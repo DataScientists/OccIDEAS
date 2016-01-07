@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <!-- Database connection settings -->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/occideas</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">P@ssword</property>
+        
+        <property name="connection.autoReconnect">true</property>
+    	<property name="connection.autoReconnectForPools">true</property>
+    	<property name="connection.is-connection-validation-required">true</property>
+    
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        
+       <!--  Use a Tomcat 7.0 JNDI datasource
+		<property name="connection.datasource">java:comp/env/jdbc/epistudy</property>
+
+        JDBC connection pool (use the built-in) -->
+        <property name="connection.pool_size">2</property>
+
+        <!-- SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+
+        <!-- Enable Hibernate's current session context -->
+        <property name="current_session_context_class">thread</property>
+
+        <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+
+        <!-- Echo all executed SQL to stdout -->
+       <!--  <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+		<property name="use_sql_comments">true</property> -->
+        
+        <property name="hibernate.c3p0.min_size">5</property>
+  		<property name="hibernate.c3p0.max_size">20</property>
+  		<property name="hibernate.c3p0.timeout">1000</property>
+  		<property name="hibernate.c3p0.max_statements">50</property>
+  		<property name="hibernate.c3p0.idle_test_period">3000</property>
+        
+        <property name="show_sql">true</property>
+        
+        <mapping class="org.occideas.AdditionalField"></mapping>
+	 	<mapping class="org.occideas.Module"></mapping>
+	 	<mapping class="org.occideas.Question"></mapping>
+	 	<mapping class="org.occideas.PossibleAnswer"></mapping>
+	 	<mapping class="org.occideas.Fragment"></mapping>
+	 	<mapping class="org.occideas.Agent"></mapping>
+	 	<mapping class="org.occideas.AgentGroup"></mapping>
+	 	<mapping class="org.occideas.Rule"></mapping>
+	 	<mapping class="org.occideas.Node"></mapping>
+	 	<mapping class="org.occideas.Note"></mapping>
+	 	<mapping class="org.occideas.RuleAdditionalField"></mapping>
+	 	<mapping class="org.occideas.ModuleRule"></mapping>
+	 	<mapping class="org.occideas.Interview"></mapping>
+	 	<mapping class="org.occideas.InterviewQuestionAnswer"></mapping>
+	 	
+	 
+    </session-factory>
+
+</hibernate-configuration>
+

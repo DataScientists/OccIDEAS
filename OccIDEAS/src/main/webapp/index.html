@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="UTF-8"/>
+	<title>OccIDEAS</title>
+	
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-animate.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-loading-bar/0.7.1/loading-bar.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+	<link rel="stylesheet" href="styles/style.css" />
+	
+	
+</head>
+<body>
+    <div class="container" ng-app="occIDEASApp">
+      <header ng-include="'nav.html'"></header>
+      <div ui-view></div>
+      <footer ng-include="'footer.html'"></footer>
+    </div>
+</body>
+    <script src="scripts/occideas.js"></script>
+	<script src="scripts/services/modules.js"></script>
+	<script src="scripts/controllers/moduleCtrl.js"></script>
+	<script src="scripts/controllers/fragmentCtrl.js"></script>
+	<script src="scripts/controllers/agentCtrl.js"></script>
+</html>
