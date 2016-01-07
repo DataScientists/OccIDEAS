@@ -18,9 +18,9 @@
     <servlet-name>ListServlet</servlet-name>
     <url-pattern>/ListServlet</url-pattern>
   </servlet-mapping>
-   <!--  
+    
    <servlet>
-     <servlet-name>Jersey Web Application</servlet-name>
+     <servlet-name>Modules</servlet-name>
      <servlet-class>
          com.sun.jersey.spi.container.servlet.ServletContainer
      </servlet-class>
@@ -34,8 +34,8 @@
 			</init-param>
 	</servlet>
 <servlet-mapping>
-     <servlet-name>Jersey Web Application</servlet-name>
-	     <url-pattern>/*</url-pattern>
+     <servlet-name>Modules</servlet-name>
+	     <url-pattern>/rest/modules/*</url-pattern>
 </servlet-mapping> 
--->
+
 </web-app>
