@@ -1,4 +1,5 @@
 package org.occideas.rest;
+
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -12,15 +13,28 @@ import org.occideas.Module;
 
 import com.google.gson.Gson;
 
-@Path("/ModuleService")
-public class ModuleService {
 
+
+//@Path("/ModuleService")
+@Path("/modules")
+public class ModuleService extends javax.ws.rs.core.Application{
+
+	@GET
+	   //@Path("/jerseymodules")
+	   @Produces(MediaType.TEXT_HTML)
+	   public String testModule(){
+	      return "Hello World";
+	   }	
+	   
+	/*   
+	
    @GET
-   @Path("/modules")
+   //@Path("/jerseymodules")
    @Produces(MediaType.APPLICATION_JSON)
    public List<Module> getModules(){
       return this.getAllModules();
    }	
+   
    
    private List<Module> getAllModules(){
    		Session hibernateSession = null;
@@ -31,9 +45,10 @@ public class ModuleService {
 		hibernateSession.getTransaction().commit();
 		hibernateSession.close();
 		Gson gson = new Gson();
-		//Gson gson = new GsonBuilder().excludeFieldsWithModifiers(modifiers).excludeFieldsWithoutExposeAnnotation().create() ;
 		String json = gson.toJson(modules);
+		
 		return modules;
    }
+   */
 }
 

@@ -20,22 +20,24 @@
   </servlet-mapping>
     
    <servlet>
-     <servlet-name>Modules</servlet-name>
+     <servlet-name>TestModules</servlet-name>
      <servlet-class>
-         com.sun.jersey.spi.container.servlet.ServletContainer
+         org.glassfish.jersey.servlet.ServletContainer
      </servlet-class>
 			<init-param>
 					<param-name>
-							com.sun.jersey.config.property.packages
+							javax.ws.rs.Application
 					</param-name>
 					<param-value>
 							org.occideas.rest.ModuleService
 					</param-value>
 			</init-param>
+			<load-on-startup>1</load-on-startup>
+			
 	</servlet>
 <servlet-mapping>
-     <servlet-name>Modules</servlet-name>
-	     <url-pattern>/rest/modules/*</url-pattern>
+     <servlet-name>TestModules</servlet-name>
+	     <url-pattern>/rest/*</url-pattern>
 </servlet-mapping> 
 
 </web-app>

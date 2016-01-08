@@ -5,6 +5,11 @@ angular
   .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider) {
     $urlRouterProvider.otherwise('/');
     $stateProvider
+    .state('jerseymodule', {
+        url: '/jerseymodules',
+        templateUrl: 'modules.html',
+        controller: 'jerseymoduleCtrl'
+      })
       .state('module', {
         url: '/modules',
         templateUrl: 'modules.html',
