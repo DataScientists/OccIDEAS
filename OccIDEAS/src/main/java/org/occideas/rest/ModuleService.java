@@ -24,14 +24,7 @@ import com.google.gson.Gson;
 
 @Path("/modules")
 public class ModuleService{
-/*
-	@GET
-	@Produces( {MediaType.TEXT_HTML})
-	public String testModule(){
-	   return "Hello world";
-	}	
-  
-	*/
+
    @GET
    @Produces(MediaType.APPLICATION_JSON)
    public String findModules(){
