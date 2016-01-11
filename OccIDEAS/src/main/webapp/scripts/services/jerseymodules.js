@@ -1,14 +1,12 @@
 angular
   .module('occIDEASApp')
-  .factory('JerseyModules', ['$http', function($http) {
-	var apiUrl = '';
-	var modulesUrl = apiUrl + '/jerseymodules';
+  .factory('jerseyModules', ['$http', function($http) {
+	var apiUrl = 'http://localhost:8080/occideas/rest/';
+	var modulesUrl = apiUrl + 'modules';
 	var apiKey = '';
-
-	//modulesUrl = 'ListServlet';
-	    
+	
 	var getModules = function() {
-	  return $http.get(modulesUrl + '?deleted=false').then(function(response) {
+	  return $http.get(modulesUrl).then(function(response) {
 	    return response.data;
 	  });
 	};

@@ -1,8 +1,10 @@
 angular
   .module('occIDEASApp')
-  .controller('jerseymoduleCtrl', ['$scope', 'JerseyModules', function($scope, Modules) {
-    $scope.title = "Modules";
-    Modules.get().then(function(data) {
+  .controller('jerseymoduleCtrl', ['$scope', 'jerseyModules', function($scope, jerseyModules) {
+    $scope.title = "Jersey Modules";
+    console.log('jerseyModules');
+    
+    jerseyModules.get().then(function(data) {
       $scope.items = data;
     });
   }]);

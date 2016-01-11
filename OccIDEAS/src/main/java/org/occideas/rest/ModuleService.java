@@ -1,35 +1,31 @@
 package org.occideas.rest;
 
-import java.util.List;
+//import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.hibernate.Session;
-import org.occideas.HibernateUtility;
-import org.occideas.Module;
+//import org.hibernate.Session;
+//import org.occideas.HibernateUtility;
+//import org.occideas.Module;
 
 import com.google.gson.Gson;
 
 
 
-//@Path("/ModuleService")
 @Path("/modules")
-public class ModuleService extends javax.ws.rs.core.Application{
+public class ModuleService{
 
 	@GET
-	   //@Path("/jerseymodules")
-	   @Produces(MediaType.TEXT_HTML)
-	   public String testModule(){
-	      return "Hello World";
-	   }	
-	   
-	/*   
+	@Produces( {MediaType.TEXT_HTML})
+	public String testModule(){
+	   return "Hello world";
+	}	
+  
 	
-   @GET
-   //@Path("/jerseymodules")
+  /* @GET
    @Produces(MediaType.APPLICATION_JSON)
    public List<Module> getModules(){
       return this.getAllModules();
@@ -48,7 +44,6 @@ public class ModuleService extends javax.ws.rs.core.Application{
 		String json = gson.toJson(modules);
 		
 		return modules;
-   }
-   */
+   }*/
 }
 

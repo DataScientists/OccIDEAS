@@ -22,6 +22,7 @@ angular
       })
       .state('agent', {
         url: '/agent',
-        templateUrl: 'agent.html'
+        templateUrl: 'agent.html',
+        controller: 'agentCtrl'
       });
   }]);
