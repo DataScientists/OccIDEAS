@@ -9,14 +9,14 @@
     <welcome-file>index.jsp</welcome-file>
    </welcome-file-list>
    <servlet>
-    <description></description>
-    <display-name>ListServlet</display-name>
-    <servlet-name>ListServlet</servlet-name>
-    <servlet-class>org.occideas.servlets.ListServlet</servlet-class>
+	    <description></description>
+	    <display-name>ListServlet</display-name>
+	    <servlet-name>ListServlet</servlet-name>
+	    <servlet-class>org.occideas.servlets.ListServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ListServlet</servlet-name>
-    <url-pattern>/ListServlet</url-pattern>
+	    <servlet-name>ListServlet</servlet-name>
+	    <url-pattern>/ListServlet</url-pattern>
   </servlet-mapping>
     
    <servlet>
@@ -30,8 +30,8 @@
 	</servlet>
 	
 	<servlet-mapping>
-	<servlet-name>Jersey REST Service</servlet-name>
-	<url-pattern>/rest/*</url-pattern>
+		<servlet-name>Jersey REST Service</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
 
 </web-app>

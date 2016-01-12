@@ -1,18 +1,11 @@
 package org.occideas.rest;
 
-import java.util.List;
-
 //import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.occideas.HibernateUtility;
-import org.occideas.Module;
 
 //import org.hibernate.Session;
 //import org.occideas.HibernateUtility;
@@ -25,42 +18,23 @@ import com.google.gson.Gson;
 @Path("/modules")
 public class ModuleService{
 
-   @GET
+	@GET
+	@Produces( {MediaType.TEXT_HTML})
+	public String testModule(){
+	   return "Hello world";
+	}	
+	
+	
+	
+  /* @GET
    @Produces(MediaType.APPLICATION_JSON)
-   public String findModules(){
-      return this.findAllModules();
-   }
-   @GET
-   @Produces(MediaType.APPLICATION_JSON)
-   public String findModule(long id){
-      return this.findModuleById(id);
-   }
-    
-   private String findModuleById(long id){
-	   Session hibernateSession = null;
-		Transaction transaction = null;
-		Module module = null;
-		try {
-			hibernateSession = HibernateUtility.getSessionFactory().openSession();
-			transaction = hibernateSession.beginTransaction();
-			module = (Module) hibernateSession.get(Module.class, id);
-			// NodeHelper.getAllNodes(module);
-			transaction.commit();
-			hibernateSession.flush();
-
-		} catch (Exception e) {
-			if (transaction != null)
-				transaction.rollback();
-			System.out.println("module not retrieved - " + e.getMessage());
-		} finally {
-			hibernateSession.close();
-		}
-		Gson gson = new Gson();
-		String json = gson.toJson(module);
-		return json;
-   }
-   private String findAllModules(){
-  		Session hibernateSession = null;
+   public List<Module> getModules(){
+      return this.getAllModules();
+   }	
+   
+   
+   private List<Module> getAllModules(){
+   		Session hibernateSession = null;
 		hibernateSession = HibernateUtility.getSessionFactory().openSession();
 		hibernateSession.beginTransaction();	
 		@SuppressWarnings("unchecked")
@@ -70,8 +44,7 @@ public class ModuleService{
 		Gson gson = new Gson();
 		String json = gson.toJson(modules);
 		
-		return json;
-  }
-  
+		return modules;
+   }*/
 }
 

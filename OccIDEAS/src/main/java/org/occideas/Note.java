@@ -18,9 +18,11 @@ public class Note implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue
 	private long idNote;
+	
 	@ManyToOne(fetch=FetchType.EAGER)
 	private Node node;
 	private String type;
+
 	@Column(length=2048)
 	private String text;
 	private Date lastUpdated;

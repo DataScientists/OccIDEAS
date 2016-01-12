@@ -10,7 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "agent_discriminator", discriminatorType=DiscriminatorType.STRING)
@@ -21,6 +23,7 @@ public class AgentInfo implements Serializable {
 	private long idAgent;
 	private String name;
 	private String description;
+
 	private Date lastUpdated;
 	private int deleted;
 

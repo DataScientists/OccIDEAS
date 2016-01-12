@@ -23,16 +23,20 @@ import javax.persistence.OneToMany;
 public class Node implements Cloneable {
 	@Id @GeneratedValue
 	private long idNode;
+	
 	@Column(length=2048)
 	private String name;
+	
 	@Column(length=2048)
 	private String description;
+	
 	private String type;
 	private int sequence;
 	private String number;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	private Node parent;
+	
 	private long link;
 	private long topNodeId;
 	private Date lastUpdated;
