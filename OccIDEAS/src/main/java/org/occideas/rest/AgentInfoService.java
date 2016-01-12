@@ -33,14 +33,13 @@ public class AgentInfoService {
 	   		
 	   		session.save(info);
 			tr.commit();
-			session.close();		
 			
-			status= "{status:1}";
+			status= "{\"status\":1}";
 			
 		} catch (Exception e) {
-			System.out.println("Transaction Fail"+e.getMessage());
+			System.out.println("Transaction Fail "+e.getMessage());
 			tr.rollback();
-			status= "{status:0}";
+			status= "{\"status\":0}";
 		}
 		finally{
 			session.close();					
@@ -51,7 +50,7 @@ public class AgentInfoService {
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAgentInfo(@QueryParam("id") String id)
+	public String getAgentInfo(@QueryParam("id") long id)
 	{
 		Session session = null;
 		Transaction tr = null;
@@ -62,11 +61,18 @@ public class AgentInfoService {
 			AgentInfo info =  (AgentInfo) session.get(AgentInfo.class, id);
 			tr.commit();
 			
-			resp=  "{status:1,data:'"+new Gson().toJson(info)+"'}";
+			if(info != null) //SUCCESSFULLY GET DATA
+				resp=  "{\"status\": 1,\"data\": "+new Gson().toJson(info)+"}";
+			else // INVALIDE AGENT ID
+				resp=  "{\"status\": -1}";				
+
+			System.out.println(resp);
 		}
 		catch(Exception e){
 			System.out.println("Info Not retrieved"+e.getMessage());
-			resp = "{status:0}";
+			
+			//SERVER ERROR
+			resp = "{\"status\":0}";
 		}
 		finally{
 			session.close();								
@@ -93,12 +99,12 @@ public class AgentInfoService {
 	   		session.update(info);
 			tr.commit();
 			
-			status= "{status:1}";
+			status= "{\"status\":1}";
 			
 		} catch (Exception e) {
 			System.out.println("Transaction Fail"+e.getMessage());
 			tr.rollback();
-			status= "{status:1}";
+			status= "{\"status\":0}";
 		}
 		finally{
 			session.close();					
@@ -109,7 +115,7 @@ public class AgentInfoService {
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteAgentInfo(@QueryParam("id") String id)
+	public String deleteAgentInfo(@QueryParam("id") long id)
 	{
 		Session session = null;
 		Transaction tr = null;
@@ -118,20 +124,20 @@ public class AgentInfoService {
 			session= HibernateUtility.getSessionFactory().openSession();
 	   		tr = session.beginTransaction();	
 			AgentInfo info =  (AgentInfo) session.get(AgentInfo.class, id);
-			tr.commit();
 			
 			session.delete(info);
+			tr.commit();
 			
-			resp=  "{status:1}";
+			resp= "{\"status\":1}";
 		}
 		catch(Exception e){
 			System.out.println("Info Not Deleted"+e.getMessage());
-			resp = "{status:0}";
+			resp= "{\"status\":0}";
 		}
 		finally{
 			session.close();								
 		}
 		
 		return resp;
-	}	
+	}
 }
