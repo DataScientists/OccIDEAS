@@ -4,26 +4,25 @@ import java.io.IOException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import org.occideas.AgentGroup;
+import org.occideas.rest.common.AgentCommon;
 
-import org.occideas.Module;
-import org.occideas.rest.common.NodeCommon;
-
-@Path("/module")
-public class ModuleService extends NodeCommon{
-
+@Path("/agentagentGroup")
+public class AgentGroupService extends AgentCommon{
+	
 	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String createModule(final Module module) throws IOException
+	public String createAgentGroup(final AgentGroup agentGroup) throws IOException
 	{
-		return super.create(module);
+		return super.create(agentGroup);
 	}	
 	
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getModule(@QueryParam("id") long id)
+	public String getAgentGroup(@QueryParam("id") long id)
 	{
 		return super.get(id);
 	}
@@ -32,15 +31,15 @@ public class ModuleService extends NodeCommon{
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String updateModule(final Module module) throws IOException
+	public String updateAgentGroup(final AgentGroup agentGroup) throws IOException
 	{
-		return super.update(module);
+		return super.update(agentGroup);
 	}
 	
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteModule(@QueryParam("id") long id)
+	public String deleteAgentGroup(@QueryParam("id") long id)
 	{
 		return super.delete(id);
 	}

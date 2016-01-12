@@ -5,25 +5,25 @@ import java.io.IOException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import org.occideas.Module;
+import org.occideas.Fragment;
 import org.occideas.rest.common.NodeCommon;
 
-@Path("/module")
-public class ModuleService extends NodeCommon{
+@Path("/fragment")
+public class FragmentService extends NodeCommon{
 
 	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String createModule(final Module module) throws IOException
+	public String createFragment(final Fragment fragment) throws IOException
 	{
-		return super.create(module);
+		return super.create(fragment);
 	}	
 	
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getModule(@QueryParam("id") long id)
+	public String getFragment(@QueryParam("id") long id)
 	{
 		return super.get(id);
 	}
@@ -32,15 +32,15 @@ public class ModuleService extends NodeCommon{
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String updateModule(final Module module) throws IOException
+	public String updateFragment(final Fragment fragment) throws IOException
 	{
-		return super.update(module);
+		return super.update(fragment);
 	}
 	
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteModule(@QueryParam("id") long id)
+	public String deleteFragment(@QueryParam("id") long id)
 	{
 		return super.delete(id);
 	}
