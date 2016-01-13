@@ -3,11 +3,13 @@ package org.occideas.rest.common;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.occideas.Node;
 import org.occideas.HibernateUtility;
+import org.occideas.Module;
+import org.occideas.Node;
 
 import com.google.gson.Gson;
 
@@ -59,6 +61,39 @@ public class NodeCommon {
 			else // INVALIDE AGENT ID
 				resp=  "{\"status\": -1}";				
 
+			System.out.println(resp);
+		}
+		catch(Exception e){
+			System.out.println("node Not retrieved"+e.getMessage());
+			
+			//SERVER ERROR
+			resp = "{\"status\":0}";
+		}
+		finally{
+			session.close();								
+		}
+		
+		return resp;
+	}
+	protected String getAllModules()
+	{
+		Session session = null;
+		Transaction tr = null;
+		String resp = "";
+		try {
+			session= HibernateUtility.getSessionFactory().openSession();
+	   		tr = session.beginTransaction();	
+	   		@SuppressWarnings("unchecked")
+			List<Module> modules = session.createCriteria(Module.class).list();
+			tr.commit();
+			
+			if(modules != null) {//SUCCESSFULLY GET DATA
+				Gson gson = new Gson();		
+				resp = gson.toJson(modules);
+			}else{ // INVALIDE AGENT ID
+				resp=  "{\"status\": -1}";				
+			}
+		
 			System.out.println(resp);
 		}
 		catch(Exception e){

@@ -27,6 +27,13 @@ public class ModuleService extends NodeCommon{
 	{
 		return super.get(id);
 	}
+	@GET
+	@Path("/getAll")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getModules()
+	{
+		return super.getAllModules();
+	}
 
 	@PUT
 	@Path("/update")

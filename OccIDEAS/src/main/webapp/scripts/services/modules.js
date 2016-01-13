@@ -1,14 +1,12 @@
 angular
   .module('occIDEASApp')
   .factory('Modules', ['$http', function($http) {
-	var apiUrl = '';
-	var modulesUrl = apiUrl + '/modules';
+	var apiUrl = 'http://localhost:8080/occideas/rest/';
+	var modulesUrl = apiUrl + 'module';
 	var apiKey = '';
-
-	modulesUrl = 'ListServlet';
-	    
+	
 	var getModules = function() {
-	  return $http.get(modulesUrl + '?deleted=false').then(function(response) {
+	  return $http.get(modulesUrl+'/getAll').then(function(response) {
 	    return response.data;
 	  });
 	};
