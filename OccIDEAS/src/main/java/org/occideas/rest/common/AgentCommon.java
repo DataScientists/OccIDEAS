@@ -21,7 +21,7 @@ public class AgentCommon {
 		String status = "";
 		try {
 			session= HibernateUtility.getSessionFactory().openSession();
-	   		tr = session.beginTransaction();	
+			tr = session.beginTransaction();	
 
 	   		info.setLastUpdated(new Date(Calendar.getInstance().getTimeInMillis()));
 	   		
