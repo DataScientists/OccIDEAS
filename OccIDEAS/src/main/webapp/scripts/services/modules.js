@@ -16,11 +16,18 @@ angular
 		console.log(response.data.id);
 	  });
 	};
+	
+	var deleteModule = function(moduleObj) {
+		  return $http.post(modulesUrl+'/delete' + '?id='+moduleObj.id).then(function(response) {
+			console.log(response.data.id);
+		  });
+		}; 
 
 	// factory definition
 	return {
 	      get: getModules,
-	      post: postNewModule 
+	      post: postNewModule, 
+	      deleteModule: deleteModule
 	};
 
   }]);

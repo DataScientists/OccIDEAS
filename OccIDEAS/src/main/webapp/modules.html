@@ -3,7 +3,7 @@
   <li  ng-repeat="module in items">
     <input type="text" ng-model="module.name">
     <input type="text" ng-model="module.description">
-    <button ng-click="items.splice($index,1)">-</button>
+    <button ng-click="deleteModule($index)">-</button>
   </li>
 </ul>
 

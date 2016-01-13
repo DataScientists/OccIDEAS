@@ -7,4 +7,9 @@ angular
     Modules.get().then(function(data) {
       $scope.items = data;
     });
+    
+    //Modules.deleteModule(moduleIndex).then(function(data) {
+    //	$scope.items.splice(moduleIndex,1);
+    //});
+    
   }]);
