@@ -3,9 +3,13 @@ package org.occideas;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 @Entity
 @DiscriminatorValue("G")
@@ -14,7 +18,9 @@ public class AgentGroup extends AgentInfo{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@OneToMany(mappedBy="agentGroup")
+	@OneToMany(mappedBy="agentGroup",fetch=FetchType.EAGER)
+	@Column(name="agentGroup_idAgent")
+	
 	private List<Agent> agents;
 	
 
@@ -36,7 +42,7 @@ public class AgentGroup extends AgentInfo{
 		this.getAgents().add(agent);
 	}
 	
-
+	
 	public List<Agent> getAgents() {
 		return agents;
 	}

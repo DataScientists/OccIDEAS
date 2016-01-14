@@ -4,130 +4,105 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.Calendar;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.occideas.AgentGroup;
 import org.occideas.AgentInfo;
 import org.occideas.HibernateUtility;
-
-import com.google.gson.Gson;
-
+import org.occideas.exceptions.GenericException;
 
 public class AgentCommon {
-	//COMMON FUNCTIONS
-	protected String create(AgentInfo info) throws IOException
-	{
+	// COMMON FUNCTIONS
+	protected String create(AgentInfo info) throws IOException {
 		Session session = null;
 		Transaction tr = null;
 		String status = "";
 		try {
-			session= HibernateUtility.getSessionFactory().openSession();
-			tr = session.beginTransaction();	
+			session = HibernateUtility.getSessionFactory().openSession();
+			tr = session.beginTransaction();
 
-	   		info.setLastUpdated(new Date(Calendar.getInstance().getTimeInMillis()));
-	   		
-	   		session.save(info);
+			info.setLastUpdated(new Date(Calendar.getInstance().getTimeInMillis()));
+
+			session.save(info);
 			tr.commit();
-			
-			//SUCCESSFULLY CREATED			
-			status= "{\"status\":1}";
-			
+
+			// SUCCESSFULLY CREATED
+			status = "{\"status\":1}";
+
 		} catch (Exception e) {
-			System.out.println("Transaction Fail "+e.getMessage());
+			System.out.println("Transaction Fail " + e.getMessage());
 			tr.rollback();
-			//SERVER ERROR			
-			status= "{\"status\":0}";
-		}
-		finally{
-			session.close();					
-		}
-		return status;		
-	}
-	
-	protected String get(long id)
-	{
-		Session session = null;
-		Transaction tr = null;
-		String resp = "";
-		try {
-			session= HibernateUtility.getSessionFactory().openSession();
-	   		tr = session.beginTransaction();	
-			AgentInfo info =  (AgentInfo) session.get(AgentInfo.class, id);
-			tr.commit();
-			
-			if(info != null) //SUCCESSFULLY GET DATA
-				resp=  "{\"status\": 1,\"data\": "+new Gson().toJson(info)+"}";
-			else // INVALIDE AGENT ID
-				resp=  "{\"status\": -1}";				
-
-			System.out.println(resp);
-		}
-		catch(Exception e){
-			System.out.println("Info Not retrieved"+e.getMessage());
-			
-			//SERVER ERROR
-			resp = "{\"status\":0}";
-		}
-		finally{
-			session.close();								
-		}
-		
-		return resp;
-	}
-	
-	protected String update(AgentInfo info) throws IOException
-	{	   	
-		Session session = null;
-		Transaction tr = null;
-		String status = "";
-		try {
-			session= HibernateUtility.getSessionFactory().openSession();
-	   		tr = session.beginTransaction();	
-
-	   		info.setLastUpdated(new Date(Calendar.getInstance().getTimeInMillis()));
-	   		
-	   		session.update(info);
-			tr.commit();
-			
-			//SUCCESSFULLY UPDATED
-			status= "{\"status\":1}";
-			
-		} catch (Exception e) {
-			System.out.println("Transaction Fail"+e.getMessage());
-			tr.rollback();
-			//SERVER ERROR		
-			status= "{\"status\":0}";
-		}
-		finally{
-			session.close();					
+			// SERVER ERROR
+			status = "{\"status\":0}";
+		} finally {
+			session.close();
 		}
 		return status;
-	}	
+	}
 
-	protected String delete(long id)
-	{
+	protected AgentGroup get(long id) throws GenericException {
+		Session session = null;
+		AgentGroup info = null;
+		try {
+			session = HibernateUtility.getSessionFactory().openSession();
+			info = (AgentGroup) session.get(AgentGroup.class, id);
+		} catch (Throwable e) {
+			throw new GenericException("Database failure.",e);
+		}
+
+		return info;
+	}
+
+	protected String update(AgentInfo info) throws IOException {
+		Session session = null;
+		Transaction tr = null;
+		String status = "";
+		try {
+			session = HibernateUtility.getSessionFactory().openSession();
+			tr = session.beginTransaction();
+
+			info.setLastUpdated(new Date(Calendar.getInstance().getTimeInMillis()));
+
+			session.update(info);
+			tr.commit();
+
+			// SUCCESSFULLY UPDATED
+			status = "{\"status\":1}";
+
+		} catch (Exception e) {
+			System.out.println("Transaction Fail" + e.getMessage());
+			tr.rollback();
+			// SERVER ERROR
+			status = "{\"status\":0}";
+		} finally {
+			session.close();
+		}
+		return status;
+	}
+
+	protected String delete(long id) {
 		Session session = null;
 		Transaction tr = null;
 		String resp = "";
 		try {
-			session= HibernateUtility.getSessionFactory().openSession();
-	   		tr = session.beginTransaction();	
-			AgentInfo info =  (AgentInfo) session.get(AgentInfo.class, id);
-			
+			session = HibernateUtility.getSessionFactory().openSession();
+			tr = session.beginTransaction();
+			AgentInfo info = (AgentInfo) session.get(AgentInfo.class, id);
+
 			session.delete(info);
 			tr.commit();
-			
-			//SUCCESSFULLY DELETED
-			resp= "{\"status\":1}";
+
+			// SUCCESSFULLY DELETED
+			resp = "{\"status\":1}";
+		} catch (Exception e) {
+			System.out.println("Info Not Deleted" + e.getMessage());
+			// SERVER ERROR
+			resp = "{\"status\":0}";
+		} finally {
+			session.close();
 		}
-		catch(Exception e){
-			System.out.println("Info Not Deleted"+e.getMessage());
-			//SERVER ERROR
-			resp= "{\"status\":0}";
-		}
-		finally{
-			session.close();								
-		}
-		
+
 		return resp;
-	}	
+	}
 }

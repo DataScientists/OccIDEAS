@@ -20,6 +20,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.AgentGroup;
 import org.occideas.HibernateUtility;
+import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
 
 import com.google.gson.Gson;
@@ -39,9 +40,18 @@ public class AgentGroupService extends AgentCommon{
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAgentGroup(@QueryParam("id") long id)
+	public AgentGroup getAgentGroup(@QueryParam("id") long id) throws GenericException
 	{
-		return super.get(id);
+		Session session = null;
+		AgentGroup info = null;
+		try {
+			session = HibernateUtility.getSessionFactory().openSession();
+			info = (AgentGroup) session.get(AgentGroup.class, id);
+		} catch (Exception e) {
+			throw new GenericException("Database failure.",e);
+		}
+
+		return info;
 	}
 
 	@PUT

@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 
 
 @Entity
@@ -17,6 +21,8 @@ public class Agent extends AgentInfo{
 	private static final long serialVersionUID = 1L;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
+	
 	private AgentGroup agentGroup;
 
 	public Agent() {
@@ -33,6 +39,7 @@ public class Agent extends AgentInfo{
 		this.setIdAgent(idAgent);
 	}
 
+	@JsonIgnore
 	public AgentGroup getGroup() {
 		return agentGroup;
 	}

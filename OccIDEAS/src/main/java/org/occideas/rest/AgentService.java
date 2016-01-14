@@ -3,18 +3,28 @@ package org.occideas.rest;
 import java.io.IOException;
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.occideas.Agent;
-import org.occideas.Agent;
+import org.occideas.AgentGroup;
 import org.occideas.HibernateUtility;
+import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
 
 import com.google.gson.Gson;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/agent")
 public class AgentService extends AgentCommon{
@@ -31,9 +41,15 @@ public class AgentService extends AgentCommon{
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAgent(@QueryParam("id") long id)
+	public Response getAgent(@QueryParam("id") long id)
 	{
-		return super.get(id);
+		AgentGroup agentGroup;
+		try {
+			agentGroup = super.get(id);
+		} catch (GenericException e) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		return Response.ok(agentGroup).build();
 	}
 
 	@PUT

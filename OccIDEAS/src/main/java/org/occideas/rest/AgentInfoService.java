@@ -4,9 +4,14 @@ import java.io.IOException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.occideas.AgentGroup;
 import org.occideas.AgentInfo;
+import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
+
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/agentinfo")
 public class AgentInfoService extends AgentCommon{
@@ -23,9 +28,15 @@ public class AgentInfoService extends AgentCommon{
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAgentInfo(@QueryParam("id") long id)
+	public Response getAgentInfo(@QueryParam("id") long id)
 	{
-		return super.get(id);
+		AgentGroup agentGroup;
+		try {
+			agentGroup = super.get(id);
+		} catch (GenericException e) {
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(agentGroup).build();
 	}
 
 	@PUT
