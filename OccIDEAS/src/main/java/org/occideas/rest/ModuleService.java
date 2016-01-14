@@ -28,7 +28,7 @@ public class ModuleService extends NodeCommon{
 		return super.get(id);
 	}
 	@GET
-	@Path("/getAll")
+	@Path("/getlist")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getModules()
 	{

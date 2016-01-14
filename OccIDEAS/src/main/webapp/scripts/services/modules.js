@@ -6,7 +6,7 @@ angular
 	var apiKey = '';
 	
 	var getModules = function() {
-	  return $http.get(modulesUrl+'/getAll').then(function(response) {
+	  return $http.get(modulesUrl+'/getlist').then(function(response) {
 	    return response.data;
 	  });
 	};
