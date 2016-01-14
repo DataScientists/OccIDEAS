@@ -1,7 +1,7 @@
 angular
   .module('occIDEASApp')
   .factory('Modules', ['$http', function($http) {
-	var apiUrl = 'http://localhost:8080/occideas/rest/';
+	var apiUrl = '/occideas/rest/';
 	var modulesUrl = apiUrl + 'module';
 	var apiKey = '';
 	

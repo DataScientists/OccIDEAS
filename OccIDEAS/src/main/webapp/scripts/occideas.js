@@ -1,6 +1,7 @@
 angular
   .module('occIDEASApp', [
-    'ui.router'
+    'ui.router',
+    'ui.tree'
   ])
   .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider) {
     $urlRouterProvider.otherwise('/');
