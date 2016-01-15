@@ -5,12 +5,18 @@ import java.io.IOException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import org.occideas.PossibleAnswer;
 import org.occideas.Question;
 import org.occideas.rest.common.NodeCommon;
 
 @Path("/question")
-public class QuestionService extends NodeCommon{
-
+public class QuestionService extends NodeCommon
+{
+	public QuestionService() 
+	{
+		super.childClass = Question.class;
+	}
+	
 	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)

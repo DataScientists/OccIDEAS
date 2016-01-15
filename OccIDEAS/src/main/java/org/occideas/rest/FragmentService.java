@@ -26,8 +26,13 @@ import org.occideas.rest.common.NodeCommon;
 import com.google.gson.Gson;
 
 @Path("/fragment")
-public class FragmentService extends NodeCommon {
-
+public class FragmentService extends NodeCommon 
+{
+	public FragmentService() 
+	{
+		super.childClass = Fragment.class;
+	}
+	
 	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -35,7 +40,7 @@ public class FragmentService extends NodeCommon {
 	public String createFragment(final Fragment fragment) throws IOException {
 		return super.create(fragment);
 	}
-
+		
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -99,4 +104,6 @@ public class FragmentService extends NodeCommon {
 
 		return resp;
 	}
+
+
 }

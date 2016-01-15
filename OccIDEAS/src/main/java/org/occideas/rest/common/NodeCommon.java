@@ -14,13 +14,16 @@ import org.occideas.Node;
 import com.google.gson.Gson;
 
 
-public class NodeCommon {
+public class NodeCommon 
+{
+	protected Class<? extends Node> childClass = Node.class;
+	
 	//COMMON FUNCTIONS
 	protected String create(Node node) throws IOException
 	{
 		Session session = null;
 		Transaction tr = null;
-		String status = "";
+		String resp = "";
 		try {
 			session= HibernateUtility.getSessionFactory().openSession();
 	   		tr = session.beginTransaction();	
@@ -31,18 +34,18 @@ public class NodeCommon {
 			tr.commit();
 			
 			//SUCCESSFULLY CREATED			
-			status= "{\"status\":1}";
+			resp=  "{\"status\": 1,\"data\": "+new Gson().toJson(node)+"}";
 			
 		} catch (Exception e) {
 			System.out.println("Transaction Fail "+e.getMessage());
 			tr.rollback();
 			//SERVER ERROR			
-			status= "{\"status\":0}";
+			resp= "{\"status\":0}";
 		}
 		finally{
 			session.close();					
 		}
-		return status;		
+		return resp;		
 	}
 	
 	protected String get(long id)
@@ -53,7 +56,7 @@ public class NodeCommon {
 		try {
 			session= HibernateUtility.getSessionFactory().openSession();
 	   		tr = session.beginTransaction();	
-			Node node =  (Node) session.get(Node.class, id);
+			Node node =  (Node) session.get(childClass, id);
 			tr.commit();
 			
 			if(node != null) //SUCCESSFULLY GET DATA
@@ -75,6 +78,7 @@ public class NodeCommon {
 		
 		return resp;
 	}
+	
 	protected String getAllModules()
 	{
 		Session session = null;
@@ -113,7 +117,7 @@ public class NodeCommon {
 	{	   	
 		Session session = null;
 		Transaction tr = null;
-		String status = "";
+		String resp = "";
 		try {
 			session= HibernateUtility.getSessionFactory().openSession();
 	   		tr = session.beginTransaction();	
@@ -124,18 +128,18 @@ public class NodeCommon {
 			tr.commit();
 			
 			//SUCCESSFULLY UPDATED
-			status= "{\"status\":1}";
+			resp=  "{\"status\": 1,\"data\": "+new Gson().toJson(node)+"}";
 			
 		} catch (Exception e) {
 			System.out.println("Transaction Fail"+e.getMessage());
 			tr.rollback();
 			//SERVER ERROR		
-			status= "{\"status\":0}";
+			resp = "{\"status\":0}";
 		}
 		finally{
 			session.close();					
 		}
-		return status;
+		return resp;
 	}	
 
 	protected String delete(long id)
@@ -146,7 +150,7 @@ public class NodeCommon {
 		try {
 			session= HibernateUtility.getSessionFactory().openSession();
 	   		tr = session.beginTransaction();	
-			Node node =  (Node) session.get(Node.class, id);
+			Node node =  (Node) session.get(this.childClass, id);
 			
 			session.delete(node);
 			tr.commit();

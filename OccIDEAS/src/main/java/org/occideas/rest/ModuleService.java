@@ -5,12 +5,18 @@ import java.io.IOException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import org.occideas.Fragment;
 import org.occideas.Module;
 import org.occideas.rest.common.NodeCommon;
 
 @Path("/module")
-public class ModuleService extends NodeCommon{
-
+public class ModuleService extends NodeCommon
+{
+	public ModuleService() 
+	{
+		super.childClass = Module.class;
+	}
+	
 	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
