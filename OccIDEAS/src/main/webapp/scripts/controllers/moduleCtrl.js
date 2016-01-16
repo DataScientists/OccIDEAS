@@ -1,7 +1,7 @@
 (function() {
 angular
   .module('occIDEASApp')
-  .controller('moduleCtrl', ['Modules','NgTableParams', function(Modules,NgTableParams) {
+  .controller('moduleCtrl', ['Modules','NgTableParams','$state', function(Modules,NgTableParams,$state) {
     var self = this;
     
     self.tableParams = new NgTableParams({}, {
@@ -14,11 +14,16 @@ angular
           });
         },
       });
-    
+    self.treeView = treeView;
     self.cancel = cancel;
     self.del = del;
     self.save = save;
 
+    function treeView(row){
+    	console.log("Inside treeView: " +row);
+    	$state.go("questionView",row);
+    }
+    
     function cancel(row, rowForm) {
         var originalRow = resetRow(row, rowForm);
         angular.extend(row, originalRow);

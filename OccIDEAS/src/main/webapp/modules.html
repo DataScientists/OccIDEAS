@@ -11,7 +11,7 @@
   table-condensed editable-table moduleTable"
   ng-form="vm.tableForm" disable-filter="vm.isAdding" 
   demo-tracked-table="vm.tableTracker">
-      <tr ng-repeat="row in $data" demo-tracked-table-row="row" ng-form="rowForm">
+      <tr ng-repeat="row in $data" demo-tracked-table-row="row" ng-form="rowForm" ng-click="vm.treeView(row)">
         <td title="'Name'" filter="{name: 'text'}" sortable="'name'" ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''" ng-form="name" demo-tracked-table-cell>
             <span ng-switch-default class="editable-text">{{row.name}}</span>
             <div class="controls" ng-class="name.$invalid && name.$dirty ? 'has-error' : ''" ng-switch-when="true">

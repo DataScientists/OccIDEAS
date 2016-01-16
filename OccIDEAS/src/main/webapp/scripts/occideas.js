@@ -2,9 +2,10 @@ angular
   .module("occIDEASApp", [
     "ui.router",
     "ngMaterial",
+    "ui.tree",
     "ngTable"
   ])
-  .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider) {
+  .config(['$urlRouterProvider', '$stateProvider','QuestionsService', function($urlRouterProvider, $stateProvider,QuestionsService) {
     $urlRouterProvider.otherwise('/');
     $stateProvider
     .state('allmodules', {
@@ -21,6 +22,14 @@ angular
         url: '/fragment',
         templateUrl: 'fragment.html',
         controller: 'fragmentCtrl'
+      })
+      .state('questionView', {
+		        url: '/questionView',
+		        templateUrl: 'scripts/questions/view/questions.html',
+		        controller: 'QuestionsCtrl',
+		        onEnter: function(QuestionsService, $stateParams) {
+		        	QuestionsService.findQuestions($stateParams.row);
+		        }
       })
       .state('agent', {
         url: '/agent',
