@@ -1,4 +1,4 @@
-<div ng-cloak ng-controller="moduleCtrl as vm">
+<div ng-cloak ng-controller="ModuleCtrl as vm">
   <md-toolbar md-scroll-shrink ng-if="true">
     <div class="md-toolbar-tools">
       <h3>
@@ -11,17 +11,21 @@
   table-condensed editable-table moduleTable"
   ng-form="vm.tableForm" disable-filter="vm.isAdding" 
   demo-tracked-table="vm.tableTracker">
-      <tr ng-repeat="row in $data" demo-tracked-table-row="row" ng-form="rowForm" ng-click="vm.treeView(row)">
-        <td title="'Name'" filter="{name: 'text'}" sortable="'name'" ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''" ng-form="name" demo-tracked-table-cell>
+      <tr ng-repeat="row in $data" demo-tracked-table-row="row" ng-form="rowForm">
+        <td title="'Name'" filter="{name: 'text'}" sortable="'name'" ng-switch="row.isEditing"  ng-class="name.$dirty ? 'bg-warning' : ''" ng-form="name" demo-tracked-table-cell>
+            <div ng-click="vm.treeView(row)">
             <span ng-switch-default class="editable-text">{{row.name}}</span>
             <div class="controls" ng-class="name.$invalid && name.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="name" ng-model="row.name" class="editable-input form-control input-sm" required />
             </div>
+            </div>
           </td>
-           <td title="'Description'" filter="{description: 'text'}" sortable="'description'" ng-switch="row.isEditing" ng-class="description.$dirty ? 'bg-warning' : ''" ng-form="description" demo-tracked-table-cell>
+           <td title="'Description'" filter="{description: 'text'}" sortable="'description'"  ng-switch="row.isEditing" ng-class="description.$dirty ? 'bg-warning' : ''" ng-form="description" demo-tracked-table-cell>
+            <div ng-click="vm.treeView(row)">
             <span ng-switch-default class="editable-text">{{row.description}}</span>
             <div class="controls" ng-class="description.$invalid && description.$dirty ? 'has-error' : ''" ng-switch-when="true">
               <input type="text" name="description" ng-model="row.description" class="editable-input form-control input-sm" required />
+            </div>
             </div>
           </td>
           <td>
