@@ -16,10 +16,15 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "node_discriminator", discriminatorType=DiscriminatorType.STRING)
-
+@JsonRootName(value = "Nodes")
 public class Node implements Cloneable {
 	@Id @GeneratedValue
 	private long idNode;
@@ -35,6 +40,7 @@ public class Node implements Cloneable {
 	private String number;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
+	@JsonInclude(Include.NON_NULL)
 	private Node parent;
 	
 	private long link;
@@ -42,9 +48,12 @@ public class Node implements Cloneable {
 	private Date lastUpdated;
 	
 	@OneToMany(mappedBy="parent")
-	private transient List<Node> childNodes;
+	@JsonInclude(Include.NON_EMPTY)
+	@JsonProperty(value="nodes")
+	private List<Node> childNodes;
 	
 	@OneToMany(mappedBy="node", fetch = FetchType.EAGER)
+	@JsonInclude(Include.NON_EMPTY)
 	private List<Note> notes;
 	
 	

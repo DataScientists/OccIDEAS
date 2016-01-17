@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 @Entity
 @DiscriminatorValue("G")
 public class AgentGroup extends AgentInfo{

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity 
 @DiscriminatorValue("Q")
 public class Question extends Node {
@@ -29,5 +31,11 @@ public class Question extends Node {
 
 	public Question(String idNode) {
 		this.setIdNode(Integer.parseInt(idNode));
+	}
+	
+	@Override
+	@JsonIgnore
+	public Node getParent() {
+		return super.getParent();
 	}
 }

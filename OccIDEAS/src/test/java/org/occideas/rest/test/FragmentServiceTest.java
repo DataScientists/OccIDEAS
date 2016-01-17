@@ -2,6 +2,7 @@ package org.occideas.rest.test;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.gson.Gson;
@@ -17,6 +18,7 @@ import org.occideas.Fragment;
 import org.occideas.rest.response.DataResponse;
 import org.occideas.rest.response.StatusOnly;
 
+@Ignore
 public class FragmentServiceTest {
 	@Test
 	public void testFragment() {

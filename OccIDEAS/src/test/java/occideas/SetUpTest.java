@@ -24,7 +24,7 @@ import org.occideas.Note;
 import org.occideas.PossibleAnswer;
 import org.occideas.Question;
 import org.occideas.Rule;
-
+@Ignore
 public class SetUpTest {
 
 	static SessionFactory sf;

@@ -2,6 +2,7 @@ package org.occideas.rest.test;
 
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.gson.Gson;
@@ -16,7 +17,7 @@ import java.io.IOException;
 import org.occideas.PossibleAnswer;
 import org.occideas.rest.response.DataResponse;
 import org.occideas.rest.response.StatusOnly;
-
+@Ignore
 public class PossibleAnswerServiceTest {
 	@Test
 	public void testPossibleAnswer() {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity 
 @DiscriminatorValue("P")
 public class PossibleAnswer extends Node {
@@ -28,5 +30,10 @@ public class PossibleAnswer extends Node {
 		childNode.setParent(this);
 		super.setChildNodes(getChildNodes() == null ? new ArrayList<Node>() : getChildNodes());
 		getChildNodes().add(childNode);
+	}
+	@Override
+	@JsonIgnore
+	public Node getParent() {
+		return super.getParent();
 	}
 }

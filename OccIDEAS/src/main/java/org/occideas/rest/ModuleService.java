@@ -2,11 +2,23 @@ package org.occideas.rest;
 
 import java.io.IOException;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import org.occideas.Fragment;
+import org.hibernate.Session;
+import org.occideas.HibernateUtility;
 import org.occideas.Module;
+import org.occideas.Node;
+import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.NodeCommon;
 
 @Path("/module")
@@ -29,9 +41,25 @@ public class ModuleService extends NodeCommon
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getModule(@QueryParam("id") long id)
+	public Response getModule(@QueryParam("id") long id)
 	{
-		return super.get(id);
+		Module module;
+		try {
+			Session session = null;
+			module = null;
+			try {
+				session = HibernateUtility.getSessionFactory().openSession();
+				module = (Module) session.get(Module.class, id);
+				for(Node node:module.getChildNodes()){
+					System.out.println(node.getIdNode());
+				}
+			} catch (Throwable e) {
+				throw new GenericException("Database failure.",e);
+			}
+		} catch (GenericException e) {
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(module).build();
 	}
 	@GET
 	@Path("/getlist")

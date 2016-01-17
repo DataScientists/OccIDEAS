@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.Calendar;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.occideas.AgentGroup;

@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -24,7 +25,6 @@ import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
 
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 @Path("/agent")
 public class AgentService extends AgentCommon{

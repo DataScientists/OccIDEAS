@@ -5,12 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @DiscriminatorValue("A")
 public class Agent extends AgentInfo{
