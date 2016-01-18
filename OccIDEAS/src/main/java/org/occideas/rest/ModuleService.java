@@ -21,7 +21,6 @@ import org.occideas.Module;
 import org.occideas.Node;
 import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.NodeCommon;
-import org.occideas.vo.ModuleVO;
 
 @Path("/module")
 public class ModuleService extends NodeCommon
@@ -52,9 +51,6 @@ public class ModuleService extends NodeCommon
 			try {
 				session = HibernateUtility.getSessionFactory().openSession();
 				module = (Module) session.get(Module.class, id);
-				for(Node node:module.getChildNodes()){
-					System.out.println(node.getIdNode());
-				}
 			} catch (Throwable e) {
 				throw new GenericException("Database failure.",e);
 			}
@@ -63,12 +59,22 @@ public class ModuleService extends NodeCommon
 		}
 		return Response.ok(module).build();
 	}
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/getlist")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<ModuleVO> getModules()
+	public Response getModules()
 	{
-		return super.getAllModules();
+		List<Module> modules = null;
+		Session session = null;
+		try {
+			session = HibernateUtility.getSessionFactory().openSession();
+			modules = (List<Module>) session.createCriteria(Module.class).list();
+		} catch (Throwable e) {
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(modules).build();
+		
 	}
 
 	@PUT

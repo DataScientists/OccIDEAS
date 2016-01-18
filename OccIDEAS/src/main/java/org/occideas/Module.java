@@ -7,6 +7,11 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @DiscriminatorValue("M")
 public class Module extends Node{
@@ -47,5 +52,4 @@ public class Module extends Node{
 	public void setModuleRules(List<ModuleRule> moduleRules) {
 		this.moduleRules = moduleRules;
 	}
-
 }
