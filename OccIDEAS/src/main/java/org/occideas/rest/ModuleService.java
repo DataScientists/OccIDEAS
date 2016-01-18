@@ -20,6 +20,7 @@ import org.occideas.HibernateUtility;
 import org.occideas.Module;
 import org.occideas.Node;
 import org.occideas.exceptions.GenericException;
+import org.occideas.mapper.ModuleMapper;
 import org.occideas.rest.common.NodeCommon;
 
 @Path("/module")
@@ -73,7 +74,7 @@ public class ModuleService extends NodeCommon
 		} catch (Throwable e) {
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
-		return Response.ok(modules).build();
+		return Response.ok(new ModuleMapper().convertToListVO(modules)).build();
 		
 	}
 
