@@ -21,9 +21,8 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.Fragment;
 import org.occideas.HibernateUtility;
+import org.occideas.Node;
 import org.occideas.rest.common.NodeCommon;
-
-import com.google.gson.Gson;
 
 @Path("/fragment")
 public class FragmentService extends NodeCommon 
@@ -44,7 +43,7 @@ public class FragmentService extends NodeCommon
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getFragment(@QueryParam("id") long id) {
+	public Node getFragment(@QueryParam("id") long id) {
 		return super.get(id);
 	}
 
@@ -52,57 +51,37 @@ public class FragmentService extends NodeCommon
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public String updateFragment(final Fragment fragment) throws IOException {
+	public Node updateFragment(final Fragment fragment) throws IOException {
 		return super.update(fragment);
 	}
 
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteFragment(@QueryParam("id") long id) {
-		return super.delete(id);
+	public void deleteFragment(@QueryParam("id") long id) {
+		super.delete(id);
 	}
 
 	@GET
 	@Path("/getlist")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getFragmentList(@DefaultValue("all") @QueryParam("type") String type) {
+	public List<Fragment> getFragmentList(@DefaultValue("all") @QueryParam("type") String type) {
 
 		Session session = null;
-		Transaction tr = null;
-		String resp = "";
-
+		List<Fragment> list = null;
 		try {
 			session = HibernateUtility.getSessionFactory().openSession();
 
 			Criteria cr = session.createCriteria(Fragment.class);
 
-			if (!type.equals("all"))
+			if (!type.equals("all")){
 				cr.add(Restrictions.eq("type", type));
-
-			tr = session.beginTransaction();
-
-			List<Fragment> list = cr.list();
-
-			tr.commit();
-
-			if (list != null) // SUCCESSFULLY GET DATA
-				resp = "{\"status\": 1,\"data\": " + new Gson().toJson(list)
-						+ "}";
-			else
-				// No Data
-				resp = "{\"status\": -1}";
-			
+			}
+			list = cr.list();
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-
-			// SERVER ERROR
-			resp = "{\"status\":0}";
-		} finally {
-			session.close();
-		}
-
-		return resp;
+		} 
+		return list;
 	}
 
 

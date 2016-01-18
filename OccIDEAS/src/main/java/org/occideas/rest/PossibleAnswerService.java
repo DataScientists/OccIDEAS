@@ -6,6 +6,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.occideas.Module;
+import org.occideas.Node;
 import org.occideas.PossibleAnswer;
 import org.occideas.rest.common.NodeCommon;
 
@@ -29,7 +30,7 @@ public class PossibleAnswerService extends NodeCommon
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getPossibleAnswer(@QueryParam("id") long id)
+	public Node getPossibleAnswer(@QueryParam("id") long id)
 	{
 		return super.get(id);
 	}
@@ -38,7 +39,7 @@ public class PossibleAnswerService extends NodeCommon
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String updatePossibleAnswer(final PossibleAnswer possibleAnswer) throws IOException
+	public Node updatePossibleAnswer(final PossibleAnswer possibleAnswer) throws IOException
 	{
 		return super.update(possibleAnswer);
 	}
@@ -46,8 +47,8 @@ public class PossibleAnswerService extends NodeCommon
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deletePossibleAnswer(@QueryParam("id") long id)
+	public void deletePossibleAnswer(@QueryParam("id") long id)
 	{
-		return super.delete(id);
+		super.delete(id);
 	}
 }

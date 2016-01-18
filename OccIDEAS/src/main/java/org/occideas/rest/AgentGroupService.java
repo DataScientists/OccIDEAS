@@ -13,6 +13,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -22,8 +24,6 @@ import org.occideas.AgentGroup;
 import org.occideas.HibernateUtility;
 import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
-
-import com.google.gson.Gson;
 
 @Path("/agentgroup")
 public class AgentGroupService extends AgentCommon{
@@ -71,84 +71,42 @@ public class AgentGroupService extends AgentCommon{
 		return super.delete(id);
 	}
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/getchildagents")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getChildAgents(@DefaultValue("all") @QueryParam("group_id") String group_id) {
+	public Response getChildAgents(@DefaultValue("all") @QueryParam("group_id") String group_id) {
 
 		Session session = null;
-		Transaction tr = null;
-		String resp = "";
-
+		List<AgentGroup> list = null;
 		try {
 			session = HibernateUtility.getSessionFactory().openSession();
-
 			Criteria cr = session.createCriteria(AgentGroup.class);
-
 			if (!group_id.equals("all"))
 				cr.add(Restrictions.eq("agentGroup_idAgent", Long.parseLong(group_id)));
-
-			tr = session.beginTransaction();
-
-			List<AgentGroup> list = cr.list();
-
-			tr.commit();
-
-			if (list != null) // SUCCESSFULLY GET DATA
-				resp = "{\"status\": 1,\"data\": " + new Gson().toJson(list)
-						+ "}";
-			else
-				// No Data
-				resp = "{\"status\": -1}";
-			
+			list = cr.list();
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-
-			// SERVER ERROR
-			resp = "{\"status\":0}";
-		} finally {
-			session.close();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 
-		return resp;
+		return Response.ok(list).build();
 	}	
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/getlist")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAgentGroupList() {
-
+	public List<AgentGroup> getAgentGroupList() {
 		Session session = null;
-		Transaction tr = null;
-		String resp = "";
-
+		List<AgentGroup> list = null;
 		try {
 			session = HibernateUtility.getSessionFactory().openSession();
-
 			Criteria cr = session.createCriteria(AgentGroup.class);
-
-			tr = session.beginTransaction();
-
-			List<AgentGroup> list = cr.list();
-
-			tr.commit();
-
-			if (list != null) // SUCCESSFULLY GET DATA
-				resp = "{\"status\": 1,\"data\": " + new Gson().toJson(list)
-						+ "}";
-			else
-				// No Data
-				resp = "{\"status\": -1}";
-			
+			list = cr.list();
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
-
-			// SERVER ERROR
-			resp = "{\"status\":0}";
-		} finally {
-			session.close();
-		}
-
-		return resp;
+		} 
+		return list;
 	}		
 }

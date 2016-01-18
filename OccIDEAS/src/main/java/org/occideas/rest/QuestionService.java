@@ -2,10 +2,17 @@ package org.occideas.rest;
 
 import java.io.IOException;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.occideas.PossibleAnswer;
+import org.occideas.Node;
 import org.occideas.Question;
 import org.occideas.rest.common.NodeCommon;
 
@@ -29,7 +36,7 @@ public class QuestionService extends NodeCommon
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getQuestion(@QueryParam("id") long id)
+	public Node getQuestion(@QueryParam("id") long id)
 	{
 		return super.get(id);
 	}
@@ -38,7 +45,7 @@ public class QuestionService extends NodeCommon
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String updateQuestion(final Question question) throws IOException
+	public Node updateQuestion(final Question question) throws IOException
 	{
 		return super.update(question);
 	}
@@ -46,8 +53,8 @@ public class QuestionService extends NodeCommon
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteQuestion(@QueryParam("id") long id)
+	public void deleteQuestion(@QueryParam("id") long id)
 	{
-		return super.delete(id);
+		super.delete(id);
 	}
 }

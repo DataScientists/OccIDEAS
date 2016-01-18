@@ -1,6 +1,7 @@
 package org.occideas.rest;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,6 +21,7 @@ import org.occideas.Module;
 import org.occideas.Node;
 import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.NodeCommon;
+import org.occideas.vo.ModuleVO;
 
 @Path("/module")
 public class ModuleService extends NodeCommon
@@ -64,7 +66,7 @@ public class ModuleService extends NodeCommon
 	@GET
 	@Path("/getlist")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getModules()
+	public List<ModuleVO> getModules()
 	{
 		return super.getAllModules();
 	}
@@ -73,7 +75,7 @@ public class ModuleService extends NodeCommon
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String updateModule(final Module module) throws IOException
+	public Node updateModule(final Module module) throws IOException
 	{
 		return super.update(module);
 	}
@@ -81,8 +83,8 @@ public class ModuleService extends NodeCommon
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteModule(@QueryParam("id") long id)
+	public void deleteModule(@QueryParam("id") long id)
 	{
-		return super.delete(id);
+		super.delete(id);
 	}
 }

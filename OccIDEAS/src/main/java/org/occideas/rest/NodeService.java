@@ -23,7 +23,7 @@ public class NodeService extends NodeCommon{
 	@GET
 	@Path("/get")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getNode(@QueryParam("id") long id)
+	public Node getNode(@QueryParam("id") long id)
 	{
 		return super.get(id);
 	}
@@ -32,7 +32,7 @@ public class NodeService extends NodeCommon{
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
-	public String updateNode(final Node node) throws IOException
+	public Node updateNode(final Node node) throws IOException
 	{
 		return super.update(node);
 	}
@@ -40,8 +40,8 @@ public class NodeService extends NodeCommon{
 	@DELETE
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String deleteNode(@QueryParam("id") long id)
+	public void deleteNode(@QueryParam("id") long id)
 	{
-		return super.delete(id);
+		super.delete(id);
 	}
 }

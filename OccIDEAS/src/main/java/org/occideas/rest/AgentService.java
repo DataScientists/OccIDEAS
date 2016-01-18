@@ -24,8 +24,6 @@ import org.occideas.HibernateUtility;
 import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
 
-import com.google.gson.Gson;
-
 @Path("/agent")
 public class AgentService extends AgentCommon{
 
@@ -70,42 +68,22 @@ public class AgentService extends AgentCommon{
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/getlist")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAgentList() {
+	public List<Agent> getAgentList() {
 
 		Session session = null;
-		Transaction tr = null;
-		String resp = "";
-
+		List<Agent> list = null;
 		try {
 			session = HibernateUtility.getSessionFactory().openSession();
-
 			Criteria cr = session.createCriteria(Agent.class);
-
-			tr = session.beginTransaction();
-
-			List<Agent> list = cr.list();
-
-			tr.commit();
-
-			if (list != null) // SUCCESSFULLY GET DATA
-				resp = "{\"status\": 1,\"data\": " + new Gson().toJson(list)
-						+ "}";
-			else
-				// No Data
-				resp = "{\"status\": -1}";
-			
+			list = cr.list();
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
+		} 
 
-			// SERVER ERROR
-			resp = "{\"status\":0}";
-		} finally {
-			session.close();
-		}
-
-		return resp;
+		return list;
 	}		
 }

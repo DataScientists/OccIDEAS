@@ -12,9 +12,7 @@ import org.hibernate.Session;
 import org.occideas.HibernateUtility;
 import org.occideas.Module;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Servlet implementation class FragmentList
@@ -52,10 +50,10 @@ public class ListServlet extends HttpServlet {
 			if (action.equalsIgnoreCase("loadfullmodulelist")) {
 				// hibernate code to retrieve list of modules
 				
-				String json = this.loadFullModuleList();
+				List<Module> json = this.loadFullModuleList();
 				response.setContentType("application/json");
 				response.setHeader("Cache-Control", "no-cache");
-				response.getWriter().write(json);
+				response.getWriter().write(new ObjectMapper().writeValueAsString(json));
 			}
 		} catch (Throwable t) {
 			// throw 400 back to user
@@ -67,17 +65,9 @@ public class ListServlet extends HttpServlet {
 			}
 		}
     }
-    private String loadFullModuleList(){
-    	Session hibernateSession = null;
-		hibernateSession = HibernateUtility.getSessionFactory().openSession();
-		hibernateSession.beginTransaction();	
-		@SuppressWarnings("unchecked")
-		List<Module> modules = hibernateSession.createCriteria(Module.class).list();
-		hibernateSession.getTransaction().commit();
-		hibernateSession.close();
-		Gson gson = new Gson();
-		//Gson gson = new GsonBuilder().excludeFieldsWithModifiers(modifiers).excludeFieldsWithoutExposeAnnotation().create() ;
-		String json = gson.toJson(modules);
-    	return json;
+    @SuppressWarnings("unchecked")
+	private List<Module> loadFullModuleList(){
+    	Session hibernateSession = HibernateUtility.getSessionFactory().openSession();
+    	return (List<Module>)hibernateSession.createCriteria(Module.class).list();
     }
 }
