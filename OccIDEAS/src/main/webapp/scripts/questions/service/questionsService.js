@@ -12,9 +12,10 @@
 				  method: 'GET',
 				  url: restUrl
 				}).then(function successCallback(response) {
-				    console.log("Success");
+				    console.log("Success1");
+				    return response;
 				  }, function errorCallback(response) {
-					  console.log("error");
+					  console.log("error retrieving questions:"+response);
 				  });
 		};
 		return {

@@ -21,7 +21,6 @@
 	    self.save = save;
 
 	    function treeView(row){
-	    	console.log("Inside treeView: " +row);
 	    	$state.go("questionView",{row:row});
 	    }
 	    

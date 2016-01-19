@@ -1,15 +1,23 @@
+hello
 <div ng-cloak ng-controller="QuestionsCtrl as vm">
-	<div ui-tree>
+	<div ui-tree class="tree-node tree-node-content">
   <ol ui-tree-nodes="" ng-model="list">
     <li ng-repeat="item in list" ui-tree-node>
       <div ui-tree-handle>
-        {{item.title}}
+        {{item.name}}
       </div>
-      <ol ui-tree-nodes="" ng-model="item.items">
-        <li ng-repeat="subItem in item.items" ui-tree-node>
+      <ol ui-tree-nodes="" ng-model="item.nodes">
+        <li ng-repeat="subItem in item.nodes" ui-tree-node>
           <div ui-tree-handle>
-            {{subItem.title}}
+            {{subItem.name}}
           </div>
+          <ol ui-tree-nodes="" ng-model="subItem.nodes">
+        	<li ng-repeat="subsubItem in subItem.nodes" ui-tree-node>
+          	<div ui-tree-handle>
+            	{{subsubItem.name}}
+          	</div>
+        	</li>
+      		</ol>
         </li>
       </ol>
     </li>

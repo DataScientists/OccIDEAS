@@ -9,10 +9,24 @@
 		    .state('questionView', {
 		        url: '/questionView',
 		        templateUrl: 'scripts/questions/view/questions.html',
-		        controller: 'QuestionsCtrl',
+		        controller: function($scope, list){
+		        	console.log("list up:"+list);
+		            $scope.list = list;
+		        },
 		        params:{row: null},
-		        onEnter: function(QuestionsService, $stateParams) {
-		        	QuestionsService.findQuestions($stateParams.row);
+		        resolve:{
+		        	list: function($stateParams, $http, $q, $timeout) {
+		        		console.log("initializing list");
+		        		return 	$http({
+		  				  method: 'GET',
+		  				  url: 'rest/module/get?id=' + $stateParams.row.idNode
+		  				}).then(function successCallback(response) {
+		  				    console.log("Success1");
+		  				    return response;
+		  				  }, function errorCallback(response) {
+		  					  console.log("error retrieving questions:"+response);
+		  				  });
+		        	}
 		        }
 		 });
 	}
