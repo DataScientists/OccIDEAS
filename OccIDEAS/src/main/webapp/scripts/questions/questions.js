@@ -3,31 +3,29 @@
 	  .module('occIDEASApp.Questions',['ui.router'])
 	  .config(Config);
 	
-	Config.$inject = ['$stateProvider'];
-	function Config($stateProvider){
+	Config.$inject = ['$stateProvider','treeConfig'];
+	function Config($stateProvider,treeConfig){
 		 $stateProvider
 		    .state('questionView', {
 		        url: '/questionView',
 		        templateUrl: 'scripts/questions/view/questions.html',
-		        controller: function($scope, list){
-		        	console.log("list up:"+list);
-		            $scope.list = list;
-		        },
+		        controller: 'QuestionsCtrl as vm',
 		        params:{row: null},
 		        resolve:{
-		        	list: function($stateParams, $http, $q, $timeout) {
-		        		console.log("initializing list");
-		        		return 	$http({
-		  				  method: 'GET',
-		  				  url: 'rest/module/get?id=' + $stateParams.row.idNode
-		  				}).then(function successCallback(response) {
-		  				    console.log("Success1");
-		  				    return response;
-		  				  }, function errorCallback(response) {
-		  					  console.log("error retrieving questions:"+response);
-		  				  });
+		        	data: function($stateParams,QuestionsService) {
+		        		return QuestionsService.findQuestions($stateParams.row)
+		        				.then(function(data){
+				        			var responseInArray = [];
+				        			console.log("Questions:"+data);
+				        			if(data){
+					        			responseInArray = [data];
+					        		}
+					        		return responseInArray;
+        				})
 		        	}
 		        }
 		 });
+		 
+		 treeConfig.defaultCollapsed = false;
 	}
 })();

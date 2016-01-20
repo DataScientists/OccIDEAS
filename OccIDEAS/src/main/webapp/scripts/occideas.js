@@ -6,6 +6,7 @@ angular
     "ngMaterial",
     "ui.tree",
     "ngTable",
+    "ngSanitize",
     
     "occIDEASApp.Questions",
     "occIDEASApp.Modules"
