@@ -19,9 +19,9 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
-import org.occideas.Fragment;
-import org.occideas.HibernateUtility;
-import org.occideas.Node;
+import org.occideas.entity.Fragment;
+import org.occideas.entity.HibernateUtility;
+import org.occideas.entity.Node;
 import org.occideas.rest.common.NodeCommon;
 
 @Path("/fragment")

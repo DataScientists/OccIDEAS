@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
 
-import org.occideas.Fragment;
+import org.occideas.entity.Fragment;
 import org.occideas.rest.response.DataResponse;
 import org.occideas.rest.response.StatusOnly;
 

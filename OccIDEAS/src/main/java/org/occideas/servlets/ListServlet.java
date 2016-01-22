@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hibernate.Session;
-import org.occideas.HibernateUtility;
-import org.occideas.Module;
+import org.occideas.entity.HibernateUtility;
+import org.occideas.entity.Module;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

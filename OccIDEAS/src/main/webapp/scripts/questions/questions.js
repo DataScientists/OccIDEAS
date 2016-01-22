@@ -15,12 +15,7 @@
 		        	data: function($stateParams,QuestionsService) {
 		        		return QuestionsService.findQuestions($stateParams.row)
 		        				.then(function(data){
-				        			var responseInArray = [];
-				        			console.log("Questions:"+data);
-				        			if(data){
-					        			responseInArray = [data];
-					        		}
-					        		return responseInArray;
+					        		return data;
         				})
 		        	}
 		        }

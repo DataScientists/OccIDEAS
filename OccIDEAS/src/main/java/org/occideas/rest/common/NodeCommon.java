@@ -3,14 +3,10 @@ package org.occideas.rest.common;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.List;
 
 import org.hibernate.Session;
-import org.occideas.HibernateUtility;
-import org.occideas.Module;
-import org.occideas.Node;
-import org.occideas.mapper.ModuleMapper;
-import org.occideas.vo.ModuleVO;
+import org.occideas.entity.HibernateUtility;
+import org.occideas.entity.Node;
 
 public class NodeCommon 
 {
@@ -47,22 +43,22 @@ public class NodeCommon
 		return node;
 	}
 	
-	@SuppressWarnings("unchecked")
-	protected List<ModuleVO> getAllModules()
-	{
-		Session session = null;
-		List<ModuleVO> moduleList = null;
-		try {
-			session= HibernateUtility.getSessionFactory().openSession();
-			List<Module> modules = session.createCriteria(Module.class).list();
-			ModuleMapper moduleMapper = new ModuleMapper();
-	   		moduleList = moduleMapper.convertToListVO(modules);
-		}catch(Exception e){
-			System.out.println("node Not retrieved"+e.getMessage());
-		}
-		
-		return moduleList;
-	}
+//	@SuppressWarnings("unchecked")
+//	protected List<ModuleVO> getAllModules()
+//	{
+//		Session session = null;
+//		List<ModuleVO> moduleList = null;
+//		try {
+//			session= HibernateUtility.getSessionFactory().openSession();
+//			List<Module> modules = session.createCriteria(Module.class).list();
+//			ModuleMapper moduleMapper = new ModuleMapper();
+//	   		moduleList = moduleMapper.convertToListVO(modules);
+//		}catch(Exception e){
+//			System.out.println("node Not retrieved"+e.getMessage());
+//		}
+//		
+//		return moduleList;
+//	}
 	
 	protected Node update(Node node) throws IOException
 	{	   	

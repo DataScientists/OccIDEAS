@@ -2,10 +2,6 @@ package org.occideas.vo;
 
 import java.util.Date;
 import java.util.List;
-
-import org.occideas.Node;
-import org.occideas.Note;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,15 +15,15 @@ public class ModuleVO {
 	private int sequence;
 	private String number;
 	@JsonInclude(Include.NON_NULL)
-	private Node parent;
+	private NodeVO parent;
 	private long link;
 	private long topNodeId;
 	private Date lastUpdated;
 	@JsonInclude(Include.NON_EMPTY)
 	@JsonProperty(value = "nodes")
-	private List<Node> childNodes;
+	private List<NodeVO> childNodes;
 	@JsonInclude(Include.NON_EMPTY)
-	private List<Note> notes;
+	private List<NoteVO> notes;
 	private long originalId;
 	private Integer deleted = 0;
 	private String nodeclass;
@@ -80,11 +76,11 @@ public class ModuleVO {
 		this.number = number;
 	}
 
-	public Node getParent() {
+	public NodeVO getParent() {
 		return parent;
 	}
 
-	public void setParent(Node parent) {
+	public void setParent(NodeVO parent) {
 		this.parent = parent;
 	}
 
@@ -112,19 +108,19 @@ public class ModuleVO {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public List<Node> getChildNodes() {
+	public List<NodeVO> getChildNodes() {
 		return childNodes;
 	}
 
-	public void setChildNodes(List<Node> childNodes) {
+	public void setChildNodes(List<NodeVO> childNodes) {
 		this.childNodes = childNodes;
 	}
 
-	public List<Note> getNotes() {
+	public List<NoteVO> getNotes() {
 		return notes;
 	}
 
-	public void setNotes(List<Note> notes) {
+	public void setNotes(List<NoteVO> notes) {
 		this.notes = notes;
 	}
 

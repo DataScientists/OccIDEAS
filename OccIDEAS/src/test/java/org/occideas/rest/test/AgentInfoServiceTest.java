@@ -3,6 +3,7 @@ package org.occideas.rest.test;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.occideas.entity.AgentInfo;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -12,8 +13,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
-
-import org.occideas.AgentInfo;
 
 public class AgentInfoServiceTest {
 

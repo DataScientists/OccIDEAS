@@ -14,8 +14,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.occideas.AgentGroup;
-import org.occideas.AgentInfo;
+import org.occideas.entity.AgentGroup;
+import org.occideas.entity.AgentInfo;
 import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
 

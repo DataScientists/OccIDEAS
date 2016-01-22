@@ -13,16 +13,17 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.occideas.Agent;
-import org.occideas.AgentGroup;
-import org.occideas.HibernateUtility;
-import org.occideas.Module;
-import org.occideas.Node;
-import org.occideas.Note;
-import org.occideas.PossibleAnswer;
-import org.occideas.Question;
-import org.occideas.Rule;
+import org.occideas.entity.Agent;
+import org.occideas.entity.AgentGroup;
+import org.occideas.entity.HibernateUtility;
+import org.occideas.entity.Module;
+import org.occideas.entity.Node;
+import org.occideas.entity.Note;
+import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
+import org.occideas.entity.Rule;
 
+@Ignore
 public class DBPersistenceTest {
 
 	static SessionFactory sf;
