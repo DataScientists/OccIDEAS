@@ -7,7 +7,7 @@
 		var self = this;
 		
 		var tabs = [
-		            { title: 'Module List', content: "Tabs will become paginated if there isn't enough room for them."},
+		            { title: 'Module List', content: ""},
 		            { title: 'Fragment List', content: "You can swipe left and right on a mobile device to change tabs."},
 		            { title: 'Agent List', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
 		           ],

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/webapp"/>
-	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="target/m2e-wtp/web-resources"/>
+	<classpathentry excluding="scripts/angular/angular-ui-tree.js|scripts/angular/ng-table.js" kind="src" path="src/main/webapp"/>
+	<classpathentry excluding="**/*.min.js|**/*angular-ui-tree.js|**/*ng-table.js|**/bower_components/*|**/node_modules/*" kind="src" path="target/m2e-wtp/web-resources"/>
 	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.WebProject">
 		<attributes>
