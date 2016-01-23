@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response.Status;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.occideas.Agent;
-import org.occideas.AgentGroup;
-import org.occideas.HibernateUtility;
+import org.occideas.entity.Agent;
+import org.occideas.entity.AgentGroup;
+import org.occideas.entity.HibernateUtility;
 import org.occideas.exceptions.GenericException;
 import org.occideas.rest.common.AgentCommon;
 

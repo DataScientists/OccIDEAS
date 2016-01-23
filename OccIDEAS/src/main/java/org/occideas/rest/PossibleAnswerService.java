@@ -5,9 +5,9 @@ import java.io.IOException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import org.occideas.Module;
-import org.occideas.Node;
-import org.occideas.PossibleAnswer;
+import org.occideas.entity.Module;
+import org.occideas.entity.Node;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.rest.common.NodeCommon;
 
 @Path("/possibleAnswer")

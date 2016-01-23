@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.occideas.Module;
+import org.occideas.entity.Module;
 import org.occideas.rest.response.DataResponse;
 import org.occideas.rest.response.StatusOnly;
 

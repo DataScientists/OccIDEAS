@@ -14,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import java.io.IOException;
 
-import org.occideas.PossibleAnswer;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.rest.response.DataResponse;
 import org.occideas.rest.response.StatusOnly;
 @Ignore

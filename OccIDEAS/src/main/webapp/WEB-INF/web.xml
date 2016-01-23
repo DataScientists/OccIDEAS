@@ -1,42 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-   xmlns="http://java.sun.com/xml/ns/javaee" 
-   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
-   http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
-   id="WebApp_ID" version="3.0">
-   <display-name>OccIDEAS</display-name>
-   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-   </welcome-file-list>
-   <servlet>
-	    <description></description>
-	    <display-name>ListServlet</display-name>
-	    <servlet-name>ListServlet</servlet-name>
-	    <servlet-class>org.occideas.servlets.ListServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-	    <servlet-name>ListServlet</servlet-name>
-	    <url-pattern>/ListServlet</url-pattern>
-  </servlet-mapping>
-    
-   <servlet>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+   http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>OccIDEAS</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<servlet>
+		<description></description>
+		<display-name>ListServlet</display-name>
+		<servlet-name>ListServlet</servlet-name>
+		<servlet-class>org.occideas.servlets.ListServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ListServlet</servlet-name>
+		<url-pattern>/ListServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<servlet-name>Jersey REST Service</servlet-name>
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
- 			<param-name>jersey.config.server.provider.packages</param-name>
- 			<param-value>org.occideas.rest</param-value>
- 		</init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>org.occideas</param-value>
+		</init-param>
 		<init-param>
-		    <!--<param-name>com.sun.jersey.config.property.packages</param-name>-->
-		    <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-		    <param-value>org.occideas.rest</param-value>
+			<!--<param-name>com.sun.jersey.config.property.packages</param-name> -->
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>org.occideas</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>Jersey REST Service</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/applicationContext.xml</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 
 </web-app>

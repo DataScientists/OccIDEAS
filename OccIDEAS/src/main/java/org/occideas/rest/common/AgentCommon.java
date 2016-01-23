@@ -6,9 +6,9 @@ import java.util.Calendar;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.occideas.AgentGroup;
-import org.occideas.AgentInfo;
-import org.occideas.HibernateUtility;
+import org.occideas.entity.AgentGroup;
+import org.occideas.entity.AgentInfo;
+import org.occideas.entity.HibernateUtility;
 import org.occideas.exceptions.GenericException;
 
 public class AgentCommon {

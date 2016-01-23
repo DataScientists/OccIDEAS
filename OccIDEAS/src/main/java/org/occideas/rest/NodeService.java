@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import org.occideas.Node;
+import org.occideas.entity.Node;
 import org.occideas.rest.common.NodeCommon;
 
 @Path("/node")
