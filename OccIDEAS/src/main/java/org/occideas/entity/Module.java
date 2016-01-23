@@ -1,5 +1,6 @@
 package org.occideas.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,12 @@ import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue("M")
-public class Module extends Node{
+public class Module extends Node implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7963940691772676956L;
 	@Transient
 	private List<ModuleRule> moduleRules;
 	

@@ -1,40 +1,84 @@
 <div ng-cloak ng-controller="ModuleCtrl as vm">
-  <md-toolbar md-scroll-shrink ng-if="true">
-    <div class="md-toolbar-tools">
-      <h3>
-        <span>Modules</span>
-      </h3>
-    </div>
-  </md-toolbar>
-  <md-content flex>
-  <table ng-table="vm.tableParams" class="table table-bordered table-hover 
+
+<div >
+
+ <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect>
+      <md-tab ng-repeat="tab in tabs"
+              ng-disabled="tab.disabled"
+              label="{{tab.title}}" >
+        <div class="demo-tab tab{{$index%4}}" style="padding: 25px; text-align: center;">
+          <div ng-bind="tab.content"></div>
+          <br/>
+          <md-button class="md-primary md-raised" ng-click="removeTab( tab )" ng-disabled="tabs.length <= 1">Remove Tab</md-button>
+        </div>
+      </md-tab>
+    </md-tabs>
+ 
+
+	
+	<md-content flex>
+	<table ng-table="vm.tableParams"
+		class="table table-bordered table-hover 
   table-condensed editable-table moduleTable"
-  ng-form="vm.tableForm" disable-filter="vm.isAdding" 
-  demo-tracked-table="vm.tableTracker">
-      <tr ng-repeat="row in $data" demo-tracked-table-row="row" ng-form="rowForm">
-        <td title="'Name'" filter="{name: 'text'}" sortable="'name'" ng-switch="row.isEditing"  ng-class="name.$dirty ? 'bg-warning' : ''" ng-form="name" demo-tracked-table-cell>
-            <div ng-click="vm.treeView(row)">
-            <span ng-switch-default class="editable-text">{{row.name}}</span>
-            <div class="controls" ng-class="name.$invalid && name.$dirty ? 'has-error' : ''" ng-switch-when="true">
-              <input type="text" name="name" ng-model="row.name" class="editable-input form-control input-sm" required />
-            </div>
-            </div>
-          </td>
-           <td title="'Description'" filter="{description: 'text'}" sortable="'description'"  ng-switch="row.isEditing" ng-class="description.$dirty ? 'bg-warning' : ''" ng-form="description" demo-tracked-table-cell>
-            <div ng-click="vm.treeView(row)">
-            <span ng-switch-default class="editable-text">{{row.description}}</span>
-            <div class="controls" ng-class="description.$invalid && description.$dirty ? 'has-error' : ''" ng-switch-when="true">
-              <input type="text" name="description" ng-model="row.description" class="editable-input form-control input-sm" required />
-            </div>
-            </div>
-          </td>
-          <td>
-            <button class="btn btn-primary btn-sm" ng-click="vm.save(row, rowForm)" ng-if="row.isEditing" ng-disabled="rowForm.$pristine || rowForm.$invalid"><span class="glyphicon glyphicon-ok"></span></button>
-            <button class="btn btn-default btn-sm" ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing"><span class="glyphicon glyphicon-remove"></span></button>
-            <button class="btn btn-default btn-sm" ng-click="row.isEditing = true" ng-if="!row.isEditing"><span class="glyphicon glyphicon-pencil"></span></button>
-            <button class="btn btn-danger btn-sm" ng-click="vm.del(row)" ng-if="!row.isEditing"><span class="glyphicon glyphicon-trash"></span></button>
-          </td>
-      </tr>
-    </table>
-  </md-content>
+		ng-form="vm.tableForm" disable-filter="vm.isAdding"
+		demo-tracked-table="vm.tableTracker">
+		<tr ng-repeat="row in $data" demo-tracked-table-row="row"
+			ng-form="rowForm">
+			<td title="'Name'" filter="{name: 'text'}" sortable="'name'"
+				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"
+				ng-form="name" demo-tracked-table-cell>
+				<div ng-click="vm.treeView(row)">
+					<span ng-switch-default class="editable-text">{{row.name}}</span>
+					<div class="controls"
+						ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
+						ng-switch-when="true">
+						<input type="text" name="name" ng-model="row.name"
+							class="editable-input form-control input-sm" required />
+					</div>
+				</div>
+			</td>
+			<td title="'Description'" filter="{description: 'text'}"
+				sortable="'description'" ng-switch="row.isEditing"
+				ng-class="description.$dirty ? 'bg-warning' : ''"
+				ng-form="description" demo-tracked-table-cell>
+				<div ng-click="vm.treeView(row)">
+					<span ng-switch-default class="editable-text">{{row.description}}</span>
+					<div class="controls"
+						ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"
+						ng-switch-when="true">
+						<input type="text" name="description" ng-model="row.description"
+							class="editable-input form-control input-sm" required />
+					</div>
+				</div>
+			</td>
+			<td>
+				<button class="btn btn-primary btn-sm"
+					ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
+					ng-disabled="rowForm.$pristine || rowForm.$invalid">
+					<span class="glyphicon glyphicon-ok"></span>
+				</button>
+				<button class="btn btn-default btn-sm"
+					ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
+					<span class="glyphicon glyphicon-remove"></span>
+				</button>
+				<button class="btn btn-default btn-sm"
+					ng-click="row.isEditing = true" ng-if="!row.isEditing">
+					<span class="glyphicon glyphicon-pencil"></span>
+				</button>
+				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
+					ng-if="!row.isEditing">
+					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+			</td>
+		</tr>
+	</table>
+	</md-content> 
+</div>
+
+
+
+
+
+  
+  
 </div>
