@@ -69,6 +69,7 @@ tr.angular-ui-tree-empty {
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
   <div ui-tree-handle class="tree-node tree-node-content form-inline">
+	<div class="{{node.type}}">
 	<a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag ng-click="toggle(this)"><span
         class="glyphicon"
         ng-class="{
@@ -78,6 +79,7 @@ tr.angular-ui-tree-empty {
 	<div class="form-group">
     <input type="text" value="{{node.name}}" ng-model="node.name" 
 				class="form-control" style="width:500px;">
+    </div>
     </div>
 	<div class="form-group pull-right" style="margin-top: 5px;">
     <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span
@@ -90,6 +92,7 @@ tr.angular-ui-tree-empty {
     <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
     </li>
   </ol>
+	
 </script>
 <div class="row">
 	<div class="col-sm-12">

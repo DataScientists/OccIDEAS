@@ -1,46 +1,55 @@
-(function(){
-	angular.module('occIDEASApp.Questions')
-	.controller('QuestionsCtrl',QuestionsCtrl);
-	
-	QuestionsCtrl.$inject = ['data','$scope'];
-	function QuestionsCtrl(data,$scope){
+(function() {
+	angular.module('occIDEASApp.Questions').controller('QuestionsCtrl',QuestionsCtrl);
+
+	QuestionsCtrl.$inject = [ 'data', '$scope' ];
+	function QuestionsCtrl(data, $scope) {
 		var vm = this;
 		vm.data = data;
-		
-		$scope.remove = function (scope) {
-	        scope.remove();
-	      };
 
-	      $scope.toggle = function (scope) {
-	        scope.toggle();
-	      };
+		$scope.remove = function(scope) {
+			scope.remove();
+		};
 
-	      $scope.moveLastToTheBeginning = function () {
-	        var a = $scope.data.pop();
-	        $scope.data.splice(0, 0, a);
-	      };
+		$scope.toggle = function(scope) {
+			scope.toggle();
+		};
 
-	      $scope.newSubItem = function (scope) {
-	        var nodeData = scope.$modelValue;
-	        if(!nodeData.nodes){
-	        	nodeData.nodes = [];
+		$scope.moveLastToTheBeginning = function() {
+			var a = $scope.data.pop();
+			$scope.data.splice(0, 0, a);
+		};
+		$scope.newSubItem = function(scope) {
+			var nodeData = scope.$modelValue;
+			if (!nodeData.nodes) {
+				nodeData.nodes = [];
 			}
-	        nodeData.nodes.push({
-	          idNode: nodeData.idNode * 10 + nodeData.nodes.length,
-	          name: "",
-	          description: "default",
-	          topNodeId: nodeData.idNode,
-	          type: "Module",
-	          nodes: []
-	        });
-	      };
+			if (nodeData.type == 'PossibleAnswer') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "",
+					description : "default",
+					topNodeId : nodeData.idNode,
+					type : "Question",
+					nodes : []
+				});
+			} else if (nodeData.type == 'Question') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "",
+					description : "default",
+					topNodeId : nodeData.idNode,
+					type : "PossibleAnswer",
+					nodes : []
+				});
+			}
+		};
 
-	      $scope.collapseAll = function () {
-	        $scope.$broadcast('collapseAll');
-	      };
+		$scope.collapseAll = function() {
+			$scope.$broadcast('collapseAll');
+		};
 
-	      $scope.expandAll = function () {
-	        $scope.$broadcast('expandAll');
-	      };
+		$scope.expandAll = function() {
+			$scope.$broadcast('expandAll');
+		};
 	}
 })();
