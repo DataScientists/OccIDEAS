@@ -2,31 +2,15 @@
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
 	
-	ModuleCtrl.$inject = ['ModulesService','NgTableParams','$state','$scope'];
-	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope){
+	ModuleCtrl.$inject = ['ModulesService','NgTableParams','$state','$scope','ModulesCache'];
+	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache){
 		var self = this;
-		
-		var tabs = [
-		            { title: 'Module List', content: ""},
-		            { title: 'Fragment List', content: "You can swipe left and right on a mobile device to change tabs."},
-		            { title: 'Agent List', content: "You can bind the selected tab via the selected attribute on the md-tabs element."},
-		           ],
-		          selected = null,
-		          previous = null;
-		      $scope.tabs = tabs;
-		      $scope.selectedIndex = 0;
-		      
-		      $scope.addTab = function (title, view) {
-		        view = view || title + " Content View";
-		        tabs.push({ title: title, content: view, disabled: false});
-		      };
-		      $scope.removeTab = function (tab) {
-		        var index = tabs.indexOf(tab);
-		        tabs.splice(index, 1);
-		      };
 		
 		self.tableParams = new NgTableParams({}, {
 	        getData: function(params) {
+	          if(ModulesCache.get("all")){
+	  			  return ModulesCache.get("all");
+	  		  }
 	          return  ModulesService.get().then(function(data) {
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.total(data.length);
@@ -42,9 +26,7 @@
 	    
 	    
 	    function treeView(row){
-	    	//$state.go("questionView",{row:row});
-	    	//var tabs = $scope.tabs;
-	    	tabs.push({ title: row.name, content: $state.go("questionView",{row:row}), disabled: false});    	         
+	    	$state.go("questionView",{row:row});
 	    }
 	    
 	    function cancel(row, rowForm) {

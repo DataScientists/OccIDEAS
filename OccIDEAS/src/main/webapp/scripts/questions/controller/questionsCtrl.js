@@ -3,8 +3,7 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope' ];
 	function QuestionsCtrl(data, $scope) {
-		var vm = this;
-		vm.data = data;
+		$scope.data = data;
 
 		$scope.remove = function(scope) {
 			scope.remove();

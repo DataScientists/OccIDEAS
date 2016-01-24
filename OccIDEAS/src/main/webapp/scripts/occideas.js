@@ -7,10 +7,12 @@ angular
     "ui.tree",
     "ngTable",
     "ngSanitize",
-    
+    "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
     "occIDEASApp.Modules"
-  ])
+  ], function($rootScopeProvider){
+	  $rootScopeProvider.digestTtl(100);
+  })
   .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider) {
     $urlRouterProvider.otherwise('/');
     $stateProvider

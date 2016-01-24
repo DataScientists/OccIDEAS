@@ -2,15 +2,17 @@
 	angular.module('occIDEASApp.Modules')
 	.service('ModulesService',ModulesService);
 
-	ModulesService.$inject = ['$http'];
-	function ModulesService($http){
+	ModulesService.$inject = ['$http','ModulesCache'];
+	function ModulesService($http,ModulesCache){
 		var apiUrl = '/occideas/rest/';
 		var modulesUrl = apiUrl + 'module';
 		var apiKey = '';
 		
 		var getModules = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
-		    return response.data;
+		    var data = response.data;
+		    ModulesCache.put("all",data);
+		    return data;
 		  });
 		};
 

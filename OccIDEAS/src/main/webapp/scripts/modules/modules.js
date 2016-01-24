@@ -1,10 +1,15 @@
 (function(){
 	angular
 	  .module('occIDEASApp.Modules',['ui.router'])
-	  .config(Config);
+	  .config(Config)
+	  .factory('ModulesCache',ModulesCache);
 	
-	Config.$inject = [];
-	function Config(){
-		
+	Config.$inject = ['$stateProvider'];
+	function Config($stateProvider){
+	}
+	
+	ModulesCache.$inject = ['$cacheFactory'];
+	function ModulesCache($cacheFactory){
+		return $cacheFactory('modules-cache');
 	}
 })();

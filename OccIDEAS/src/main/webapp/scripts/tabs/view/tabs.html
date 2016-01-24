@@ -1,0 +1,15 @@
+<div ng-cloak ng-controller="TabsCtrl as vm">
+   <md-content class="md-padding">
+    <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect>
+      <md-tab ng-repeat="tab in tabs"
+              ng-disabled="tab.disabled"
+              label="{{tab.title}}">
+        <div class="demo-tab tab{{$index%4}}" style="padding: 25px; text-align: center;">
+         <div id="content" ui-view flex> </div>
+          <br/>
+<!--<md-button class="md-primary md-raised" ng-click="removeTab( tab )" ng-disabled="tabs.length <= 1">Remove Tab</md-button> -->
+        </div>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</div>
