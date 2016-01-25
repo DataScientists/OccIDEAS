@@ -18,13 +18,12 @@ angular
     $stateProvider
     .state('allmodules', {
         url: '/allmodules',
-        templateUrl: 'scripts/modules/view/modules.html',
-        controller: 'ModuleCtrl'
+        controller: 'TabsCtrl as vm',
+        templateUrl: 'scripts/modules/view/modules.html'
       })
       .state('module', {
         url: '/module',
-        templateUrl: 'scripts/modules/view/modules.html',
-        controller: 'ModuleCtrl'
+        templateUrl: 'scripts/modules/view/modules.html'
       })
       .state('fragment', {
         url: '/fragment',

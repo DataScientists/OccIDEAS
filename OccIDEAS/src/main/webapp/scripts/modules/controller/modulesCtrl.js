@@ -9,11 +9,13 @@
 		self.tableParams = new NgTableParams({}, {
 	        getData: function(params) {
 	          if(ModulesCache.get("all")){
+	        	  console.log("Data getting from modules cache ...");
 	  			  return ModulesCache.get("all");
 	  		  }
 	          return  ModulesService.get().then(function(data) {
+	        	  console.log("Data getting from modules ajax ...");
 	        	  self.originalData = angular.copy(data);
-	        	  self.tableParams.total(data.length);
+//	        	  self.tableParams.total(data.length);
 	        	  self.tableParams.settings().dataset = data;
 	            return data;
 	          });

@@ -4,8 +4,8 @@
 	
 	QuestionsService.$inject = ['$http','$q'];
 	function QuestionsService($http,$q){
-		function findQuestions(row) {
-			var restUrl = 'rest/module/get?id=' + row.idNode;
+		function findQuestions(idNode) {
+			var restUrl = 'rest/module/get?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl

@@ -80,13 +80,13 @@ tr.angular-ui-tree-empty {
     <input type="text" value="{{node.name}}" ng-model="node.name" 
 				class="form-control" style="width:500px;">
     </div>
-    </div>
 	<div class="form-group pull-right" style="margin-top: 5px;">
     <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span
         class="glyphicon glyphicon-remove"></span></a>
     <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span
         class="glyphicon glyphicon-plus"></span></a>
 	</div>
+    </div>
   </div>
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
     <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">

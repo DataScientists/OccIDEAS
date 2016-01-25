@@ -5,6 +5,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
+import org.hibernate.transform.Transformers;
 import org.occideas.entity.Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -42,7 +44,12 @@ public class ModuleDao {
     @SuppressWarnings("unchecked")
 	public List<Module> getAll() {
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(Module.class);
+      final Criteria crit = session.createCriteria(Module.class)
+    		  						.setProjection(Projections.projectionList()
+    		  						.add(Projections.property("idNode"),"idNode")
+    		  						.add(Projections.property("name"),"name")
+    		  						.add(Projections.property("description"),"description"))
+    		  						.setResultTransformer(Transformers.aliasToBean(Module.class));
       return crit.list();
     }
 

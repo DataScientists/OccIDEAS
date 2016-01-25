@@ -22,25 +22,29 @@
 		});
 
 		var tabs = [ {
-			title : 'Module List'
+			title : 'Module List',
+			viewName: 'moduleView'
 		}, {
-			title : 'Fragment List'
-		}, {
-			title : 'Agent List'
-		}, ], selected = null, previous = null;
+			title : 'Fragment List',
+			viewName: 'fragmentView'
+		},
+		{
+			title : 'Agent List',
+			viewName: 'agentView'
+		}], selected = null, previous = null;
 		$scope.tabs = tabs;
 		$scope.selectedIndex = 0;
 
 		$scope.addTab = function(row) {
 			tabs.push({
 				title : row.name,
+				viewName: 'questionsView',
 				disabled : false
 			});
 			$scope.tabOptions.push({
 				state: "tabs.questions",
-				data: {row:row}
+				data: {row:row.idNode}
 			});
-			$state.go("tabs.questions",{row:row});
 		};
 		$scope.removeTab = function(tab) {
 			var index = tabs.indexOf(tab);
