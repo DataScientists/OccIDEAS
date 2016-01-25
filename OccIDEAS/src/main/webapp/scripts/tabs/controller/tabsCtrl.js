@@ -39,6 +39,7 @@
 			tabs.push({
 				title : row.name,
 				viewName: 'questionsView',
+				canClose: true,
 				disabled : false
 			});
 			$scope.tabOptions.push({

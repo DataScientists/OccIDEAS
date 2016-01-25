@@ -1,29 +1,20 @@
 <div ng-cloak ng-controller="TabsCtrl as vm">
    <md-content class="md-padding">
     <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect>
-<!--     	<md-tab label="Module List"> -->
-<!--         	<md-content class="md-padding"> -->
-<!--         		<div id="content" ui-view="moduleView" flex> </div> -->
-<!--         	</md-content> -->
-<!--       	</md-tab> -->
-<!--       	<md-tab label="Frament List"> -->
-<!--         	<md-content class="md-padding"> -->
-<!--         		<div id="content" ui-view="fragmentView" flex> </div> -->
-<!--         	</md-content> -->
-<!--       	</md-tab> -->
-<!--       	<md-tab label="Agent List"> -->
-<!--         	<md-content class="md-padding"> -->
-<!--         		<div id="content" ui-view="agentView" flex> </div> -->
-<!--         	</md-content> -->
-<!--       	</md-tab> -->
-      <md-tab ng-repeat="tab in tabs"
-              ng-disabled="tab.disabled"
-              label="{{tab.title}}">
-        <div class="tab{{$index%4}}" style="padding: 25px;">
+      <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" layout-fill>
+      	<md-tab-label>
+        <span>{{tab.title}}</span>
+          <span ng-click="removeTab(tab)" ng-if="tab.canClose">
+              <span class="glyphicon glyphicon-remove" style="margin-left:3px" />
+          </span>
+        </md-tab-label>
+        <md-tab-body ng-class="tab.style" layout="column" layout-fill>
+                <div class="tab{{$index%4}}" style="padding: 25px;">
          <div id="content" ui-view="{{tab.viewName}}" flex> </div>
           <br/>
 <!-- <md-button class="md-primary md-raised" ng-click="removeTab( tab )" ng-disabled="tabs.length <= 1">Remove Tab</md-button> -->
         </div>
+        </md-tab-body>
       </md-tab>
     </md-tabs>
   </md-content>
