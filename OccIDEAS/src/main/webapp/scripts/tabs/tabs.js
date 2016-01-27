@@ -23,7 +23,8 @@
 		}).state('tabs.agents', {
 			views:{
 				'agentView':{
-					templateUrl : "scripts/agents/view/agents.html"
+					templateUrl : "scripts/agents/view/agentsTable.html",
+					controller: 'AgentCtrl as vm'
 				}
 			}
 		}).state('tabs.questions', {
