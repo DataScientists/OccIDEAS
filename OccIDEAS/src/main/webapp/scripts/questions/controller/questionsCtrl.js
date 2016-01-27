@@ -1,13 +1,11 @@
 (function() {
-	angular.module('occIDEASApp.Questions').controller('QuestionsCtrl',QuestionsCtrl);
+	angular.module('occIDEASApp.Questions').controller('QuestionsCtrl',
+			QuestionsCtrl);
 
 	QuestionsCtrl.$inject = [ 'data', '$scope' ];
 	function QuestionsCtrl(data, $scope) {
+		var self = this;
 		$scope.data = data;
-
-		$scope.remove = function(scope) {
-			scope.remove();
-		};
 
 		$scope.toggle = function(scope) {
 			scope.toggle();
@@ -50,5 +48,29 @@
 		$scope.expandAll = function() {
 			$scope.$broadcast('expandAll');
 		};
+
+		$scope.saveEdit = function(scope) {
+			$scope.safeApply(function() {
+				scope.$modelValue.editEnabled = false;
+			});
+		};
+
+		$scope.enable = function(scope) {
+			$scope.safeApply(function() {
+				scope.$modelValue.editEnabled = true;
+			});
+		};
+
+		$scope.safeApply = function(fn) {
+			var phase = this.$root.$$phase;
+			if (phase == '$apply' || phase == '$digest') {
+				if (fn && (typeof (fn) === 'function')) {
+					fn();
+				}
+			} else {
+				this.$apply(fn);
+			}
+		};
+
 	}
 })();

@@ -12,14 +12,6 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
-		function findFragment(idNode) {
-			var restUrl = 'rest/fragment/get?id=' + idNode;
-			var request =  $http({
-				  method: 'GET',
-				  url: restUrl
-				})
-			return request.then(handleSuccess,handleError);
-		}
 		
 		function handleError( response ) {
             if (
@@ -36,8 +28,7 @@
         }
 		
 		return {
-			findQuestions: findQuestions,
-			findFragment: findFragment
+			findQuestions: findQuestions
 		};
 	}
 })();

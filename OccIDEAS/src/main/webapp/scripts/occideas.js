@@ -7,10 +7,11 @@ angular
     "ui.tree",
     "ngTable",
     "ngSanitize",
+    "angular-confirm",
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
-    "occIDEASApp.Fragments",
-    "occIDEASApp.Modules"
+    "occIDEASApp.Modules",
+    "occIDEASApp.Fragments"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
@@ -26,10 +27,10 @@ angular
         url: '/module',
         templateUrl: 'scripts/modules/view/modules.html'
       })
-      .state('allfragments', {
-        url: '/allfragments',
-        controller: 'TabsCtrl as vm',
-        templateUrl: 'scripts/modules/view/modules.html'
+      .state('fragment', {
+        url: '/fragment',
+        templateUrl: 'fragment.html',
+        controller: 'fragmentCtrl'
       })
       .state('agent', {
         url: '/agent',

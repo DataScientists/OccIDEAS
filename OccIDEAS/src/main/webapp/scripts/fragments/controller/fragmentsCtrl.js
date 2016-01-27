@@ -1,5 +1,5 @@
 (function(){
-	angular.module('occIDEASApp.Fragments')
+	angular.module('occIDEASApp.Fragments',[])
 		   .controller('FragmentCtrl',FragmentCtrl);
 	
 	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','ModulesCache'];
