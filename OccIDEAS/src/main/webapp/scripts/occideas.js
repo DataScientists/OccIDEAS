@@ -8,6 +8,7 @@ angular
     "ngTable",
     "ngSanitize",
     "angular-confirm",
+    "ui.bootstrap.contextMenu",
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
     "occIDEASApp.Modules",
