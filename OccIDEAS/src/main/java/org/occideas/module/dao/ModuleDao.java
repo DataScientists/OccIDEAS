@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Module;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +53,18 @@ public class ModuleDao {
     		  						.setResultTransformer(Transformers.aliasToBean(Module.class));
       return crit.list();
     }
+    @SuppressWarnings("unchecked")
+   	public List<Module> getAllActive() {
+         final Session session = sessionFactory.getCurrentSession();
+         final Criteria crit = session.createCriteria(Module.class)
+        		 					.add(Restrictions.eq("deleted", 0))
+       		  						.setProjection(Projections.projectionList()
+       		  						.add(Projections.property("idNode"),"idNode")
+       		  						.add(Projections.property("type"),"type")
+       		  						.add(Projections.property("name"),"name")
+       		  						.add(Projections.property("description"),"description"))
+       		  						.setResultTransformer(Transformers.aliasToBean(Module.class));
+         return crit.list();
+       }
 
 }

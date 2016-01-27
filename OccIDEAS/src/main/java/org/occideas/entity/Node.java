@@ -129,11 +129,11 @@ public class Node implements Cloneable {
 	}
 
 	public String getType() {
-		if (type == null) {
+		/*if (type == null) {
 			type = "Module";
 		} else if (type.equalsIgnoreCase("")) {
 			type = "Module";
-		}
+		}*/
 		return type;
 	}
 

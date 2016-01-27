@@ -23,7 +23,7 @@ public class ModuleServiceImpl implements ModuleService {
 	
 	@Override
 	public List<ModuleVO> listAll() {
-		return mapper.convertToModuleVOList(dao.getAll(),false);
+		return mapper.convertToModuleVOList(dao.getAllActive(),false);
 	}
 
 	@Override
