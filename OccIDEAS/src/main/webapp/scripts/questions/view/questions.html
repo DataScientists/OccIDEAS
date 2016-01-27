@@ -77,11 +77,16 @@ tr.angular-ui-tree-empty {
           'glyphicon-chevron-down': !collapsed
         }"></span></a>
 	<div class="form-group">
-    <input type="text" value="{{node.name}}" ng-model="node.name" 
-				class="form-control" style="width:500px;">
+	 <div ng-hide="node.editEnabled" data-nodrag>
+       <span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
+    </div>
+    <div ng-show="node.editEnabled">
+      <input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 
+			ng-keypress="($event.which === 13)?saveEdit(this):0">
+    </div>
     </div>
 	<div class="form-group pull-right" style="margin-top: 5px;">
-    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span
+    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)" confirm="Are you sure you want to delete - '{{node.name}}'"><span
         class="glyphicon glyphicon-remove"></span></a>
     <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span
         class="glyphicon glyphicon-plus"></span></a>
@@ -94,7 +99,6 @@ tr.angular-ui-tree-empty {
   </ol>
 	
 </script>
-<!-- <pre>Debug {{data | json}}</pre> -->
 <div class="row">
 	<div class="col-sm-12">
 	<div class="panel panel-default">
