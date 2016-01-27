@@ -9,6 +9,7 @@ angular
     "ngSanitize",
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
+    "occIDEASApp.Fragments",
     "occIDEASApp.Modules"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
@@ -25,10 +26,10 @@ angular
         url: '/module',
         templateUrl: 'scripts/modules/view/modules.html'
       })
-      .state('fragment', {
-        url: '/fragment',
-        templateUrl: 'fragment.html',
-        controller: 'fragmentCtrl'
+      .state('allfragments', {
+        url: '/allfragments',
+        controller: 'TabsCtrl as vm',
+        templateUrl: 'scripts/modules/view/modules.html'
       })
       .state('agent', {
         url: '/agent',

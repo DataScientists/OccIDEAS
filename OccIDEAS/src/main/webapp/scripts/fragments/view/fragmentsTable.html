@@ -23,7 +23,7 @@
             <td title="'Name'" filter="{name: 'text'}" sortable="'name'"
 				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"
 				ng-form="name" demo-tracked-table-cell>
-				<div ng-click="addModuleTab(row)">
+				<div ng-click="addFragmentTab(row)">
 					<span ng-switch-default class="editable-text">{{row.name}}</span>
 					<div class="controls"
 						ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
@@ -37,7 +37,7 @@
 				sortable="'description'" ng-switch="row.isEditing"
 				ng-class="description.$dirty ? 'bg-warning' : ''"
 				ng-form="description" demo-tracked-table-cell>
-				<div ng-click="addModuleTab(row)">
+				<div ng-click="addFragmentTab(row)">
 					<span ng-switch-default class="editable-text">{{row.description}}</span>
 					<div class="controls"
 						ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"

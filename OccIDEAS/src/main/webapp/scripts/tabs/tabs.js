@@ -16,7 +16,8 @@
 		}).state('tabs.fragments', {
 			views:{
 				'fragmentView':{
-					templateUrl : "scripts/fragment/view/fragments.html"
+					templateUrl : "scripts/fragments/view/fragmentsTable.html",
+					controller: 'FragmentCtrl as vm'
 				}
 			}
 		}).state('tabs.agents', {
@@ -42,6 +43,26 @@
 			        				.then(function(data){
 			        					console.log("Data getting from questions AJAX ...");
 			        					QuestionsCache.put($stateParams.row,data);
+						        		return data;
+		    				})
+			        	}
+			        }
+				}
+			}
+		}).state('tabs.fragment', {
+			url: '/fragment/:row',
+			views:{
+				'getfragmentView':{
+					templateUrl: 'scripts/questions/view/questions.html',
+			        controller: 'QuestionsCtrl as vm',
+			        params:{row: null},
+			        resolve:{
+			        	data: function($stateParams,QuestionsService) {
+			        		
+			        		return QuestionsService.findFragment($stateParams.row)
+			        				.then(function(data){
+			        					console.log("Fragment Data from AJAX ...");
+			        					console.log("Fragment IdNode: "+$stateParams.row);		        					
 						        		return data;
 		    				})
 			        	}

@@ -18,6 +18,8 @@
 		};
 				
 		$scope.$watch('selectedIndex', function(current, old) {
+			console.log("Navigating to "+$scope.tabOptions[current].state);
+			console.log("with data: "+$scope.tabOptions[current].data)
 			$state.go($scope.tabOptions[current].state,$scope.tabOptions[current].data);
 		});
 
@@ -35,7 +37,19 @@
 		$scope.tabs = tabs;
 		$scope.selectedIndex = 0;
 
-		$scope.addTab = function(row) {
+		$scope.addFragmentTab = function(row) {
+			tabs.push({
+				title : row.name,
+				viewName: 'getfragmentView',
+				canClose: true,
+				disabled : false
+			});
+			$scope.tabOptions.push({
+				state: "tabs.fragment",
+				data: {row:row.idNode}
+			});
+		};
+		$scope.addModuleTab = function(row) {
 			tabs.push({
 				title : row.name,
 				viewName: 'questionsView',

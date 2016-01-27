@@ -1,4 +1,4 @@
-package org.occideas.module.dao;
+package org.occideas.fragment.dao;
 
 import java.util.List;
 
@@ -8,6 +8,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,54 +16,55 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public class ModuleDao {
+public class FragmentDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public Module save(Module module){
-      return (Module) sessionFactory.getCurrentSession().save(module);
+	
+	public Fragment save(Fragment fragment){
+      return (Fragment) sessionFactory.getCurrentSession().save(fragment);
     }
 
 
-    public void delete(Module module){
-      sessionFactory.getCurrentSession().delete(module);
+    public void delete(Fragment fragment){
+      sessionFactory.getCurrentSession().delete(fragment);
     }
 
-	public Module get(Long id){
-      return (Module) sessionFactory.getCurrentSession().get(Module.class, id);
+	public Fragment get(Long id){
+      return (Fragment) sessionFactory.getCurrentSession().get(Fragment.class, id);
     }
 
-	public Module merge(Module module)   {
-      return (Module) sessionFactory.getCurrentSession().merge(module);
+	public Fragment merge(Fragment fragment)   {
+      return (Fragment) sessionFactory.getCurrentSession().merge(fragment);
     }
 
-    public void saveOrUpdate(Module module){
-      sessionFactory.getCurrentSession().saveOrUpdate(module);
+    public void saveOrUpdate(Fragment fragment){
+      sessionFactory.getCurrentSession().saveOrUpdate(fragment);
     }
 
     @SuppressWarnings("unchecked")
-	public List<Module> getAll() {
+	public List<Fragment> getAll() {
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(Module.class)
+      final Criteria crit = session.createCriteria(Fragment.class)
     		  						.setProjection(Projections.projectionList()
     		  						.add(Projections.property("idNode"),"idNode")
     		  						.add(Projections.property("name"),"name")
     		  						.add(Projections.property("description"),"description"))
-    		  						.setResultTransformer(Transformers.aliasToBean(Module.class));
+    		  						.setResultTransformer(Transformers.aliasToBean(Fragment.class));
       return crit.list();
     }
     @SuppressWarnings("unchecked")
-   	public List<Module> getAllActive() {
+   	public List<Fragment> getAllActive() {
          final Session session = sessionFactory.getCurrentSession();
-         final Criteria crit = session.createCriteria(Module.class)
+         final Criteria crit = session.createCriteria(Fragment.class)
         		 					.add(Restrictions.eq("deleted", 0))
        		  						.setProjection(Projections.projectionList()
        		  						.add(Projections.property("idNode"),"idNode")
        		  						.add(Projections.property("type"),"type")
        		  						.add(Projections.property("name"),"name")
        		  						.add(Projections.property("description"),"description"))
-       		  						.setResultTransformer(Transformers.aliasToBean(Module.class));
+       		  						.setResultTransformer(Transformers.aliasToBean(Fragment.class));
          return crit.list();
        }
 
