@@ -11,6 +11,7 @@ angular
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
     "occIDEASApp.Modules",
+    "occIDEASApp.Agents",
     "occIDEASApp.Fragments"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);

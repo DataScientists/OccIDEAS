@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Fragments')
 	.service('FragmentsService',FragmentsService);
 
-	FragmentsService.$inject = ['$http','FragmentsCache'];
-	function FragmentsService($http,FragmentsCache){
+	FragmentsService.$inject = ['$http'];
+	function FragmentsService($http){
 		var apiUrl = '/occideas/rest/';
 		var modulesUrl = apiUrl + 'fragment';
 		var apiKey = '';
@@ -11,7 +11,7 @@
 		var getFragments = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
 		    var data = response.data;
-		    FragmentsCache.put("all",data);
+		    //FragmentsCache.put("all",data);
 		    return data;
 		  });
 		};
