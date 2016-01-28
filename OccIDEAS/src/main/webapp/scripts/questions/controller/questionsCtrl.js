@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Questions').controller('QuestionsCtrl',
 			QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope' ];
-	function QuestionsCtrl(data, $scope) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog' ];
+	function QuestionsCtrl(data, $scope, $mdDialog) {
 		var self = this;
 		$scope.data = data;
 
@@ -71,6 +71,13 @@
 				this.$apply(fn);
 			}
 		};
+
+		$scope.menuOptions = [ [ 'Export to JSON', function($itemScope) {
+			$scope.selected = $itemScope.item.name;
+		} ], null, // Dividier
+		[ 'Export to PDF', function($itemScope) {
+			$scope.items.splice($itemScope.$index, 1);
+		} ] ];
 
 	}
 })();
