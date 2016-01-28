@@ -16,19 +16,19 @@
 		  });
 		};
 		
-		/*function findFragment(idNode) {
+		function findFragment(idNode) {
 			var restUrl = 'rest/fragment/get?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
 				})
 			return request.then(handleSuccess,handleError);
-			return $http.get(restUrl).then(function(response) {
+			/*return $http.get(restUrl).then(function(response) {
 			    var data = response.data;
 			    return data;
-			  });
+			  });*/
 		}
-*/
+
 		var postNewFragment = function(moduleObj) {
 		  return $http.post(modulesUrl + '?apiKey='+apiKey).then(function(response) {
 			console.log(response.data.id);
@@ -44,9 +44,10 @@
 		return {		  
 		      get: getFragments,
 		      post: postNewFragment, 	    
+		      findFragment: findFragment,
 		      deleteFragment: deleteFragment
 		};
-		/*function handleError( response ) {
+		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
                 ! response.data.message
@@ -58,7 +59,7 @@
 
 		function handleSuccess( response ) {
             return( response.data );
-        }*/
+        }
 	}
 	
 })();

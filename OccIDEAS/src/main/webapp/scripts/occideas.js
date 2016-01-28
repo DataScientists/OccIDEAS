@@ -8,6 +8,7 @@ angular
     "ngTable",
     "ngSanitize",
     "angular-confirm",
+    "ui.bootstrap.contextMenu",
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
     "occIDEASApp.Modules",
@@ -27,6 +28,11 @@ angular
       .state('module', {
         url: '/module',
         templateUrl: 'scripts/modules/view/modules.html'
+      })
+      .state('allfragments', {
+    	  url: '/allfragments',
+    	  controller: 'TabsCtrl as vm',
+    	  templateUrl: 'scripts/modules/view/modules.html'
       })
       .state('fragment', {
         url: '/fragment',

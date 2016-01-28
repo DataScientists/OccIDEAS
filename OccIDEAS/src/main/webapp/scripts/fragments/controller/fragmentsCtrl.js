@@ -1,11 +1,11 @@
 (function(){
-	angular.module('occIDEASApp.Fragments',[])
+	angular.module('occIDEASApp.Fragments')
 		   .controller('FragmentCtrl',FragmentCtrl);
 	
 	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','ModulesCache'];
 	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,FragmentsCache){
 		var self = this;
-		
+//		$scope.data = data;
 		self.tableParams = new NgTableParams({group: "type"}, {	
 	        getData: function(params) {
 	          /*if(FragmentsCache.get("all")){

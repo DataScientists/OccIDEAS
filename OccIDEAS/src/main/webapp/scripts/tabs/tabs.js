@@ -58,9 +58,9 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null},
 			        resolve:{
-			        	data: function($stateParams,QuestionsService) {
+			        	data: function($stateParams,FragmentsService) {
 			        		
-			        		return QuestionsService.findFragment($stateParams.row)
+			        		return FragmentsService.findFragment($stateParams.row)
 			        				.then(function(data){
 			        					console.log("Fragment Data from AJAX ...");
 			        					console.log("Fragment IdNode: "+$stateParams.row);		        					

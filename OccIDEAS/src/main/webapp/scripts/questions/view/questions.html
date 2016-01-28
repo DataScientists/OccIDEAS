@@ -69,7 +69,7 @@ tr.angular-ui-tree-empty {
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
   <div ui-tree-handle class="tree-node tree-node-content form-inline">
-	<div class="{{node.type}}">
+	<div class="{{node.type}}" context-menu="menuOptions">
 	<a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag ng-click="toggle(this)"><span
         class="glyphicon"
         ng-class="{
@@ -93,13 +93,15 @@ tr.angular-ui-tree-empty {
 	</div>
     </div>
   </div>
-  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+  <ol ui-tree-nodes="" ng-m  <div ng-bind="selected"></div>
+odel="node.nodes" ng-class="{hidden: collapsed}">
     <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
     </li>
   </ol>
 	
 </script>
 <div class="row">
+<!-- <pre>debug {{data | json}}</pre> -->
 	<div class="col-sm-12">
 	<div class="panel panel-default">
   <div class="panel-heading">Add / Remove / Move Questions</div>
