@@ -2,6 +2,17 @@
 .moduleTable td:last-child {
   min-width: 90px;
 }
+/**Node Types*/
+.M_Module{
+	height: 90px;
+    font-size: 22px;
+    background: rgb(103, 98, 98) !important;
+    color: #D7DFE4 !important;;
+}
+.P_simple {
+    background: #C8CACE !important;
+    color: #7c9eb2 !important;
+}
 
 /** Editable table
 ------------------------- */

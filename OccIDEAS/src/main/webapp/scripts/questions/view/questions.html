@@ -41,7 +41,6 @@ tr.angular-ui-tree-empty {
     background: #f8faff;
     color: #7c9eb2;
 }
-
 .nodrop {
     background-color: #f2dede;
 }
@@ -68,8 +67,8 @@ tr.angular-ui-tree-empty {
 }
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div ui-tree-handle class="tree-node tree-node-content form-inline">
-	<div class="{{node.type}}" context-menu="menuOptions">
+  <div ui-tree-handle class="tree-node tree-node-content form-inline ">
+	<div context-menu="menuOptions" class="{{node.type}}">
 	<a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag ng-click="toggle(this)"><span
         class="glyphicon"
         ng-class="{
@@ -104,7 +103,6 @@ tr.angular-ui-tree-empty {
 <!-- <pre>debug {{data | json}}</pre> -->
 	<div class="col-sm-12">
 	<div class="panel panel-default">
-  <div class="panel-heading">Add / Remove / Move Questions</div>
   <div class="panel-body">
   	<div ui-tree id="tree-root">
 		<ol ui-tree-nodes ng-model="data">
