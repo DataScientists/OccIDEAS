@@ -72,12 +72,38 @@
 			}
 		};
 
-		$scope.menuOptions = [ [ 'Export to JSON', function($itemScope) {
-			$scope.selected = $itemScope.item.name;
-		} ], null, // Dividier
-		[ 'Export to PDF', function($itemScope) {
-			$scope.items.splice($itemScope.$index, 1);
-		} ] ];
+		$scope.menuOptions = 
+			[ [ 'Show/Hide Children', function($itemScope) {
+									
+				var toggleChildren = function (scope) {
+	        		var i, subScope,
+	                nodes = scope.childNodes();
+		            for (i = 0; i < nodes.length; i++) {
+		              subScope = nodes[i].$childNodesScope;
+		              if (subScope) {
+		            	  var collapsed = !subScope.collapsed;
+		            	  for (i = 0; i < nodes.length; i++) {
+		    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
+		    	            }
+		              }
+		            }
+	              };
+	              toggleChildren($itemScope);
+								} 
+			  ],
+			  [ 'Open aJMS', function($itemScope) {	
+				  					$scope.addFragmentTab($itemScope.node)
+				  				} 
+				  ], null, // Dividier
+			  [ 'Export to JSON', function($itemScope) {
+				  					$scope.items.splice($itemScope.$index, 1);
+			  					} 
+			  ],
+			  [ 'Export to PDF', function($itemScope) {
+					$scope.items.splice($itemScope.$index, 1);
+				} 
+]
+			];
 
 	}
 })();

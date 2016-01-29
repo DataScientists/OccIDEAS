@@ -68,8 +68,10 @@ tr.angular-ui-tree-empty {
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
   <div ui-tree-handle class="tree-node tree-node-content form-inline ">
-	<div context-menu="menuOptions" class="{{node.type}}">
-	<a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" data-nodrag ng-click="toggle(this)"><span
+	<div context-menu="menuOptions" class="{{node.type}}" >
+	<a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
+		ng-click="toggle(this)">
+		<span
         class="glyphicon"
         ng-class="{
           'glyphicon-chevron-right': collapsed,
