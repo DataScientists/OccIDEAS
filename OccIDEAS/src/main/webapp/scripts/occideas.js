@@ -75,8 +75,8 @@ angular
         });
    }
    
-   ErrorHandler.$inject = ['$injector','$window'];
-   function ErrorHandler($injector,$window){
+   ErrorHandler.$inject = ['$injector','$window','$location'];
+   function ErrorHandler($injector,$window,$location){
    	return {
    		'requestError': function(rejection) {
    	      if (canRecover(rejection)) {
@@ -86,8 +86,12 @@ angular
    	    },
    		'responseError': function(response) {
    			if (response.status != 200) {
-   	            var state = $injector.get('$state');
-   	            state.go('error',{error:"Response Status returned:"+response.status+" "+response.statusText});
+   	            var state = $injector.get('$state');       
+   	            state.go('error',{
+   	            	error:"Response Status returned:"
+   	            		+response.status+" "
+   	            		+response.statusText+" "
+   	            		+response.data});
    	        }
    		    return response;
    		}
