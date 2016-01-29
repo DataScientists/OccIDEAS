@@ -9,6 +9,7 @@ angular
     "ngSanitize",
     "angular-confirm",
     "ui.bootstrap.contextMenu",
+    "ui.bootstrap",
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
     "occIDEASApp.Modules",
@@ -72,6 +73,14 @@ angular
         	  event.preventDefault();
         	  $state.get('error').error = { code: 123, description: 'Exception stack trace' }
         	  return $state.go('error');
+        });
+        document.addEventListener("keyup", function(e) {
+            if (e.keyCode === 27)
+                $rootScope.$broadcast("escapePressed", e.target);
+        });
+
+        document.addEventListener("click", function(e) {
+            $rootScope.$broadcast("documentClicked", e.target);
         });
    }
    

@@ -1,12 +1,23 @@
 (function() {
-	angular.module('occIDEASApp.Questions').controller('QuestionsCtrl',
-			QuestionsCtrl);
+	angular.module('occIDEASApp.Questions')
+			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog' ];
-	function QuestionsCtrl(data, $scope, $mdDialog) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService' ];
+	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService) {
 		var self = this;
 		$scope.data = data;
-
+		$scope.rightNav = "slideFrag";
+		FragmentsService.get().then(function(val) {
+			$scope.fragment = val;
+		});
+		$scope.toggleRight = function(){
+		    if ($scope.rightNav === "slideFrag"){
+		      $scope.rightNav = "";
+		    }
+		    else{
+		      $scope.rightNav = "slideFrag";
+		    }
+		};
 		$scope.toggle = function(scope) {
 			scope.toggle();
 		};
@@ -102,8 +113,8 @@
 			  [ 'Export to PDF', function($itemScope) {
 					$scope.items.splice($itemScope.$index, 1);
 				} 
-]
+			  ]
 			];
-
+		
 	}
 })();
