@@ -1,3 +1,14 @@
+.welcome{
+	height: 190px;
+    font-size: 22px;
+    color: #2e3436;
+}
+.footer{
+    font-size: 12px;
+    color: #2e3436;
+    
+}
+
 /**Module table*/
 .moduleTable td:last-child {
   min-width: 90px;
