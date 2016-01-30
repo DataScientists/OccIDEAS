@@ -76,7 +76,7 @@ tr.angular-ui-tree-empty {
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
   <div ui-tree-handle class="tree-node tree-node-content form-inline" ng-class=node.warning>
-	<div context-menu="menuOptions" class="{{node.type}} {{node.nodeclass}}" >
+	<div context-menu="showMenu(this)" class="{{node.type}} {{node.nodeclass}}" >
 	<a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
 		ng-click="toggle(this)">
 		<span
@@ -91,7 +91,7 @@ tr.angular-ui-tree-empty {
     </div>
     <div ng-show="node.editEnabled">
       <input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 
-			ng-keypress="($event.which === 13)?saveEdit(this):0">
+			ng-keypress="(($event.which === 13))?saveEdit(this):0">
     </div>
     </div>
 	<div class="form-group pull-right" style="margin-top: 5px;">

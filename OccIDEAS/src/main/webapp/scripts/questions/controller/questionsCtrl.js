@@ -68,7 +68,7 @@
 			if (!nodeData.nodes) {
 				nodeData.nodes = [];
 			}
-			if (nodeData.type == 'P_single') {
+			if (nodeData.type == 'P_simple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
 					name : "New Question",
@@ -158,8 +158,50 @@
 			}
 		};
 
-		$scope.menuOptions = 
-			[ [ 'Add', function($itemScope) {
+		$scope.showMenu = function(scope) {
+			if(scope.node.nodeclass=='M'){
+				return $scope.moduleMenuOptions;
+			}else if(scope.node.nodeclass=='Q'){
+				return $scope.questionMenuOptions;
+			}else if(scope.node.nodeclass=='P'){
+				return $scope.possibleAnswerMenuOptions;
+			}
+		};
+		$scope.moduleMenuOptions = 
+			[ [ 'Add Question', function($itemScope) {
+						$scope.newSubItem($itemScope)
+						}
+			  ],		  
+			  [ 'Show/Hide Children', function($itemScope) {
+					
+					var toggleChildren = function (scope) {
+		        		var i, subScope,
+		                nodes = scope.childNodes();
+			            for (i = 0; i < nodes.length; i++) {
+			              subScope = nodes[i].$childNodesScope;
+			              if (subScope) {
+			            	  var collapsed = !subScope.collapsed;
+			            	  for (i = 0; i < nodes.length; i++) {
+			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
+			    	            }
+			              }
+			            }
+		              };
+		              toggleChildren($itemScope);
+					} 
+				  ], null, // Dividier
+			  [ 'Export to JSON', function($itemScope) {
+				  					$scope.items.splice($itemScope.$index, 1);
+			  					} 
+			  ],
+			  [ 'Export to PDF', function($itemScope) {
+					$scope.items.splice($itemScope.$index, 1);
+				} 
+			  ]
+			];
+		
+		$scope.questionMenuOptions = 
+			[ [ 'Add Possible Answer', function($itemScope) {
 						$scope.newSubItem($itemScope)
 						}
 			  ],
@@ -185,18 +227,38 @@
 		              toggleChildren($itemScope);
 					} 
 				  ],
-			  [ 'Open aJMS', function($itemScope) {	
+			  [ 'Open as aJMS', function($itemScope) {	
 				  					$scope.addFragmentTab($itemScope.node)
 				  				} 
-				  ], null, // Dividier
-			  [ 'Export to JSON', function($itemScope) {
-				  					$scope.items.splice($itemScope.$index, 1);
-			  					} 
-			  ],
-			  [ 'Export to PDF', function($itemScope) {
-					$scope.items.splice($itemScope.$index, 1);
-				} 
 			  ]
+			];
+		$scope.possibleAnswerMenuOptions = 
+			[ [ 'Add Quesiton', function($itemScope) {
+						$scope.newSubItem($itemScope)
+						}
+			  ],
+			  [ 'Remove', function($itemScope) {
+					$scope.remove($itemScope)
+					}
+			  ],
+			  [ 'Show/Hide Children', function($itemScope) {
+					
+					var toggleChildren = function (scope) {
+		        		var i, subScope,
+		                nodes = scope.childNodes();
+			            for (i = 0; i < nodes.length; i++) {
+			              subScope = nodes[i].$childNodesScope;
+			              if (subScope) {
+			            	  var collapsed = !subScope.collapsed;
+			            	  for (i = 0; i < nodes.length; i++) {
+			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
+			    	            }
+			              }
+			            }
+		              };
+		              toggleChildren($itemScope);
+					} 
+			   ]
 			];
 		
 	}
