@@ -5,27 +5,42 @@
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService' ];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService) {
 		var self = this;
-		$scope.data = data;
+		$scope.data = data;		
 		$scope.treeOptions = {
-				accept:function(sourceNodeScope,destNodeScope,index){
-					console.log(sourceNodeScope);
-					if(sourceNodeScope.node.type === 'Q_simple'){
-						return false;
+				beforeDrop:function(event){
+					var sourceNode = event.source.nodeScope.node;
+					sourceNode.warning = null;
+					var destNode = event.dest.nodesScope.node;
+					console.log("source"+sourceNode.type);
+					if(!destNode){
+						sourceNode.warning = 'warning';						
+					}else{
+						console.log("dest "+destNode.type);
+						if(stringStartsWith(sourceNode.type,'Q')){
+							if(stringStartsWith(destNode.type,'Q')){
+								console.log("dropped Q on Q")
+								sourceNode.warning = 'warning';
+							}			
+						}else if(stringStartsWith(sourceNode.type,'P')){
+							if(stringStartsWith(destNode.type,'P')){
+								console.log("Droped P on P")
+								sourceNode.warning = 'warning';
+							}			
+						}
 					}
-					return true;
+					
+					function stringStartsWith (string, prefix) {
+					    return string.slice(0, prefix.length) == prefix;
+					}
 				},
 				beforeDrag: function(sourceNodeScope){
-					if(sourceNodeScope.node.type === 'M_Module'){
-						alert("Unable to drag module");
+					if(sourceNodeScope.node.type === 'M_Module'){					
 						return false;
+					}else{
+						return true;
 					}
-					return true;
 				}
-
-
 		}
-		
-		
 		$scope.rightNav = "slideFrag";
 		FragmentsService.get().then(function(val) {
 			$scope.fragment = val;
@@ -41,7 +56,9 @@
 		$scope.toggle = function(scope) {
 			scope.toggle();
 		};
-
+		$scope.remove = function(scope) {
+			scope.remove();
+		};
 		$scope.moveLastToTheBeginning = function() {
 			var a = $scope.data.pop();
 			$scope.data.splice(0, 0, a);
@@ -51,24 +68,62 @@
 			if (!nodeData.nodes) {
 				nodeData.nodes = [];
 			}
-			if (nodeData.type == 'PossibleAnswer') {
+			if (nodeData.type == 'P_single') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Question",
 					description : "default",
 					topNodeId : nodeData.idNode,
-					type : "Question",
+					type : "Q_simple",
+					nodeclass : "Q",
 					nodes : []
 				});
-			} else if (nodeData.type == 'Question') {
+			} else if (nodeData.type == 'Q_single') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
-					description : "default",
+					name : "New Possible Answer",
 					topNodeId : nodeData.idNode,
-					type : "PossibleAnswer",
+					type : "P_single",
+					nodeclass : "P",
 					nodes : []
 				});
+			}else if (nodeData.type == 'Q_multiple') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "New Multi Possible Answer",
+					topNodeId : nodeData.idNode,
+					type : "P_multiple",
+					nodeclass : "P",
+					nodes : []
+				});
+			}else if (nodeData.type == 'Q_simple') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "New Possible Answer",
+					topNodeId : nodeData.idNode,
+					type : "P_single",
+					nodeclass : "P",
+					nodes : []
+				});
+			}else if (nodeData.type == 'M_Module') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "New Question",
+					topNodeId : nodeData.idNode,
+					type : "Q_simple",
+					nodeclass : "Q",
+					nodes : []
+				});
+			}else{
+				var nodeData = scope.$modelValue;
+		        nodeData.nodes.push({
+		          id: nodeData.idNode * 10 + nodeData.nodes.length,
+		          name: "new node",
+		          topNodeId : nodeData.idNode,
+				  type : "default",
+				  warning: "warning",
+		          nodes: []
+		        });
 			}
 		};
 
@@ -104,24 +159,32 @@
 		};
 
 		$scope.menuOptions = 
-			[ [ 'Show/Hide Children', function($itemScope) {
-									
-				var toggleChildren = function (scope) {
-	        		var i, subScope,
-	                nodes = scope.childNodes();
-		            for (i = 0; i < nodes.length; i++) {
-		              subScope = nodes[i].$childNodesScope;
-		              if (subScope) {
-		            	  var collapsed = !subScope.collapsed;
-		            	  for (i = 0; i < nodes.length; i++) {
-		    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
-		    	            }
-		              }
-		            }
-	              };
-	              toggleChildren($itemScope);
-								} 
+			[ [ 'Add', function($itemScope) {
+						$scope.newSubItem($itemScope)
+						}
 			  ],
+			  [ 'Remove', function($itemScope) {
+					$scope.remove($itemScope)
+					}
+			  ],
+			  [ 'Show/Hide Children', function($itemScope) {
+					
+					var toggleChildren = function (scope) {
+		        		var i, subScope,
+		                nodes = scope.childNodes();
+			            for (i = 0; i < nodes.length; i++) {
+			              subScope = nodes[i].$childNodesScope;
+			              if (subScope) {
+			            	  var collapsed = !subScope.collapsed;
+			            	  for (i = 0; i < nodes.length; i++) {
+			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
+			    	            }
+			              }
+			            }
+		              };
+		              toggleChildren($itemScope);
+					} 
+				  ],
 			  [ 'Open aJMS', function($itemScope) {	
 				  					$scope.addFragmentTab($itemScope.node)
 				  				} 

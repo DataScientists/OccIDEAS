@@ -141,6 +141,10 @@ public class ModuleVO {
 	}
 
 	public String getNodeclass() {
+		String nodeclass = "";
+		if(this.getType().length()>0){
+			nodeclass = this.getType().substring(0,1);
+		}
 		return nodeclass;
 	}
 

@@ -41,6 +41,17 @@ tr.angular-ui-tree-empty {
     background: #f8faff;
     color: #7c9eb2;
 }
+.warning {
+    border: 2px solid #C53E3E !important;
+}
+.P {
+	border: 1px solid #f8faff;
+    border-bottom-color: #C79B1C; !important;
+}
+.Q {
+	border: 1px solid #f8faff;
+    border-bottom-color: #4657B7; !important;
+}
 .nodrop {
     background-color: #f2dede;
 }
@@ -55,9 +66,6 @@ tr.angular-ui-tree-empty {
     margin-right: 10px;
 }
 
-.angular-ui-tree-handle:hover {
-}
-
 .angular-ui-tree-placeholder {
     background: #f0f9ff;
     border: 2px dashed #bed2db;
@@ -67,8 +75,8 @@ tr.angular-ui-tree-empty {
 }
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div ui-tree-handle class="tree-node tree-node-content form-inline">
-	<div context-menu="menuOptions" class="{{node.type}}" >
+  <div ui-tree-handle class="tree-node tree-node-content form-inline" ng-class=node.warning>
+	<div context-menu="menuOptions" class="{{node.type}} {{node.nodeclass}}" >
 	<a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
 		ng-click="toggle(this)">
 		<span
@@ -87,10 +95,7 @@ tr.angular-ui-tree-empty {
     </div>
     </div>
 	<div class="form-group pull-right" style="margin-top: 5px;">
-    <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)" confirm="Are you sure you want to delete - '{{node.name}}'"><span
-        class="glyphicon glyphicon-remove"></span></a>
-    <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span
-        class="glyphicon glyphicon-plus"></span></a>
+    <!-- Agents rules to go here -->
 	</div>
 	</div>
   </div>
