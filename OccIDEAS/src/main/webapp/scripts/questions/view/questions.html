@@ -108,22 +108,16 @@ tr.angular-ui-tree-empty {
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
   <div class="tree-node">
-    <div class="pull-left tree-handle" ui-tree-handle>
-      <span class="glyphicon glyphicon-list"></span>
-    </div>
     <div class="tree-node-content">
-      <a class="btn btn-success btn-xs" data-nodrag ng-click="toggle(this)">
-        <span class="glyphicon" ng-class="{
+      <a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
+		ng-click="toggle(this)">
+		<span
+        class="glyphicon"
+        ng-class="{
           'glyphicon-chevron-right': collapsed,
           'glyphicon-chevron-down': !collapsed
-          }">
-        </span>
-      </a>
-
-      {{node.title}}
-
-      <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
-      <a class="pull-right btn btn-primary btn-xs" data-nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+        }"></span></a>
+      {{node.name}}
     </div>
   </div>
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
@@ -152,11 +146,12 @@ tr.angular-ui-tree-empty {
 <div id="fragmentsdragdrop"><ul></ul>
 <div>
     <h5>Fragment List</h5>
-     <uib-accordion close-others="oneAtATime">
-     	 <uib-accordion-group heading="{{group.name}}" ng-repeat="group in fragment">
-<!--       		{{group.content}} -->
-    	</uib-accordion-group>
-     </uib-accordion>
+     <div ui-tree id="tree-root2">
+		<ol ui-tree-nodes ng-model="fragment">
+			<li ng-repeat="node in fragment" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+		</ol>
+	</div>
   </div>
 </div>
 </div>
