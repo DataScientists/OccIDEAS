@@ -6,6 +6,26 @@
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService) {
 		var self = this;
 		$scope.data = data;
+		$scope.treeOptions = {
+				accept:function(sourceNodeScope,destNodeScope,index){
+					console.log(sourceNodeScope);
+					if(sourceNodeScope.node.type === 'Q_simple'){
+						return false;
+					}
+					return true;
+				},
+				beforeDrag: function(sourceNodeScope){
+					if(sourceNodeScope.node.type === 'M_Module'){
+						alert("Unable to drag module");
+						return false;
+					}
+					return true;
+				}
+
+
+		}
+		
+		
 		$scope.rightNav = "slideFrag";
 		FragmentsService.get().then(function(val) {
 			$scope.fragment = val;

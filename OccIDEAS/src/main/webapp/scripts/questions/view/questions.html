@@ -67,7 +67,7 @@ tr.angular-ui-tree-empty {
 }
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div ui-tree-handle class="tree-node tree-node-content form-inline ">
+  <div ui-tree-handle class="tree-node tree-node-content form-inline">
 	<div context-menu="menuOptions" class="{{node.type}}" >
 	<a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
 		ng-click="toggle(this)">
@@ -130,9 +130,9 @@ tr.angular-ui-tree-empty {
 	<div class="col-sm-12">
 	<div class="panel panel-default">
   <div class="panel-body">
-  	<div ui-tree id="tree-root">
+  	<div ui-tree="treeOptions" id="tree-root">
 		<ol ui-tree-nodes ng-model="data">
-			<li ng-repeat="node in data" ui-tree-node
+			<li ng-repeat="node in data" ui-tree-node 
 				ng-include="'nodes_renderer.html'"></li>
 		</ol>
 	</div>
