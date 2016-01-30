@@ -2,7 +2,7 @@
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
 	
-	ModuleCtrl.$inject = ['ModulesService','NgTableParams','$state','$scope','ModulesCache'];
+	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache){
 		var self = this;
 		var dirtyCellsByRow = [];
@@ -51,7 +51,7 @@
 	    function resetRow(row, rowForm) {
 	        row.isEditing = false;
 	        rowForm.$setPristine();
-	        self.tableTracker.untrack(row);
+//	        self.tableTracker.untrack(row);
 	        return window._.findWhere(self.originalData, function (r) {
 	            return r.id === row.id;
 	        });

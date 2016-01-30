@@ -16,7 +16,7 @@
                 </a>
             </td>
         </tr>
-        <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm">          
+        <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
             <td sortable="type" data-title="'Type'" groupable="'type'" ng-if="false">
             	{{row.type}}
           	</td>
