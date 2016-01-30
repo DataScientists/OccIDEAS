@@ -195,12 +195,12 @@
 					} 
 				  ], null, // Dividier
 			  [ 'Export to JSON', function($itemScope) {
-				  					$scope.items.splice($itemScope.$index, 1);
-			  					} 
+					alert('under development');
+				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
-					$scope.items.splice($itemScope.$index, 1);
-				} 
+				  					alert('under development');
+								} 
 			  ]
 			];
 		

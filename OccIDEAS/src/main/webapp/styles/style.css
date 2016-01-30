@@ -17,7 +17,13 @@
 .M_Module{
 	height: 90px;
     font-size: 22px;
-    background: rgb(103, 98, 98) !important;
+    background: #676262  !important;
+    color: #D7DFE4 !important;;
+}
+.F_ajsm{
+	height: 90px;
+    font-size: 22px;
+    background: #626467 !important;
     color: #D7DFE4 !important;;
 }
 
