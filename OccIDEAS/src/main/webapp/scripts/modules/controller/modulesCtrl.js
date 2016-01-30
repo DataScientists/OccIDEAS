@@ -5,7 +5,8 @@
 	ModuleCtrl.$inject = ['ModulesService','NgTableParams','$state','$scope','ModulesCache'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache){
 		var self = this;
-		
+		var dirtyCellsByRow = [];
+	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams({group: "type"}, {	
 	        getData: function(params) {
 	          if(ModulesCache.get("all")){
@@ -59,6 +60,21 @@
 	        var originalRow = resetRow(row, rowForm);
 	        angular.extend(originalRow, row);
 	    }
+	    
+	    function setInvalid(isInvalid) {
+	        self.$invalid = isInvalid;
+	        self.$valid = !isInvalid;
+	      }
+	    
+	    function untrack(row) {
+	        _.remove(invalidCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        _.remove(dirtyCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        setInvalid(invalidCellsByRow.length > 0);
+	      }
 	}
 })();
 
