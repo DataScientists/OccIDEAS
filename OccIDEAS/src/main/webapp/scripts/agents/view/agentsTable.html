@@ -16,14 +16,14 @@
                 </a>
             </td>
         </tr>
-        <tr ng-hide="group.$hideRows" ng-repeat="row in group.data">          
+        <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm">          
             <td sortable="groupName" data-title="'groupName'" groupable="'groupName'" ng-if="false">
             	{{row.type}}
           	</td>
             <td title="'Name'" filter="{name: 'text'}" sortable="'name'"
 				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"
 				ng-form="name" demo-tracked-table-cell>
-				<div ng-click="addFragmentTab(row)">
+				<div ng-click="row.isEditing = true">
 					<span ng-switch-default class="editable-text">{{row.name}}</span>
 					<div class="controls"
 						ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
@@ -37,7 +37,7 @@
 				sortable="'description'" ng-switch="row.isEditing"
 				ng-class="description.$dirty ? 'bg-warning' : ''"
 				ng-form="description" demo-tracked-table-cell>
-				<div ng-click="addFragmentTab(row)">
+				<div ng-click="row.isEditing = true">
 					<span ng-switch-default class="editable-text">{{row.description}}</span>
 					<div class="controls"
 						ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"
@@ -58,8 +58,8 @@
 					<span class="glyphicon glyphicon-remove"></span>
 				</button>
 				<button class="btn btn-default btn-sm"
-					ng-click="row.isEditing = true" ng-if="!row.isEditing">
-					<span class="glyphicon glyphicon-pencil"></span>
+					ng-click="addModuleTab(row)" ng-if="!row.isEditing">
+					<span class="glyphicon glyphicon-list-alt"></span>
 				</button>
 				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
 					ng-if="!row.isEditing">
