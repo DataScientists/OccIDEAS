@@ -88,6 +88,7 @@ tr.angular-ui-tree-empty {
 	<div class="form-group">
 	 <div ng-hide="node.editEnabled" data-nodrag>
        <span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
+		<span ng-if="isDragging" class="badge">{{node.type}}</span>
     </div>
     <div ng-show="node.editEnabled">
       <input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 

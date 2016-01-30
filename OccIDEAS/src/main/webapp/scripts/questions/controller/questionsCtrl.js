@@ -5,7 +5,8 @@
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService' ];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService) {
 		var self = this;
-		$scope.data = data;		
+		$scope.data = data;	
+		$scope.isDragging = false;
 		$scope.treeOptions = {
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
@@ -16,24 +17,25 @@
 						sourceNode.warning = 'warning';						
 					}else{
 						console.log("dest "+destNode.type);
-						if(stringStartsWith(sourceNode.type,'Q')){
-							if(stringStartsWith(destNode.type,'Q')){
+						if(sourceNode.nodeclass=='Q'){
+							if(destNode.nodeclass=='Q'){
 								console.log("dropped Q on Q")
 								sourceNode.warning = 'warning';
 							}			
-						}else if(stringStartsWith(sourceNode.type,'P')){
-							if(stringStartsWith(destNode.type,'P')){
+						}else if(sourceNode.nodeclass=='P'){
+							if(destNode.nodeclass=='P'){
 								console.log("Droped P on P")
 								sourceNode.warning = 'warning';
+							}else if(destNode.nodeclass=='M'){
+								console.log("Droped P on M")
+								sourceNode.warning = 'warning';			
 							}			
 						}
 					}
-					
-					function stringStartsWith (string, prefix) {
-					    return string.slice(0, prefix.length) == prefix;
-					}
+					$scope.isDragging = false;
 				},
 				beforeDrag: function(sourceNodeScope){
+					$scope.isDragging = true;
 					if(sourceNodeScope.node.type === 'M_Module'){					
 						return false;
 					}else{
@@ -165,6 +167,8 @@
 				return $scope.questionMenuOptions;
 			}else if(scope.node.nodeclass=='P'){
 				return $scope.possibleAnswerMenuOptions;
+			}else{
+				return $scope.defaultMenuOptions;
 			}
 		};
 		$scope.moduleMenuOptions = 
@@ -259,6 +263,13 @@
 		              toggleChildren($itemScope);
 					} 
 			   ]
+			];
+		$scope.defaultMenuOptions = 
+			[ 
+			  [ 'Remove', function($itemScope) {
+					$scope.remove($itemScope)
+					}
+			  ]
 			];
 		
 	}
