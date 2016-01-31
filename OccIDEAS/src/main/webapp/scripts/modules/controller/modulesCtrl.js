@@ -8,9 +8,10 @@
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams({group: "type"}, {	
-	        getData: function(params) {
+	        getData: function($defer,params) {
 	          if(ModulesCache.get("all")){
 	        	  console.log("Data getting from modules cache ...");
+	        	  $defer.resolve();
 	  			  return ModulesCache.get("all");
 	  		  }
 	          return  ModulesService.get().then(function(data) {
@@ -18,6 +19,8 @@
 	        	  self.originalData = angular.copy(data);
 //	        	  self.tableParams.total(data.length);
 	        	  self.tableParams.settings().dataset = data;
+	        	  ModulesCache.put("all",data);
+	        	  $defer.resolve();
 	            return data;
 	          });
 	        },
@@ -26,6 +29,22 @@
 	    self.cancel = cancel;
 	    self.del = del;
 	    self.save = save;
+	    self.add = add;
+	    
+	    function add(type) {
+	        self.isEditing = true;
+	        self.isAdding = true;
+	        self.tableParams.settings().dataset.unshift({
+	          name: "",
+	          idNode:Math.max.apply(null, _.pluck(self.tableParams.settings().dataset, "idNode"))+1,
+	          type: type,
+	          description: null
+	        });
+	        self.originalData = angular.copy(self.tableParams.settings().dataset);
+	        self.tableParams.sorting({});
+	        self.tableParams.page(1);
+	        self.tableParams.reload();
+	      }
 	    
 	    
 	    function treeView(row){
@@ -51,10 +70,8 @@
 	    function resetRow(row, rowForm) {
 	        row.isEditing = false;
 	        rowForm.$setPristine();
-//	        self.tableTracker.untrack(row);
-	        return window._.findWhere(self.originalData, function (r) {
-	            return r.id === row.id;
-	        });
+	        self.tableTracker.untrack(row);
+	        return window._.findWhere(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
 	        var originalRow = resetRow(row, rowForm);

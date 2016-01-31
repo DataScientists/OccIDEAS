@@ -94,7 +94,7 @@
 	            });
 	            setInvalid(invalidCellsByRow.length > 0);
 	        }
-	    }
+	    }	
 	}());
 	(function () {
 	    angular.module('occIDEASApp.Modules').directive('demoTrackedTableRow', demoTrackedTableRow);
@@ -136,7 +136,7 @@
 	    }
 	}());
 	(function () {
-	    angular.module('occIDEASApp').directive('demoTrackedTableCell', demoTrackedTableCell);
+	    angular.module('occIDEASApp.Modules').directive('demoTrackedTableCell', demoTrackedTableCell);
 	    demoTrackedTableCell.$inject = [];
 	    function demoTrackedTableCell() {
 	        return {
