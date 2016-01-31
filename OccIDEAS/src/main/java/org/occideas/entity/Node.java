@@ -16,9 +16,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Where;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @Entity
@@ -47,6 +48,7 @@ public class Node implements Cloneable {
 	private Date lastUpdated;
 	
 	@OneToMany(mappedBy="parent")
+	@Where(clause = "deleted = 0")
 	private List<Node> childNodes;
 	
 	@OneToMany(mappedBy="node", fetch = FetchType.EAGER)
