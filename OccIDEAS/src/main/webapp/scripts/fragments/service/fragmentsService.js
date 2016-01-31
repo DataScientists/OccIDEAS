@@ -15,6 +15,19 @@
 		    return data;
 		  });
 		};
+		var findFragmentChildNodes = function(idNode) {
+			  return $http.get('rest/fragment/get?id=' + idNode).then(function(response) {
+			    var data = response.data;
+			    var filteredData = [];
+			    for(var i=0;i < data.length;i++){
+					var node = data[i];
+					if(node.nodes!=null){					
+						filteredData=node.nodes;
+					}
+				}
+			    return filteredData;
+			  });
+			};
 		var getFragmentsByType = function(type) {
 			  return $http.get(modulesUrl+'/getlist').then(function(response) {
 			    var data = response.data;
@@ -22,7 +35,8 @@
 			    for(var i=0;i < data.length;i++){
 					var node = data[i];
 					if(node.type==type){
-						filteredData.push(node)
+						
+						filteredData.push(node);
 					}
 				}
 			    return filteredData;
@@ -58,6 +72,7 @@
 			get: getFragments,
 		    post: postNewFragment, 	    
 		    findFragment: findFragment,
+		    findFragmentChildNodes: findFragmentChildNodes,
 		    deleteFragment: deleteFragment
 		};
 		function handleError( response ) {
