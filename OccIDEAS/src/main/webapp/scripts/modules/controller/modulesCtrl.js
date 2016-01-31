@@ -2,27 +2,32 @@
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
 	
-	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache'];
-	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache){
+	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter'];
+	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter){
 		var self = this;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
-		self.tableParams = new NgTableParams({group: "type"}, {	
+		self.tableParams = new NgTableParams(
+				{
+					group: "type",
+					sorting:{
+						type: 'asc',
+						name: 'asc',
+						description: 'asc'
+					}
+				}, {	
 	        getData: function($defer,params) {
-	          if(ModulesCache.get("all")){
-	        	  console.log("Data getting from modules cache ...");
-	        	  $defer.resolve();
-	  			  return ModulesCache.get("all");
-	  		  }
+	          if(params.filter().name){	
+	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+	          }else{
 	          return  ModulesService.get().then(function(data) {
 	        	  console.log("Data getting from modules ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
-//	        	  self.tableParams.total(data.length);
 	        	  self.tableParams.settings().dataset = data;
-	        	  ModulesCache.put("all",data);
 	        	  $defer.resolve();
 	            return data;
 	          });
+	          }
 	        },
 	      });
 	    self.treeView = treeView;
@@ -76,6 +81,7 @@
 	    function save(row, rowForm) {
 	        var originalRow = resetRow(row, rowForm);
 	        angular.extend(originalRow, row);
+	        self.isAdding = false;
 	    }
 	    
 	    function setInvalid(isInvalid) {
