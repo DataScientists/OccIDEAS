@@ -31,7 +31,7 @@
 	        	  console.log("Data getting from modules ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.settings().dataset = data;
-	        	  ModulesCache.push("all",data);
+	        	  ModulesCache.put("all",data);
 	        	  $defer.resolve();
 	            return data;
 	          });
