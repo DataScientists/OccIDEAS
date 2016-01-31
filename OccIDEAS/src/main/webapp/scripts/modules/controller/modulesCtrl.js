@@ -20,11 +20,18 @@
 	          if(params.filter().name || params.filter().description){	
 	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 	          }
+	          if(ModulesCache.get("all")){
+	        	  console.log("Data getting from modules cache ...");
+	        	  self.originalData = angular.copy(data);
+	        	  $defer.resolve();
+	  			  return ModulesCache.get("all");
+	  		  }	
 	          else{
 	          return  ModulesService.get().then(function(data) {
 	        	  console.log("Data getting from modules ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.settings().dataset = data;
+	        	  ModulesCache.push("all",data);
 	        	  $defer.resolve();
 	            return data;
 	          });
