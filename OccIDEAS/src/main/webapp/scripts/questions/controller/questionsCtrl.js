@@ -2,25 +2,48 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','QuestionsService','QuestionsCache'];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,QuestionsService,QuestionsCache) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','QuestionsCache'];
+	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,QuestionsCache) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
+		$scope.droppedFragment = null;
 		$scope.templateTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
-					var sourceNode = sourceNodeScope.node;
+					//var sourceNode = sourceNodeScope.node;
 				      return true;
 				    },
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
-					
+					var destNode = event.dest.nodesScope.node;
+					console.log("source"+sourceNode.type);
+					if(!destNode){
+						sourceNode.warning = 'warning';						
+					}
+					if (!destNode.nodes) {
+						destNode.nodes = [];
+					}
 					$scope.isDragging = false;
-					return true;
+					var deferred = $q.defer();
+					
+					return FragmentsService.findFragmentChildNodes(sourceNode.idNode).then(function(fragmentData) {						
+						destNode.nodes.unshift({
+							idNode : fragmentData[0].idNode * 10 + fragmentData[0].nodes.length,
+							name : fragmentData[0].name,
+							description : fragmentData[0].description,
+							topNodeId : fragmentData[0].idNode,
+							type : fragmentData[0].type,
+							nodeclass : fragmentData[0].nodeclass,
+							nodes : fragmentData[0].nodes
+						});
+						deferred.resolve();
+						return false;
+					});
 				},
 				beforeDrag: function(sourceNodeScope){
-					$scope.isDragging = true;					
-						return true;
+					$scope.isDragging = true;	
+					
+					return true;
 				}			
 		}
 		$scope.treeOptions = {
@@ -72,7 +95,12 @@
 			}
 			$scope.aJsmFragmentSlider = data;
 		});
-		FragmentsService.getByType('F_template').then(function(data) {		
+		FragmentsService.getByType('F_template').then(function(data) {	
+			for(var i=0;i < data.length;i++){
+				var node = data[i];
+				node.type = "Q_linkedtemplate";
+				node.nodeclass = "Q";
+			}
 			$scope.templateFragmentSlider = data;
 		});
 		FragmentsService.getByType('F_frequency').then(function(data) {		
@@ -216,7 +244,7 @@
 		};
 		$scope.moduleMenuOptions = 
 			[ [ 'Add Question', function($itemScope) {
-						$scope.newSubItem($itemScope)
+						$scope.newSubItem($itemScope);
 						}
 			  ],		  
 			  [ 'Show/Hide Children', function($itemScope) {
@@ -249,11 +277,11 @@
 		
 		$scope.questionMenuOptions = 
 			[ [ 'Add Possible Answer', function($itemScope) {
-						$scope.newSubItem($itemScope)
+						$scope.newSubItem($itemScope);
 						}
 			  ],
 			  [ 'Remove', function($itemScope) {
-					$scope.remove($itemScope)
+					$scope.remove($itemScope);
 					}
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
@@ -275,17 +303,17 @@
 					} 
 				  ],
 			  [ 'Open as aJMS', function($itemScope) {	
-				  					$scope.addFragmentTab($itemScope.node)
+				  					$scope.addFragmentTab($itemScope.node);
 				  				} 
 			  ]
 			];
 		$scope.possibleAnswerMenuOptions = 
 			[ [ 'Add Quesiton', function($itemScope) {
-						$scope.newSubItem($itemScope)
+						$scope.newSubItem($itemScope);
 						}
 			  ],
 			  [ 'Remove', function($itemScope) {
-					$scope.remove($itemScope)
+					$scope.remove($itemScope);
 					}
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
@@ -310,7 +338,7 @@
 		$scope.defaultMenuOptions = 
 			[ 
 			  [ 'Remove', function($itemScope) {
-					$scope.remove($itemScope)
+					$scope.remove($itemScope);
 					}
 			  ]
 			];
