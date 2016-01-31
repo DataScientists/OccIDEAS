@@ -132,7 +132,7 @@
 			if (nodeData.type == 'P_simple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Question",
 					placeholder: "New Question",
 					description : "default",
 					topNodeId : nodeData.idNode,
