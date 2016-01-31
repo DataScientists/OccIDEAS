@@ -22,7 +22,7 @@
 	          }
 	          if(ModulesCache.get("all")){
 	        	  console.log("Data getting from modules cache ...");
-	        	  self.originalData = angular.copy(data);
+//	        	  self.originalData = angular.copy(data);
 	        	  $defer.resolve();
 	  			  return ModulesCache.get("all");
 	  		  }	
