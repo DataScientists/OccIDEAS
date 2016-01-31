@@ -17,9 +17,10 @@
 					}
 				}, {	
 	        getData: function($defer,params) {
-	          if(params.filter().name){	
+	          if(params.filter().name || params.filter().description){	
 	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-	          }else{
+	          }
+	          else{
 	          return  ModulesService.get().then(function(data) {
 	        	  console.log("Data getting from modules ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
