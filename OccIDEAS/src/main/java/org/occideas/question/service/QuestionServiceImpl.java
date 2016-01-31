@@ -35,19 +35,18 @@ public class QuestionServiceImpl implements QuestionService{
 
 	@Override
 	public QuestionVO create(QuestionVO o) {
-		Question question = dao.save(mapper.convertToNode(o));
+		Question question = dao.save(mapper.convertToQuestion(o));
 		return mapper.convertToQuestionVO(question);
 	}
 
 	@Override
-	public QuestionVO update(QuestionVO o) {
-		Question question = dao.merge(mapper.convertToNode(o));
-		return mapper.convertToQuestionVO(question);
+	public void update(QuestionVO o) {
+		dao.saveOrUpdate(mapper.convertToQuestion(o));
 	}
 
 	@Override
 	public void delete(QuestionVO o) {
-		dao.delete(mapper.convertToNode(o));
+		dao.delete(mapper.convertToQuestion(o));
 	}
 
 }

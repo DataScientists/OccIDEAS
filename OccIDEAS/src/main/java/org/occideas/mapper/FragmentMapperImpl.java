@@ -23,27 +23,27 @@ public class FragmentMapperImpl implements FragmentMapper {
             return null;
         }
 
-        FragmentVO moduleVO = new FragmentVO();
+        FragmentVO fragmentVO = new FragmentVO();
 
-        moduleVO.setIdNode( moduleEntity.getIdNode() );
-        moduleVO.setName( moduleEntity.getName() );
-        moduleVO.setDescription( moduleEntity.getDescription() );
-        moduleVO.setType( moduleEntity.getType() );
-        moduleVO.setSequence( moduleEntity.getSequence() );
-        moduleVO.setNumber( moduleEntity.getNumber() );
-//        moduleVO.setParent( nodeMapper.convertToNodeVO( moduleEntity.getParent() ) );
-        moduleVO.setLink( moduleEntity.getLink() );
-        moduleVO.setTopNodeId( moduleEntity.getTopNodeId() );
-        moduleVO.setLastUpdated( moduleEntity.getLastUpdated() );
+        fragmentVO.setIdNode( moduleEntity.getIdNode() );
+        fragmentVO.setName( moduleEntity.getName() );
+        fragmentVO.setDescription( moduleEntity.getDescription() );
+        fragmentVO.setType( moduleEntity.getType() );
+        fragmentVO.setSequence( moduleEntity.getSequence() );
+        fragmentVO.setNumber( moduleEntity.getNumber() );
+        fragmentVO.setParentId( moduleEntity.getParentId());
+        fragmentVO.setLink( moduleEntity.getLink() );
+        fragmentVO.setTopNodeId( moduleEntity.getTopNodeId() );
+        fragmentVO.setLastUpdated( moduleEntity.getLastUpdated() );
         List<Node> childNodes = moduleEntity.getChildNodes();
         if(includeChild && !CommonUtil.isListEmpty(childNodes)){
-        moduleVO.setChildNodes( nodeMapper.convertToNodeVOList( childNodes ) );
+        fragmentVO.setChildNodes( nodeMapper.convertToNodeVOList( childNodes ) );
         }
-        moduleVO.setOriginalId( moduleEntity.getOriginalId() );
-        moduleVO.setDeleted( moduleEntity.getDeleted() );
-        moduleVO.setNodeclass( moduleEntity.getNodeclass() );
+        fragmentVO.setOriginalId( moduleEntity.getOriginalId() );
+        fragmentVO.setDeleted( moduleEntity.getDeleted() );
+        fragmentVO.setNodeclass( moduleEntity.getNodeclass() );
 
-        return moduleVO;
+        return fragmentVO;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class FragmentMapperImpl implements FragmentMapper {
         module.setDescription( moduleVO.getDescription() );
         module.setType( moduleVO.getType() );
         module.setSequence( moduleVO.getSequence() );
-        module.setParent( nodeMapper.convertToModule( moduleVO.getParent() ) );
+        module.setParentId( moduleVO.getParentId());
         module.setLastUpdated( moduleVO.getLastUpdated() );
         List<NodeVO> childNodes = moduleVO.getChildNodes();
         if(!CommonUtil.isListEmpty(childNodes)){

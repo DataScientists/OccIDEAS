@@ -3,10 +3,12 @@ package org.occideas.vo;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties({"editEnabled"})
 public class NodeVO {
 
 	private long idNode;
@@ -15,8 +17,7 @@ public class NodeVO {
 	private String type;
 	private int sequence;
 	private String number;
-	@JsonInclude(Include.NON_NULL)
-	private NodeVO parent;
+	private String parentId;
 	private long link;
 	private long topNodeId;
 	private Date lastUpdated;
@@ -77,12 +78,12 @@ public class NodeVO {
 		this.number = number;
 	}
 
-	public NodeVO getParent() {
-		return parent;
+	public String getParentId() {
+		return parentId;
 	}
 
-	public void setParent(NodeVO parent) {
-		this.parent = parent;
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
 
 	public long getLink() {

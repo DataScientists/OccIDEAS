@@ -43,9 +43,8 @@ public class FragmentServiceImpl implements FragmentService {
 	}
 
 	@Override
-	public FragmentVO update(FragmentVO module) {
-		Fragment moduleEntity = dao.merge(mapper.convertToFragment(module));
-		return mapper.convertToFragmentVO(moduleEntity,false);
+	public void update(FragmentVO module) {
+		dao.merge(mapper.convertToFragment(module));
 	}
 
 	@Override

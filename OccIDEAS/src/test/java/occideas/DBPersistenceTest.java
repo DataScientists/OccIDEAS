@@ -86,14 +86,14 @@ public class DBPersistenceTest {
 		
 		Question q = new Question();
 		q.setName("Question 1");
-		q.setParent(m);
+//		q.setParent(m);
 		q.setTopNodeId(m.getIdNode());
 		
 		session.save(q);
 		
 		PossibleAnswer pa = new PossibleAnswer();
 		pa.setName("Possible Answer 1");
-		pa.setParent(q);
+//		pa.setParent(q);
 		pa.setTopNodeId(m.getIdNode());
 		
 		session.save(pa);
@@ -132,28 +132,28 @@ public class DBPersistenceTest {
 		
 		Question q = new Question();
 		q.setName("Question 1");
-		q.setParent(m);
+//		q.setParent(m);
 		q.setTopNodeId(m.getIdNode());
 		
 		session.save(q);
 		
 		PossibleAnswer pa = new PossibleAnswer();
 		pa.setName("Possible Answer 1");
-		pa.setParent(q);
+//		pa.setParent(q);
 		pa.setTopNodeId(m.getIdNode());
 		
 		session.save(pa);
 		
 		Question q1 = new Question();
 		q1.setName("Question 2");
-		q1.setParent(m);
+//		q1.setParent(m);
 		q1.setTopNodeId(m.getIdNode());
 		
 		session.save(q1);
 		
 		PossibleAnswer pa1 = new PossibleAnswer();
 		pa1.setName("Possible Answer 2");
-		pa1.setParent(q);
+//		pa1.setParent(q);
 		pa1.setTopNodeId(m.getIdNode());
 		
 		session.save(pa1);

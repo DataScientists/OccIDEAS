@@ -42,9 +42,8 @@ public class AgentServiceImpl implements AgentService {
 	}
 
 	@Override
-	public AgentVO update(AgentVO o) {
-		Agent moduleEntity = dao.merge(mapper.convertToAgent(o));
-		return mapper.convertToAgentVO(moduleEntity);
+	public void update(AgentVO o) {
+		dao.merge(mapper.convertToAgent(o));
 	}
 
 	@Override

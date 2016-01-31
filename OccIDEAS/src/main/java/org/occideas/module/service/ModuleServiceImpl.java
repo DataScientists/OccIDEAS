@@ -42,9 +42,8 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public ModuleVO update(ModuleVO module) {
-		Module moduleEntity = dao.merge(mapper.convertToModule(module));
-		return mapper.convertToModuleVO(moduleEntity,false);
+	public void update(ModuleVO module) {
+		dao.merge(mapper.convertToModule(module));
 	}
 
 	@Override

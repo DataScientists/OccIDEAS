@@ -6,10 +6,12 @@ import java.util.List;
 import org.occideas.entity.Node;
 import org.occideas.entity.Note;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties({"editEnabled"})
 public class QuestionVO {
 
 	private long idNode;
@@ -18,16 +20,15 @@ public class QuestionVO {
 	private String type;
 	private int sequence;
 	private String number;
-	@JsonInclude(Include.NON_NULL)
-	private Node parent;
+	private String parentId;
 	private long link;
 	private long topNodeId;
 	private Date lastUpdated;
 	@JsonInclude(Include.NON_EMPTY)
 	@JsonProperty(value = "nodes")
-	private List<Node> childNodes;
+	private List<NodeVO> childNodes;
 	@JsonInclude(Include.NON_EMPTY)
-	private List<Note> notes;
+	private List<NoteVO> notes;
 	private long originalId;
 	private Integer deleted = 0;
 	private String nodeclass;
@@ -80,13 +81,6 @@ public class QuestionVO {
 		this.number = number;
 	}
 
-	public Node getParent() {
-		return parent;
-	}
-
-	public void setParent(Node parent) {
-		this.parent = parent;
-	}
 
 	public long getLink() {
 		return link;
@@ -110,22 +104,6 @@ public class QuestionVO {
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
-	}
-
-	public List<Node> getChildNodes() {
-		return childNodes;
-	}
-
-	public void setChildNodes(List<Node> childNodes) {
-		this.childNodes = childNodes;
-	}
-
-	public List<Note> getNotes() {
-		return notes;
-	}
-
-	public void setNotes(List<Note> notes) {
-		this.notes = notes;
 	}
 
 	public long getOriginalId() {
@@ -152,4 +130,29 @@ public class QuestionVO {
 		this.nodeclass = nodeclass;
 	}
 
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
+
+	public List<NodeVO> getChildNodes() {
+		return childNodes;
+	}
+
+	public void setChildNodes(List<NodeVO> childNodes) {
+		this.childNodes = childNodes;
+	}
+
+	public List<NoteVO> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<NoteVO> notes) {
+		this.notes = notes;
+	}
+
+	
 }

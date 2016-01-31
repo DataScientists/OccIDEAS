@@ -93,9 +93,14 @@ tr.angular-ui-tree-empty {
     </div>
     <div ng-show="node.editEnabled">
       <input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 
-			ng-keypress="(($event.which === 13))?saveEdit(this):0">
+			ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
     </div>
     </div>
+	<div style="padding-top: 10px;padding-left: 30px;">
+		<button type="button" class="btn btn-default btn-lg" ng-if="node.type === 'M_Module'" ng-click="save()">
+  			<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Save
+		</button>
+	</div>
 	<div class="form-group pull-right" style="margin-top: 5px;">
     <!-- Agents rules to go here -->
 	</div>

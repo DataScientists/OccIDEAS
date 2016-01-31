@@ -30,7 +30,7 @@ public class ModuleMapperImpl implements ModuleMapper {
         moduleVO.setType( moduleEntity.getType() );
         moduleVO.setSequence( moduleEntity.getSequence() );
         moduleVO.setNumber( moduleEntity.getNumber() );
-//        moduleVO.setParent( nodeMapper.convertToNodeVO( moduleEntity.getParent() ) );
+        moduleVO.setParentId( moduleEntity.getParentId());
         moduleVO.setLink( moduleEntity.getLink() );
         moduleVO.setTopNodeId( moduleEntity.getTopNodeId() );
         moduleVO.setLastUpdated( moduleEntity.getLastUpdated() );
@@ -72,7 +72,7 @@ public class ModuleMapperImpl implements ModuleMapper {
         module.setDescription( moduleVO.getDescription() );
         module.setType( moduleVO.getType() );
         module.setSequence( moduleVO.getSequence() );
-        module.setParent( nodeMapper.convertToModule( moduleVO.getParent() ) );
+        module.setParentId( moduleVO.getParentId() );
         module.setLastUpdated( moduleVO.getLastUpdated() );
         List<NodeVO> childNodes = moduleVO.getChildNodes();
         if(!CommonUtil.isListEmpty(childNodes)){

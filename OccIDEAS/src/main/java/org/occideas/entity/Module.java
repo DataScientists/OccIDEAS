@@ -34,7 +34,7 @@ public class Module extends Node implements Serializable{
 	}
 
 	public void addChild(Question childNode) {
-		childNode.setParent(this);
+		childNode.setParentId(this.getParentId());
 		super.setChildNodes(getChildNodes() == null?new ArrayList<Node>():getChildNodes());
 		getChildNodes().add(childNode);
 	}

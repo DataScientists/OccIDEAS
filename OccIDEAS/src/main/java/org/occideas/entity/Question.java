@@ -25,7 +25,7 @@ public class Question extends Node {
 	}
 
 	public void addChild(PossibleAnswer childNode) {
-		childNode.setParent(this);
+		childNode.setParentId(this.getParentId());
 		this.setChildNodes(this.getChildNodes() == null ? new ArrayList<Node>() : this.getChildNodes());
 		this.getChildNodes().add(childNode);
 	}

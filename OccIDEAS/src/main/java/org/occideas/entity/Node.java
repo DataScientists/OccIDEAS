@@ -13,9 +13,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -40,14 +41,15 @@ public class Node implements Cloneable {
 	private int sequence;
 	private String number;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	private Node parent;
+	@Column(name="parent_idNode")
+	private String parentId;
 	
 	private long link;
 	private long topNodeId;
 	private Date lastUpdated;
 	
-	@OneToMany(mappedBy="parent")
+	@OneToMany(mappedBy="parentId")
+	@Cascade(value=CascadeType.SAVE_UPDATE)
 	@Where(clause = "deleted = 0")
 	private List<Node> childNodes;
 	
@@ -70,7 +72,7 @@ public class Node implements Cloneable {
 		this.type = node.getType();
 		this.sequence = node.getSequence();
 		this.number = node.getNumber();
-		this.parent = node.getParent();
+		this.parentId = node.getParentId();
 		
 		this.link = node.getLink();
 		this.topNodeId = node.getTopNodeId();
@@ -82,7 +84,7 @@ public class Node implements Cloneable {
 	}
 
 	public void addChild(Node childNode) {
-		childNode.setParent(this);
+		childNode.setParentId(this.getParentId());
 		this.setChildNodes(getChildNodes() == null ? new ArrayList<Node>() : getChildNodes());
 		getChildNodes().add(childNode);
 	}
@@ -150,13 +152,13 @@ public class Node implements Cloneable {
 	public void setSequence(int sequence) {
 		this.sequence = sequence;
 	}
-
-	public Node getParent() {
-		return parent;
+	
+	public String getParentId() {
+		return parentId;
 	}
 
-	public void setParent(Node parent) {
-		this.parent = parent;
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
 
 	public Date getLastUpdated() {

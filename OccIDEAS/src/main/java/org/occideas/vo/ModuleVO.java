@@ -14,8 +14,7 @@ public class ModuleVO {
 	private String type;
 	private int sequence;
 	private String number;
-	@JsonInclude(Include.NON_NULL)
-	private NodeVO parent;
+	private String parentId;
 	private long link;
 	private long topNodeId;
 	private Date lastUpdated;
@@ -76,12 +75,12 @@ public class ModuleVO {
 		this.number = number;
 	}
 
-	public NodeVO getParent() {
-		return parent;
+	public String getParentId() {
+		return parentId;
 	}
 
-	public void setParent(NodeVO parent) {
-		this.parent = parent;
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
 
 	public long getLink() {

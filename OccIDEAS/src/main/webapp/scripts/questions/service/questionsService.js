@@ -13,6 +13,16 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function save(data){
+			var restSaveUrl = 'rest/question/update';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -28,7 +38,8 @@
         }
 		
 		return {
-			findQuestions: findQuestions
+			findQuestions: findQuestions,
+			save:save
 		};
 	}
 })();

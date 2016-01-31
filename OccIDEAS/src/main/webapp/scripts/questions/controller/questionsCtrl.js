@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService' ];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','QuestionsService','QuestionsCache'];
+	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,QuestionsService,QuestionsCache) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -104,9 +104,11 @@
 			if (nodeData.type == 'P_simple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "New Question",
+					name : "",
+					placeholder: "New Question",
 					description : "default",
 					topNodeId : nodeData.idNode,
+					parentId:nodeData.idNode,
 					type : "Q_simple",
 					nodeclass : "Q",
 					nodes : []
@@ -114,8 +116,10 @@
 			} else if (nodeData.type == 'Q_single') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "New Possible Answer",
+					name : "",
+					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
+					parentId:nodeData.idNode,
 					type : "P_single",
 					nodeclass : "P",
 					nodes : []
@@ -123,8 +127,10 @@
 			}else if (nodeData.type == 'Q_multiple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "New Multi Possible Answer",
+					name : "",
+					placeholder: "New Multi Possible Answer",
 					topNodeId : nodeData.idNode,
+					parentId:nodeData.idNode,
 					type : "P_multiple",
 					nodeclass : "P",
 					nodes : []
@@ -132,8 +138,10 @@
 			}else if (nodeData.type == 'Q_simple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "New Possible Answer",
+					name : "",
+					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
+					parentId:nodeData.idNode,
 					type : "P_single",
 					nodeclass : "P",
 					nodes : []
@@ -141,8 +149,10 @@
 			}else if (nodeData.type == 'M_Module') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "New Question",
+					name : "",
+					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
+					parentId:nodeData.idNode,
 					type : "Q_simple",
 					nodeclass : "Q",
 					nodes : []
@@ -151,8 +161,10 @@
 				var nodeData = scope.$modelValue;
 		        nodeData.nodes.push({
 		          id: nodeData.idNode * 10 + nodeData.nodes.length,
-		          name: "new node",
+		          name: "",
+		          placeholder:"new node",
 		          topNodeId : nodeData.idNode,
+		          parentId:nodeData.idNode,
 				  type : "default",
 				  warning: "warning",
 		          nodes: []
@@ -303,5 +315,11 @@
 			  ]
 			];
 		
+		$scope.save = function (){
+			QuestionsService.save($scope.data[0]).then(function(results){
+				console.log(results);
+				console.log(QuestionsCache.info());
+			});
+		};
 	}
 })();

@@ -25,7 +25,7 @@ public class NodeMapperImpl implements NodeMapper{
 	        nodeVO.setType( node.getType() );
 	        nodeVO.setSequence( node.getSequence() );
 	        nodeVO.setNumber( node.getNumber() );
-//	        nodeVO.setParent( convertToNodeVO( node.getParent() ) );
+	        nodeVO.setParentId(node.getParentId());
 	        nodeVO.setLink( node.getLink() );
 	        nodeVO.setTopNodeId( node.getTopNodeId() );
 	        nodeVO.setLastUpdated( node.getLastUpdated() );
@@ -67,7 +67,7 @@ public class NodeMapperImpl implements NodeMapper{
 	        node.setDescription( nodeVO.getDescription() );
 	        node.setType( nodeVO.getType() );
 	        node.setSequence( nodeVO.getSequence() );
-//	        node.setParent( convertToModule( nodeVO.getParent() ) );
+	        node.setParentId(nodeVO.getParentId());
 	        node.setLastUpdated( nodeVO.getLastUpdated() );
 	        List<NodeVO> childNodes = nodeVO.getChildNodes();
 	        if(!CommonUtil.isListEmpty(childNodes)){

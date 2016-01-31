@@ -13,7 +13,7 @@ public interface QuestionMapper {
 
 	List<QuestionVO> convertToQuestionVOList(List<Question> questionList);
 
-	Question convertToNode(QuestionVO questionVO);
+	Question convertToQuestion(QuestionVO questionVO);
 	
 	List<Question> convertToQuestionList(List<QuestionVO> questionVO);
 	
