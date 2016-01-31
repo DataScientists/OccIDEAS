@@ -15,7 +15,19 @@
 		    return data;
 		  });
 		};
-		
+		var getFragmentsByType = function(type) {
+			  return $http.get(modulesUrl+'/getlist').then(function(response) {
+			    var data = response.data;
+			    var filteredData = [];
+			    for(var i=0;i < data.length;i++){
+					var node = data[i];
+					if(node.type==type){
+						filteredData.push(node)
+					}
+				}
+			    return filteredData;
+			  });
+			};
 		function findFragment(idNode) {
 			var restUrl = 'rest/fragment/get?id=' + idNode;
 			var request =  $http({
@@ -42,10 +54,11 @@
 			}; 
 
 		return {		  
-		      get: getFragments,
-		      post: postNewFragment, 	    
-		      findFragment: findFragment,
-		      deleteFragment: deleteFragment
+			getByType: getFragmentsByType,
+			get: getFragments,
+		    post: postNewFragment, 	    
+		    findFragment: findFragment,
+		    deleteFragment: deleteFragment
 		};
 		function handleError( response ) {
             if (

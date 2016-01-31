@@ -89,6 +89,7 @@ tr.angular-ui-tree-empty {
 	 <div ng-hide="node.editEnabled" data-nodrag>
        <span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
 		<span ng-if="isDragging" class="badge">{{node.type}}</span>
+		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>
     </div>
     <div ng-show="node.editEnabled">
       <input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 
@@ -108,9 +109,9 @@ tr.angular-ui-tree-empty {
 	
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-  <div class="tree-node">
-    <div class="tree-node-content">
-      <a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
+<div ui-tree-handle class="tree-node tree-node-content form-inline" >
+	<div  >
+	<a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
 		ng-click="toggle(this)">
 		<span
         class="glyphicon"
@@ -118,13 +119,23 @@ tr.angular-ui-tree-empty {
           'glyphicon-chevron-right': collapsed,
           'glyphicon-chevron-down': !collapsed
         }"></span></a>
-      {{node.name}}
+	<div class="form-group">
+	 <div ng-hide="node.editEnabled" data-nodrag>
+       <span data-nodrag>{{node.name}}</span>
+		<span ng-if="isDragging" class="badge">{{node.type}}</span>
+		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>
     </div>
+    
+    </div>
+	
+	</div>
   </div>
+  <div ng-bind="selected"></div>
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
     <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer2.html'">
     </li>
   </ol>
+
 </script>
 <div class="row">
 	<div class="col-sm-12">
@@ -147,12 +158,33 @@ tr.angular-ui-tree-empty {
 <div id="fragmentsdragdrop"><ul></ul>
 <div>
     <h5>Fragment List</h5>
-     <div ui-tree id="tree-root2">
-		<ol ui-tree-nodes ng-model="fragment">
-			<li ng-repeat="node in fragment" ui-tree-node 
+    <uib-accordion close-others="oneAtATime">
+     	 <uib-accordion-group heading="aJSMs" >
+				<div ui-tree id="fragmentTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
+				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
 				ng-include="'nodes_renderer2.html'"></li>
-		</ol>
-	</div>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+    	<uib-accordion-group heading="Templates" >
+		<div ui-tree="templateTreeOptions" id="templateTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="templateFragmentSlider">
+				<li ng-repeat="node in templateFragmentSlider" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+    	<uib-accordion-group heading="Frequencies" >
+		<div ui-tree id="frequencyTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="frequencyFragmentSlider">
+				<li ng-repeat="node in frequencyFragmentSlider" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+     </uib-accordion>
+     
   </div>
 </div>
 </div>

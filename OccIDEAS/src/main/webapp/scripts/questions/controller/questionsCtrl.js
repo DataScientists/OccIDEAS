@@ -7,7 +7,27 @@
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
+		$scope.templateTreeOptions = {
+				accept: function(sourceNodeScope, destNodesScope, destIndex) {
+					var sourceNode = sourceNodeScope.node;
+				      return true;
+				    },
+				beforeDrop:function(event){
+					var sourceNode = event.source.nodeScope.node;
+					
+					$scope.isDragging = false;
+					return true;
+				},
+				beforeDrag: function(sourceNodeScope){
+					$scope.isDragging = true;					
+						return true;
+				}			
+		}
 		$scope.treeOptions = {
+				accept: function(sourceNodeScope, destNodesScope, destIndex) {
+					var sourceNode = sourceNodeScope.node;
+				      return true;
+				    },
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
 					sourceNode.warning = null;
@@ -44,8 +64,19 @@
 				}
 		}
 		$scope.rightNav = "slideFrag";
-		FragmentsService.get().then(function(val) {
-			$scope.fragment = val;
+		FragmentsService.getByType('F_ajsm').then(function(data) {	
+			for(var i=0;i < data.length;i++){
+				var node = data[i];
+				node.type = "Q_linkedajsm";
+				node.nodeclass = "Q";
+			}
+			$scope.aJsmFragmentSlider = data;
+		});
+		FragmentsService.getByType('F_template').then(function(data) {		
+			$scope.templateFragmentSlider = data;
+		});
+		FragmentsService.getByType('F_frequency').then(function(data) {		
+			$scope.frequencyFragmentSlider = data;
 		});
 		$scope.toggleRight = function(){
 		    if ($scope.rightNav === "slideFrag"){
