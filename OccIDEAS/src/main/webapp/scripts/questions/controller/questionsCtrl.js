@@ -9,6 +9,36 @@
 		$scope.isDragging = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
+		$scope.aJsmTreeOptions = {
+				accept: function(sourceNodeScope, destNodesScope, destIndex) {
+					//var sourceNode = sourceNodeScope.node;
+				      return true;
+				    },
+				beforeDrop:function(event){
+					var sourceNode = event.source.nodeScope.node;
+					var destNode = event.dest.nodesScope.node;
+					console.log("source"+sourceNode.type);
+					if(!destNode){
+						return false;						
+					}else{
+						if (!sourceNode.nodes) {
+							sourceNode.nodes = [];
+						}
+						destNode.nodes.unshift({
+								idNode : sourceNode.idNode * 10 + sourceNode.nodes.length,
+								name : sourceNode.name,
+								description : sourceNode.description,
+								topNodeId : sourceNode.idNode,
+								type : sourceNode.type,
+								nodeclass : sourceNode.nodeclass,
+								link : sourceNode.idNode,
+								nodes : []
+						});
+						return false;
+					}
+					
+				}
+		}
 		$scope.templateTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					//var sourceNode = sourceNodeScope.node;
@@ -80,7 +110,8 @@
 				},
 				beforeDrag: function(sourceNodeScope){
 					$scope.isDragging = true;
-					if(sourceNodeScope.node.type === 'M_Module'){					
+					if(sourceNodeScope.node.classtype === 'M'){	
+						$scope.isDragging = false;
 						return false;
 					}else{
 						return true;
@@ -145,17 +176,18 @@
 		};
 		
 		function cascadeDelete(arrayInp){
-			if(!angular.isUndefined(arrayInp) && arrayInp.length > 0){
+			if(arrayInp.length > 0){
 				_.each(arrayInp, function(obj) {
 					  _.each(obj, function(value, key) {
 					    if(key === 'deleted') {
 					      obj[key] = 1;
 					    }
 					  });
+					if(obj.nodes.length > 0){
+						cascadeDelete(obj.nodes);
+					}
 				});
-				if(!angular.isUndefined(arrayInp.nodes) && arrayInp.nodes.length > 0){
-					cascadeDelete(arrayInp.nodes);
-				}
+				
 			}
 		}
 		
@@ -175,29 +207,29 @@
 					placeholder: "New Question",
 					description : "default",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
-					type : "Q_simple",
+					parentId: nodeData.idNode,
+					type : "Q_single",
 					nodeclass : "Q",
 					nodes : []
 				});
 			} else if (nodeData.type == 'Q_single') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
-					type : "P_single",
+					parentId: nodeData.idNode,
+					type : "P_simple",
 					nodeclass : "P",
 					nodes : []
 				});
 			}else if (nodeData.type == 'Q_multiple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Multi Possible Answer",
 					placeholder: "New Multi Possible Answer",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
+					parentId: nodeData.idNode,
 					type : "P_multiple",
 					nodeclass : "P",
 					nodes : []
@@ -205,21 +237,21 @@
 			}else if (nodeData.type == 'Q_simple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
-					type : "P_single",
+					parentId: nodeData.idNode,
+					type : "P_simple",
 					nodeclass : "P",
 					nodes : []
 				});
 			}else if (nodeData.type == 'M_Module') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
+					parentId: nodeData.idNode,
 					type : "Q_simple",
 					nodeclass : "Q",
 					nodes : []
@@ -228,10 +260,10 @@
 				var nodeData = scope.$modelValue;
 		        nodeData.nodes.push({
 		          id: nodeData.idNode * 10 + nodeData.nodes.length,
-		          name: "",
+		          name: "new default node",
 		          placeholder:"new node",
 		          topNodeId : nodeData.idNode,
-		          parentId:nodeData.idNode,
+		          parentId: nodeData.idNode,
 				  type : "default",
 				  warning: "warning",
 		          nodes: []
@@ -304,6 +336,10 @@
 		              toggleChildren($itemScope);
 					} 
 				  ], null, // Dividier
+			  [ 'Run Interview', function($itemScope) {
+					alert('under development');
+				} 
+			  ],
 			  [ 'Export to JSON', function($itemScope) {
 					alert('under development');
 				} 
@@ -341,10 +377,12 @@
 		              toggleChildren($itemScope);
 					} 
 				  ],
-			  [ 'Open as aJMS', function($itemScope) {	
-				  					$scope.addFragmentTab($itemScope.node);
-				  				} 
-			  ]
+				  [ 'Open as aJMS', function($itemScope) {	
+	  					var node = $itemScope.node;
+	  					node.idNode = node.link;
+	  					$scope.addFragmentTab(node);
+	  				} 
+				  ]
 			];
 		$scope.possibleAnswerMenuOptions = 
 			[ [ 'Add Quesiton', function($itemScope) {
@@ -382,10 +420,14 @@
 			  ]
 			];
 		
-		$scope.save = function (){
+		$scope.saveModule = function (){
 			QuestionsService.save($scope.data[0]).then(function(response){
 				if(response.status === 200){
 					alert('Save was Successful!');
+					//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
+					QuestionsService.findQuestions($scope.data[0].idNode).then(function(data) {	
+						$scope.data = data.data;
+					});
 				}
 			});
 		};
