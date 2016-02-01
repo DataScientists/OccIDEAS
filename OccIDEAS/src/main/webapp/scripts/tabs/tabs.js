@@ -35,15 +35,10 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null},
 			        resolve:{
-			        	data: function($stateParams,QuestionsService,QuestionsCache) {
-			        		//if(QuestionsCache.get($stateParams.row)){
-			        		//	console.log("Data getting from questions cache ...");
-			        		//	return QuestionsCache.get($stateParams.row);
-			        		//}
+			        	data: function($stateParams,QuestionsService) {
 			        		return QuestionsService.findQuestions($stateParams.row)
 			        				.then(function(data){
 			        					console.log("Data getting from questions AJAX ...");
-			        					QuestionsCache.put($stateParams.row,data);
 						        		return data;
 		    				})
 			        	}

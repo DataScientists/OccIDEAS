@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','QuestionsCache','ModulesService'];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,QuestionsCache,ModulesService) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','ModulesService'];
+	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,ModulesService) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -355,7 +355,6 @@
 		$scope.save = function (){
 			QuestionsService.save($scope.data[0]).then(function(results){
 				console.log(results);
-				console.log(QuestionsCache.info());
 			});
 		};
 	}

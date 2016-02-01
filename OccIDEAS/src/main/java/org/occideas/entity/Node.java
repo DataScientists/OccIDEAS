@@ -9,7 +9,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -28,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @DiscriminatorColumn(name = "node_discriminator", discriminatorType=DiscriminatorType.STRING)
 @JsonRootName(value = "Nodes")
 public class Node implements Cloneable {
-	@Id @GeneratedValue
+	@Id
 	private long idNode;
 	
 	@Column(length=2048)

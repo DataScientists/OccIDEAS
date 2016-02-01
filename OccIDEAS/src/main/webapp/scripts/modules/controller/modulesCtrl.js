@@ -1,7 +1,6 @@
 (function(){
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
-	
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter){
 		var self = this;
