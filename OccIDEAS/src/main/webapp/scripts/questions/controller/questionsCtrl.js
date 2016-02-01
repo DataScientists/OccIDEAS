@@ -128,7 +128,6 @@
 			_.each(arrayList, function(data) {
 				data.sequence = seq++;
 			})
-			 console.log(arrayList);
 		}
 		
 		ModulesService.getActiveModules().then(function(data) {	
@@ -269,6 +268,7 @@
 		          nodes: []
 		        });
 			}
+			reorderSequence(scope.$modelValue.nodes);
 		};
 
 		$scope.collapseAll = function() {
