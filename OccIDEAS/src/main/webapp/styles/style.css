@@ -8,6 +8,20 @@
     color: #2e3436;
     
 }
+.badge-deleted {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #A54949;
+    border-radius: 10px;
+}
 .btn-save {
 	padding: 4px 4px !important;
     font-size: 14px !important; 

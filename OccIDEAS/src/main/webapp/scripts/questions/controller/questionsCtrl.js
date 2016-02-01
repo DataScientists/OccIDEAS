@@ -192,7 +192,7 @@
 					placeholder: "New Question",
 					description : "default",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
+					parentId: nodeData.idNode,
 					type : "Q_simple",
 					nodeclass : "Q",
 					nodes : []
@@ -203,7 +203,7 @@
 					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
+					parentId: nodeData.idNode,
 					type : "P_single",
 					nodeclass : "P",
 					nodes : []
@@ -214,7 +214,7 @@
 					name : "New Multi Possible Answer",
 					placeholder: "New Multi Possible Answer",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
+					parentId: nodeData.idNode,
 					type : "P_multiple",
 					nodeclass : "P",
 					nodes : []
@@ -225,7 +225,7 @@
 					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
+					parentId: nodeData.idNode,
 					type : "P_single",
 					nodeclass : "P",
 					nodes : []
@@ -236,7 +236,7 @@
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
-					parentId:nodeData.idNode,
+					parentId: nodeData.idNode,
 					type : "Q_simple",
 					nodeclass : "Q",
 					nodes : []
@@ -248,7 +248,7 @@
 		          name: "new default node",
 		          placeholder:"new node",
 		          topNodeId : nodeData.idNode,
-		          parentId:nodeData.idNode,
+		          parentId: nodeData.idNode,
 				  type : "default",
 				  warning: "warning",
 		          nodes: []
