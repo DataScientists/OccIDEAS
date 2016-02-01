@@ -4,6 +4,7 @@
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter){
 		var self = this;
+		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(
@@ -34,13 +35,22 @@
 	    self.del = del;
 	    self.save = save;
 	    self.add = add;
+	    self.toggleIsDeleting = toggleIsDeleting;
 	    
+	    function toggleIsDeleting(){
+	    	if(self.isDeleting){
+	    		self.isDeleting = false;
+	    	}else{
+	    		self.isDeleting = true;
+	    	}
+	    }
 	    function add(type) {
 	        self.isEditing = true;
 	        self.isAdding = true;
+	        
 	        self.tableParams.settings().dataset.unshift({
 	          name: "",
-	          idNode:Math.max.apply(null, _.pluck(self.tableParams.settings().dataset, "idNode"))+1,
+	          idNode:"",
 	          type: type,
 	          description: null
 	        });
@@ -84,6 +94,12 @@
 	        var originalRow = resetRow(row, rowForm);
 	        angular.extend(originalRow, row);
 	        self.isAdding = false;
+	        ModulesService.save(row).then(function(response){
+				if(response.status === 200){
+					alert('Save was Successful!');
+					self.tableParams.reload();
+				}
+			});
 	    }
 	    
 	    function setInvalid(isInvalid) {

@@ -7,6 +7,7 @@
 			abstract : true,
 			templateUrl : "scripts/tabs/view/tabs.html"
 		}).state('tabs.modules', {
+			url: '/modules/',
 			views:{
 				'moduleView':{
 					templateUrl : "scripts/modules/view/modulesTable.html",
@@ -14,6 +15,7 @@
 				}
 			}
 		}).state('tabs.fragments', {
+			url: '/fragments/',
 			views:{
 				'fragmentView':{
 					templateUrl : "scripts/fragments/view/fragmentsTable.html",
@@ -21,6 +23,7 @@
 				}
 			}
 		}).state('tabs.agents', {
+			url: '/agents/',
 			views:{
 				'agentView':{
 					templateUrl : "scripts/agents/view/agentsTable.html",

@@ -10,6 +10,7 @@ import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 
 @Service
@@ -43,7 +44,14 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public void update(ModuleVO module) {
-		dao.merge(mapper.convertToModule(module));
+		generateIdIfNotExist(module);
+		dao.saveOrUpdate(mapper.convertToModule(module));
+	}
+
+	private void generateIdIfNotExist(ModuleVO module) {
+		if(StringUtils.isEmpty(module.getIdNode())){
+			module.setIdNode(dao.generateIdNode());
+		}
 	}
 
 	@Override

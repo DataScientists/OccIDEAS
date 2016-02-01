@@ -2,10 +2,13 @@ package org.occideas.vo;
 
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties({"editEnabled","warning","placeholder","id","isEditing"})
 public class ModuleVO {
 
 	private long idNode;
@@ -140,7 +143,7 @@ public class ModuleVO {
 	}
 
 	public String getNodeclass() {
-		String nodeclass = "";
+		nodeclass = "";
 		if(this.getType().length()>0){
 			nodeclass = this.getType().substring(0,1);
 		}

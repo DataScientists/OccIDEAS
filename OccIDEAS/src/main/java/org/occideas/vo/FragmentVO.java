@@ -140,6 +140,10 @@ public class FragmentVO {
 	}
 
 	public String getNodeclass() {
+		nodeclass = "";
+		if(this.getType().length()>0){
+			nodeclass = this.getType().substring(0,1);
+		}
 		return nodeclass;
 	}
 

@@ -255,6 +255,39 @@
 					nodeclass : "Q",
 					nodes : []
 				});
+			}else if (nodeData.type == 'M_Module_') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "New Question",
+					placeholder: "New Question",
+					topNodeId : nodeData.idNode,
+					parentId: nodeData.idNode,
+					type : "Q_simple",
+					nodeclass : "Q",
+					nodes : []
+				});
+			}else if (nodeData.type == 'M_Module__') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "New Question",
+					placeholder: "New Question",
+					topNodeId : nodeData.idNode,
+					parentId: nodeData.idNode,
+					type : "Q_simple",
+					nodeclass : "Q",
+					nodes : []
+				});
+			}else if (nodeData.type == 'M_IntroModule') {
+				nodeData.nodes.push({
+					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					name : "New Question",
+					placeholder: "New Question",
+					topNodeId : nodeData.idNode,
+					parentId: nodeData.idNode,
+					type : "Q_simple",
+					nodeclass : "Q",
+					nodes : []
+				});
 			}else{
 				var nodeData = scope.$modelValue;
 		        nodeData.nodes.push({
@@ -304,6 +337,8 @@
 
 		$scope.showMenu = function(scope) {
 			if(scope.node.nodeclass=='M'){
+				return $scope.moduleMenuOptions;
+			}else if(scope.node.nodeclass=='F'){
 				return $scope.moduleMenuOptions;
 			}else if(scope.node.nodeclass=='Q'){
 				return $scope.questionMenuOptions;
