@@ -8,6 +8,13 @@
     color: #2e3436;
     
 }
+.btn-save {
+	padding: 4px 4px !important;
+    font-size: 14px !important; 
+    color: #fff !important;
+    background-color: #7D89B7 !important;
+    border-color: #7D89B7 !important;
+}
 .btn-success {
     color: #fff;
     background-color: #7D89B7 !important;

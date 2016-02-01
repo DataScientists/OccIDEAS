@@ -9,6 +9,36 @@
 		$scope.isDragging = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
+		$scope.aJsmTreeOptions = {
+				accept: function(sourceNodeScope, destNodesScope, destIndex) {
+					//var sourceNode = sourceNodeScope.node;
+				      return true;
+				    },
+				beforeDrop:function(event){
+					var sourceNode = event.source.nodeScope.node;
+					var destNode = event.dest.nodesScope.node;
+					console.log("source"+sourceNode.type);
+					if(!destNode){
+						return false;						
+					}else{
+						if (!sourceNode.nodes) {
+							sourceNode.nodes = [];
+						}
+						destNode.nodes.unshift({
+								idNode : sourceNode.idNode * 10 + sourceNode.nodes.length,
+								name : sourceNode.name,
+								description : sourceNode.description,
+								topNodeId : sourceNode.idNode,
+								type : sourceNode.type,
+								nodeclass : sourceNode.nodeclass,
+								link : sourceNode.idNode,
+								nodes : []
+						});
+						return false;
+					}
+					
+				}
+		}
 		$scope.templateTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					//var sourceNode = sourceNodeScope.node;
@@ -170,7 +200,7 @@
 			} else if (nodeData.type == 'Q_single') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
 					parentId:nodeData.idNode,
@@ -181,7 +211,7 @@
 			}else if (nodeData.type == 'Q_multiple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Multi Possible Answer",
 					placeholder: "New Multi Possible Answer",
 					topNodeId : nodeData.idNode,
 					parentId:nodeData.idNode,
@@ -192,7 +222,7 @@
 			}else if (nodeData.type == 'Q_simple') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
 					parentId:nodeData.idNode,
@@ -203,7 +233,7 @@
 			}else if (nodeData.type == 'M_Module') {
 				nodeData.nodes.push({
 					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
-					name : "",
+					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
 					parentId:nodeData.idNode,
@@ -215,7 +245,7 @@
 				var nodeData = scope.$modelValue;
 		        nodeData.nodes.push({
 		          id: nodeData.idNode * 10 + nodeData.nodes.length,
-		          name: "",
+		          name: "new default node",
 		          placeholder:"new node",
 		          topNodeId : nodeData.idNode,
 		          parentId:nodeData.idNode,
@@ -291,6 +321,10 @@
 		              toggleChildren($itemScope);
 					} 
 				  ], null, // Dividier
+			  [ 'Run Interview', function($itemScope) {
+					alert('under development');
+				} 
+			  ],
 			  [ 'Export to JSON', function($itemScope) {
 					alert('under development');
 				} 
@@ -328,10 +362,12 @@
 		              toggleChildren($itemScope);
 					} 
 				  ],
-			  [ 'Open as aJMS', function($itemScope) {	
-				  					$scope.addFragmentTab($itemScope.node);
-				  				} 
-			  ]
+				  [ 'Open as aJMS', function($itemScope) {	
+	  					var node = $itemScope.node;
+	  					node.idNode = node.link;
+	  					$scope.addFragmentTab(node);
+	  				} 
+				  ]
 			];
 		$scope.possibleAnswerMenuOptions = 
 			[ [ 'Add Quesiton', function($itemScope) {
