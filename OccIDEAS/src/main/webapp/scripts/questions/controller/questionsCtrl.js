@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','ModulesService'];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,ModulesService) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','ModulesService','$anchorScroll','$location'];
+	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,ModulesService,$anchorScroll,$location) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -196,12 +196,13 @@
 		};
 		$scope.newSubItem = function(scope) {
 			var nodeData = scope.$modelValue;
+			var newIdNode = nodeData.idNode * 10 + nodeData.nodes.length;
 			if (!nodeData.nodes) {
 				nodeData.nodes = [];
 			}
 			if (nodeData.type == 'P_simple') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Question",
 					placeholder: "New Question",
 					description : "default",
@@ -213,7 +214,7 @@
 				});
 			} else if (nodeData.type == 'Q_single') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
@@ -224,7 +225,7 @@
 				});
 			}else if (nodeData.type == 'Q_multiple') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Multi Possible Answer",
 					placeholder: "New Multi Possible Answer",
 					topNodeId : nodeData.idNode,
@@ -235,7 +236,7 @@
 				});
 			}else if (nodeData.type == 'Q_simple') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
@@ -246,7 +247,7 @@
 				});
 			}else if (nodeData.type == 'M_Module') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -257,7 +258,7 @@
 				});
 			}else if (nodeData.type == 'M_Module_') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -268,7 +269,7 @@
 				});
 			}else if (nodeData.type == 'M_Module__') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -279,7 +280,7 @@
 				});
 			}else if (nodeData.type == 'M_IntroModule') {
 				nodeData.nodes.push({
-					idNode : nodeData.idNode * 10 + nodeData.nodes.length,
+					idNode : newIdNode,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -291,7 +292,7 @@
 			}else{
 				var nodeData = scope.$modelValue;
 		        nodeData.nodes.push({
-		          id: nodeData.idNode * 10 + nodeData.nodes.length,
+		          id: newIdNode,
 		          name: "new default node",
 		          placeholder:"new node",
 		          topNodeId : nodeData.idNode,
@@ -302,6 +303,8 @@
 		        });
 			}
 			reorderSequence(scope.$modelValue.nodes);
+			$location.hash(newIdNode);
+		    $anchorScroll();
 		};
 
 		$scope.collapseAll = function() {

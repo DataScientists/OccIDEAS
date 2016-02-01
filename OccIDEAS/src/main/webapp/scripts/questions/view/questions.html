@@ -85,7 +85,7 @@ tr.angular-ui-tree-empty {
           'glyphicon-chevron-right': collapsed,
           'glyphicon-chevron-down': !collapsed
         }"></span></a>
-	<div class="form-group">
+	<div class="form-group" id="{{node.idNode}}">
 	 <div ng-hide="node.editEnabled" data-nodrag>
 
        <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
