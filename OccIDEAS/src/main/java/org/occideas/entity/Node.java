@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -50,6 +51,7 @@ public class Node implements Cloneable {
 	@OneToMany(mappedBy="parentId")
 	@Cascade(value=CascadeType.SAVE_UPDATE)
 	@Where(clause = "deleted = 0")
+	@OrderBy("sequence ASC")
 	private List<Node> childNodes;
 	
 	@OneToMany(mappedBy="node", fetch = FetchType.EAGER)

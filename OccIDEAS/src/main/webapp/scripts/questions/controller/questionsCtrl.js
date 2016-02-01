@@ -85,8 +85,21 @@
 					}else{
 						return true;
 					}
-				}
+				},
+				dropped: function (event){
+					reorderSequence(event.dest.nodesScope.$modelValue);
+					reorderSequence(event.source.nodesScope.$modelValue);
+				} 
 		}
+		
+		function reorderSequence(arrayList){
+			var seq = 0;
+			_.each(arrayList, function(data) {
+				data.sequence = seq++;
+			})
+			 console.log(arrayList);
+		}
+		
 		ModulesService.getActiveModules().then(function(data) {	
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
