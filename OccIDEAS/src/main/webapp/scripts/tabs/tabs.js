@@ -37,9 +37,9 @@
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		return QuestionsService.findQuestions($stateParams.row)
-			        				.then(function(data){
+			        				.then(function(response){
 			        					console.log("Data getting from questions AJAX ...");
-						        		return data;
+						        		return response.data;
 		    				})
 			        	}
 			        }

@@ -127,8 +127,25 @@
 			scope.toggle();
 		};
 		$scope.remove = function(scope) {
-			scope.remove();
+			scope.$modelValue.deleted = 1;
+			cascadeDelete(scope.$modelValue.nodes);
 		};
+		
+		function cascadeDelete(arrayInp){
+			if(!angular.isUndefined(arrayInp) && arrayInp.length > 0){
+				_.each(arrayInp, function(obj) {
+					  _.each(obj, function(value, key) {
+					    if(key === 'deleted') {
+					      obj[key] = 1;
+					    }
+					  });
+				});
+				if(!angular.isUndefined(arrayInp.nodes) && arrayInp.nodes.length > 0){
+					cascadeDelete(arrayInp.nodes);
+				}
+			}
+		}
+		
 		$scope.moveLastToTheBeginning = function() {
 			var a = $scope.data.pop();
 			$scope.data.splice(0, 0, a);
@@ -353,9 +370,12 @@
 			];
 		
 		$scope.save = function (){
-			QuestionsService.save($scope.data[0]).then(function(results){
-				console.log(results);
+			QuestionsService.save($scope.data[0]).then(function(response){
+				if(response.status === 200){
+					alert('Save was Successful!');
+				}
 			});
 		};
+		
 	}
 })();

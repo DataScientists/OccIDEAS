@@ -34,7 +34,7 @@
         }
 
 		function handleSuccess( response ) {
-            return( response.data );
+            return(response);
         }
 		
 		return {
