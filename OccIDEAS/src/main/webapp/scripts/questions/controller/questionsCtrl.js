@@ -110,7 +110,8 @@
 				},
 				beforeDrag: function(sourceNodeScope){
 					$scope.isDragging = true;
-					if(sourceNodeScope.node.type === 'M_Module'){					
+					if(sourceNodeScope.node.classtype === 'M'){	
+						$scope.isDragging = false;
 						return false;
 					}else{
 						return true;
@@ -162,17 +163,18 @@
 		};
 		
 		function cascadeDelete(arrayInp){
-			if(!angular.isUndefined(arrayInp) && arrayInp.length > 0){
+			if(arrayInp.length > 0){
 				_.each(arrayInp, function(obj) {
 					  _.each(obj, function(value, key) {
 					    if(key === 'deleted') {
 					      obj[key] = 1;
 					    }
 					  });
+					if(obj.nodes.length > 0){
+						cascadeDelete(obj.nodes);
+					}
 				});
-				if(!angular.isUndefined(arrayInp.nodes) && arrayInp.nodes.length > 0){
-					cascadeDelete(arrayInp.nodes);
-				}
+				
 			}
 		}
 		
@@ -193,7 +195,7 @@
 					description : "default",
 					topNodeId : nodeData.idNode,
 					parentId: nodeData.idNode,
-					type : "Q_simple",
+					type : "Q_single",
 					nodeclass : "Q",
 					nodes : []
 				});
@@ -204,7 +206,7 @@
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
 					parentId: nodeData.idNode,
-					type : "P_single",
+					type : "P_simple",
 					nodeclass : "P",
 					nodes : []
 				});
@@ -226,7 +228,7 @@
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
 					parentId: nodeData.idNode,
-					type : "P_single",
+					type : "P_simple",
 					nodeclass : "P",
 					nodes : []
 				});
@@ -405,10 +407,14 @@
 			  ]
 			];
 		
-		$scope.save = function (){
+		$scope.saveModule = function (){
 			QuestionsService.save($scope.data[0]).then(function(response){
 				if(response.status === 200){
 					alert('Save was Successful!');
+					//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
+					QuestionsService.findQuestions($scope.data[0].idNode).then(function(data) {	
+						$scope.data = data.data;
+					});
 				}
 			});
 		};

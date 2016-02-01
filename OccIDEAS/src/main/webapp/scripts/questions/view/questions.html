@@ -92,7 +92,7 @@ tr.angular-ui-tree-empty {
 		<span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
 		<span ng-if="isDragging" class="badge">{{node.type}}</span>
 		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>
-		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="save()">
+		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="saveModule()">
   			Save
 		</button>
     </div>
