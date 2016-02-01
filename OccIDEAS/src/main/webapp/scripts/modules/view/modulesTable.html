@@ -24,7 +24,7 @@
             <td sortable="type" data-title="'Type'" groupable="'type'" ng-if="false">
             	{{row.type}}
           	</td>
-            <td title="'Name'" filter="{name: 'text'}" sortable="'name'"
+            <td title="'Name'" filter="{name: 'text'}"
 				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"
 				ng-form="name" demo-tracked-table-cell>
 				<div ng-click="row.isEditing = true">
@@ -38,7 +38,7 @@
 				</div>
 			</td>
 			<td title="'Description'" filter="{description: 'text'}"
-				sortable="'description'" ng-switch="row.isEditing"
+				ng-switch="row.isEditing"
 				ng-class="description.$dirty ? 'bg-warning' : ''"
 				ng-form="description" demo-tracked-table-cell>
 				<div ng-click="row.isEditing = true">

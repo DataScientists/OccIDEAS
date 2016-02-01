@@ -9,35 +9,27 @@
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(
 				{
-					group: "type",
-					sorting:{
-						type: 'asc',
-						name: 'asc',
-						description: 'asc'
-					}
-				}, {	
+					group: "type"
+				}, 
+				{	
 	        getData: function($defer,params) {
 	          if(params.filter().name || params.filter().description){	
 	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 	          }
-	          if(ModulesCache.get("all")){
-	        	  console.log("Data getting from modules cache ...");
-//	        	  self.originalData = angular.copy(data);
-	        	  $defer.resolve();
-	  			  return ModulesCache.get("all");
-	  		  }	
-	          else{
+	          if(!self.tableParams.shouldGetData){
+	        	  return self.tableParams.settings().dataset;
+	          }
 	          return  ModulesService.get().then(function(data) {
 	        	  console.log("Data getting from modules ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.settings().dataset = data;
-	        	  ModulesCache.put("all",data);
+	        	  self.tableParams.shouldGetData = true;
 	        	  $defer.resolve();
 	            return data;
 	          });
-	          }
-	        },
+	          },
 	      });
+		self.tableParams.shouldGetData = true;
 	    self.treeView = treeView;
 	    self.cancel = cancel;
 	    self.del = del;
@@ -56,6 +48,7 @@
 	        self.originalData = angular.copy(self.tableParams.settings().dataset);
 	        self.tableParams.sorting({});
 	        self.tableParams.page(1);
+	        self.tableParams.shouldGetData = false;
 	        self.tableParams.reload();
 	      }
 	    
@@ -73,6 +66,7 @@
 	        _.remove(self.tableParams.settings().dataset, function (item) {
 	            return row === item;
 	        });
+	        self.tableParams.shouldGetData = false;
 	        self.tableParams.reload().then(function (data) {
 	            if (data.length === 0 && self.tableParams.total() > 0) {
 	                self.tableParams.page(self.tableParams.page() - 1);
