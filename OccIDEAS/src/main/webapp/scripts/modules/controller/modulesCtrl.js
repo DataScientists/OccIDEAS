@@ -50,6 +50,7 @@
 	        self.tableParams.page(1);
 	        self.tableParams.shouldGetData = false;
 	        self.tableParams.reload();
+	        self.isAdding = false;
 	      }
 	    
 	    

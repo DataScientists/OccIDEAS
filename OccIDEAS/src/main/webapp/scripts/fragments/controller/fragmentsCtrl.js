@@ -2,30 +2,51 @@
 	angular.module('occIDEASApp.Fragments')
 		   .controller('FragmentCtrl',FragmentCtrl);
 	
-	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','ModulesCache'];
-	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,FragmentsCache){
+	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter'];
+	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter){
 		var self = this;
-//		$scope.data = data;
+		var dirtyCellsByRow = [];
+	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams({group: "type"}, {	
-	        getData: function(params) {
-	          /*if(FragmentsCache.get("all")){
-	        	  console.log("Data getting from fragments cache ...");
-	  			  return FragmentsCache.get("all");
-	  		  }*/
+	        getData: function($defer,params) {
+	          if(params.filter().name || params.filter().description){	
+		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+		      }
+	          if(!self.tableParams.shouldGetData){
+	        	  return self.tableParams.settings().dataset;
+	          }
 	          return  FragmentsService.get().then(function(data) {
 	        	  console.log("Data get list from fragments ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
-//	        	  self.tableParams.total(data.length);
 	        	  self.tableParams.settings().dataset = data;
+	        	  self.tableParams.shouldGetData = true;
 	            return data;
 	          });
 	        },
 	      });
+		self.tableParams.shouldGetData = true;
 	    self.treeView = treeView;
 	    self.cancel = cancel;
 	    self.del = del;
 	    self.save = save;
+	    self.add = add;
 	    
+	    function add(type) {
+	        self.isEditing = true;
+	        self.isAdding = true;
+	        self.tableParams.settings().dataset.unshift({
+	          name: "",
+	          idNode:Math.max.apply(null, _.pluck(self.tableParams.settings().dataset, "idNode"))+1,
+	          type: type,
+	          description: null
+	        });
+	        self.originalData = angular.copy(self.tableParams.settings().dataset);
+	        self.tableParams.sorting({});
+	        self.tableParams.page(1);
+	        self.tableParams.shouldGetData = false;
+	        self.tableParams.reload();
+	        self.isAdding = false;
+	      }
 	    
 	    function treeView(row){
 	    	$state.go("questionView",{row:row});
@@ -51,14 +72,22 @@
 	        row.isEditing = false;
 	        rowForm.$setPristine();
 	        self.tableTracker.untrack(row);
-	        return window._.findWhere(self.originalData, function (r) {
-	            return r.id === row.id;
-	        });
+	        return window._.findWhere(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
 	        var originalRow = resetRow(row, rowForm);
 	        angular.extend(originalRow, row);
+	        self.isAdding = false;
 	    }
+	    function untrack(row) {
+	        _.remove(invalidCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        _.remove(dirtyCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        setInvalid(invalidCellsByRow.length > 0);
+	      }
 	}
 })();
 

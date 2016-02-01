@@ -2,29 +2,49 @@
 	angular.module('occIDEASApp.Agents')
 		   .controller('AgentCtrl',FragmentCtrl);
 	
-	FragmentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','AgentsCache'];
-	function FragmentCtrl(AgentsService,NgTableParams,$state,$scope,AgentsCache){
+	FragmentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter'];
+	function FragmentCtrl(AgentsService,NgTableParams,$state,$scope,$filter){
 		var self = this;
-		
+		var dirtyCellsByRow = [];
+	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams({group: "groupName",count: 100}, {	
-	        getData: function(params) {
-	          /*if(FragmentsCache.get("all")){
-	        	  console.log("Data getting from fragments cache ...");
-	  			  return FragmentsCache.get("all");
-	  		  }*/
+	        getData: function($defer,params) {
+	        	if(params.filter().name || params.filter().description){	
+		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+		          }
+		          if(!self.tableParams.shouldGetData){
+		        	  return self.tableParams.settings().dataset;
+		          }
 	          return  AgentsService.get().then(function(data) {
 	        	  console.log("Data get list from agents ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
-//	        	  self.tableParams.total(data.length);
 	        	  self.tableParams.settings().dataset = data;
 	            return data;
 	          });
 	        },
 	      });
+		self.tableParams.shouldGetData = true;
 	    self.cancel = cancel;
 	    self.del = del;
 	    self.save = save;
+	    self.add = add;
 	
+	    function add(groupName) {
+	        self.isEditing = true;
+	        self.isAdding = true;
+	        self.tableParams.settings().dataset.unshift({
+	          name: "",
+	          idNode:Math.max.apply(null, _.pluck(self.tableParams.settings().dataset, "idNode"))+1,
+	          groupName: groupName,
+	          description: null
+	        });
+	        self.originalData = angular.copy(self.tableParams.settings().dataset);
+	        self.tableParams.sorting({});
+	        self.tableParams.page(1);
+	        self.tableParams.shouldGetData = false;
+	        self.tableParams.reload();
+	        self.isAdding = false;
+	     }
 	    function cancel(row, rowForm) {
 	        var originalRow = resetRow(row, rowForm);
 	        angular.extend(row, originalRow);
@@ -45,14 +65,27 @@
 	        row.isEditing = false;
 	        rowForm.$setPristine();
 	        self.tableTracker.untrack(row);
-	        return window._.findWhere(self.originalData, function (r) {
-	            return r.id === row.id;
-	        });
+	        return window._.findWhere(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
 	        var originalRow = resetRow(row, rowForm);
 	        angular.extend(originalRow, row);
+	        self.isAdding = false;
 	    }
+	    function setInvalid(isInvalid) {
+	        self.$invalid = isInvalid;
+	        self.$valid = !isInvalid;
+	      }
+	    
+	    function untrack(row) {
+	        _.remove(invalidCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        _.remove(dirtyCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        setInvalid(invalidCellsByRow.length > 0);
+	      }
 	}
 })();
 
