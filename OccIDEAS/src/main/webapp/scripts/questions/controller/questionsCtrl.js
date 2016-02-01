@@ -2,12 +2,13 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','QuestionsCache'];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,QuestionsCache) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','QuestionsCache','ModulesService'];
+	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,QuestionsCache,ModulesService) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
-		$scope.droppedFragment = null;
+		$scope.showFragmentSlider = true;
+		$scope.showModuleSlider = false;
 		$scope.templateTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					//var sourceNode = sourceNodeScope.node;
@@ -44,9 +45,9 @@
 					$scope.isDragging = true;	
 					
 					return true;
-				}			
+				}
 		}
-		$scope.treeOptions = {
+		$scope.moduleTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					var sourceNode = sourceNodeScope.node;
 				      return true;
@@ -86,6 +87,14 @@
 					}
 				}
 		}
+		ModulesService.getActiveModules().then(function(data) {	
+			for(var i=0;i < data.length;i++){
+				var node = data[i];
+				node.type = "Q_linkedmodule";
+				node.nodeclass = "Q";
+			}
+			$scope.moduleSlider = data;
+		});
 		$scope.rightNav = "slideFrag";
 		FragmentsService.getByType('F_ajsm').then(function(data) {	
 			for(var i=0;i < data.length;i++){

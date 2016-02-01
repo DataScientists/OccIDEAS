@@ -15,6 +15,20 @@
 		    return data;
 		  });
 		};
+		
+		var getActiveModules = function() {
+			  return $http.get(modulesUrl+'/getlist').then(function(response) {
+			    var data = response.data;
+			    var filteredData = [];
+			    for(var i=0;i < data.length;i++){
+					var node = data[i];
+					if(node.type=='M_Module'){					
+						filteredData.push(node);
+					}
+				}
+			    return filteredData;
+			  });
+			};
 
 		var postNewModule = function(moduleObj) {
 		  return $http.post(modulesUrl + '?apiKey='+apiKey).then(function(response) {
@@ -29,7 +43,8 @@
 			}; 
 
 		return {
-		      get: getModules,
+			getActiveModules: getActiveModules,
+			get: getModules,
 		      post: postNewModule, 
 		      deleteModule: deleteModule
 		};

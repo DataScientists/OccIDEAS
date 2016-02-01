@@ -8,6 +8,16 @@
     color: #2e3436;
     
 }
+.btn-success {
+    color: #fff;
+    background-color: #7D89B7 !important;
+    border-color: #7D89B7 !important; 
+}
+.btn-success:hover {
+    color: #fff;
+    background-color: #505875 !important;
+    border-color: #2F3446 !important;
+}
 
 /**Module table*/
 .moduleTable td:last-child {
