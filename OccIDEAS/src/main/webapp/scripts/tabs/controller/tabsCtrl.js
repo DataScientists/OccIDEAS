@@ -19,15 +19,26 @@
 		};
 				
 		$scope.$watch('selectedIndex', function(current, old) {
-			console.log("Navigating to "+$scope.tabOptions[current].state);
-			console.log("with data: "+$scope.tabOptions[current].data)
+			var state = null;
 			var data = null;
-			var state = $scope.tabOptions[current].state;
-			if($scope.tabOptions[current].state === "tabs.questions" || $scope.tabOptions[current].state === "tabs.fragment"){
-				data = $scope.tabOptions[current].data;
-				$scope.tabOptions.splice(current, 1);
+			if($scope.tabOptions[current]){
+				if($scope.tabOptions[current].state){
+					console.log("Navigating to "+$scope.tabOptions[current].state);
+					state = $scope.tabOptions[current].state;
+				}else{
+					state = "tabs.modules";
+				}
+				if($scope.tabOptions[current].data){
+					console.log("with data: "+$scope.tabOptions[current].data)
+					console.log("with idNode: "+$scope.tabOptions[current].data.row)
+					data = $scope.tabOptions[current].data;
+				}
+				
+			}else{
+				state = "tabs.modules";
 			}
 			$state.go(state,data);
+
 		});
 
 		var tabs = [ {
@@ -84,6 +95,10 @@
 		$scope.removeTab = function(tab) {
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);
+			$scope.tabOptions.splice(index, 1);
+			if($scope.selectedIndex==3){
+				$scope.selectedIndex=0;
+			}
 		};
 		$scope.turnOffProgressBar = function turnOffProgressBar(){
 			$scope.loading = false;
