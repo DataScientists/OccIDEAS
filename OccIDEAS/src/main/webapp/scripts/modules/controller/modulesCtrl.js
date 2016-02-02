@@ -67,9 +67,8 @@
 	    	$state.go("questionView",{row:row});
 	    }
 	    
-	    function cancel(row, rowForm) {
-	        var originalRow = resetRow(row, rowForm);
-	        angular.extend(row, originalRow);
+	    function cancel(row) {
+	    	del(row);
 	    }
 	    function del(row) {
 	    	//  Modules.deleteModule().then(function(data) {});////Delete module here via ajax//
@@ -91,13 +90,19 @@
 	        return window._.findWhere(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
-	        var originalRow = resetRow(row, rowForm);
-	        angular.extend(originalRow, row);
-	        self.isAdding = false;
+	    	var originalRow = resetRow(row, rowForm);
+	        angular.extend(row, originalRow);
+	    	self.isEditing = false;
 	        ModulesService.save(row).then(function(response){
 				if(response.status === 200){
-					alert('Save was Successful!');
-					self.tableParams.reload();
+					console.log('Module Save was Successful!');
+					self.tableParams.shouldGetData = true;
+			        self.tableParams.reload().then(function (data) {
+			            if (data.length === 0 && self.tableParams.total() > 0) {
+			                self.tableParams.page(self.tableParams.page() - 1);
+			                self.tableParams.reload();
+			            }
+			        });
 				}
 			});
 	    }
