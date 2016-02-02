@@ -9,7 +9,6 @@ import org.occideas.module.dao.ModuleDao;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 
@@ -57,6 +56,11 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public void delete(ModuleVO module) {
 		dao.delete(mapper.convertToModule(module));
+	}
+
+	@Override
+	public void merge(ModuleVO module) {
+		dao.merge(mapper.convertToModule(module));
 	}
 
 }

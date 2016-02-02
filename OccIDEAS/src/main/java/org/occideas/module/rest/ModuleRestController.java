@@ -75,12 +75,12 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		}
 		return Response.ok().build();
 	}
-
+	
 	@Path(value="/delete")
 	@POST
 	public Response delete(ModuleVO json) {
 		try{
-			service.delete(json);
+			service.merge(json);
 		}catch(Throwable e){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}

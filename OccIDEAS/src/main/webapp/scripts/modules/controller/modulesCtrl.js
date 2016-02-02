@@ -74,8 +74,20 @@
 	    	del(row);
 	    }
 	    function del(row) {
-	    	//  Modules.deleteModule().then(function(data) {});////Delete module here via ajax//
-	        _.remove(self.tableParams.settings().dataset, function (item) {
+	    	row.deleted = 1;
+	    	var data =  ModulesService.deleteModule(row).then(function(response) {
+	    		if(response.status === 200){
+					console.log('Module was deleted!');
+					self.tableParams.shouldGetData = true;
+			        self.tableParams.reload().then(function (data) {
+			            if (data.length === 0 && self.tableParams.total() > 0) {
+			                self.tableParams.page(self.tableParams.page() - 1);
+			                self.tableParams.reload();
+			            }
+			        });
+				}
+	        });
+	    	_.remove(self.tableParams.settings().dataset, function (item) {
 	            return row === item;
 	        });
 	        self.tableParams.shouldGetData = false;
