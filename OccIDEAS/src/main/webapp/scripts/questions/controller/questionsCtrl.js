@@ -9,7 +9,7 @@
 		$scope.isDragging = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
-		$anchorScroll.yOffset = 100;
+		$anchorScroll.yOffset = 200;
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					//var sourceNode = sourceNodeScope.node;
@@ -331,6 +331,7 @@
 			reorderSequence(scope.$modelValue.nodes);
 			$location.hash(locationId);
 		    $anchorScroll();
+		    saveModuleAndReload();
 		};
 
 		$scope.collapseAll = function() {
@@ -487,17 +488,21 @@
 					}
 			  ]
 			];
-		
-		$scope.saveModule = function (){
+		function saveModuleAndReload(){
 			QuestionsService.save($scope.data[0]).then(function(response){
 				if(response.status === 200){
-					alert('Save was Successful!');
+					console.log('Save was Successful!');
 					//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
 					QuestionsService.findQuestions($scope.data[0].idNode).then(function(data) {	
 						$scope.data = data.data;
 					});
+				}else{
+					console.log('ERROR on Save!');
 				}
 			});
+		}
+		$scope.saveModule = function (){
+			saveModuleAndReload();
 		};
 		
 	}

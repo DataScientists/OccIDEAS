@@ -19,7 +19,9 @@ public class NodeMapperImpl implements NodeMapper{
 
 	        NodeVO nodeVO = new NodeVO();
 
-	        nodeVO.setIdNode( node.getIdNode() );
+	        if(node.getIdNode()!=0){
+	        	nodeVO.setIdNode( node.getIdNode() );
+	        }
 	        nodeVO.setName( node.getName() );
 	        nodeVO.setDescription( node.getDescription() );
 	        nodeVO.setType( node.getType() );
