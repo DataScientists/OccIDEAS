@@ -25,7 +25,7 @@
 
 		var tabs = [ {
 			title : 'Module List',
-			viewName: 'moduleView'
+			viewName: 'moduleView',
 		}, {
 			title : 'Fragment List',
 			viewName: 'fragmentView'
@@ -50,6 +50,10 @@
 			});
 		};
 		$scope.addModuleTab = function(row) {
+			var check = _.some( tabs, function( el ) {
+			    return el.title === row.name;
+			} );
+			if(!check){
 			tabs.push({
 				title : row.name,
 				viewName: 'questionsView',
@@ -60,6 +64,13 @@
 				state: "tabs.questions",
 				data: {row:row.idNode}
 			});
+			}else{
+				_.find(tabs, function(el, index){ 
+					if(el.title === row.name){
+						$scope.selectedIndex = index;
+				    } 
+				});
+			}
 		};
 		$scope.removeTab = function(tab) {
 			var index = tabs.indexOf(tab);
