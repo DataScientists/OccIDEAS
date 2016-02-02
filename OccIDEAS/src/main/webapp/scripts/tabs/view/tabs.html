@@ -1,5 +1,6 @@
 <div ng-cloak ng-controller="TabsCtrl as vm">
    <md-content class="md-padding">
+   <md-progress-linear ng-if="loading" md-mode="indeterminate"></md-progress-linear>
     <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-dynamic-height>
       <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" layout-fill>
       	<md-tab-label>
@@ -8,6 +9,7 @@
               <span class="glyphicon glyphicon-remove" style="margin-left:3px" />
           </span>
         </md-tab-label>
+        
         <md-tab-body ng-class="tab.style" layout="column" layout-fill >
                 <div class="tab{{$index%4}}" >
          <div id="content" ui-view="{{tab.viewName}}" flex> </div>
@@ -17,5 +19,8 @@
         </md-tab-body>
       </md-tab>
     </md-tabs>
+    
   </md-content>
+  
+  <!-- <pre>  Doing the turn off {{ turnOffProgressBar() }}</pre> -->
 </div>

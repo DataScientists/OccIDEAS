@@ -3,6 +3,7 @@
 
 	TabsCtrl.$inject = ['$scope','$state'];
 	function TabsCtrl($scope,$state) {
+		$scope.loading = false;
 		$scope.tabOptions = [];
 		$scope.tabOptions[0] = {
 			state: "tabs.modules",
@@ -38,6 +39,7 @@
 		$scope.selectedIndex = 0;
 
 		$scope.addFragmentTab = function(row) {
+			
 			tabs.push({
 				title : row.name,
 				viewName: 'getfragmentView',
@@ -48,6 +50,7 @@
 				state: "tabs.fragment",
 				data: {row:row.idNode}
 			});
+			
 		};
 		$scope.addModuleTab = function(row) {
 			var check = _.some( tabs, function( el ) {
@@ -76,5 +79,9 @@
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);
 		};
+		$scope.turnOffProgressBar = function turnOffProgressBar(){
+			$scope.loading = false;
+			return 'Done';
+		}
 	}
 })();

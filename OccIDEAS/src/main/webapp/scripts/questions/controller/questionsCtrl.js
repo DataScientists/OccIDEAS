@@ -2,8 +2,12 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService','$q','QuestionsService','ModulesService','$anchorScroll','$location'];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,$q,QuestionsService,ModulesService,$anchorScroll,$location) {
+	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
+	                          '$q','QuestionsService','ModulesService',
+	                          '$anchorScroll','$location'];
+	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
+			$q,QuestionsService,ModulesService,
+			$anchorScroll,$location) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -36,6 +40,7 @@
 								parentId : destNode.idNode,
 								nodes : []
 						});
+						reorderSequence(destNode.nodes)
 						saveModuleAndReload();
 						return false;
 					}
@@ -422,11 +427,11 @@
 						$scope.newSubItem($itemScope);
 						}
 			  ],
-			  [ 'Toggle Multiple Choice', function($itemScope) {
+			  [ 'Multiple Choice (Toggle)', function($itemScope) {
 					$scope.toggleMultipleChoice($itemScope);
 					}
 			  ],
-			  [ 'Toggle Remove', function($itemScope) {
+			  [ 'Remove (Toggle)', function($itemScope) {
 					$scope.remove($itemScope);
 					}
 			  ],
@@ -460,7 +465,7 @@
 						$scope.newSubItem($itemScope);
 						}
 			  ],
-			  [ 'Remove', function($itemScope) {
+			  [ 'Remove (Toggle)', function($itemScope) {
 					$scope.remove($itemScope);
 					}
 			  ],
@@ -485,7 +490,7 @@
 			];
 		$scope.defaultMenuOptions = 
 			[ 
-			  [ 'Remove', function($itemScope) {
+			  [ 'Remove (Toggle)', function($itemScope) {
 					$scope.remove($itemScope);
 					}
 			  ]

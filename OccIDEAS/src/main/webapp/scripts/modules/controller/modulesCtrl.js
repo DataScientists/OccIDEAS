@@ -1,8 +1,10 @@
 (function(){
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
-	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter'];
-	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter){
+	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
+                          '$anchorScroll','$location'];
+	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
+			$anchorScroll,$location){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -49,10 +51,11 @@
 	        self.isAdding = true;
 	        
 	        self.tableParams.settings().dataset.unshift({
-	        	name: "",
+	        	name: "New Module",
 	        	placeholder: "New Module",
 		        type: type,
-		        description: ""
+		        description: "New Description",
+		        isEditing: true
 	        });
 	        self.originalData = angular.copy(self.tableParams.settings().dataset);
 	        self.tableParams.sorting({});
@@ -101,6 +104,8 @@
 			            if (data.length === 0 && self.tableParams.total() > 0) {
 			                self.tableParams.page(self.tableParams.page() - 1);
 			                self.tableParams.reload();
+			                $location.hash("");
+			    		    $anchorScroll();
 			            }
 			        });
 				}
