@@ -21,7 +21,13 @@
 		$scope.$watch('selectedIndex', function(current, old) {
 			console.log("Navigating to "+$scope.tabOptions[current].state);
 			console.log("with data: "+$scope.tabOptions[current].data)
-			$state.go($scope.tabOptions[current].state,$scope.tabOptions[current].data);
+			var data = null;
+			var state = $scope.tabOptions[current].state;
+			if($scope.tabOptions[current].state === "tabs.questions" || $scope.tabOptions[current].state === "tabs.fragment"){
+				data = $scope.tabOptions[current].data;
+				$scope.tabOptions.splice(current, 1);
+			}
+			$state.go(state,data);
 		});
 
 		var tabs = [ {
