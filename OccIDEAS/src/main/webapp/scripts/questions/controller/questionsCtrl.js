@@ -11,6 +11,7 @@
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
+		$scope.isCreatingFragments = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
 		$anchorScroll.yOffset = 200;
@@ -185,8 +186,13 @@
 			}else{
 				scope.$modelValue.type = 'Q_Multiple';
 			}
-			
-			//cascadeDelete(scope.$modelValue.nodes);
+		};
+		$scope.toggleCreatingFragments = function(scope) {
+			if($scope.isCreatingFragments){
+				$scope.isCreatingFragments = false;
+			}else{
+				$scope.isCreatingFragments = true;
+			}	
 		};
 		$scope.remove = function(scope) {
 			if(scope.$modelValue.deleted){
@@ -386,7 +392,11 @@
 			}
 		};
 		$scope.moduleMenuOptions = 
-			[ [ 'Add Question', function($itemScope) {
+			[ [ 'Create Fragments (Toggle)', function($itemScope) {
+					$scope.toggleCreatingFragments($itemScope);
+				}
+			  ],
+			  [ 'Add Question', function($itemScope) {
 						$scope.newSubItem($itemScope);
 						}
 			  ],		  
@@ -427,6 +437,7 @@
 						$scope.newSubItem($itemScope);
 						}
 			  ],
+			  
 			  [ 'Multiple Choice (Toggle)', function($itemScope) {
 					$scope.toggleMultipleChoice($itemScope);
 					}
