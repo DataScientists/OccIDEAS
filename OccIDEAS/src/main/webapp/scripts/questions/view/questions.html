@@ -85,10 +85,11 @@ tr.angular-ui-tree-empty {
           'glyphicon-chevron-right': collapsed,
           'glyphicon-chevron-down': !collapsed
         }"></span></a>
-	<div class="form-group" id="{{node.idNode}}">
+	<div class="form-group" id={{node.anchorId}}>
 	 <div ng-hide="node.editEnabled" data-nodrag>
 
        <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
+		<span ng-if="!node.idNode || node.idNode===0" class="badge-multi">Unsaved</span>
 		<span ng-if="node.type.indexOf('Multi') > -1" class="badge-multi">Multi</span>
 		<span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
 		<span ng-if="isDragging" class="badge">{{node.type}}</span>

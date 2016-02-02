@@ -49,10 +49,10 @@
 	        self.isAdding = true;
 	        
 	        self.tableParams.settings().dataset.unshift({
-	          name: "",
-	          idNode:"",
-	          type: type,
-	          description: null
+	        	name: "",
+	        	placeholder: "New Module",
+		        type: type,
+		        description: ""
 	        });
 	        self.originalData = angular.copy(self.tableParams.settings().dataset);
 	        self.tableParams.sorting({});

@@ -9,10 +9,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"editEnabled","warning","placeholder","id","isEditing"})
+@JsonIgnoreProperties({"editEnabled","warning","placeholder","isEditing"})
 public class NodeVO {
 
 	private long idNode;
+	private long anchorId;
 	private String name;
 	private String description;
 	private String type;
@@ -156,6 +157,17 @@ public class NodeVO {
 
 	public void setNodeclass(String nodeclass) {
 		this.nodeclass = nodeclass;
+	}
+
+	public long getAnchorId() {
+		if(anchorId==0){
+			anchorId = idNode;
+		}
+		return anchorId;
+	}
+
+	public void setAnchorId(long anchorId) {
+		this.anchorId = anchorId;
 	}
 
 }

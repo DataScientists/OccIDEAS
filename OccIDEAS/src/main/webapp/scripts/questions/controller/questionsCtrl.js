@@ -9,6 +9,7 @@
 		$scope.isDragging = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
+		$anchorScroll.yOffset = 100;
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					//var sourceNode = sourceNodeScope.node;
@@ -25,7 +26,7 @@
 							sourceNode.nodes = [];
 						}
 						destNode.nodes.unshift({
-								idNode : sourceNode.idNode * 10 + sourceNode.nodes.length,
+								
 								name : sourceNode.name,
 								description : sourceNode.description,
 								topNodeId : sourceNode.idNode,
@@ -59,7 +60,7 @@
 					
 					return FragmentsService.findFragmentChildNodes(sourceNode.idNode).then(function(fragmentData) {						
 						destNode.nodes.unshift({
-							idNode : fragmentData[0].idNode * 10 + fragmentData[0].nodes.length,
+							
 							name : fragmentData[0].name,
 							description : fragmentData[0].description,
 							topNodeId : fragmentData[0].idNode,
@@ -170,10 +171,7 @@
 		$scope.toggle = function(scope) {
 			scope.toggle();
 		};
-		$scope.remove = function(scope) {
-			scope.$modelValue.deleted = 1;
-			cascadeDelete(scope.$modelValue.nodes);
-		};
+		
 		$scope.toggleMultipleChoice = function(scope) {
 			if(scope.$modelValue.type=='Q_Multiple'){
 				scope.$modelValue.type = 'Q_Single';
@@ -183,17 +181,27 @@
 			
 			//cascadeDelete(scope.$modelValue.nodes);
 		};
-		
-		function cascadeDelete(arrayInp){
+		$scope.remove = function(scope) {
+			if(scope.$modelValue.deleted){
+				scope.$modelValue.deleted = 0;
+				cascadeDelete(scope.$modelValue.nodes,0);
+			}else{
+				scope.$modelValue.deleted = 1;
+				cascadeDelete(scope.$modelValue.nodes,1);
+			}
+			
+			
+		};
+		function cascadeDelete(arrayInp,deleteFlag){
 			if(arrayInp.length > 0){
 				_.each(arrayInp, function(obj) {
 					  _.each(obj, function(value, key) {
 					    if(key === 'deleted') {
-					      obj[key] = 1;
+					      obj[key] = deleteFlag;
 					    }
 					  });
 					if(obj.nodes.length > 0){
-						cascadeDelete(obj.nodes);
+						cascadeDelete(obj.nodes,deleteFlag);
 					}
 				});
 				
@@ -204,15 +212,23 @@
 			var a = $scope.data.pop();
 			$scope.data.splice(0, 0, a);
 		};
+		$scope.getNodeId = function(scope) {
+			var nodeId = 0;
+			if(scope.anchorId){
+				nodeId = scope.anchorId;
+			}else{
+				nodeId = scope.idNode;
+			}
+		}
 		$scope.newSubItem = function(scope) {
 			var nodeData = scope.$modelValue;
-			var newIdNode = nodeData.idNode * 10 + nodeData.nodes.length;
+			var locationId = nodeData.idNode * 10 + nodeData.nodes.length
 			if (!nodeData.nodes) {
 				nodeData.nodes = [];
 			}
 			if (nodeData.type == 'P_simple') {
-				nodeData.nodes.push({
-					idNode : newIdNode,
+				nodeData.nodes.push({	
+					anchorId : locationId,
 					name : "New Question",
 					placeholder: "New Question",
 					description : "default",
@@ -224,7 +240,7 @@
 				});
 			} else if (nodeData.type == 'Q_single') {
 				nodeData.nodes.push({
-					idNode : newIdNode,
+					anchorId : locationId,
 					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
@@ -235,7 +251,7 @@
 				});
 			}else if (nodeData.type == 'Q_multiple') {
 				nodeData.nodes.push({
-					idNode : newIdNode,
+					anchorId : locationId,
 					name : "New Multi Possible Answer",
 					placeholder: "New Multi Possible Answer",
 					topNodeId : nodeData.idNode,
@@ -246,7 +262,7 @@
 				});
 			}else if (nodeData.type == 'Q_simple') {
 				nodeData.nodes.push({
-					idNode : newIdNode,
+					anchorId : locationId,
 					name : "New Possible Answer",
 					placeholder:"New Possible Answer",
 					topNodeId : nodeData.idNode,
@@ -257,7 +273,7 @@
 				});
 			}else if (nodeData.type == 'M_Module') {
 				nodeData.nodes.push({
-					idNode : newIdNode,
+					anchorId : locationId,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -268,7 +284,7 @@
 				});
 			}else if (nodeData.type == 'M_Module_') {
 				nodeData.nodes.push({
-					idNode : newIdNode,
+					anchorId : locationId,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -279,7 +295,7 @@
 				});
 			}else if (nodeData.type == 'M_Module__') {
 				nodeData.nodes.push({
-					idNode : newIdNode,
+					anchorId : locationId,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -290,7 +306,7 @@
 				});
 			}else if (nodeData.type == 'M_IntroModule') {
 				nodeData.nodes.push({
-					idNode : newIdNode,
+					anchorId : locationId,
 					name : "New Question",
 					placeholder: "New Question",
 					topNodeId : nodeData.idNode,
@@ -302,7 +318,7 @@
 			}else{
 				var nodeData = scope.$modelValue;
 		        nodeData.nodes.push({
-		          id: newIdNode,
+		          anchorId : locationId,
 		          name: "new default node",
 		          placeholder:"new node",
 		          topNodeId : nodeData.idNode,
@@ -313,7 +329,7 @@
 		        });
 			}
 			reorderSequence(scope.$modelValue.nodes);
-			$location.hash(newIdNode);
+			$location.hash(locationId);
 		    $anchorScroll();
 		};
 
@@ -407,7 +423,7 @@
 					$scope.toggleMultipleChoice($itemScope);
 					}
 			  ],
-			  [ 'Remove', function($itemScope) {
+			  [ 'Toggle Remove', function($itemScope) {
 					$scope.remove($itemScope);
 					}
 			  ],
