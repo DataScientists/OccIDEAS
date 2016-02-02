@@ -169,7 +169,7 @@ tr.angular-ui-tree-empty {
     <h5>Fragment List</h5>
     <uib-accordion close-others="oneAtATime">
      	 <uib-accordion-group heading="aJSMs" >
-				<div ui-tree="moduleTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
+				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
 			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
 				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
 				ng-include="'nodes_renderer2.html'"></li>
@@ -208,7 +208,7 @@ tr.angular-ui-tree-empty {
     <h5>Module List</h5>
     <uib-accordion close-others="oneAtATime">
          <uib-accordion-group heading="Module" >
-			<div ui-tree="moduleTreeOptions" id="templateTree-root" data-clone-enabled="true">
+			<div ui-tree="aJsmTreeOptions" id="templateTree-root" data-clone-enabled="true">
 			<ol ui-tree-nodes ng-model="moduleSlider">
 				<li ng-repeat="node in moduleSlider" ui-tree-node 
 				ng-include="'nodes_renderer2.html'"></li>
@@ -216,7 +216,7 @@ tr.angular-ui-tree-empty {
 		</div>
     	</uib-accordion-group>
      	 <uib-accordion-group heading="aJSMs" >
-				<div ui-tree="moduleTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
+				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
 			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
 				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
 				ng-include="'nodes_renderer2.html'"></li>

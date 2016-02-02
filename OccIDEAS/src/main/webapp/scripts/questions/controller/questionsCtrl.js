@@ -33,8 +33,10 @@
 								type : sourceNode.type,
 								nodeclass : sourceNode.nodeclass,
 								link : sourceNode.idNode,
+								parentId : destNode.idNode,
 								nodes : []
 						});
+						saveModuleAndReload();
 						return false;
 					}
 					
