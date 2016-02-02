@@ -17,7 +17,7 @@ public class NodeVO {
 	private String name;
 	private String description;
 	private String type;
-	private int sequence;
+	private int sequence = 1;
 	private String number;
 	private String parentId;
 	private long link;

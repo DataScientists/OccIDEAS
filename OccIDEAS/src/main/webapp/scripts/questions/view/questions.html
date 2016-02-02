@@ -94,6 +94,8 @@ tr.angular-ui-tree-empty {
 		<span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
 		<span ng-if="isDragging" class="badge">{{node.type}}</span>
 		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>
+		<span ng-if="isDragging" class="badge">{{node.parentId}}</span>
+		<span ng-if="isDragging" class="badge">{{node.sequence}}</span>
 		<span ng-if="(node.nodeclass === 'Q')&&(isCreatingFragments)" save-fragment-modal="node.name" class="badge" >
 		<span class="glyphicon glyphicon-retweet"></span>
 			<md-tooltip>

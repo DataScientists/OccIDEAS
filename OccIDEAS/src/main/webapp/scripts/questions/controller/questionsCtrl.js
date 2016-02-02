@@ -21,6 +21,10 @@
 				      return true;
 				    },
 				beforeDrop:function(event){
+					
+					
+				},
+				dropped: function (event){
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
 					console.log("source"+sourceNode.type);
@@ -41,11 +45,10 @@
 								parentId : destNode.idNode,
 								nodes : []
 						});
-						reorderSequence(destNode.nodes)
-						saveModuleAndReload();
+						cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
+						//saveModuleAndReload();
 						return false;
 					}
-					
 				}
 		}
 		$scope.templateTreeOptions = {
@@ -67,16 +70,21 @@
 					var deferred = $q.defer();
 					
 					return FragmentsService.findFragmentChildNodes(sourceNode.idNode).then(function(fragmentData) {						
+						
+						cascadeTemplateNullIds(fragmentData);
+						
 						destNode.nodes.unshift({
 							
 							name : fragmentData[0].name,
 							description : fragmentData[0].description,
-							topNodeId : fragmentData[0].idNode,
 							type : fragmentData[0].type,
 							nodeclass : fragmentData[0].nodeclass,
 							nodes : fragmentData[0].nodes
 						});
+						
+						//saveModuleAndReload();
 						deferred.resolve();
+						
 						return false;
 					});
 				},
@@ -84,6 +92,9 @@
 					$scope.isDragging = true;	
 					
 					return true;
+				},
+				dropped: function (event){
+					
 				}
 		}
 		$scope.moduleTreeOptions = {
@@ -92,6 +103,18 @@
 				      return true;
 				    },
 				beforeDrop:function(event){
+					
+				},
+				beforeDrag: function(sourceNodeScope){
+					$scope.isDragging = true;
+					if(sourceNodeScope.node.classtype === 'M'){	
+						$scope.isDragging = false;
+						return false;
+					}else{
+						return true;
+					}
+				},
+				dropped: function (event){
 					var sourceNode = event.source.nodeScope.node;
 					sourceNode.warning = null;
 					var destNode = event.dest.nodesScope.node;
@@ -115,30 +138,47 @@
 							}			
 						}
 					}
+					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
-				},
-				beforeDrag: function(sourceNodeScope){
-					$scope.isDragging = true;
-					if(sourceNodeScope.node.classtype === 'M'){	
-						$scope.isDragging = false;
-						return false;
-					}else{
-						return true;
+					cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
+					if(sourceNode.warning != 'warning'){
+						saveModuleAndReload();
 					}
-				},
-				dropped: function (event){
-					reorderSequence(event.dest.nodesScope.$modelValue);
-					reorderSequence(event.source.nodesScope.$modelValue);
 				} 
 		}
-		
 		function reorderSequence(arrayList){
-			var seq = 0;
+			var seq = 1;
 			_.each(arrayList, function(data) {
-				data.sequence = seq++;
+				 data.sequence = seq++;			
 			})
 		}
-		
+		function cascadeReOrderWithParentId(arrayInp,parentId){
+			var seq = 1;
+			var parentId = parentId;
+			_.each(arrayInp, function(data) {
+				 data.sequence = seq++;	
+				 data.idNode = null;
+				 data.parentId = parentId;
+				 parentId = data.idNode;
+				 cascadeReOrderWithParentId(data.nodes,parentId);
+			})
+		}
+		function cascadeTemplateNullIds(nodes){
+			var seq = 1;
+			var parentId = parentId;
+			_.each(nodes, function(data) {
+				data.sequence = seq++;	
+				
+				data.originalId = data.idNode;
+				data.idNode = null;	
+				data.parentId = null;
+				 
+				if(data.nodes.length>0){
+					cascadeTemplateNullIds(data.nodes);
+				}		 
+			})
+		}
+
 		ModulesService.getActiveModules().then(function(data) {	
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
@@ -220,6 +260,7 @@
 				
 			}
 		}
+		
 		
 		$scope.moveLastToTheBeginning = function() {
 			var a = $scope.data.pop();
@@ -467,6 +508,8 @@
 				  [ 'Open as aJMS', function($itemScope) {	
 	  					var node = $itemScope.node;
 	  					node.idNode = node.link;
+	  					node.type = 'F_ajsm';
+	  					node.classtype = 'F';
 	  					$scope.addFragmentTab(node);
 	  				} 
 				  ]
