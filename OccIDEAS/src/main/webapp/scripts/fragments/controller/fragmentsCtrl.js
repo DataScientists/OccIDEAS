@@ -5,6 +5,7 @@
 	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter'];
 	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter){
 		var self = this;
+		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams({group: "type"}, {	
@@ -31,6 +32,14 @@
 	    self.save = save;
 	    self.add = add;
 	    
+	    self.toggleIsDeleting = toggleIsDeleting; 
+	    function toggleIsDeleting(){
+	    	if(self.isDeleting){
+	    		self.isDeleting = false;
+	    	}else{
+	    		self.isDeleting = true;
+	    	}
+	    }
 	    function add(type) {
 	        self.isEditing = true;
 	        self.isAdding = true;

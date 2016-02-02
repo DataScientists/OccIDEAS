@@ -36,7 +36,7 @@
 	    self.save = save;
 	    self.add = add;
 	    self.toggleIsDeleting = toggleIsDeleting;
-	    
+	  
 	    function toggleIsDeleting(){
 	    	if(self.isDeleting){
 	    		self.isDeleting = false;

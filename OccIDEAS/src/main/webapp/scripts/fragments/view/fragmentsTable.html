@@ -16,6 +16,9 @@
        				 <button class="btn btn-default" ng-click="vm.add(group.value)">
           					<span class="glyphicon glyphicon-plus"></span>
        				 </button>
+       				 <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+          					<span class="glyphicon glyphicon-trash"></span>
+       				 </button>
      			 </div>
             </td>
         </tr>
@@ -65,7 +68,7 @@
 					<span class="glyphicon glyphicon-list-alt"></span>
 				</button>
 				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
-					ng-if="!row.isEditing" confirm="Delete fragment {{row.name}}?">
+					ng-if="vm.isDeleting" confirm="Delete fragment {{row.name}}?">
 					<span class="glyphicon glyphicon-trash"></span>
 				</button>
 			</td>

@@ -166,12 +166,22 @@
 		      $scope.rightNav = "slideFrag";
 		    }
 		};
+		
 		$scope.toggle = function(scope) {
 			scope.toggle();
 		};
 		$scope.remove = function(scope) {
 			scope.$modelValue.deleted = 1;
 			cascadeDelete(scope.$modelValue.nodes);
+		};
+		$scope.toggleMultipleChoice = function(scope) {
+			if(scope.$modelValue.type=='Q_Multiple'){
+				scope.$modelValue.type = 'Q_Single';
+			}else{
+				scope.$modelValue.type = 'Q_Multiple';
+			}
+			
+			//cascadeDelete(scope.$modelValue.nodes);
 		};
 		
 		function cascadeDelete(arrayInp){
@@ -392,6 +402,10 @@
 			[ [ 'Add Possible Answer', function($itemScope) {
 						$scope.newSubItem($itemScope);
 						}
+			  ],
+			  [ 'Toggle Multiple Choice', function($itemScope) {
+					$scope.toggleMultipleChoice($itemScope);
+					}
 			  ],
 			  [ 'Remove', function($itemScope) {
 					$scope.remove($itemScope);

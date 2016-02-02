@@ -89,6 +89,7 @@ tr.angular-ui-tree-empty {
 	 <div ng-hide="node.editEnabled" data-nodrag>
 
        <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
+		<span ng-if="node.type.indexOf('Multi') > -1" class="badge-multi">Multi</span>
 		<span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
 		<span ng-if="isDragging" class="badge">{{node.type}}</span>
 		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>

@@ -1,5 +1,6 @@
 package org.occideas.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class ModuleVO {
 	private long link;
 	private long topNodeId;
 	private Date lastUpdated;
-	@JsonInclude(Include.NON_EMPTY)
+	@JsonInclude(Include.NON_NULL)
 	@JsonProperty(value = "nodes")
 	private List<NodeVO> childNodes;
 	@JsonInclude(Include.NON_EMPTY)
@@ -111,6 +112,9 @@ public class ModuleVO {
 	}
 
 	public List<NodeVO> getChildNodes() {
+		if(childNodes==null){
+			childNodes = new ArrayList<NodeVO>();
+		}
 		return childNodes;
 	}
 
