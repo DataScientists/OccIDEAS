@@ -94,6 +94,12 @@ tr.angular-ui-tree-empty {
 		<span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
 		<span ng-if="isDragging" class="badge">{{node.type}}</span>
 		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>
+		<span ng-if="(node.nodeclass === 'Q')&&(isCreatingFragments)" save-fragment-modal="node.name" class="badge" >
+		<span class="glyphicon glyphicon-retweet"></span>
+			<md-tooltip>
+        	Save Fragment
+      		</md-tooltip>
+		</span>
 		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="saveModule()">
   			Save
 		</button>
@@ -145,6 +151,7 @@ tr.angular-ui-tree-empty {
   </ol>
 
 </script>
+
 <div class="row">
 	<div class="col-sm-12">
 	<div class="panel panel-default">
