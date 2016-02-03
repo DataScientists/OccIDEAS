@@ -14,7 +14,7 @@
 		        params:{row: null},
 		        resolve:{
 		        	data: function($stateParams,QuestionsService) {
-		        		return QuestionsService.findQuestions($stateParams.row)
+		        		return QuestionsService.findQuestions($stateParams.row,'M')
 		        				.then(function(data){
 		        					console.log("Data getting from questions AJAX ...");
 					        		return data;

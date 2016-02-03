@@ -98,30 +98,36 @@ tr.angular-ui-tree-empty {
 		<span ng-if="isDragging" class="badge">{{node.sequence}}</span>
 		<span ng-if="(node.nodeclass === 'Q')&&(isCreatingFragments)" save-fragment-modal="node.name" class="badge" >
 		<span class="glyphicon glyphicon-retweet"></span>
-			<md-tooltip>	
+			<md-tooltip>
         	Save Fragment
       		</md-tooltip>
 		</span>
-        <div ng-show="false">
-		<md-content class="md-padding" layout="column">
+		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="saveModule()">
+  			Save
+		</button>
+        <div ng-show="(node.nodeclass === 'M')">
+		<md-content >
     
-    <div class="lock-size" layout="row" layout-align="center center">
+    <div class="typesetting">
       <md-fab-speed-dial md-open="vm.isOpen" md-direction="{{selectedDirection}}"
                          ng-class="selectedMode">
         <md-fab-trigger>
-          <md-button aria-label="menu" class="md-fab md-warn">
-            
+          <md-button aria-label="menu" >
+            <span class="badge">Type:{{node.type}}</span>
           </md-button>
         </md-fab-trigger>
         <md-fab-actions>
-          <md-button aria-label="Twitter" class="md-fab md-raised md-mini">
-            
+          <md-button ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')" class="md-fab md-raised md-mini">
+            <span>Prod</span>
           </md-button>
-          <md-button aria-label="Facebook" class="md-fab md-raised md-mini">
-            
+          <md-button ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')" class="md-fab md-raised md-mini">
+            <span >Dev</span>
           </md-button>
-          <md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
-           
+          <md-button ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')" class="md-fab md-raised md-mini">
+           <span >Test</span>
+          </md-button>
+		  <md-button ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')" class="md-fab md-raised md-mini">
+           <span >Intro</span>
           </md-button>
         </md-fab-actions>
       </md-fab-speed-dial>
@@ -129,9 +135,7 @@ tr.angular-ui-tree-empty {
     
   </md-content>
 		</div>
-		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="saveModule()">
-  			Save
-		</button>
+		
     </div>
     <div ng-show="node.editEnabled">
       <input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 

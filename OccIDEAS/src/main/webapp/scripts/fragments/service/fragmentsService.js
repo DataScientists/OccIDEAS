@@ -15,6 +15,15 @@
 		    return data;
 		  });
 		};
+		function save(data){
+			var restSaveUrl = 'rest/fragment/update';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess1,handleError);
+		}
 		var findFragmentChildNodes = function(idNode) {
 			  return $http.get('rest/fragment/get?id=' + idNode).then(function(response) {
 			    var data = response.data;
@@ -81,7 +90,8 @@
 		return {		  
 			getByType: getFragmentsByType,
 			get: getFragments,
-		    post: postNewFragment, 	    
+		    post: postNewFragment, 	
+		    save: save, 	
 		    findFragment: findFragment,
 		    findFragmentChildNodes: findFragmentChildNodes,
 		    deleteFragment: deleteFragment,
@@ -99,6 +109,9 @@
 
 		function handleSuccess( response ) {
             return( response.data );
+        }
+		function handleSuccess1( response ) {
+            return( response );
         }
 	}
 	

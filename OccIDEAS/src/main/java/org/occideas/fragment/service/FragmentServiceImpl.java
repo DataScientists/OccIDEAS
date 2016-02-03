@@ -44,7 +44,9 @@ public class FragmentServiceImpl implements FragmentService {
 
 	@Override
 	public void update(FragmentVO module) {
-		dao.merge(mapper.convertToFragment(module));
+		//generateIdIfNotExist(module);
+		dao.saveOrUpdate(mapper.convertToFragment(module));
+		
 	}
 
 	@Override
