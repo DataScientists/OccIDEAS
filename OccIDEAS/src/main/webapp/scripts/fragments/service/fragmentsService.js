@@ -66,6 +66,17 @@
 				console.log(response.data.id);
 			  });
 			}; 
+			
+		var createFragment = function(moduleObj){
+			var request =  $http({
+				  method: 'POST',
+				  url: modulesUrl+'/create',
+				  data:moduleObj
+				})
+			request.then(function(response){
+				return response;
+			});
+		};
 
 		return {		  
 			getByType: getFragmentsByType,
@@ -73,7 +84,8 @@
 		    post: postNewFragment, 	    
 		    findFragment: findFragment,
 		    findFragmentChildNodes: findFragmentChildNodes,
-		    deleteFragment: deleteFragment
+		    deleteFragment: deleteFragment,
+		    createFragment:createFragment
 		};
 		function handleError( response ) {
             if (

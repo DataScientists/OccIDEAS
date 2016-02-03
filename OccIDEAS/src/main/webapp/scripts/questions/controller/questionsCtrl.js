@@ -4,10 +4,10 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location'];
+	                          '$anchorScroll','$location','$mdMedia'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location) {
+			$anchorScroll,$location,$mdMedia) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -25,9 +25,7 @@
 		$scope.availableDirections = ['up', 'down', 'left', 'right'];
 		$scope.selectedDirection = 'up';
 
-		
-		
-		
+		$scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 		
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
@@ -499,9 +497,21 @@
 			  ],
 			  
 			  [ 'Save as Fragment', function($itemScope) {
-					//$scope.toggleMultipleChoice($itemScope);
-				  
-					}
+				  $mdDialog.show({
+					  controller: QuestionsCtrl,
+					  locals: {
+				           data: data
+				         },
+				      templateUrl: 'scripts/questions/view/fragmentDialog.html',
+				      parent: angular.element(document.body),
+				      clickOutsideToClose:true
+				    })
+				    .then(function(answer) {
+				      $scope.status = 'You said the information was "' + answer + '".';
+				    }, function() {
+				      $scope.status = 'You cancelled the dialog.';
+				    });
+				}
 			  ],
 			  [ 'Remove (Toggle)', function($itemScope) {
 					$scope.remove($itemScope);
@@ -590,6 +600,12 @@
 				}
 			});
 			
+			function saveAsFragment(data){
+				var response = FragmentsService.createFragment(data);	
+				  if(response === '200'){
+					  alert('Save fragment was successful!');
+				  }
+			}
 		}
 		
 		function generateIdNodeCascade(data,maxId,parentId){
@@ -617,5 +633,12 @@
 			saveModuleAndReload();
 		};
 		
+		$scope.saveAsFragment = function (){
+			saveAsFragment();
+		}
+		
+		$scope.cancel = function() {
+		    $mdDialog.cancel();
+		};
 	}
 })();
