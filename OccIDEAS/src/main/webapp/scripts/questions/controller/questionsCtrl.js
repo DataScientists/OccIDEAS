@@ -11,6 +11,7 @@
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
+		$scope.isDragginEnabled = false;
 		$scope.isCreatingFragments = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
@@ -21,11 +22,21 @@
 		$scope.bottomDirections = ['down', 'right'];
 		self.isOpen = false;
 		$scope.availableModes = ['md-fling', 'md-scale'];
-		$scope.selectedMode = 'md-fling';
+		$scope.selectedMode = 'md-scale';
 		$scope.availableDirections = ['up', 'down', 'left', 'right'];
-		$scope.selectedDirection = 'right';
+		$scope.selectedDirection = 'left';
 
 		$scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+		
+		$scope.isHeaderNode = function(node){
+			if(node.type.indexOf('M_Module')>-1){
+				return true;
+			}else if(node.type.indexOf('F_ajsm')>-1){
+				return true;
+			}else{
+				return false;
+			}
+		}
 		
 		$scope.setNodeType = function (node,type){
 			if(type == 'Prod'){
@@ -74,7 +85,7 @@
 								nodes : []
 						});
 						cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
-						saveModuleAndReload();
+						//saveModuleAndReload();
 						return false;
 					}
 					
@@ -115,7 +126,7 @@
 						});
 
 						deferred.resolve();
-						saveModuleAndReload();
+						//saveModuleAndReload();
 						return false;
 					});
 				},
@@ -172,9 +183,9 @@
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
 					cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
-					if(sourceNode.warning != 'warning'){
-						saveModuleAndReload();
-					}
+					//if(sourceNode.warning != 'warning'){
+					//	saveModuleAndReload();
+					//}
 				} 
 		}
 		function reorderSequence(arrayList){
@@ -454,7 +465,7 @@
 			reorderSequence(scope.$modelValue.nodes);
 			$location.hash(locationId);
 		    $anchorScroll();
-		    saveModuleAndReload();
+		    //saveModuleAndReload();
 		};
 
 		$scope.collapseAll = function() {
@@ -503,10 +514,19 @@
 			}
 		};
 		$scope.moduleMenuOptions = 
-			[ [ 'Add Question', function($itemScope) {
-						$scope.newSubItem($itemScope);
+			[ [ 'Enable/Disable Dragging', function($itemScope) {
+				if($scope.isDragginEnabled){
+					$scope.isDragginEnabled = false;
+				}else{
+					$scope.isDragginEnabled = true;
+				}
+					
 						}
-			  ],		  
+			  ],
+			  [ 'Add Question', function($itemScope) {
+					$scope.newSubItem($itemScope);
+					}
+			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
 					
 					var toggleChildren = function (scope) {

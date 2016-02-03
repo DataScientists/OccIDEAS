@@ -44,25 +44,19 @@ tr.angular-ui-tree-empty {
 .warning {
     border: 2px solid #C53E3E !important;
 }
-.P {
-	border: 1px solid #f8faff;
-    border-bottom-color: #C79B1C; !important;
-}
-.Q {
-	border: 1px solid #f8faff;
-    border-bottom-color: #4657B7; !important;
-}
+
 .nodrop {
     background-color: #f2dede;
 }
 
 .tree-node-content {
-    margin: 10px;
+    /* margin: 10px; */
+    
 }
 .tree-handle {
     padding: 10px;
-    background: #428bca;
-    color: #FFF;
+    background: #E3F0F6;
+    color: #7D89B7;
     margin-right: 10px;
 }
 
@@ -75,23 +69,61 @@ tr.angular-ui-tree-empty {
 }
 </style>
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div ui-tree-handle class="tree-node tree-node-content form-inline" ng-class=node.warning >
-	<div context-menu="showMenu(this)" class="{{node.type}} {{node.nodeclass}}" >
-	<a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
-		ng-click="toggle(this)">
-		<span
-        class="glyphicon"
-        ng-class="{
+  <div ui-tree="" id="tree2-root" class="angular-ui-tree">
+      <ol ui-tree-nodes="" ng-model="data" class="ng-pristine ng-untouched ng-valid angular-ui-tree-nodes">
+  <div class="tree-node">
+    <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="">
+      <span class="glyphicon glyphicon-list "></span>
+    </div>
+    <div context-menu="showMenu(this)" class=" tree-node-content ">
+      <a ng-if="!isHeaderNode(node)" class="btn btn-success btn-xs" data-nodrag="" ng-click="toggle(this)">
+        <span class="glyphicon glyphicon-chevron-down " ng-class="{
           'glyphicon-chevron-right': collapsed,
           'glyphicon-chevron-down': !collapsed
-        }"></span></a>
-	<div class="form-group" id={{node.anchorId}}>
+          }">
+        </span>
+      </a>
+<div class="form-group " id={{node.anchorId}}>
+	 <div ng-show="node.editEnabled">
+      		<input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 
+				ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
+     </div>
 	 <div ng-hide="node.editEnabled" data-nodrag>
 
        <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
 		<span ng-if="!node.idNode || node.idNode===0" class="badge-multi">Unsaved</span>
 		<span ng-if="node.type.indexOf('Multi') > -1" class="badge-multi">Multi</span>
+		<div class="{{node.nodeclass}} "  >
 		<span ng-click="enable(this)" data-nodrag>{{node.name}}</span>
+		
+		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="saveModule()">
+  			Save
+		</button>
+		<div ng-if="isHeaderNode(node)" class="typesetting">
+     		<md-fab-speed-dial md-open="vm.isOpen" md-direction="{{selectedDirection}}"
+                         ng-class="selectedMode">
+        	<md-fab-trigger>
+          	<md-button aria-label="menu" >
+            <span class="badge">Type:{{node.type}}</span>
+          	</md-button>
+        	</md-fab-trigger>
+        	<md-fab-actions>
+          	<md-button ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')" class="md-fab md-raised md-mini">
+            	<span>Prod</span>
+          	</md-button>
+          	<md-button ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')" class="md-fab md-raised md-mini">
+            <span >Dev</span>
+          	</md-button>
+          	<md-button ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')" class="md-fab md-raised md-mini">
+           	<span >Test</span>
+          	</md-button>
+		  	<md-button ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')" class="md-fab md-raised md-mini">
+           	<span >Intro</span>
+          	</md-button>
+        	</md-fab-actions>
+      		</md-fab-speed-dial>
+    		</div>
+		</div>
 		<span ng-if="isDragging" class="badge">{{node.type}}</span>
 		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>
 		<span ng-if="isDragging" class="badge">{{node.parentId}}</span>
@@ -102,55 +134,25 @@ tr.angular-ui-tree-empty {
         	Save Fragment
       		</md-tooltip>
 		</span>
-		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="saveModule()">
-  			Save
-		</button>
+		
         <div ng-show="(node.nodeclass === 'M')">
 		<md-content >
     
-    <div class="typesetting">
-      <md-fab-speed-dial md-open="vm.isOpen" md-direction="{{selectedDirection}}"
-                         ng-class="selectedMode">
-        <md-fab-trigger>
-          <md-button aria-label="menu" >
-            <span class="badge">Type:{{node.type}}</span>
-          </md-button>
-        </md-fab-trigger>
-        <md-fab-actions>
-          <md-button ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')" class="md-fab md-raised md-mini">
-            <span>Prod</span>
-          </md-button>
-          <md-button ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')" class="md-fab md-raised md-mini">
-            <span >Dev</span>
-          </md-button>
-          <md-button ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')" class="md-fab md-raised md-mini">
-           <span >Test</span>
-          </md-button>
-		  <md-button ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')" class="md-fab md-raised md-mini">
-           <span >Intro</span>
-          </md-button>
-        </md-fab-actions>
-      </md-fab-speed-dial>
-    </div>
     
-  </md-content>
-		</div>
-		
-    </div>
-    <div ng-show="node.editEnabled">
+      <div ng-show="node.editEnabled">
       <input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 
 			ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
     </div>
-    </div>
-	
-	<div class="form-group pull-right" style="margin-top: 5px;">
+
+      <div class="form-group pull-right" style="margin-top: 5px;">
     <!-- Agents rules to go here -->
+
 	</div>
-	</div>
+    </div>
   </div>
-  <div ng-bind="selected"></div>
+
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false">
     </li>
   </ol>
 	

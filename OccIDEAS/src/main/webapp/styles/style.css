@@ -1,3 +1,9 @@
+.M_Module{
+	display: none;
+}
+.F_ajsm{
+	display: none;
+}
 .welcome{
 	height: 190px;
     font-size: 22px;
@@ -13,7 +19,9 @@
 	background-color: #676262;
 	float:right;
 }
-
+.normalcursor {
+    cursor: auto !important;
+}
 .badge-multi {
     display: inline-block;
     min-width: 10px;
@@ -65,35 +73,26 @@
   min-width: 90px;
 }
 /**Node Types*/
-.M_Module{
+.M{
 	height: 90px;
     font-size: 22px;
     background: #676262  !important;
     color: #D7DFE4 !important;
+    width:100%
 }
-.M_Module_{
-	height: 90px;
-    font-size: 22px;
-    background: #676262  !important;
-    color: #D7DFE4 !important;
+.Q{
+	height: 20px;
+	padding-left: 111px;
+    
+    border-bottom: 2px solid;
+    border-bottom-color: #4657B7;
 }
-.M_Module__{
-	height: 90px;
-    font-size: 22px;
-    background: #676262  !important;
-    color: #D7DFE4 !important;
-}
-.M_IntroModule{
-	height: 90px;
-    font-size: 22px;
-    background: #676262  !important;
-    color: #D7DFE4 !important;
-}
-.F_ajsm{
-	height: 90px;
-    font-size: 22px;
-    background: #626467 !important;
-    color: #D7DFE4 !important;
+.P{
+	height: 20px;
+	padding-left: 111px;
+    
+    border-bottom: 1px solid;
+    border-bottom-color: #C79B1C; !important;
 }
 
 /** Editable table
