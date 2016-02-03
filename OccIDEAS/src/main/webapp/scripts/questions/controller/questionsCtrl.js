@@ -85,7 +85,7 @@
 								nodes : []
 						});
 						cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
-						//saveModuleAndReload();
+						saveModuleAndReload();
 						return false;
 					}
 					
@@ -126,7 +126,7 @@
 						});
 
 						deferred.resolve();
-						//saveModuleAndReload();
+						saveModuleAndReload();
 						return false;
 					});
 				},
@@ -183,9 +183,9 @@
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
 					cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
-					//if(sourceNode.warning != 'warning'){
-					//	saveModuleAndReload();
-					//}
+					if(sourceNode.warning != 'warning'){
+						saveModuleAndReload();
+					}
 				} 
 		}
 		function reorderSequence(arrayList){
@@ -465,7 +465,7 @@
 			reorderSequence(scope.$modelValue.nodes);
 			$location.hash(locationId);
 		    $anchorScroll();
-		    //saveModuleAndReload();
+		    saveModuleAndReload();
 		};
 
 		$scope.collapseAll = function() {
@@ -514,15 +514,7 @@
 			}
 		};
 		$scope.moduleMenuOptions = 
-			[ [ 'Enable/Disable Dragging', function($itemScope) {
-				if($scope.isDragginEnabled){
-					$scope.isDragginEnabled = false;
-				}else{
-					$scope.isDragginEnabled = true;
-				}
-					
-						}
-			  ],
+			[ 
 			  [ 'Add Question', function($itemScope) {
 					$scope.newSubItem($itemScope);
 					}
