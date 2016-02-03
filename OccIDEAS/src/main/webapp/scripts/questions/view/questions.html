@@ -102,6 +102,33 @@ tr.angular-ui-tree-empty {
         	Save Fragment
       		</md-tooltip>
 		</span>
+        <div ng-show="false">
+		<md-content class="md-padding" layout="column">
+    
+    <div class="lock-size" layout="row" layout-align="center center">
+      <md-fab-speed-dial md-open="vm.isOpen" md-direction="{{selectedDirection}}"
+                         ng-class="selectedMode">
+        <md-fab-trigger>
+          <md-button aria-label="menu" class="md-fab md-warn">
+            
+          </md-button>
+        </md-fab-trigger>
+        <md-fab-actions>
+          <md-button aria-label="Twitter" class="md-fab md-raised md-mini">
+            
+          </md-button>
+          <md-button aria-label="Facebook" class="md-fab md-raised md-mini">
+            
+          </md-button>
+          <md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
+           
+          </md-button>
+        </md-fab-actions>
+      </md-fab-speed-dial>
+    </div>
+    
+  </md-content>
+		</div>
 		<button type="button" class="btn btn-default btn-lg btn-save" ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" ng-click="saveModule()">
   			Save
 		</button>

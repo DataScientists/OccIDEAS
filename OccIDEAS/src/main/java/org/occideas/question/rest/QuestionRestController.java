@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 
 	@Autowired
 	private QuestionService service;
+	
+	@Autowired
+	private ModuleService moduleService;
 	
 	@GET
 	@Path(value="/getlist")
@@ -48,6 +52,19 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
+	}
+	
+	@GET
+	@Path(value="/getMaxId")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getMaxId() {
+		Long longVal = null;
+		try{
+			longVal = moduleService.getMaxId();
+		}catch(Throwable e){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(longVal).build();
 	}
 
 	@Path(value="/create")

@@ -23,6 +23,15 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getMaxId(){
+			var restGetMaxIdUrl = 'rest/question/getMaxId';
+			var request =  $http({
+				  method: 'GET',
+				  url: restGetMaxIdUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -39,7 +48,8 @@
 		
 		return {
 			findQuestions: findQuestions,
-			save:save
+			save:save,
+			getMaxId:getMaxId
 		};
 	}
 })();

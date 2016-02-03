@@ -5,4 +5,5 @@ import org.occideas.vo.ModuleVO;
 
 public interface ModuleService extends BaseService<ModuleVO>{
 	public void merge(ModuleVO module);
+	public Long getMaxId();
 }

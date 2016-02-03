@@ -46,13 +46,7 @@ public class ModuleServiceImpl implements ModuleService {
 		generateIdIfNotExist(module);
 		dao.saveOrUpdate(mapper.convertToModule(module));
 	}
-
-	private void generateIdIfNotExist(ModuleVO module) {
-		if(StringUtils.isEmpty(module.getIdNode())){
-			module.setIdNode(dao.generateIdNode());
-		}
-	}
-
+	
 	@Override
 	public void delete(ModuleVO module) {
 		dao.delete(mapper.convertToModule(module));
@@ -61,6 +55,17 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public void merge(ModuleVO module) {
 		dao.merge(mapper.convertToModule(module));
+	}
+
+	@Override
+	public Long getMaxId() {
+		return dao.generateIdNode();
+	}
+	
+	private void generateIdIfNotExist(ModuleVO module) {
+		if(StringUtils.isEmpty(module.getIdNode())){
+			module.setIdNode(dao.generateIdNode());
+		}
 	}
 
 }

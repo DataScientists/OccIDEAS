@@ -15,6 +15,20 @@
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
 		$anchorScroll.yOffset = 200;
+		
+		//typesetting
+		$scope.topDirections = ['left', 'up'];
+		$scope.bottomDirections = ['down', 'right'];
+		self.isOpen = false;
+		$scope.availableModes = ['md-fling', 'md-scale'];
+		$scope.selectedMode = 'md-fling';
+		$scope.availableDirections = ['up', 'down', 'left', 'right'];
+		$scope.selectedDirection = 'up';
+
+		
+		
+		
+		
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					//var sourceNode = sourceNodeScope.node;
@@ -483,6 +497,12 @@
 					$scope.toggleMultipleChoice($itemScope);
 					}
 			  ],
+			  
+			  [ 'Save as Fragment', function($itemScope) {
+					//$scope.toggleMultipleChoice($itemScope);
+				  
+					}
+			  ],
 			  [ 'Remove (Toggle)', function($itemScope) {
 					$scope.remove($itemScope);
 					}
@@ -550,18 +570,49 @@
 			  ]
 			];
 		function saveModuleAndReload(){
-			QuestionsService.save($scope.data[0]).then(function(response){
+			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
-					console.log('Save was Successful!');
-					//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
-					QuestionsService.findQuestions($scope.data[0].idNode).then(function(data) {	
-						$scope.data = data.data;
+					generateIdNodeCascade($scope.data[0],response.data,$scope.data[0].idNode);
+					
+					QuestionsService.save($scope.data[0]).then(function(response){
+						if(response.status === 200){
+							console.log('Save was Successful!');
+							//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
+							QuestionsService.findQuestions($scope.data[0].idNode).then(function(data) {	
+								$scope.data = data.data;
+							});
+						}else{
+							console.log('ERROR on Save!');
+						}
 					});
 				}else{
 					console.log('ERROR on Save!');
 				}
 			});
+			
 		}
+		
+		function generateIdNodeCascade(data,maxId,parentId){
+			var maxIdIncrement = maxId;
+			if(!data.idNode){
+				maxIdIncrement =(maxIdIncrement + 1);
+				data.idNode = maxIdIncrement;
+				
+				if(parentId){
+					data.parentId = parentId;
+				}
+			}
+			if(data.nodes){
+				if(data.nodes.length > 0){
+					for (i = 0; i < data.nodes.length; i++) {
+						generateIdNodeCascade(data.nodes[i],maxIdIncrement+i,data.idNode);   	              
+	    	        }
+					
+				}
+			}
+			
+		}
+		
 		$scope.saveModule = function (){
 			saveModuleAndReload();
 		};
