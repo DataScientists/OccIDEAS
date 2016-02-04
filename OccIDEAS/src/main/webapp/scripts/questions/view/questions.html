@@ -157,9 +157,9 @@ tr.angular-ui-tree-empty {
 
 <script type="text/ng-template" id="nodes_renderer.html">
   <div id="tree2-root" class="angular-ui-tree">
-      <ol  ui-tree-handle class="ng-pristine ng-untouched ng-valid angular-ui-tree-nodes">
+      <ol ui-tree-handle class="ng-pristine ng-untouched ng-valid angular-ui-tree-nodes">
   <div class="tree-node">
-    <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="">
+    <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}">
       <span class="glyphicon glyphicon-list "></span>
     </div>
 	<span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>

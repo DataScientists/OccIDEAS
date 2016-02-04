@@ -670,7 +670,6 @@
 			  ]
 			];
 		function saveModuleAndReload(){
-			reorderSequence($scope.data[0].nodes);
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
 					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);
