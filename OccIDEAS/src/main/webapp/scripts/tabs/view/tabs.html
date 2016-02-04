@@ -1,7 +1,7 @@
 <div ng-cloak ng-controller="TabsCtrl as vm">
    <md-content class="md-padding">
    <md-progress-linear ng-if="loading" md-mode="indeterminate"></md-progress-linear>
-    <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-dynamic-height>
+    <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-dynamic-height md-enable-disconnect="true">
       <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" layout-fill>
       	<md-tab-label>
         <span>{{tab.title}}</span>
@@ -9,10 +9,9 @@
               <span class="glyphicon glyphicon-remove" style="margin-left:3px" />
           </span>
         </md-tab-label>
-        
         <md-tab-body ng-class="tab.style" layout="column" layout-fill >
                 <div class="tab{{$index%4}}" >
-         <div id="content" ui-view="{{tab.viewName}}" flex> </div>
+         		<div id="content" ui-view="{{tab.viewName}}" flex><md-progress-circular md-mode="indeterminate"></md-progress-circular></div>
           <br/>
 <!-- <md-button class="md-primary md-raised" ng-click="removeTab( tab )" ng-disabled="tabs.length <= 1">Remove Tab</md-button> -->
         </div>

@@ -68,6 +68,93 @@ tr.angular-ui-tree-empty {
     box-sizing: border-box;
 }
 </style>
+<div>
+<div class="row">
+	<div class="col-sm-12">
+	<div class="panel panel-default">
+ 	 <div class="panel-body">
+  	<div ui-tree="moduleTreeOptions" id="tree-root">
+		<ol ui-tree-nodes ng-model="data">
+			<li ng-repeat="node in data" ui-tree-node 
+				ng-include="'nodes_renderer.html'"></li>
+		</ol>
+	</div>
+  </div>
+</div>
+	</div>
+</div>
+
+<div ng-if="showFragmentSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
+		<div class="frag-contain">
+		<div class="fragmentSticker" ng-click="toggleRight()">Fragments</div> 
+<label for="fragmentsdragdrop" class="fraglabel">Drag Drop Fragments: </label>
+<div id="fragmentsdragdrop"><ul></ul>
+<div>
+    <h5>Fragment List</h5>
+    <uib-accordion close-others="oneAtATime">
+     	 <uib-accordion-group heading="aJSMs" >
+				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
+				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+    	<uib-accordion-group heading="Templates" >
+		<div ui-tree="templateTreeOptions" id="templateTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="templateFragmentSlider">
+				<li ng-repeat="node in templateFragmentSlider" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+    	<uib-accordion-group heading="Frequencies" >
+		<div ui-tree="templateTreeOptions" id="frequencyTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="frequencyFragmentSlider">
+				<li ng-repeat="node in frequencyFragmentSlider" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+     </uib-accordion>
+     
+  </div>
+</div>
+</div>
+</div>
+<!-- Show module list slider -->
+<div ng-if="showModuleSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
+		<div class="frag-contain">
+		<div class="fragmentSticker" ng-click="toggleRight()">Modules</div> 
+<label for="fragmentsdragdrop" class="fraglabel">Drag Drop Modules: </label>
+<div id="fragmentsdragdrop"><ul></ul>
+<div>
+    <h5>Module List</h5>
+    <uib-accordion close-others="oneAtATime">
+         <uib-accordion-group heading="Module" >
+			<div ui-tree="aJsmTreeOptions" id="templateTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="moduleSlider">
+				<li ng-repeat="node in moduleSlider" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+     	 <uib-accordion-group heading="aJSMs" >
+				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
+				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+     </uib-accordion>
+     
+  </div>
+</div>
+</div>
+</div>
+</div>
+
 <script type="text/ng-template" id="nodes_renderer.html">
   <div ui-tree="" id="tree2-root" class="angular-ui-tree">
       <ol ui-tree-nodes="" ng-model="node" class="ng-pristine ng-untouched ng-valid angular-ui-tree-nodes">
@@ -186,88 +273,3 @@ tr.angular-ui-tree-empty {
   </ol>
 
 </script>
-
-<div class="row">
-	<div class="col-sm-12">
-	<div class="panel panel-default">
-  <div class="panel-body">
-  	<div ui-tree="moduleTreeOptions" id="tree-root">
-		<ol ui-tree-nodes ng-model="data">
-			<li ng-repeat="node in data" ui-tree-node 
-				ng-include="'nodes_renderer.html'"></li>
-		</ol>
-	</div>
-  </div>
-</div>
-	</div>
-</div>
-
-<div ng-if="showFragmentSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
-		<div class="frag-contain">
-		<div class="fragmentSticker" ng-click="toggleRight()">Fragments</div> 
-<label for="fragmentsdragdrop" class="fraglabel">Drag Drop Fragments: </label>
-<div id="fragmentsdragdrop"><ul></ul>
-<div>
-    <h5>Fragment List</h5>
-    <uib-accordion close-others="oneAtATime">
-     	 <uib-accordion-group heading="aJSMs" >
-				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
-				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-    	<uib-accordion-group heading="Templates" >
-		<div ui-tree="templateTreeOptions" id="templateTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="templateFragmentSlider">
-				<li ng-repeat="node in templateFragmentSlider" ui-tree-node 
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-    	<uib-accordion-group heading="Frequencies" >
-		<div ui-tree="templateTreeOptions" id="frequencyTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="frequencyFragmentSlider">
-				<li ng-repeat="node in frequencyFragmentSlider" ui-tree-node 
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-     </uib-accordion>
-     
-  </div>
-</div>
-</div>
-</div>
-<!-- Show module list slider -->
-<div ng-if="showModuleSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
-		<div class="frag-contain">
-		<div class="fragmentSticker" ng-click="toggleRight()">Modules</div> 
-<label for="fragmentsdragdrop" class="fraglabel">Drag Drop Modules: </label>
-<div id="fragmentsdragdrop"><ul></ul>
-<div>
-    <h5>Module List</h5>
-    <uib-accordion close-others="oneAtATime">
-         <uib-accordion-group heading="Module" >
-			<div ui-tree="aJsmTreeOptions" id="templateTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="moduleSlider">
-				<li ng-repeat="node in moduleSlider" ui-tree-node 
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-     	 <uib-accordion-group heading="aJSMs" >
-				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
-				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-     </uib-accordion>
-     
-  </div>
-</div>
-</div>
-</div>
