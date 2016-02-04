@@ -382,13 +382,17 @@
 					nodes : []
 				});
 			}else if (nodeData.type == 'Q_simple') {
+				var type = "P_simple"
+				if(scope.isFreeText){
+					type = "P_freetext"
+				}
 				nodeData.nodes.push({
 					anchorId : locationId,
-					name : "New Possible Answer",
-					placeholder:"New Possible Answer",
+					name : "[Freetext]",
+					placeholder:"[Freetext]",
 					topNodeId : nodeData.idNode,
 					parentId: nodeData.idNode,
-					type : "P_simple",
+					type : type,
 					nodeclass : "P",
 					nodes : []
 				});
@@ -575,6 +579,11 @@
 			[ [ 'Add Possible Answer', function($itemScope) {
 						$scope.newSubItem($itemScope);
 						}
+			  ],
+			  [ 'Add Free Text Possible Answer', function($itemScope) {
+				  $itemScope.isFreeText = true;
+					$scope.newSubItem($itemScope);
+					}
 			  ],
 			  
 			  [ 'Multiple Choice (Toggle)', function($itemScope) {
