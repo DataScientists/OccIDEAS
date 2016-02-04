@@ -74,8 +74,9 @@
 	    	$state.go("questionView",{row:row});
 	    }
 	    
-	    function cancel(row) {
-	    	del(row);
+	    function cancel(row,rowForm) {
+	    	var originalRow = resetRow(row, rowForm);
+	        angular.extend(row, originalRow);
 	    }
 	    function del(row) {
 	    	row.deleted = 1;
@@ -109,8 +110,6 @@
 	        return window._.findWhere(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
-	    	var originalRow = resetRow(row, rowForm);
-	        angular.extend(row, originalRow);
 	    	self.isEditing = false;
 	        ModulesService.save(row).then(function(response){
 				if(response.status === 200){
