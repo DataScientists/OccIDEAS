@@ -8,7 +8,8 @@
     background: #f8faff;
     border: 1px solid #dae2ea;
     color: #7c9eb2;
-
+    min-height: 38px !important;
+    padding-top: 8px;
 }
 .angular-ui-tree-nodes {
     padding-left: 0px; 
@@ -166,25 +167,40 @@ tr.angular-ui-tree-empty {
         <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle=""  >
           <span class="glyphicon glyphicon-list"></span>
         </div>
-        <div class="tree-node-content"> <!-- start content -->
-          <span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>
-	      <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
-	      <span ng-if="!node.idNode || node.idNode===0" class="badge-multi">Unsaved</span>
-	      <span ng-if="node.type.indexOf('Multi') > -1" class="badge-multi">Multi</span>
-          <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle(this)">
-            <span class="glyphicon glyphicon-chevron-down" ng-class="{
+<!-- start content -->
+        <div context-menu="showMenu(this)" class="tree-node-content {{node.nodeclass}} {{node.warning}}"> 
+          <a ng-if="!node.editEnabled" class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle(this)">
+            <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,
               'glyphicon-chevron-down': !collapsed
               }">
             </span>
           </a>
-          {{node.name}}
+          <span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>
+	      <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
+	      <span ng-if="!node.idNode || node.idNode===0" class="badge-multi">Unsaved</span>
+	      <span ng-if="node.type.indexOf('Multi') > -1" class="badge-multi">Multi</span>
+          
+          <span ng-if="!node.editEnabled" ng-click="enable(this)" data-nodrag>{{node.name}}</span>
           <div ng-show="node.editEnabled">
-      		<input type="text" ng-model="node.name" class="form-control" style="width:500px;"  data-nodrag 
-				ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
+      		<input type="text" 
+             ng-model="node.name" 
+             ng-focus="focus=true;blur=false;" 
+             ng-blur="saveEdit(this)" 
+             class="form-control"  
+             data-nodrag 
+			 ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
      	  </div>
-          <!-- start fab menu for changing type of module --> 
-          <div ng-if="isHeaderNode(node)" class="typesetting">
+<!-- start save button -->
+		  <button type="button" 
+            class="btn btn-default btn-lg btn-save" 
+            ng-if="(node.nodeclass === 'M')||(node.nodeclass === 'F')" 
+            ng-click="saveModule()">
+              Save	
+           </button>
+<!-- end save Button -->
+<!-- start fab menu for changing type of module --> 
+          <div ng-if="isModuleHeaderNode(node)" class="typesetting">
      		<md-fab-speed-dial md-open="vm.isOpen" md-direction="{{selectedDirection}}"
                          ng-class="selectedMode">
         	<md-fab-trigger>
@@ -208,8 +224,9 @@ tr.angular-ui-tree-empty {
         	</md-fab-actions>
       		</md-fab-speed-dial>
 		  </div>
-          <!-- end fab menu for changing type of module --> 
-       </div> <!-- end content -->
+<!-- end fab menu for changing type of module --> 
+       </div> 
+<!-- end content -->
      </div>
   </div>
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">

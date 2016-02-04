@@ -29,7 +29,7 @@
 		$scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 		
 		$scope.isCollapsableNode = function(node){
-			if($scope.isHeaderNode(node)){
+			if($scope.isModuleHeaderNode(node)){
 				return false;
 			}else if(node.nodes.length==0){
 				return false;
@@ -39,7 +39,7 @@
 				return true;
 			}
 		}
-		$scope.isHeaderNode = function(node){
+		$scope.isModuleHeaderNode = function(node){
 			if(node.type.indexOf('M_Module')>-1){
 				return true;
 			}else if(node.type.indexOf('M_Module_')>-1){
@@ -47,8 +47,6 @@
 			}else if(node.type.indexOf('M_Module__')>-1){
 				return true;
 			}else if(node.type.indexOf('M_IntroModule')>-1){
-				return true;
-			}else if(node.type.indexOf('F_ajsm')>-1){
 				return true;
 			}else{
 				return false;
@@ -632,7 +630,7 @@
 		              toggleChildren($itemScope);
 					} 
 				  ],
-				  [ 'Open as aJMS', function($itemScope) {	
+				  [ 'Open as aJSM', function($itemScope) {	
 	  					var node = $itemScope.node;
 	  					node.idNode = node.link;
 	  					node.type = 'F_ajsm';
