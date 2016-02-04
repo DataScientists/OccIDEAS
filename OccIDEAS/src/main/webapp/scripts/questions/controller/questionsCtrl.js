@@ -31,6 +31,12 @@
 		$scope.isHeaderNode = function(node){
 			if(node.type.indexOf('M_Module')>-1){
 				return true;
+			}else if(node.type.indexOf('M_Module_')>-1){
+				return true;
+			}else if(node.type.indexOf('M_Module__')>-1){
+				return true;
+			}else if(node.type.indexOf('M_IntroModule')>-1){
+				return true;
 			}else if(node.type.indexOf('F_ajsm')>-1){
 				return true;
 			}else{
