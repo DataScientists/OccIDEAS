@@ -11,7 +11,7 @@
         </md-tab-label>
         <md-tab-body ng-class="tab.style" layout="column" layout-fill >
                 <div class="tab{{$index%4}}" >
-         		<div id="content" ui-view="{{tab.viewName}}" flex>
+         		<div id="content" ui-view="{{tab.viewName}}" flex class="ng-cloak">
          		<md-progress-circular md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
          		</div>
           <br/>

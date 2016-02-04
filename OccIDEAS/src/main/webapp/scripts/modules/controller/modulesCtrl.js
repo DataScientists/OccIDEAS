@@ -76,7 +76,20 @@
 	    
 	    function cancel(row,rowForm) {
 	    	var originalRow = resetRow(row, rowForm);
-	        angular.extend(row, originalRow);
+	    	if(row.idNode){
+	    		angular.extend(row, originalRow);
+	    	}else{
+	    		_.remove(self.tableParams.settings().dataset, function (item) {
+		            return row === item;
+		        });
+	    		self.tableParams.shouldGetData = false;
+		        self.tableParams.reload().then(function (data) {
+		            if (data.length === 0 && self.tableParams.total() > 0) {
+		                self.tableParams.page(self.tableParams.page() - 1);
+		                self.tableParams.reload();
+		            }
+		        });
+	    	} 
 	    }
 	    function del(row) {
 	    	row.deleted = 1;

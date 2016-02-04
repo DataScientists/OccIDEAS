@@ -80,7 +80,7 @@ public class ModuleDao {
     						.add(Projections.property("idNode"),"idNode"))
     						.setResultTransformer(Transformers.aliasToBean(Node.class));
     	List<Node> list = (List<Node>)crit.list();
-    	return list.get(0).getIdNode()+1;
+    	return list.get(0).getIdNode();
     }
 
 }
