@@ -28,6 +28,15 @@
 
 		$scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
 		
+		$scope.isCollapsableNode = function(node){
+			if($scope.isHeaderNode(node)){
+				return false;
+			}else if(node.nodes.length==0){
+				return false;
+			}else{
+				return true;
+			}
+		}
 		$scope.isHeaderNode = function(node){
 			if(node.type.indexOf('M_Module')>-1){
 				return true;
@@ -132,7 +141,7 @@
 						});
 
 						deferred.resolve();
-						saveModuleAndReload();
+						//saveModuleAndReload();
 						return false;
 					});
 				},
@@ -192,6 +201,7 @@
 					if(sourceNode.warning != 'warning'){
 						saveModuleAndReload();
 					}
+					
 				} 
 		}
 		function reorderSequence(arrayList){
@@ -660,6 +670,7 @@
 			  ]
 			];
 		function saveModuleAndReload(){
+			reorderSequence($scope.data[0].nodes);
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
 					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);
