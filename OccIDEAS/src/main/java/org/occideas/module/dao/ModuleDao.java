@@ -60,6 +60,7 @@ public class ModuleDao {
    	public List<Module> getAllActive() {
          final Session session = sessionFactory.getCurrentSession();
          final Criteria crit = session.createCriteria(Module.class)
+        		 					.addOrder(Order.asc("name"))
         		 					.add(Restrictions.eq("deleted", 0))
        		  						.setProjection(Projections.projectionList()
        		  						.add(Projections.property("idNode"),"idNode")

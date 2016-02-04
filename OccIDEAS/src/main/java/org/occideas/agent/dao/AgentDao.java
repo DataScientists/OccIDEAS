@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
@@ -56,6 +57,7 @@ public class AgentDao {
    	public List<Agent> getAllActive() {
          final Session session = sessionFactory.getCurrentSession();
          final Criteria crit = session.createCriteria(Agent.class)
+        		 					.addOrder(Order.asc("name"))
         		 					.add(Restrictions.eq("deleted", 0))
        		  						.setProjection(Projections.projectionList()
        		  						.add(Projections.property("idAgent"),"idAgent")

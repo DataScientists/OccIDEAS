@@ -169,7 +169,7 @@ tr.angular-ui-tree-empty {
         </div>
 <!-- start content -->
         <div context-menu="showMenu(this)" class="tree-node-content {{node.nodeclass}} {{node.warning}}"> 
-          <a ng-if="!node.editEnabled" class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle(this)">
+          <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle(this)">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,
               'glyphicon-chevron-down': !collapsed
@@ -182,7 +182,7 @@ tr.angular-ui-tree-empty {
 	      <span ng-if="node.type.indexOf('Multi') > -1" class="badge-multi">Multi</span>
           
           <span ng-if="!node.editEnabled" ng-click="enable(this)" data-nodrag>{{node.name}}</span>
-          <div ng-show="node.editEnabled">
+          <div ng-show="node.editEnabled" class="editBox">
       		<input type="text" 
              ng-model="node.name" 
              ng-focus="focus=true;blur=false;" 

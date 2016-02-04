@@ -17,6 +17,10 @@
 	border: 2px solid #80ADDA !important;
 	border-radius: 30px;
 }
+.editBox input{
+	margin-left: 20px;
+    margin-top: -18px;
+}
 .welcome{
 	height: 190px;
     font-size: 22px;

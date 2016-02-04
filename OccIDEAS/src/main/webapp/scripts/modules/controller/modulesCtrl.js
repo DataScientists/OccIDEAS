@@ -15,7 +15,7 @@
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(
 				{
-					group: "type"
+					group: "type",
 				}, 
 				{	
 	        getData: function($defer,params) {

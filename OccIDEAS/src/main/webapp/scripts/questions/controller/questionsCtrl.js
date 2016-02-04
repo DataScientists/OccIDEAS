@@ -202,9 +202,8 @@
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
-					//cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
 					if(sourceNode.warning != 'warning'){
-						//saveModuleAndReload();
+						saveModuleAndReload();
 					}
 					
 				} 
@@ -484,9 +483,9 @@
 		        });
 			}
 			reorderSequence(scope.$modelValue.nodes);
-			//$location.hash(locationId);
-		    //$anchorScroll();
-		    saveModuleAndReload();
+			$location.hash(locationId);
+		    $anchorScroll();
+		    //saveModuleAndReload();
 		};
 
 		$scope.collapseAll = function() {
