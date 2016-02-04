@@ -33,6 +33,8 @@
 				return false;
 			}else if(node.nodes.length==0){
 				return false;
+			}else if(node.deleted==1){
+				return false;
 			}else{
 				return true;
 			}
@@ -160,7 +162,11 @@
 				      return true;
 				    },
 				beforeDrop:function(event){
-					
+					var destNode = event.dest.nodesScope.node;
+					if(!destNode){
+						$scope.isDragging = false;
+						return false;
+					}
 				},
 				beforeDrag: function(sourceNodeScope){
 					$scope.isDragging = true;
@@ -197,9 +203,10 @@
 					}
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
-					cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
+					reorderSequence(destNode.nodes);
+					//cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
 					if(sourceNode.warning != 'warning'){
-						saveModuleAndReload();
+						//saveModuleAndReload();
 					}
 					
 				} 
@@ -479,8 +486,8 @@
 		        });
 			}
 			reorderSequence(scope.$modelValue.nodes);
-			$location.hash(locationId);
-		    $anchorScroll();
+			//$location.hash(locationId);
+		    //$anchorScroll();
 		    saveModuleAndReload();
 		};
 
@@ -672,6 +679,7 @@
 		function saveModuleAndReload(){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
+					
 					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);
 					
 					QuestionsService.save($scope.data[0]).then(function(response){
@@ -736,6 +744,7 @@
 				var i=0;
 				_.each(arrayInp, function(node) {
 					console.log(node.name)
+					//node.sequence = i;
 					if(!node.idNode){
 						maxIdIncrement =(maxIdIncrement + 1);
 						node.idNode = maxIdIncrement;
