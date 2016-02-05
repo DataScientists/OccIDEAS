@@ -4,10 +4,10 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia'];
+	                          '$anchorScroll','$location','$mdMedia','$window'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia) {
+			$anchorScroll,$location,$mdMedia,$window) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -27,6 +27,10 @@
 		$scope.selectedDirection = 'left';
 
 		$scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+		
+		$window.beforeNode = [];
+		$window.afterNode = [];
+		$scope.undoEnable = false;
 		
 		$scope.isCollapsableNode = function(node){
 			if($scope.isModuleHeaderNode(node)){
@@ -157,7 +161,7 @@
 		$scope.moduleTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					var sourceNode = sourceNodeScope.node;
-				      return true;
+				    return true;
 				    },
 				beforeDrop:function(event){
 					var destNode = event.dest.nodesScope.node;
@@ -176,6 +180,7 @@
 					}
 				},
 				dropped: function (event){
+					recordAction($scope.data);
 					var sourceNode = event.source.nodeScope.node;
 					sourceNode.warning = null;
 					var destNode = event.dest.nodesScope.node;
@@ -302,6 +307,7 @@
 			}	
 		};
 		$scope.remove = function(scope) {
+			recordAction($scope.data);
 			if(scope.$modelValue.deleted){
 				scope.$modelValue.deleted = 0;
 				cascadeDelete(scope.$modelValue.nodes,0);
@@ -309,8 +315,7 @@
 				scope.$modelValue.deleted = 1;
 				cascadeDelete(scope.$modelValue.nodes,1);
 			}
-			
-			
+			saveModuleAndReload();
 		};
 		function cascadeDelete(arrayInp,deleteFlag){
 			if(arrayInp.length > 0){
@@ -342,6 +347,7 @@
 			}
 		}
 		$scope.newSubItem = function(scope) {
+			recordAction($scope.data);
 			var nodeData = scope.$modelValue;
 			var locationId = nodeData.idNode * 10 + nodeData.nodes.length
 			if (!nodeData.nodes) {
@@ -489,7 +495,7 @@
 			reorderSequence(scope.$modelValue.nodes);
 			$location.hash(locationId);
 		    $anchorScroll();
-		    //saveModuleAndReload();
+		    saveModuleAndReload();
 		};
 
 		$scope.collapseAll = function() {
@@ -504,9 +510,11 @@
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
 			});
+			saveModuleAndReload();
 		};
 
 		$scope.enable = function(scope) {
+			recordAction($scope.data);
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = true;
 			});
@@ -781,5 +789,16 @@
 		$scope.cancel = function() {
 		    $mdDialog.cancel();
 		};
+		
+		function recordAction(data){
+			$window.beforeNode = angular.copy(data);
+			$scope.undoEnable = true;
+		}
+		
+		$scope.undo = function(){
+			$scope.data = $window.beforeNode;
+			saveModuleAndReload();
+			$scope.undoEnable = false;
+		}
 	}
 })();
