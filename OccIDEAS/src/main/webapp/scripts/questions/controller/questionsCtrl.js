@@ -576,7 +576,7 @@
 					nodeclass : "Q",
 					nodes : []
 				});
-			}else if (nodeData.type.indexOf('P') != 0) {
+			}else if (nodeData.type.indexOf('P') == 0) { //P is first character
 				nodeData.nodes.push({
 					anchorId : locationId,
 					name : "New Question",
@@ -587,7 +587,7 @@
 					nodeclass : "Q",
 					nodes : []
 				});
-			}else if (nodeData.type.indexOf('Q') != 0) {
+			}else if (nodeData.type.indexOf('Q') == 0) { //Q is first character
 				nodeData.nodes.push({
 					anchorId : locationId,
 					name : "New Possible Answer",
@@ -821,7 +821,7 @@
 					
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
-							console.log('Save was Successful!');
+							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
 								$scope.data = data.data;
 							});
@@ -842,7 +842,7 @@
 					
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
-							console.log('Save was Successful!');
+							console.log('Save was Successful! Not Reloading');
 							//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
 							//QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
 							//	$scope.data = data.data;
