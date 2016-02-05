@@ -162,7 +162,7 @@ tr.angular-ui-tree-empty {
 </div>
 
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div id="tree2-root" class="angular-ui-tree">
+  <div id="tree1-root" class="angular-ui-tree">
      <div class="tree-node">
 		{{isClonable}}
         <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="" 
@@ -235,31 +235,21 @@ tr.angular-ui-tree-empty {
   </ol>
 </script>
 <script type="text/ng-template" id="nodes_renderer2.html">
-<div ui-tree-handle class="tree-node tree-node-content form-inline" >
-	<div  >
-	<a ng-if="node.nodes && node.nodes.length > 0" class="btn btn-success btn-xs" data-nodrag 
-		ng-click="toggle(this)">
-		<span
-        class="glyphicon"
-        ng-class="{
-          'glyphicon-chevron-right': collapsed,
-          'glyphicon-chevron-down': !collapsed
-        }"></span></a>
-	<div class="form-group">
-	 <div ng-hide="node.editEnabled" data-nodrag>
-       <span data-nodrag>{{node.name}}</span>
-		<span ng-if="isDragging" class="badge">{{node.type}}</span>
-		<span ng-if="isDragging" class="badge">{{node.idNode}}</span>
-    </div>
-    
-    </div>
-	
-	</div>
+<div id="tree2-root" class="angular-ui-tree">
+     <div class="tree-node">
+        <div class="pull-left tree-handle angular-ui-tree-handle " ui-tree-handle=""  >
+          <span class="glyphicon glyphicon-list"></span>
+        </div>
+<!-- start content -->
+        <div class="tree-node-content Q {{node.warning}}">        
+          <span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>
+          <span data-nodrag>{{node.name}}</span>
+       </div> 
+<!-- end content -->
+     </div>
   </div>
-  <div ng-bind="selected"></div>
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer2.html'">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer2.html'" class="angular-ui-tree-node" collapsed="false">
     </li>
   </ol>
-
 </script>

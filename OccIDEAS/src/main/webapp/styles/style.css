@@ -85,6 +85,11 @@
     border-color: #2F3446 !important;
 }
 
+.angular-ui-tree-placeholder-warning {
+    background: #FFF0F0 !important;
+    border: 2px dashed #A02713 !important;
+}
+
 /**Module table*/
 .moduleTable td:last-child {
   min-width: 90px;
