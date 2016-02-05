@@ -164,7 +164,9 @@ tr.angular-ui-tree-empty {
 <script type="text/ng-template" id="nodes_renderer.html">
   <div id="tree2-root" class="angular-ui-tree">
      <div class="tree-node">
-        <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle=""  >
+		{{isClonable}}
+        <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="" 
+			ng-mousedown="copy($event)">
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->

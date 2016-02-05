@@ -191,10 +191,22 @@
 						return true;
 					}
 				},
+				dragStart: function(event){
+					if($scope.isClonable){
+						event.elements.placeholder.replaceWith(event.elements.dragging.clone().find('li'));
+						event.source.nodeScope.node.idNode = "";
+						cascadeIdCleanse(event.source.nodeScope.node.nodes);
+					}
+				},
+				dragStop: function(event){
+					
+				},
 				dropped: function (event){
 					var sourceNode = event.source.nodeScope.node;
 					sourceNode.warning = null;
 					var destNode = event.dest.nodesScope.node;
+					
+					$scope.isClonable = false;
 					console.log("source"+sourceNode.type);
 					if(!destNode){
 						sourceNode.warning = 'warning';						
@@ -219,7 +231,7 @@
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
-						saveModuleWithoutReload();
+						saveModuleAndReload();
 					}
 					
 				} 
@@ -328,6 +340,23 @@
 			}
 			saveModuleAndReload();
 		};
+		
+		function cascadeIdCleanse(arrayInp){
+			if(arrayInp.length > 0){
+				_.each(arrayInp, function(obj) {
+					  _.each(obj, function(value, key) {
+					    if(key === 'idNode') {
+					      obj[key] = "";
+					    }
+					  });
+					if(obj.nodes.length > 0){
+						cascadeIdCleanse(obj.nodes);
+					}
+				});
+				
+			}
+		}
+		
 		function cascadeDelete(arrayInp,deleteFlag){
 			if(arrayInp.length > 0){
 				_.each(arrayInp, function(obj) {
@@ -828,6 +857,13 @@
 			$scope.data = $window.beforeNode;
 			saveModuleAndReload();
 			$scope.undoEnable = false;
+		}
+		
+		$scope.isClonable = false;
+		$scope.copy = function(event){
+			if (event.ctrlKey) {
+				$scope.isClonable = true;
+			} 
 		}
 	}
 })();
