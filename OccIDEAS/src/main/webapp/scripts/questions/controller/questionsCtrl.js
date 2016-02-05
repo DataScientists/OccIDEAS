@@ -82,12 +82,18 @@
 					//var sourceNode = sourceNodeScope.node;
 				      return true;
 				    },
+				beforeDrag: function(sourceNodeScope){
+						$scope.isDragging = true;	
+						
+						return true;
+					},
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
 					console.log("source"+sourceNode.type);
 					if(!destNode){
-						return false;						
+						$scope.isDragging = false;
+						return false;					
 					}else{
 						if (!sourceNode.nodes) {
 							sourceNode.nodes = [];
@@ -104,7 +110,8 @@
 								nodes : []
 						});
 						cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
-						saveModuleAndReload();
+						$scope.isDragging = false;
+						saveModuleWithoutReload();
 						return false;
 					}
 					
@@ -123,7 +130,8 @@
 					var destNode = event.dest.nodesScope.node;
 					console.log("source"+sourceNode.type);
 					if(!destNode){
-						sourceNode.warning = 'warning';						
+						$scope.isDragging = false;
+						return false;					
 					}
 					if (!destNode.nodes) {
 						destNode.nodes = [];
@@ -143,9 +151,8 @@
 							nodeclass : fragmentData[0].nodeclass,
 							nodes : fragmentData[0].nodes
 						});
-
+						saveModuleWithoutReload();
 						deferred.resolve();
-						//saveModuleAndReload();
 						return false;
 					});
 				},
@@ -208,7 +215,7 @@
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
-						saveModuleAndReload();
+						saveModuleWithoutReload();
 					}
 					
 				} 
@@ -388,14 +395,16 @@
 					nodes : []
 				});
 			}else if (nodeData.type == 'Q_simple') {
-				var type = "P_simple"
+				var type = "P_simple";
+				var defaultText = "New Possible Answer";
 				if(scope.isFreeText){
-					type = "P_freetext"
+					type = "P_freetext";
+					defaultText = "[Freetext]";
 				}
 				nodeData.nodes.push({
 					anchorId : locationId,
-					name : "[Freetext]",
-					placeholder:"[Freetext]",
+					name : defaultText,
+					placeholder:defaultText,
 					topNodeId : nodeData.idNode,
 					parentId: nodeData.idNode,
 					type : type,
@@ -507,8 +516,12 @@
 		};
 
 		$scope.saveEdit = function(scope) {
+			if(!scope.$modelValue.name){
+				scope.$modelValue.name = 'Blank';
+			}
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
+				saveModuleWithoutReload()
 			});
 			saveModuleAndReload();
 		};
@@ -699,10 +712,31 @@
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful!');
-							//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
 								$scope.data = data.data;
 							});
+						}else{
+							console.log('ERROR on Save!');
+						}
+					});
+				}else{
+					console.log('ERROR on Save!');
+				}
+			});
+		}
+		function saveModuleWithoutReload(){
+			QuestionsService.getMaxId().then(function(response){
+				if(response.status === 200){
+					
+					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);
+					
+					QuestionsService.save($scope.data[0]).then(function(response){
+						if(response.status === 200){
+							console.log('Save was Successful!');
+							//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
+							//QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
+							//	$scope.data = data.data;
+							//});
 						}else{
 							console.log('ERROR on Save!');
 						}
@@ -742,15 +776,7 @@
 					});
 				}
 			});
-			
-			
 		}
-		/*function saveAsFragment(data){
-			var response = FragmentsService.createFragment(data);	
-			  if(response === '200'){
-				  alert('Save fragment was successful!');
-			  }
-		}*/
 		var maxIdIncrement = 0;
 		function generateIdNodeCascade(arrayInp,maxId,parentId){
 			maxIdIncrement = maxId;
@@ -758,7 +784,7 @@
 				var i=0;
 				_.each(arrayInp, function(node) {
 					console.log(node.name)
-					//node.sequence = i;
+					node.sequence = i;
 					if(!node.idNode){
 						maxIdIncrement =(maxIdIncrement + 1);
 						node.idNode = maxIdIncrement;
