@@ -61,42 +61,42 @@ public class FragmentMapperImpl implements FragmentMapper {
     }
 
     @Override
-    public Fragment convertToFragment(FragmentVO moduleVO) {
-        if ( moduleVO == null ) {
+    public Fragment convertToFragment(FragmentVO fragmentVO) {
+        if ( fragmentVO == null ) {
             return null;
         }
 
-        Fragment module = new Fragment();
+        Fragment fragment = new Fragment();
 
-        module.setIdNode( moduleVO.getIdNode() );
-        module.setName( moduleVO.getName() );
-        module.setDescription( moduleVO.getDescription() );
-        module.setType( moduleVO.getType() );
-        module.setSequence( moduleVO.getSequence() );
-        module.setParentId( moduleVO.getParentId());
-        module.setLastUpdated( moduleVO.getLastUpdated() );
-        List<NodeVO> childNodes = moduleVO.getChildNodes();
+        fragment.setIdNode( fragmentVO.getIdNode() );
+        fragment.setName( fragmentVO.getName() );
+        fragment.setDescription( fragmentVO.getDescription() );
+        fragment.setType( fragmentVO.getType() );
+        fragment.setSequence( fragmentVO.getSequence() );
+        fragment.setParentId( fragmentVO.getParentId());
+        fragment.setLastUpdated( fragmentVO.getLastUpdated() );
+        List<NodeVO> childNodes = fragmentVO.getChildNodes();
         if(!CommonUtil.isListEmpty(childNodes)){
-        	module.setChildNodes( nodeMapper.convertToNodeList(childNodes) );
+        	fragment.setChildNodes( nodeMapper.convertToNodeList(childNodes) );
         }
-        module.setNumber( moduleVO.getNumber() );
-        module.setLink( moduleVO.getLink() );
-        module.setTopNodeId( moduleVO.getTopNodeId() );
-        module.setOriginalId( moduleVO.getOriginalId() );
-        module.setDeleted( moduleVO.getDeleted() );
-        module.setNodeclass( moduleVO.getNodeclass() );
+        fragment.setNumber( fragmentVO.getNumber() );
+        fragment.setLink( fragmentVO.getLink() );
+        fragment.setTopNodeId( fragmentVO.getTopNodeId() );
+        fragment.setOriginalId( fragmentVO.getOriginalId() );
+        fragment.setDeleted( fragmentVO.getDeleted() );
+        fragment.setNodeclass( fragmentVO.getNodeclass() );
 
-        return module;
+        return fragment;
     }
 
     @Override
-    public List<Fragment> convertToFragmentList(List<FragmentVO> moduleVO) {
-        if ( moduleVO == null ) {
+    public List<Fragment> convertToFragmentList(List<FragmentVO> fragmentVO) {
+        if ( fragmentVO == null ) {
             return null;
         }
 
         List<Fragment> list = new ArrayList<Fragment>();
-        for ( FragmentVO moduleVO_ : moduleVO ) {
+        for ( FragmentVO moduleVO_ : fragmentVO ) {
             list.add( convertToFragment( moduleVO_ ) );
         }
 

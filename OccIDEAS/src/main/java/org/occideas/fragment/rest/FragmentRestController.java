@@ -56,7 +56,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(FragmentVO json) {
 		try{
-			service.create(json);
+			service.createFragment(json);
 		}catch(Throwable e){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}

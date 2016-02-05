@@ -3,12 +3,11 @@ package org.occideas.fragment.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.occideas.entity.Fragment;
-import org.occideas.entity.Module;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.vo.FragmentVO;
-import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FragmentServiceImpl implements FragmentService {
 
+	private Logger log = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private FragmentDao dao;
 	
@@ -37,11 +38,11 @@ public class FragmentServiceImpl implements FragmentService {
 	}
 
 	@Override
-	public FragmentVO create(FragmentVO module) {
-		Fragment moduleEntity = dao.save(mapper.convertToFragment(module));
-		return mapper.convertToFragmentVO(moduleEntity,false);
+	public void createFragment(FragmentVO fragmentVO) {
+		log.info("FragmentVO:"+fragmentVO);
+		dao.save(mapper.convertToFragment(fragmentVO));
 	}
-
+	
 	@Override
 	public void update(FragmentVO module) {
 		//generateIdIfNotExist(module);
@@ -52,6 +53,12 @@ public class FragmentServiceImpl implements FragmentService {
 	@Override
 	public void delete(FragmentVO module) {
 		dao.delete(mapper.convertToFragment(module));
+	}
+
+	@Override
+	public FragmentVO create(FragmentVO o) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

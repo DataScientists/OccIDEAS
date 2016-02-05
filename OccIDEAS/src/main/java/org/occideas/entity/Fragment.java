@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.util.ReflectionUtils;
 @Entity 
 @DiscriminatorValue("F")
 public class Fragment extends Node{
@@ -38,4 +41,9 @@ public class Fragment extends Node{
 	public void setModuleRules(List<SimplerRule> moduleRules) {
 		this.moduleRules = moduleRules;
 	}*/
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

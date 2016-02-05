@@ -22,8 +22,8 @@ public class FragmentDao {
 	private SessionFactory sessionFactory;
 
 	
-	public Fragment save(Fragment fragment){
-      return (Fragment) sessionFactory.getCurrentSession().save(fragment);
+	public void save(Fragment fragment){
+		sessionFactory.getCurrentSession().persist(fragment);
     }
 
 

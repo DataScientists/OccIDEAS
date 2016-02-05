@@ -51,7 +51,7 @@ public class Node implements Cloneable {
 	private Date lastUpdated;
 	
 	@OneToMany(mappedBy="parentId")
-	@Cascade(value=CascadeType.SAVE_UPDATE)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
 	@Where(clause = "deleted = 0")
 	@OrderBy("sequence ASC")
 	private List<Node> childNodes;

@@ -4,10 +4,10 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window) {
+			$anchorScroll,$location,$mdMedia,$window,$state) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -358,6 +358,8 @@
 			$scope.moduleSlider = data;
 		});
 		$scope.rightNav = "slideFrag";
+		initFragments();
+		function initFragments(){
 		FragmentsService.getByType('F_ajsm').then(function(data) {	
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
@@ -382,6 +384,7 @@
 			}
 			$scope.frequencyFragmentSlider = data;
 		});
+		}
 		$scope.toggleRight = function(){
 		    if ($scope.rightNav === "slideFrag"){
 		      $scope.rightNav = "";
@@ -856,7 +859,7 @@
 		function saveAsFragment(data,mydata){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
-					var maxId = response.data;
+					var maxId = response.data+1;
 					destNode = {
 							idNode : maxId,
 							name : mydata.name,
@@ -873,11 +876,10 @@
 					});
 					cascadeTemplateNullIds(destNode.nodes);
 					generateIdNodeCascade(destNode.nodes,maxId,destNode.idNode);
-					FragmentsService.save(destNode).then(function(response){
+					FragmentsService.createFragment(destNode).then(function(response){
 						if(response.status === 200){
-							
-							//$scope.addFragmentTab(destNode);
-							console.log("Fragment saved")
+							console.log("Fragment saved");
+							initFragments();
 							$mdDialog.cancel();
 						}
 					});

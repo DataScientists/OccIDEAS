@@ -82,9 +82,7 @@
 				  url: modulesUrl+'/create',
 				  data:moduleObj
 				})
-			request.then(function(response){
-				return response;
-			});
+		    return request.then(handleSuccess1,handleError);
 		};
 
 		return {		  
