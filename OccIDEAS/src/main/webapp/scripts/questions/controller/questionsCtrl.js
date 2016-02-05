@@ -172,6 +172,11 @@
 				    },
 				beforeDrop:function(event){
 					var destNode = event.dest.nodesScope.node;
+					
+					if(event.source.index != event.dest.index){
+						recordAction($scope.data);
+					}
+					
 					if(!destNode){
 						$scope.isDragging = false;
 						return false;
@@ -187,7 +192,6 @@
 					}
 				},
 				dropped: function (event){
-					recordAction($scope.data);
 					var sourceNode = event.source.nodeScope.node;
 					sourceNode.warning = null;
 					var destNode = event.dest.nodesScope.node;
@@ -521,7 +525,6 @@
 			}
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
-				saveModuleWithoutReload()
 			});
 			saveModuleAndReload();
 		};
