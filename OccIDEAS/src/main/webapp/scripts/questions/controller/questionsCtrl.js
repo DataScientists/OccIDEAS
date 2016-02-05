@@ -11,8 +11,6 @@
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
-		$scope.isDragginEnabled = false;
-		$scope.isCreatingFragments = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
 		$anchorScroll.yOffset = 200;
@@ -91,13 +89,31 @@
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
 					console.log("source"+sourceNode.type);
+					
+						
+					
 					if(!destNode){
 						$scope.isDragging = false;
-						return false;					
+						return false;			
 					}else{
-						if (!sourceNode.nodes) {
-							sourceNode.nodes = [];
+						if(sourceNode.nodeclass=='Q'){
+							if(destNode.nodeclass=='Q'){
+								sourceNode.warning = '';
+								$scope.isDragging = false;
+								return false;
+							}			
+						}else if(sourceNode.nodeclass=='P'){
+							if(destNode.nodeclass=='P'){
+								sourceNode.warning = '';
+								$scope.isDragging = false;
+								return false;
+							}else if(destNode.nodeclass=='M'){
+								sourceNode.warning = '';
+								$scope.isDragging = false;
+								return false;			
+							}			
 						}
+						
 						destNode.nodes.unshift({
 								
 								name : sourceNode.name,
@@ -117,7 +133,6 @@
 					
 				},
 				dropped: function (event){
-					
 				}
 		}
 		$scope.templateTreeOptions = {
@@ -133,9 +148,24 @@
 						$scope.isDragging = false;
 						return false;					
 					}
-					if (!destNode.nodes) {
-						destNode.nodes = [];
+					if(sourceNode.nodeclass=='Q'){
+						if(destNode.nodeclass=='Q'){
+							sourceNode.warning = '';
+							$scope.isDragging = false;
+							return false;
+						}			
+					}else if(sourceNode.nodeclass=='P'){
+						if(destNode.nodeclass=='P'){
+							sourceNode.warning = '';
+							$scope.isDragging = false;
+							return false;
+						}else if(destNode.nodeclass=='M'){
+							sourceNode.warning = '';
+							$scope.isDragging = false;
+							return false;			
+						}			
 					}
+					
 					$scope.isDragging = false;
 					var deferred = $q.defer();
 					
@@ -162,29 +192,87 @@
 					return true;
 				},
 				dropped: function (event){
-					
 				}
 		}
 		$scope.moduleTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
 					var sourceNode = sourceNodeScope.node;
+					var destNode = destNodesScope.node;
+					var placeholder = document.getElementsByClassName("angular-ui-tree-placeholder");
+					var wrappedplaceholder = angular.element(placeholder);
+					if(!destNode){
+						sourceNode.warning = 'warning';						
+					}else{
+						if(sourceNode.nodeclass=='Q'){
+							if(destNode.nodeclass=='Q'){
+								console.log("Hovering Q on Q");
+								
+								wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
+								sourceNode.warning = 'warning';		
+							}else{
+								wrappedplaceholder.removeClass('angular-ui-tree-placeholder-warning');
+								sourceNode.warning = '';
+							}			
+						}else if(sourceNode.nodeclass=='P'){
+							if(destNode.nodeclass=='P'){
+								console.log("Hovering P on P");
+								wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
+								sourceNode.warning = 'warning';		
+							}else if(destNode.nodeclass=='M'){
+								console.log("Hovering P on M");
+								wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
+								sourceNode.warning = 'warning';				
+							}else{
+								wrappedplaceholder.removeClass('angular-ui-tree-placeholder-warning');
+								sourceNode.warning = '';
+							}			
+						}else{
+							wrappedplaceholder.removeClass('angular-ui-tree-placeholder-warning');
+							sourceNode.warning = '';
+						}
+					}
 				    return true;
-				    },
+				},
 				beforeDrop:function(event){
+					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
-					
 					if(event.source.index != event.dest.index){
 						recordAction($scope.data);
 					}
-					
+					$scope.isDragging = false;
+					var retValue = true;
 					if(!destNode){
 						$scope.isDragging = false;
-						return false;
+						retValue=false;
+					}else{
+						if(sourceNode.nodeclass=='Q'){
+							if(destNode.nodeclass=='Q'){
+								console.log("dropped Q on Q");							
+								retValue=false;		
+							}			
+						}else if(sourceNode.nodeclass=='P'){
+							if(destNode.nodeclass=='P'){
+								console.log("Dropped P on P");
+								retValue=false;		
+							}else if(destNode.nodeclass=='M'){
+								console.log("Dropped P on M");
+								retValue=false;			
+							}else{
+								sourceNode.warning = '';
+							}			
+						}else{
+							sourceNode.warning = '';	
+						}
 					}
+					
+					return retValue;
 				},
 				beforeDrag: function(sourceNodeScope){
 					$scope.isDragging = true;
 					if(sourceNodeScope.node.classtype === 'M'){	
+						$scope.isDragging = false;
+						return false;
+					}else if(sourceNodeScope.node.classtype === 'F'){	
 						$scope.isDragging = false;
 						return false;
 					}else{
@@ -192,6 +280,7 @@
 					}
 				},
 				dropped: function (event){
+					
 					var sourceNode = event.source.nodeScope.node;
 					sourceNode.warning = null;
 					var destNode = event.dest.nodesScope.node;
@@ -200,20 +289,7 @@
 						sourceNode.warning = 'warning';						
 					}else{
 						console.log("dest "+destNode.type);
-						if(sourceNode.nodeclass=='Q'){
-							if(destNode.nodeclass=='Q'){
-								console.log("dropped Q on Q")
-								sourceNode.warning = 'warning';
-							}			
-						}else if(sourceNode.nodeclass=='P'){
-							if(destNode.nodeclass=='P'){
-								console.log("Droped P on P")
-								sourceNode.warning = 'warning';
-							}else if(destNode.nodeclass=='M'){
-								console.log("Droped P on M")
-								sourceNode.warning = 'warning';			
-							}			
-						}
+						
 					}
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
@@ -221,8 +297,7 @@
 					if(sourceNode.warning != 'warning'){
 						saveModuleWithoutReload();
 					}
-					
-				} 
+				}
 		}
 		function reorderSequence(arrayList){
 			var seq = 1;
@@ -282,12 +357,17 @@
 		FragmentsService.getByType('F_template').then(function(data) {	
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
-				node.type = "Q_linkedtemplate";
+				//node.type = "Q_linkedtemplate";
 				node.nodeclass = "Q";
 			}
 			$scope.templateFragmentSlider = data;
 		});
-		FragmentsService.getByType('F_frequency').then(function(data) {		
+		FragmentsService.getByType('F_frequency').then(function(data) {	
+			for(var i=0;i < data.length;i++){
+				var node = data[i];
+				//node.type = "Q_linkedtemplate";
+				node.nodeclass = "Q";
+			}
 			$scope.frequencyFragmentSlider = data;
 		});
 		$scope.toggleRight = function(){
@@ -304,18 +384,12 @@
 		};
 		
 		$scope.toggleMultipleChoice = function(scope) {
+			recordAction($scope.data);
 			if(scope.$modelValue.type=='Q_Multiple'){
 				scope.$modelValue.type = 'Q_Single';
 			}else{
 				scope.$modelValue.type = 'Q_Multiple';
 			}
-		};
-		$scope.toggleCreatingFragments = function(scope) {
-			if($scope.isCreatingFragments){
-				$scope.isCreatingFragments = false;
-			}else{
-				$scope.isCreatingFragments = true;
-			}	
 		};
 		$scope.remove = function(scope) {
 			recordAction($scope.data);
@@ -605,9 +679,10 @@
 						}
 			  ],
 			  [ 'Add Free Text Possible Answer', function($itemScope) {
-				  $itemScope.isFreeText = true;
-					$scope.newSubItem($itemScope);
-					}
+			  		$itemScope.isFreeText = true;
+			  		$scope.newSubItem($itemScope);
+			  		$itemScope.isFreeText = false;
+				}
 			  ],
 			  
 			  [ 'Multiple Choice (Toggle)', function($itemScope) {
