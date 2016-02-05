@@ -9,9 +9,9 @@
               <span class="glyphicon glyphicon-remove" style="margin-left:3px" />
           </span>
         </md-tab-label>
-        <md-tab-body ng-class="tab.style" layout="column" layout-fill >
+        <md-tab-body ng-cloak ng-class="tab.style" layout="column" layout-fill >
                 <div class="tab{{$index%4}}" >
-         		<div id="content" ui-view="{{tab.viewName}}" flex class="ng-cloak">
+         		<div id="content" ng-cloak ui-view="{{tab.viewName}}" flex>
          		<md-progress-circular md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
          		</div>
           <br/>
