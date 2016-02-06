@@ -942,12 +942,10 @@
 		}
 		
 		$scope.scrollTo = function( target){
-			return $("body").each(function(){
-				var scrollPane = $("body");
-				var scrollTarget = $('#'+target);
-				var scrollY = scrollTarget.offset().top - 12;
-				scrollPane.animate({scrollTop : scrollY }, 2500, 'swing');
-			});
+			var scrollPane = $("body");
+			var scrollTarget = $('#'+target);
+			var scrollY = scrollTarget.offset().top - 12;
+			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 	}
 })();
