@@ -13,6 +13,7 @@
 		$scope.isDragging = false;
 		$scope.showFragmentSlider = true;
 		$scope.showModuleSlider = false;
+		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
 		
 		//typesetting
@@ -264,7 +265,6 @@
 							sourceNode.warning = '';	
 						}
 					}
-					
 					return retValue;
 				},
 				beforeDrag: function(sourceNodeScope){
@@ -283,6 +283,8 @@
 					if($scope.isClonable){
 						event.elements.placeholder.replaceWith(event.elements.dragging.clone().find('li'));
 						event.source.nodeScope.node.idNode = "";
+						var name = event.source.nodeScope.node.name;
+						event.source.nodeScope.node.name = name+"(Copy)";
 						cascadeIdCleanse(event.source.nodeScope.node.nodes);
 					}
 				},
@@ -814,18 +816,15 @@
 		function saveModuleAndReload(locationId){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
-					
-					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);
-					
+					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);		
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
-									$scope.data = data.data;
-									if(locationId){
-										 $location.hash(locationId);
-										 $anchorScroll();
-									}
+								$scope.data = data.data;
+								if(locationId){
+									$scope.scrollTo(locationId);
+								}
 							});
 						}else{
 							console.log('ERROR on Save!');
@@ -836,19 +835,16 @@
 				}
 			});
 		}
-		function saveModuleWithoutReload(){
+		function saveModuleWithoutReload(locationId){
 			QuestionsService.getMaxId().then(function(response){
-				if(response.status === 200){
-					
-					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);
-					
+				if(response.status === 200){				
+					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);					
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
-							//$scope.data = QuestionsService.findQuestions($scope.data[0].idNode);
-							//QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
-							//	$scope.data = data.data;
-							//});
+							if(locationId){
+								$scope.scrollTo(locationId);
+							}
 						}else{
 							console.log('ERROR on Save!');
 						}
@@ -944,5 +940,14 @@
 				$scope.isClonable = true;
 			} 
 		}
+		
+		$scope.scrollTo = function( target){
+			return $("body").each(function(){
+				var scrollPane = $("body");
+				var scrollTarget = $('#'+target);
+				var scrollY = scrollTarget.offset().top - 12;
+				scrollPane.animate({scrollTop : scrollY }, 2500, 'swing');
+			});
+		};
 	}
 })();
