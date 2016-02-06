@@ -163,7 +163,7 @@ tr.angular-ui-tree-empty {
 
 <script type="text/ng-template" id="nodes_renderer.html">
   <div id="tree1-root" class="angular-ui-tree">
-     <div class="tree-node">
+     <div class="tree-node" id="{{node.anchorId}}">
         <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="" 
 			ng-mousedown="copy($event)">
           <span class="glyphicon glyphicon-list"></span>

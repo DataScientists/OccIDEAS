@@ -823,8 +823,8 @@
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
 									$scope.data = data.data;
 									if(locationId){
-										 $location.hash('theId_'+locationId);
-										    $anchorScroll();
+										 $location.hash(locationId);
+										 $anchorScroll();
 									}
 							});
 						}else{

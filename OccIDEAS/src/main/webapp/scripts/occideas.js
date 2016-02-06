@@ -64,9 +64,10 @@ angular
   .run(configureDefaults)
   .factory('ErrorHandler',ErrorHandler);	
 
-   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope'];
-   function configureDefaults(ngTableDefaults,$state,$rootScope) {
-        ngTableDefaults.params.count = 5;
+   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','$anchorScroll'];
+   function configureDefaults(ngTableDefaults,$state,$rootScope,$anchorScroll) {
+	    $anchorScroll.yOffset = 50;
+	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
         
         $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
