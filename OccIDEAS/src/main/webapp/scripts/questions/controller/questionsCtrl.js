@@ -281,7 +281,7 @@
 				},
 				dragStart: function(event){
 					if($scope.isClonable){
-						event.elements.placeholder.replaceWith(event.elements.dragging.clone().find('li'));
+						event.elements.placeholder.replaceWith(event.elements.dragging.clone().find('li')[0]);
 						event.source.nodeScope.node.idNode = "";
 						var name = event.source.nodeScope.node.name;
 						event.source.nodeScope.node.name = name+"(Copy)";
