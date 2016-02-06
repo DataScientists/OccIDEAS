@@ -119,7 +119,7 @@
 .P{
 	height: 40px;
     padding-left: 20px;
-    
+    background: #FDFBF5 !important;
     border-bottom: 1px solid;
     border-bottom-color: #C79B1C; !important;
 }

@@ -74,6 +74,7 @@
 					node.type = 'M_IntroModule'
 				}
 			} 
+			saveModuleWithoutReload();
 		}	
 		
 		$scope.aJsmTreeOptions = {
@@ -281,6 +282,7 @@
 				},
 				dragStart: function(event){
 					if($scope.isClonable){
+						
 						event.elements.placeholder.replaceWith(event.elements.dragging.clone().find('li')[0]);
 						event.source.nodeScope.node.idNode = "";
 						var name = event.source.nodeScope.node.name;
@@ -296,7 +298,10 @@
 					var sourceNode = event.source.nodeScope.node;
 					sourceNode.warning = null;
 					var destNode = event.dest.nodesScope.node;
-					
+					if($scope.isClonable){
+						console.log("Just cloned so turning undo off ");
+						$scope.undoEnable = false;
+					}
 					$scope.isClonable = false;
 					console.log("source"+sourceNode.type);
 					if(!destNode){
@@ -816,7 +821,7 @@
 		function saveModuleAndReload(locationId){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
-					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);		
+					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode,$scope.data[0].number);		
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
@@ -838,7 +843,7 @@
 		function saveModuleWithoutReload(locationId){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){				
-					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode);					
+					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode,$scope.data[0].number);					
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
@@ -873,7 +878,7 @@
 						nodes : data.nodes
 					});
 					cascadeTemplateNullIds(destNode.nodes);
-					generateIdNodeCascade(destNode.nodes,maxId,destNode.idNode);
+					generateIdNodeCascade(destNode.nodes,maxId,destNode.idNode,destNode.idNode.number);
 					FragmentsService.createFragment(destNode).then(function(response){
 						if(response.status === 200){
 							console.log("Fragment saved");
@@ -885,13 +890,43 @@
 			});
 		}
 		var maxIdIncrement = 0;
-		function generateIdNodeCascade(arrayInp,maxId,parentId){
+		function generateIdNodeCascade(arrayInp,maxId,parentId,parentNodeNumber){
 			maxIdIncrement = maxId;
+			 
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
 					console.log(node.name)
 					node.sequence = i;
+					if(node.nodeclass=='Q'){
+						node.number = parentNodeNumber + (i+1);
+					}else if (node.nodeclass=='P'){
+						if(!isNaN(parentNodeNumber)){
+							if(i>26){
+								var character = String.fromCharCode('A'.charCodeAt()+(i-27));
+								node.number = parentNodeNumber + 'Z' + $scope.getNextKey(character);
+							}else{
+								var character = String.fromCharCode('A'.charCodeAt()+(i-1));
+								node.number = parentNodeNumber + $scope.getNextKey(character);
+							}
+							
+						}else{
+							var length = parentNodeNumber.length;
+							var lastCharacter = parentNodeNumber.substring(length-1);
+							if(!isNaN(lastCharacter)){
+								if(i>26){
+									var character = String.fromCharCode('A'.charCodeAt()+(i-27));
+									node.number = parentNodeNumber + 'Z' + $scope.getNextKey(character);
+								}else{
+									var character = String.fromCharCode('A'.charCodeAt()+(i-1));
+									node.number = parentNodeNumber + $scope.getNextKey(character);
+								}
+								
+							}
+						}
+						
+					}
+					
 					if(!node.idNode){
 						maxIdIncrement =(maxIdIncrement + 1);
 						node.idNode = maxIdIncrement;
@@ -902,7 +937,7 @@
 					}  
 					if(node.nodes){
 						if(node.nodes.length > 0){
-							generateIdNodeCascade(node.nodes,maxIdIncrement,node.idNode);
+							generateIdNodeCascade(node.nodes,maxIdIncrement,node.idNode,node.number);
 						}
 					}
 					i++;
@@ -910,7 +945,16 @@
 				
 			}
 		}
-		
+		$scope.getNextKey = function(key) {
+			  if (/^Z+$/.test(key)) {
+			    // If all z's, replace all with a's
+			    key = key + 'A';
+			  } else {
+			    // (take till last char) append with (increment last char)
+			    key = key.slice(0, -1) + String.fromCharCode(key.slice(-1).charCodeAt() + 1);
+			  }
+			  return key;
+			};
 		$scope.saveModule = function (){
 			saveModuleAndReload();
 		};
