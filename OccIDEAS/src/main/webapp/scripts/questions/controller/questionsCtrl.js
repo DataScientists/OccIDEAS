@@ -236,9 +236,9 @@
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
-					if(event.source.index != event.dest.index){
+					//if(event.source.index != event.dest.index){
 						recordAction($scope.data);
-					}
+					//}
 					$scope.isDragging = false;
 					var retValue = true;
 					if(!destNode){
@@ -470,7 +470,7 @@
 			}
 		}
 		$scope.newSubItem = function(scope) {
-			recordAction($scope.data);
+			//recordAction($scope.data);
 			var nodeData = scope.$modelValue;
 			var locationId = nodeData.idNode * 10 + nodeData.nodes.length
 			if (!nodeData.nodes) {
