@@ -15,6 +15,12 @@
 }
 .Q_linkedajsm{
 	border: 2px solid #80ADDA !important;
+	background: #92DAEA !important;
+	border-radius: 30px;
+}
+.Q_linkedmodule{
+	border: 2px solid #80ADDA !important;
+	background: #92DAEA !important;
 	border-radius: 30px;
 }
 .editBox input{

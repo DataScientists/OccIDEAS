@@ -42,6 +42,13 @@
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
 			        					console.log("Data getting from questions AJAX ...");
+			        					if(response.data[0].type=='M_IntroModule'){
+			        						response.data.showModuleSlider = true;
+			        						response.data.showFragmentSlider = false;
+			        					}else{
+			        						response.data.showModuleSlider = false;
+			        						response.data.showFragmentSlider = true;
+			        					}
 						        		return response.data;
 		    				})
 			        	}

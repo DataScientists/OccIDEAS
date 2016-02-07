@@ -11,8 +11,6 @@
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
-		$scope.showFragmentSlider = true;
-		$scope.showModuleSlider = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
 		
@@ -665,7 +663,13 @@
 				return $scope.moduleMenuOptions;
 			}else if(scope.node.nodeclass=='Q'){
 				$scope.selectedNode = scope.node;
-				return $scope.questionMenuOptions;
+				var menuOptions;
+				if(scope.node.type=='Q_linkedmodule'){
+					menuOptions = $scope.linkedModuleMenuOptions;
+				}else{
+					menuOptions = $scope.questionMenuOptions;
+				}
+				return menuOptions;
 			}else if(scope.node.nodeclass=='P'){
 				return $scope.possibleAnswerMenuOptions;
 			}else{
@@ -782,6 +786,21 @@
 	  					$scope.addFragmentTab(node);
 	  				} 
 				  ]
+			];
+		$scope.linkedModuleMenuOptions = 
+			[ 
+			  [ 'Remove (Toggle)', function($itemScope) {
+					$scope.remove($itemScope);
+					}
+			  ],
+			  [ 'Open as Module', function($itemScope) {	
+	  					var node = $itemScope.node;
+	  					node.idNode = node.link;
+	  					node.type = 'M_Module';
+	  					node.classtype = 'M';
+	  					$scope.addModuleTab(node);
+	  				} 
+			  ]
 			];
 		$scope.possibleAnswerMenuOptions = 
 			[ [ 'Add Question', function($itemScope) {

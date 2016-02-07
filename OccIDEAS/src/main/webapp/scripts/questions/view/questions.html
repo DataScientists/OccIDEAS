@@ -90,7 +90,7 @@ tr.angular-ui-tree-empty {
 	</div>
 </div>
 
-<div ng-if="showFragmentSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
+<div ng-if="data.showFragmentSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
 		<div class="frag-contain">
 		<div class="fragmentSticker" ng-click="toggleRight()">Fragments</div> 
 <label for="fragmentsdragdrop" class="fraglabel">Drag Drop Fragments: </label>
@@ -129,15 +129,15 @@ tr.angular-ui-tree-empty {
 </div>
 </div>
 <!-- Show module list slider -->
-<div ng-if="showModuleSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
+<div ng-if="data.showModuleSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
 		<div class="frag-contain">
 		<div class="fragmentSticker" ng-click="toggleRight()">Modules</div> 
 <label for="fragmentsdragdrop" class="fraglabel">Drag Drop Modules: </label>
 <div id="fragmentsdragdrop"><ul></ul>
 <div>
-    <h5>Module List</h5>
+    <h5>Production Module List</h5>
     <uib-accordion close-others="oneAtATime">
-         <uib-accordion-group heading="Module" >
+         <uib-accordion-group heading="Module" is-open="true">
 			<div ui-tree="aJsmTreeOptions" id="templateTree-root" data-clone-enabled="true">
 			<ol ui-tree-nodes ng-model="moduleSlider">
 				<li ng-repeat="node in moduleSlider" ui-tree-node 
@@ -145,14 +145,7 @@ tr.angular-ui-tree-empty {
 			</ol>
 		</div>
     	</uib-accordion-group>
-     	 <uib-accordion-group heading="aJSMs" >
-				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
-				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
+     	 
      </uib-accordion>
      
   </div>
