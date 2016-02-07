@@ -411,7 +411,7 @@
 				scope.$modelValue.type = 'Q_Multiple';
 			}
 		};
-		$scope.remove = function(scope) {
+		$scope.deleteNode = function(scope) {
 			recordAction($scope.data);
 			if(scope.$modelValue.deleted){
 				scope.$modelValue.deleted = 0;
@@ -420,8 +420,28 @@
 				scope.$modelValue.deleted = 1;
 				cascadeDelete(scope.$modelValue.nodes,1);
 			}
-			saveModuleAndReload();
+			var deffered = $q.defer();
+			saveModuleWithoutReload('',deffered);
+			deffered.promise.then(function(resolve){
+				searchAndRemoveNode($scope.data,scope);
+			});
 		};
+		
+		function searchAndRemoveNode(objSearch,scope){
+			 var index = _.findIndex(objSearch, function(o) {
+				if(o.$$hashKey === scope.$modelValue.$$hashKey ){
+					return o.number;
+				}
+				if(!angular.isUndefined(o.nodes) && o.nodes.length > 0){
+					var x = searchAndRemoveNode(o.nodes,scope);
+					if (x > -1) {
+			               o.nodes.splice(x, 1)[0];
+			            return;
+			        }
+				}
+			 });
+			 return index;
+		}
 		
 		function cascadeIdCleanse(arrayInp){
 			if(arrayInp.length > 0){
@@ -617,7 +637,7 @@
 		        });
 			}
 			reorderSequence(scope.$modelValue.nodes);
-			saveModuleAndReload(locationId);
+			saveModuleWithoutReload(locationId);
 		};
 
 		$scope.collapseAll = function() {
@@ -757,7 +777,7 @@
 				}
 			  ],
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
@@ -790,7 +810,7 @@
 		$scope.linkedModuleMenuOptions = 
 			[ 
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ],
 			  [ 'Open as Module', function($itemScope) {	
@@ -808,7 +828,7 @@
 						}
 			  ],
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
@@ -833,7 +853,7 @@
 		$scope.defaultMenuOptions = 
 			[ 
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ]
 			];
@@ -859,24 +879,34 @@
 				}
 			});
 		}
-		function saveModuleWithoutReload(locationId){
-			QuestionsService.getMaxId().then(function(response){
-				if(response.status === 200){				
-					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode,$scope.data[0].number);					
-					QuestionsService.save($scope.data[0]).then(function(response){
-						if(response.status === 200){
-							console.log('Save was Successful! Not Reloading');
-							if(locationId){
-								$scope.scrollTo(locationId);
+		function saveModuleWithoutReload(locationId,deffered){
+			 QuestionsService.getMaxId().then(function(response){
+					if(response.status === 200){				
+						generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode,$scope.data[0].number);					
+						QuestionsService.save($scope.data[0]).then(function(response){
+							if(response.status === 200){
+								console.log('Save was Successful! Not Reloading');
+								if(locationId && locationId != ''){
+									$scope.scrollTo(locationId);
+								}
+								if(deffered){
+									deffered.resolve();
+								}
+							}else{
+								console.log('ERROR on Save!');
+								if(deffered){
+								deffered.reject();
+								}
 							}
-						}else{
-							console.log('ERROR on Save!');
-						}
-					});
-				}else{
-					console.log('ERROR on Save!');
-				}
-			});
+							return deffered.promise;
+						});
+					}else{
+						console.log('ERROR on Save!');
+						if(deffered){
+							deffered.reject();
+							}
+					}
+			});	
 		}
 		function saveAsFragment(data,mydata){
 			QuestionsService.getMaxId().then(function(response){
@@ -993,7 +1023,7 @@
 		
 		$scope.undo = function(){
 			$scope.data = $window.beforeNode;
-			saveModuleAndReload();
+			saveModuleWithoutReload();
 			$scope.undoEnable = false;
 		}
 		
