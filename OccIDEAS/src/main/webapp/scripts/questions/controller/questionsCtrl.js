@@ -28,7 +28,7 @@
 		$window.beforeNode = [];
 		$window.afterNode = [];
 		$scope.undoEnable = false;
-		
+
 		$scope.isCollapsableNode = function(node){
 			if($scope.isModuleHeaderNode(node)){
 				return false;
@@ -73,7 +73,7 @@
 				}
 			} 
 			saveModuleWithoutReload();
-		}	
+		}
 		
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
@@ -280,9 +280,9 @@
 				},
 				dragStart: function(event){
 					if($scope.isClonable){
-						
+
 						event.elements.placeholder.replaceWith(event.elements.dragging.find('li').clone()[0]);
-						
+
 						event.source.nodeScope.node.idNode = "";
 						var name = event.source.nodeScope.node.name;
 						event.source.nodeScope.node.name = name+"(Copy)";
@@ -366,7 +366,7 @@
 		$scope.rightNav = "slideFrag";
 		initFragments();
 		function initFragments(){
-		FragmentsService.getByType('F_ajsm').then(function(data) {	
+		FragmentsService.getByType('F_ajsm').then(function(data) {
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
 				node.type = "Q_linkedajsm";
@@ -702,7 +702,7 @@
 					} 
 				  ], null, // Dividier
 			  [ 'Run Interview', function($itemScope) {
-					alert('under development');
+                  $scope.addInterviewTab($itemScope);
 				} 
 			  ],
 			  [ 'Export to JSON', function($itemScope) {
@@ -788,22 +788,22 @@
 	  				} 
 				  ]
 			];
-		$scope.linkedModuleMenuOptions = 
-			[ 
+		$scope.linkedModuleMenuOptions =
+			[
 			  [ 'Remove (Toggle)', function($itemScope) {
 					$scope.remove($itemScope);
 					}
 			  ],
-			  [ 'Open as Module', function($itemScope) {	
+			  [ 'Open as Module', function($itemScope) {
 	  					var node = $itemScope.node;
 	  					node.idNode = node.link;
 	  					node.type = 'M_Module';
 	  					node.classtype = 'M';
 	  					$scope.addModuleTab(node);
-	  				} 
+	  				}
 			  ]
 			];
-		$scope.possibleAnswerMenuOptions = 
+		$scope.possibleAnswerMenuOptions =
 			[ [ 'Add Question', function($itemScope) {
 						$scope.newSubItem($itemScope);
 						}
@@ -846,7 +846,7 @@
 					var parentId = $scope.data[0].idNode;
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
@@ -867,15 +867,15 @@
 		}
 		function saveModuleWithoutReload(locationId){
 			QuestionsService.getMaxId().then(function(response){
-				if(response.status === 200){				
+				if(response.status === 200){
 					var nodes = $scope.data[0].nodes;
 					var maxId = response.data;
 					var parentId = $scope.data[0].idNode;
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
-					
-					
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
+
+
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
@@ -914,9 +914,9 @@
 					var parentId = destNode.idNode;
 					var parentNodeNumber = destNode.idNode.number;
 					var topNodeId = destNode.idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
-					
-					
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
+
+
 					FragmentsService.createFragment(destNode).then(function(response){
 						if(response.status === 200){
 							console.log("Fragment saved");
@@ -930,7 +930,7 @@
 		var maxIdIncrement = 0;
 		function generateIdNodeCascade(arrayInp,maxId,parentId,parentNodeNumber,topNodeId){
 			maxIdIncrement = maxId;
-			 
+
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
@@ -948,7 +948,7 @@
 								var character = String.fromCharCode('A'.charCodeAt()+(i-1));
 								node.number = parentNodeNumber + $scope.getNextKey(character);
 							}
-							
+
 						}else{
 							var length = parentNodeNumber.length;
 							var lastCharacter = parentNodeNumber.substring(length-1);
@@ -960,12 +960,12 @@
 									var character = String.fromCharCode('A'.charCodeAt()+(i-1));
 									node.number = parentNodeNumber + $scope.getNextKey(character);
 								}
-								
+
 							}
 						}
-						
+
 					}
-					
+
 					if(!node.idNode){
 						maxIdIncrement =(maxIdIncrement + 1);
 						node.idNode = maxIdIncrement;
@@ -1023,12 +1023,56 @@
 				$scope.isClonable = true;
 			} 
 		}
-		
+
 		$scope.scrollTo = function( target){
 			var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
 			var scrollY = scrollTarget.offset().top - 12;
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
+
+        resetSelectedIndex();
+        $scope.interviewStarted = false;
+        $scope.saveAnswerQuestion = function(node){
+            var seletectedEl = angular.element(document.getElementsByClassName("selected"));
+            if(!seletectedEl.length && $scope.interviewStarted){
+                alert("Please select an answer!");
+                return false;
+            }
+
+            var idNode;
+            if(!$scope.interviewStarted
+                // && node.type != "Q_simple" && node.type != 'Q_single'
+            ){
+                idNode = node.idNode;
+            }else{
+                idNode = seletectedEl[0].id;
+            }
+            QuestionsService.getNextQuestion(idNode).then(function(response){
+                console.log(response);
+                if(response.status === 200){
+                    $scope.data.showedQuestion = response.data;
+                    resetSelectedIndex();
+                    $scope.interviewStarted = true;
+                }else if(response.status == 400) {
+                    alert("End interview!");
+                    return false;
+                }else{
+                    console.log('ERROR on Get!');
+                }
+            });;
+        }
+
+        $scope.singleChoiceHandler = function($index){
+            $scope.selectedIndex = $index;
+        }
+
+        $scope.multipleChoiceHandler = function(id){
+            angular.element('#'+id).addClass('selected');
+        }
+
+        function resetSelectedIndex(){
+            $scope.selectedIndex = -1;
+        }
 	}
 })();
