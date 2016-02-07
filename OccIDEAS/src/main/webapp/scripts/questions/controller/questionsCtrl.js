@@ -236,9 +236,9 @@
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
-					if(event.source.index != event.dest.index){
+					//if(event.source.index != event.dest.index){
 						recordAction($scope.data);
-					}
+					//}
 					$scope.isDragging = false;
 					var retValue = true;
 					if(!destNode){
@@ -281,7 +281,8 @@
 				dragStart: function(event){
 					if($scope.isClonable){
 						
-						event.elements.placeholder.replaceWith(event.elements.dragging.clone().find('li')[0]);
+						event.elements.placeholder.replaceWith(event.elements.dragging.find('li').clone()[0]);
+						
 						event.source.nodeScope.node.idNode = "";
 						var name = event.source.nodeScope.node.name;
 						event.source.nodeScope.node.name = name+"(Copy)";
@@ -489,7 +490,7 @@
 			}
 		}
 		$scope.newSubItem = function(scope) {
-			recordAction($scope.data);
+			//recordAction($scope.data);
 			var nodeData = scope.$modelValue;
 			var locationId = nodeData.idNode * 10 + nodeData.nodes.length
 			if (!nodeData.nodes) {
@@ -860,7 +861,12 @@
 		function saveModuleAndReload(locationId){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
-					generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode,$scope.data[0].number);		
+					var nodes = $scope.data[0].nodes;
+					var maxId = response.data;
+					var parentId = $scope.data[0].idNode;
+					var parentNodeNumber = $scope.data[0].number;
+					var topNodeId = $scope.data[0].idNode;
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
@@ -880,31 +886,36 @@
 			});
 		}
 		function saveModuleWithoutReload(locationId,deffered){
-			 QuestionsService.getMaxId().then(function(response){
-					if(response.status === 200){				
-						generateIdNodeCascade($scope.data[0].nodes,response.data,$scope.data[0].idNode,$scope.data[0].number);					
-						QuestionsService.save($scope.data[0]).then(function(response){
-							if(response.status === 200){
-								console.log('Save was Successful! Not Reloading');
-								if(locationId && locationId != ''){
-									$scope.scrollTo(locationId);
-								}
-								if(deffered){
-									deffered.resolve();
-								}
-							}else{
-								console.log('ERROR on Save!');
-								if(deffered){
-								deffered.reject();
-								}
+			QuestionsService.getMaxId().then(function(response){
+				if(response.status === 200){				
+					var nodes = $scope.data[0].nodes;
+					var maxId = response.data;
+					var parentId = $scope.data[0].idNode;
+					var parentNodeNumber = $scope.data[0].number;
+					var topNodeId = $scope.data[0].idNode;
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
+					QuestionsService.save($scope.data[0]).then(function(response){
+						if(response.status === 200){
+							console.log('Save was Successful! Not Reloading');
+							if(locationId && locationId != ''){
+								$scope.scrollTo(locationId);
 							}
-							return deffered.promise;
-						});
+							if(deffered){
+								deffered.resolve();
+							}
+						}
+						else{
+							console.log('ERROR on Save!');
+							if(deffered){
+								deffered.reject();
+							}
+						}
+					});
 					}else{
-						console.log('ERROR on Save!');
+						console.log('ERROR on Get max ID!');
 						if(deffered){
 							deffered.reject();
-							}
+						}
 					}
 			});	
 		}
@@ -927,7 +938,13 @@
 						nodes : data.nodes
 					});
 					cascadeTemplateNullIds(destNode.nodes);
-					generateIdNodeCascade(destNode.nodes,maxId,destNode.idNode,destNode.idNode.number);
+					var nodes = destNode.nodes;
+					var parentId = destNode.idNode;
+					var parentNodeNumber = destNode.idNode.number;
+					var topNodeId = destNode.idNode;
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
+					
+					
 					FragmentsService.createFragment(destNode).then(function(response){
 						if(response.status === 200){
 							console.log("Fragment saved");
@@ -939,7 +956,7 @@
 			});
 		}
 		var maxIdIncrement = 0;
-		function generateIdNodeCascade(arrayInp,maxId,parentId,parentNodeNumber){
+		function generateIdNodeCascade(arrayInp,maxId,parentId,parentNodeNumber,topNodeId){
 			maxIdIncrement = maxId;
 			 
 			if(arrayInp.length > 0){
@@ -947,6 +964,7 @@
 				_.each(arrayInp, function(node) {
 					console.log(node.name)
 					node.sequence = i;
+					node.topNodeId = topNodeId;
 					if(node.nodeclass=='Q'){
 						node.number = parentNodeNumber + (i+1);
 					}else if (node.nodeclass=='P'){
@@ -986,7 +1004,7 @@
 					}  
 					if(node.nodes){
 						if(node.nodes.length > 0){
-							generateIdNodeCascade(node.nodes,maxIdIncrement,node.idNode,node.number);
+							generateIdNodeCascade(node.nodes,maxIdIncrement,node.idNode,node.number,topNodeId);
 						}
 					}
 					i++;

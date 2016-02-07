@@ -1,4 +1,4 @@
-package org.occideas.module.rest;
+package org.occideas.agent.rest;
 
 import java.util.ArrayList;
 import java.util.List;
