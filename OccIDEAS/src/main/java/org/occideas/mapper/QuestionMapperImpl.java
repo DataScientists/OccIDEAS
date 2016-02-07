@@ -2,6 +2,7 @@ package org.occideas.mapper;
 
 import java.util.List;
 
+import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.NodeVO;
@@ -18,7 +19,29 @@ public class QuestionMapperImpl implements QuestionMapper {
 	@Override
 	public QuestionVO convertToQuestionVO(Question question) {
 		// TODO Auto-generated method stub
-		return null;
+        if ( question == null ) {
+            return null;
+        }
+
+        QuestionVO questionVO = new QuestionVO();
+
+        questionVO.setIdNode(question.getIdNode());
+        questionVO.setName(question.getName());
+        questionVO.setDescription(question.getDescription());
+        questionVO.setType(question.getType());
+        questionVO.setSequence(question.getSequence());
+        questionVO.setNumber(question.getNumber());
+        questionVO.setParentId(question.getParentId());
+        questionVO.setLink(question.getLink());
+        questionVO.setTopNodeId(question.getTopNodeId());
+        questionVO.setLastUpdated(question.getLastUpdated());
+        List<Node> childNodes = question.getChildNodes();
+        questionVO.setChildNodes(nodeMapper.convertToNodeVOList(childNodes));
+        questionVO.setOriginalId(question.getOriginalId());
+        questionVO.setDeleted(question.getDeleted());
+        questionVO.setNodeclass(question.getNodeclass());
+
+        return questionVO;
 	}
 
 	@Override
@@ -70,7 +93,7 @@ public class QuestionMapperImpl implements QuestionMapper {
         return null;
 	}
 
-    
-    
+
+
 }
 

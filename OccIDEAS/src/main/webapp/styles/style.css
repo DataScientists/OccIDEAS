@@ -272,16 +272,16 @@ label.fraglabel {
 }  
 
 .dialogdemoBasicUsage #popupContainer {
-  position: relative; 
+  position: relative;
 }
 .dialogdemoBasicUsage .footer {
   width: 100%;
   text-align: center;
-  margin-left: 20px; 
+  margin-left: 20px;
 }
 .dialogdemoBasicUsage .footer, .dialogdemoBasicUsage .footer > code {
   font-size: 0.8em;
-  margin-top: 50px; 
+  margin-top: 50px;
 }
 .fixedHeader{
 	z-index: 9999;
@@ -290,7 +290,11 @@ label.fraglabel {
     left: 50%;
     width: 100%;
     transform: translateX(-50%);
-    padding-right: 15px; 
-    padding-left: 15px; 
+    padding-right: 15px;
+    padding-left: 15px;
 }
-  
+
+.selected{
+    border: 1px solid #7c9eb2;
+    background: #7c9eb2;
+}
