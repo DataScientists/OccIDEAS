@@ -60,8 +60,10 @@
 				    			var frequencies = [];
 				    			for(var i=0;i < data.length;i++){
 				    				var node = data[i];
+				    				node.idnode = "";
 				    				node.nodeclass = "Q";
 				    				if(node.type=='F_ajsm'){
+				    					node.type = "Q_linkedajsm";
 				    					ajsms.push(node);
 				    				}else if(node.type=='F_template'){
 				    					templates.push(node);
@@ -108,6 +110,7 @@
 				    				var node = data[i];
 				    				node.nodeclass = "Q";
 				    				if(node.type=='F_ajsm'){
+				    					node.type = "Q_linkedajsm";				 			
 				    					ajsms.push(node);
 				    				}else if(node.type=='F_template'){
 				    					templates.push(node);

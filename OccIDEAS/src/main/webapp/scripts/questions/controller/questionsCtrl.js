@@ -502,13 +502,19 @@
 					nodes : []
 				});
 			}else if (nodeData.type == 'Q_multiple') {
+				var type = "P_simple";
+				var defaultText = "New Possible Answer";
+				if(scope.isFreeText){
+					type = "P_freetext";
+					defaultText = "[Freetext]";
+				}
 				nodeData.nodes.push({
 					anchorId : locationId,
-					name : "New Multi Possible Answer",
+					name : defaultText,
 					placeholder: "New Multi Possible Answer",
 					topNodeId : nodeData.idNode,
 					parentId: nodeData.idNode,
-					type : "P_multiple",
+					type : type,
 					nodeclass : "P",
 					nodes : []
 				});
@@ -855,7 +861,11 @@
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
+								var showFragmentSlider = $scope.data.showFragmentSlider;
+								var showModuleSlider = $scope.data.showModuleSlider;
 								$scope.data = data.data;
+								$scope.data.showFragmentSlider = showFragmentSlider;
+								$scope.data.showModuleSlider = showModuleSlider;
 								if(locationId){
 									$scope.scrollTo(locationId);
 								}
@@ -1117,7 +1127,7 @@
 		$scope.scrollTo = function( target){
 			var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
-			var scrollY = scrollTarget.offset().top - 12;
+			var scrollY = scrollTarget.offset().top - 150;
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 
