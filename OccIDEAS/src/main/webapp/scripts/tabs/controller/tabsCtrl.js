@@ -92,6 +92,31 @@
 				});
 			}
 		};
+        $scope.addInterviewTab = function(scope) {
+            var nodeData = scope.$modelValue;
+            var tabTitle = "Interview "+nodeData.name;
+            var check = _.some( tabs, function( el ) {
+                return el.title === tabTitle;
+            } );
+            if(!check){
+                tabs.push({
+                    title : tabTitle,
+                    viewName: 'interviewView',
+                    canClose: true,
+                    disabled : false
+                });
+                $scope.tabOptions.push({
+                    state: "tabs.interview",
+                    data: {row:nodeData.idNode}
+                });
+            }else{
+                _.find(tabs, function(el, index){
+                    if(el.title === tabTitle){
+                        $scope.selectedIndex = index;
+                    }
+                });
+            }
+        };
 		$scope.removeTab = function(tab) {
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);

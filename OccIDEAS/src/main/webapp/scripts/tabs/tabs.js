@@ -75,6 +75,27 @@
 			        }
 				}
 			}
-		});
+		}).state('tabs.interview', {
+            url: '/questions/:row',
+            views:{
+                'interviewView':{
+                    templateUrl: 'scripts/questions/view/interview.html',
+                    controller: 'QuestionsCtrl as vm',
+                    params:{row: null},
+                    resolve:{
+                        data: function($stateParams,QuestionsService) {
+                            return QuestionsService.findQuestions($stateParams.row,'M')
+                                .then(function(response){
+                                    console.log("Data getting from questions AJAX ...");
+                                    var viewData = response.data;
+                                    viewData['showedQuestion'] = response.data[0];
+                                    console.log(viewData);
+                                    return viewData;
+                                })
+                        }
+                    }
+                }
+            }
+        });
 	}
 })();

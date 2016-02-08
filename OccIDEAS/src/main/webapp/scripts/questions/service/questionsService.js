@@ -31,7 +31,16 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
-		
+
+        function getNextQuestion(idnode){
+            var restNextQuestionUrl = 'rest/question/getNextQuestion?idNode=' + idnode;
+            var request =  $http({
+                method: 'GET',
+                url: restNextQuestionUrl
+            })
+            return request.then(handleSuccess,handleError);
+        }
+
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -49,7 +58,8 @@
 		return {
 			findQuestions: findQuestions,
 			save:save,
-			getMaxId:getMaxId
+			getMaxId:getMaxId,
+            getNextQuestion:getNextQuestion
 		};
 	}
 })();
