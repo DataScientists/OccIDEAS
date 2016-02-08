@@ -52,35 +52,33 @@
 						        		return response.data;
 		    				})
 			        	},
-			        	templateData: function(FragmentsService) {
-			        		var object = {};
-			        	FragmentsService.getByType('F_template').then(function(data) {	
-			    			for(var i=0;i < data.length;i++){
-			    				var node = data[i];
-			    				node.nodeclass = "Q";
-			    			}
-			    			object.template = data;
-			    		});
-			        	FragmentsService.getByType('F_ajsm').then(function(data) {
-			    			for(var i=0;i < data.length;i++){
-			    				var node = data[i];
-			    				node.type = "Q_linkedajsm";
-			    				node.nodeclass = "Q";
-			    			}
-			    			object.ajsm = data;
-			        	});
-			        	FragmentsService.getByType('F_frequency').then(function(data) {	
-		        			for(var i=0;i < data.length;i++){
-		        				var node = data[i];
-		        				node.nodeclass = "Q";
-		        			}
-		        			object.frequency = data;
-		        		});
-			    		return object;
-			        	}
-			        	}
+			        	templateData: function(FragmentsService) {		        		        	
+				    		return FragmentsService.get().then(function(data) {	
+				    			var object = {};
+				    			var ajsms = [];
+				    			var templates = [];
+				    			var frequencies = [];
+				    			for(var i=0;i < data.length;i++){
+				    				var node = data[i];
+				    				node.nodeclass = "Q";
+				    				if(node.type=='F_ajsm'){
+				    					ajsms.push(node);
+				    				}else if(node.type=='F_template'){
+				    					templates.push(node);
+				    				}else if(node.type=='F_frequency'){
+				    					frequencies.push(node);
+				    				}
+				    			}
+				    			object.template = templates;
+				    			object.frequency = frequencies;
+				    			object.ajsm = ajsms;
+				    			
+				    			return object;
+				    		});
+				        }
 			        }
-				}
+			     }
+			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
 			views:{
@@ -100,32 +98,30 @@
 						        		return data;
 		    				})
 			        	},
-			        	templateData: function(FragmentsService) {
-			        		var object = {};
-			        	FragmentsService.getByType('F_template').then(function(data) {	
-			    			for(var i=0;i < data.length;i++){
-			    				var node = data[i];
-			    				node.nodeclass = "Q";
-			    			}
-			    			object.template = data;
-			    		});
-			        	FragmentsService.getByType('F_ajsm').then(function(data) {
-			    			for(var i=0;i < data.length;i++){
-			    				var node = data[i];
-			    				node.type = "Q_linkedajsm";
-			    				node.nodeclass = "Q";
-			    			}
-			    			object.ajsm = data;
-			        	});
-			        	FragmentsService.getByType('F_frequency').then(function(data) {	
-		        			for(var i=0;i < data.length;i++){
-		        				var node = data[i];
-		        				node.nodeclass = "Q";
-		        			}
-		        			object.frequency = data;
-		        		});
-			    		return object;
-			        	}
+			        	templateData: function(FragmentsService) {		        		        	
+				    		return FragmentsService.get().then(function(data) {	
+				    			var object = {};
+				    			var ajsms = [];
+				    			var templates = [];
+				    			var frequencies = [];
+				    			for(var i=0;i < data.length;i++){
+				    				var node = data[i];
+				    				node.nodeclass = "Q";
+				    				if(node.type=='F_ajsm'){
+				    					ajsms.push(node);
+				    				}else if(node.type=='F_template'){
+				    					templates.push(node);
+				    				}else if(node.type=='F_frequency'){
+				    					frequencies.push(node);
+				    				}
+				    			}
+				    			object.template = templates;
+				    			object.frequency = frequencies;
+				    			object.ajsm = ajsms;
+				    			
+				    			return object;
+				    		});
+				        }
 			        }
 				}
 			}
