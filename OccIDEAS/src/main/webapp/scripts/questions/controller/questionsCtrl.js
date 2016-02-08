@@ -4,15 +4,19 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state) {
+			$anchorScroll,$location,$mdMedia,$window,$state,templateData) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
+		$scope.templateData = templateData.template;
+		
+		$scope.aJSMData = templateData.ajsm;
+    	$scope.frequencyData = templateData.frequency;
 		
 		//typesetting
 		$scope.topDirections = ['left', 'up'];
@@ -364,33 +368,6 @@
 			$scope.moduleSlider = data;
 		});
 		$scope.rightNav = "slideFrag";
-		initFragments();
-		function initFragments(){
-		FragmentsService.getByType('F_ajsm').then(function(data) {
-			for(var i=0;i < data.length;i++){
-				var node = data[i];
-				node.type = "Q_linkedajsm";
-				node.nodeclass = "Q";
-			}
-			$scope.aJsmFragmentSlider = data;
-		});
-		FragmentsService.getByType('F_template').then(function(data) {	
-			for(var i=0;i < data.length;i++){
-				var node = data[i];
-				//node.type = "Q_linkedtemplate";
-				node.nodeclass = "Q";
-			}
-			$scope.templateFragmentSlider = data;
-		});
-		FragmentsService.getByType('F_frequency').then(function(data) {	
-			for(var i=0;i < data.length;i++){
-				var node = data[i];
-				//node.type = "Q_linkedtemplate";
-				node.nodeclass = "Q";
-			}
-			$scope.frequencyFragmentSlider = data;
-		});
-		}
 		$scope.toggleRight = function(){
 		    if ($scope.rightNav === "slideFrag"){
 		      $scope.rightNav = "";
@@ -412,7 +389,7 @@
 				scope.$modelValue.type = 'Q_Multiple';
 			}
 		};
-		$scope.remove = function(scope) {
+		$scope.deleteNode = function(scope) {
 			recordAction($scope.data);
 			if(scope.$modelValue.deleted){
 				scope.$modelValue.deleted = 0;
@@ -421,8 +398,28 @@
 				scope.$modelValue.deleted = 1;
 				cascadeDelete(scope.$modelValue.nodes,1);
 			}
-			saveModuleAndReload();
+			var deffered = $q.defer();
+			saveModuleWithoutReload('',deffered);
+			deffered.promise.then(function(resolve){
+				searchAndRemoveNode($scope.data,scope);
+			});
 		};
+		
+		function searchAndRemoveNode(objSearch,scope){
+			 var index = _.findIndex(objSearch, function(o) {
+				if(o.$$hashKey === scope.$modelValue.$$hashKey ){
+					return o.number;
+				}
+				if(!angular.isUndefined(o.nodes) && o.nodes.length > 0){
+					var x = searchAndRemoveNode(o.nodes,scope);
+					if (x > -1) {
+			               o.nodes.splice(x, 1)[0];
+			            return;
+			        }
+				}
+			 });
+			 return index;
+		}
 		
 		function cascadeIdCleanse(arrayInp){
 			if(arrayInp.length > 0){
@@ -618,7 +615,7 @@
 		        });
 			}
 			reorderSequence(scope.$modelValue.nodes);
-			saveModuleAndReload(locationId);
+			saveModuleWithoutReload(locationId);
 		};
 
 		$scope.collapseAll = function() {
@@ -741,7 +738,9 @@
 		                    data: function () {
 		                        return $scope.selectedNode;
 		                    },
-		                    
+		                    templateData: function(){
+		                    	return templateData;
+		                    }
 					  },
 					  /*locals: {
 						  addFragmentTab: $scope.addFragmentTab
@@ -758,7 +757,7 @@
 				}
 			  ],
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
@@ -791,7 +790,7 @@
 		$scope.linkedModuleMenuOptions =
 			[
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ],
 			  [ 'Open as Module', function($itemScope) {
@@ -809,7 +808,7 @@
 						}
 			  ],
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
@@ -834,7 +833,7 @@
 		$scope.defaultMenuOptions = 
 			[ 
 			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.remove($itemScope);
+					$scope.deleteNode($itemScope);
 					}
 			  ]
 			];
@@ -865,7 +864,7 @@
 				}
 			});
 		}
-		function saveModuleWithoutReload(locationId){
+		function saveModuleWithoutReload(locationId,deffered){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
 					var nodes = $scope.data[0].nodes;
@@ -873,24 +872,34 @@
 					var parentId = $scope.data[0].idNode;
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
-
-
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
 					QuestionsService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
-							if(locationId){
+							if(locationId && locationId != ''){
 								$scope.scrollTo(locationId);
 							}
-						}else{
+							if(deffered){
+								deffered.resolve();
+							}
+						}
+						else{
 							console.log('ERROR on Save!');
+							if(deffered){
+								deffered.reject();
+							}
 						}
 					});
-				}else{
-					console.log('ERROR on Save!');
-				}
-			});
+					}else{
+						console.log('ERROR on Get max ID!');
+						if(deffered){
+							deffered.reject();
+						}
+					}
+			});	
 		}
+		
+		
 		function saveAsFragment(data,mydata){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
@@ -914,19 +923,95 @@
 					var parentId = destNode.idNode;
 					var parentNodeNumber = destNode.idNode.number;
 					var topNodeId = destNode.idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
+					generateIdNodeCascadeFragment(nodes,maxId,parentId);
 
-
+					var deffered = $q.defer();
 					FragmentsService.createFragment(destNode).then(function(response){
 						if(response.status === 200){
 							console.log("Fragment saved");
-							initFragments();
-							$mdDialog.cancel();
+							FragmentsService.getByType('F_template').then(function(template) {	
+				    			for(var i=0;i < template.length;i++){
+				    				var node = template[i];
+				    				node.nodeclass = "Q";
+				    			}
+				    			_.merge($scope.templateData, template);
+				    				if (!$scope.templateData.$$phase) {
+				    			        try {
+				    			        	$scope.templateData.$digest();
+				    			        }
+				    			        catch (e) { }
+				    			    }
+				    				deffered.resolve();
+				    		});
+							FragmentsService.getByType('F_ajsm').then(function(data) {
+			        			for(var i=0;i < data.length;i++){
+			        				var node = data[i];
+			        				node.type = "Q_linkedajsm";
+			        				node.nodeclass = "Q";
+			        			}
+			        			_.merge($scope.aJSMData, data);
+			        			if (!$scope.aJSMData.$$phase) {
+			    			        try {
+			    			        	$scope.aJSMData.$digest();
+			    			        }
+			    			        catch (e) { }
+			    			    }
+			        			deffered.resolve();
+			        		});
+							FragmentsService.getByType('F_frequency').then(function(data) {	
+			        			for(var i=0;i < data.length;i++){
+			        				var node = data[i];
+			        				//node.type = "Q_linkedtemplate";
+			        				node.nodeclass = "Q";
+			        			}
+			        			_.merge($scope.frequencyData, data);
+			        			if (!$scope.frequencyData.$$phase) {
+			    			        try {
+			    			        	$scope.frequencyData.$digest();
+			    			        }
+			    			        catch (e) { }
+			    			    }
+			        			deffered.resolve();
+			        		});
+						   
+						}else{
+							deffered.reject();
 						}
+					});
+					deffered.promise.then(function(){
+						$mdDialog.hide();
 					});
 				}
 			});
 		}
+		
+		var increment = 0;
+		function generateIdNodeCascadeFragment(arrayInp,maxId,parentId){
+			increment = maxId;
+			if(arrayInp.length > 0){
+				var i=0;
+				_.each(arrayInp, function(node) {
+					console.log(node.name)
+					node.sequence = i;
+					if(!node.idNode){
+						increment =(increment + 1);
+						node.idNode = increment;
+						
+						if(parentId){
+							node.parentId = parentId;
+						}
+					}  
+					if(node.nodes){
+						if(node.nodes.length > 0){
+							generateIdNodeCascadeFragment(node.nodes,increment,node.idNode);
+						}
+					}
+					i++;
+				});
+				
+			}
+		}
+		
 		var maxIdIncrement = 0;
 		function generateIdNodeCascade(arrayInp,maxId,parentId,parentNodeNumber,topNodeId){
 			maxIdIncrement = maxId;
@@ -1013,7 +1098,7 @@
 		
 		$scope.undo = function(){
 			$scope.data = $window.beforeNode;
-			saveModuleAndReload();
+			saveModuleWithoutReload();
 			$scope.undoEnable = false;
 		}
 		

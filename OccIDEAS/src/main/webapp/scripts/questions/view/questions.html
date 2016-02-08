@@ -100,24 +100,24 @@ tr.angular-ui-tree-empty {
     <uib-accordion close-others="oneAtATime">
      	 <uib-accordion-group heading="aJSMs" >
 				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="aJsmFragmentSlider">
-				<li ng-repeat="node in aJsmFragmentSlider" ui-tree-node  
+			<ol ui-tree-nodes ng-model="aJSMData">
+				<li ng-repeat="node in aJSMData track by $index" ui-tree-node  
 				ng-include="'nodes_renderer2.html'"></li>
 			</ol>
 		</div>
     	</uib-accordion-group>
     	<uib-accordion-group heading="Templates" >
 		<div ui-tree="templateTreeOptions" id="templateTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="templateFragmentSlider">
-				<li ng-repeat="node in templateFragmentSlider" ui-tree-node 
+			<ol ui-tree-nodes ng-model="templateData">
+				<li ng-repeat="node in templateData track by $index" ui-tree-node 
 				ng-include="'nodes_renderer2.html'"></li>
 			</ol>
 		</div>
     	</uib-accordion-group>
     	<uib-accordion-group heading="Frequencies" >
 		<div ui-tree="templateTreeOptions" id="frequencyTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="frequencyFragmentSlider">
-				<li ng-repeat="node in frequencyFragmentSlider" ui-tree-node 
+			<ol ui-tree-nodes ng-model="frequencyData">
+				<li ng-repeat="node in frequencyData track by $index" ui-tree-node 
 				ng-include="'nodes_renderer2.html'"></li>
 			</ol>
 		</div>
@@ -247,8 +247,4 @@ tr.angular-ui-tree-empty {
 <!-- end content -->
      </div>
   </div>
-  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer2.html'" class="angular-ui-tree-node" collapsed="false">
-    </li>
-  </ol>
 </script>

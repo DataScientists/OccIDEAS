@@ -4,21 +4,12 @@
 	
 	QuestionsService.$inject = ['$http','$q'];
 	function QuestionsService($http,$q){
-		function findQuestions(idNode,nodeclass) {
-			if(nodeclass=='F'){
-				var restUrl = 'rest/fragment/get?id=' + idNode;
-				var request =  $http({
-					  method: 'GET',
-					  url: restUrl
-					})
-			}else{
-				var restUrl = 'rest/module/get?id=' + idNode;
-				var request =  $http({
-					  method: 'GET',
-					  url: restUrl
-					})
-			}
-			
+		function findQuestions(idNode) {
+			var restUrl = 'rest/module/get?id=' + idNode;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
 			return request.then(handleSuccess,handleError);
 		}
 		
