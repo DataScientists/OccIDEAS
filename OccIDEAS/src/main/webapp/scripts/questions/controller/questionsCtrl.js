@@ -4,15 +4,35 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state) {
+			$anchorScroll,$location,$mdMedia,$window,$state,templateData) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
+		$scope.templateData = templateData;
+		
+		$scope.aJSMData = [];
+		FragmentsService.getByType('F_ajsm').then(function(data) {
+    			for(var i=0;i < data.length;i++){
+    				var node = data[i];
+    				node.type = "Q_linkedajsm";
+    				node.nodeclass = "Q";
+    			}
+    			$scope.aJSMData = data;
+    	});
+    	$scope.frequencyData = [];
+    	FragmentsService.getByType('F_frequency').then(function(data) {	
+    			for(var i=0;i < data.length;i++){
+    				var node = data[i];
+    				//node.type = "Q_linkedtemplate";
+    				node.nodeclass = "Q";
+    			}
+    			$scope.frequencyData = data;
+    	})
 		
 		//typesetting
 		$scope.topDirections = ['left', 'up'];
@@ -364,33 +384,6 @@
 			$scope.moduleSlider = data;
 		});
 		$scope.rightNav = "slideFrag";
-		initFragments();
-		function initFragments(){
-		FragmentsService.getByType('F_ajsm').then(function(data) {
-			for(var i=0;i < data.length;i++){
-				var node = data[i];
-				node.type = "Q_linkedajsm";
-				node.nodeclass = "Q";
-			}
-			$scope.aJsmFragmentSlider = data;
-		});
-		FragmentsService.getByType('F_template').then(function(data) {	
-			for(var i=0;i < data.length;i++){
-				var node = data[i];
-				//node.type = "Q_linkedtemplate";
-				node.nodeclass = "Q";
-			}
-			$scope.templateFragmentSlider = data;
-		});
-		FragmentsService.getByType('F_frequency').then(function(data) {	
-			for(var i=0;i < data.length;i++){
-				var node = data[i];
-				//node.type = "Q_linkedtemplate";
-				node.nodeclass = "Q";
-			}
-			$scope.frequencyFragmentSlider = data;
-		});
-		}
 		$scope.toggleRight = function(){
 		    if ($scope.rightNav === "slideFrag"){
 		      $scope.rightNav = "";
@@ -761,7 +754,15 @@
 		                    data: function () {
 		                        return $scope.selectedNode;
 		                    },
-		                    
+		                    templateData: function(){
+		                    	return $scope.templateData;
+		                    },
+		                    aJSMData: function(){
+		                    	return $scope.aJSMData;
+		                    },
+		                    frequencyData: function(){
+		                    	return $scope.frequencyData;
+		                    }
 					  },
 					  /*locals: {
 						  addFragmentTab: $scope.addFragmentTab
@@ -919,6 +920,8 @@
 					}
 			});	
 		}
+		
+		
 		function saveAsFragment(data,mydata){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
@@ -942,19 +945,95 @@
 					var parentId = destNode.idNode;
 					var parentNodeNumber = destNode.idNode.number;
 					var topNodeId = destNode.idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
+					generateIdNodeCascadeFragment(nodes,maxId,parentId);
 
-
+					var deffered = $q.defer();
 					FragmentsService.createFragment(destNode).then(function(response){
 						if(response.status === 200){
 							console.log("Fragment saved");
-							initFragments();
-							$mdDialog.cancel();
+							FragmentsService.getByType('F_template').then(function(template) {	
+				    			for(var i=0;i < template.length;i++){
+				    				var node = template[i];
+				    				node.nodeclass = "Q";
+				    			}
+				    			_.merge($scope.templateData, template);
+				    				if (!$scope.templateData.$$phase) {
+				    			        try {
+				    			        	$scope.templateData.$digest();
+				    			        }
+				    			        catch (e) { }
+				    			    }
+				    				deffered.resolve();
+				    		});
+							FragmentsService.getByType('F_ajsm').then(function(data) {
+			        			for(var i=0;i < data.length;i++){
+			        				var node = data[i];
+			        				node.type = "Q_linkedajsm";
+			        				node.nodeclass = "Q";
+			        			}
+			        			_.merge($scope.aJSMData, data);
+			        			if (!$scope.aJSMData.$$phase) {
+			    			        try {
+			    			        	$scope.aJSMData.$digest();
+			    			        }
+			    			        catch (e) { }
+			    			    }
+			        			deffered.resolve();
+			        		});
+							FragmentsService.getByType('F_frequency').then(function(data) {	
+			        			for(var i=0;i < data.length;i++){
+			        				var node = data[i];
+			        				//node.type = "Q_linkedtemplate";
+			        				node.nodeclass = "Q";
+			        			}
+			        			_.merge($scope.frequencyData, data);
+			        			if (!$scope.frequencyData.$$phase) {
+			    			        try {
+			    			        	$scope.frequencyData.$digest();
+			    			        }
+			    			        catch (e) { }
+			    			    }
+			        			deffered.resolve();
+			        		});
+						   
+						}else{
+							deffered.reject();
 						}
+					});
+					deffered.promise.then(function(){
+						$mdDialog.hide();
 					});
 				}
 			});
 		}
+		
+		var increment = 0;
+		function generateIdNodeCascadeFragment(arrayInp,maxId,parentId){
+			increment = maxId;
+			if(arrayInp.length > 0){
+				var i=0;
+				_.each(arrayInp, function(node) {
+					console.log(node.name)
+					node.sequence = i;
+					if(!node.idNode){
+						increment =(increment + 1);
+						node.idNode = increment;
+						
+						if(parentId){
+							node.parentId = parentId;
+						}
+					}  
+					if(node.nodes){
+						if(node.nodes.length > 0){
+							generateIdNodeCascadeFragment(node.nodes,increment,node.idNode);
+						}
+					}
+					i++;
+				});
+				
+			}
+		}
+		
 		var maxIdIncrement = 0;
 		function generateIdNodeCascade(arrayInp,maxId,parentId,parentNodeNumber,topNodeId){
 			maxIdIncrement = maxId;

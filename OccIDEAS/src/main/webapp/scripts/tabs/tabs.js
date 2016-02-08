@@ -51,10 +51,19 @@
 			        					}
 						        		return response.data;
 		    				})
+			        	},
+			        	templateData: function(FragmentsService) {
+			        	return FragmentsService.getByType('F_template').then(function(data) {	
+			    			for(var i=0;i < data.length;i++){
+			    				var node = data[i];
+			    				node.nodeclass = "Q";
+			    			}
+			    			return data;
+			    		})
+			        	}
 			        	}
 			        }
 				}
-			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
 			views:{
