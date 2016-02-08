@@ -11,7 +11,7 @@ public interface NodeMapper {
 	
 	List<NodeVO> convertToNodeVOList(List<Node> node);
 
-	Node convertToModule(NodeVO nodeVO);
+	Node convertToNode(NodeVO nodeVO);
 	
 	List<Node> convertToNodeList(List<NodeVO> nodeVO);
 	

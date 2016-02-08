@@ -57,7 +57,7 @@ public class NodeMapperImpl implements NodeMapper{
 	    }
 
 	    @Override
-	    public Node convertToModule(NodeVO nodeVO) {
+	    public Node convertToNode(NodeVO nodeVO) {
 	        if ( nodeVO == null ) {
 	            return null;
 	        }
@@ -93,7 +93,7 @@ public class NodeMapperImpl implements NodeMapper{
 
 	        List<Node> list_ = new ArrayList<Node>();
 	        for ( NodeVO nodeVO_ : nodeVO ) {
-	            list_.add( convertToModule( nodeVO_ ) );
+	            list_.add( convertToNode( nodeVO_ ) );
 	        }
 
 	        return list_;

@@ -46,6 +46,10 @@ public class Rule implements Serializable {
 	public Rule() {
 		super();
 	}
+	public Rule(String idRule) {
+		super();
+		this.setIdRule(Long.parseLong(idRule));
+	}
 	public Rule(long ruleId) {
 		this.setIdRule(ruleId);
 	}

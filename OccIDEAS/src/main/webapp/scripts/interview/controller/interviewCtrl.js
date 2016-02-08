@@ -4,19 +4,16 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state,templateData) {
+			$anchorScroll,$location,$mdMedia,$window,$state) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
-		$scope.templateData = templateData.template;
 		
-		$scope.aJSMData = templateData.ajsm;
-    	$scope.frequencyData = templateData.frequency;
 		
 		//typesetting
 		$scope.topDirections = ['left', 'up'];
@@ -466,169 +463,7 @@
 				nodeId = scope.idNode;
 			}
 		}
-		$scope.newSubItem = function(scope) {
-			//recordAction($scope.data);
-			var nodeData = scope.$modelValue;
-			var locationId = nodeData.idNode * 10 + nodeData.nodes.length
-			if (!nodeData.nodes) {
-				nodeData.nodes = [];
-			}
-			if (nodeData.type == 'P_simple') {
-				nodeData.nodes.push({	
-					anchorId : locationId,
-					name : "New Question",
-					placeholder: "New Question",
-					description : "default",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "Q_single",
-					nodeclass : "Q",
-					nodes : []
-				});
-			} else if (nodeData.type == 'Q_single') {
-				var type = "P_simple";
-				var defaultText = "New Possible Answer";
-				if(scope.isFreeText){
-					type = "P_freetext";
-					defaultText = "[Freetext]";
-				}
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : defaultText,
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : type,
-					nodeclass : "P",
-					nodes : []
-				});
-			}else if (nodeData.type == 'Q_multiple') {
-				var type = "P_simple";
-				var defaultText = "New Possible Answer";
-				if(scope.isFreeText){
-					type = "P_freetext";
-					defaultText = "[Freetext]";
-				}
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : defaultText,
-					placeholder: "New Multi Possible Answer",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : type,
-					nodeclass : "P",
-					nodes : []
-				});
-			}else if (nodeData.type == 'Q_simple') {
-				var type = "P_simple";
-				var defaultText = "New Possible Answer";
-				if(scope.isFreeText){
-					type = "P_freetext";
-					defaultText = "[Freetext]";
-				}
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : defaultText,
-					placeholder:defaultText,
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : type,
-					nodeclass : "P",
-					nodes : []
-				});
-			}else if (nodeData.type == 'M_Module') {
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : "New Question",
-					placeholder: "New Question",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "Q_simple",
-					nodeclass : "Q",
-					nodes : []
-				});
-			}else if (nodeData.type == 'M_Module_') {
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : "New Question",
-					placeholder: "New Question",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "Q_simple",
-					nodeclass : "Q",
-					nodes : []
-				});
-			}else if (nodeData.type == 'M_Module__') {
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : "New Question",
-					placeholder: "New Question",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "Q_simple",
-					nodeclass : "Q",
-					nodes : []
-				});
-			}else if (nodeData.type == 'M_IntroModule') {
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : "New Question",
-					placeholder: "New Question",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "Q_simple",
-					nodeclass : "Q",
-					nodes : []
-				});
-			}else if (nodeData.type == 'F_ajsm') {
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : "New Question",
-					placeholder: "New Question",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "Q_simple",
-					nodeclass : "Q",
-					nodes : []
-				});
-			}else if (nodeData.type.indexOf('P') == 0) { //P is first character
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : "New Question",
-					placeholder: "New Question",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "Q_simple",
-					nodeclass : "Q",
-					nodes : []
-				});
-			}else if (nodeData.type.indexOf('Q') == 0) { //Q is first character
-				nodeData.nodes.push({
-					anchorId : locationId,
-					name : "New Possible Answer",
-					placeholder:"New Possible Answer",
-					topNodeId : nodeData.idNode,
-					parentId: nodeData.idNode,
-					type : "P_simple",
-					nodeclass : "P",
-					nodes : []
-				});
-			}else{
-				var nodeData = scope.$modelValue;
-		        nodeData.nodes.push({
-		          anchorId : locationId,
-		          name: "new default node",
-		          placeholder:"new node",
-		          topNodeId : nodeData.idNode,
-		          parentId: nodeData.idNode,
-				  type : "default",
-				  warning: "warning",
-		          nodes: []
-		        });
-			}
-			reorderSequence(scope.$modelValue.nodes);
-			saveModuleWithoutReload(locationId);
-		};
-
+		
 		$scope.collapseAll = function() {
 			$scope.$broadcast('collapseAll');
 		};
@@ -685,204 +520,8 @@
 				return $scope.defaultMenuOptions;
 			}
 		};
-		$scope.moduleMenuOptions = 
-			[ 
-			  [ 'Show Rules', function($itemScope) {
-					$scope.addRuleTab($itemScope);
-					}
-			  ],
-			  [ 'Add Question', function($itemScope) {
-					$scope.newSubItem($itemScope);
-				}
-			  ],
-			  [ 'Show/Hide Children', function($itemScope) {
-					
-					var toggleChildren = function (scope) {
-		        		var i, subScope,
-		                nodes = scope.childNodes();
-			            for (i = 0; i < nodes.length; i++) {
-			              subScope = nodes[i].$childNodesScope;
-			              if (subScope) {
-			            	  var collapsed = !subScope.collapsed;
-			            	  for (i = 0; i < nodes.length; i++) {
-			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
-			    	            }
-			              }
-			            }
-		              };
-		              toggleChildren($itemScope);
-					} 
-				  ], null, // Dividier
-			  [ 'Run Interview', function($itemScope) {
-                  $scope.addInterviewTab($itemScope);
-				} 
-			  ],
-			  [ 'Export to JSON', function($itemScope) {
-					alert('under development');
-				} 
-			  ],
-			  [ 'Export to PDF', function($itemScope) {
-				  					alert('under development');
-								} 
-			  ]
-			];
 		
-		$scope.questionMenuOptions = 
-			[ [ 'Add Possible Answer', function($itemScope) {
-						$scope.newSubItem($itemScope);
-						}
-			  ],
-			  [ 'Add Free Text Possible Answer', function($itemScope) {
-			  		$itemScope.isFreeText = true;
-			  		$scope.newSubItem($itemScope);
-			  		$itemScope.isFreeText = false;
-				}
-			  ],
-			  
-			  [ 'Multiple Choice (Toggle)', function($itemScope) {
-					$scope.toggleMultipleChoice($itemScope);
-					}
-			  ],
-			  
-			  [ 'Save as Fragment', function($itemScope) {
-				  
-				  $mdDialog.show({
-					  //scope: $scope,
-					  controller: QuestionsCtrl,
-					  resolve: {
-		                    data: function () {
-		                        return $scope.selectedNode;
-		                    },
-		                    templateData: function(){
-		                    	return templateData;
-		                    }
-					  },
-					  /*locals: {
-						  addFragmentTab: $scope.addFragmentTab
-				         },*/
-				      templateUrl: 'scripts/questions/view/fragmentDialog.html',
-				      parent: angular.element(document.body),
-				      clickOutsideToClose:true
-				    })
-				    .then(function(answer) {
-				      $scope.status = 'You said the information was "' + answer + '".';
-				    }, function() {
-				      $scope.status = 'You cancelled the dialog.';
-				    });
-				}
-			  ],
-			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.deleteNode($itemScope);
-					}
-			  ],
-			  [ 'Show/Hide Children', function($itemScope) {
-					
-					var toggleChildren = function (scope) {
-		        		var i, subScope,
-		                nodes = scope.childNodes();
-			            for (i = 0; i < nodes.length; i++) {
-			              subScope = nodes[i].$childNodesScope;
-			              if (subScope) {
-			            	  var collapsed = !subScope.collapsed;
-			            	  for (i = 0; i < nodes.length; i++) {
-			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
-			    	            }
-			              }
-			            }
-		              };
-		              toggleChildren($itemScope);
-					} 
-				  ],
-				  [ 'Open as aJSM', function($itemScope) {	
-	  					var node = $itemScope.node;
-	  					node.idNode = node.link;
-	  					node.type = 'F_ajsm';
-	  					node.classtype = 'F';
-	  					$scope.addFragmentTab(node);
-	  				} 
-				  ]
-			];
-		$scope.linkedModuleMenuOptions =
-			[
-			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.deleteNode($itemScope);
-					}
-			  ],
-			  [ 'Open as Module', function($itemScope) {
-	  					var node = $itemScope.node;
-	  					node.idNode = node.link;
-	  					node.type = 'M_Module';
-	  					node.classtype = 'M';
-	  					$scope.addModuleTab(node);
-	  				}
-			  ]
-			];
-		$scope.possibleAnswerMenuOptions =
-			[ [ 'Add Question', function($itemScope) {
-						$scope.newSubItem($itemScope);
-						}
-			  ],
-			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.deleteNode($itemScope);
-					}
-			  ],
-			  [ 'Show/Hide Children', function($itemScope) {
-					
-					var toggleChildren = function (scope) {
-		        		var i, subScope,
-		                nodes = scope.childNodes();
-			            for (i = 0; i < nodes.length; i++) {
-			              subScope = nodes[i].$childNodesScope;
-			              if (subScope) {
-			            	  var collapsed = !subScope.collapsed;
-			            	  for (i = 0; i < nodes.length; i++) {
-			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
-			    	            }
-			              }
-			            }
-		              };
-		              toggleChildren($itemScope);
-					} 
-			   ]
-			];
-		$scope.defaultMenuOptions = 
-			[ 
-			  [ 'Remove (Toggle)', function($itemScope) {
-					$scope.deleteNode($itemScope);
-					}
-			  ]
-			];
-		function saveModuleAndReload(locationId){
-			QuestionsService.getMaxId().then(function(response){
-				if(response.status === 200){
-					var nodes = $scope.data[0].nodes;
-					var maxId = response.data;
-					var parentId = $scope.data[0].idNode;
-					var parentNodeNumber = $scope.data[0].number;
-					var topNodeId = $scope.data[0].idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
-					QuestionsService.save($scope.data[0]).then(function(response){
-						if(response.status === 200){
-							console.log('Save was Successful Now Reloading!');
-							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
-								var showFragmentSlider = $scope.data.showFragmentSlider;
-								var showModuleSlider = $scope.data.showModuleSlider;
-								$scope.data = data.data;
-								$scope.data.showFragmentSlider = showFragmentSlider;
-								$scope.data.showModuleSlider = showModuleSlider;
-								if(locationId){
-									$scope.scrollTo(locationId);
-								}
-							});
-						}else{
-							console.log('ERROR on Save!');
-						}
-					});
-				}else{
-					console.log('ERROR on Save!');
-				}
-			});
-		}
+		
 		function saveModuleWithoutReload(locationId,deffered){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
@@ -1131,7 +770,7 @@
 		$scope.scrollTo = function( target){
 			var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
-			var scrollY = scrollTarget.offset().top - 150;
+			var scrollY = scrollTarget.offset().top - 12;
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 

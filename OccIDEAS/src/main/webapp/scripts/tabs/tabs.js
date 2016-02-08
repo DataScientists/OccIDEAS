@@ -149,6 +149,27 @@
                     }
                 }
             }
+        }).state('tabs.rules', {
+            url: '/rules/:row',
+            views:{
+                'ruleView':{
+                    templateUrl: 'scripts/rules/view/rules.html',
+                    controller: 'RulesCtrl as vm',
+                    params:{row: null},
+                    resolve:{
+                        data: function($stateParams,RulesService) {
+                            return RulesService.getModuleRules($stateParams.row,'M')
+                                .then(function(response){
+                                    console.log("Data getting from questions AJAX ...");
+                                    var viewData = response.data;
+                                    
+                                    console.log(viewData);
+                                    return viewData;
+                                })
+                        }
+                    }
+                }
+            }
         });
 	}
 })();

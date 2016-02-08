@@ -92,6 +92,31 @@
 				});
 			}
 		};
+        $scope.addRulesTab = function(scope) {
+            var nodeData = scope.$modelValue;
+            var tabTitle = "Interview "+nodeData.name;
+            var check = _.some( tabs, function( el ) {
+                return el.title === tabTitle;
+            } );
+            if(!check){
+                tabs.push({
+                    title : tabTitle,
+                    viewName: 'rulesView',
+                    canClose: true,
+                    disabled : false
+                });
+                $scope.tabOptions.push({
+                    state: "tabs.rules",
+                    data: {row:nodeData.idNode}
+                });
+            }else{
+                _.find(tabs, function(el, index){
+                    if(el.title === tabTitle){
+                        $scope.selectedIndex = index;
+                    }
+                });
+            }
+        };
         $scope.addInterviewTab = function(scope) {
             var nodeData = scope.$modelValue;
             var tabTitle = "Interview "+nodeData.name;
