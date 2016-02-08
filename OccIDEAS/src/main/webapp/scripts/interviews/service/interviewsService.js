@@ -1,9 +1,9 @@
 (function(){
-	angular.module('occIDEASApp.Questions')
-	.service('QuestionsService',QuestionsService);
+	angular.module('occIDEASApp.Interviews')
+	.service('InterviewsService',InterviewsService);
 	
-	QuestionsService.$inject = ['$http','$q'];
-	function QuestionsService($http,$q){
+	InterviewsService.$inject = ['$http','$q'];
+	function InterviewsService($http,$q){
 		function findQuestions(idNode) {
 			var restUrl = 'rest/module/get?id=' + idNode;
 			var request =  $http({

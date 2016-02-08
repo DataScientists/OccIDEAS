@@ -1135,48 +1135,6 @@
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 
-        resetSelectedIndex();
-        $scope.interviewStarted = false;
-        $scope.saveAnswerQuestion = function(node){
-            var seletectedEl = angular.element(document.getElementsByClassName("selected"));
-            if(!seletectedEl.length && $scope.interviewStarted){
-                alert("Please select an answer!");
-                return false;
-            }
-
-            var idNode;
-            if(!$scope.interviewStarted
-                // && node.type != "Q_simple" && node.type != 'Q_single'
-            ){
-                idNode = node.idNode;
-            }else{
-                idNode = seletectedEl[0].id;
-            }
-            QuestionsService.getNextQuestion(idNode).then(function(response){
-                console.log(response);
-                if(response.status === 200){
-                    $scope.data.showedQuestion = response.data;
-                    resetSelectedIndex();
-                    $scope.interviewStarted = true;
-                }else if(response.status == 400) {
-                    alert("End interview!");
-                    return false;
-                }else{
-                    console.log('ERROR on Get!');
-                }
-            });;
-        }
-
-        $scope.singleChoiceHandler = function($index){
-            $scope.selectedIndex = $index;
-        }
-
-        $scope.multipleChoiceHandler = function(id){
-            angular.element('#'+id).addClass('selected');
-        }
-
-        function resetSelectedIndex(){
-            $scope.selectedIndex = -1;
-        }
+        
 	}
 })();

@@ -1,1 +1,28 @@
-<pre>{{data | json}}</pre>
+<div class="col-md-6">
+    <div ng-model="data">
+        <ul id="{{data.showedQuestion.idNode}}">
+            <div ng-model="data.showedQuestion.name">{{data.showedQuestion.name}}</div>
+
+            <div ng-if="data.showedQuestion.type == 'Q_multiple'">
+                <li ng-repeat="node in data.showedQuestion.nodes">
+                    <label id="{{node.idNode}}" ng-model="data.showedQuestion.nodes[node]" ng-click="multipleChoiceHandler(node.idNode)">
+                        {{node.name}}
+                    </label>
+                </li>
+            </div>
+            <div ng-if="data.showedQuestion.type == 'Q_single' || data.showedQuestion.type == 'Q_simple'">
+                <li ng-repeat="node in data.showedQuestion.nodes" class="single-choice">
+                    <label id="{{node.idNode}}" ng-model="data.showedQuestion.nodes[node]" ng-click="singleChoiceHandler($index)" ng-class="{ 'selected': $index == selectedIndex }">
+                        {{node.name}}
+                    </label>
+                </li>
+            </div>
+            <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised md-mini">
+                <span>Get next</span>
+            </md-button>
+        </ul>
+    </div>
+</div>
+<div class="col-md-6">
+    <div ng-include="'scripts/questions/view/questions.html'"></div>
+</div>
