@@ -756,12 +756,6 @@
 		                    },
 		                    templateData: function(){
 		                    	return $scope.templateData;
-		                    },
-		                    aJSMData: function(){
-		                    	return $scope.aJSMData;
-		                    },
-		                    frequencyData: function(){
-		                    	return $scope.frequencyData;
 		                    }
 					  },
 					  /*locals: {
