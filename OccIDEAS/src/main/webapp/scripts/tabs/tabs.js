@@ -132,12 +132,12 @@
             url: '/questions/:row',
             views:{
                 'interviewView':{
-                    templateUrl: 'scripts/questions/view/interview.html',
-                    controller: 'QuestionsCtrl as vm',
+                    templateUrl: 'scripts/interviews/view/interview.html',
+                    controller: 'InterviewsCtrl as vm',
                     params:{row: null},
                     resolve:{
-                        data: function($stateParams,QuestionsService) {
-                            return QuestionsService.findQuestions($stateParams.row,'M')
+                        data: function($stateParams,InterviewsService) {
+                            return InterviewsService.findQuestions($stateParams.row,'M')
                                 .then(function(response){
                                     console.log("Data getting from questions AJAX ...");
                                     var viewData = response.data;

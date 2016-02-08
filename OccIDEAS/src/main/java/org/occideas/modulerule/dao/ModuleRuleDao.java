@@ -46,10 +46,9 @@ public class ModuleRuleDao {
       final Session session = sessionFactory.getCurrentSession();
       
       Query query = session
-              .createSQLQuery("SELECT COUNT(*) as count FROM ModuleRules WHERE idModule= :id")
-              .addScalar("count", LongType.INSTANCE).setParameter("id",18432); 
+              .createSQLQuery("SELECT * FROM ModuleRules "); 
       
-      List firstResult = query.list();
+      List<?> list = query.list();
       /*Query query = session.createSQLQuery("select * from ModuleRules")
     		  .addScalar("idModule", StandardBasicTypes.LONG)
     		  .addScalar("idRule", StandardBasicTypes.LONG)

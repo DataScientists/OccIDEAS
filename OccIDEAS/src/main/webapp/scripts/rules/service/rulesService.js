@@ -1,6 +1,6 @@
 (function(){
-	angular.module('occIDEASApp.Rule')
-	.service('RulesService',QuestionsService);
+	angular.module('occIDEASApp.Rules')
+	.service('RulesService',RulesService);
 	
 	RulesService.$inject = ['$http','$q'];
 	function RulesService($http,$q){

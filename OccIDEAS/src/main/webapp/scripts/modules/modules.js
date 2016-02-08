@@ -2,14 +2,14 @@
 	angular
 	  .module('occIDEASApp.Modules',['ui.router'])
 	  .config(Config)
-	  .factory('ModulesCache',ModulesCache);
+	  .factory('RulesCache',RulesCache);
 	
 	Config.$inject = ['$stateProvider'];
 	function Config($stateProvider){
 	}
 	
-	ModulesCache.$inject = ['$cacheFactory'];
-	function ModulesCache($cacheFactory){
-		return $cacheFactory('modules-cache');
+	RulesCache.$inject = ['$cacheFactory'];
+	function RulesCache($cacheFactory){
+		return $cacheFactory('rules-cache');
 	}
 })();

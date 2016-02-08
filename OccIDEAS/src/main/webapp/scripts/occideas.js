@@ -12,6 +12,8 @@ angular
     "ui.bootstrap",
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
+    "occIDEASApp.Rules",
+    "occIDEASApp.Interviews",
     "occIDEASApp.Modules",
     "occIDEASApp.Agents",
     "occIDEASApp.Rules",
