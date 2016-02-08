@@ -383,10 +383,10 @@
 		
 		$scope.toggleMultipleChoice = function(scope) {
 			recordAction($scope.data);
-			if(scope.$modelValue.type=='Q_Multiple'){
-				scope.$modelValue.type = 'Q_Single';
+			if(scope.$modelValue.type=='Q_multiple'){
+				scope.$modelValue.type = 'Q_single';
 			}else{
-				scope.$modelValue.type = 'Q_Multiple';
+				scope.$modelValue.type = 'Q_multiple';
 			}
 		};
 		$scope.deleteNode = function(scope) {
@@ -486,13 +486,18 @@
 					nodes : []
 				});
 			} else if (nodeData.type == 'Q_single') {
+				var type = "P_simple";
+				var defaultText = "New Possible Answer";
+				if(scope.isFreeText){
+					type = "P_freetext";
+					defaultText = "[Freetext]";
+				}
 				nodeData.nodes.push({
 					anchorId : locationId,
-					name : "New Possible Answer",
-					placeholder:"New Possible Answer",
+					name : defaultText,
 					topNodeId : nodeData.idNode,
 					parentId: nodeData.idNode,
-					type : "P_simple",
+					type : type,
 					nodeclass : "P",
 					nodes : []
 				});
