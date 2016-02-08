@@ -94,9 +94,37 @@
 			        		return FragmentsService.findFragment($stateParams.row)
 			        				.then(function(data){
 			        					console.log("Fragment Data from AJAX ...");
-			        					console.log("Fragment IdNode: "+$stateParams.row);		        					
+			        					console.log("Fragment IdNode: "+$stateParams.row);			        					
+			        					data.showModuleSlider = false;
+			        					data.showFragmentSlider = true;		        					
 						        		return data;
 		    				})
+			        	},
+			        	templateData: function(FragmentsService) {
+			        		var object = {};
+			        	FragmentsService.getByType('F_template').then(function(data) {	
+			    			for(var i=0;i < data.length;i++){
+			    				var node = data[i];
+			    				node.nodeclass = "Q";
+			    			}
+			    			object.template = data;
+			    		});
+			        	FragmentsService.getByType('F_ajsm').then(function(data) {
+			    			for(var i=0;i < data.length;i++){
+			    				var node = data[i];
+			    				node.type = "Q_linkedajsm";
+			    				node.nodeclass = "Q";
+			    			}
+			    			object.ajsm = data;
+			        	});
+			        	FragmentsService.getByType('F_frequency').then(function(data) {	
+		        			for(var i=0;i < data.length;i++){
+		        				var node = data[i];
+		        				node.nodeclass = "Q";
+		        			}
+		        			object.frequency = data;
+		        		});
+			    		return object;
 			        	}
 			        }
 				}
