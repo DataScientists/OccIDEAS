@@ -13,26 +13,10 @@
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
-		$scope.templateData = templateData;
+		$scope.templateData = templateData.template;
 		
-		$scope.aJSMData = [];
-		FragmentsService.getByType('F_ajsm').then(function(data) {
-    			for(var i=0;i < data.length;i++){
-    				var node = data[i];
-    				node.type = "Q_linkedajsm";
-    				node.nodeclass = "Q";
-    			}
-    			$scope.aJSMData = data;
-    	});
-    	$scope.frequencyData = [];
-    	FragmentsService.getByType('F_frequency').then(function(data) {	
-    			for(var i=0;i < data.length;i++){
-    				var node = data[i];
-    				//node.type = "Q_linkedtemplate";
-    				node.nodeclass = "Q";
-    			}
-    			$scope.frequencyData = data;
-    	})
+		$scope.aJSMData = templateData.ajsm;
+    	$scope.frequencyData = templateData.frequency;
 		
 		//typesetting
 		$scope.topDirections = ['left', 'up'];
@@ -755,7 +739,7 @@
 		                        return $scope.selectedNode;
 		                    },
 		                    templateData: function(){
-		                    	return $scope.templateData;
+		                    	return templateData;
 		                    }
 					  },
 					  /*locals: {

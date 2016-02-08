@@ -53,13 +53,30 @@
 		    				})
 			        	},
 			        	templateData: function(FragmentsService) {
-			        	return FragmentsService.getByType('F_template').then(function(data) {	
+			        		var object = {};
+			        	FragmentsService.getByType('F_template').then(function(data) {	
 			    			for(var i=0;i < data.length;i++){
 			    				var node = data[i];
 			    				node.nodeclass = "Q";
 			    			}
-			    			return data;
-			    		})
+			    			object.template = data;
+			    		});
+			        	FragmentsService.getByType('F_ajsm').then(function(data) {
+			    			for(var i=0;i < data.length;i++){
+			    				var node = data[i];
+			    				node.type = "Q_linkedajsm";
+			    				node.nodeclass = "Q";
+			    			}
+			    			object.ajsm = data;
+			        	});
+			        	FragmentsService.getByType('F_frequency').then(function(data) {	
+		        			for(var i=0;i < data.length;i++){
+		        				var node = data[i];
+		        				node.nodeclass = "Q";
+		        			}
+		        			object.frequency = data;
+		        		});
+			    		return object;
 			        	}
 			        	}
 			        }
