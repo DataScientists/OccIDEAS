@@ -15,7 +15,7 @@
 		    return data;
 		  });
 		};
-
+		
 		var postNewAgent = function(moduleObj) {
 		  return $http.post(modulesUrl + '?apiKey='+apiKey).then(function(response) {
 			console.log(response.data.id);

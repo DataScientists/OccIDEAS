@@ -236,6 +236,57 @@ md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
     right: -310px!important;
 }  
 
+#agentDropContainer{
+	position: fixed;
+    z-index: 100000;
+    height: 80%;
+    left: 0px;
+    bottom: 5%;
+    transition-property: all;
+    transition-duration: .5s;
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+
+.agent-contain {
+    position: relative;
+    height: 100%;
+    width: 310px;
+}
+
+#agentDropContainer .agentSticker {
+   cursor: pointer;
+    float: left;
+    width: 120px;
+    height: 30px;
+    left: 340px;
+    top: 95px;
+    position: absolute;
+    transform: rotate(-90deg);
+    transform-origin: left bottom;
+    white-space: nowrap;
+    color: #fff;
+    padding: 5px 0px 0px 10px;
+    text-align: center;
+}
+    
+#agentDropContainer .agentSticker {
+    background: #797979;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.agent-contain .panel-title{
+    font-size: .8em;
+}  
+
+.agent-contain .panel-body li{
+    font-size: .7em;
+}  
+
+
+.slideFragLeft {
+    left: -310px!important;
+}
+
 label, input, button, select, textarea {
     font-size: 13px;
     font-weight: normal;
@@ -254,6 +305,13 @@ label.fraglabel {
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
     padding: 5px 5px 5px 10px;
 }  
+
+#agentDragDrop{
+	border: solid 2px #686868;
+    background-color: #E9E9E9;
+    overflow: auto;
+    height: 100%;
+}
 
 #fragmentsdragdrop {
     border: solid 2px #686868;

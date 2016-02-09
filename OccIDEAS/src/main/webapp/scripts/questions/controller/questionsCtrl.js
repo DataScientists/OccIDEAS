@@ -4,17 +4,17 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData','agentsData'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state,templateData) {
+			$anchorScroll,$location,$mdMedia,$window,$state,templateData,agentsData) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
 		$scope.templateData = templateData.template;
-		
+		$scope.agentsData = agentsData;
 		$scope.aJSMData = templateData.ajsm;
     	$scope.frequencyData = templateData.frequency;
 		
@@ -374,6 +374,16 @@
 		    }
 		    else{
 		      $scope.rightNav = "slideFrag";
+		    }
+		};
+		
+		$scope.leftNav = "slideFragLeft";
+		$scope.toggleLeft = function(){
+		    if ($scope.leftNav === "slideFragLeft"){
+		      $scope.leftNav = "";
+		    }
+		    else{
+		      $scope.leftNav = "slideFragLeft";
 		    }
 		};
 		
