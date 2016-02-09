@@ -108,7 +108,7 @@ tr.angular-ui-tree-empty {
      	 	</uib-accordion-heading>
      	 		<div>
 					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="subNode in value track by $index">
+						<li class="list-group-item" ng-repeat="subNode in value track by $index" ng-click="toggleRulesObj(subNode)">
 							{{subNode.name}} <span class="badge pull-right">3</span></li>
 					</ul>
 				</div>
@@ -220,6 +220,27 @@ tr.angular-ui-tree-empty {
               ng-click="undo()">
               Undo	
              </button>
+			<div class="agentheader expanded pull-right" ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)">
+				<div class="verticalagents">
+						<div class="agentcontainer" ng-repeat="rule in rulesObj">
+								<span id="87" class="rotatedagenttext">{{rule.name}}</span>
+						</div>
+				</div>
+			</div>
+			<div class="pull-right" ng-if="((node.nodeclass != 'M')&&(node.nodeclass != 'F')) && (rulesObj.length > 0)"
+						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="rule in rulesObj">
+						<div class="verticalrules" >
+							<div id="A_14560" 
+								 class="rulescontainer">
+								<div class="agentACell">
+									<span class="cell-lable">
+										<div class="probHigh"></div>
+									</span>
+								</div>
+							</div>
+						</div>
+			</div>
+				
 
 		  <div class="form-group pull-right" style="margin-top: 5px;">
     		<span class="badge">{{node.number}}</span>

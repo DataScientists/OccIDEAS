@@ -102,7 +102,7 @@
 }
 /**Node Types*/
 .M{
-	height: 90px;
+	height: 110px;
     font-size: 22px;
     background: #676262  !important;
     color: #D7DFE4 !important;
@@ -271,7 +271,7 @@ md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
     
 #agentDropContainer .agentSticker {
     background: #797979;
-    border-radius: 5px 5px 0px 0px;
+    border-radius: 0px 0px 5px 5px;
 }
 
 .agent-contain .panel-title{
@@ -355,4 +355,85 @@ label.fraglabel {
 .selected{
     border: 1px solid #7c9eb2;
     background: #7c9eb2;
+}
+
+.agentheader{
+	color: #FFF;
+	font: 13px/1.7em 'Open Sans';
+}
+
+.verticalagents{
+	height: 110px;
+    border-left: aliceblue solid 1px;
+    width: auto;
+}
+
+.verticalrules{
+	height: 40px;
+    border-left: aliceblue solid 1px;
+    width: auto;
+    display:inline;
+}
+
+.probHigh{
+    width: 6px;
+    height: 6px;
+    background: #ff0000;
+    border-radius: 2px;
+    float: left;
+}
+	
+}
+
+.rulescontainer {
+    position: relative;
+    width: 27px;
+    height: 40px;
+    border-right: solid aliceblue 1px;
+    float: left;
+}
+
+.agentcontainer {
+    position: relative;
+    width: 27px;
+    height: 110px;
+    border-right: solid aliceblue 1px;
+    float: left;
+}
+
+.rotatedagenttext {
+    display: block;
+    font-size: 0.7em;
+    -webkit-transform: rotate(-90deg);
+    -webkit-transform-origin: left top 0;
+    -moz-transform: rotate(-90deg);
+    -moz-transform-origin: left bottom;
+    -ms-transform: rotate(-90deg);
+    -ms-transform-origin: left bottom;
+    -o-transform: rotate(-90deg);
+    -o-transform-origin: left bottom;
+    transform: rotate(-90deg);
+    transform-origin: left bottom;
+    white-space: nowrap;
+    position: relative;
+    bottom: 4px;
+    position: absolute;
+    left: 23px;
+}
+
+.agentACell {
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 21px;
+    color: #FFF;
+    border: 3px solid #FFF;
+    box-shadow: 1px 1px 3px rgba(0,0,0,.4);
+    text-shadow: 1px 1px 2px rgba(0,0,0,.4);
+    margin: 0px 2px 0px 2px;
+    float: left;
+    overflow: hidden;
+    background: #686868;
 }

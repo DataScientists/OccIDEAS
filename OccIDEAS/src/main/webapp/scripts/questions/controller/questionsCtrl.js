@@ -17,7 +17,19 @@
 		$scope.agentsData = agentsData;
 		$scope.aJSMData = templateData.ajsm;
     	$scope.frequencyData = templateData.frequency;
-		
+    	$scope.rulesObj = [];
+		$scope.toggleRulesObj = function (node){
+			if(_.findIndex($scope.rulesObj, function(o) { return o.name === node.name; }) != -1){
+				$scope.safeApply(function () {
+		              $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) { return o.name === node.name; }), 1)[0];
+		        });
+			}else{
+				$scope.rulesObj.push(node);
+			}
+			
+		};
+    	
+    	
 		//typesetting
 		$scope.topDirections = ['left', 'up'];
 		$scope.bottomDirections = ['down', 'right'];
