@@ -81,9 +81,12 @@
 		
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
-					//var sourceNode = sourceNodeScope.node;
+					  
 				      return true;
 				    },
+				dragStart: function(event){
+						$scope.undoEnable = false;
+					},
 				beforeDrag: function(sourceNodeScope){
 						$scope.isDragging = true;	
 						
@@ -141,9 +144,12 @@
 		}
 		$scope.templateTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
-					//var sourceNode = sourceNodeScope.node;
+					  
 				      return true;
 				    },
+				dragStart: function(event){
+						$scope.undoEnable = false;
+					},
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
@@ -467,7 +473,7 @@
 			}
 		}
 		$scope.newSubItem = function(scope) {
-			//recordAction($scope.data);
+			$scope.undoEnable = false;
 			var nodeData = scope.$modelValue;
 			var locationId = nodeData.idNode * 10 + nodeData.nodes.length
 			if (!nodeData.nodes) {
@@ -1116,9 +1122,13 @@
 		}
 		
 		$scope.undo = function(){
+			var showFragmentSlider = $scope.data.showFragmentSlider;
+			var showModuleSlider = $scope.data.showModuleSlider;
 			$scope.data = $window.beforeNode;
 			saveModuleWithoutReload();
 			$scope.undoEnable = false;
+			$scope.data.showFragmentSlider = showFragmentSlider;
+			$scope.data.showModuleSlider = showModuleSlider;
 		}
 		
 		$scope.isClonable = false;
