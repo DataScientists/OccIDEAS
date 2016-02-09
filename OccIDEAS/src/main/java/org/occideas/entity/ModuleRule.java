@@ -1,5 +1,7 @@
 package org.occideas.entity;
 
+import java.math.BigInteger;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -13,15 +15,10 @@ public class ModuleRule  implements java.io.Serializable{
 	@Id
 	private String primaryKey;
 	
-	private long idModule;
-	private long idRule;
-	private long idAgent;
-	private long idNode;
-	
-	transient private Module module;
-	transient private Agent agent;
-	transient private Rule rule;
-	//private PossibleAnswer possibleAnswer;
+	private BigInteger idModule;
+	private BigInteger idRule;
+	private BigInteger idAgent;
+	private BigInteger idNode;
 	
 	public ModuleRule() {
 		super();
@@ -31,75 +28,44 @@ public class ModuleRule  implements java.io.Serializable{
 		super();
 		this.setPrimaryKey(primaryKey);
 	}
-	
-	public Module getModule() {
-		module = new Module(this.idModule);
-		return module;
-	}
-	public void setModule(Module module) {
-		this.module = module;
-	}
-	
-	public Agent getAgent() {
-		agent = new Agent(this.idAgent);
-		return agent;
-	}
-	public void setAgent(Agent agent) {
-		this.agent = agent;
-	}
-	public Rule getRule() {
-		rule = new Rule(this.idRule);
-		return rule;
-	}
-	public void setRule(Rule rule) {
-		this.rule = rule;
-	}
-	/*public PossibleAnswer getNode() {
-		possibleAnswer = new PossibleAnswer(this.idNode);
-		return possibleAnswer;
-	}
-	public void setPossibleAnswer(PossibleAnswer possibleAnswer) {
-		this.possibleAnswer = possibleAnswer;
-	}*/
 	public String getPrimaryKey() {
 		return primaryKey;
 	}
 	public void setPrimaryKey(String primaryKey) {
 		this.primaryKey = primaryKey;
 	}
-
-	public Long getIdModule() {
+	
+	public BigInteger getIdModule() {
 		return idModule;
 	}
 
-	public void setIdModule(long idModule) {
+	public void setIdModule(BigInteger idModule) {
 		this.idModule = idModule;
 	}
 
-	public Long getIdRule() {
+	public BigInteger getIdRule() {
 		return idRule;
 	}
 
-	public void setIdRule(long idRule) {
+	public void setIdRule(BigInteger idRule) {
 		this.idRule = idRule;
 	}
 
-	public Long getIdAgent() {
+	public BigInteger getIdAgent() {
 		return idAgent;
 	}
 
-	public void setIdAgent(long idAgent) {
+	public void setIdAgent(BigInteger idAgent) {
 		this.idAgent = idAgent;
 	}
 
-	public Long getIdNode() {
+	public BigInteger getIdNode() {
 		return idNode;
 	}
 
-	public void setIdNode(long idNode) {
+	public void setIdNode(BigInteger idNode) {
 		this.idNode = idNode;
 	}
-	
-	
+
 
 }

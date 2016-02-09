@@ -3,7 +3,10 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.Agent;
+import org.occideas.entity.Module;
 import org.occideas.entity.ModuleRule;
+import org.occideas.entity.Rule;
 import org.occideas.vo.ModuleRuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,9 +31,9 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
 
         ModuleRuleVO moduleVO = new ModuleRuleVO();
 
-        moduleVO.setAgent( agentMapper.convertToAgentVO(moduleEntity.getAgent()));
-        moduleVO.setModule( moduleMapper.convertToModuleVO(moduleEntity.getModule(),false));
-        moduleVO.setRule( ruleMapper.convertToRuleVO(moduleEntity.getRule()));
+        moduleVO.setAgent( agentMapper.convertToAgentVO(new Agent(moduleEntity.getIdAgent().longValue())));
+        moduleVO.setModule( moduleMapper.convertToModuleVO(new Module(moduleEntity.getIdModule().longValue()),false));
+        moduleVO.setRule( ruleMapper.convertToRuleVO(new Rule(moduleEntity.getIdRule().longValue())));
         //moduleVO.setNode( nodeMapper.convertToNodeVO(moduleEntity.getNode()));
         
         return moduleVO;
@@ -58,9 +61,9 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
 
         ModuleRule module = new ModuleRule();
 
-        module.setAgent( agentMapper.convertToAgent(moduleVO.getAgent()) );
-        module.setRule( ruleMapper.convertToRule(moduleVO.getRule()) );
-        module.setModule( moduleMapper.convertToModule(moduleVO.getModule()) );
+        //module.setAgent( agentMapper.convertToAgent(moduleVO.getIdAgent()) );
+        //module.setRule( ruleMapper.convertToRule(moduleVO.getIdRule()) );
+        //module.setModule( moduleMapper.convertToModule(moduleVO.getIdModule()) );
         //module.setNode( nodeMapper.convertToNode(moduleVO.getNode()) );
 
         return module;
