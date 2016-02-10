@@ -46,8 +46,9 @@ public class ModuleRuleDao {
     @SuppressWarnings("unchecked")
 	public List<ModuleRule> getAll() {
     	final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(ModuleRule.class)
-      		  						.setResultTransformer(Transformers.aliasToBean(ModuleRule.class));
+        final Criteria crit = session.createCriteria(ModuleRule.class);
+        
+        //List<ModuleRule> retValue = crit.list(); 
         return crit.list();
     }
     @SuppressWarnings("unchecked")

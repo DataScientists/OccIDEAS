@@ -1,42 +1,38 @@
 package org.occideas.vo;
 
+import java.math.BigInteger;
+
 public class ModuleRuleVO {
 
-	private RuleVO rule;
-	private AgentVO agent;
-	private ModuleVO module;
-	private NodeVO node;
-
-	public RuleVO getRule() {
-		return rule;
+	private BigInteger idModule;
+	private BigInteger idRule;
+	private BigInteger idAgent;
+	private BigInteger idNode;
+	
+	
+	public BigInteger getIdModule() {
+		return idModule;
 	}
-
-	public void setRule(RuleVO rule) {
-		this.rule = rule;
+	public void setIdModule(BigInteger idModule) {
+		this.idModule = idModule;
 	}
-
-	public AgentVO getAgent() {
-		return agent;
+	public BigInteger getIdRule() {
+		return idRule;
 	}
-
-	public void setAgent(AgentVO agent) {
-		this.agent = agent;
+	public void setIdRule(BigInteger idRule) {
+		this.idRule = idRule;
 	}
-
-	public ModuleVO getModule() {
-		return module;
+	public BigInteger getIdAgent() {
+		return idAgent;
 	}
-
-	public void setModule(ModuleVO module) {
-		this.module = module;
+	public void setIdAgent(BigInteger idAgent) {
+		this.idAgent = idAgent;
 	}
-
-	public NodeVO getNode() {
-		return node;
+	public BigInteger getIdNode() {
+		return idNode;
 	}
-
-	public void setNode(NodeVO node) {
-		this.node = node;
+	public void setIdNode(BigInteger idNode) {
+		this.idNode = idNode;
 	}
 
 }
