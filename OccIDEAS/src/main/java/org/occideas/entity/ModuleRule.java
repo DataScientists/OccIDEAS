@@ -15,10 +15,10 @@ public class ModuleRule  implements java.io.Serializable{
 	@Id
 	private String primaryKey;
 	
-	private BigInteger idModule;
-	private BigInteger idRule;
-	private BigInteger idAgent;
-	private BigInteger idNode;
+	private long idModule;
+	private long idRule;
+	private long idAgent;
+	private long idNode;
 	
 	public ModuleRule() {
 		super();
@@ -35,35 +35,35 @@ public class ModuleRule  implements java.io.Serializable{
 		this.primaryKey = primaryKey;
 	}
 	
-	public BigInteger getIdModule() {
+	public long getIdModule() {
 		return idModule;
 	}
 
-	public void setIdModule(BigInteger idModule) {
+	public void setIdModule(long idModule) {
 		this.idModule = idModule;
 	}
 
-	public BigInteger getIdRule() {
+	public long getIdRule() {
 		return idRule;
 	}
 
-	public void setIdRule(BigInteger idRule) {
+	public void setIdRule(long idRule) {
 		this.idRule = idRule;
 	}
 
-	public BigInteger getIdAgent() {
+	public long getIdAgent() {
 		return idAgent;
 	}
 
-	public void setIdAgent(BigInteger idAgent) {
+	public void setIdAgent(long idAgent) {
 		this.idAgent = idAgent;
 	}
 
-	public BigInteger getIdNode() {
+	public long getIdNode() {
 		return idNode;
 	}
 
-	public void setIdNode(BigInteger idNode) {
+	public void setIdNode(long idNode) {
 		this.idNode = idNode;
 	}
 
