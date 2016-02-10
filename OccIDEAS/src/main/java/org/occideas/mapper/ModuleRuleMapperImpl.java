@@ -15,12 +15,14 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
         if ( moduleEntity == null ) {
             return null;
         }
-
         ModuleRuleVO moduleVO = new ModuleRuleVO();
         moduleVO.setIdAgent(moduleEntity.getIdAgent());
+        moduleVO.setAgentName(moduleEntity.getAgentName());
         moduleVO.setIdRule(moduleEntity.getIdRule());
         moduleVO.setIdModule(moduleEntity.getIdModule());
+        moduleVO.setModuleName(moduleEntity.getModuleName());
         moduleVO.setIdNode(moduleEntity.getIdNode());
+        moduleVO.setNodeNumber(moduleEntity.getNodeNumber());
         
         return moduleVO;
     }
@@ -30,12 +32,10 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
         if ( moduleEntity == null ) {
             return null;
         }
-
         List<ModuleRuleVO> list = new ArrayList<ModuleRuleVO>();
         for ( ModuleRule module : moduleEntity ) {
             list.add( convertToModuleRuleVO( module ) );
         }
-
         return list;
     }
 
@@ -48,7 +48,6 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
     @Override
     public List<ModuleRule> convertToModuleRuleList(List<ModuleRuleVO> moduleVO) {
         
-
         return null;
     }
 

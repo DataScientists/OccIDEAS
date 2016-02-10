@@ -716,7 +716,7 @@
 		$scope.moduleMenuOptions = 
 			[ 
 			  [ 'Show Rules', function($itemScope) {
-					$scope.addRuleTab($itemScope);
+					$scope.addRulesTab($itemScope);
 					}
 			  ],
 			  [ 'Add Question', function($itemScope) {

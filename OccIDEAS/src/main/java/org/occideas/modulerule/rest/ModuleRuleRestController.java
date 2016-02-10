@@ -20,7 +20,7 @@ import org.springframework.http.MediaType;
 public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO>{
 
 	@Autowired
-	private ModuleRuleService service;
+	private ModuleRuleService service;	
 
 	@GET
 	@Path(value="/getlist")
@@ -36,7 +36,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 	}
 	
 	@GET
-	@Path(value="/getbymoduleid")
+	@Path(value="/getbymodule")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getByModuleId(@QueryParam("id") Long id) {
 		List<ModuleRuleVO> list = new ArrayList<ModuleRuleVO>();
@@ -48,7 +48,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		return Response.ok(list).build();
 	}
 	@GET
-	@Path(value="/getbyagentid")
+	@Path(value="/getbyagent")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getByAgentId(@QueryParam("id") Long id) {
 		List<ModuleRuleVO> list = new ArrayList<ModuleRuleVO>();

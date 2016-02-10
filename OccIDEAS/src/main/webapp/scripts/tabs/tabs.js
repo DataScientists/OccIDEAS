@@ -154,27 +154,37 @@
                                     return viewData;
                                 })
                         }
+				        
+                        
+                       
                     }
                 }
             }
         }).state('tabs.rules', {
             url: '/rules/:row',
             views:{
-                'ruleView':{
-                    templateUrl: 'scripts/rules/view/rules.html',
+                'rulesView':{
+                    templateUrl: 'scripts/rules/view/rulesTable.html',
                     controller: 'RulesCtrl as vm',
                     params:{row: null},
                     resolve:{
                         data: function($stateParams,RulesService) {
-                            return RulesService.getModuleRules($stateParams.row,'M')
+                            return RulesService.listByModule($stateParams.row)
                                 .then(function(response){
-                                    console.log("Data getting from questions AJAX ...");
+                                    console.log("Data getting from module rules AJAX ... for "+$stateParams.row);
                                     var viewData = response.data;
                                     
                                     console.log(viewData);
                                     return viewData;
                                 })
-                        }
+                        },
+			        	templateData: function($stateParams) {		        		        					    		
+			    			var object = {};				    						    			
+			    			object.moduleId = $stateParams.row;
+			    			object.agentId = null;//todo
+			    			return object;
+			    		}
+                        
                     }
                 }
             }

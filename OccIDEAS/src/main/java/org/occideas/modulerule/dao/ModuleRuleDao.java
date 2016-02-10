@@ -46,25 +46,21 @@ public class ModuleRuleDao {
     @SuppressWarnings("unchecked")
 	public List<ModuleRule> getAll() {
     	final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(ModuleRule.class);
-        
-        //List<ModuleRule> retValue = crit.list(); 
+        final Criteria crit = session.createCriteria(ModuleRule.class);    
         return crit.list();
     }
     @SuppressWarnings("unchecked")
 	public List<ModuleRule> getRulesByModule(Long moduleId) {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(ModuleRule.class)
-    		  						.add(Restrictions.eq("idModule",moduleId)) 		  						
-    		  						.setResultTransformer(Transformers.aliasToBean(ModuleRule.class));
+    		  						.add(Restrictions.eq("idModule",moduleId));
       return crit.list();
     }
     @SuppressWarnings("unchecked")
 	public List<ModuleRule> getRulesByAgent(Long agentId) {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(ModuleRule.class)
-    		  						.add(Restrictions.eq("idAgent",agentId)) 		  						
-    		  						.setResultTransformer(Transformers.aliasToBean(ModuleRule.class));
+    		  						.add(Restrictions.eq("idAgent",agentId));
       return crit.list();
     }
 }

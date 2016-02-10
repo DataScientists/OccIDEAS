@@ -1,15 +1,28 @@
 package org.occideas.vo;
 
-import java.math.BigInteger;
-
 public class ModuleRuleVO {
 
 	private long idModule;
+	private String moduleName;
 	private long idRule;
 	private long idAgent;
+	private String agentName;
 	private long idNode;
+	private String nodeNumber;	
 	
 	
+	public String getAgentName() {
+		return agentName;
+	}
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
+	}
+	public String getNodeNumber() {
+		return nodeNumber;
+	}
+	public void setNodeNumber(String nodeNumber) {
+		this.nodeNumber = nodeNumber;
+	}
 	public long getIdModule() {
 		return idModule;
 	}
@@ -33,6 +46,12 @@ public class ModuleRuleVO {
 	}
 	public void setIdNode(long idNode) {
 		this.idNode = idNode;
+	}
+	public String getModuleName() {
+		return moduleName;
+	}
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
 	}
 
 }

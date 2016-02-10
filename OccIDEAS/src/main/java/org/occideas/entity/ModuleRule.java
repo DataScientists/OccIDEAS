@@ -1,7 +1,5 @@
 package org.occideas.entity;
 
-import java.math.BigInteger;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -16,10 +14,31 @@ public class ModuleRule  implements java.io.Serializable{
 	private String primaryKey;
 	
 	private long idModule;
+	private String moduleName;
 	private long idRule;
 	private long idAgent;
+	private String agentName;
 	private long idNode;
+	private String nodeNumber;	
 	
+	
+
+	public String getAgentName() {
+		return agentName;
+	}
+
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
+	}
+
+	public String getNodeNumber() {
+		return nodeNumber;
+	}
+
+	public void setNodeNumber(String nodeNumber) {
+		this.nodeNumber = nodeNumber;
+	}
+
 	public ModuleRule() {
 		super();
 	}
@@ -67,5 +86,12 @@ public class ModuleRule  implements java.io.Serializable{
 		this.idNode = idNode;
 	}
 
+	public String getModuleName() {
+		return moduleName;
+	}
+
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
 
 }
