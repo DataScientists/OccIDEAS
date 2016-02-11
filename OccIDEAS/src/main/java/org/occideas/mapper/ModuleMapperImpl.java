@@ -41,7 +41,6 @@ public class ModuleMapperImpl implements ModuleMapper {
         moduleVO.setOriginalId( moduleEntity.getOriginalId() );
         moduleVO.setDeleted( moduleEntity.getDeleted() );
         moduleVO.setNodeclass( moduleEntity.getNodeclass() );
-
         return moduleVO;
     }
 

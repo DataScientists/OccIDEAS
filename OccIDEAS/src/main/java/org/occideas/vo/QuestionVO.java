@@ -32,6 +32,8 @@ public class QuestionVO {
 	private long originalId;
 	private Integer deleted = 0;
 	private String nodeclass;
+	@JsonInclude(Include.NON_EMPTY)
+	private List<ModuleRuleVO> moduleRule;
 
 	public long getIdNode() {
 		return idNode;
@@ -154,5 +156,12 @@ public class QuestionVO {
 		this.notes = notes;
 	}
 
-	
+	public List<ModuleRuleVO> getModuleRule() {
+		return moduleRule;
+	}
+
+	public void setModuleRule(List<ModuleRuleVO> moduleRule) {
+		this.moduleRule = moduleRule;
+	}
+
 }

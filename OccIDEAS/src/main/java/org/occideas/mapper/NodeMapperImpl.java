@@ -6,11 +6,15 @@ import java.util.List;
 import org.occideas.entity.Node;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.NodeVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NodeMapperImpl implements NodeMapper{
-
+		
+		@Autowired
+		private ModuleRuleMapper moduleRuleMapper;
+	
 	    @Override
 	    public NodeVO convertToNodeVO(Node node) {
 	        if ( node == null ) {
@@ -38,7 +42,9 @@ public class NodeMapperImpl implements NodeMapper{
 	        nodeVO.setOriginalId( node.getOriginalId() );
 	        nodeVO.setDeleted( node.getDeleted() );
 	        nodeVO.setNodeclass( node.getNodeclass() );
-
+	        if("P_simple".equals(nodeVO.getType())){
+	        nodeVO.setModuleRule(moduleRuleMapper.convertToModuleRuleVOList(node.getModuleRule()));
+	        }
 	        return nodeVO;
 	    }
 

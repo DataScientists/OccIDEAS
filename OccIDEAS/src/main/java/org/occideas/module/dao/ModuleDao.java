@@ -11,6 +11,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class ModuleDao {
 	public Module get(Long id){
       return (Module) sessionFactory.getCurrentSession().get(Module.class, id);
     }
-
+	
 	public Module merge(Module module)   {
       return (Module) sessionFactory.getCurrentSession().merge(module);
     }

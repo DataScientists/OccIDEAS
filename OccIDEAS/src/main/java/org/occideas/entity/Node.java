@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
@@ -57,7 +58,9 @@ public class Node implements Cloneable {
 	@OneToMany(mappedBy="node", fetch = FetchType.EAGER)
 	@JsonInclude(Include.NON_EMPTY)
 	private List<Note> notes;
-	
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinColumn(name="idNode",referencedColumnName="idNode")
+	private List<ModuleRule> moduleRule; 
 	
 	private long originalId;
 	private Integer deleted = 0;
@@ -233,6 +236,13 @@ public class Node implements Cloneable {
 	public void setNotes(List<Note> notes) {
 		this.notes = notes;
 	}
-	
+
+	public List<ModuleRule> getModuleRule() {
+		return moduleRule;
+	}
+
+	public void setModuleRule(List<ModuleRule> moduleRule) {
+		this.moduleRule = moduleRule;
+	}
 
 }

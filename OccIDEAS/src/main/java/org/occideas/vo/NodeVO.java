@@ -33,6 +33,7 @@ public class NodeVO {
 	private long originalId;
 	private Integer deleted = 0;
 	private String nodeclass;
+	private List<ModuleRuleVO> moduleRule;
 
 	public long getIdNode() {
 		return idNode;
@@ -170,6 +171,14 @@ public class NodeVO {
 
 	public void setAnchorId(long anchorId) {
 		this.anchorId = anchorId;
+	}
+	
+	public List<ModuleRuleVO> getModuleRule() {
+		return moduleRule;
+	}
+
+	public void setModuleRule(List<ModuleRuleVO> moduleRule) {
+		this.moduleRule = moduleRule;
 	}
 
 	@Override

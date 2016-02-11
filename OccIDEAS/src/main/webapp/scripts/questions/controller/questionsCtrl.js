@@ -19,12 +19,6 @@
 		$scope.aJSMData = templateData.ajsm;
     	$scope.frequencyData = templateData.frequency;
     	$scope.rulesObj = [];
-    	$scope.moduleRules = [];
-    	RulesService.listByModule($scope.data[0].idNode).then(function(data){
-			if(data.length > 0){
-				$scope.moduleRules = data;
-			} 
-		});
 		$scope.toggleRulesObj = function (agents){
 			if(_.findIndex($scope.rulesObj, function(o) { 
 					return o.idAgent === agents.idAgent; }) != -1){
@@ -37,12 +31,12 @@
 			}
 			
 		};
-    	$scope.attachRulesIfAny(node,agents){
-    		var filteredAgent = _.filter($scope.moduleRules, _.matches({ 'idAgent': agents.idAgent }));
+    	$scope.getRulesIfAny = function(node,agents){
+    		var filteredAgent = _.filter(node.moduleRule, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
-				//@TODO find nodeId in filtered agent, if seen attach rule to node
-				node.rules = {};
+				return _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
 			}
+			return null;			
     	}
     	
 		//typesetting

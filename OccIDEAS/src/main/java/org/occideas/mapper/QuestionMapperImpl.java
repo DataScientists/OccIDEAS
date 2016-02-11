@@ -15,6 +15,9 @@ public class QuestionMapperImpl implements QuestionMapper {
 
     @Autowired
     private NodeMapper nodeMapper;
+    
+    @Autowired
+    private ModuleRuleMapper moduleRuleMapper;
 
 	@Override
 	public QuestionVO convertToQuestionVO(Question question) {
@@ -40,6 +43,8 @@ public class QuestionMapperImpl implements QuestionMapper {
         questionVO.setOriginalId(question.getOriginalId());
         questionVO.setDeleted(question.getDeleted());
         questionVO.setNodeclass(question.getNodeclass());
+        questionVO.setModuleRule(moduleRuleMapper.
+        		convertToModuleRuleVOList(question.getModuleRule()));
 
         return questionVO;
 	}

@@ -32,6 +32,10 @@
 		<level value="INFO" />
 		<appender-ref ref="console" />
 	</logger>
+	<logger name="org.hibernate.type" additivity="false">
+		<level value="trace" />
+		<appender-ref ref="console" />
+	</logger>
 	<root>
 		<priority value="info"></priority>
 		<appender-ref ref="FILE" />

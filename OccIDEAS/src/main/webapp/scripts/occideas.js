@@ -21,6 +21,7 @@ angular
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
+  .constant('_', window._)
   .config(['$urlRouterProvider', '$stateProvider','$httpProvider', function($urlRouterProvider, $stateProvider,$httpProvider) {
 	$httpProvider.interceptors.push('ErrorHandler');
     $urlRouterProvider.otherwise('/');
@@ -69,7 +70,8 @@ angular
 
    configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope'];
    function configureDefaults(ngTableDefaults,$state,$rootScope) {
-	    
+	   	$rootScope._ = window._; 
+	   	   
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
         

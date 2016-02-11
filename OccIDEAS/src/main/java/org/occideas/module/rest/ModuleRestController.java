@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.module.service.ModuleService;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -49,6 +50,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		}
 		return Response.ok(list).build();
 	}
+	
 
 	@Path(value="/create")
 	@POST
