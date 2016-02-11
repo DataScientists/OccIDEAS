@@ -476,3 +476,11 @@ label.fraglabel {
     overflow: hidden;
     background: #686868;
 }
+
+.moduleInterview{
+    overflow: scroll; height: 700px;
+}
+
+.highlight{
+    background: #ffff00;
+}
