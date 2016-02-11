@@ -82,19 +82,19 @@
 		$scope.setNodeType = function (node,type){
 			if(type == 'Prod'){
 				if (node.nodeclass == 'M') {
-					node.type = 'M_Module'
+					node.type = 'M_Module';
 				}
 			}else if(type == 'Dev'){
 				if (node.nodeclass == 'M') {
-					node.type = 'M_Module_'
+					node.type = 'M_Module_';
 				}
 			}else if(type == 'Test'){
 				if (node.nodeclass == 'M') {
-					node.type = 'M_Module__'
+					node.type = 'M_Module__';
 				}
 			} else if(type == 'Intro'){
 				if (node.nodeclass == 'M') {
-					node.type = 'M_IntroModule'
+					node.type = 'M_IntroModule';
 				}
 			} 
 			saveModuleWithoutReload();
@@ -153,7 +153,6 @@
 								parentId : destNode.idNode,
 								nodes : []
 						});
-						cascadeReOrderWithParentId(destNode.nodes,destNode.idNode);
 						$scope.isDragging = false;
 						saveModuleWithoutReload();
 						return false;
@@ -352,17 +351,6 @@
 			var seq = 1;
 			_.each(arrayList, function(data) {
 				 data.sequence = seq++;			
-			})
-		}
-		function cascadeReOrderWithParentId(arrayInp,parentId){
-			var seq = 1;
-			var parentId = parentId;
-			_.each(arrayInp, function(data) {
-				 data.sequence = seq++;	
-				 data.idNode = null;
-				 data.parentId = parentId;
-				 parentId = data.idNode;
-				 cascadeReOrderWithParentId(data.nodes,parentId);
 			})
 		}
 		function cascadeTemplateNullIds(nodes){
