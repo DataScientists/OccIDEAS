@@ -20,6 +20,10 @@ public class RuleMapperImpl implements RuleMapper {
 
         ruleVO.setIdRule( ruleEntity.getIdRule() );
         ruleVO.setLastUpdated( ruleEntity.getLastUpdated() ); 
+        ruleVO.setAgentId(ruleEntity.getAgentId());
+        ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
+        ruleVO.setLevel(ruleEntity.getLevel());
+        ruleVO.setType(ruleEntity.getType());
         return ruleVO;
     }
 

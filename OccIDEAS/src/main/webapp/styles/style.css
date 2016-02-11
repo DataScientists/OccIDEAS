@@ -382,8 +382,47 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
-	
+
+.probMedium{
+	width: 6px;
+    height: 6px;
+    background: #ffa500;;
+    border-radius: 2px;
+    float: left;
 }
+
+.probLow{
+	width: 6px;
+    height: 6px;
+    background: #ffff00;
+    border-radius: 2px;
+    float: left;
+}
+
+.probUnknown{
+	width: 6px;
+    height: 6px;
+    background: #ffc0cb;
+    border-radius: 2px;
+    float: left;
+}
+
+.possUnknown{
+	width: 6px;
+    height: 6px;
+    background: #add8e6;
+    border-radius: 2px;
+    float: left;
+}
+
+.noExposure{
+	width: 6px;
+    height: 6px;
+    background: #e5e5e5;
+    border-radius: 2px;
+    float: left;
+}
+	
 
 .rulescontainer {
     position: relative;

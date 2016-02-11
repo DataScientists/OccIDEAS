@@ -27,7 +27,7 @@ public class Rule implements Serializable {
 	private long agentId;
 	private String type;
 	private int level;
-	@Type(type="timestamp")
+//	@Type(type="timestamp")
 	private Date lastUpdated;
 	
 	@ManyToMany(cascade = {CascadeType.ALL})

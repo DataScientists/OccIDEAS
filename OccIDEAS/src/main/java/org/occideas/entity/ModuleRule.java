@@ -1,7 +1,10 @@
 package org.occideas.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class ModuleRule  implements java.io.Serializable{
@@ -15,13 +18,14 @@ public class ModuleRule  implements java.io.Serializable{
 	
 	private long idModule;
 	private String moduleName;
-	private long idRule;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "idRule")
+	private Rule rule;
 	private long idAgent;
+
 	private String agentName;
 	private long idNode;
 	private String nodeNumber;	
-	
-	
 
 	public String getAgentName() {
 		return agentName;
@@ -62,14 +66,6 @@ public class ModuleRule  implements java.io.Serializable{
 		this.idModule = idModule;
 	}
 
-	public long getIdRule() {
-		return idRule;
-	}
-
-	public void setIdRule(long idRule) {
-		this.idRule = idRule;
-	}
-
 	public long getIdAgent() {
 		return idAgent;
 	}
@@ -94,4 +90,13 @@ public class ModuleRule  implements java.io.Serializable{
 		this.moduleName = moduleName;
 	}
 
+	public Rule getRule() {
+		return rule;
+	}
+
+	public void setRule(Rule rule) {
+		this.rule = rule;
+	}
+
+	
 }

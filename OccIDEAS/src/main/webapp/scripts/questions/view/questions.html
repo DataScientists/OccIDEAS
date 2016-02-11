@@ -227,14 +227,17 @@ tr.angular-ui-tree-empty {
 						</div>
 				</div>
 			</div>
-			<div class="pull-right" ng-if="((node.nodeclass != 'M')&&(node.nodeclass != 'F')) && (rulesObj.length > 0)"
-						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="rule in rulesObj">
-						<div class="verticalrules" >
-							<div id="A_14560" 
-								 class="rulescontainer">
+			<div class="pull-right" ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)"
+						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in rulesObj">
+						<div class="verticalrules">
+							<div class="rulescontainer">
 								<div class="agentACell">
 									<span class="cell-lable">
-										<div class="probHigh"></div>
+										<div ng-class="{'probHigh':obj.rule.level === 0,
+														'probMedium':obj.rule.level === 1,
+														'probLow':obj.rule.level === 2,
+														'probUnknown':obj.rule.level === 3,
+														'possUnknown':obj.rule.level === 4}" ng-if="obj.rule"></div>
 									</span>
 								</div>
 							</div>

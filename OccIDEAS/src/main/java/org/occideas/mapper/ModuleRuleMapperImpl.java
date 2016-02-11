@@ -5,11 +5,15 @@ import java.util.List;
 
 import org.occideas.entity.ModuleRule;
 import org.occideas.vo.ModuleRuleVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ModuleRuleMapperImpl implements ModuleRuleMapper {
 
+	@Autowired
+	private RuleMapper ruleMapper;
+	
 	@Override
     public ModuleRuleVO convertToModuleRuleVO(ModuleRule moduleEntity) {
         if ( moduleEntity == null ) {
@@ -18,12 +22,11 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
         ModuleRuleVO moduleVO = new ModuleRuleVO();
         moduleVO.setIdAgent(moduleEntity.getIdAgent());
         moduleVO.setAgentName(moduleEntity.getAgentName());
-        moduleVO.setIdRule(moduleEntity.getIdRule());
         moduleVO.setIdModule(moduleEntity.getIdModule());
         moduleVO.setModuleName(moduleEntity.getModuleName());
         moduleVO.setIdNode(moduleEntity.getIdNode());
         moduleVO.setNodeNumber(moduleEntity.getNodeNumber());
-        
+        moduleVO.setRule(ruleMapper.convertToRuleVO(moduleEntity.getRule()));
         return moduleVO;
     }
 

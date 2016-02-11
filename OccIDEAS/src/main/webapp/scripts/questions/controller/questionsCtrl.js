@@ -4,10 +4,11 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData','agentsData'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData',
+	                          'agentsData','RulesService'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state,templateData,agentsData) {
+			$anchorScroll,$location,$mdMedia,$window,$state,templateData,agentsData,RulesService) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -18,17 +19,31 @@
 		$scope.aJSMData = templateData.ajsm;
     	$scope.frequencyData = templateData.frequency;
     	$scope.rulesObj = [];
-		$scope.toggleRulesObj = function (node){
-			if(_.findIndex($scope.rulesObj, function(o) { return o.name === node.name; }) != -1){
+    	$scope.moduleRules = [];
+    	RulesService.listByModule($scope.data[0].idNode).then(function(data){
+			if(data.length > 0){
+				$scope.moduleRules = data;
+			} 
+		});
+		$scope.toggleRulesObj = function (agents){
+			if(_.findIndex($scope.rulesObj, function(o) { 
+					return o.idAgent === agents.idAgent; }) != -1){
 				$scope.safeApply(function () {
-		              $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) { return o.name === node.name; }), 1)[0];
+		              $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) { 
+		            	  return o.idAgent === agents.idAgent; }), 1)[0];
 		        });
 			}else{
-				$scope.rulesObj.push(node);
+				$scope.rulesObj.push(agents);
 			}
 			
 		};
-    	
+    	$scope.attachRulesIfAny(node,agents){
+    		var filteredAgent = _.filter($scope.moduleRules, _.matches({ 'idAgent': agents.idAgent }));
+			if(filteredAgent.length > 0){
+				//@TODO find nodeId in filtered agent, if seen attach rule to node
+				node.rules = {};
+			}
+    	}
     	
 		//typesetting
 		$scope.topDirections = ['left', 'up'];
