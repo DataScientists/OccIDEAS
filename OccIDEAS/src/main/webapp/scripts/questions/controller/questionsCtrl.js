@@ -37,7 +37,7 @@
 			}
 			
 		};
-    	$scope.attachRulesIfAny(node,agents){
+    	$scope.attachRulesIfAny = function (node,agents){
     		var filteredAgent = _.filter($scope.moduleRules, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
 				//@TODO find nodeId in filtered agent, if seen attach rule to node
