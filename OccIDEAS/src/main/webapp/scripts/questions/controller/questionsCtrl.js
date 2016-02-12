@@ -5,10 +5,11 @@
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData',
-	                          'agentsData','RulesService'];
+	                          'agentsData','RulesService','$compile'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state,templateData,agentsData,RulesService) {
+			$anchorScroll,$location,$mdMedia,$window,$state,templateData,
+			agentsData,RulesService,$compile) {
 		var self = this;
 		$scope.data = data;	
 		$scope.isDragging = false;
@@ -689,7 +690,9 @@
 				this.$apply(fn);
 			}
 		};
-
+		$scope.showRulesMenu = function(scope){
+			return $scope.rulesMenuOptions;
+		}
 		$scope.showMenu = function(scope) {
 			if(scope.node.nodeclass=='M'){
 				return $scope.moduleMenuOptions;
@@ -780,6 +783,9 @@
 		                    },
 		                    templateData: function(){
 		                    	return templateData;
+		                    },
+		                    agentsData: function(){
+		                    	return agentsData;
 		                    }
 					  },
 					  /*locals: {
@@ -842,6 +848,14 @@
 	  				}
 			  ]
 			];
+		$scope.rulesMenuOptions =
+			[
+			  [ 'Show Rules', function($itemScope,node) {
+				  newNote(node.currentTarget.parentElement,$itemScope,$compile);
+			  }
+			  ]
+			];
+		
 		$scope.possibleAnswerMenuOptions =
 			[ [ 'Add Question', function($itemScope) {
 						$scope.newSubItem($itemScope);
