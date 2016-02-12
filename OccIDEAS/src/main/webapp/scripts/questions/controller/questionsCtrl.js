@@ -705,6 +705,7 @@
 			}else if(scope.node.nodeclass=='F'){
 				return $scope.moduleMenuOptions;
 			}else if(scope.node.nodeclass=='Q'){
+				$scope.selectedNode = scope.node;
 				var menuOptions;
 				if(scope.node.type=='Q_linkedmodule'){
 					menuOptions = $scope.linkedModuleMenuOptions;
@@ -782,9 +783,9 @@
 				  $mdDialog.show({
 					  //scope: $scope,
 					  controller: QuestionsCtrl,
-					  resolve: {
+					  resolve: {					  
 						  data: function () {
-		                        return $scope.data;
+							  return $scope.selectedNode;
 		                    },
 		                    templateData: function(){
 		                    	return templateData;
@@ -1037,8 +1038,6 @@
 					});
 					deffered.promise.then(function(){
 						$mdDialog.hide();
-						saveModuleAndReload();
-						
 					});
 				}
 			});
