@@ -60,5 +60,8 @@ public class FragmentServiceImpl implements FragmentService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	@Override
+	public void merge(FragmentVO module) {
+		dao.merge(mapper.convertToFragment(module));
+	}
 }

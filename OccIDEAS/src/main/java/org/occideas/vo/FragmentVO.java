@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"anchorId"})
+@JsonIgnoreProperties({"editEnabled","warning","placeholder","id","isEditing"})
 public class FragmentVO {
 
 	private long idNode;

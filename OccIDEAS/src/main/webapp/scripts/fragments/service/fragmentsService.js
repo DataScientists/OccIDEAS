@@ -64,17 +64,14 @@
 			  });*/
 		}
 
-		var postNewFragment = function(moduleObj) {
-		  return $http.post(modulesUrl + '?apiKey='+apiKey).then(function(response) {
-			console.log(response.data.id);
-		  });
-		};
-		
 		var deleteFragment = function(moduleObj) {
-			  return $http.post(modulesUrl+'/delete' + '?id='+moduleObj.id).then(function(response) {
-				console.log(response.data.id);
+			var request = $http({
+				method:'POST',
+				url: modulesUrl+'/delete',
+				data:moduleObj
 			  });
-			}; 
+			  return request.then(handleSuccess,handleError);
+		}
 			
 		var createFragment = function(moduleObj){
 			var request =  $http({
@@ -88,7 +85,6 @@
 		return {		  
 			getByType: getFragmentsByType,
 			get: getFragments,
-		    post: postNewFragment, 	
 		    save: save, 	
 		    findFragment: findFragment,
 		    findFragmentChildNodes: findFragmentChildNodes,
