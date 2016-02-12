@@ -75,8 +75,8 @@ tr.angular-ui-tree-empty {
 }
 </style>
 <script id="rules-template" type="text/x-custom-template">
-<div class="note">
-<button type="button" class="btn btn-default" onclick="deleteNote(this)" aria-label="Left Align">
+<div class="note" prevent-right-click>
+<button type="button" class="btn btn-default pull-right" onclick="deleteNote(this)" aria-label="Left Align">
 	<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
 	<div class="panel panel-default">
@@ -94,6 +94,31 @@ tr.angular-ui-tree-empty {
   			</ul>
 		</div>
 	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			Level
+		</div>
+		<div class="panel-body">
+			<ul class="list-group">
+    			<li class="list-group-item">
+<select name="singleSelect" id="singleSelect" ng-model="rule.rule.level">
+      <option value="0" ngSelected="{{rule.rule.level === 0}}">PROBABLE_HIGH</option>
+      <option value="1" ngSelected="{{rule.rule.level === 1}}">PROBABLE_MEDIUM</option>
+      <option value="2" ngSelected="{{rule.rule.level === 2}}">PROBABLE_LOW</option>
+	  <option value="3" ngSelected="{{rule.rule.level === 3}}">PROBABLE_UNKNOWN</option>
+	  <option value="4" ngSelected="{{rule.rule.level === 4}}">POSSIBLE_UNKNOWN</option>
+	  <option value="5" ngSelected="{{rule.rule.level === 5}}">NO_EXPOSURE</option>
+    </select></li>
+  			</ul>
+		</div>
+	</div>
+<div class="panel panel-default">
+		<div class="panel-heading">
+			<button type="button" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+</button>
+		</div>
+</div>
 </div>
 </script>
 <div class="row ">
