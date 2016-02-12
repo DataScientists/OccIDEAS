@@ -43,11 +43,13 @@
 	    function add(type) {
 	        self.isEditing = true;
 	        self.isAdding = true;
+	        
 	        self.tableParams.settings().dataset.unshift({
-	          name: "",
-	          idNode:Math.max.apply(null, _.pluck(self.tableParams.settings().dataset, "idNode"))+1,
-	          type: type,
-	          description: null
+	        	name: "New Fragment",
+	        	placeholder: "New Fragment",
+		        type: type,
+		        description: "New Description",
+		        isEditing: true
 	        });
 	        self.originalData = angular.copy(self.tableParams.settings().dataset);
 	        self.tableParams.sorting({});
@@ -61,15 +63,41 @@
 	    	$state.go("questionView",{row:row});
 	    }
 	    
-	    function cancel(row, rowForm) {
-	        var originalRow = resetRow(row, rowForm);
-	        angular.extend(row, originalRow);
+	    function cancel(row,rowForm) {
+	    	var originalRow = resetRow(row, rowForm);
+	    	if(row.idNode){
+	    		angular.extend(row, originalRow);
+	    	}else{
+	    		_.remove(self.tableParams.settings().dataset, function (item) {
+		            return row === item;
+		        });
+	    		self.tableParams.shouldGetData = false;
+		        self.tableParams.reload().then(function (data) {
+		            if (data.length === 0 && self.tableParams.total() > 0) {
+		                self.tableParams.page(self.tableParams.page() - 1);
+		                self.tableParams.reload();
+		            }
+		        });
+	    	} 
 	    }
 	    function del(row) {
-	    	//  Modules.deleteModule().then(function(data) {});////Delete module here via ajax//
-	        _.remove(self.tableParams.settings().dataset, function (item) {
+	    	row.deleted = 1;
+	    	var data =  FragmentsService.deleteFragment(row).then(function(response) {
+	    		if(response.status === 200){
+					console.log('Module was deleted!');
+					self.tableParams.shouldGetData = true;
+			        self.tableParams.reload().then(function (data) {
+			            if (data.length === 0 && self.tableParams.total() > 0) {
+			                self.tableParams.page(self.tableParams.page() - 1);
+			                self.tableParams.reload();
+			            }
+			        });
+				}
+	        });
+	    	_.remove(self.tableParams.settings().dataset, function (item) {
 	            return row === item;
 	        });
+	        self.tableParams.shouldGetData = false;
 	        self.tableParams.reload().then(function (data) {
 	            if (data.length === 0 && self.tableParams.total() > 0) {
 	                self.tableParams.page(self.tableParams.page() - 1);
@@ -84,10 +112,28 @@
 	        return window._.findWhere(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
-	        var originalRow = resetRow(row, rowForm);
-	        angular.extend(originalRow, row);
-	        self.isAdding = false;
+	    	self.isEditing = false;
+	    	FragmentsService.save(row).then(function(response){
+				if(response.status === 200){
+					console.log('Module Save was Successful!');
+					self.tableParams.shouldGetData = true;
+			        self.tableParams.reload().then(function (data) {
+			            if (data.length === 0 && self.tableParams.total() > 0) {
+			                self.tableParams.page(self.tableParams.page() - 1);
+			                self.tableParams.reload();
+			                $location.hash("");
+			    		    $anchorScroll();
+			            }
+			        });
+				}
+			});
 	    }
+	    
+	    function setInvalid(isInvalid) {
+	        self.$invalid = isInvalid;
+	        self.$valid = !isInvalid;
+	      }
+	    
 	    function untrack(row) {
 	        _.remove(invalidCellsByRow, function(item) {
 	          return item.row === row;

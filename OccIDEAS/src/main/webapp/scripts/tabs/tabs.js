@@ -132,6 +132,14 @@
 				    			
 				    			return object;
 				    		});
+				        },
+				        agentsData: function(AgentsService){
+				        	return  AgentsService.get().then(function(data) {
+				        		var result = _.groupBy(data, function(b) { 
+				        			return b.groupName;
+				        		});
+					            return result;
+				        	});
 				        }
 			        }
 				}

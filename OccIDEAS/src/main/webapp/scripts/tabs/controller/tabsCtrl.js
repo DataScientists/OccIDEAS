@@ -94,7 +94,7 @@
 		};
         $scope.addRulesTab = function(scope) {
             var nodeData = scope.$modelValue;
-            var tabTitle = "Interview "+nodeData.name;
+            var tabTitle = "Rules "+nodeData.name;
             var check = _.some( tabs, function( el ) {
                 return el.title === tabTitle;
             } );

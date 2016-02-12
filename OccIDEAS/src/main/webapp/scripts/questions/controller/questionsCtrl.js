@@ -56,25 +56,33 @@
 		$scope.undoEnable = false;
 
 		$scope.isCollapsableNode = function(node){
-			if($scope.isModuleHeaderNode(node)){
-				return false;
-			}else if(node.nodes.length==0){
-				return false;
-			}else if(node.deleted==1){
-				return false;
+			if(node){				
+				if($scope.isModuleHeaderNode(node)){
+					return false;
+				}else if(node.nodes.length==0){
+					return false;
+				}else if(node.deleted==1){
+					return false;
+				}else{
+					return true;
+				}
 			}else{
-				return true;
+				return false;
 			}
 		}
-		$scope.isModuleHeaderNode = function(node){
-			if(node.type.indexOf('M_Module')>-1){
-				return true;
-			}else if(node.type.indexOf('M_Module_')>-1){
-				return true;
-			}else if(node.type.indexOf('M_Module__')>-1){
-				return true;
-			}else if(node.type.indexOf('M_IntroModule')>-1){
-				return true;
+		$scope.isModuleHeaderNode = function(node){		
+			if(node){	
+				if(node.type.indexOf('M_Module')>-1){
+					return true;
+				}else if(node.type.indexOf('M_Module_')>-1){
+					return true;
+				}else if(node.type.indexOf('M_Module__')>-1){
+					return true;
+				}else if(node.type.indexOf('M_IntroModule')>-1){
+					return true;
+				}else{
+					return false;
+				}
 			}else{
 				return false;
 			}
@@ -670,7 +678,7 @@
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
 			});
-			saveModuleAndReload();
+			saveModuleWithoutReload();
 		};
 
 		$scope.enable = function(scope) {
@@ -777,9 +785,9 @@
 				  $mdDialog.show({
 					  //scope: $scope,
 					  controller: QuestionsCtrl,
-					  resolve: {
-		                    data: function () {
-		                        return $scope.selectedNode;
+					  resolve: {					  
+						  data: function () {
+							  return $scope.selectedNode;
 		                    },
 		                    templateData: function(){
 		                    	return templateData;
@@ -969,12 +977,14 @@
 							nodeclass : "F",
 							nodes : []
 						};
+					var childNodes = [];
+					angular.copy(data.nodes,childNodes);
 					destNode.nodes.unshift({
 						name : data.name,
 						description : data.description,
 						type : data.type,
 						nodeclass : data.nodeclass,
-						nodes : data.nodes
+						nodes : childNodes
 					});
 					cascadeTemplateNullIds(destNode.nodes);
 					var nodes = destNode.nodes;

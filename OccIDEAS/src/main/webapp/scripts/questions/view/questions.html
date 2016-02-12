@@ -212,7 +212,7 @@ tr.angular-ui-tree-empty {
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div context-menu="showMenu(this)" class="tree-node-content {{node.nodeclass}} {{node.warning}}"> 
+        <div context-menu="showMenu(this)" class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
           <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle(this)">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,

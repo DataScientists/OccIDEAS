@@ -80,7 +80,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 	@POST
 	public Response delete(FragmentVO json) {
 		try{
-			service.delete(json);
+			service.merge(json);
 		}catch(Throwable e){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}

@@ -477,6 +477,7 @@ label.fraglabel {
     background: #686868;
 }
 
+<<<<<<< HEAD
 /** Rules Dialog */
 /* * Hide from both screenreaders and browsers: h5bp.com/u */
 .hidden {
@@ -642,3 +643,12 @@ a:focus {
 	z-index: 100;
 }
 
+=======
+.moduleInterview{
+    overflow: scroll; height: 700px;
+}
+
+.highlight{
+    background: #ffff00;
+}
+>>>>>>> a245b42fd6be569e23d70153caf1a8f8deb9aca9
