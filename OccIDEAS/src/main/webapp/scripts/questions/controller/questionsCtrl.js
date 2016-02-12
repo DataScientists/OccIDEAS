@@ -14,6 +14,7 @@
 		$scope.data = data;	
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
+		$scope.data.showAgentSlider = true;
 		$anchorScroll.yOffset = 200;
 		$scope.templateData = templateData.template;
 		$scope.agentsData = agentsData;

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"editEnabled","warning","placeholder","isEditing"})
+@JsonIgnoreProperties({"editEnabled","warning","placeholder","isEditing","showAgentSlider"})
 public class NodeVO {
 
 	private long idNode;
@@ -185,4 +185,5 @@ public class NodeVO {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+
 }
