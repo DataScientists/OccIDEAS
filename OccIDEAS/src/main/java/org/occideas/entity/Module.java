@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
@@ -31,6 +33,10 @@ public class Module extends Node implements Serializable{
 	@Where(clause = "deleted = 0")
 	@OrderBy("sequence ASC")
 	private List<Question> childNodes;
+	
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinColumn(name="idModule",referencedColumnName="idNode")
+	protected List<ModuleRule> moduleRule; 
 	
 	public Module() {
 		super();
@@ -58,6 +64,14 @@ public class Module extends Node implements Serializable{
 
 	public void setChildNodes(List<Question> childNodes) {
 		this.childNodes = childNodes;
+	}
+
+	public List<ModuleRule> getModuleRule() {
+		return moduleRule;
+	}
+
+	public void setModuleRule(List<ModuleRule> moduleRule) {
+		this.moduleRule = moduleRule;
 	}
 	
 	

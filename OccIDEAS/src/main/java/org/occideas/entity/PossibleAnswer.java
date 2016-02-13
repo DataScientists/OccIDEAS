@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
@@ -24,6 +26,10 @@ public class PossibleAnswer extends Node {
 	@Where(clause = "deleted = 0")
 	@OrderBy("sequence ASC")
 	private List<Question> childNodes;
+	
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinColumn(name="idNode",referencedColumnName="idNode")
+	protected List<ModuleRule> moduleRule; 
 	
 	public PossibleAnswer() {
 		super();
@@ -48,7 +54,13 @@ public class PossibleAnswer extends Node {
 	public void setChildNodes(List<Question> childNodes) {
 		this.childNodes = childNodes;
 	}
-	
-	
+
+	public List<ModuleRule> getModuleRule() {
+		return moduleRule;
+	}
+
+	public void setModuleRule(List<ModuleRule> moduleRule) {
+		this.moduleRule = moduleRule;
+	}
 
 }

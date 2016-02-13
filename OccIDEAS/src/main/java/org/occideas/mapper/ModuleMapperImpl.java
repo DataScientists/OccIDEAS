@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Module;
+import org.occideas.entity.ModuleRule;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.ModuleVO;
@@ -17,6 +18,9 @@ public class ModuleMapperImpl implements ModuleMapper {
     @Autowired
     private QuestionMapper nodeMapper;
     
+    @Autowired
+    private ModuleRuleMapper ruleMapper;
+
     @Override
     public ModuleVO convertToModuleVO(Module moduleEntity,boolean includeChild) {
         if ( moduleEntity == null ) {
@@ -42,6 +46,10 @@ public class ModuleMapperImpl implements ModuleMapper {
         moduleVO.setOriginalId( moduleEntity.getOriginalId() );
         moduleVO.setDeleted( moduleEntity.getDeleted() );
         moduleVO.setNodeclass( moduleEntity.getNodeclass() );
+        List<ModuleRule> moduleRule = moduleEntity.getModuleRule();
+        if(!CommonUtil.isListEmpty(moduleRule)){
+        	moduleVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+        }
         return moduleVO;
     }
 
