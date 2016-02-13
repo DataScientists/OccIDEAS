@@ -4,24 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-public class QuestionVO extends NodeVO{
+public class PossibleAnswerVO extends NodeVO {
 
 	@JsonInclude(Include.NON_NULL)
 	@JsonProperty(value = "nodes")
-	private List<PossibleAnswerVO> childNodes;
+	private List<QuestionVO> childNodes;
 
-
-	public List<PossibleAnswerVO> getChildNodes() {
+	public List<QuestionVO> getChildNodes() {
 		if(childNodes == null){
-			childNodes = new ArrayList<PossibleAnswerVO>();
+			childNodes = new ArrayList<QuestionVO>();
 		}
 		return childNodes;
 	}
 
-	public void setChildNodes(List<PossibleAnswerVO> childNodes) {
+	public void setChildNodes(List<QuestionVO> childNodes) {
 		this.childNodes = childNodes;
 	}
 	

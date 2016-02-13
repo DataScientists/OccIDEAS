@@ -2,11 +2,12 @@ package org.occideas.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.occideas.entity.Module;
-import org.occideas.entity.Node;
+import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
+import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class ModuleMapperImpl implements ModuleMapper {
 
     @Autowired
-    private NodeMapper nodeMapper;
+    private QuestionMapper nodeMapper;
 
     @Override
     public ModuleVO convertToModuleVO(Module moduleEntity,boolean includeChild) {
@@ -34,9 +35,9 @@ public class ModuleMapperImpl implements ModuleMapper {
         moduleVO.setLink( moduleEntity.getLink() );
         moduleVO.setTopNodeId( moduleEntity.getTopNodeId() );
         moduleVO.setLastUpdated( moduleEntity.getLastUpdated() );
-        List<Node> childNodes = moduleEntity.getChildNodes();
+        List<Question> childNodes = moduleEntity.getChildNodes();
         if(includeChild && !CommonUtil.isListEmpty(childNodes)){
-        moduleVO.setChildNodes( nodeMapper.convertToNodeVOList( childNodes ) );
+        moduleVO.setChildNodes( nodeMapper.convertToQuestionVOList( childNodes ) );
         }
         moduleVO.setOriginalId( moduleEntity.getOriginalId() );
         moduleVO.setDeleted( moduleEntity.getDeleted() );
@@ -73,9 +74,9 @@ public class ModuleMapperImpl implements ModuleMapper {
         module.setSequence( moduleVO.getSequence() );
         module.setParentId( moduleVO.getParentId() );
         module.setLastUpdated( moduleVO.getLastUpdated() );
-        List<NodeVO> childNodes = moduleVO.getChildNodes();
+        List<QuestionVO> childNodes = moduleVO.getChildNodes();
         if(!CommonUtil.isListEmpty(childNodes)){
-        	module.setChildNodes( nodeMapper.convertToNodeList(childNodes) );
+        	module.setChildNodes( nodeMapper.convertToQuestionList(childNodes) );
         }
         module.setNumber( moduleVO.getNumber() );
         module.setLink( moduleVO.getLink() );

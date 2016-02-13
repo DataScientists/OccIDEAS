@@ -1,21 +1,25 @@
 package org.occideas.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.springframework.util.ReflectionUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Where;
 @Entity 
 @DiscriminatorValue("F")
 public class Fragment extends Node{
 
-	//private List<Question> questions;
-	
-	//private List<SimplerRule> moduleRules = new ArrayList<SimplerRule>();
-	
+	@OneToMany(mappedBy="parentId",targetEntity=Node.class)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@Where(clause = "deleted = 0")
+	@OrderBy("sequence ASC")
+	private List<Question> childNodes;
 
 	public Fragment() {
 		super();
@@ -25,23 +29,15 @@ public class Fragment extends Node{
 		super();
 		this.setIdNode(idNode);
 	}
-
-	/*public List<Question> getQuestions() {
-		return questions;
-	}
-
-
-	public void setQuestions(List<Question> questions) {
-		this.questions = questions;
-	}*/
-	/*public List<SimplerRule> getModuleRules() {
-		return moduleRules;
-	}
-
-	public void setModuleRules(List<SimplerRule> moduleRules) {
-		this.moduleRules = moduleRules;
-	}*/
 	
+	public List<Question> getChildNodes() {
+		return childNodes;
+	}
+
+	public void setChildNodes(List<Question> childNodes) {
+		this.childNodes = childNodes;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

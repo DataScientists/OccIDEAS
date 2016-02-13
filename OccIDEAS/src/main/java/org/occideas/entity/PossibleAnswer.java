@@ -1,15 +1,25 @@
 package org.occideas.entity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Where;
 @Entity 
 @DiscriminatorValue("P")
 public class PossibleAnswer extends Node {
 
+	@OneToMany(mappedBy="parentId",targetEntity=Node.class)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@Where(clause = "deleted = 0")
+	@OrderBy("sequence ASC")
+	private List<Question> childNodes;
+	
 	public PossibleAnswer() {
 		super();
 	}
@@ -26,9 +36,14 @@ public class PossibleAnswer extends Node {
 		this.setIdNode(idNode);
 	}
 
-	public void addChild(Question childNode) {
-		childNode.setParentId(this.getParentId());
-		super.setChildNodes(getChildNodes() == null ? new ArrayList<Node>() : getChildNodes());
-		getChildNodes().add(childNode);
+	public List<Question> getChildNodes() {
+		return childNodes;
 	}
+
+	public void setChildNodes(List<Question> childNodes) {
+		this.childNodes = childNodes;
+	}
+	
+	
+
 }

@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.base.dao.BaseDao;
-import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.mapper.QuestionMapper;
-import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,12 +52,12 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionVO getNextQuestion(long idNode) {
-        Node currentAnswer = dao.get(Node.class, idNode);
+    	PossibleAnswer currentAnswer = dao.get(PossibleAnswer.class, idNode);
         Question nextQuestion = (Question) inspectNextQuestion(currentAnswer);
         return mapper.convertToQuestionVO(nextQuestion);
     }
 
-    private Node inspectNextQuestion(Node node) {
+    private Question inspectNextQuestion(PossibleAnswer node) {
         if (node.getChildNodes().isEmpty()) {
             return getNearestQuestion(node);
         } else {
@@ -67,10 +65,9 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
-    private Node getNearestQuestion(Node node) {
-        Node father = dao.get(Node.class, Long.valueOf(node.getParentId()));
-        if (father instanceof Question) {
-            Node grandFather = dao.get(Node.class, Long.valueOf(father.getParentId()));
+    private Question getNearestQuestion(PossibleAnswer node) {
+        Question father = dao.get(Question.class, Long.valueOf(node.getParentId()));
+        	PossibleAnswer grandFather = dao.get(PossibleAnswer.class, Long.valueOf(father.getParentId()));
 
             for (int i = 0; i < grandFather.getChildNodes().size(); i++) {
                 if (grandFather.getChildNodes().get(i).getIdNode() == father.getIdNode()) {
@@ -81,10 +78,6 @@ public class QuestionServiceImpl implements QuestionService {
                     }
                 }
             }
-        } else {
-            return getNearestQuestion(father);
-        }
-
         return null;
     }
 }

@@ -940,7 +940,7 @@
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
-					QuestionsService.save($scope.data[0]).then(function(response){
+					ModulesService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
 							if(locationId && locationId != ''){

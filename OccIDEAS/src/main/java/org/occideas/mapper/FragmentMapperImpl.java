@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Fragment;
-import org.occideas.entity.Node;
+import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.FragmentVO;
-import org.occideas.vo.NodeVO;
+import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class FragmentMapperImpl implements FragmentMapper {
 
     @Autowired
-    private NodeMapper nodeMapper;
+    private QuestionMapper nodeMapper;
 
     @Override
     public FragmentVO convertToFragmentVO(Fragment moduleEntity,boolean includeChild) {
@@ -35,9 +35,9 @@ public class FragmentMapperImpl implements FragmentMapper {
         fragmentVO.setLink( moduleEntity.getLink() );
         fragmentVO.setTopNodeId( moduleEntity.getTopNodeId() );
         fragmentVO.setLastUpdated( moduleEntity.getLastUpdated() );
-        List<Node> childNodes = moduleEntity.getChildNodes();
+        List<Question> childNodes = moduleEntity.getChildNodes();
         if(includeChild && !CommonUtil.isListEmpty(childNodes)){
-        fragmentVO.setChildNodes( nodeMapper.convertToNodeVOList( childNodes ) );
+        fragmentVO.setChildNodes( nodeMapper.convertToQuestionVOList( childNodes ) );
         }
         fragmentVO.setOriginalId( moduleEntity.getOriginalId() );
         fragmentVO.setDeleted( moduleEntity.getDeleted() );
@@ -75,9 +75,9 @@ public class FragmentMapperImpl implements FragmentMapper {
         fragment.setSequence( fragmentVO.getSequence() );
         fragment.setParentId( fragmentVO.getParentId());
         fragment.setLastUpdated( fragmentVO.getLastUpdated() );
-        List<NodeVO> childNodes = fragmentVO.getChildNodes();
+        List<QuestionVO> childNodes = fragmentVO.getChildNodes();
         if(!CommonUtil.isListEmpty(childNodes)){
-        	fragment.setChildNodes( nodeMapper.convertToNodeList(childNodes) );
+        	fragment.setChildNodes( nodeMapper.convertToQuestionList( childNodes ) );
         }
         fragment.setNumber( fragmentVO.getNumber() );
         fragment.setLink( fragmentVO.getLink() );

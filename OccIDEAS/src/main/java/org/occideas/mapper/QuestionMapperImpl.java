@@ -1,11 +1,14 @@
 package org.occideas.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.entity.Node;
+import org.occideas.entity.Module;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
-import org.occideas.vo.NodeVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,92 +16,99 @@ import org.springframework.stereotype.Component;
 @Component
 public class QuestionMapperImpl implements QuestionMapper {
 
-    @Autowired
-    private NodeMapper nodeMapper;
-    
-    @Autowired
-    private ModuleRuleMapper moduleRuleMapper;
+	@Autowired
+	private PossibleAnswerMapper mapper;
+
+	@Autowired
+	private ModuleRuleMapper moduleRuleMapper;
 
 	@Override
 	public QuestionVO convertToQuestionVO(Question question) {
 		// TODO Auto-generated method stub
-        if ( question == null ) {
-            return null;
-        }
+		if (question == null) {
+			return null;
+		}
 
-        QuestionVO questionVO = new QuestionVO();
+		QuestionVO questionVO = new QuestionVO();
 
-        questionVO.setIdNode(question.getIdNode());
-        questionVO.setName(question.getName());
-        questionVO.setDescription(question.getDescription());
-        questionVO.setType(question.getType());
-        questionVO.setSequence(question.getSequence());
-        questionVO.setNumber(question.getNumber());
-        questionVO.setParentId(question.getParentId());
-        questionVO.setLink(question.getLink());
-        questionVO.setTopNodeId(question.getTopNodeId());
-        questionVO.setLastUpdated(question.getLastUpdated());
-        List<Node> childNodes = question.getChildNodes();
-        questionVO.setChildNodes(nodeMapper.convertToNodeVOList(childNodes));
-        questionVO.setOriginalId(question.getOriginalId());
-        questionVO.setDeleted(question.getDeleted());
-        questionVO.setNodeclass(question.getNodeclass());
-        questionVO.setModuleRule(moduleRuleMapper.
-        		convertToModuleRuleVOList(question.getModuleRule()));
+		questionVO.setIdNode(question.getIdNode());
+		questionVO.setName(question.getName());
+		questionVO.setDescription(question.getDescription());
+		questionVO.setType(question.getType());
+		questionVO.setSequence(question.getSequence());
+		questionVO.setNumber(question.getNumber());
+		questionVO.setParentId(question.getParentId());
+		questionVO.setLink(question.getLink());
+		questionVO.setTopNodeId(question.getTopNodeId());
+		questionVO.setLastUpdated(question.getLastUpdated());
+		List<PossibleAnswer> childNodes = question.getChildNodes();
+		if (!CommonUtil.isListEmpty(childNodes)) {
+			questionVO.setChildNodes(mapper.convertToPossibleAnswerVOList(childNodes));
+		}
+		questionVO.setOriginalId(question.getOriginalId());
+		questionVO.setDeleted(question.getDeleted());
+		questionVO.setNodeclass(question.getNodeclass());
+		questionVO.setModuleRule(moduleRuleMapper.convertToModuleRuleVOList(question.getModuleRule()));
 
-        return questionVO;
+		return questionVO;
 	}
 
 	@Override
-	public List<QuestionVO> convertToQuestionVOList(List<Question> questionList) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<QuestionVO> convertToQuestionVOList(List<Question> questionEntity) {
+		if ( questionEntity == null ) {
+            return null;
+        }
+
+        List<QuestionVO> list = new ArrayList<QuestionVO>();
+        for ( Question question : questionEntity ) {
+            list.add( convertToQuestionVO( question) );
+        }
+
+        return list;
 	}
 
 	@Override
 	public Question convertToQuestion(QuestionVO questionVO) {
-		if ( questionVO == null ) {
-            return null;
-        }
+		if (questionVO == null) {
+			return null;
+		}
 
-        Question question = new Question();
+		Question question = new Question();
 
-        question.setIdNode( questionVO.getIdNode() );
-        question.setName( questionVO.getName() );
-        question.setDescription( questionVO.getDescription() );
-        question.setType( questionVO.getType() );
-        question.setSequence( questionVO.getSequence() );
-        question.setParentId( questionVO.getParentId());
-        question.setLastUpdated( questionVO.getLastUpdated() );
-        List<NodeVO> childNodes = questionVO.getChildNodes();
-        if(!CommonUtil.isListEmpty(childNodes)){
-        	question.setChildNodes( nodeMapper.convertToNodeList(childNodes) );
-        }
-        question.setNumber( questionVO.getNumber() );
-        question.setLink( questionVO.getLink() );
-        question.setTopNodeId( questionVO.getTopNodeId() );
-        question.setOriginalId( questionVO.getOriginalId() );
-        question.setDeleted( questionVO.getDeleted() );
-        question.setNodeclass( questionVO.getNodeclass() );
+		question.setIdNode(questionVO.getIdNode());
+		question.setName(questionVO.getName());
+		question.setDescription(questionVO.getDescription());
+		question.setType(questionVO.getType());
+		question.setSequence(questionVO.getSequence());
+		question.setParentId(questionVO.getParentId());
+		question.setLastUpdated(questionVO.getLastUpdated());
+		List<PossibleAnswerVO> childNodes = questionVO.getChildNodes();
+		if (!CommonUtil.isListEmpty(childNodes)) {
+			question.setChildNodes(mapper.convertToPossibleAnswerList(childNodes));
+		}
+		question.setNumber(questionVO.getNumber());
+		question.setLink(questionVO.getLink());
+		question.setTopNodeId(questionVO.getTopNodeId());
+		question.setOriginalId(questionVO.getOriginalId());
+		question.setDeleted(questionVO.getDeleted());
+		question.setNodeclass(questionVO.getNodeclass());
 
-        return question;
+		return question;
 	}
 
 	@Override
-	public List<Question> convertToQuestionList(List<QuestionVO> nodeVO) {
-//		if ( questionVOList == null ) {
-//            return null;
-//        }
-//
-//        List<Question> list_ = new ArrayList<Question>();
-//        for ( QuestionVO questionVO : questionVOList ) {
-//            list_.add( convertToQuestion( questionVO ) );
-//        }
+	public List<Question> convertToQuestionList(List<QuestionVO> questionVO) {
+		if (questionVO == null) {
+			return null;
+		}
 
-        return null;
+		List<Question> list = new ArrayList<Question>();
+		for (QuestionVO questionVO_ : questionVO) {
+			list.add(convertToQuestion(questionVO_));
+		}
+
+		return list;
+
 	}
 
-
-
 }
-

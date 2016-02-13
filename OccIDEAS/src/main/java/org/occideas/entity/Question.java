@@ -1,16 +1,25 @@
 package org.occideas.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.Where;
 @Entity 
 @DiscriminatorValue("Q")
 public class Question extends Node {
 
+	@OneToMany(mappedBy="parentId",targetEntity=Node.class)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@Where(clause = "deleted = 0")
+	@OrderBy("sequence ASC")
+	private List<PossibleAnswer> childNodes;
+	
 	public Question() {
 		super();
 	}
@@ -24,19 +33,18 @@ public class Question extends Node {
 		this.setIdNode(idNode);
 	}
 
-	public void addChild(PossibleAnswer childNode) {
-		childNode.setParentId(this.getParentId());
-		this.setChildNodes(this.getChildNodes() == null ? new ArrayList<Node>() : this.getChildNodes());
-		this.getChildNodes().add(childNode);
-	}
-
 	public Question(String idNode) {
 		this.setIdNode(Integer.parseInt(idNode));
 	}
-	
-	@Override
-	@OneToMany(mappedBy="parent",fetch=FetchType.EAGER)
-	public List<Node> getChildNodes() {
-		return super.getChildNodes();
+
+	public List<PossibleAnswer> getChildNodes() {
+		return childNodes;
 	}
+
+	public void setChildNodes(List<PossibleAnswer> childNodes) {
+		this.childNodes = childNodes;
+	}
+	
+	
+	
 }

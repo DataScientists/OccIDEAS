@@ -14,11 +14,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -30,41 +25,35 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName(value = "Nodes")
 public class Node implements Cloneable {
 	@Id
-	private long idNode;
+	protected long idNode;
 	
 	@Column(length=2048)
-	private String name;
+	protected String name;
 	
 	@Column(length=2048)
-	private String description;
+	protected String description;
 	
-	private String type;
-	private int sequence;
-	private String number;
+	protected String type;
+	protected int sequence;
+	protected String number;
 	
 	@Column(name="parent_idNode")
-	private String parentId;
+	protected String parentId;
 	
-	private long link;
-	private long topNodeId;
-	private Date lastUpdated;
-	
-	@OneToMany(mappedBy="parentId")
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
-	@Where(clause = "deleted = 0")
-	@OrderBy("sequence ASC")
-	private List<Node> childNodes;
+	protected long link;
+	protected long topNodeId;
+	protected Date lastUpdated;
 	
 	@OneToMany(mappedBy="node", fetch = FetchType.EAGER)
 	@JsonInclude(Include.NON_EMPTY)
-	private List<Note> notes;
+	protected List<Note> notes;
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinColumn(name="idNode",referencedColumnName="idNode")
-	private List<ModuleRule> moduleRule; 
+	protected List<ModuleRule> moduleRule; 
 	
-	private long originalId;
-	private Integer deleted = 0;
-	private String nodeclass;
+	protected long originalId;
+	protected Integer deleted = 0;
+	protected String nodeclass;
 
 	public Node() {
 		super();
@@ -83,24 +72,14 @@ public class Node implements Cloneable {
 		this.lastUpdated = node.getLastUpdated();
 		this.originalId = node.getOriginalId();
 		this.deleted = node.getDeleted();
-		this.childNodes = node.getChildNodes();
 		
 	}
 
-	public void addChild(Node childNode) {
-		childNode.setParentId(this.getParentId());
-		this.setChildNodes(getChildNodes() == null ? new ArrayList<Node>() : getChildNodes());
-		getChildNodes().add(childNode);
-	}
-
-	
 	public void addNote(Note note) {
 		note.setNode(this);
 		this.setNotes(this.getNotes() == null?new ArrayList<Note>():this.getNotes());
 		this.getNotes().add(note);
 	}
-
-	
 
 	public Node(String idNode) {
 		super();
@@ -171,14 +150,6 @@ public class Node implements Cloneable {
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
-	}
-
-	public List<Node> getChildNodes() {
-		return childNodes = childNodes == null ? new ArrayList<Node>() : childNodes;
-	}
-
-	public void setChildNodes(List<Node> childNodes) {
-		this.childNodes = childNodes;
 	}
 
 	public String getNumber() {

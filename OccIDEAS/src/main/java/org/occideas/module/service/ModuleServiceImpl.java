@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.occideas.entity.Module;
 import org.occideas.mapper.ModuleMapper;
-import org.occideas.mapper.NodeMapper;
 import org.occideas.module.dao.ModuleDao;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,6 @@ public class ModuleServiceImpl implements ModuleService {
 	
 	@Autowired
 	private ModuleMapper mapper;
-	
-	@Autowired
-	private NodeMapper nodeMapper;
 	
 	@Override
 	public List<ModuleVO> listAll() {
