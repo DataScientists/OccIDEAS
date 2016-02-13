@@ -3,11 +3,10 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.entity.Module;
+import org.occideas.entity.ModuleRule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
-import org.occideas.vo.ModuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,9 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 
 	@Autowired
 	private QuestionMapper mapper;
+	
+	@Autowired
+    private ModuleRuleMapper ruleMapper;
 	
 	@Override
 	public PossibleAnswerVO convertToPossibleAnswerVO(PossibleAnswer answerEntity) {
@@ -44,6 +46,10 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         answerVO.setOriginalId( answerEntity.getOriginalId() );
         answerVO.setDeleted( answerEntity.getDeleted() );
         answerVO.setNodeclass( answerEntity.getNodeclass() );
+        List<ModuleRule> moduleRule = answerEntity.getModuleRule();
+        if(!CommonUtil.isListEmpty(moduleRule)){
+        	answerVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+        }
         return answerVO;
 	}
 
@@ -86,7 +92,6 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 	        possibleAnswer.setOriginalId( answerVO.getOriginalId() );
 	        possibleAnswer.setDeleted( answerVO.getDeleted() );
 	        possibleAnswer.setNodeclass( answerVO.getNodeclass() );
-
 	        return possibleAnswer;
 	}
 

@@ -3,11 +3,9 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
-import org.occideas.vo.ModuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;

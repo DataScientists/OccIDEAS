@@ -2,8 +2,6 @@ package org.occideas.module.dao;
 
 import java.util.List;
 
-import javax.persistence.OrderBy;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,7 +9,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.springframework.beans.factory.annotation.Autowired;

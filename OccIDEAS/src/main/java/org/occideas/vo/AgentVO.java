@@ -2,11 +2,6 @@ package org.occideas.vo;
 
 import java.util.Date;
 
-import org.occideas.entity.AgentGroup;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
 public class AgentVO {
 
 	private long idAgent;

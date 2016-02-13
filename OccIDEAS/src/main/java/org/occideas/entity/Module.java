@@ -51,14 +51,6 @@ public class Module extends Node implements Serializable{
 		this.getNotes().add(note);
 	}
 
-	public List<ModuleRule> getModuleRules() {
-		return moduleRules;
-	}
-
-	public void setModuleRules(List<ModuleRule> moduleRules) {
-		this.moduleRules = moduleRules;
-	}
-
 	public List<Question> getChildNodes() {
 		return childNodes;
 	}

@@ -1,7 +1,5 @@
 package org.occideas.vo;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 public class ModuleRuleVO {
 
 	private long idModule;
