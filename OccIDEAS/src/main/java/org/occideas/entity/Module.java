@@ -8,22 +8,23 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 
 @Entity
 @DiscriminatorValue("M")
+@DynamicUpdate(value=true)
+@DynamicInsert(value=true)
 public class Module extends Node implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7963940691772676956L;
-	@Transient
-	private List<ModuleRule> moduleRules;
 	
 	@OneToMany(mappedBy="parentId",targetEntity=Node.class)
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})

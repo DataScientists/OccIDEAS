@@ -10,9 +10,14 @@ import javax.persistence.OrderBy;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
+
 @Entity 
 @DiscriminatorValue("F")
+@DynamicUpdate(value=true)
+@DynamicInsert(value=true)
 public class Fragment extends Node{
 
 	@OneToMany(mappedBy="parentId",targetEntity=Node.class)

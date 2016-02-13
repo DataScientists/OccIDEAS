@@ -9,9 +9,14 @@ import javax.persistence.OrderBy;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
+
 @Entity 
 @DiscriminatorValue("Q")
+@DynamicUpdate(value=true)
+@DynamicInsert(value=true)
 public class Question extends Node {
 
 	@OneToMany(mappedBy="parentId",targetEntity=Node.class)

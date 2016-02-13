@@ -6,7 +6,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 @Entity
+@DynamicUpdate(value=true)
+@DynamicInsert(value=true)
 public class ModuleRule  implements java.io.Serializable{
 	/**
 	 * 
