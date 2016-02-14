@@ -28,6 +28,7 @@ public abstract class NodeVO {
 	protected long originalId;
 	protected Integer deleted = 0;
 	protected String nodeclass;
+	@JsonInclude(Include.NON_NULL)
 	protected List<ModuleRuleVO> moduleRule;
 
 	public long getIdNode() {

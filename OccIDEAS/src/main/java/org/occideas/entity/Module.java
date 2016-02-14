@@ -15,12 +15,14 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Where;
 
-@Entity
+@Entity()
 @DiscriminatorValue("M")
 @DynamicUpdate(value=true)
 @DynamicInsert(value=true)
+@SelectBeforeUpdate(value=true)
 public class Module extends Node implements Serializable{
 
 	/**
@@ -35,7 +37,7 @@ public class Module extends Node implements Serializable{
 	private List<Question> childNodes;
 	
 	@OneToMany(fetch=FetchType.LAZY)
-	@JoinColumn(name="idModule",referencedColumnName="idNode")
+	@JoinColumn(name="idModule",referencedColumnName="idNode",updatable=false)
 	protected List<ModuleRule> moduleRule; 
 	
 	public Module() {

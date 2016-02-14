@@ -13,12 +13,14 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Where;
 
 @Entity 
 @DiscriminatorValue("P")
 @DynamicUpdate(value=true)
 @DynamicInsert(value=true)
+@SelectBeforeUpdate(value=true)
 public class PossibleAnswer extends Node {
 
 	@OneToMany(mappedBy="parentId",targetEntity=Node.class)
@@ -28,7 +30,7 @@ public class PossibleAnswer extends Node {
 	private List<Question> childNodes;
 	
 	@OneToMany(fetch=FetchType.LAZY)
-	@JoinColumn(name="idNode",referencedColumnName="idNode")
+	@JoinColumn(name="idNode",referencedColumnName="idNode",updatable=false)
 	protected List<ModuleRule> moduleRule; 
 	
 	public PossibleAnswer() {
