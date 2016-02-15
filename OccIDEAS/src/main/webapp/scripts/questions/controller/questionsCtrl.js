@@ -39,7 +39,16 @@
         		x.total = totalVal;
         		} );
         	}
+    		group = setOrder(group);
     		return group;
+    	}
+    	
+    	function setOrder (obj) {
+    	    var out = [];
+    	    _.forEach(obj,function(value,key) {
+    	      out.push({ key: key, value: value ,total: value.total});
+    	    });
+    	    return out;
     	}
     	
     	
