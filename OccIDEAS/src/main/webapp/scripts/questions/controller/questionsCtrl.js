@@ -26,20 +26,22 @@
     		var group = _.groupBy(agent, function(b) { 
     			return b.groupName;
     		});
-    		if($scope.data[0].moduleRule){
-        		_.forOwn(group, function(x, key) { 
-        		var totalVal = 0; 
-        		_.forEach(x,function(v,k) {
-        			  var ruleArray =_.filter($scope.data[0].moduleRule, function(r){
-        					return v.idAgent === r.idAgent; 
-        			  });
-        			  v.total = ruleArray.length;
-        			  totalVal = totalVal + v.total;
-        			});
-        		x.total = totalVal;
-        		} );
-        	}
-    		return group;
+    		if($scope.data[0]){
+    			if($scope.data[0].moduleRule){
+            		_.forOwn(group, function(x, key) { 
+            		var totalVal = 0; 
+            		_.forEach(x,function(v,k) {
+            			  var ruleArray =_.filter($scope.data[0].moduleRule, function(r){
+            					return v.idAgent === r.idAgent; 
+            			  });
+            			  v.total = ruleArray.length;
+            			  totalVal = totalVal + v.total;
+            			});
+            		x.total = totalVal;
+            		} );
+            	}
+        		return group;
+    		}
     	}
     	
     	
@@ -364,7 +366,7 @@
 						console.log("Just cloned so turning undo off ");
 						$scope.undoEnable = false;
 					}
-					$scope.isClonable = false;
+					
 					console.log("source"+sourceNode.type);
 					if(!destNode){
 						sourceNode.warning = 'warning';						
@@ -376,7 +378,13 @@
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
-						saveModuleWithoutReload();
+						if($scope.isClonable){						
+							saveModuleAndReload();
+							$scope.isClonable = false;												
+						}else{
+							saveModuleWithoutReload();
+						}
+						
 					}
 				}
 		}
@@ -932,7 +940,7 @@
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
-					QuestionsService.save($scope.data[0]).then(function(response){
+					ModulesService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
