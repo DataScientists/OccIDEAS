@@ -4,8 +4,17 @@
 	
 	QuestionsService.$inject = ['$http','$q'];
 	function QuestionsService($http,$q){
-		function findQuestions(idNode) {
-			var restUrl = 'rest/module/get?id=' + idNode;
+		function findQuestions(idNode,type) {
+			var restUrl = "";
+			if(type=='M'){
+				restUrl = 'rest/module/get?id=' + idNode;
+				
+			}else if(type=='F'){
+				restUrl = 'rest/fragment/get?id=' + idNode;
+				
+			}else{
+				restUrl = 'rest/question/get?id=' + idNode;
+			}
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -20,6 +29,32 @@
 				  url: restSaveUrl,
 				  data:data
 				})
+			return request.then(handleSuccess,handleError);
+		}
+		function saveNode(data){
+			if(data.nodeclass=='M'){
+				var restSaveUrl = 'rest/module/update';
+				var request =  $http({
+					  method: 'POST',
+					  url: restSaveUrl,
+					  data:data
+					})
+			}else if(data.nodeclass=='F'){
+				var restSaveUrl = 'rest/fragment/update';
+				var request =  $http({
+					  method: 'POST',
+					  url: restSaveUrl,
+					  data:data
+					})
+			}else{
+				var restSaveUrl = 'rest/question/update';
+				var request =  $http({
+					  method: 'POST',
+					  url: restSaveUrl,
+					  data:data
+					})
+			}
+			
 			return request.then(handleSuccess,handleError);
 		}
 		
@@ -58,6 +93,7 @@
 		return {
 			findQuestions: findQuestions,
 			save:save,
+			saveNode:saveNode,
 			getMaxId:getMaxId,
             getNextQuestion:getNextQuestion
 		};

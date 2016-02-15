@@ -948,7 +948,7 @@
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
-					ModulesService.save($scope.data[0]).then(function(response){
+					QuestionsService.saveNode($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
@@ -975,7 +975,7 @@
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
-					ModulesService.save($scope.data[0]).then(function(response){
+					QuestionsService.saveNode($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
 							if(locationId && locationId != ''){
