@@ -376,7 +376,7 @@
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
-						saveModuleAndReload();
+						saveModuleWithoutReload();
 					}
 				}
 		}
