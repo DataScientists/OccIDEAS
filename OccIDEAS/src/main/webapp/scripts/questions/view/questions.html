@@ -309,7 +309,7 @@ tr.angular-ui-tree-empty {
 	<div class="title">Agent <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{rule.agentName}}</div>
 		<input type="text" value="Nodes" disabled/>
 			<ul class="list-group" style="margin: 0 0 0 0;">
-    			<li class="list-group-item">{{rule.nodeNumber}}</li>
+    			<li class="list-group-item nodeNumber" ng-click="highlightNode(rule)">{{rule.nodeNumber}}</li>
   			</ul>
 			<input type="text" value="Level" disabled/>
 			<ul class="list-group" style="margin: 0 0 0 0;">

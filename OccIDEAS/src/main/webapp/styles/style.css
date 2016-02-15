@@ -666,6 +666,27 @@ a:focus {
   background:#5d92ba;
 }
 
+.note .nodeNumber:hover {
+	background-color: #e2e2e2;
+}
+
+.highlight{
+	-webkit-animation-name: blink; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
+    animation-name: blink;
+    animation-duration: 5s;
+}
+
+@-webkit-keyframes blink {
+    from {background-color: #FDFBF5;}
+    to {background-color: #e7ce83;}
+}
+
+@keyframes blink {
+    from {background-color: #FDFBF5;}
+    to {background-color: #e7ce83;}
+}
+
 #add_new {
 	position: fixed;
 	top: 20px;

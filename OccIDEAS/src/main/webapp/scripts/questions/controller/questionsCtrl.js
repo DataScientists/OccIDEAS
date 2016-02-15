@@ -1220,6 +1220,13 @@
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 
-        
+        $scope.highlightNode = function(rule){
+        	var elementId = 'node-'+rule.idNode;
+        	$scope.scrollTo(elementId);
+        	$('#'+elementId).toggleClass('highlight');  
+        	   setTimeout(function(){
+        	     $('#'+elementId).toggleClass('highlight');  
+        	   },5000);
+        }
 	}
 })();
