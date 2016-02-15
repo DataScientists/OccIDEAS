@@ -75,7 +75,7 @@ tr.angular-ui-tree-empty {
 }
 </style>
 <script id="rules-template" type="text/x-custom-template">
-<div class="note" prevent-right-click>
+<div class="note" prevent-right-click angular-follow>
 <button type="button" class="btn btn-default pull-right" onclick="deleteNote(this)" aria-label="Left Align">
 	<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
@@ -237,7 +237,7 @@ tr.angular-ui-tree-empty {
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div context-menu="showMenu(this)" class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
+        <div context-menu="showMenu(this)" sticky disabled-sticky="node.nodeclass !== 'M'" class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
           <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle(this)">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,

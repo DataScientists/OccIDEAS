@@ -57,7 +57,7 @@ if($itemScope.rule == null){
 	return;
 }	
 var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
-angular.element(tpl).hide().appendTo("body").show("fade", 300).draggable().on(
+angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteZindex);
 		});
