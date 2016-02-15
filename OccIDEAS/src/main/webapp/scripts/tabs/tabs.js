@@ -104,10 +104,10 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null},
 			        resolve:{
-			        	data: function($stateParams,FragmentsService) {
+			        	data: function($stateParams,QuestionsService) {
 			        		
-			        		return FragmentsService.findFragment($stateParams.row)
-			        				.then(function(data){
+			        		return QuestionsService.findQuestions($stateParams.row,'F')
+			        				.then(function(response){
 			        					if(angular.isUndefined($window.sliderVal)){
 				        					$window.sliderVal = [];
 				        				}
@@ -121,7 +121,7 @@
 			        					console.log("Fragment IdNode: "+$stateParams.row);			        					
 			        					$window.sliderVal[idNode].showModuleSlider = false;
 			        					$window.sliderVal[idNode].showFragmentSlider = true;		        					
-						        		return data;
+			        					return response.data;
 		    				})
 			        	},
 			        	templateData: function(FragmentsService) {		        		        	
