@@ -146,16 +146,16 @@ tr.angular-ui-tree-empty {
     		<h4 class="panel-title">Agents List</h4>
   		</div>
   		<div class="panel-body">
-		<uib-accordion close-others="oneAtATime" ng-repeat="(key, value) in agentsData track by $index">
+		<uib-accordion close-others="oneAtATime" ng-repeat="(key, value) in agentsData track by $index | orderBy:'total'">
      	 <uib-accordion-group>
      	 	<uib-accordion-heading>
      	 	{{key}}
-     	 		<span class="badge pull-right">0</span>
+     	 		<span class="badge pull-right">{{value.total || 0}}</span>
      	 	</uib-accordion-heading>
      	 		<div>
 					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="subNode in value track by $index" ng-click="toggleRulesObj(subNode)">
-							{{subNode.name}} <span class="badge pull-right">3</span></li>
+						<li class="list-group-item" ng-repeat="subNode in value track by $index | orderBy:'-total'" ng-click="toggleRulesObj(subNode)">
+							{{subNode.name}} <span class="badge pull-right">{{subNode.total || 0}}</span></li>
 					</ul>
 				</div>
      	 </uib-accordion-group>

@@ -11,7 +11,7 @@ public class AgentVO {
 	private String groupName;
 	
 	private Date lastUpdated;
-	
+	private Integer total = 0;
 	private Integer deleted = 0;
 
 	public long getIdAgent() {
@@ -61,7 +61,13 @@ public class AgentVO {
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
-	
 
+	public Integer getTotal() {
+		return total;
+	}
+
+	public void setTotal(Integer total) {
+		this.total = total;
+	}
 
 }

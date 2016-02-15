@@ -36,7 +36,7 @@
 				'questionsView':{
 					templateUrl: 'scripts/questions/view/questions.html',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null},
+			        params:{row: null,module:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
@@ -79,11 +79,8 @@
 				    		});
 				        },
 				        agentsData: function(AgentsService){
-				        	return  AgentsService.get().then(function(data) {
-				        		var result = _.groupBy(data, function(b) { 
-				        			return b.groupName;
-				        		});
-					            return result;
+				        	return  AgentsService.get().then(function(x) {
+					            return x;
 				        	});
 				        }
 			        }

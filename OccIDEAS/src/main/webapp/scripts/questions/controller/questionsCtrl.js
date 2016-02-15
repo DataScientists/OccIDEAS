@@ -17,10 +17,33 @@
 		$scope.data.showAgentSlider = true;
 		$anchorScroll.yOffset = 200;
 		$scope.templateData = templateData.template;
-		$scope.agentsData = agentsData;
+		$scope.agentsData = initAgentData(agentsData);
 		$scope.aJSMData = templateData.ajsm;
     	$scope.frequencyData = templateData.frequency;
     	$scope.rulesObj = [];
+    	
+    	function initAgentData(agent){
+    		var group = _.groupBy(agent, function(b) { 
+    			return b.groupName;
+    		});
+    		if($scope.data[0].moduleRule){
+        		_.forOwn(group, function(x, key) { 
+        		var totalVal = 0; 
+        		_.forEach(x,function(v,k) {
+        			  var ruleArray =_.filter($scope.data[0].moduleRule, function(r){
+        					return v.idAgent === r.idAgent; 
+        			  });
+        			  v.total = ruleArray.length;
+        			  totalVal = totalVal + v.total;
+        			});
+        		x.total = totalVal;
+        		} );
+        	}
+    		return group;
+    	}
+    	
+    	
+    	
 		$scope.toggleRulesObj = function (agents){
 			if(_.findIndex($scope.rulesObj, function(o) { 
 					return o.idAgent === agents.idAgent; }) != -1){
