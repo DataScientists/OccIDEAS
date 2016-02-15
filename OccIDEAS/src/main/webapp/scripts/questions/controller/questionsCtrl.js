@@ -12,6 +12,7 @@
 			agentsData,RulesService,$compile) {
 		var self = this;
 		$scope.data = data;	
+		$scope.$window = $window;  
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$scope.data.showAgentSlider = true;
@@ -373,7 +374,7 @@
 						console.log("Just cloned so turning undo off ");
 						$scope.undoEnable = false;
 					}
-					$scope.isClonable = false;
+					
 					console.log("source"+sourceNode.type);
 					if(!destNode){
 						sourceNode.warning = 'warning';						
@@ -385,7 +386,13 @@
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
-						saveModuleAndReload();
+						if($scope.isClonable){						
+							saveModuleAndReload();
+							$scope.isClonable = false;												
+						}else{
+							saveModuleWithoutReload();
+						}
+						
 					}
 				}
 		}
@@ -941,15 +948,11 @@
 					var parentNodeNumber = $scope.data[0].number;
 					var topNodeId = $scope.data[0].idNode;
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
-					QuestionsService.save($scope.data[0]).then(function(response){
+					ModulesService.save($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
-								var showFragmentSlider = $scope.data.showFragmentSlider;
-								var showModuleSlider = $scope.data.showModuleSlider;
 								$scope.data = data.data;
-								$scope.data.showFragmentSlider = showFragmentSlider;
-								$scope.data.showModuleSlider = showModuleSlider;
 								if(locationId){
 									$scope.scrollTo(locationId);
 								}
@@ -959,7 +962,7 @@
 						}
 					});
 				}else{
-					console.log('ERROR on Save!');
+					console.log('ERROR on Save!');	
 				}
 			});
 		}
@@ -1198,13 +1201,9 @@
 		}
 		
 		$scope.undo = function(){
-			var showFragmentSlider = $scope.data.showFragmentSlider;
-			var showModuleSlider = $scope.data.showModuleSlider;
 			$scope.data = $window.beforeNode;
 			saveModuleWithoutReload();
 			$scope.undoEnable = false;
-			$scope.data.showFragmentSlider = showFragmentSlider;
-			$scope.data.showModuleSlider = showModuleSlider;
 		}
 		
 		$scope.isClonable = false;
