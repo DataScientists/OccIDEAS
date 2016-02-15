@@ -581,15 +581,11 @@ a:focus {
 	top:0px;
 	left:700px;
 	padding: 0 0 0 0;
-	width: 250px;
+	width: 240px;
 	min-height: 130px;
 	margin: 0 30px 30px 0;
-/* 	background: linear-gradient(top, rgba(0,0,0,.05), rgba(0,0,0,.25)); */
-	background-color: #b0c4c4;
-	box-shadow: 5px 5px 10px -2px rgba(33,33,33,.3);
-/* 	transform: rotate(2deg); */
-/* 	transform: skew(-1deg,1deg); */
-/* 	transition: transform .15s; */
+	background: #4478a0;
+	box-shadow: 0px 0px 8px rgba(68, 140, 160, 0.5);
 	font-size:11px;
 	z-index: 1050;
 	@extend .noflick;
@@ -638,6 +634,36 @@ a:focus {
 
 .note .panel-body{
 	padding: 0 0 0 0;
+}
+
+.note .title {
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #5189B5;
+  border-width: 0px 0px 1px 0px;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding: 0px 16px;
+  background: #5C9CCE;
+  box-shadow: 0px 1px 4px rgba(68, 120, 160, 0.1);
+  font-size: 12px;
+  line-height:2em;
+}
+
+.note input[type=text]{
+  color: #fff;
+  border: 0;
+  outline: 0;
+  resize: none;
+  margin: 0;
+  margin-top: 1em;
+  padding: .5em;
+  width:100%;
+  border-bottom: 1px dotted rgba(250, 250, 250, 0.4);
+  background:#5d92ba;
 }
 
 #add_new {

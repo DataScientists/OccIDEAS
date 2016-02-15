@@ -74,53 +74,6 @@ tr.angular-ui-tree-empty {
     box-sizing: border-box;
 }
 </style>
-<script id="rules-template" type="text/x-custom-template">
-<div class="note" prevent-right-click angular-follow>
-<button type="button" class="btn btn-default pull-right" onclick="deleteNote(this)" aria-label="Left Align">
-	<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-	</button>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h4>Agent:</h4> <b>{{rule.agentName}}</b>
-		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			Nodes
-		</div>
-		<div class="panel-body">
-			<ul class="list-group">
-    			<li class="list-group-item">{{rule.nodeNumber}}</li>
-  			</ul>
-		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			Level
-		</div>
-		<div class="panel-body">
-			<ul class="list-group">
-    			<li class="list-group-item">
-<select name="singleSelect" id="singleSelect" ng-model="rule.rule.level">
-      <option value="0" ng-selected="{{rule.rule.level === 0}}">PROBABLE_HIGH</option>
-      <option value="1" ng-selected="{{rule.rule.level === 1}}">PROBABLE_MEDIUM</option>
-      <option value="2" ng-selected="{{rule.rule.level === 2}}">PROBABLE_LOW</option>
-	  <option value="3" ng-selected="{{rule.rule.level === 3}}">PROBABLE_UNKNOWN</option>
-	  <option value="4" ng-selected="{{rule.rule.level === 4}}">POSSIBLE_UNKNOWN</option>
-	  <option value="5" ng-selected="{{rule.rule.level === 5}}">NO_EXPOSURE</option>
-    </select></li>
-  			</ul>
-		</div>
-	</div>
-<div class="panel panel-default">
-		<div class="panel-heading">
-			<button type="button" class="btn btn-default btn-lg">
-  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-</button>
-		</div>
-</div>
-</div>
-</script>
 <div class="row ">
 	<div class="col-sm-12">
 	<div class="panel panel-default">
@@ -347,4 +300,33 @@ tr.angular-ui-tree-empty {
 <!-- end content -->
      </div>
   </div>
+</script>
+<script id="rules-template" type="text/x-custom-template">
+<div class="note" prevent-right-click angular-follow>
+<button type="button" class="btn btn-primary btn-xs pull-right" onclick="deleteNote(this)" aria-label="Left Align">
+	<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+	</button>
+	<div class="title">Agent <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{rule.agentName}}</div>
+		<input type="text" value="Nodes" disabled/>
+			<ul class="list-group" style="margin: 0 0 0 0;">
+    			<li class="list-group-item">{{rule.nodeNumber}}</li>
+  			</ul>
+			<input type="text" value="Level" disabled/>
+			<ul class="list-group" style="margin: 0 0 0 0;">
+    			<li class="list-group-item">
+<select name="singleSelect" id="singleSelect" ng-model="rule.rule.level">
+      <option value="0" ng-selected="{{rule.rule.level === 0}}">PROBABLE_HIGH</option>
+      <option value="1" ng-selected="{{rule.rule.level === 1}}">PROBABLE_MEDIUM</option>
+      <option value="2" ng-selected="{{rule.rule.level === 2}}">PROBABLE_LOW</option>
+	  <option value="3" ng-selected="{{rule.rule.level === 3}}">PROBABLE_UNKNOWN</option>
+	  <option value="4" ng-selected="{{rule.rule.level === 4}}">POSSIBLE_UNKNOWN</option>
+	  <option value="5" ng-selected="{{rule.rule.level === 5}}">NO_EXPOSURE</option>
+    </select></li>
+  			</ul>
+		<div style="margin-left:2px;margin-top: 2px;">
+			<button type="button" class="btn btn-default btn-md">
+  				<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+			</button>
+		</div>
+</div>
 </script>
