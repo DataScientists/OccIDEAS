@@ -1,5 +1,12 @@
 (function() {
-	angular.module("occIDEASApp.Tabs", [ 'ui.router' ]).config(Config);
+	angular.module("occIDEASApp.Tabs", [ 'ui.router' ])
+	.config(Config)
+	.factory('TabsCache',TabsCache);
+	
+	TabsCache.$inject = ['$cacheFactory'];
+	function TabsCache($cacheFactory){
+		return $cacheFactory('tabs-cache');
+	}
 
 	Config.$inject = ['$stateProvider','$windowProvider','$rootScopeProvider'];
 	function Config($stateProvider,$windowProvider,$rootScopeProvider) {
@@ -40,7 +47,12 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	data: function($stateParams,QuestionsService) {
+			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        		if(TabsCache.get($stateParams.row)){
+			        			console.log("Data getting from questions Cache ...");
+			        			return TabsCache.get($stateParams.row);
+			        		}
+			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
 			        					console.log("Data getting from questions AJAX ...");
@@ -60,6 +72,7 @@
 			        						$window.sliderVal.idNode.showFragmentSlider =true;
 			        						$window.sliderVal.idNode.showModuleSlider = false;
 			        					}
+			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				})
 			        	},

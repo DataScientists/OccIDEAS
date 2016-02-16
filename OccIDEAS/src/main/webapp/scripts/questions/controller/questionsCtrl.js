@@ -5,20 +5,20 @@
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData',
-	                          'agentsData','RulesService','$compile'];
+	                          'agentsData','RulesService','$compile','TabsCache'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,templateData,
-			agentsData,RulesService,$compile) {
+			agentsData,RulesService,$compile,TabsCache) {
 		var self = this;
 		$scope.data = data;	
+		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
-		/*$scope.data.showAgentSlider = true;*/
 		$anchorScroll.yOffset = 200;
 		$scope.templateData = templateData.template;
-		$scope.agentsData = initAgentData(agentsData);
+		$scope.agentsData = null;
 		$scope.aJSMData = templateData.ajsm;
     	$scope.frequencyData = templateData.frequency;
     	$scope.rulesObj = [];
@@ -386,13 +386,7 @@
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
-						if($scope.isClonable){						
-							saveModuleAndReload();
-							$scope.isClonable = false;												
-						}else{
 							saveModuleWithoutReload();
-						}
-						
 					}
 				}
 		}
@@ -449,6 +443,9 @@
 		    else{
 		      $scope.leftNav = "slideFragLeft";
 		    }
+		    if($scope.agentsData === null){
+				$scope.agentsData = initAgentData(agentsData);
+			}
 		};
 		
 		$scope.toggle = function(scope) {
@@ -952,6 +949,7 @@
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
+								TabsCache.put(data.data.idNode,data.data);
 								$scope.data = data.data;
 								if(locationId){
 									$scope.scrollTo(locationId);
@@ -978,6 +976,7 @@
 					QuestionsService.saveNode($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
+							TabsCache.put(response.data.idNode,response.data);
 							if(locationId && locationId != ''){
 								$scope.scrollTo(locationId);
 							}
@@ -1227,6 +1226,31 @@
         	   setTimeout(function(){
         	     $('#'+elementId).toggleClass('highlight');  
         	   },5000);
+        }
+        
+        $scope.toggleCollapse = function(node,scope){
+        	scope.toggle();
+        	if(node.collapsed){
+        		node.collapsed = false;
+        	}else{
+        		node.collapsed = true;
+        	}
+        	var o = getObject(TabsCache.get(moduleIdNode)[0].nodes,node.idNode);
+        	if(!angular.isUndefined(o)){
+        		o.collapsed = node.collapsed;
+        	}
+        }
+        
+        function getObject (array,idNode){
+        	var object = _.find(array, _.matchesProperty('idNode', idNode));
+        	if(object != null || !angular.isUndefined(object)){
+    			return object;
+    		}
+        	_.forEach(array,function(v,k) {
+        		if(v.nodes){
+        			return getObject(v.nodes,idNode);
+        		}
+        	});
         }
 	}
 })();
