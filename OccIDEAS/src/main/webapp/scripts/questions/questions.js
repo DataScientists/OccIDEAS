@@ -6,7 +6,7 @@
 	
 	Config.$inject = ['$stateProvider','treeConfig'];
 	function Config($stateProvider,treeConfig){
-		 $stateProvider
+		 /*$stateProvider
 		    .state('questionView', {
 		        url: '/questionView',
 		        templateUrl: 'scripts/questions/view/questions.html',
@@ -21,7 +21,7 @@
         				})
 		        	}
 		        }
-		 });
+		 });*/
 		 
 		 treeConfig.defaultCollapsed = false;
 	}

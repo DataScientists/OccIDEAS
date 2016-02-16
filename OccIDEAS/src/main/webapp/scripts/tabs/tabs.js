@@ -1,9 +1,10 @@
 (function() {
 	angular.module("occIDEASApp.Tabs", [ 'ui.router' ]).config(Config);
 
-	Config.$inject = ['$stateProvider','$windowProvider'];
-	function Config($stateProvider,$windowProvider) {
+	Config.$inject = ['$stateProvider','$windowProvider','$rootScopeProvider'];
+	function Config($stateProvider,$windowProvider,$rootScopeProvider) {
 		var $window = $windowProvider.$get();
+		$rootScopeProvider.$window = $window;
 		$stateProvider.state('tabs', {
 			abstract : true,
 			templateUrl : "scripts/tabs/view/tabs.html"
@@ -46,18 +47,18 @@
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
-			        					var idNode = response.data.idNode;
-			        					$window.sliderVal[idNode] = {
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
 			        							showFragmentSlider:true,
 			        							showModuleSlider:true,
 			        							showAgentSlider:true
 			        					};
 			        					if(response.data[0].type=='M_IntroModule'){
-			        						$window.sliderVal[idNode].showFragmentSlider =false;
-			        						$window.sliderVal[idNode].showModuleSlider = true;
+			        						$window.sliderVal.idNode.showFragmentSlider =false;
+			        						$window.sliderVal.idNode.showModuleSlider = true;
 			        					}else{
-			        						$window.sliderVal[idNode].showFragmentSlider =true;
-			        						$window.sliderVal[idNode].showModuleSlider = false;
+			        						$window.sliderVal.idNode.showFragmentSlider =true;
+			        						$window.sliderVal.idNode.showModuleSlider = false;
 			        					}
 						        		return response.data;
 		    				})
@@ -109,18 +110,18 @@
 			        		return QuestionsService.findQuestions($stateParams.row,'F')
 			        				.then(function(response){
 			        					if(angular.isUndefined($window.sliderVal)){
-				        					$window.sliderVal = [];
+				        					$window.sliderVal = {};
 				        				}
-			        					var idNode= $stateParams.row;
-			        					$window.sliderVal[idNode] = {
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
 			        							showFragmentSlider:true,
 			        							showModuleSlider:true,
 			        							showAgentSlider:true
 			        					};
 			        					console.log("Fragment Data from AJAX ...");
 			        					console.log("Fragment IdNode: "+$stateParams.row);			        					
-			        					$window.sliderVal[idNode].showModuleSlider = false;
-			        					$window.sliderVal[idNode].showFragmentSlider = true;		        					
+			        					$window.sliderVal.idNode.showModuleSlider = false;
+			        					$window.sliderVal.idNode.showFragmentSlider = true;		        					
 			        					return response.data;
 		    				})
 			        	},
@@ -150,11 +151,8 @@
 				    		});
 				        },
 				        agentsData: function(AgentsService){
-				        	return  AgentsService.get().then(function(data) {
-				        		var result = _.groupBy(data, function(b) { 
-				        			return b.groupName;
-				        		});
-					            return result;
+				        	return  AgentsService.get().then(function(x) {
+					            return x;
 				        	});
 				        }
 			        }
@@ -195,9 +193,9 @@
                     resolve:{
                         data: function($stateParams,RulesService) {
                             return RulesService.listByModule($stateParams.row)
-                                .then(function(response){
+                                .then(function(data){
                                     console.log("Data getting from module rules AJAX ... for "+$stateParams.row);
-                                    var viewData = response.data;
+                                    var viewData = data;
                                     
                                     console.log(viewData);
                                     return viewData;

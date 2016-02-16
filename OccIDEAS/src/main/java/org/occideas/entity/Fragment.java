@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
@@ -26,6 +28,10 @@ public class Fragment extends Node{
 	@OrderBy("sequence ASC")
 	private List<Question> childNodes;
 
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinColumn(name="idModule",referencedColumnName="idNode",updatable=false)
+	protected List<ModuleRule> moduleRule; 
+	
 	public Fragment() {
 		super();
 	}
@@ -46,5 +52,13 @@ public class Fragment extends Node{
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+	
+	public List<ModuleRule> getModuleRule() {
+		return moduleRule;
+	}
+
+	public void setModuleRule(List<ModuleRule> moduleRule) {
+		this.moduleRule = moduleRule;
 	}
 }

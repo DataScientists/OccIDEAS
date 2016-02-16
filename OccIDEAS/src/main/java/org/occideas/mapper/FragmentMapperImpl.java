@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Fragment;
+import org.occideas.entity.ModuleRule;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.FragmentVO;
@@ -16,6 +17,9 @@ public class FragmentMapperImpl implements FragmentMapper {
 
     @Autowired
     private QuestionMapper nodeMapper;
+    
+    @Autowired
+    private ModuleRuleMapper ruleMapper;
 
     @Override
     public FragmentVO convertToFragmentVO(Fragment moduleEntity,boolean includeChild) {
@@ -42,7 +46,10 @@ public class FragmentMapperImpl implements FragmentMapper {
         fragmentVO.setOriginalId( moduleEntity.getOriginalId() );
         fragmentVO.setDeleted( moduleEntity.getDeleted() );
         fragmentVO.setNodeclass( moduleEntity.getNodeclass() );
-
+        List<ModuleRule> moduleRule = moduleEntity.getModuleRule();
+        if(!CommonUtil.isListEmpty(moduleRule)){
+        	fragmentVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+        }
         return fragmentVO;
     }
 
