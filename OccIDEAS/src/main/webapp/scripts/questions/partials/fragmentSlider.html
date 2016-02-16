@@ -1,0 +1,53 @@
+<div ng-if="$window.sliderVal.idNode.showFragmentSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
+		<div class="frag-contain">
+		<div class="fragmentSticker" ng-click="toggleRight()">Fragments</div> 
+<label for="fragmentsdragdrop" class="fraglabel">Drag Drop Fragments: </label>
+<div id="fragmentsdragdrop"><ul></ul>
+<div>
+    <h5>Fragment List</h5>
+    <uib-accordion close-others="oneAtATime">
+     	 <uib-accordion-group heading="aJSMs" >
+				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="aJSMData">
+				<li ng-repeat="node in aJSMData track by $index" ui-tree-node  
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+    	<uib-accordion-group heading="Templates" >
+		<div ui-tree="templateTreeOptions" id="templateTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="templateData">
+				<li ng-repeat="node in templateData track by $index" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+    	<uib-accordion-group heading="Frequencies" >
+		<div ui-tree="templateTreeOptions" id="frequencyTree-root" data-clone-enabled="true">
+			<ol ui-tree-nodes ng-model="frequencyData">
+				<li ng-repeat="node in frequencyData track by $index" ui-tree-node 
+				ng-include="'nodes_renderer2.html'"></li>
+			</ol>
+		</div>
+    	</uib-accordion-group>
+     </uib-accordion>
+     
+  </div>
+</div>
+</div>
+	<script type="text/ng-template" id="nodes_renderer2.html">
+<div id="tree2-root" class="angular-ui-tree">
+     <div class="tree-node">
+        <div class="pull-left tree-handle angular-ui-tree-handle " ui-tree-handle=""  >
+          <span class="glyphicon glyphicon-list"></span>
+        </div>
+<!-- start content -->
+        <div class="tree-node-content Q {{node.warning}}">        
+          <span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>
+          <span data-nodrag>{{node.name}}</span>
+       </div> 
+<!-- end content -->
+     </div>
+  </div>
+</script>
+</div>
