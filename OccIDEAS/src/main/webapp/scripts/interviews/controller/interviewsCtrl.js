@@ -18,14 +18,8 @@
                 return false;
             }
 
-            var idNode;
-            if (!$scope.interviewStarted
-            // && node.type != "Q_simple" && node.type != 'Q_single'
-            ) {
-                idNode = node.idNode;
-            } else {
-                idNode = seletectedEl[0].id;
-            }
+            var idNode = seletectedEl[0].id;
+            
             InterviewsService.getNextQuestion(idNode).then(function (response) {
                 console.log(response);
                 if (response.status === 200) {

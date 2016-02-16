@@ -166,12 +166,12 @@
                     controller: 'InterviewsCtrl as vm',
                     params:{row: null},
                     resolve:{
-                        data: function($stateParams,InterviewsService) {                    	
-                            return InterviewsService.findQuestions($stateParams.row,'M')
+                        data: function($stateParams,QuestionsService) {                    	
+                            return QuestionsService.findQuestions($stateParams.row,'M')
                                 .then(function(response){
                                     console.log("Data getting from questions AJAX ...");
                                     var viewData = response.data;
-                                    viewData.showedQuestion = response.data[0];
+                                    viewData.showedQuestion = response.data[0].nodes[0];
                                     viewData.showAgentSlider = false;
                                     console.log(viewData);
                                     return viewData;
