@@ -386,7 +386,12 @@
 					$scope.isDragging = false;
 					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
+						if($scope.isClonable){						
+							saveModuleAndReload();
+							$scope.isClonable = false;												
+						}else{
 							saveModuleWithoutReload();
+						}
 					}
 				}
 		}
@@ -870,7 +875,7 @@
 					} 
 				  ],
 				  [ 'Open as aJSM', function($itemScope) {	
-	  					var node = $itemScope.node;
+	  					var node = angular.copy($itemScope.node);
 	  					node.idNode = node.link;
 	  					node.type = 'F_ajsm';
 	  					node.classtype = 'F';
@@ -912,11 +917,10 @@
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
 					
-					var toggleChildren = function (scope) {
-		        		var i, subScope,
-		                nodes = scope.childNodes();
-			            for (i = 0; i < nodes.length; i++) {
-			              subScope = nodes[i].$childNodesScope;
+					var toggleChildren = function (nodes) {
+		                //var nodes = $itemScope.childNodes();
+			            for (var i = 0; i < nodes.length; i++) {
+			              var subScope = nodes[i].$childNodesScope;
 			              if (subScope) {
 			            	  var collapsed = !subScope.collapsed;
 			            	  for (i = 0; i < nodes.length; i++) {
@@ -925,7 +929,7 @@
 			              }
 			            }
 		              };
-		              toggleChildren($itemScope);
+		              toggleChildren($itemScope.childNodes());
 					} 
 			   ]
 			];
