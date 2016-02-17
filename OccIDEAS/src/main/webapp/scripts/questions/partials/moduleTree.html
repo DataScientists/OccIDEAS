@@ -8,7 +8,7 @@
 <!-- start content -->
         <div context-menu="showMenu(this)" sticky disabled-sticky="!((node.nodeclass === 'M')||(node.nodeclass === 'F'))" class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
 		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
-            <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-right" ng-class="{
+            <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,
               'glyphicon-chevron-down': !collapsed
               }">
@@ -97,8 +97,8 @@
 <!-- end content -->
      </div>
   </div>
-  <ol ui-tree-nodes="" ng-model="node.nodes" >
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" ng-if="!collapsed" collapsed="true"></li>
+  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
   </ol>
 </script>
 <div class="row ">
