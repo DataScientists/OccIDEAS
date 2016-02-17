@@ -775,20 +775,19 @@
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
 					
-					var toggleChildren = function (scope) {
-		        		var i, subScope,
-		                nodes = scope.childNodes();
-			            for (i = 0; i < nodes.length; i++) {
-			              subScope = nodes[i].$childNodesScope;
-			              if (subScope) {
-			            	  var collapsed = !subScope.collapsed;
-			            	  for (i = 0; i < nodes.length; i++) {
-			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
-			    	            }
-			              }
+				  var collapseOrExpand = function (scope) {
+			          var i, subScope,
+			              nodes = scope.childNodes();
+			          for (i = 0; i < nodes.length; i++) {
+			        	var collapsed = nodes[i].collapsed;
+			            !collapsed ? nodes[i].collapse() : nodes[i].expand();
+			            subScope = nodes[i].$childNodesScope;
+			            if (subScope) {
+			              collapseOrExpand(subScope);
 			            }
-		              };
-		              toggleChildren($itemScope);
+			          }
+			        };
+			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Dividier
 			  [ 'Run Interview', function($itemScope) {
