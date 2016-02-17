@@ -1,0 +1,37 @@
+<script type="text/ng-template" id="nodes_renderer.html">
+    <div id="tree1-root" class="angular-ui-tree">
+        <div class="tree-node" id="{{node.anchorId}}">
+            <!-- start content -->
+            <div disabled-sticky="!((node.nodeclass === 'M')||(node.nodeclass === 'F'))"
+                 class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
+                <a class="btn btn-success btn-xs {{node.type}}">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+                <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
+                <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+                <span>{{node.name}}</span>
+
+                <div class="form-group pull-right" style="margin-top: 5px;">
+                    <span class="badge">{{node.number}}</span>
+                </div>
+            </div>
+            <!-- end content -->
+        </div>
+    </div>
+    <ol ui-tree-nodes="" ng-model="node.nodes">
+        <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
+    </ol>
+</script>
+<div class="row ">
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ui-tree="moduleTreeOptions" id="tree-root">
+                    <ol ui-tree-nodes ng-model="data">
+                        <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

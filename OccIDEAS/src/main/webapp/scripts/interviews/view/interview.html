@@ -18,11 +18,11 @@
                 </li>
             </div>
             <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised md-mini">
-                <span>Get next</span>
+                <span>Next</span>
             </md-button>
         </ul>
     </div>
 </div>
 <div class="col-md-6 moduleInterview">
-    <div ng-include="'scripts/questions/view/questions.html'"></div>
+    <ng-include src="'scripts/interviews/partials/moduleTree.html'"></ng-include>
 </div>
