@@ -829,7 +829,9 @@
 					  controller: QuestionsCtrl,
 					  resolve: {					  
 						  data: function () {
-							  return $scope.selectedNode;
+							  var data = [];
+							  data[0]=$scope.selectedNode;
+							  return data;
 		                    },
 		                    templateData: function(){
 		                    	return templateData;
@@ -1016,13 +1018,12 @@
 							nodeclass : "F",
 							nodes : []
 						};
-					var childNodes = [];
-					angular.copy(data.nodes,childNodes);
+					var childNodes = angular.copy(data[0].nodes);
 					destNode.nodes.unshift({
-						name : data.name,
-						description : data.description,
-						type : data.type,
-						nodeclass : data.nodeclass,
+						name : data[0].name,
+						description : data[0].description,
+						type : data[0].type,
+						nodeclass : data[0].nodeclass,
 						nodes : childNodes
 					});
 					cascadeTemplateNullIds(destNode.nodes);
