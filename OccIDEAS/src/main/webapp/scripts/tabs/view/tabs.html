@@ -6,16 +6,23 @@
       	<md-tab-label>
         <span>{{tab.title}}</span>
           <span ng-click="removeTab(tab)" ng-if="tab.canClose">
-              <span class="glyphicon glyphicon-remove" style="margin-left:3px" />
+              <span class="glyphicon glyphicon-remove" style="margin-left:3px"/>
           </span>
         </md-tab-label>
         <md-tab-body ng-cloak ng-class="tab.style" layout="column" layout-fill >
                 <div class="tab{{$index%4}}" >
-         		<ng-view ng-cloak ui-view="{{tab.viewName}}">
-         		<md-progress-circular md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+				<ng-view ng-cloak ui-view="{{tab.viewName}}" ng-if="tab.viewName != 'tabs.questions'">
+				<md-progress-circular ng-if="questionsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+				<div ng-cloak ui-view="questions" ng-show="$state.includes('tabs.questions')">
+				</div>
+         		</div>
+         		<div ng-cloak ui-view="questions1" ng-show="$state.includes('tabs.questions1')">
+         		</div>
+         		</div>
+         		<div ng-cloak ui-view="questions2" ng-show="$state.includes('tabs.questions2')">
+         		</div>
          		</div>
           <br/>
-<!-- <md-button class="md-primary md-raised" ng-click="removeTab( tab )" ng-disabled="tabs.length <= 1">Remove Tab</md-button> -->
         </div>
         </md-tab-body>
       </md-tab>

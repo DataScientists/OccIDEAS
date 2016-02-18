@@ -1,11 +1,12 @@
 <div ng-if="$window.sliderVal.idNode.showFragmentSlider" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
 		<div class="frag-contain">
-		<div class="fragmentSticker" ng-click="toggleRight()">Fragments</div> 
+		<div class="fragmentSticker" ng-click="toggleRight()" style="cursor: pointer;">Fragments</div> 
 <label for="fragmentsdragdrop" class="fraglabel">Drag Drop Fragments: </label>
 <div id="fragmentsdragdrop"><ul></ul>
 <div>
     <h5>Fragment List</h5>
-    <uib-accordion close-others="oneAtATime">
+    <md-progress-circular ng-if="fragmentsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+    <uib-accordion close-others="oneAtATime" ng-if="!fragmentsLoading">
      	 <uib-accordion-group heading="aJSMs" >
 				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
 			<ol ui-tree-nodes ng-model="aJSMData">

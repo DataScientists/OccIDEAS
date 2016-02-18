@@ -1,8 +1,8 @@
 (function() {
 	angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
-	TabsCtrl.$inject = ['$scope','$state'];
-	function TabsCtrl($scope,$state) {
+	TabsCtrl.$inject = ['$scope','$state','$rootScope'];
+	function TabsCtrl($scope,$state,$rootScope) {
 		$scope.loading = false;
 		$scope.tabOptions = [];
 		$scope.tabOptions[0] = {
@@ -17,7 +17,7 @@
 			state: "tabs.agents",
 			data: ""
 		};
-				
+		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
 			var state = null;
 			var data = null;
@@ -43,14 +43,14 @@
 
 		var tabs = [ {
 			title : 'Module List',
-			viewName: 'moduleView',
+			viewName: 'modules@tabs',
 		}, {
 			title : 'Fragment List',
-			viewName: 'fragmentView'
+			viewName: 'fragments@tabs'
 		},
 		{
 			title : 'Agent List',
-			viewName: 'agentView'
+			viewName: 'agents@tabs'
 		}], selected = null, previous = null;
 		$scope.tabs = tabs;
 		$scope.selectedIndex = 0;
@@ -70,24 +70,36 @@
 			
 		};
 		$scope.addModuleTab = function(row) {
+			$rootScope.questionsLoading = true;
 			var check = _.some( tabs, function( el ) {
 			    return el.title === row.name;
 			} );
-			if(!check){
+			if(!check && ($scope.questionsCount < 3)){
 			tabs.push({
 				title : row.name,
 				viewName: 'questionsView',
 				canClose: true,
 				disabled : false
 			});
+			var questionState = '';
+			if($scope.questionsCount > 0){
+				questionState = $scope.questionsCount;
+			}
 			$scope.tabOptions.push({
-				state: "tabs.questions",
+				state: "tabs.questions"+questionState,
 				data: {row:row.idNode}
 			});
-			}else{
+			$scope.questionsCount++;
+			}
+			else if($scope.questionsCount == 2){
+				$rootScope.questionsLoading = false;
+				alert("Unable to have more than 3 questions tab opened at the same time.");
+			}
+			else{
 				_.find(tabs, function(el, index){ 
 					if(el.title === row.name){
 						$scope.selectedIndex = index;
+						$rootScope.questionsLoading = false;
 				    } 
 				});
 			}
@@ -118,6 +130,7 @@
             }
         };
         $scope.addInterviewTab = function(scope) {
+        	$rootScope.questionsLoading = true;
             var nodeData = scope.$modelValue;
             var tabTitle = "Interview "+nodeData.name;
             var check = _.some( tabs, function( el ) {
@@ -138,6 +151,7 @@
                 _.find(tabs, function(el, index){
                     if(el.title === tabTitle){
                         $scope.selectedIndex = index;
+                        $rootScope.questionsLoading = false;
                     }
                 });
             }
@@ -149,6 +163,7 @@
 			if($scope.selectedIndex==3){
 				$scope.selectedIndex=0;
 			}
+			$scope.questionsCount--;
 		};
 		$scope.turnOffProgressBar = function turnOffProgressBar(){
 			$scope.loading = false;

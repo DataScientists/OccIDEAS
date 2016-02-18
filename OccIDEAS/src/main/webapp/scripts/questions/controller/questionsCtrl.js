@@ -4,12 +4,12 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData',
-	                          'agentsData','RulesService','$compile','TabsCache'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state',
+	                          'agentsData','RulesService','$compile','TabsCache','$rootScope'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state,templateData,
-			agentsData,RulesService,$compile,TabsCache) {
+			$anchorScroll,$location,$mdMedia,$window,$state,
+			agentsData,RulesService,$compile,TabsCache,$rootScope) {
 		var self = this;
 		$scope.data = data;	
 		var moduleIdNode = $scope.data[0].idNode;
@@ -17,10 +17,10 @@
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
-		$scope.templateData = templateData.template;
+		$scope.templateData = null;
 		$scope.agentsData = null;
-		$scope.aJSMData = templateData.ajsm;
-    	$scope.frequencyData = templateData.frequency;
+		$scope.aJSMData = null;
+    	$scope.frequencyData = null;
     	$scope.rulesObj = [];
     	
     	function initAgentData(agent){
@@ -41,7 +41,36 @@
         		} );
         	}
     		group = setOrder(group);
+    		$scope.agentsLoading = false;
     		return group;
+    	}
+    	
+    	function initFragmentData(){
+    		$scope.fragmentsLoading = true;
+    		 FragmentsService.get().then(function(data) {	
+	    			var object = {};
+	    			var ajsms = [];
+	    			var templates = [];
+	    			var frequencies = [];
+	    			for(var i=0;i < data.length;i++){
+	    				var node = data[i];
+	    				node.idnode = "";
+	    				node.nodeclass = "Q";
+	    				if(node.type=='F_ajsm'){
+	    					node.type = "Q_linkedajsm";
+	    					ajsms.push(node);
+	    				}else if(node.type=='F_template'){
+	    					templates.push(node);
+	    				}else if(node.type=='F_frequency'){
+	    					frequencies.push(node);
+	    				}
+	    			}
+	    			$scope.templateData = templates;
+	    			$scope.frequencyData = frequencies;
+	    			$scope.aJSMData = ajsms;
+	    			$scope.fragmentsLoading = false;
+	    			return object;
+    		 });
     	}
     	
     	function setOrder (obj) {
@@ -438,6 +467,9 @@
 		    else{
 		      $scope.rightNav = "slideFrag";
 		    }
+		    if($scope.templateData === null || $scope.aJSMData === null || $scope.frequencyData === null){
+				initFragmentData();
+			}
 		};
 		
 		$scope.leftNav = "slideFragLeft";
@@ -449,6 +481,7 @@
 		      $scope.leftNav = "slideFragLeft";
 		    }
 		    if($scope.agentsData === null){
+		    	$scope.agentsLoading = true;
 				$scope.agentsData = initAgentData(agentsData);
 			}
 		};
@@ -831,9 +864,6 @@
 							  var data = [];
 							  data[0]=$scope.selectedNode;
 							  return data;
-		                    },
-		                    templateData: function(){
-		                    	return templateData;
 		                    },
 		                    agentsData: function(){
 		                    	return agentsData;
@@ -1256,5 +1286,7 @@
         		}
         	});
         }
+        
+        $rootScope.questionsLoading = false;
 	}
 })();
