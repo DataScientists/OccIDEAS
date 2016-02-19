@@ -56,10 +56,10 @@
 		$scope.selectedIndex = 0;
 
 		$scope.addFragmentTab = function(row) {
-			
+			$rootScope.questionsLoading = true;
 			tabs.push({
 				title : row.name,
-				viewName: 'fragments@tabs',
+				viewName: 'fragment@tabs',
 				canClose: true,
 				disabled : false
 			});

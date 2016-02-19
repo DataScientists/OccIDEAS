@@ -206,7 +206,7 @@
 		    deepStateRedirect: false,
 			views:{
 				'fragment@tabs':{
-					templateUrl: 'scripts/questions/view/questions.html',
+					template: '<div scope-question></div>',
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null},
 			        resolve:{
