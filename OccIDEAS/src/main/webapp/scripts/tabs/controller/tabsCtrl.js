@@ -59,7 +59,7 @@
 			
 			tabs.push({
 				title : row.name,
-				viewName: 'getfragmentView',
+				viewName: 'fragments@tabs',
 				canClose: true,
 				disabled : false
 			});
@@ -113,7 +113,7 @@
             if(!check){
                 tabs.push({
                     title : tabTitle,
-                    viewName: 'rulesView',
+                    viewName: 'rules@tabs',
                     canClose: true,
                     disabled : false
                 });
@@ -139,7 +139,7 @@
             if(!check){
                 tabs.push({
                     title : tabTitle,
-                    viewName: 'interviewView',
+                    viewName: 'interview@tabs',
                     canClose: true,
                     disabled : false
                 });
