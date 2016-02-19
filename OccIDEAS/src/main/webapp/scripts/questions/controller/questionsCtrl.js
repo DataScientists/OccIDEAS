@@ -22,6 +22,7 @@
 		$scope.aJSMData = null;
     	$scope.frequencyData = null;
     	$scope.rulesObj = [];
+    	$scope.rulesInt = [];
     	
     	function initAgentData(agent){
     		var group = _.groupBy(agent, function(b) { 
@@ -98,7 +99,24 @@
     	$scope.getRulesIfAny = function(node,agents){
     		var filteredAgent = _.filter(node.moduleRule, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
-				return _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
+				var rules=  _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
+				var id = rules.rule.idRule;
+				var existRules = _.filter($scope.rulesInt, { 'id': id});
+				if(existRules.length > 0){
+					existRules[0].nodes.push({
+						nodeNumber:node.number,
+						idNode:node.idNode
+					});
+				}else{
+				$scope.rulesInt.push({
+					'id':id,
+					nodes:[{
+						nodeNumber:node.number,
+						idNode:node.idNode
+					}]
+				});
+				}
+				return rules;
 			}
 			return null;			
     	}
@@ -932,6 +950,12 @@
 		$scope.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope,node) {
+				  var conditions = _.filter($scope.rulesInt, { 'id': $itemScope.rule.rule.idRule});
+				  if(conditions.length > 0){
+					  $itemScope.rule.condition = conditions[0].nodes;
+				  }else{
+					  $itemScope.rule.condition = [];
+				  }
 				  newNote(node.currentTarget.parentElement,$itemScope,$compile);
 			  }
 			  ]
@@ -1253,8 +1277,8 @@
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 
-        $scope.highlightNode = function(rule){
-        	var elementId = 'node-'+rule.idNode;
+        $scope.highlightNode = function(idNode){
+        	var elementId = 'node-'+idNode;
         	$scope.scrollTo(elementId);
         	$('#'+elementId).toggleClass('highlight');  
         	   setTimeout(function(){

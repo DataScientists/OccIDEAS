@@ -16,7 +16,7 @@ public class RuleVO {
 	private int level;
 	private Date lastUpdated;
 	@JsonInclude(Include.NON_NULL)
-	private List<NodeVO> conditions;
+	private List<PossibleAnswerVO> conditions;
 	private Long legacyRuleId;
 	@JsonInclude(Include.NON_NULL)
 	private List<AdditionalField> additionalfields;
@@ -61,11 +61,11 @@ public class RuleVO {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public List<NodeVO> getConditions() {
+	public List<PossibleAnswerVO> getConditions() {
 		return conditions;
 	}
 
-	public void setConditions(List<NodeVO> conditions) {
+	public void setConditions(List<PossibleAnswerVO> conditions) {
 		this.conditions = conditions;
 	}
 
@@ -84,5 +84,4 @@ public class RuleVO {
 	public void setAdditionalfields(List<AdditionalField> additionalfields) {
 		this.additionalfields = additionalfields;
 	}
-
 }
