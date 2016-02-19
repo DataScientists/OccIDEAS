@@ -97,12 +97,7 @@
 			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				})
-			        	},
-				        agentsData: function(AgentsService){
-				        	return  AgentsService.get().then(function(x) {
-					            return x;
-				        	});
-				        }
+			        	}
 			        }
 			     }
 			}
@@ -144,12 +139,7 @@
 			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				})
-			        	},
-				        agentsData: function(AgentsService){
-				        	return  AgentsService.get().then(function(x) {
-					            return x;
-				        	});
-				        }
+			        	}
 			        }
 			     }
 			}
@@ -191,12 +181,7 @@
 			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				})
-			        	},
-				        agentsData: function(AgentsService){
-				        	return  AgentsService.get().then(function(x) {
-					            return x;
-				        	});
-				        }
+			        	}
 			        }
 			     }
 			}
@@ -229,12 +214,7 @@
 			        					$window.sliderVal.idNode.showFragmentSlider = true;		        					
 			        					return response.data;
 		    				})
-			        	},
-				        agentsData: function(AgentsService){
-				        	return  AgentsService.get().then(function(x) {
-					            return x;
-				        	});
-				        }
+			        	}
 			        }
 				}
 			}

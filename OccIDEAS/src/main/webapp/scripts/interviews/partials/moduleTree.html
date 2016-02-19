@@ -1,3 +1,16 @@
+<div class="row ">
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ui-tree="moduleTreeOptions" id="tree-root">
+                    <ol ui-tree-nodes ng-model="data">
+                        <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/ng-template" id="nodes_renderer.html">
     <div id="tree1-root" class="angular-ui-tree">
         <div class="tree-node" id="{{node.anchorId}}">
@@ -22,16 +35,3 @@
         <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
     </ol>
 </script>
-<div class="row ">
-    <div class="col-sm-12">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ui-tree="moduleTreeOptions" id="tree-root">
-                    <ol ui-tree-nodes ng-model="data">
-                        <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

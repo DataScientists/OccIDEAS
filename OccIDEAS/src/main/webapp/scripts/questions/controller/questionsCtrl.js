@@ -5,11 +5,11 @@
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
-	                          'agentsData','RulesService','$compile','TabsCache','$rootScope'];
+	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			agentsData,RulesService,$compile,TabsCache,$rootScope) {
+			AgentsService,RulesService,$compile,TabsCache,$rootScope) {
 		var self = this;
 		$scope.data = data;	
 		var moduleIdNode = $scope.data[0].idNode;
@@ -24,7 +24,8 @@
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	
-    	function initAgentData(agent){
+    	function initAgentData(){
+    		AgentsService.get().then(function(agent) {
     		var group = _.groupBy(agent, function(b) { 
     			return b.groupName;
     		});
@@ -43,7 +44,8 @@
         	}
     		group = setOrder(group);
     		$scope.agentsLoading = false;
-    		return group;
+    		$scope.agentsData = group;
+    		});
     	}
     	
     	function initFragmentData(){
@@ -81,8 +83,6 @@
     	    });
     	    return out;
     	}
-    	
-    	
     	
 		$scope.toggleRulesObj = function (agents){
 			if(_.findIndex($scope.rulesObj, function(o) { 
@@ -500,7 +500,7 @@
 		    }
 		    if($scope.agentsData === null){
 		    	$scope.agentsLoading = true;
-				$scope.agentsData = initAgentData(agentsData);
+				initAgentData();
 			}
 		};
 		
@@ -882,9 +882,6 @@
 							  var data = [];
 							  data[0]=$scope.selectedNode;
 							  return data;
-		                    },
-		                    agentsData: function(){
-		                    	return agentsData;
 		                    }
 					  },
 					  /*locals: {

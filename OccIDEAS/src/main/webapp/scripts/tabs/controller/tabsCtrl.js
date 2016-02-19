@@ -37,6 +37,7 @@
 			}else{
 				state = "tabs.modules";
 			}
+			console.log("going to state "+state);
 			$state.go(state,data);
 
 		});
@@ -57,6 +58,7 @@
 
 		$scope.addFragmentTab = function(row) {
 			$rootScope.questionsLoading = true;
+			console.log("addFragmentTab questionsLoading "+$rootScope.questionsLoading);
 			tabs.push({
 				title : row.name,
 				viewName: 'fragment@tabs',
@@ -71,6 +73,7 @@
 		};
 		$scope.addModuleTab = function(row) {
 			$rootScope.questionsLoading = true;
+			console.log("addModuleTab questionsLoading "+$rootScope.questionsLoading);
 			var check = _.some( tabs, function( el ) {
 			    return el.title === row.name;
 			} );
@@ -103,8 +106,10 @@
 				    } 
 				});
 			}
+			console.log("addModuleTab questionsLoading end");
 		};
         $scope.addRulesTab = function(scope) {
+        	console.log("addRulesTab questionsLoading "+$rootScope.questionsLoading);
             var nodeData = scope.$modelValue;
             var tabTitle = "Rules "+nodeData.name;
             var check = _.some( tabs, function( el ) {
@@ -131,6 +136,7 @@
         };
         $scope.addInterviewTab = function(scope) {
         	$rootScope.questionsLoading = true;
+        	console.log("addInterviewTab questionsLoading "+$rootScope.questionsLoading);
             var nodeData = scope.$modelValue;
             var tabTitle = "Interview "+nodeData.name;
             var check = _.some( tabs, function( el ) {
