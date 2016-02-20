@@ -100,7 +100,7 @@
     		var filteredAgent = _.filter(node.moduleRule, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
 				var rules=  _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
-				var id = rules.rule.idRule;
+				var id = rules.idRule;
 				var existRules = _.filter($scope.rulesInt, { 'id': id});
 				if(existRules.length > 0){
 					existRules[0].nodes.push({
@@ -804,6 +804,8 @@
 				var menuOptions;
 				if(scope.node.type=='Q_linkedmodule'){
 					menuOptions = $scope.linkedModuleMenuOptions;
+				}else if(scope.node.type=='Q_linkedajsm'){
+					menuOptions = $scope.linkedAjsmMenuOptions;
 				}else{
 					menuOptions = $scope.questionMenuOptions;
 				}
@@ -919,15 +921,22 @@
 		              };
 		              toggleChildren($itemScope);
 					} 
-				  ],
-				  [ 'Open as aJSM', function($itemScope) {	
-	  					var node = angular.copy($itemScope.node);
-	  					node.idNode = node.link;
-	  					node.type = 'F_ajsm';
-	  					node.classtype = 'F';
-	  					$scope.addFragmentTab(node);
-	  				} 
 				  ]
+			];
+		$scope.linkedAjsmMenuOptions =
+			[
+			  [ 'Remove (Toggle)', function($itemScope) {
+					$scope.deleteNode($itemScope);
+					}
+			  ],
+			  [ 'Open as aJSM', function($itemScope) {	
+					var node = angular.copy($itemScope.node);
+					node.idNode = node.link;
+					node.type = 'F_ajsm';
+					node.classtype = 'F';
+					$scope.addFragmentTab(node);
+				} 
+			  ]
 			];
 		$scope.linkedModuleMenuOptions =
 			[
@@ -936,7 +945,7 @@
 					}
 			  ],
 			  [ 'Open as Module', function($itemScope) {
-	  					var node = $itemScope.node;
+				  		var node = angular.copy($itemScope.node);
 	  					node.idNode = node.link;
 	  					node.type = 'M_Module';
 	  					node.classtype = 'M';
@@ -947,14 +956,23 @@
 		$scope.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope,node) {
-				  var conditions = _.filter($scope.rulesInt, { 'id': $itemScope.rule.rule.idRule});
+				  /*var conditions = _.filter($scope.rulesInt, { 'id': $itemScope.rule.rule.idRule});
 				  if(conditions.length > 0){
 					  $itemScope.rule.condition = conditions[0].nodes;
 				  }else{
 					  $itemScope.rule.condition = [];
-				  }
-				  newNote(node.currentTarget.parentElement,$itemScope,$compile);
-			  }
+				  }*/
+				  //get full list of rules on this node and agent
+				  
+				  RulesService.getRule($itemScope.rule.idRule).then(function(response) {
+					  console.log('Data getting from AJAX rule id:'+$itemScope.rule.idRule);
+					  if(response.status === 200){
+						console.log('Found rule id:'+response.data[0].idRule);
+						$itemScope.rule.condition = response.data[0].conditions;
+						newNote(node.currentTarget.parentElement,$itemScope,$compile);
+					  }
+			        });
+			  	}			  
 			  ]
 			];
 		
@@ -1149,7 +1167,7 @@
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
-					console.log(node.name)
+					
 					node.sequence = i;
 					if(!node.idNode){
 						increment =(increment + 1);
@@ -1177,7 +1195,7 @@
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
-					console.log(node.name)
+					
 					node.sequence = i;
 					node.topNodeId = topNodeId;
 					if(node.nodeclass=='Q'){

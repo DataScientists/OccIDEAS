@@ -2,16 +2,17 @@ package org.occideas.entity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 
 @Entity 
 public class Rule implements Serializable {
@@ -27,7 +28,12 @@ public class Rule implements Serializable {
 	private int level;
 //	@Type(type="timestamp")
 	private Date lastUpdated;
-
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="Node_Rule", 
+                joinColumns={@JoinColumn(name="idRule")}, 
+                inverseJoinColumns={@JoinColumn(name="idNode")})
+	private List<PossibleAnswer> conditions;
 	private Long legacyRuleId;
 	
 	@ManyToMany(cascade = {CascadeType.ALL})
@@ -85,12 +91,15 @@ public class Rule implements Serializable {
 	public void setAgentId(long agentId) {
 		this.agentId = agentId;
 	}
-	/*public List<AdditionalField> getAdditionalfields() {
-		return additionalfields;
+	public List<PossibleAnswer> getConditions() {
+		if(conditions==null){
+			conditions = new ArrayList<PossibleAnswer>();
+		}
+		return conditions;
 	}
-	public void setAdditionalfields(List<AdditionalField> additionalfields) {
-		this.additionalfields = additionalfields;
-	}*/
+	public void setConditions(List<PossibleAnswer> conditions) {
+		this.conditions = conditions;
+	}
 	
 	public List<AdditionalField> getAdditionalfields() {
 		return additionalfields;

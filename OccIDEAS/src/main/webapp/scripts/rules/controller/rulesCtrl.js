@@ -23,7 +23,7 @@
 				          if(!self.tableParams.shouldGetData){
 				        	  return self.tableParams.settings().dataset;
 				          }
-				          console.log("ModuleId:"+templateData.moduleId); //Ask Jed about a better way to do this
+				          console.log("ModuleId:"+templateData.moduleId); 
 				          return  RulesService.listByModule(templateData.moduleId).then(function(data) {
 				        	  console.log("Data getting from moduleruless ajax ... id:"+templateData.moduleId);        	 
 				        	  self.originalData = angular.copy(data);

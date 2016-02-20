@@ -21,7 +21,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 
 	@Autowired
 	private ModuleRuleService service;	
-
+	
 	@GET
 	@Path(value="/getlist")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)

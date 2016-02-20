@@ -42,6 +42,7 @@ public class ModuleRuleServiceImpl implements ModuleRuleService {
 		modulesVO.addAll(mapper.convertToModuleRuleVOList(modules));
 		return modulesVO;
 	}
+	
 
 	@Override
 	public ModuleRuleVO create(ModuleRuleVO o) {

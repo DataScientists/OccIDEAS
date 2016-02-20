@@ -28,13 +28,21 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
-		function listByAgent(idNode) {
-			var restUrl = 'rest/modulerule/getbyagent?id=' + idNode;
+		function listByAgent(idAgent) {
+			var restUrl = 'rest/modulerule/getbyagent?id=' + idAgent;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
 				})
 			return request.then(handleSuccess1,handleError);
+		}
+		function getRule(idRule) {
+			var restUrl = 'rest/rule/get?id=' + idRule;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
 		}
 		//modulerule/getlist
 		function handleError( response ) {
@@ -57,6 +65,7 @@
 			listByModule: listByModule,
 			listByAgent: listByAgent,
 			listAllRules: listAllRules,
+			getRule: getRule,
 			findRules: findRules
 			
 		};

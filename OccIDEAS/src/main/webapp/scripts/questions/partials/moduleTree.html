@@ -63,11 +63,7 @@
 							<div class="rulescontainer">
 								<div class="agentACell">
 									<span class="cell-lable">
-										<div ng-class="{'probHigh':rule.rule.level === 0,
-														'probMedium':rule.rule.level === 1,
-														'probLow':rule.rule.level === 2,
-														'probUnknown':rule.rule.level === 3,
-														'possUnknown':rule.rule.level === 4}" ng-if="rule != null"></div>
+										<div ng-class="rule.ruleLevel" ng-if="rule != null"></div>
 									</span>
 								</div>
 							</div>

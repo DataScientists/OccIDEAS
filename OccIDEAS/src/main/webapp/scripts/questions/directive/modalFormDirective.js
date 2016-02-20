@@ -20,7 +20,7 @@
 		                        + "</div>",
 		            controller: function ($scope, $modalInstance) {
 		                $scope.ok = function ($scope) {
-		                	console.log($scope);
+		                	
 		                    $modalInstance.close();
 		                };
 		      
