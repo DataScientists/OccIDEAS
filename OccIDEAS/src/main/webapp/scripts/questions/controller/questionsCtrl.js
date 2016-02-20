@@ -2,17 +2,62 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
+	QuestionsCtrl.$inject = [ 'row', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope'];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
+	function QuestionsCtrl(row, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,TabsCache,$rootScope) {
 		var self = this;
-		$scope.data = data;	
-		var moduleIdNode = $scope.data[0].idNode;
+		self.questionLoading = true;
+		var idNode = 'Node'+row;
+		if(angular.isUndefined($window.sliderVal)){
+			$window.sliderVal = [];
+			}
+		$window.sliderVal.idNode = {
+				showFragmentSlider:true,
+				showModuleSlider:false,
+				showAgentSlider:true
+		};
+		var initData = function(row){
+			if(TabsCache.get(row)){
+    			console.log("[questions@tabs]Data getting from questions Cache ...");
+    			_.merge($scope.data, TabsCache.get(row));
+				if (!$scope.data.$$phase) {
+			        try {
+			        	$scope.data.$digest();
+			        }
+			        catch (e) { }
+			    }
+				self.questionLoading = false;
+    		}
+    		
+    		return QuestionsService.findQuestions(row,'M')
+    				.then(function(response){
+    					console.log("[questions@tabs]Data getting from questions AJAX ...");
+    					if(response.data[0].type=='M_IntroModule'){
+    						$window.sliderVal.idNode.showFragmentSlider =false;
+    						$window.sliderVal.idNode.showModuleSlider = true;
+    					}else{
+    						$window.sliderVal.idNode.showFragmentSlider =true;
+    						$window.sliderVal.idNode.showModuleSlider = false;
+    					}
+    					TabsCache.put(row,response.data);
+    					_.merge($scope.data, response.data);
+	    				if (!$scope.data.$$phase) {
+	    			        try {
+	    			        	$scope.data.$digest();
+	    			        }
+	    			        catch (e) { }
+	    			    }
+	    				self.questionLoading = false;
+			});
+		}
+		$scope.data = [];
+		initData(row);
+//		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
@@ -1326,6 +1371,5 @@
         	});
         }
         
-        $rootScope.questionsLoading = false;
 	}
 })();

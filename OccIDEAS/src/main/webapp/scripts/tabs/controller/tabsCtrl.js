@@ -57,8 +57,6 @@
 		$scope.selectedIndex = 0;
 
 		$scope.addFragmentTab = function(row) {
-			$rootScope.questionsLoading = true;
-			console.log("addFragmentTab questionsLoading "+$rootScope.questionsLoading);
 			tabs.push({
 				title : row.name,
 				viewName: 'fragment@tabs',
@@ -72,8 +70,6 @@
 			
 		};
 		$scope.addModuleTab = function(row) {
-			$rootScope.questionsLoading = true;
-			console.log("addModuleTab questionsLoading "+$rootScope.questionsLoading);
 			var check = _.some( tabs, function( el ) {
 			    return el.title === row.name;
 			} );
@@ -95,21 +91,18 @@
 			$scope.questionsCount++;
 			}
 			else if($scope.questionsCount == 2){
-				$rootScope.questionsLoading = false;
 				alert("Unable to have more than 3 questions tab opened at the same time.");
 			}
 			else{
 				_.find(tabs, function(el, index){ 
 					if(el.title === row.name){
 						$scope.selectedIndex = index;
-						$rootScope.questionsLoading = false;
 				    } 
 				});
 			}
 			console.log("addModuleTab questionsLoading end");
 		};
         $scope.addRulesTab = function(scope) {
-        	console.log("addRulesTab questionsLoading "+$rootScope.questionsLoading);
             var nodeData = scope.$modelValue;
             var tabTitle = "Rules "+nodeData.name;
             var check = _.some( tabs, function( el ) {
@@ -135,8 +128,6 @@
             }
         };
         $scope.addInterviewTab = function(scope) {
-        	$rootScope.questionsLoading = true;
-        	console.log("addInterviewTab questionsLoading "+$rootScope.questionsLoading);
             var nodeData = scope.$modelValue;
             var tabTitle = "Interview "+nodeData.name;
             var check = _.some( tabs, function( el ) {
@@ -157,7 +148,6 @@
                 _.find(tabs, function(el, index){
                     if(el.title === tabTitle){
                         $scope.selectedIndex = index;
-                        $rootScope.questionsLoading = false;
                     }
                 });
             }

@@ -12,7 +12,6 @@
         <md-tab-body ng-cloak ng-class="tab.style" layout="column" layout-fill >
                 <div class="tab{{$index%4}}" >
 				<ng-view ng-cloak ui-view="{{tab.viewName}}" ng-if="tab.viewName != 'tabs.questions'">
-				<md-progress-circular ng-if="$root.questionsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
 				<div ng-cloak ui-view="questions" ng-show="$state.includes('tabs.questions')">
 				</div>
          		</div>
