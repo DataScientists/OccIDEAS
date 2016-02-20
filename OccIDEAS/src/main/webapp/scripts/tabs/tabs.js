@@ -70,7 +70,10 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        		var node = {};
+			        		node.type = 'M';
+			        		node.idNode = $stateParams.row;
+			        		return node;
 			        	}
 			        }
 			     }
@@ -86,7 +89,10 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        		var node = {};
+			        		node.type = 'M';
+			        		node.idNode = $stateParams.row;
+			        		return node;
 			        	}
 			        }
 				}
@@ -102,7 +108,10 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        		var node = {};
+			        		node.type = 'M';
+			        		node.idNode = $stateParams.row;
+			        		return node;
 			        	}
 			        }
 			     }
@@ -118,7 +127,10 @@
 			        params:{row: null},
 			        resolve:{
 			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        		var node = {};
+			        		node.type = 'F';
+			        		node.idNode = $stateParams.row;
+			        		return node;
 			        	}
 			        }
 				}

@@ -2,7 +2,7 @@
 	angular.module('occIDEASApp.Questions')
 			.controller('QuestionsCtrl',QuestionsCtrl);
 
-	QuestionsCtrl.$inject = [ 'row', '$scope', '$mdDialog','FragmentsService',
+	QuestionsCtrl.$inject = [ 'row','$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope'];
@@ -12,7 +12,7 @@
 			AgentsService,RulesService,$compile,TabsCache,$rootScope) {
 		var self = this;
 		self.questionLoading = true;
-		var idNode = 'Node'+row;
+		var idNode = 'Node'+row.idNode;
 		if(angular.isUndefined($window.sliderVal)){
 			$window.sliderVal = [];
 			}
@@ -22,9 +22,9 @@
 				showAgentSlider:true
 		};
 		var initData = function(row){
-			if(TabsCache.get(row)){
+			if(TabsCache.get(row.idNode)){
     			console.log("[questions@tabs]Data getting from questions Cache ...");
-    			_.merge($scope.data, TabsCache.get(row));
+    			_.merge($scope.data, TabsCache.get(row.idNode));
 				if (!$scope.data.$$phase) {
 			        try {
 			        	$scope.data.$digest();
@@ -34,8 +34,9 @@
 				self.questionLoading = false;
     		}
     		
-    		return QuestionsService.findQuestions(row,'M')
+    		return QuestionsService.findQuestions(row.idNode,row.type)
     				.then(function(response){
+    					
     					console.log("[questions@tabs]Data getting from questions AJAX ...");
     					if(response.data[0].type=='M_IntroModule'){
     						$window.sliderVal.idNode.showFragmentSlider =false;
