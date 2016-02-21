@@ -99,9 +99,9 @@
 			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				});
-			        	}
 			        }
 			     }
+			}
 			}
 		}).state('tabs.questions1', {
 			url: '/questions1/:row',
@@ -142,9 +142,9 @@
 			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				});
-			        	}
 			        }
 				}
+			}
 			}
 		}).state('tabs.questions2', {
 			url: '/questions2/:row',
@@ -185,9 +185,9 @@
 			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				});
-			        	}
 			        }
 			     }
+			}
 			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
@@ -200,7 +200,10 @@
 			        params:{row: null},
 			        resolve:{
 			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        		var node = {};
+			        		node.type = 'F';
+			        		node.idNode = $stateParams.row;
+			        		return node;
 			        	}
 			        }
 				}
