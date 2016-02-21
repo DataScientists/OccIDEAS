@@ -28,7 +28,8 @@
 		$rootScopeProvider.$window = $window;
 		$stateProvider.state('tabs', {
 			abstract : true,
-			templateUrl : "scripts/tabs/view/tabs.html"
+			templateUrl : "scripts/tabs/view/tabs.html",
+			controller: 'TabsCtrl as vm'
 		}).state('tabs.modules', {
 			url: '/modules/',
 			sticky: false,
@@ -61,23 +62,50 @@
 			}
 		}).state('tabs.questions', {
 			url: '/questions/:row',
-			sticky: true,
-		    deepStateRedirect: true,
+			sticky: false,
+		    deepStateRedirect: false,
 			views:{
 				'questions@tabs':{
 					templateUrl: 'scripts/questions/view/questions.html',
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        		console.log("inside questions@tabs resolve");
+			        		if(TabsCache.get($stateParams.row)){
+			        			console.log("Data getting from questions Cache ...");
+			        			return TabsCache.get($stateParams.row);
+			        		}
+			        		
+			        		return QuestionsService.findQuestions($stateParams.row,'M')
+			        				.then(function(response){
+			        					console.log("Data getting from questions AJAX ...");
+			        					if(angular.isUndefined($window.sliderVal)){
+			        					$window.sliderVal = [];
+			        					}
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
+			        							showFragmentSlider:true,
+			        							showModuleSlider:true,
+			        							showAgentSlider:true
+			        					};
+			        					if(response.data[0].type=='M_IntroModule'){
+			        						$window.sliderVal.idNode.showFragmentSlider =false;
+			        						$window.sliderVal.idNode.showModuleSlider = true;
+			        					}else{
+			        						$window.sliderVal.idNode.showFragmentSlider =true;
+			        						$window.sliderVal.idNode.showModuleSlider = false;
+			        					}
+			        					TabsCache.put($stateParams.row,response.data);
+						        		return response.data;
+		    				});
 			        	}
 			        }
 			     }
 			}
 		}).state('tabs.questions1', {
 			url: '/questions1/:row',
-			sticky: true,
+			sticky: false,
 		    deepStateRedirect: true,
 			views:{
 				'questions1@tabs':{
@@ -85,15 +113,42 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        		console.log("inside questions1@tabs resolve");
+			        		if(TabsCache.get($stateParams.row)){
+			        			console.log("Data getting from questions Cache ...");
+			        			return TabsCache.get($stateParams.row);
+			        		}
+			        		
+			        		return QuestionsService.findQuestions($stateParams.row,'M')
+			        				.then(function(response){
+			        					console.log("Data getting from questions AJAX ...");
+			        					if(angular.isUndefined($window.sliderVal)){
+			        					$window.sliderVal = [];
+			        					}
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
+			        							showFragmentSlider:true,
+			        							showModuleSlider:true,
+			        							showAgentSlider:true
+			        					};
+			        					if(response.data[0].type=='M_IntroModule'){
+			        						$window.sliderVal.idNode.showFragmentSlider =false;
+			        						$window.sliderVal.idNode.showModuleSlider = true;
+			        					}else{
+			        						$window.sliderVal.idNode.showFragmentSlider =true;
+			        						$window.sliderVal.idNode.showModuleSlider = false;
+			        					}
+			        					TabsCache.put($stateParams.row,response.data);
+						        		return response.data;
+		    				});
 			        	}
 			        }
 				}
 			}
 		}).state('tabs.questions2', {
 			url: '/questions2/:row',
-			sticky: true,
+			sticky: false,
 		    deepStateRedirect: true,
 			views:{
 				'questions2@tabs':{
@@ -101,8 +156,35 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	row: function($stateParams) {
-			        		return $stateParams.row;
+			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        		console.log("inside questions2@tabs resolve");
+			        		if(TabsCache.get($stateParams.row)){
+			        			console.log("Data getting from questions Cache ...");
+			        			return TabsCache.get($stateParams.row);
+			        		}
+			        		
+			        		return QuestionsService.findQuestions($stateParams.row,'M')
+			        				.then(function(response){
+			        					console.log("Data getting from questions AJAX ...");
+			        					if(angular.isUndefined($window.sliderVal)){
+			        					$window.sliderVal = [];
+			        					}
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
+			        							showFragmentSlider:true,
+			        							showModuleSlider:true,
+			        							showAgentSlider:true
+			        					};
+			        					if(response.data[0].type=='M_IntroModule'){
+			        						$window.sliderVal.idNode.showFragmentSlider =false;
+			        						$window.sliderVal.idNode.showModuleSlider = true;
+			        					}else{
+			        						$window.sliderVal.idNode.showFragmentSlider =true;
+			        						$window.sliderVal.idNode.showModuleSlider = false;
+			        					}
+			        					TabsCache.put($stateParams.row,response.data);
+						        		return response.data;
+		    				});
 			        	}
 			        }
 			     }

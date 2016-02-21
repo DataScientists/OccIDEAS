@@ -70,20 +70,22 @@
 			
 		};
 		$scope.addModuleTab = function(row) {
+			$rootScope.tabsLoading = true;
 			var check = _.some( tabs, function( el ) {
 			    return el.title === row.name;
 			} );
+			
 			if(!check && ($scope.questionsCount < 3)){
+				var questionState = '';
+				if($scope.questionsCount > 0){
+					questionState = $scope.questionsCount;
+				}
 			tabs.push({
 				title : row.name,
-				viewName: 'questionsView',
+				viewName: null,
 				canClose: true,
 				disabled : false
 			});
-			var questionState = '';
-			if($scope.questionsCount > 0){
-				questionState = $scope.questionsCount;
-			}
 			$scope.tabOptions.push({
 				state: "tabs.questions"+questionState,
 				data: {row:row.idNode}
