@@ -1,28 +1,36 @@
 <div class="col-md-6">
     <div ng-model="data">
-        <ul id="{{data.showedQuestion.idNode}}">
-            <div ng-model="data.showedQuestion.name">{{data.showedQuestion.name}}</div>
+        <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
+            <div>{{data.showedQuestion.name}}</div>
 
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
                 <li ng-repeat="node in data.showedQuestion.nodes">
-                    <label id="{{node.idNode}}" ng-model="data.showedQuestion.nodes[node]" ng-click="multipleChoiceHandler(node.idNode)">
+                    <label id="answer-{{node.idNode}}" ng-click="multipleChoiceHandler(data.showedQuestion.idNode, node.idNode)" ng-if="node.type != 'P_freetext'">
                         {{node.name}}
                     </label>
+                    <input id="answer-{{node.idNode}}" type="text" ng-if="node.type == 'P_freetext'" ng-click="multipleChoiceHandler(data.showedQuestion.idNode, node.idNode)"/>
                 </li>
             </div>
             <div ng-if="data.showedQuestion.type == 'Q_single' || data.showedQuestion.type == 'Q_simple'">
                 <li ng-repeat="node in data.showedQuestion.nodes" class="single-choice">
-                    <label id="{{node.idNode}}" ng-model="data.showedQuestion.nodes[node]" ng-click="singleChoiceHandler($index)" ng-class="{ 'selected': $index == selectedIndex }">
+                    <label id="answer-{{node.idNode}}" ng-click="singleChoiceHandler($index)" ng-class="{ 'selected': $index == selectedIndex }" ng-if="node.type != 'P_freetext'">
                         {{node.name}}
                     </label>
+                    <input id="answer-{{node.idNode}}" type="text" ng-if="node.type == 'P_freetext'" ng-click="singleChoiceHandler($index)" ng-class="{ 'selected': $index == selectedIndex }"/>
                 </li>
             </div>
-            <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised md-mini">
-                <span>Next</span>
+            <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">
+                <span>NEXT</span>
             </md-button>
         </ul>
+        <div ng-if="!data.interviewStarted">
+            <md-button ng-click="startInterview(data)" class="md-fab md-raised ">
+                <span>START</span>
+            </md-button>
+        </div>
+        </form>
     </div>
 </div>
-<div class="col-md-6 moduleInterview">
+<div class="col-md-6 moduleInterview" id="interivew-module-tree">
     <ng-include src="'scripts/interviews/partials/moduleTree.html'"></ng-include>
 </div>

@@ -353,7 +353,7 @@ label.fraglabel {
 }
 
 .selected{
-    border: 1px solid #7c9eb2;
+    border: 0;
     background: #7c9eb2;
 }
 
