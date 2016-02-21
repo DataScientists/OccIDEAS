@@ -63,7 +63,7 @@ public class RuleMapperImpl implements RuleMapper {
         rule.setLevel(ruleVO.getLevel());
         rule.setType(ruleVO.getType());
         rule.setConditions(paMapper.convertToPossibleAnswerList(ruleVO.getConditions()));
-        //rule.setAdditionalfields(additionalfields);
+        rule.setAdditionalfields(ruleVO.getAdditionalfields());
         
         return rule;
     }

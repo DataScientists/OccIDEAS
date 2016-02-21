@@ -62,7 +62,7 @@
 						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in rulesObj">
 						<div class="verticalrules" ng-init="rules = getRulesIfAny(node,obj)">
 							<div class="rulescontainer">
-								<div class="agentACell" ng-click="addToActiveRule(node)">
+								<div class="agentACell" ng-click="addToActiveRule(node,this)">
 									<span class="cell-lable" ng-repeat="rule in rules">
 										<div ng-class="rule.ruleLevel" ng-if="rule != null"></div>
 									</span>

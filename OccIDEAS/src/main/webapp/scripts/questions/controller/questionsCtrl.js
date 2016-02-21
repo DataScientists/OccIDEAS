@@ -86,6 +86,7 @@
     	}
     	
 		$scope.toggleRulesObj = function (agents){
+			
 			if(_.findIndex($scope.rulesObj, function(o) { 
 					return o.idAgent === agents.idAgent; }) != -1){
 				$scope.safeApply(function () {
@@ -968,24 +969,29 @@
 				  //get full list of rules on this node and agent
 				  
 				  for(var i=0;i < $itemScope.rules.length;i++){
-				  var rule = $itemScope.rules[i];
-					  RulesService.getRule(rule.idRule).then(function(response) {
-						  //console.log('Data getting from AJAX rule id:'+response.data[0].idRule);
-						  if(response.status === 200){
-							console.log('Found rule id:'+response.data[0].idRule);
-							for(var j=0;j < $itemScope.rules.length;j++){
-								var rule = $itemScope.rules[j];
-								if(rule.idRule==response.data[0].idRule){
-									$itemScope.rules[j].condition = response.data[0].conditions;
-									$itemScope.rule = $itemScope.rules[j];
-									newNote(node.currentTarget.parentElement,$itemScope,$compile);
-									$scope.activeRuleDialog = $itemScope.rule;
-									$scope.activeRule = response.data[0];
+					  var rule = $itemScope.rules[i];
+					  if(rule.idRule){
+						  RulesService.getRule(rule.idRule).then(function(response) {
+							  //console.log('Data getting from AJAX rule id:'+response.data[0].idRule);
+							  if(response.status === 200){
+								console.log('Found rule id:'+response.data[0].idRule);
+								for(var j=0;j < $itemScope.rules.length;j++){
+									var rule = $itemScope.rules[j];
+									if(rule.idRule==response.data[0].idRule){
+										$itemScope.rules[j].condition = response.data[0].conditions;
+										$itemScope.rule = $itemScope.rules[j];
+										newNote(node.currentTarget.parentElement,$itemScope,$compile);
+										$scope.activeRuleDialog = $itemScope.rule;
+										$scope.activeRule = response.data[0];
+									}
 								}
-							}
-							
-						  }
-				        });
+								
+							  }
+					        });
+					  }else{
+						  alert("Try reload");
+					  }
+					  
 				  }
 				  
 			  	}			  
@@ -1355,9 +1361,58 @@
 				}
 		    });
         }
-        $scope.addToActiveRule = function(node){
+        $scope.addToActiveRule = function(node,rules){
+        	
         	var rule = $scope.activeRule;
-        	rule.conditions.push(node);
+        	var bAlreadyInRule = false;
+        	for(var i=0;i<rule.conditions.length;i++){
+        		var iCondition = rule.conditions[i];
+        		if(iCondition.idNode==node.idNode){
+        			bAlreadyInRule = true;
+        			break;
+        		}
+        	}
+        	if(!bAlreadyInRule){
+        		rule.conditions.push(node);
+            	if(rules.rules==null){
+            		rules.rules = [];
+            	}
+            	var ruleLevel = "";
+            	if(rule.level==0){
+            		ruleLevel = "probHigh";
+            	}else if(rule.level==1){
+            		ruleLevel = "probMedium";
+            	}else if(rule.level==2){
+            		ruleLevel = "probLow";
+            	}else if(rule.level==3){
+            		ruleLevel = "probUnknown";
+            	}else if(rule.level==4){
+            		ruleLevel = "possUnknown";
+            	}else if(rule.level==5){
+            		ruleLevel = "noExposure";
+            	}
+            	rules.rules.push({
+            		ruleLevel:ruleLevel,
+            		idNode:node.idNode
+            		})
+            	RulesService.save(rule).then(function(response){
+    				if(response.status === 200){
+    					console.log('Rule Save was Successful!');
+    					
+    				}
+    			});
+        	}
+        }
+        $scope.removeNodeFromRule = function(node){
+        	var rule = $scope.activeRule;
+        	
+        	for(var i=0;i<rule.conditions.length;i++){
+        		var iCondition = rule.conditions[i];
+        		if(iCondition.idNode==node.idNode){
+        			rule.conditions.splice(i,1);
+        			
+        		}
+        	}
         	RulesService.save(rule).then(function(response){
 				if(response.status === 200){
 					console.log('Rule Save was Successful!');
