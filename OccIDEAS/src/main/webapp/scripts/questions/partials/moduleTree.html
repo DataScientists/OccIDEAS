@@ -54,16 +54,16 @@
 			ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this,node)">
 				<div class="verticalagents">
 						<div class="agentcontainer" ng-repeat="rule in rulesObj">
-								<span id="87" class="rotatedagenttext">{{rule.name}}</span>
+								<span class="rotatedagenttext">{{rule.name}}</span>
 						</div>
 				</div>
 			</div>
 			<div class="pull-right" ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this)"
 						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in rulesObj">
-						<div class="verticalrules" ng-init="rule = getRulesIfAny(node,obj)">
+						<div class="verticalrules" ng-init="rules = getRulesIfAny(node,obj)">
 							<div class="rulescontainer">
-								<div class="agentACell">
-									<span class="cell-lable">
+								<div class="agentACell" ng-click="addToActiveRule(node)">
+									<span class="cell-lable" ng-repeat="rule in rules">
 										<div ng-class="rule.ruleLevel" ng-if="rule != null"></div>
 									</span>
 								</div>

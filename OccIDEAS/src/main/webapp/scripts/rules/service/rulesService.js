@@ -44,6 +44,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		function save(data){
+			var restSaveUrl = 'rest/rule/update';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		//modulerule/getlist
 		function handleError( response ) {
             if (
@@ -65,6 +74,7 @@
 			listByModule: listByModule,
 			listByAgent: listByAgent,
 			listAllRules: listAllRules,
+			save: save,
 			getRule: getRule,
 			findRules: findRules
 			

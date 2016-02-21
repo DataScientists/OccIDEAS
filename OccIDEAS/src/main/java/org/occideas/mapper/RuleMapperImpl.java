@@ -58,7 +58,13 @@ public class RuleMapperImpl implements RuleMapper {
         }
         Rule rule = new Rule();
         rule.setIdRule( ruleVO.getIdRule() );
-        rule.setLastUpdated( ruleVO.getLastUpdated() );            
+        rule.setAgentId(ruleVO.getAgentId());
+        rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
+        rule.setLevel(ruleVO.getLevel());
+        rule.setType(ruleVO.getType());
+        rule.setConditions(paMapper.convertToPossibleAnswerList(ruleVO.getConditions()));
+        //rule.setAdditionalfields(additionalfields);
+        
         return rule;
     }
 

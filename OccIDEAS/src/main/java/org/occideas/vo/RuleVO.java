@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.occideas.entity.AdditionalField;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonIgnoreProperties({"idNode"})
 public class RuleVO {
 
 	private long idRule;

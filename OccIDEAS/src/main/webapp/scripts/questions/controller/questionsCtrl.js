@@ -100,7 +100,9 @@
     	$scope.getRulesIfAny = function(node,agents){
     		var filteredAgent = _.filter(node.moduleRule, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
-				var rules=  _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
+				/*var rules=  _.reduce(filteredAgent, function(memo, current) { 
+					return _.extend(memo, current) 
+					},  {});
 				var id = rules.idRule;
 				var existRules = _.filter($scope.rulesInt, { 'id': id});
 				if(existRules.length > 0){
@@ -116,8 +118,8 @@
 						idNode:node.idNode
 					}]
 				});
-				}
-				return rules;
+				}*/
+				return filteredAgent;
 			}
 			return null;			
     	}
@@ -965,14 +967,27 @@
 				  }*/
 				  //get full list of rules on this node and agent
 				  
-				  RulesService.getRule($itemScope.rule.idRule).then(function(response) {
-					  console.log('Data getting from AJAX rule id:'+$itemScope.rule.idRule);
-					  if(response.status === 200){
-						console.log('Found rule id:'+response.data[0].idRule);
-						$itemScope.rule.condition = response.data[0].conditions;
-						newNote(node.currentTarget.parentElement,$itemScope,$compile);
-					  }
-			        });
+				  for(var i=0;i < $itemScope.rules.length;i++){
+				  var rule = $itemScope.rules[i];
+					  RulesService.getRule(rule.idRule).then(function(response) {
+						  //console.log('Data getting from AJAX rule id:'+response.data[0].idRule);
+						  if(response.status === 200){
+							console.log('Found rule id:'+response.data[0].idRule);
+							for(var j=0;j < $itemScope.rules.length;j++){
+								var rule = $itemScope.rules[j];
+								if(rule.idRule==response.data[0].idRule){
+									$itemScope.rules[j].condition = response.data[0].conditions;
+									$itemScope.rule = $itemScope.rules[j];
+									newNote(node.currentTarget.parentElement,$itemScope,$compile);
+									$scope.activeRuleDialog = $itemScope.rule;
+									$scope.activeRule = response.data[0];
+								}
+							}
+							
+						  }
+				        });
+				  }
+				  
 			  	}			  
 			  ]
 			];
@@ -1327,5 +1342,28 @@
         	});
         }
         $rootScope.tabsLoading = false;
+        
+        $scope.activeRule = null;
+        $scope.activeRuleDialog = null;
+        
+        $scope.setActiveRule = function(rule){
+        	$scope.activeRuleDialog = rule;
+        	RulesService.getRule(rule.idRule).then(function(response) {
+        		if(response.status === 200){
+					console.log('Found rule id:'+response.data[0].idRule);
+					$scope.activeRule = response.data[0];
+				}
+		    });
+        }
+        $scope.addToActiveRule = function(node){
+        	var rule = $scope.activeRule;
+        	rule.conditions.push(node);
+        	RulesService.save(rule).then(function(response){
+				if(response.status === 200){
+					console.log('Rule Save was Successful!');
+					
+				}
+			});
+        }
 	}
 })();

@@ -5,7 +5,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,7 +13,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 @Entity 
+@DynamicUpdate(value=true)
+@DynamicInsert(value=true)
+@SelectBeforeUpdate(value=true)
 public class Rule implements Serializable {
 
 	/**
@@ -30,13 +38,15 @@ public class Rule implements Serializable {
 	private Date lastUpdated;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
     @JoinTable(name="Node_Rule", 
                 joinColumns={@JoinColumn(name="idRule")}, 
                 inverseJoinColumns={@JoinColumn(name="idNode")})
 	private List<PossibleAnswer> conditions;
 	private Long legacyRuleId;
 	
-	@ManyToMany(cascade = {CascadeType.ALL})
+	@ManyToMany
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
     @JoinTable(name="Rule_AdditionalField", 
                 joinColumns={@JoinColumn(name="idRule")}, 
                 inverseJoinColumns={@JoinColumn(name="idAdditionalField")})

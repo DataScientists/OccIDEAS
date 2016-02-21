@@ -53,17 +53,16 @@ function deleteNote(elem) {
 };
 
 function newNote(element,$itemScope,$compile) {
-if($itemScope.rule == null){
-	return;
-}	
-var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
-angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
+	if($itemScope.rule == null){
+		return;
+	}	
+	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
+	angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteZindex);
 		});
+	angular.element('textarea').autogrow();
+	angular.element('.note');
 
-angular.element('textarea').autogrow();
-
-angular.element('.note')
 	return false;
 };
