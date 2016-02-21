@@ -107,7 +107,7 @@
             var container = $('#interivew-module-tree'),
                 scrollTo = $('#' + target);
             container.animate({
-                scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 200
+                scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() + 150
             });
         };
         
