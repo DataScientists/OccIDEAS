@@ -92,7 +92,7 @@
 			});
 			$scope.questionsCount++;
 			}
-			else if($scope.questionsCount == 2){
+			else if($scope.questionsCount > 2){
 				alert("Unable to have more than 3 questions tab opened at the same time.");
 			}
 			else{

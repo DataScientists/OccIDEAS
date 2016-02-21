@@ -62,8 +62,8 @@
 			}
 		}).state('tabs.questions', {
 			url: '/questions/:row',
-			sticky: false,
-		    deepStateRedirect: false,
+			sticky: true,
+		    deepStateRedirect: true,
 			views:{
 				'questions@tabs':{
 					templateUrl: 'scripts/questions/view/questions.html',
@@ -105,7 +105,7 @@
 			}
 		}).state('tabs.questions1', {
 			url: '/questions1/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions1@tabs':{
@@ -148,7 +148,7 @@
 			}
 		}).state('tabs.questions2', {
 			url: '/questions2/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions2@tabs':{
@@ -191,7 +191,7 @@
 			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'fragment@tabs':{
@@ -199,13 +199,37 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null},
 			        resolve:{
-			        	row: function($stateParams) {
-			        		var node = {};
-			        		node.type = 'F';
-			        		node.idNode = $stateParams.row;
-			        		return node;
-			        	}
+			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        		console.log("inside questions1@tabs resolve");
+			        		if(TabsCache.get($stateParams.row)){
+			        			console.log("Data getting from questions Cache ...");
+			        			return TabsCache.get($stateParams.row);
+			        		}
+			        		
+			        		return QuestionsService.findQuestions($stateParams.row,'F')
+			        				.then(function(response){
+			        					console.log("Data getting from questions AJAX ...");
+			        					if(angular.isUndefined($window.sliderVal)){
+			        					$window.sliderVal = [];
+			        					}
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
+			        							showFragmentSlider:true,
+			        							showModuleSlider:true,
+			        							showAgentSlider:true
+			        					};
+			        					if(response.data[0].type=='M_IntroModule'){
+			        						$window.sliderVal.idNode.showFragmentSlider =false;
+			        						$window.sliderVal.idNode.showModuleSlider = true;
+			        					}else{
+			        						$window.sliderVal.idNode.showFragmentSlider =true;
+			        						$window.sliderVal.idNode.showModuleSlider = false;
+			        					}
+			        					TabsCache.put($stateParams.row,response.data);
+						        		return response.data;
+		    				});
 			        }
+				}
 				}
 			}
 		}).state('tabs.interview', {
