@@ -22,7 +22,7 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
     private ModuleRuleMapper ruleMapper;
 	
 	@Override
-	public PossibleAnswerVO convertToPossibleAnswerVO(PossibleAnswer answerEntity) {
+	public PossibleAnswerVO convertToPossibleAnswerVO(PossibleAnswer answerEntity,boolean includeChildNode) {
 		if ( answerEntity == null ) {
             return null;
         }
@@ -39,9 +39,12 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         answerVO.setLink( answerEntity.getLink() );
         answerVO.setTopNodeId( answerEntity.getTopNodeId() );
         answerVO.setLastUpdated( answerEntity.getLastUpdated() );
-        List<Question> childNodes = answerEntity.getChildNodes();
-        if(!CommonUtil.isListEmpty(childNodes)){
-        answerVO.setChildNodes( mapper.convertToQuestionVOList( childNodes ) );
+        List<Question> childNodes = new ArrayList<Question>();
+        if(includeChildNode){
+        	childNodes = answerEntity.getChildNodes();
+        	if(!CommonUtil.isListEmpty(childNodes)){
+                answerVO.setChildNodes( mapper.convertToQuestionVOList( childNodes ) );
+            }
         }
         answerVO.setOriginalId( answerEntity.getOriginalId() );
         answerVO.setDeleted( answerEntity.getDeleted() );
@@ -54,14 +57,14 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 	}
 
 	@Override
-	public List<PossibleAnswerVO> convertToPossibleAnswerVOList(List<PossibleAnswer> answerEntity) {
+	public List<PossibleAnswerVO> convertToPossibleAnswerVOList(List<PossibleAnswer> answerEntity,boolean includeChildNodes) {
 		if ( answerEntity == null ) {
             return null;
         }
 
         List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
         for ( PossibleAnswer answer : answerEntity ) {
-            list.add( convertToPossibleAnswerVO( answer) );
+            list.add( convertToPossibleAnswerVO( answer,includeChildNodes) );
         }
 
         return list;

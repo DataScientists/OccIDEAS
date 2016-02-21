@@ -1,10 +1,7 @@
 package org.occideas.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -23,13 +20,30 @@ public class ModuleRule  implements java.io.Serializable{
 	
 	private long idModule;
 	private String moduleName;
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "idRule")
-	private Rule rule;
+	
+	private long idRule;
+	private String ruleLevel;
+	
 	private long idAgent;
-
 	private String agentName;
+	
 	private long idNode;
+	public long getIdRule() {
+		return idRule;
+	}
+
+	public void setIdRule(long idRule) {
+		this.idRule = idRule;
+	}
+
+	public String getRuleLevel() {
+		return ruleLevel;
+	}
+
+	public void setRuleLevel(String ruleLevel) {
+		this.ruleLevel = ruleLevel;
+	}
+
 	private String nodeNumber;	
 
 	public String getAgentName() {
@@ -95,13 +109,4 @@ public class ModuleRule  implements java.io.Serializable{
 		this.moduleName = moduleName;
 	}
 
-	public Rule getRule() {
-		return rule;
-	}
-
-	public void setRule(Rule rule) {
-		this.rule = rule;
-	}
-
-	
 }

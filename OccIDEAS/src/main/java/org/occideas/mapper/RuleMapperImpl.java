@@ -3,13 +3,19 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Rule;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.RuleVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RuleMapperImpl implements RuleMapper {
 
+	@Autowired
+	private PossibleAnswerMapper paMapper;
+	
     @Override
     public RuleVO convertToRuleVO(Rule ruleEntity) {
         if ( ruleEntity == null ) {
@@ -24,7 +30,11 @@ public class RuleMapperImpl implements RuleMapper {
         ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
         ruleVO.setLevel(ruleEntity.getLevel());
         ruleVO.setType(ruleEntity.getType());
-        return ruleVO;
+        List<PossibleAnswer> conditions = ruleEntity.getConditions();
+		if (!CommonUtil.isListEmpty(conditions)) {
+			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOList(conditions,false));
+		}
+         return ruleVO;
     }
 
     @Override

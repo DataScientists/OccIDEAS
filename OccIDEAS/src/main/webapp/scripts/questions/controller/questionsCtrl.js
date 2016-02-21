@@ -4,26 +4,29 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData',
-	                          'agentsData','RulesService','$compile','TabsCache'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state',
+	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state,templateData,
-			agentsData,RulesService,$compile,TabsCache) {
+			$anchorScroll,$location,$mdMedia,$window,$state,
+			AgentsService,RulesService,$compile,TabsCache,$rootScope) {
 		var self = this;
+		console.log('inside QuestionsCtrl');
 		$scope.data = data;	
 		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
-		$scope.templateData = templateData.template;
+		$scope.templateData = null;
 		$scope.agentsData = null;
-		$scope.aJSMData = templateData.ajsm;
-    	$scope.frequencyData = templateData.frequency;
+		$scope.aJSMData = null;
+    	$scope.frequencyData = null;
     	$scope.rulesObj = [];
+    	$scope.rulesInt = [];
     	
-    	function initAgentData(agent){
+    	function initAgentData(){
+    		AgentsService.get().then(function(agent) {
     		var group = _.groupBy(agent, function(b) { 
     			return b.groupName;
     		});
@@ -41,7 +44,37 @@
         		} );
         	}
     		group = setOrder(group);
-    		return group;
+    		$scope.agentsLoading = false;
+    		$scope.agentsData = group;
+    		});
+    	}
+    	
+    	function initFragmentData(){
+    		$scope.fragmentsLoading = true;
+    		 FragmentsService.get().then(function(data) {	
+	    			var object = {};
+	    			var ajsms = [];
+	    			var templates = [];
+	    			var frequencies = [];
+	    			for(var i=0;i < data.length;i++){
+	    				var node = data[i];
+	    				node.idnode = "";
+	    				node.nodeclass = "Q";
+	    				if(node.type=='F_ajsm'){
+	    					node.type = "Q_linkedajsm";
+	    					ajsms.push(node);
+	    				}else if(node.type=='F_template'){
+	    					templates.push(node);
+	    				}else if(node.type=='F_frequency'){
+	    					frequencies.push(node);
+	    				}
+	    			}
+	    			$scope.templateData = templates;
+	    			$scope.frequencyData = frequencies;
+	    			$scope.aJSMData = ajsms;
+	    			$scope.fragmentsLoading = false;
+	    			return object;
+    		 });
     	}
     	
     	function setOrder (obj) {
@@ -51,8 +84,6 @@
     	    });
     	    return out;
     	}
-    	
-    	
     	
 		$scope.toggleRulesObj = function (agents){
 			if(_.findIndex($scope.rulesObj, function(o) { 
@@ -69,7 +100,24 @@
     	$scope.getRulesIfAny = function(node,agents){
     		var filteredAgent = _.filter(node.moduleRule, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
-				return _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
+				var rules=  _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
+				var id = rules.idRule;
+				var existRules = _.filter($scope.rulesInt, { 'id': id});
+				if(existRules.length > 0){
+					existRules[0].nodes.push({
+						nodeNumber:node.number,
+						idNode:node.idNode
+					});
+				}else{
+				$scope.rulesInt.push({
+					'id':id,
+					nodes:[{
+						nodeNumber:node.number,
+						idNode:node.idNode
+					}]
+				});
+				}
+				return rules;
 			}
 			return null;			
     	}
@@ -438,6 +486,9 @@
 		    else{
 		      $scope.rightNav = "slideFrag";
 		    }
+		    if($scope.templateData === null || $scope.aJSMData === null || $scope.frequencyData === null){
+				initFragmentData();
+			}
 		};
 		
 		$scope.leftNav = "slideFragLeft";
@@ -449,7 +500,8 @@
 		      $scope.leftNav = "slideFragLeft";
 		    }
 		    if($scope.agentsData === null){
-				$scope.agentsData = initAgentData(agentsData);
+		    	$scope.agentsLoading = true;
+				initAgentData();
 			}
 		};
 		
@@ -753,6 +805,8 @@
 				var menuOptions;
 				if(scope.node.type=='Q_linkedmodule'){
 					menuOptions = $scope.linkedModuleMenuOptions;
+				}else if(scope.node.type=='Q_linkedajsm'){
+					menuOptions = $scope.linkedAjsmMenuOptions;
 				}else{
 					menuOptions = $scope.questionMenuOptions;
 				}
@@ -831,12 +885,6 @@
 							  var data = [];
 							  data[0]=$scope.selectedNode;
 							  return data;
-		                    },
-		                    templateData: function(){
-		                    	return templateData;
-		                    },
-		                    agentsData: function(){
-		                    	return agentsData;
 		                    }
 					  },
 					  /*locals: {
@@ -874,15 +922,22 @@
 		              };
 		              toggleChildren($itemScope);
 					} 
-				  ],
-				  [ 'Open as aJSM', function($itemScope) {	
-	  					var node = angular.copy($itemScope.node);
-	  					node.idNode = node.link;
-	  					node.type = 'F_ajsm';
-	  					node.classtype = 'F';
-	  					$scope.addFragmentTab(node);
-	  				} 
 				  ]
+			];
+		$scope.linkedAjsmMenuOptions =
+			[
+			  [ 'Remove (Toggle)', function($itemScope) {
+					$scope.deleteNode($itemScope);
+					}
+			  ],
+			  [ 'Open as aJSM', function($itemScope) {	
+					var node = angular.copy($itemScope.node);
+					node.idNode = node.link;
+					node.type = 'F_ajsm';
+					node.classtype = 'F';
+					$scope.addFragmentTab(node);
+				} 
+			  ]
 			];
 		$scope.linkedModuleMenuOptions =
 			[
@@ -891,7 +946,7 @@
 					}
 			  ],
 			  [ 'Open as Module', function($itemScope) {
-	  					var node = $itemScope.node;
+				  		var node = angular.copy($itemScope.node);
 	  					node.idNode = node.link;
 	  					node.type = 'M_Module';
 	  					node.classtype = 'M';
@@ -902,8 +957,23 @@
 		$scope.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope,node) {
-				  newNote(node.currentTarget.parentElement,$itemScope,$compile);
-			  }
+				  /*var conditions = _.filter($scope.rulesInt, { 'id': $itemScope.rule.rule.idRule});
+				  if(conditions.length > 0){
+					  $itemScope.rule.condition = conditions[0].nodes;
+				  }else{
+					  $itemScope.rule.condition = [];
+				  }*/
+				  //get full list of rules on this node and agent
+				  
+				  RulesService.getRule($itemScope.rule.idRule).then(function(response) {
+					  console.log('Data getting from AJAX rule id:'+$itemScope.rule.idRule);
+					  if(response.status === 200){
+						console.log('Found rule id:'+response.data[0].idRule);
+						$itemScope.rule.condition = response.data[0].conditions;
+						newNote(node.currentTarget.parentElement,$itemScope,$compile);
+					  }
+			        });
+			  	}			  
 			  ]
 			];
 		
@@ -1098,7 +1168,7 @@
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
-					console.log(node.name)
+					
 					node.sequence = i;
 					if(!node.idNode){
 						increment =(increment + 1);
@@ -1126,7 +1196,7 @@
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
-					console.log(node.name)
+					
 					node.sequence = i;
 					node.topNodeId = topNodeId;
 					if(node.nodeclass=='Q'){
@@ -1223,8 +1293,8 @@
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 
-        $scope.highlightNode = function(rule){
-        	var elementId = 'node-'+rule.idNode;
+        $scope.highlightNode = function(idNode){
+        	var elementId = 'node-'+idNode;
         	$scope.scrollTo(elementId);
         	$('#'+elementId).toggleClass('highlight');  
         	   setTimeout(function(){
@@ -1256,5 +1326,6 @@
         		}
         	});
         }
+        $rootScope.tabsLoading = false;
 	}
 })();

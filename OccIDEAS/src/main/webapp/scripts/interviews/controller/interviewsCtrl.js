@@ -4,10 +4,10 @@
 
     InterviewsCtrl.$inject = ['data', '$scope', '$mdDialog', 'FragmentsService',
         '$q', 'QuestionsService', 'ModulesService', 'InterviewsService',
-        '$anchorScroll', '$location', '$mdMedia', '$window', '$state'];
+        '$anchorScroll', '$location', '$mdMedia', '$window', '$state','$rootScope'];
     function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService,
                             $q, QuestionsService, ModulesService, InterviewsService,
-                            $anchorScroll, $location, $mdMedia, $window, $state) {
+                            $anchorScroll, $location, $mdMedia, $window, $state, $rootScope) {
         var self = this;
         $scope.data = data;
 
@@ -110,5 +110,7 @@
                 scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 200
             });
         };
+        
+        $rootScope.questionsLoading = false;
     }
 })();

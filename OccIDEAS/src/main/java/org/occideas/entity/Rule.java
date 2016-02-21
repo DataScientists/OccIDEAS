@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,11 +29,11 @@ public class Rule implements Serializable {
 //	@Type(type="timestamp")
 	private Date lastUpdated;
 	
-	@ManyToMany(cascade = {CascadeType.ALL})
+	@ManyToMany(fetch=FetchType.LAZY)
     @JoinTable(name="Node_Rule", 
                 joinColumns={@JoinColumn(name="idRule")}, 
                 inverseJoinColumns={@JoinColumn(name="idNode")})
-	private List<Node> conditions;
+	private List<PossibleAnswer> conditions;
 	private Long legacyRuleId;
 	
 	@ManyToMany(cascade = {CascadeType.ALL})
@@ -90,26 +91,22 @@ public class Rule implements Serializable {
 	public void setAgentId(long agentId) {
 		this.agentId = agentId;
 	}
-	/*public List<AdditionalField> getAdditionalfields() {
-		return additionalfields;
-	}
-	public void setAdditionalfields(List<AdditionalField> additionalfields) {
-		this.additionalfields = additionalfields;
-	}*/
-	public List<Node> getConditions() {
+	public List<PossibleAnswer> getConditions() {
 		if(conditions==null){
-			conditions = new ArrayList<Node>();
+			conditions = new ArrayList<PossibleAnswer>();
 		}
 		return conditions;
 	}
-	public void setConditions(List<Node> conditions) {
+	public void setConditions(List<PossibleAnswer> conditions) {
 		this.conditions = conditions;
 	}
 	
 	public List<AdditionalField> getAdditionalfields() {
 		return additionalfields;
 	}
+	
 	public void setAdditionalfields(List<AdditionalField> additionalfields) {
 		this.additionalfields = additionalfields;
 	}
+	
 }

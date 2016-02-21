@@ -4,6 +4,7 @@ SELECT concat(m.idNode, ':',nr.idRule, ':',r.agentId, ':',n.idNode)  as primaryK
  m.idNode as idModule, 
  m.name as moduleName, 
  nr.idRule,
+ r.level as ruleLevel,
  r.agentId as idAgent, 
  a.name as agentName, 
  n.idNode,

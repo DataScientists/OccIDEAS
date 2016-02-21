@@ -1,6 +1,6 @@
 <div ng-if="$window.sliderVal.idNode.showAgentSlider" id="agentDropContainer" ng-class="leftNav" class="ui-widget">
 <div class="agent-contain">
-<div class="agentSticker" ng-click="toggleLeft()">Agents</div> 
+<div class="agentSticker" ng-click="toggleLeft()" style="cursor: pointer;">Agents</div> 
 <label for="agentDragDrop" class="fraglabel">Drag Drop Agents: </label>
 <div id="agentDragDrop"><ul></ul>
 <div>
@@ -9,7 +9,8 @@
     		<h4 class="panel-title">Agents List</h4>
   		</div>
   		<div class="panel-body">
-		<uib-accordion close-others="oneAtATime" ng-repeat="agent in agentsData | orderBy:'-total' track by $index">
+  		 <md-progress-circular ng-if="agentsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+		<uib-accordion close-others="oneAtATime" ng-if="!agentsLoading" ng-repeat="agent in agentsData | orderBy:'-total' track by $index">
      	 <uib-accordion-group>
      	 	<uib-accordion-heading>
      	 	{{agent.key}}
