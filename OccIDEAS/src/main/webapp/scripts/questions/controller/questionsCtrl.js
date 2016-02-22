@@ -25,6 +25,18 @@
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	
+    	$scope.nodePopover = {
+    			isOpen:false,
+    		    templateUrl: 'scripts/questions/partials/nodePopover.html',
+    		    open: function open() {
+    		          $scope.nodePopover.isOpen = true;
+//    		          $scope.myPopover.data = 'Hello!';
+    		    },
+  		        close: function close() {
+   		          $scope.nodePopover.isOpen = false;
+  		        }
+    	};
+    	
     	function initAgentData(){
     		AgentsService.get().then(function(agent) {
     		var group = _.groupBy(agent, function(b) { 

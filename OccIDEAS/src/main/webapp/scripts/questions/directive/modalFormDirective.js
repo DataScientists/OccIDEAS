@@ -1,7 +1,6 @@
 (function(){
 	angular
 	  .module('occIDEASApp.Questions').directive("saveFragmentModal", function ($modal) {
-		    "use strict";
 		    return {
 		      template: '<div ng-click="openFragmentModal(rowData)" ng-transclude></div>',
 		      replace: true,
