@@ -12,8 +12,7 @@
 		self.tableParams = new NgTableParams(
 				{
 					group: "agentName",
-					group: "moduleName",
-					count: 50,
+					count: 200,
 				}, 
 				{	
 					getData: function($defer,params) {					
@@ -32,7 +31,7 @@
 				        	  $defer.resolve();
 				            return data;
 				          });
-				          },
+				          }     
 				});
 		
 		self.tableParams.shouldGetData = true;
