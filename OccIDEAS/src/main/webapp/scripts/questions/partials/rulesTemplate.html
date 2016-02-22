@@ -6,7 +6,7 @@
 	<div class="title">{{rule.idRule}} {{rule.agentName}}</div>
 		<input type="text" value="Nodes" disabled/>
 			<ul class="list-group" style="margin: 0 0 0 0;">
-    			<li popover-is-open="nodePopover.isOpen" popover-placement="right" ng-mouseenter="nodePopover.open()" uib-popover-template="nodePopover.templateUrl" class="list-group-item nodeNumber" ng-repeat="x in rule.condition" ng-click="highlightNode(x.idNode)">
+    			<li popover-is-open="nodePopover.isOpen" popover-placement="right" ng-mouseenter="nodePopover.open(x)" uib-popover-template="nodePopover.templateUrl" class="list-group-item nodeNumber" ng-repeat="x in rule.condition" ng-click="highlightNode(x.idNode)">
 					{{x.number}}
 					<div class="pull-right">
 						<span ng-if="$index>0" class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeNodeFromRule(x)"></span>

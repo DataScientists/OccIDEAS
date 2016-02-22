@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,5 +46,13 @@ public class BaseDao{
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(type);
       return crit.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+   	public <T> List<T> getListbyId(final Class<T> type,final Long id) {
+         final Session session = sessionFactory.getCurrentSession();
+         final Criteria crit = session.createCriteria(type);
+         crit.add(Restrictions.eq("idNode", id));
+         return crit.list();
     }
 }

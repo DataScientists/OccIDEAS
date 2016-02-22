@@ -12,6 +12,8 @@
 			}else if(type=='F'){
 				restUrl = 'rest/fragment/get?id=' + idNode;
 				
+			}else if(type=='P'){
+				restUrl = 'rest/answer/getById?id='+idNode;
 			}else{
 				restUrl = 'rest/question/get?id=' + idNode;
 			}

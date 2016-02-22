@@ -26,14 +26,62 @@
     	$scope.rulesInt = [];
     	
     	$scope.nodePopover = {
-    			isOpen:false,
+//    			isOpen:function(x){
+//    				if(angular.isUndefined(x.info)){
+//    					return false;
+//    				}
+//    				var nodeInPopup = x.info["Node"+x.idNode];
+//   		    	 	if(!nodeInPopup){
+//   		    	 	   x.info["Node"+x.idNode] = {
+//		    				  idNode:x.idNode,
+//		    				  nodeclass:x.nodeclass,
+//		    				  nodePopover:{
+//		    					  isOpen: false
+//		    				  },
+//		    				  nodePopoverInProgress : false
+//		    		  };
+//   		    	 	  return false;
+//   		    	 	}else{
+//   		    	 	 return x.info["Node"+x.idNode].nodePopover.isOpen;
+//   		    	 	}
+//    			},
+    			isOpen: false,
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
-    		    open: function open() {
-    		          $scope.nodePopover.isOpen = true;
-//    		          $scope.myPopover.data = 'Hello!';
+    		    open: function open(x) {
+    		    	  if(angular.isUndefined(x.info)){
+    		    		  x.info = [];
+    		    	  }
+    		    	  var nodeInPopup = x.info["Node"+x.idNode];
+    		    	 if(!nodeInPopup){
+    		    		  x.info["Node"+x.idNode] = {
+    		    				  idNode:x.idNode,
+    		    				  nodeclass:x.nodeclass,
+    		    				  nodePopover:{
+    		    					  isOpen: false
+    		    				  },
+    		    				  nodePopoverInProgress : false
+    		    		  };
+    		    		  nodeInPopup = x.info["Node"+x.idNode];
+    		    	  }
+    		    	 $scope.nodePopover.isOpen = true;
+    		    	 nodeInPopup.nodePopover.isOpen = true;
+    		    	 nodeInPopup.nodePopoverInProgress = true;
+    		          if(TabsCache.get(nodeInPopup.idNode)){
+		        			console.log("Data getting from questions Cache ...");
+		        			nodeInPopup.data = TabsCache.get(x.idNode)[0];
+		        			nodeInPopup.nodePopoverInProgress = false;
+		        	  }
+    		          else{
+    		          QuestionsService.findQuestions(nodeInPopup.idNode,nodeInPopup.nodeclass).then(function(data) {	
+							TabsCache.put(data.data.idNode,data.data);
+							nodeInPopup.data = data.data[0];
+							nodeInPopup.nodePopoverInProgress = false;
+					 });
+    		         }
     		    },
-  		        close: function close() {
-   		          $scope.nodePopover.isOpen = false;
+  		        close: function close(x) {
+  		        	x.info["Node"+x.idNode].isOpen = false;
+  		        	$scope.nodePopover.isOpen = false;
   		        }
     	};
     	
