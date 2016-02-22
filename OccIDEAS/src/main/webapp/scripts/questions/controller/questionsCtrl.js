@@ -26,44 +26,9 @@
     	$scope.rulesInt = [];
     	
     	$scope.nodePopover = {
-//    			isOpen:function(x){
-//    				if(angular.isUndefined(x.info)){
-//    					return false;
-//    				}
-//    				var nodeInPopup = x.info["Node"+x.idNode];
-//   		    	 	if(!nodeInPopup){
-//   		    	 	   x.info["Node"+x.idNode] = {
-//		    				  idNode:x.idNode,
-//		    				  nodeclass:x.nodeclass,
-//		    				  nodePopover:{
-//		    					  isOpen: false
-//		    				  },
-//		    				  nodePopoverInProgress : false
-//		    		  };
-//   		    	 	  return false;
-//   		    	 	}else{
-//   		    	 	 return x.info["Node"+x.idNode].nodePopover.isOpen;
-//   		    	 	}
-//    			},
-    			isOpen: false,
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
-    		    open: function open(x) {
-    		    	  if(angular.isUndefined(x.info)){
-    		    		  x.info = [];
-    		    	  }
-    		    	  var nodeInPopup = x.info["Node"+x.idNode];
-    		    	 if(!nodeInPopup){
-    		    		  x.info["Node"+x.idNode] = {
-    		    				  idNode:x.idNode,
-    		    				  nodeclass:x.nodeclass,
-    		    				  nodePopover:{
-    		    					  isOpen: false
-    		    				  },
-    		    				  nodePopoverInProgress : false
-    		    		  };
-    		    		  nodeInPopup = x.info["Node"+x.idNode];
-    		    	  }
-    		    	 $scope.nodePopover.isOpen = true;
+    		    open: function(x) {
+    		    	 var nodeInPopup = x.info["Node"+x.idNode];
     		    	 nodeInPopup.nodePopover.isOpen = true;
     		    	 nodeInPopup.nodePopoverInProgress = true;
     		          if(TabsCache.get(nodeInPopup.idNode)){
@@ -80,8 +45,7 @@
     		         }
     		    },
   		        close: function close(x) {
-  		        	x.info["Node"+x.idNode].isOpen = false;
-  		        	$scope.nodePopover.isOpen = false;
+  		        	x.info["Node"+x.idNode].nodePopover.isOpen = false;
   		        }
     	};
     	
@@ -1040,6 +1004,18 @@
 									if(rule.idRule==response.data[0].idRule){
 										$itemScope.rules[j].conditions = response.data[0].conditions;
 										$itemScope.rule = $itemScope.rules[j];
+										var x = $itemScope.rules[j].conditions;
+										 if(angular.isUndefined(x[0].info)){
+					    		    		  x[0].info = [];
+					    		    	  }
+										 x[0].info["Node"+x[0].idNode] = {
+					    		    				  idNode:x[0].idNode,
+					    		    				  nodeclass:x[0].nodeclass,
+					    		    				  nodePopover:{
+					    		    					  isOpen: false
+					    		    				  },
+					    		    				  nodePopoverInProgress : false
+					    		    		  };
 										newNote(node.currentTarget.parentElement,$itemScope,$compile);
 										$scope.activeRuleDialog = $itemScope.rule;
 										$scope.activeRule = response.data[0];
