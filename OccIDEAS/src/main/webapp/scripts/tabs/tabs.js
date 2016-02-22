@@ -295,8 +295,6 @@
                                 .then(function(data){
                                     console.log("Data getting from module rules AJAX ... for "+$stateParams.row);
                                     var viewData = data;
-                                    
-                                    console.log(viewData);
                                     return viewData;
                                 })
                         },
