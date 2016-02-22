@@ -13,8 +13,9 @@ public class RuleDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public Rule save(Rule module){
-      return (Rule) sessionFactory.getCurrentSession().save(module);
+	public Long save(Rule module){
+		
+      return (Long) sessionFactory.getCurrentSession().save(module);
     }
 
     public void delete(Rule module){

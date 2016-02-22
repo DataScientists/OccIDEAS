@@ -17,9 +17,8 @@ public class BaseDao{
     @Autowired
     private SessionFactory sessionFactory;
 
-    @SuppressWarnings("unchecked")
-	public <T> T save(final T o){
-      return (T) sessionFactory.getCurrentSession().save(o);
+    public long save(final Object o){
+      return (long) sessionFactory.getCurrentSession().save(o);
     }
 
 

@@ -53,6 +53,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		function create(data){
+			var restSaveUrl = 'rest/rule/create';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		//modulerule/getlist
 		function handleError( response ) {
             if (
@@ -74,6 +83,7 @@
 			listByModule: listByModule,
 			listByAgent: listByAgent,
 			listAllRules: listAllRules,
+			create: create,
 			save: save,
 			getRule: getRule,
 			findRules: findRules
