@@ -39,7 +39,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionVO create(QuestionVO o) {
-        Question question = dao.save(mapper.convertToQuestion(o));
+        Question question = new Question();
+        question.setIdNode(dao.save(mapper.convertToQuestion(o)));
         return mapper.convertToQuestionVO(question);
     }
 

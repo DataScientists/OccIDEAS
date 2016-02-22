@@ -990,7 +990,7 @@
 								for(var j=0;j < $itemScope.rules.length;j++){
 									var rule = $itemScope.rules[j];
 									if(rule.idRule==response.data[0].idRule){
-										$itemScope.rules[j].condition = response.data[0].conditions;
+										$itemScope.rules[j].conditions = response.data[0].conditions;
 										$itemScope.rule = $itemScope.rules[j];
 										newNote(node.currentTarget.parentElement,$itemScope,$compile);
 										$scope.activeRuleDialog = $itemScope.rule;
@@ -1006,6 +1006,54 @@
 					  
 				  }
 				  
+			  	}			  
+			  ],
+			  [ 'Add Rule', function($itemScope,node) {
+			  	  var conditions = [];
+			  	  conditions.push($itemScope.node);
+				  var rule = {agentId:$itemScope.agent.idAgent,conditions:conditions};
+				  RulesService.create(rule).then(function(response){
+	    				if(response.status === 200){
+	    					if(response.data.idRule){
+						 	 	RulesService.getRule(response.data.idRule).then(function(response) {
+							  
+									if(response.status === 200){
+										console.log('Found rule id:'+response.data[0].idRule);
+										$itemScope.rule = response.data[0];
+										$itemScope.rule.agentName = $itemScope.agent.name;
+										newNote(node.currentTarget.parentElement,$itemScope,$compile);									
+										$scope.activeRule = response.data[0];
+										if($itemScope.rules==null){
+											$itemScope.rules = [];
+										}
+										var ruleLevel = "probHigh";
+										if(rule.level==0){
+											ruleLevel = "probHigh";
+										}else if(rule.level==1){
+											ruleLevel = "probMedium";
+										}else if(rule.level==2){
+											ruleLevel = "probLow";
+										}else if(rule.level==3){
+											ruleLevel = "probUnknown";
+										}else if(rule.level==4){
+											ruleLevel = "possUnknown";
+										}else if(rule.level==5){
+											ruleLevel = "noExposure";
+										}
+										/*$itemScope.rules.push({
+											ruleLevel:ruleLevel,
+											idNode:node.idNode
+											})*/
+										var rulemarks = angular.element(node.target);
+										rulemarks.append("<span class='cell-lable'><div class="+ruleLevel+" ></div></span>");
+									}
+									});
+								}else{
+									  alert("Try reload");
+								}
+	    				}
+	    			});
+					  
 			  	}			  
 			  ]
 			];

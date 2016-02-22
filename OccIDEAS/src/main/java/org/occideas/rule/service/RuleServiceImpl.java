@@ -35,8 +35,10 @@ public class RuleServiceImpl implements RuleService {
 
     @Override
     public RuleVO create(RuleVO o) {
-        Rule question = dao.save(mapper.convertToRule(o));
-        return mapper.convertToRuleVO(question);
+        Rule rule = new Rule();
+        rule.setIdRule(dao.save(mapper.convertToRule(o)));
+        rule.setAgentId(o.getAgentId());
+        return mapper.convertToRuleVO(rule);
     }
 
     @Override

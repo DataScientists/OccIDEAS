@@ -55,12 +55,13 @@ public class RuleRestController implements BaseRestController<RuleVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(RuleVO json) {
+		RuleVO rule = new RuleVO();
 		try{
-			service.create(json);
+			rule = service.create(json);
 		}catch(Throwable e){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
-		return Response.ok().build();
+		return Response.ok(rule).build();
 	}
 
 	@Path(value="/update")

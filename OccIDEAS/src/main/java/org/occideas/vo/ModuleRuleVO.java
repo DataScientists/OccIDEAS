@@ -1,5 +1,8 @@
 package org.occideas.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"conditions"})
 public class ModuleRuleVO {
 
 	private long idModule;
