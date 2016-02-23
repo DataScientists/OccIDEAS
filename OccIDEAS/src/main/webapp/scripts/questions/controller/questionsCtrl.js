@@ -555,6 +555,7 @@
 			}else{
 				scope.$modelValue.type = 'Q_multiple';
 			}
+			saveModuleWithoutReload();
 		};
 		$scope.deleteNode = function(scope) {
 			recordAction($scope.data);
