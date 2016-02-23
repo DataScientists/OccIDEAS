@@ -473,7 +473,6 @@
 					}
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
-					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
 						if($scope.isClonable){						
 							saveModuleAndReload();
@@ -794,7 +793,7 @@
 		          nodes: []
 		        });
 			}
-			reorderSequence(scope.$modelValue.nodes);
+			//reorderSequence(scope.$modelValue.nodes);
 			saveModuleWithoutReload(locationId);
 		};
 
@@ -1146,7 +1145,7 @@
 								TabsCache.put(data.data.idNode,data.data);
 								$scope.data = data.data;
 								if(locationId){
-									$scope.scrollTo(locationId);
+									//$scope.scrollTo(locationId);
 								}
 							});
 						}else{
@@ -1172,7 +1171,7 @@
 							console.log('Save was Successful! Not Reloading');
 							TabsCache.put(response.data.idNode,response.data);
 							if(locationId && locationId != ''){
-								$scope.scrollTo(locationId);
+								//$scope.scrollTo(locationId);
 							}
 							if(deffered){
 								deffered.resolve();
