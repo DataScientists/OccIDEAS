@@ -45,9 +45,10 @@
 
                     if(response.data.idNode){
                         var elId = "node-" + response.data.idNode;
-                        $scope.scrollTo(elId);
-
-                        
+                        $scope.scrollTo(elId);   
+                    }else{
+                    	$scope.data.interviewStarted = false;
+                    	$scope.data.interviewEnded = true;
                     }
                     
                 } else if (response.status == 400) {
@@ -61,36 +62,40 @@
         }
 
         $scope.startInterview = function (data) {
-            var interview = {};
-            interview.moduleId = data[0].idNode;
-            InterviewsService.startInterview(interview).then(function (response) {
-                $scope.interviewId = response.data.interviewId;
-                $scope.data.interviewStarted = true;
+        	QuestionsService.findQuestions($scope.data[0].idNode,'M')
+            .then(function(response){
+                console.log("Data getting from questions AJAX ...");
+                $scope.data = response.data;
+                var interview = {};
+                interview.moduleId = data[0].idNode;
+                InterviewsService.startInterview(interview).then(function (response) {
+                    $scope.interviewId = response.data.interviewId;
+                    $scope.data.interviewStarted = true;
+                    $scope.data.interviewEnded = false;
 
-                InterviewsService.getNextQuestion(JSON.stringify({
-                    "interviewId": response.data.interviewId,
-                    "moduleId": response.data.moduleId
-                })).then(function (qResponse) {
-                    if (qResponse.status === 200) {
-                        $scope.data.showedQuestion = qResponse.data;
+                    InterviewsService.getNextQuestion(JSON.stringify({
+                        "interviewId": response.data.interviewId,
+                        "moduleId": response.data.moduleId
+                    })).then(function (qResponse) {
+                        if (qResponse.status === 200) {
+                            $scope.data.showedQuestion = qResponse.data;
 
-                        var elId = "node-" + qResponse.data.idNode;
-                        $scope.scrollTo(elId);
-                        angular.element(document.querySelector("#tree-root-interviewing #" + elId)).addClass('highlight');
-                    } else {
-                        console.log('ERROR on Get!');
-                    }
-                });
+                            var elId = "node-" + qResponse.data.idNode;
+                            $scope.scrollTo(elId);
+                            angular.element(document.querySelector("#tree-root-interviewing #" + elId)).addClass('highlight');
+                        } else {
+                            console.log('ERROR on Get!');
+                        }
+                    });
+                });             
             });
         }
-
         /*Handler click on answers*/
         resetSelectedIndex();
 
         $scope.singleChoiceHandler = function ($index) {
             $scope.selectedIndex = $index;
         }
-
         $scope.multipleChoiceHandler = function (parentId, id) {
             var el = angular.element(document.querySelector("#interviewing-" + parentId + " #answer-" + id));
             if (el.hasClass('selected')) {
@@ -99,13 +104,9 @@
                 el.addClass('selected');
             }
         }
-
         function resetSelectedIndex() {
             $scope.selectedIndex = -1;
         }
-
-        /*Handler click on answers*/
-
         $scope.scrollTo = function (target) {
             var scrollPane = $('#interivew-module-tree');
 			var scrollTarget = $('#' + target);
@@ -114,7 +115,5 @@
 			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
 			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');
         };
-        
-        $rootScope.questionsLoading = false;
     }
 })();

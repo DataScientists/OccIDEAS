@@ -30,6 +30,9 @@
         </div>
         </form>
     </div>
+    <div ng-if="data.interviewEnded">
+    	<p>The interview in now complete</p>
+    </div>
 </div>
 <div class="col-md-6 moduleInterview" id="interivew-module-tree">
     <ng-include src="'scripts/interviews/partials/moduleTree.html'"></ng-include>
