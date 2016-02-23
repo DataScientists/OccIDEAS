@@ -243,14 +243,6 @@
                     params:{row: null,module:null},
                     resolve:{
                         data: function($stateParams,QuestionsService,TabsCache) {
-                            if(TabsCache.get($stateParams.row)){
-                                console.log("Data getting from questions Cache ...");
-                                var viewData = TabsCache.get($stateParams.row);
-                                viewData.showedQuestion = viewData[0].nodes[0];
-                                viewData.showAgentSlider = false;
-                                return viewData;
-                            }
-
                             return QuestionsService.findQuestions($stateParams.row,'M')
                                 .then(function(response){
                                     console.log("Data getting from questions AJAX ...");
@@ -270,7 +262,6 @@
                                         $window.sliderVal.idNode.showFragmentSlider =true;
                                         $window.sliderVal.idNode.showModuleSlider = false;
                                     }
-                                    TabsCache.put($stateParams.row,response.data);
                                     var viewData = response.data;
                                     viewData.showedQuestion = response.data[0].nodes[0];
                                     viewData.showAgentSlider = false;

@@ -43,10 +43,13 @@
                     $scope.data.showedQuestion = response.data;
                     resetSelectedIndex();
 
-                    var elId = "node-" + response.data.idNode;
-                    $scope.scrollTo(elId);
+                    if(response.data.idNode){
+                        var elId = "node-" + response.data.idNode;
+                        $scope.scrollTo(elId);
 
-                    angular.element(document.querySelector("#tree-root-interviewing #" + elId)).addClass('highlight');
+                        
+                    }
+                    
                 } else if (response.status == 400) {
                     alert("End interview!");
                     return false;
@@ -104,11 +107,12 @@
         /*Handler click on answers*/
 
         $scope.scrollTo = function (target) {
-            var container = $('#interivew-module-tree'),
-                scrollTo = $('#' + target);
-            container.animate({
-                scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop() - 300
-            });
+            var scrollPane = $('#interivew-module-tree');
+			var scrollTarget = $('#' + target);
+			var scrollY = scrollTarget.offset().top - 150;
+			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
+			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
+			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');
         };
         
         $rootScope.questionsLoading = false;

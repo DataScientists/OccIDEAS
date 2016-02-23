@@ -2,9 +2,9 @@
 	angular.module('occIDEASApp.Rules')
 		   .controller('RulesCtrl',RulesCtrl);
 	RulesCtrl.$inject = ['RulesService','ngTableParams','$state','$scope','RulesCache','$filter',
-                          '$anchorScroll','$location','templateData'];
+                          '$anchorScroll','$location','templateData','QuestionsService'];
 	function RulesCtrl(RulesService,NgTableParams,$state,$scope,RulesCache,$filter,
-			$anchorScroll,$location,templateData){
+			$anchorScroll,$location,templateData,QuestionsService){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -50,6 +50,49 @@
 	        });
 	        setInvalid(invalidCellsByRow.length > 0);
 	      }
+	    $scope.nodePopover = {
+	    		templateUrl: 'scripts/questions/partials/nodePopover.html',
+    		    open: function(x,nodeclass) {
+    		    	if(!nodeclass){
+    		    		nodeclass = 'P';
+    		    	}
+    		    	if(!x.idNode){
+    		    		var convertX = {};
+    		    		convertX.idNode = x;
+    		    		x = convertX;
+    		    	}
+    		    	if(angular.isUndefined(x.info)){
+  		    		  x.info = [];
+  		    	  	}
+    		    	 x.info["Node"+x.idNode] = {
+							    				  idNode:x.idNode,
+							    				  nodeclass:nodeclass,
+							    				  nodePopover:{
+							    					  isOpen: false
+							    				  },
+							    				  nodePopoverInProgress : false
+		    		  							};
+    		    	 var nodeInPopup = x.info["Node"+x.idNode];
+    		    	 nodeInPopup.nodePopover.isOpen = true;
+    		    	 nodeInPopup.nodePopoverInProgress = true;
+    		          
+    		    	 if(nodeclass=='P'){
+    		    		 QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
+    		    			 nodeInPopup.data = data.data[0];
+   							nodeInPopup.nodePopoverInProgress = false;
+ 					     });
+    		    	 }else{
+    		    		 QuestionsService.findQuestion(nodeInPopup.idNode).then(function(data) {	
+  							nodeInPopup.data = data.data[0];		
+  							nodeInPopup.nodePopoverInProgress = false;
+  					     });
+    		    	 }
+    		         
+    		    },
+  		        close: function close(x) {
+  		        	x.info["Node"+x.idNode].nodePopover.isOpen = false;
+  		        }
+    	};
 	}
 })();
 

@@ -27,24 +27,37 @@
     	
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
-    		    open: function(x) {
+    		    open: function(x,nodeclass) {
+    		    	if(!nodeclass){
+    		    		nodeclass = 'P';
+    		    	}
+    		    	if(angular.isUndefined(x.info)){
+  		    		  x.info = [];
+  		    	  	}
+    		    	 x.info["Node"+x.idNode] = {
+							    				  idNode:x.idNode,
+							    				  nodeclass:nodeclass,
+							    				  nodePopover:{
+							    					  isOpen: false
+							    				  },
+							    				  nodePopoverInProgress : false
+		    		  							};
     		    	 var nodeInPopup = x.info["Node"+x.idNode];
     		    	 nodeInPopup.nodePopover.isOpen = true;
     		    	 nodeInPopup.nodePopoverInProgress = true;
-    		          if(TabsCache.get(nodeInPopup.idNode)){
-		        			console.log("Data getting from questions Cache ...");
-		        			nodeInPopup.data = TabsCache.get(x.idNode)[0];
-		        			nodeInPopup.nodePopoverInProgress = false;
-		        	  }
-    		          else{
-    		          QuestionsService.findQuestions(nodeInPopup.idNode,nodeInPopup.nodeclass).then(function(data) {	
-    		        	     console.log("Data getting from questions AJAX ...");
-    		        	  	TabsCache.put(data.data.idNode,data.data);
-							nodeInPopup.data = data.data[0];
-							nodeInPopup.nodePopoverInProgress = false;
-					 });
-    		         }
-    		    },
+    		         
+    		    	 if(nodeclass=='P'){
+    		    		 QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
+    		    			 nodeInPopup.data = data.data[0];
+   							nodeInPopup.nodePopoverInProgress = false;
+ 					     });
+    		    	 }else{
+    		    		 QuestionsService.findQuestion(nodeInPopup.idNode).then(function(data) {	
+  							nodeInPopup.data = data.data[0];		
+  							nodeInPopup.nodePopoverInProgress = false;
+  					     });
+    		    	 }  
+    		    },   		    
   		        close: function close(x) {
   		        	x.info["Node"+x.idNode].nodePopover.isOpen = false;
   		        }
@@ -459,7 +472,6 @@
 					}
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
-					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
 						if($scope.isClonable){						
 							saveModuleAndReload();
@@ -780,7 +792,7 @@
 		          nodes: []
 		        });
 			}
-			reorderSequence(scope.$modelValue.nodes);
+			//reorderSequence(scope.$modelValue.nodes);
 			saveModuleWithoutReload(locationId);
 		};
 
@@ -1097,7 +1109,7 @@
 								TabsCache.put(data.data.idNode,data.data);
 								$scope.data = data.data;
 								if(locationId){
-									$scope.scrollTo(locationId);
+									//$scope.scrollTo(locationId);
 								}
 							});
 						}else{
@@ -1123,7 +1135,7 @@
 							console.log('Save was Successful! Not Reloading');
 							TabsCache.put(response.data.idNode,response.data);
 							if(locationId && locationId != ''){
-								$scope.scrollTo(locationId);
+								//$scope.scrollTo(locationId);
 							}
 							if(deffered){
 								deffered.resolve();

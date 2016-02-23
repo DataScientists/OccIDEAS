@@ -13,6 +13,8 @@ public class PossibleAnswerVO extends NodeVO {
 	@JsonProperty(value = "nodes")
 	private List<QuestionVO> childNodes;
 
+	private QuestionVO parent;
+		
 	public List<QuestionVO> getChildNodes() {
 		if(childNodes == null){
 			childNodes = new ArrayList<QuestionVO>();
@@ -22,6 +24,14 @@ public class PossibleAnswerVO extends NodeVO {
 
 	public void setChildNodes(List<QuestionVO> childNodes) {
 		this.childNodes = childNodes;
+	}
+
+	public QuestionVO getParent() {
+		return parent;
+	}
+
+	public void setParent(QuestionVO parent) {
+		this.parent = parent;
 	}
 	
 }
