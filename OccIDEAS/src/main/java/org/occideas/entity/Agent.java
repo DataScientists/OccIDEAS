@@ -20,7 +20,6 @@ public class Agent extends AgentInfo{
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@Fetch(FetchMode.SELECT)
-	
 	private AgentGroup agentGroup;
 
 	public Agent() {

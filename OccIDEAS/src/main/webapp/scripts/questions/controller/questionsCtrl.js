@@ -38,7 +38,8 @@
 		        	  }
     		          else{
     		          QuestionsService.findQuestions(nodeInPopup.idNode,nodeInPopup.nodeclass).then(function(data) {	
-							TabsCache.put(data.data.idNode,data.data);
+    		        	     console.log("Data getting from questions AJAX ...");
+    		        	  	TabsCache.put(data.data.idNode,data.data);
 							nodeInPopup.data = data.data[0];
 							nodeInPopup.nodePopoverInProgress = false;
 					 });
@@ -110,7 +111,6 @@
     	}
     	
 		$scope.toggleRulesObj = function (agents){
-			
 			if(_.findIndex($scope.rulesObj, function(o) { 
 					return o.idAgent === agents.idAgent; }) != -1){
 				$scope.safeApply(function () {
@@ -981,61 +981,42 @@
 	  				}
 			  ]
 			];
+		
+		function addPopoverInfo(x){
+			 if(angular.isUndefined(x[0].info)){
+	    		  x[0].info = [];
+	    	  }
+			 x[0].info["Node"+x[0].idNode] = {
+	    				  idNode:x[0].idNode,
+	    				  nodeclass:x[0].nodeclass,
+	    				  nodePopover:{
+	    					  isOpen: false
+	    				  },
+	    				  nodePopoverInProgress : false
+	          };
+		}
+		
 		$scope.rulesMenuOptions =
 			[
-			  [ 'Show Rules', function($itemScope,node) {
-				  /*var conditions = _.filter($scope.rulesInt, { 'id': $itemScope.rule.rule.idRule});
-				  if(conditions.length > 0){
-					  $itemScope.rule.condition = conditions[0].nodes;
-				  }else{
-					  $itemScope.rule.condition = [];
-				  }*/
-				  //get full list of rules on this node and agent
-				  
-				  for(var i=0;i < $itemScope.rules.length;i++){
-					  var rule = $itemScope.rules[i];
-					  if(rule.idRule){
-						  RulesService.getRule(rule.idRule).then(function(response) {
-							  //console.log('Data getting from AJAX rule id:'+response.data[0].idRule);
-							  if(response.status === 200){
-								console.log('Found rule id:'+response.data[0].idRule);
-								for(var j=0;j < $itemScope.rules.length;j++){
-									var rule = $itemScope.rules[j];
-									if(rule.idRule==response.data[0].idRule){
-										$itemScope.rules[j].conditions = response.data[0].conditions;
-										$itemScope.rule = $itemScope.rules[j];
-										var x = $itemScope.rules[j].conditions;
-										 if(angular.isUndefined(x[0].info)){
-					    		    		  x[0].info = [];
-					    		    	  }
-										 x[0].info["Node"+x[0].idNode] = {
-					    		    				  idNode:x[0].idNode,
-					    		    				  nodeclass:x[0].nodeclass,
-					    		    				  nodePopover:{
-					    		    					  isOpen: false
-					    		    				  },
-					    		    				  nodePopoverInProgress : false
-					    		    		  };
-										newNote(node.currentTarget.parentElement,$itemScope,$compile);
-										$scope.activeRuleDialog = $itemScope.rule;
-										$scope.activeRule = response.data[0];
-									}
-								}
-								
-							  }
-					        });
-					  }else{
-						  alert("Try reload");
-					  }
-					  
-				  }
+			  [ 'Show Rules', function($itemScope, $event, model) {
+				  var rules =_.filter(model.moduleRule[0].rule, function(r){
+  					return $itemScope.$parent.obj.idAgent === r.agentId; 
+  			      });
+				  if(rules.length > 0){
+					  $itemScope.rule = rules[0];
+					  var x = $itemScope.rule.conditions;
+					  addPopoverInfo(x);
+					  newNote($event.currentTarget.parentElement,$itemScope,$compile);
+					  $scope.activeRuleDialog = $itemScope.rule;
+//					  $scope.activeRule = response.data[0];
+				  }	  
 				  
 			  	}			  
 			  ],
-			  [ 'Add Rule', function($itemScope,node) {
+			  [ 'Add Rule', function($itemScope, $event, model) {
 			  	  var conditions = [];
-			  	  conditions.push($itemScope.node);
-				  var rule = {agentId:$itemScope.agent.idAgent,conditions:conditions};
+			  	  conditions.push(model);
+				  var rule = {agentId:$itemScope.$parent.obj.idAgent,conditions:conditions};
 				  RulesService.create(rule).then(function(response){
 	    				if(response.status === 200){
 	    					if(response.data.idRule){
@@ -1044,32 +1025,16 @@
 									if(response.status === 200){
 										console.log('Found rule id:'+response.data[0].idRule);
 										$itemScope.rule = response.data[0];
-										$itemScope.rule.agentName = $itemScope.agent.name;
-										newNote(node.currentTarget.parentElement,$itemScope,$compile);									
+										$itemScope.rule.agentName = $itemScope.$parent.obj.name;
+										var x = $itemScope.rule.conditions;
+										addPopoverInfo(x);
+										newNote($event.currentTarget.parentElement,$itemScope,$compile);									
 										$scope.activeRule = response.data[0];
 										if($itemScope.rules==null){
 											$itemScope.rules = [];
 										}
-										var ruleLevel = "probHigh";
-										if(rule.level==0){
-											ruleLevel = "probHigh";
-										}else if(rule.level==1){
-											ruleLevel = "probMedium";
-										}else if(rule.level==2){
-											ruleLevel = "probLow";
-										}else if(rule.level==3){
-											ruleLevel = "probUnknown";
-										}else if(rule.level==4){
-											ruleLevel = "possUnknown";
-										}else if(rule.level==5){
-											ruleLevel = "noExposure";
-										}
-										/*$itemScope.rules.push({
-											ruleLevel:ruleLevel,
-											idNode:node.idNode
-											})*/
-										var rulemarks = angular.element(node.target);
-										rulemarks.append("<span class='cell-lable'><div class="+ruleLevel+" ></div></span>");
+										var rulemarks = angular.element(model.target);
+										rulemarks.append("<span class='cell-lable'><div class="+$itemScope.rule.level+" ></div></span>");
 									}
 									});
 								}else{

@@ -6,7 +6,7 @@
 	<div class="title">{{rule.idRule}} {{rule.agentName}}</div>
 		<input type="text" value="Nodes" disabled/>
 			<ul class="list-group" style="margin: 0 0 0 0;">
-    			<li popover-is-open="x.info['Node'+x.idNode].nodePopover.isOpen" popover-placement="right" ng-mouseenter="nodePopover.open(x)" uib-popover-template="nodePopover.templateUrl" class="list-group-item nodeNumber" ng-repeat="x in rule.conditions" ng-click="highlightNode(x.idNode)">
+    			<li popover-is-open="x.info['Node'+x.idNode].nodePopover.isOpen" popover-placement="left" ng-mouseenter="nodePopover.open(x)" uib-popover-template="nodePopover.templateUrl" class="list-group-item nodeNumber" ng-repeat="x in rule.conditions" ng-click="highlightNode(x.idNode)">
 					{{x.number}}
 					<div class="pull-right">
 						<span ng-if="$index>0" class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeNodeFromRule(x)"></span>
@@ -17,12 +17,12 @@
 			<ul class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item">
 <select name="singleSelect" id="singleSelect" ng-model="rule.ruleLevel">
-      <option value="0" ng-selected="{{rule.ruleLevel === 'probHigh'}}">PROBABLE_HIGH</option>
-      <option value="1" ng-selected="{{rule.ruleLevel === 'probMedium'}}">PROBABLE_MEDIUM</option>
-      <option value="2" ng-selected="{{rule.ruleLevel === 'probLow'}}">PROBABLE_LOW</option>
-	  <option value="3" ng-selected="{{rule.ruleLevel === 'probUnknown'}}">PROBABLE_UNKNOWN</option>
-	  <option value="4" ng-selected="{{rule.ruleLevel === 'possUnknown'}}">POSSIBLE_UNKNOWN</option>
-	  <option value="5" ng-selected="{{rule.ruleLevel === 'noExposure'}}">NO_EXPOSURE</option>
+      <option value="0" ng-selected="{{rule.level === 'probHigh'}}">PROBABLE_HIGH</option>
+      <option value="1" ng-selected="{{rule.level === 'probMedium'}}">PROBABLE_MEDIUM</option>
+      <option value="2" ng-selected="{{rule.level === 'probLow'}}">PROBABLE_LOW</option>
+	  <option value="3" ng-selected="{{rule.level === 'probUnknown'}}">PROBABLE_UNKNOWN</option>
+	  <option value="4" ng-selected="{{rule.level === 'possUnknown'}}">POSSIBLE_UNKNOWN</option>
+	  <option value="5" ng-selected="{{rule.level === 'noExposure'}}">NO_EXPOSURE</option>
     </select></li>
   			</ul>
 		<div style="margin-left:2px;margin-top: 2px;">

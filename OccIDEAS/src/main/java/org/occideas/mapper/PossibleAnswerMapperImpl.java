@@ -112,4 +112,42 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         return list;
 	}
 
+	@Override
+	public PossibleAnswerVO convertToPossibleAnswerVOExModRule(PossibleAnswer answerEntity) {
+		if ( answerEntity == null ) {
+            return null;
+        }
+
+		PossibleAnswerVO answerVO = new PossibleAnswerVO();
+
+        answerVO.setIdNode( answerEntity.getIdNode() );
+        answerVO.setName( answerEntity.getName() );
+        answerVO.setDescription( answerEntity.getDescription() );
+        answerVO.setType( answerEntity.getType() );
+        answerVO.setSequence( answerEntity.getSequence() );
+        answerVO.setNumber( answerEntity.getNumber() );
+        answerVO.setParentId( answerEntity.getParentId());
+        answerVO.setLink( answerEntity.getLink() );
+        answerVO.setTopNodeId( answerEntity.getTopNodeId() );
+        answerVO.setLastUpdated( answerEntity.getLastUpdated() );
+        answerVO.setOriginalId( answerEntity.getOriginalId() );
+        answerVO.setDeleted( answerEntity.getDeleted() );
+        answerVO.setNodeclass( answerEntity.getNodeclass() );
+        return answerVO;
+	}
+
+	@Override
+	public List<PossibleAnswerVO> convertToPossibleAnswerVOExModRuleList(List<PossibleAnswer> answerEntity) {
+		if ( answerEntity == null ) {
+            return null;
+        }
+
+        List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
+        for ( PossibleAnswer answer : answerEntity ) {
+            list.add( convertToPossibleAnswerVOExModRule(answer));
+        }
+
+        return list;
+	}
+
 }

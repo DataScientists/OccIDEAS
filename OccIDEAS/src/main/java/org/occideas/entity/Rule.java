@@ -34,7 +34,6 @@ public class Rule implements Serializable {
 	private long agentId;
 	private String type;
 	private int level;
-//	@Type(type="timestamp")
 	private Date lastUpdated;
 	
 	@ManyToMany(fetch=FetchType.LAZY)

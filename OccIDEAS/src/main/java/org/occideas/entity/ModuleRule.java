@@ -1,7 +1,12 @@
 package org.occideas.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -20,30 +25,14 @@ public class ModuleRule  implements java.io.Serializable{
 	
 	private long idModule;
 	private String moduleName;
-	
-	private long idRule;
-	private String ruleLevel;
-	
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinColumn(name="idRule",referencedColumnName="idRule")
+	private List<Rule> rule;
+	private String idRule;
 	private long idAgent;
 	private String agentName;
 	
 	private long idNode;
-	public long getIdRule() {
-		return idRule;
-	}
-
-	public void setIdRule(long idRule) {
-		this.idRule = idRule;
-	}
-
-	public String getRuleLevel() {
-		return ruleLevel;
-	}
-
-	public void setRuleLevel(String ruleLevel) {
-		this.ruleLevel = ruleLevel;
-	}
-
 	private String nodeNumber;	
 
 	public String getAgentName() {
@@ -109,4 +98,22 @@ public class ModuleRule  implements java.io.Serializable{
 		this.moduleName = moduleName;
 	}
 
+	public List<Rule> getRule() {
+		return rule;
+	}
+
+	public void setRule(List<Rule> rule) {
+		this.rule = rule;
+	}
+
+	public String getIdRule() {
+		return idRule;
+	}
+
+	public void setIdRule(String idRule) {
+		this.idRule = idRule;
+	}
+	
+	
+	
 }

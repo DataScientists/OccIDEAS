@@ -15,7 +15,7 @@ public class RuleVO {
 	private long idRule;
 	private long agentId;
 	private String type;
-	private int level;
+	private String level;
 	private Date lastUpdated;
 	@JsonInclude(Include.NON_NULL)
 	private List<PossibleAnswerVO> conditions;
@@ -47,11 +47,26 @@ public class RuleVO {
 		this.type = type;
 	}
 
-	public int getLevel() {
+	public String getLevel() {
+		if(level!=null){
+			if(level.equalsIgnoreCase("0")){
+				level = "probHigh";
+			}else if(level.equalsIgnoreCase("1")){
+				level = "probMedium";
+			}else if(level.equalsIgnoreCase("2")){
+				level = "probLow";
+			}else if(level.equalsIgnoreCase("3")){
+				level = "probUnknown";
+			}else if(level.equalsIgnoreCase("4")){
+				level = "possUnknown";
+			}else if(level.equalsIgnoreCase("5")){
+				level = "noExposure";
+			}
+		}
 		return level;
 	}
 
-	public void setLevel(int level) {
+	public void setLevel(String level) {
 		this.level = level;
 	}
 

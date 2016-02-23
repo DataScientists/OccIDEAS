@@ -14,4 +14,8 @@ public interface PossibleAnswerMapper {
 	PossibleAnswerVO convertToPossibleAnswerVO(PossibleAnswer answerEntity, boolean includeChildNode);
 
 	List<PossibleAnswerVO> convertToPossibleAnswerVOList(List<PossibleAnswer> answerEntity, boolean includeChildNodes);
+	
+	PossibleAnswerVO convertToPossibleAnswerVOExModRule(PossibleAnswer answerEntity);
+
+	List<PossibleAnswerVO> convertToPossibleAnswerVOExModRuleList(List<PossibleAnswer> answerEntity);
 }
