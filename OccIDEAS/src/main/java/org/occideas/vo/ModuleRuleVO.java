@@ -1,7 +1,5 @@
 package org.occideas.vo;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"conditions"})
@@ -11,7 +9,7 @@ public class ModuleRuleVO {
 	private String moduleName;
 	private long idRule;
 	private String ruleLevel;
-	private List<RuleVO> rule;
+	private RuleVO rule;
 	private long idAgent;
 	private String agentName;
 	private long idNode;
@@ -95,11 +93,11 @@ public class ModuleRuleVO {
 		this.ruleLevel = ruleLevel;
 	}
 
-	public List<RuleVO> getRule() {
+	public RuleVO getRule() {
 		return rule;
 	}
 
-	public void setRule(List<RuleVO> rule) {
+	public void setRule(RuleVO rule) {
 		this.rule = rule;
 	}
 
