@@ -18,10 +18,6 @@
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
 		$anchorScroll.yOffset = 200;
-		$scope.templateData = null;
-		$scope.agentsData = null;
-		$scope.aJSMData = null;
-    	$scope.frequencyData = null;
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	
@@ -525,7 +521,8 @@
 		    else{
 		      $scope.rightNav = "slideFrag";
 		    }
-		    if($scope.templateData === null || $scope.aJSMData === null || $scope.frequencyData === null){
+		    if(angular.isUndefined($scope.templateData) || angular.isUndefined($scope.aJSMData)
+		    			|| angular.isUndefined($scope.frequencyData)){
 				initFragmentData();
 			}
 		};
@@ -919,14 +916,7 @@
 				  
 				  $mdDialog.show({
 					  //scope: $scope,
-					  controller: QuestionsCtrl,
-					  resolve: {					  
-						  data: function () {
-							  var data = [];
-							  data[0]=$scope.selectedNode;
-							  return data;
-		                    }
-					  },
+					  scope: $scope.$new(),
 					  /*locals: {
 						  addFragmentTab: $scope.addFragmentTab
 				         },*/
@@ -1170,12 +1160,12 @@
 							nodeclass : "F",
 							nodes : []
 						};
-					var childNodes = angular.copy(data[0].nodes);
+					var childNodes = angular.copy(data.nodes);
 					destNode.nodes.unshift({
-						name : data[0].name,
-						description : data[0].description,
-						type : data[0].type,
-						nodeclass : data[0].nodeclass,
+						name : data.name,
+						description : data.description,
+						type : data.type,
+						nodeclass : data.nodeclass,
 						nodes : childNodes
 					});
 					cascadeTemplateNullIds(destNode.nodes);
@@ -1194,13 +1184,15 @@
 				    				var node = template[i];
 				    				node.nodeclass = "Q";
 				    			}
+				    			if($scope.templateData != null){
 				    			_.merge($scope.templateData, template);
-				    				if (!$scope.templateData.$$phase) {
+				    			if (!$scope.templateData.$$phase) {
 				    			        try {
 				    			        	$scope.templateData.$digest();
 				    			        }
 				    			        catch (e) { }
 				    			    }
+				    			}
 				    				deffered.resolve();
 				    		});
 							FragmentsService.getByType('F_ajsm').then(function(data) {
@@ -1209,6 +1201,7 @@
 			        				node.type = "Q_linkedajsm";
 			        				node.nodeclass = "Q";
 			        			}
+			        			if($scope.aJSMData != null){
 			        			_.merge($scope.aJSMData, data);
 			        			if (!$scope.aJSMData.$$phase) {
 			    			        try {
@@ -1216,6 +1209,7 @@
 			    			        }
 			    			        catch (e) { }
 			    			    }
+			        			}
 			        			deffered.resolve();
 			        		});
 							FragmentsService.getByType('F_frequency').then(function(data) {	
@@ -1224,13 +1218,15 @@
 			        				//node.type = "Q_linkedtemplate";
 			        				node.nodeclass = "Q";
 			        			}
-			        			_.merge($scope.frequencyData, data);
+			        			if($scope.frequencyData != null){
+				    			_.merge($scope.frequencyData, data);
 			        			if (!$scope.frequencyData.$$phase) {
 			    			        try {
 			    			        	$scope.frequencyData.$digest();
 			    			        }
 			    			        catch (e) { }
 			    			    }
+			        			}
 			        			deffered.resolve();
 			        		});
 						   
