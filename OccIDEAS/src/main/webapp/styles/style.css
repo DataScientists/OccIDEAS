@@ -714,8 +714,8 @@ a:focus {
     overflow: scroll; height: 700px;
 }
 
-.highlight{
-    background: #ffff00;
+.highlight-interview{
+    background: #DDDFE8;
 }
 
 /** UI Tree*/
