@@ -59,6 +59,23 @@
     background-color: #A7B3E2;
     border-radius: 10px;
 }
+.badge-parent {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #A7B3E2;
+    border-radius: 10px;
+}
+.popover-content {
+    padding: 3px 5px 0px 5px !important;
+}
 .badge-deleted {
     display: inline-block;
     min-width: 10px;

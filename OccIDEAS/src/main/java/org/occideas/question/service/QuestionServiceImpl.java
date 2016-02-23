@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.base.dao.BaseDao;
-import org.occideas.entity.*;
+import org.occideas.entity.InterviewQuestionAnswer;
+import org.occideas.entity.Module;
+import org.occideas.entity.Node;
+import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
 import org.occideas.interview.dao.InterviewDao;
+import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,9 @@ public class QuestionServiceImpl implements QuestionService {
     private QuestionMapper mapper;
 
     @Autowired
+    private PossibleAnswerMapper paMapper;
+
+    @Autowired
     private InterviewDao interviewDao;
 
     @Override
@@ -32,6 +40,13 @@ public class QuestionServiceImpl implements QuestionService {
     public List<QuestionVO> findById(Long id) {
         Question question = dao.get(Question.class, id);
         QuestionVO questionVO = mapper.convertToQuestionVO(question);
+        Long parentId = Long.valueOf(question.getParentId());
+        if(parentId!=question.getTopNodeId()){
+        	PossibleAnswer answer = dao.get(PossibleAnswer.class, parentId);
+            questionVO.setParent(paMapper.convertToPossibleAnswerVO(answer,false));
+        }
+        
+        
         List<QuestionVO> list = new ArrayList<QuestionVO>();
         list.add(questionVO);
         return list;

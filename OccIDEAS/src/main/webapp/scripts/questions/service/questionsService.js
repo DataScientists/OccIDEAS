@@ -23,6 +23,24 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		function findQuestion(idNode) {
+			var restUrl = 'rest/question/get?id=' + idNode;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		function findPossibleAnswer(idNode) {
+			var restUrl = 'rest/answer/getById?id='+idNode;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		
 		function save(data){
 			var restSaveUrl = 'rest/question/update';
@@ -94,6 +112,8 @@
 		
 		return {
 			findQuestions: findQuestions,
+			findQuestion: findQuestion,
+			findPossibleAnswer: findPossibleAnswer,
 			save:save,
 			saveNode:saveNode,
 			getMaxId:getMaxId,

@@ -1,23 +1,19 @@
-<div class="form-group" style="width:200px;height:100px;">
+<div class="form-group">
 	<div class="popoverTitle">
-		<button type="button" class="btn btn-primary btn-xs pull-right" 
-		ng-click="nodePopover.close(x)" aria-label="Left Align">
-		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
 	</div>
-	<md-progress-circular ng-if="x.info['Node'+x.idNode].nodePopoverInProgress" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
-	<div ng-if="!x.info['Node'+x.idNode].nodePopoverInProgress">
+	<md-progress-circular ng-if="node.info['Node'+node.idNode].nodePopoverInProgress" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+	<div ng-if="!node.info['Node'+node.idNode].nodePopoverInProgress">
 		<form>
-  <div class="form-group">
-    <label for="infoDesc">Description:</label>
-    <p id="infoDesc">{{x.info["Node"+x.idNode].data.description}}</p>
+	<div class="form-group" >
+  		 <span class="badge-parent">{{node.info["Node"+node.idNode].data.parent.number}}</span>
+  		 {{node.info["Node"+node.idNode].data.parent.name}}
+  	</div>
+  <div>
+    <span class="badge-parent">{{node.info["Node"+node.idNode].data.number}}</span>
+    {{node.info["Node"+node.idNode].data.name}}
   </div>
-  <div class="form-group">
-   		<button class="btn btn-primary" type="button" >
-  		 	Parent IdNode <span class="badge">{{x.info["Node"+x.idNode].data.parentId}}</span>
-		</button>
-  </div>
+  
 </form>
 	</div>
-	
 </div>

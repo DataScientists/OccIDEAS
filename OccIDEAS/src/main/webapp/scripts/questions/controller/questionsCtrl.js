@@ -27,23 +27,37 @@
     	
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
-    		    open: function(x) {
+    		    open: function(x,nodeclass) {
+    		    	if(!nodeclass){
+    		    		nodeclass = 'P';
+    		    	}
+    		    	if(angular.isUndefined(x.info)){
+  		    		  x.info = [];
+  		    	  	}
+    		    	 x.info["Node"+x.idNode] = {
+							    				  idNode:x.idNode,
+							    				  nodeclass:nodeclass,
+							    				  nodePopover:{
+							    					  isOpen: false
+							    				  },
+							    				  nodePopoverInProgress : false
+		    		  							};
     		    	 var nodeInPopup = x.info["Node"+x.idNode];
     		    	 nodeInPopup.nodePopover.isOpen = true;
     		    	 nodeInPopup.nodePopoverInProgress = true;
-    		          if(TabsCache.get(nodeInPopup.idNode)){
-		        			console.log("Data getting from questions Cache ...");
-		        			nodeInPopup.data = TabsCache.get(x.idNode)[0];
-		        			nodeInPopup.nodePopoverInProgress = false;
-		        	  }
-    		          else{
-    		          QuestionsService.findQuestions(nodeInPopup.idNode,nodeInPopup.nodeclass).then(function(data) {	
-							TabsCache.put(data.data.idNode,data.data);
-							nodeInPopup.data = data.data[0];
-							nodeInPopup.nodePopoverInProgress = false;
-					 });
-    		         }
-    		    },
+    		         
+    		    	 if(nodeclass=='P'){
+    		    		 QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
+    		    			 nodeInPopup.data = data.data[0];
+   							nodeInPopup.nodePopoverInProgress = false;
+ 					     });
+    		    	 }else{
+    		    		 QuestionsService.findQuestion(nodeInPopup.idNode).then(function(data) {	
+  							nodeInPopup.data = data.data[0];		
+  							nodeInPopup.nodePopoverInProgress = false;
+  					     });
+    		    	 }  
+    		    },   		    
   		        close: function close(x) {
   		        	x.info["Node"+x.idNode].nodePopover.isOpen = false;
   		        }
@@ -1004,7 +1018,7 @@
 									if(rule.idRule==response.data[0].idRule){
 										$itemScope.rules[j].conditions = response.data[0].conditions;
 										$itemScope.rule = $itemScope.rules[j];
-										var x = $itemScope.rules[j].conditions;
+										/*var x = $itemScope.rules[j].conditions;
 										 if(angular.isUndefined(x[0].info)){
 					    		    		  x[0].info = [];
 					    		    	  }
@@ -1015,7 +1029,7 @@
 					    		    					  isOpen: false
 					    		    				  },
 					    		    				  nodePopoverInProgress : false
-					    		    		  };
+					    		    		  };*/
 										newNote(node.currentTarget.parentElement,$itemScope,$compile);
 										$scope.activeRuleDialog = $itemScope.rule;
 										$scope.activeRule = response.data[0];
