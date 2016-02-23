@@ -235,38 +235,19 @@
 		}).state('tabs.interview', {
             url: '/interview/:row',
             sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
             views:{
                 'interview@tabs':{
                     templateUrl: 'scripts/interviews/view/interview.html',
                     controller: 'InterviewsCtrl as vm',
                     params:{row: null,module:null},
                     resolve:{
-                        data: function($stateParams,QuestionsService,TabsCache) {
+                        data: function($stateParams,QuestionsService) {
                             return QuestionsService.findQuestions($stateParams.row,'M')
                                 .then(function(response){
                                     console.log("Data getting from questions AJAX ...");
-                                    if(angular.isUndefined($window.sliderVal)){
-                                        $window.sliderVal = [];
-                                    }
-                                    var idNode = 'Node'+response.data[0].idNode;
-                                    $window.sliderVal.idNode = {
-                                        showFragmentSlider:true,
-                                        showModuleSlider:true,
-                                        showAgentSlider:true
-                                    };
-                                    if(response.data[0].type=='M_IntroModule'){
-                                        $window.sliderVal.idNode.showFragmentSlider =false;
-                                        $window.sliderVal.idNode.showModuleSlider = true;
-                                    }else{
-                                        $window.sliderVal.idNode.showFragmentSlider =true;
-                                        $window.sliderVal.idNode.showModuleSlider = false;
-                                    }
-                                    var viewData = response.data;
-                                    viewData.showedQuestion = response.data[0].nodes[0];
-                                    viewData.showAgentSlider = false;
-                                    return viewData;
-                                })
+                                    return response.data;
+                                });
                         }
                     }
                 }
