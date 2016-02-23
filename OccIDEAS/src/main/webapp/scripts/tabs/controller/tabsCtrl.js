@@ -162,6 +162,7 @@
 				$scope.selectedIndex=0;
 			}
 			$scope.questionsCount--;
+			$scope.agentsData = null;
 		};
 		$scope.turnOffProgressBar = function turnOffProgressBar(){
 			$scope.loading = false;
