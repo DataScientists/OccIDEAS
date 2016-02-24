@@ -114,16 +114,18 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
         QuestionVO questionVO = null;
         try {
-        	if("multiple".equals(interviewVO.getType())){
-        		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getMultipleAnswerId().get(0));
-        	}else if(interviewVO.getQuestionsAsked().size()>0){
+        	if(interviewVO.getQuestionsAsked().size()>0){
         		List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
+        		String maxNumber = "Z";
         		for(InterviewQuestionAnswerVO iqa: questionsAsked){
         			//check if has unanswered questions
         			for(QuestionVO question: iqa.getPossibleAnswer().getChildNodes()){
         				if(!isQuesitonAnswered(question,questionsAsked)){
-        					questionVO = question;
-        					break;
+        					String number = question.getNumber();
+        					if(number.compareTo(maxNumber)<0){
+        						maxNumber = number;
+        						questionVO = question;	
+        					}
         				}
         			}
         		}

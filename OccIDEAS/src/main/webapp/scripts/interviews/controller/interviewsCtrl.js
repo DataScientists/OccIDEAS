@@ -14,21 +14,27 @@
         $scope.saveAnswerQuestion = function (node) {
         	
             var seletectedEl = node.selectedAnswer;
+            if (node.type == 'Q_multiple') {
+            	seletectedEl = $scope.multiSelected;
+            }
             if (!seletectedEl && $scope.data.interviewStarted) {
                 alert("Please select an answer!");
                 return false;
             }
 
             var interview = $scope.interview;
-            //interview.questionId = node.idNode;
+            if(!interview.questionsAsked){
+        		interview.questionsAsked = [];
+        	}
             if (node.type == 'Q_multiple') {
-                var answers = angular.element(document.querySelectorAll("#interviewing-" + node.idNode + " .selected"));
+                var answers = seletectedEl;
                 var answerIds = [];
                 for (var i = 0; i < answers.length; i++) {
-                    answerIds.push(parseInt(answers[i].id.replace("answer-", "")));
-                    if ($("#interviewing-" + node.idNode + " #" + answers[i].id).is(":input")) {
-                        interview.freeText = answers[i].value;
-                    }
+                	var newQuestionAsked = {possibleAnswer:answers[i],
+                			question:node,
+    						interviewQuestionAnswerFreetext:answers[i].name}
+                	
+                	interview.questionsAsked.push(newQuestionAsked);
                 }
                 interview.multipleAnswerId = answerIds;
                 interview.type = "multiple";
@@ -36,9 +42,6 @@
             	var newQuestionAsked = {possibleAnswer:seletectedEl,
             			question:node,
 						interviewQuestionAnswerFreetext:seletectedEl.name}
-            	if(!interview.questionsAsked){
-            		interview.questionsAsked = [];
-            	}
             	interview.questionsAsked.push(newQuestionAsked);
                 
             }
@@ -120,6 +123,15 @@
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
 			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');
+        };
+        $scope.multiSelected = [];
+        $scope.multiToggle = function (item, list) {
+          var idx = list.indexOf(item);
+          if (idx > -1) list.splice(idx, 1);
+          else list.push(item);
+        };
+        $scope.multiExists = function (item, list) {
+          return list.indexOf(item) > -1;
         };
     }
 })();
