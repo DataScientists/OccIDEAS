@@ -821,3 +821,18 @@ tr.angular-ui-tree-empty {
 	margin-bottom: 10px !important;
 	
 }
+md-checkbox {
+  margin: 8px;
+  cursor: pointer;
+  padding-left: 18px;
+  padding-right: 0;
+  line-height: 26px;
+  min-width: 18px;
+  min-height: 18px;
+}
+md-checkbox.md-checked.green .md-icon {
+ background-color: rgba(199, 155, 28, 0.81);
+}
+.interview-radio-button:not([disabled]).md-primary .md-on {
+    background-color: rgba(199, 155, 28, 0.81) !important;
+}
