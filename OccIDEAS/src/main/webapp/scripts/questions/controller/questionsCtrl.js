@@ -5,11 +5,11 @@
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
-	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope'];
+	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope','ModuleRuleService'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			AgentsService,RulesService,$compile,TabsCache,$rootScope) {
+			AgentsService,RulesService,$compile,TabsCache,$rootScope,ModuleRuleService) {
 		var self = this;
 		console.log('inside QuestionsCtrl');
 		$scope.data = data;	
@@ -1004,6 +1004,7 @@
 				  if(rules.length > 0){
 				  	for(var i=0;i<rules.length;i++){
 				  		var scope = $itemScope.$new();
+				  		scope.model = model;
 				  		scope.rule = rules[i].rule;
 					  	var x = scope.rule.conditions;
 					  	x.idRule = scope.rule.idRule;
@@ -1020,16 +1021,17 @@
 			  [ 'Add Rule', function($itemScope, $event, model) {
 			  	  var conditions = [];
 			  	  conditions.push(model);
+			  	  $itemScope.model = model;
 				  var rule = {agentId:$itemScope.$parent.obj.idAgent,conditions:conditions};
 				  RulesService.create(rule).then(function(response){
 	    				if(response.status === 200){
 	    					if(response.data.idRule){
-						 	 	RulesService.getRule(response.data.idRule).then(function(response) {
+	    						ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
 							  
 									if(response.status === 200){
-										console.log('Found rule id:'+response.data[0].idRule);
-										$itemScope.rule = response.data[0];
-										$itemScope.rule.agentName = $itemScope.$parent.obj.name;
+										var result = response.data[response.data.length-1];
+										$itemScope.rule = result.rule;
+										$itemScope.rule.agentName = result.agentName;
 										var x = $itemScope.rule.conditions;
 										addPopoverInfo(x,$itemScope.rule.idRule);
 										newNote($event.currentTarget.parentElement,$itemScope,$compile);									
@@ -1037,8 +1039,17 @@
 										if($itemScope.rules==null){
 											$itemScope.rules = [];
 										}
-										var rulemarks = angular.element($event.target);
-										rulemarks.append("<span class='cell-lable'><div class="+$itemScope.rule.level+" ></div></span>");
+										if(angular.isUndefined(model.moduleRule)){
+											model.moduleRule = [];
+										}
+										
+										_.merge(model.moduleRule, response.data);
+						    			if (!model.moduleRule.$$phase) {
+						    			        try {
+						    			        	model.moduleRule.$digest();
+						    			        }
+						    			        catch (e) { }
+						    		    }
 									}
 									});
 								}else{
@@ -1462,10 +1473,25 @@
     			});
         	}
         }
-        $scope.saveRule = function(rule){
+        $scope.saveRule = function(rule,model){
         	RulesService.save(rule).then(function(response){
     			if(response.status === 200){
-    				console.log('Rule Save was Successful!');			
+    				console.log('Rule Save was Successful!');	
+    				ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
+						if(response.status === 200){
+							var result = response.data[response.data.length-1];
+							if(angular.isUndefined(model.moduleRule)){
+								model.moduleRule = [];
+							}
+							_.merge(model.moduleRule, response.data);
+			    			if (!model.moduleRule.$$phase) {
+			    			        try {
+			    			        	model.moduleRule.$digest();
+			    			        }
+			    			        catch (e) { }
+			    		    }
+						}
+						});
     			}
     		});
         	

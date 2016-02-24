@@ -47,6 +47,20 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		}
 		return Response.ok(list).build();
 	}
+	
+	@GET
+	@Path(value="/getbyidnode")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getByIdNode(@QueryParam("id") Long id) {
+		List<ModuleRuleVO> list = new ArrayList<ModuleRuleVO>();
+		try{
+			list = service.findByIdNode(id);
+		}catch(Throwable e){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
 	@GET
 	@Path(value="/getbyagent")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)

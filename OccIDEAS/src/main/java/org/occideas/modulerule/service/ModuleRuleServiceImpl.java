@@ -36,6 +36,12 @@ public class ModuleRuleServiceImpl implements ModuleRuleService {
 		modulesVO.addAll(mapper.convertToModuleRuleVOList(modules));
 		return modulesVO;
 	}
+	public List<ModuleRuleVO> findByIdNode(Long id) {
+		List<ModuleRule> modules = dao.getRulesByIdNode(id);
+		ArrayList<ModuleRuleVO> modulesVO = new ArrayList<ModuleRuleVO>();
+		modulesVO.addAll(mapper.convertToModuleRuleVOList(modules));
+		return modulesVO;
+	}
 	public List<ModuleRuleVO> findByAgentId(Long id) {
 		List<ModuleRule> modules = dao.getRulesByAgent(id);
 		ArrayList<ModuleRuleVO> modulesVO = new ArrayList<ModuleRuleVO>();

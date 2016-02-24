@@ -52,6 +52,13 @@ public class ModuleRuleDao {
       return crit.list();
     }
     @SuppressWarnings("unchecked")
+   	public List<ModuleRule> getRulesByIdNode(Long idNode) {
+         final Session session = sessionFactory.getCurrentSession();
+         final Criteria crit = session.createCriteria(ModuleRule.class)
+       		  						.add(Restrictions.eq("idNode",idNode));
+         return crit.list();
+       }
+    @SuppressWarnings("unchecked")
 	public List<ModuleRule> getRulesByAgent(Long agentId) {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(ModuleRule.class)

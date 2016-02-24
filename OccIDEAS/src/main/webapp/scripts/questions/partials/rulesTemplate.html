@@ -20,7 +20,7 @@
 			<input type="text" value="Level" disabled/>
 			<ul class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item">
-<select name="singleSelect" id="singleSelect" ng-model="rule.level" ng-change="saveRule(rule)">
+<select name="singleSelect" id="singleSelect" ng-model="rule.level" ng-change="saveRule(rule,model)">
       <option value="probHigh" ng-selected="{{rule.level === 'probHigh'}}">PROBABLE_HIGH</option>
       <option value="probMedium" ng-selected="{{rule.level === 'probMedium'}}">PROBABLE_MEDIUM</option>
       <option value="probLow" ng-selected="{{rule.level === 'probLow'}}">PROBABLE_LOW</option>
