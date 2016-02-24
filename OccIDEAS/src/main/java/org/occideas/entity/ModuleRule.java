@@ -29,6 +29,7 @@ public class ModuleRule  implements java.io.Serializable{
 	private String idRule;
 	private long idAgent;
 	private String agentName;
+	private String ruleLevel;
 	
 	private long idNode;
 	private String nodeNumber;	
@@ -110,6 +111,14 @@ public class ModuleRule  implements java.io.Serializable{
 
 	public void setIdRule(String idRule) {
 		this.idRule = idRule;
+	}
+
+	public String getRuleLevel() {
+		return ruleLevel;
+	}
+
+	public void setRuleLevel(String ruleLevel) {
+		this.ruleLevel = ruleLevel;
 	}
 	
 	

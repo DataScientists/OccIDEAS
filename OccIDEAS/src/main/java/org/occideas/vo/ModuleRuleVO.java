@@ -72,19 +72,22 @@ public class ModuleRuleVO {
 	}
 	public String getRuleLevel() {
 		if(ruleLevel!=null){
-			if(ruleLevel.equalsIgnoreCase("0")){
-				ruleLevel = "probHigh";
-			}else if(ruleLevel.equalsIgnoreCase("1")){
-				ruleLevel = "probMedium";
-			}else if(ruleLevel.equalsIgnoreCase("2")){
-				ruleLevel = "probLow";
-			}else if(ruleLevel.equalsIgnoreCase("3")){
-				ruleLevel = "probUnknown";
-			}else if(ruleLevel.equalsIgnoreCase("4")){
-				ruleLevel = "possUnknown";
-			}else if(ruleLevel.equalsIgnoreCase("5")){
-				ruleLevel = "noExposure";
-			}
+			//if(this.getRule()!=null){
+			//	ruleLevel = this.getRule().getLevel();
+				if(ruleLevel.equalsIgnoreCase("0")){
+					ruleLevel = "probHigh";
+				}else if(ruleLevel.equalsIgnoreCase("1")){
+					ruleLevel = "probMedium";
+				}else if(ruleLevel.equalsIgnoreCase("2")){
+					ruleLevel = "probLow";
+				}else if(ruleLevel.equalsIgnoreCase("3")){
+					ruleLevel = "probUnknown";
+				}else if(ruleLevel.equalsIgnoreCase("4")){
+					ruleLevel = "possUnknown";
+				}else if(ruleLevel.equalsIgnoreCase("5")){
+					ruleLevel = "noExposure";
+				}
+			//}
 		}
 		return ruleLevel;
 	}
