@@ -535,7 +535,7 @@
 		    else{
 		      $scope.leftNav = "slideFragLeft";
 		    }
-		    if($scope.agentsData === null){
+		    if((angular.isUndefined($scope.agentsData))||($scope.agentsData == null)){
 		    	$scope.agentsLoading = true;
 				initAgentData();
 			}
@@ -1002,15 +1002,18 @@
 		$scope.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
-				  var rules =_.filter(model.moduleRule[0].rule, function(r){
-  					return $itemScope.$parent.obj.idAgent === r.agentId; 
+				  var rules =_.filter(model.moduleRule, function(r){
+  					return $itemScope.$parent.obj.idAgent === r.idAgent; 
   			      });
 				  if(rules.length > 0){
-					  $itemScope.rule = rules[0];
-					  var x = $itemScope.rule.conditions;
-					  addPopoverInfo(x);
-					  newNote($event.currentTarget.parentElement,$itemScope,$compile);
-					  $scope.activeRuleDialog = $itemScope.rule;
+				  	for(var i=0;i<rules.length;i++){
+				  		$itemScope.rule = rules[i].rule;
+					  	var x = $itemScope.rule.conditions;
+					  	addPopoverInfo(x);
+					  	newNote($event.currentTarget.parentElement,$itemScope,$compile);
+					  	$scope.activeRuleDialog = $itemScope.rule;
+				  	}
+					  
 //					  $scope.activeRule = response.data[0];
 				  }	  
 				  
@@ -1460,6 +1463,14 @@
     				}
     			});
         	}
+        }
+        $scope.saveRule = function(rule){
+        	RulesService.save(rule).then(function(response){
+    			if(response.status === 200){
+    				console.log('Rule Save was Successful!');			
+    			}
+    		});
+        	
         }
         $scope.removeNodeFromRule = function(node){
         	var rule = $scope.activeRule;

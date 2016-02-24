@@ -63,8 +63,8 @@
 						<div class="verticalrules">
 							<div class="rulescontainer">
 								<div class="agentACell" ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
-									<span class="cell-lable" ng-repeat="rule in node.moduleRule[0].rule">
-										<div ng-class="rule.level" ng-if="rule.agentId === obj.idAgent"></div>
+									<span class="cell-lable" ng-repeat="mrule in node.moduleRule">
+										<div ng-class="mrule.rule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
 									</span>
 								</div>
 							</div>

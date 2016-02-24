@@ -1,29 +1,32 @@
 package org.occideas.mapper;
 
-import org.occideas.base.dao.BaseDao;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.occideas.entity.Interview;
-import org.occideas.entity.Module;
 import org.occideas.vo.InterviewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 public class InterviewMapperImpl implements InterviewMapper {
+    
     @Autowired
-    private BaseDao dao;
+	private ModuleMapper moduleMapper;
+    
+    @Autowired
+	private FragmentMapper fragmentMapper;
 
     @Override
     public InterviewVO convertToInterviewVO(Interview interview) {
         if (interview == null) {
             return null;
         }
-
         InterviewVO interviewVO = new InterviewVO();
         interviewVO.setInterviewId(interview.getIdinterview());
-        interviewVO.setModuleId(interview.getModule().getIdNode());
+        interviewVO.setReferenceNumber(interview.getReferenceNumber());
+        interviewVO.setModule(moduleMapper.convertToModuleVO(interview.getModule(),false));
+        interviewVO.setFragment(fragmentMapper.convertToFragmentVO(interview.getFragment(),false));
         return interviewVO;
     }
 
@@ -45,8 +48,11 @@ public class InterviewMapperImpl implements InterviewMapper {
             return null;
         }
         Interview interview = new Interview();
-        Module module = dao.get(Module.class, interviewVO.getModuleId());
-        interview.setModule(module);
+        
+        interview.setReferenceNumber(interviewVO.getReferenceNumber());
+        interview.setModule(moduleMapper.convertToModule(interviewVO.getModule()));
+        interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment()));
+        
         return interview;
     }
 

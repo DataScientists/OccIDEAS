@@ -76,4 +76,12 @@ public class InterviewQuestionAnswer implements java.io.Serializable {
 		this.question = question;
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 }

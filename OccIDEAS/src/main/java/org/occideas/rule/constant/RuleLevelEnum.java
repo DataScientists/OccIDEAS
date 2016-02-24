@@ -7,7 +7,7 @@ public enum RuleLevelEnum {
 	ProbLow(2,"probLow"),
 	ProbUnknown(3,"probUnknown"),
 	PossUnknown(4,"possUnknown"),
-	NoExposure(4,"possUnknown");
+	NoExposure(5,"noExposure");
 	
 	private int value;
 	private String description;

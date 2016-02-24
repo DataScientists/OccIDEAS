@@ -26,7 +26,7 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
         moduleVO.setModuleName(moduleEntity.getModuleName());
         moduleVO.setIdNode(moduleEntity.getIdNode());
         moduleVO.setNodeNumber(moduleEntity.getNodeNumber());
-        moduleVO.setRule(ruleMapper.convertToRuleVOExcPaList(moduleEntity.getRule()));
+        moduleVO.setRule(ruleMapper.convertToRuleVOExcPa(moduleEntity.getRule()));
         return moduleVO;
     }
 

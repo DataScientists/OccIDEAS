@@ -7,12 +7,15 @@ import java.util.List;
  */
 
 public class InterviewVO {
-    private String freeText;
+	private String referenceNumber;
+	private String freeText;
     private String type;
     private long singleAnswerId;
     private List<Long> multipleAnswerId;
     private long interviewId;
-    private long moduleId;
+    private ModuleVO module;
+    private FragmentVO fragment;
+    
     private long questionId;
 
     public long getQuestionId() {
@@ -23,16 +26,23 @@ public class InterviewVO {
         this.questionId = questionId;
     }
 
-    public long getModuleId() {
-        return moduleId;
-    }
+    public ModuleVO getModule() {
+		return module;
+	}
 
-    public void setModuleId(long moduleId) {
-        this.moduleId = moduleId;
-    }
+	public void setModule(ModuleVO module) {
+		this.module = module;
+	}
 
+	public FragmentVO getFragment() {
+		return fragment;
+	}
 
-    public String getFreeText() {
+	public void setFragment(FragmentVO fragment) {
+		this.fragment = fragment;
+	}
+
+	public String getFreeText() {
         return freeText;
     }
 
@@ -71,4 +81,13 @@ public class InterviewVO {
     public void setInterviewId(long interviewId) {
         this.interviewId = interviewId;
     }
+    public String getReferenceNumber() {
+		return referenceNumber;
+	}
+
+	public void setReferenceNumber(String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
+
+
 }

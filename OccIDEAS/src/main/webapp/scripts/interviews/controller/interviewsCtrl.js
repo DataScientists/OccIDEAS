@@ -67,7 +67,8 @@
                 console.log("Data getting from questions AJAX ...");
                 $scope.data = response.data;
                 var interview = {};
-                interview.moduleId = data[0].idNode;
+                interview.module = $scope.data[0];
+                interview.referenceNumber = "H"+Math.floor((Math.random() * 100) + 1);
                 InterviewsService.startInterview(interview).then(function (response) {
                     $scope.interviewId = response.data.interviewId;
                     $scope.data.interviewStarted = true;
@@ -75,7 +76,7 @@
 
                     InterviewsService.getNextQuestion(JSON.stringify({
                         "interviewId": response.data.interviewId,
-                        "moduleId": response.data.moduleId
+                        "module": response.data.module
                     })).then(function (qResponse) {
                         if (qResponse.status === 200) {
                             $scope.data.showedQuestion = qResponse.data;
