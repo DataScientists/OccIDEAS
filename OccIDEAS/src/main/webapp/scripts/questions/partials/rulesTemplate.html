@@ -7,7 +7,7 @@
 		<input type="text" value="Nodes" disabled/>
 			<ul class="list-group" style="margin: 0 0 0 0;">
     			<li popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
-					popover-placement="top" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
+					popover-placement="left" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
 					uib-popover-template="nodePopover.templateUrl" class="list-group-item nodeNumber" 
 					ng-repeat="node in rule.conditions" 
 					ng-click="highlightNode(node.idNode)" ng-mouseleave="nodePopover.close(node,rule.idRule)">
