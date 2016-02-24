@@ -51,7 +51,18 @@
                         if (response.status === 200) {
                             $scope.data.showedQuestion = response.data;
                             resetSelectedIndex();
-
+                            if($scope.data.showedQuestion.link){
+                            	var copyQuestion = angular.copy($scope.data.showedQuestion);
+                            	copyQuestion.idNode = $scope.data.showedQuestion.link;
+                            	var newQuestionAsked = {question:copyQuestion,
+                						interviewQuestionAnswerFreetext:'Q_linked'}
+                            	interview.questionsAsked.push(newQuestionAsked);
+                            	InterviewsService.save(interview).then(function (response) {
+                            		if (response.status === 200) {
+                            			console.log('Added liking question');
+                            		}
+                            	});
+                            }
                             if(response.data.idNode){
                                 var elId = "node-" + response.data.idNode;
                                 $scope.scrollTo(elId);   
@@ -60,8 +71,10 @@
                             	$scope.data.interviewEnded = true;
                             }
                             
-                        } else if (response.status == 400) {
-                            alert("End interview!");
+                        } else if (response.status == 204) {
+                            //alert("End interview!");
+                            $scope.data.interviewStarted = false;
+                            $scope.data.interviewEnded = true;
                             return false;
                         } else {
                             console.log('ERROR on Get!');
@@ -79,6 +92,7 @@
                 interview.module = $scope.data[0];
                 interview.referenceNumber = "H"+Math.floor((Math.random() * 100) + 1);
                 $scope.interview = interview;
+                
                 InterviewsService.startInterview(interview).then(function (response) {
                 	if (response.status === 200) {
                 		$scope.interviewId = response.data.interviewId;
@@ -119,11 +133,15 @@
         $scope.scrollTo = function (target) {
             var scrollPane = $('#interivew-module-tree');
 			var scrollTarget = $('#' + target);
-			var scrollY = scrollTarget.offset().top - 150;
-			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
-			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
-			angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');
-        };
+			if(scrollTarget){
+				if(scrollTarget.offset()){
+					var scrollY = scrollTarget.offset().top - 150;
+					scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
+					angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
+					angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');	
+				}	
+			}
+		};
         $scope.multiSelected = [];
         $scope.multiToggle = function (item, list) {
           var idx = list.indexOf(item);

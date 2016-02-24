@@ -118,26 +118,62 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         		List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
         		String maxNumber = "Z";
         		for(InterviewQuestionAnswerVO iqa: questionsAsked){
-        			//check if has unanswered questions
-        			for(QuestionVO question: iqa.getPossibleAnswer().getChildNodes()){
-        				if(!isQuesitonAnswered(question,questionsAsked)){
-        					String number = question.getNumber();
-        					if(number.compareTo(maxNumber)<0){
-        						maxNumber = number;
-        						questionVO = question;	
-        					}
+        			//check for unanswered questions
+        			if(iqa.getPossibleAnswer()!=null){
+        				for(QuestionVO question: iqa.getPossibleAnswer().getChildNodes()){     				
+            				if(!isQuesitonAnswered(question,questionsAsked)){
+            					String number = question.getNumber();
+            					if(number.compareTo(maxNumber)<0){
+            						maxNumber = number;
+            						questionVO = question;	
+            					}
+            				}
+            			}
+        				if(questionVO==null){//check for more module questions
+        					for(QuestionVO question: interviewVO.getModule().getChildNodes()){     				
+                				if(!isQuesitonAnswered(question,questionsAsked)){
+                					String number = question.getNumber();
+                					if(number.compareTo(maxNumber)<0){
+                						maxNumber = number;
+                						questionVO = question;	
+                					}
+                				}
+                			}
         				}
-        			}
+        			}     			
         		}
         	} else if ((interviewVO.getModule()!=null) && interviewVO.getInterviewId() > 0) { //moving into module
                 questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getModule().getIdNode());
+                questionVO.setLink(interviewVO.getModule().getIdNode());
             } else if ((interviewVO.getFragment() != null) && interviewVO.getInterviewId() > 0) { //moving into fragment aJSM
                 questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getFragment().getIdNode());
+                questionVO.setLink(interviewVO.getModule().getIdNode());
             } 
+        	if(questionVO!=null){
+        		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
+            		Long linkingQuestionId = questionVO.getIdNode();
+            		Long linkingAjsmId = questionVO.getLink();
+            		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
+            		questionVO.setLink(linkingQuestionId);
+                }else if("Q_linkedmodule".equalsIgnoreCase(questionVO.getType())){
+                	Long linkingQuestionId = questionVO.getIdNode();
+            		Long linkingmoduleId = questionVO.getLink();
+            		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingmoduleId);
+            		questionVO.setLink(linkingQuestionId);
+                }
+        	}else{
+        		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getSingleAnswerId());
+        	}
+        	
         } catch (Throwable e) {
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
-        return Response.ok(questionVO).build();
+        if(questionVO!=null){
+        	return Response.ok(questionVO).build();
+        }else{
+        	return Response.status(Response.Status.NO_CONTENT).build();
+        }
+        
     }
     private boolean isQuesitonAnswered(QuestionVO q,List<InterviewQuestionAnswerVO> questionsAsked){
     	boolean retValue = false;
