@@ -23,14 +23,12 @@
     	$scope.agentsData = null;
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
-    		    open: function(x,nodeclass) {
-    		    	if(!nodeclass){
-    		    		nodeclass = 'P';
-    		    	}
+    		    open: function(x,idRule) {
+    		    	var nodeclass = 'P';
     		    	if(angular.isUndefined(x.info)){
   		    		  x.info = [];
   		    	  	}
-    		    	 x.info["Node"+x.idNode] = {
+    		    	 x.info["Node"+x.idNode+idRule] = {
 							    				  idNode:x.idNode,
 							    				  nodeclass:nodeclass,
 							    				  nodePopover:{
@@ -38,24 +36,21 @@
 							    				  },
 							    				  nodePopoverInProgress : false
 		    		  							};
-    		    	 var nodeInPopup = x.info["Node"+x.idNode];
-    		    	 nodeInPopup.nodePopover.isOpen = true;
+    		    	 var nodeInPopup = x.info["Node"+x.idNode+idRule];
     		    	 nodeInPopup.nodePopoverInProgress = true;
-    		         
-    		    	 if(nodeclass=='P'){
-    		    		 QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
-    		    			 nodeInPopup.data = data.data[0];
-   							nodeInPopup.nodePopoverInProgress = false;
- 					     });
-    		    	 }else{
-    		    		 QuestionsService.findQuestion(nodeInPopup.idNode).then(function(data) {	
-  							nodeInPopup.data = data.data[0];		
-  							nodeInPopup.nodePopoverInProgress = false;
-  					     });
-    		    	 }  
+    		         var deffered = $q.defer();
+    		         QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
+    		    		nodeInPopup.data = data.data[0];
+    		    		nodeInPopup.idRule =idRule;
+   						nodeInPopup.nodePopoverInProgress = false;
+   						deffered.resolve();
+ 					 });
+    		         deffered.promise.then(function(){
+    		        	 nodeInPopup.nodePopover.isOpen = true;
+    		    	 })
     		    },   		    
-  		        close: function close(x) {
-  		        	x.info["Node"+x.idNode].nodePopover.isOpen = false;
+  		        close: function close(x,idRule) {
+  		        	x.info["Node"+x.idNode+idRule].nodePopover.isOpen = false;
   		        }
     	};
     	
@@ -991,6 +986,7 @@
 	    	  }
 			 x[0].info["Node"+x[0].idNode+idRule] = {
 	    				  idNode:x[0].idNode,
+	    				  idRule:idRule,
 	    				  nodeclass:x[0].nodeclass,
 	    				  nodePopover:{
 	    					  isOpen: false
@@ -1010,6 +1006,7 @@
 				  		var scope = $itemScope.$new();
 				  		scope.rule = rules[i].rule;
 					  	var x = scope.rule.conditions;
+					  	x.idRule = scope.rule.idRule;
 					  	addPopoverInfo(x,scope.rule.idRule);
 					  	newNote($event.currentTarget.parentElement,scope,$compile);
 					  	$scope.activeRuleDialog = scope.rule;
