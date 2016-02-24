@@ -1,17 +1,21 @@
 package org.occideas.interview.rest;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.occideas.base.rest.BaseRestController;
-import org.occideas.entity.*;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 @Path("/interview")
 public class InterviewRestController implements BaseRestController<InterviewVO> {
@@ -81,8 +85,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
         QuestionVO questionVO;
         try {
-            if (interviewVO.getModuleId() > 0 && interviewVO.getInterviewId() > 0) { // Have just hit start interview
-                questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getModuleId());
+            if ((interviewVO.getModule()!=null) && interviewVO.getInterviewId() > 0) { //moving into module
+                questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getModule().getIdNode());
+            } else if ((interviewVO.getFragment() != null) && interviewVO.getInterviewId() > 0) { //moving into fragment aJSM
+                questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getFragment().getIdNode());
             } else if ("multiple".equals(interviewVO.getType())) {
                 questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getMultipleAnswerId().get(0));
             } else {

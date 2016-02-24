@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.base.dao.BaseDao;
+import org.occideas.entity.Fragment;
 import org.occideas.entity.InterviewQuestionAnswer;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.interview.dao.InterviewDao;
+import org.occideas.interviewquestionanswer.dao.InterviewQuestionAnswerDao;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.vo.QuestionVO;
@@ -30,6 +32,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     private InterviewDao interviewDao;
+    
+    @Autowired
+    private InterviewQuestionAnswerDao iqaDao;
 
     @Override
     public List<QuestionVO> listAll() {
@@ -78,7 +83,9 @@ public class QuestionServiceImpl implements QuestionService {
             nextQuestion = inspectNextQuestion(interviewId, currentAnswer);
         } else if (node instanceof Module) {// Only happen when user hit start interview
             nextQuestion = ((Module) node).getChildNodes().get(0);
-        }
+        } else if (node instanceof Fragment) {//started ajsm
+            nextQuestion = ((Fragment) node).getChildNodes().get(0);
+        } 
         return mapper.convertToQuestionVO(nextQuestion);
     }
 
@@ -96,7 +103,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         if ("Q_multiple".equals(father.getType())) {
             // Get list interview-question-answer by interview and question
-            List<InterviewQuestionAnswer> iqas = interviewDao.findById(interviewId, father.getIdNode(), null);
+            List<InterviewQuestionAnswer> iqas = iqaDao.findById(interviewId, father.getIdNode(), null);
             for (int i = 0; i < iqas.size(); i++) {
                 if (node.getIdNode() == iqas.get(i).getAnswer().getIdNode()) {// If found current answer in answer list
                     if (i < iqas.size() - 1) {
