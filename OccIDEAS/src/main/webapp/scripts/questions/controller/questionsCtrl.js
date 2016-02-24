@@ -20,7 +20,7 @@
 		$anchorScroll.yOffset = 200;
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
-    	
+    	$scope.agentsData = null;
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
     		    open: function(x,nodeclass) {
