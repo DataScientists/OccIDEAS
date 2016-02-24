@@ -1037,7 +1037,7 @@
 										if($itemScope.rules==null){
 											$itemScope.rules = [];
 										}
-										var rulemarks = angular.element(model.target);
+										var rulemarks = angular.element($event.target);
 										rulemarks.append("<span class='cell-lable'><div class="+$itemScope.rule.level+" ></div></span>");
 									}
 									});
