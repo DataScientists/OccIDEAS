@@ -1,8 +1,7 @@
 <div class="col-md-6">
     <div ng-model="data">
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
-            <div>{{data.showedQuestion.name}}</div>
-
+            <md-toolbar autofocus>{{data.showedQuestion.name}}</md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
                 <li ng-repeat="node in data.showedQuestion.nodes">
                     <label id="answer-{{node.idNode}}" ng-click="multipleChoiceHandler(data.showedQuestion.idNode, node.idNode)" ng-if="node.type != 'P_freetext'">
@@ -12,12 +11,16 @@
                 </li>
             </div>
             <div ng-if="data.showedQuestion.type == 'Q_single' || data.showedQuestion.type == 'Q_simple'">
-                <li ng-repeat="node in data.showedQuestion.nodes" class="single-choice">
-                    <label id="answer-{{node.idNode}}" ng-click="singleChoiceHandler($index)" ng-class="{ 'selected': $index == selectedIndex }" ng-if="node.type != 'P_freetext'">
-                        {{node.name}}
-                    </label>
-                    <input id="answer-{{node.idNode}}" type="text" ng-if="node.type == 'P_freetext'" ng-click="singleChoiceHandler($index)" ng-class="{ 'selected': $index == selectedIndex }"/>
-                </li>
+                <md-radio-group ng-model="data.showedQuestion.selectedAnswer" >
+			      <div ng-repeat='node in data.showedQuestion.nodes' >
+			        <div flex layout-align="start center" >
+			          <md-radio-button flex ng-value="node"
+			              class="md-primary interview-radio-button">
+			            {{node.name}}
+			          </md-radio-button>
+			        </div>
+			      </div>
+			   </md-radio-group>
             </div>
             <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">
                 <span>NEXT</span>

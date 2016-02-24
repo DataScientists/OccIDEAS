@@ -23,8 +23,17 @@
             return request.then(handleSuccess, handleError);
         }
 
-        function getNextQuestion(data) {
+        function getNextQuestionOld(data) {
             var saveAndNextQ = 'rest/interview/saveAndNextQ';
+            var request = $http({
+                method: 'POST',
+                url: saveAndNextQ,
+                data: data
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        function getNextQuestion(data) {
+            var saveAndNextQ = 'rest/interview/nextquestion';
             var request = $http({
                 method: 'POST',
                 url: saveAndNextQ,

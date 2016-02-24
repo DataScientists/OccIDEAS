@@ -12,15 +12,15 @@
         $scope.data = data;
 
         $scope.saveAnswerQuestion = function (node) {
-            var seletectedEl = angular.element(document.querySelector("#interviewing-" + node.idNode + " .selected"));
-            if (!seletectedEl.length && $scope.data.interviewStarted) {
+        	
+            var seletectedEl = node.selectedAnswer;
+            if (!seletectedEl && $scope.data.interviewStarted) {
                 alert("Please select an answer!");
                 return false;
             }
 
-            var interview = {};
-            interview.interviewId = $scope.interviewId;
-            interview.questionId = node.idNode;
+            var interview = $scope.interview;
+            //interview.questionId = node.idNode;
             if (node.type == 'Q_multiple') {
                 var answers = angular.element(document.querySelectorAll("#interviewing-" + node.idNode + " .selected"));
                 var answerIds = [];
@@ -33,34 +33,40 @@
                 interview.multipleAnswerId = answerIds;
                 interview.type = "multiple";
             } else {
-                interview.singleAnswerId = seletectedEl[0].id.replace("answer-", "");
-                interview.type = "single";
-                interview.freeText = seletectedEl[0].value;
+            	var newQuestionAsked = {possibleAnswer:seletectedEl,
+            			question:node,
+						interviewQuestionAnswerFreetext:seletectedEl.name}
+            	if(!interview.questionsAsked){
+            		interview.questionsAsked = [];
+            	}
+            	interview.questionsAsked.push(newQuestionAsked);
+                
             }
+            InterviewsService.save(interview).then(function (response) {
+            	if (response.status === 200) {
+            		InterviewsService.getNextQuestion(interview).then(function (response) {
+                        if (response.status === 200) {
+                            $scope.data.showedQuestion = response.data;
+                            resetSelectedIndex();
 
-            InterviewsService.getNextQuestion(interview).then(function (response) {
-                if (response.status === 200) {
-                    $scope.data.showedQuestion = response.data;
-                    resetSelectedIndex();
-
-                    if(response.data.idNode){
-                        var elId = "node-" + response.data.idNode;
-                        $scope.scrollTo(elId);   
-                    }else{
-                    	$scope.data.interviewStarted = false;
-                    	$scope.data.interviewEnded = true;
-                    }
-                    
-                } else if (response.status == 400) {
-                    alert("End interview!");
-                    return false;
-                } else {
-                    console.log('ERROR on Get!');
-                }
-            });
-            ;
+                            if(response.data.idNode){
+                                var elId = "node-" + response.data.idNode;
+                                $scope.scrollTo(elId);   
+                            }else{
+                            	$scope.data.interviewStarted = false;
+                            	$scope.data.interviewEnded = true;
+                            }
+                            
+                        } else if (response.status == 400) {
+                            alert("End interview!");
+                            return false;
+                        } else {
+                            console.log('ERROR on Get!');
+                        }
+                    });
+            	}          	
+            });                  
         }
-
         $scope.startInterview = function (data) {
         	QuestionsService.findQuestions($scope.data[0].idNode,'M')
             .then(function(response){
@@ -69,25 +75,24 @@
                 var interview = {};
                 interview.module = $scope.data[0];
                 interview.referenceNumber = "H"+Math.floor((Math.random() * 100) + 1);
+                $scope.interview = interview;
                 InterviewsService.startInterview(interview).then(function (response) {
-                    $scope.interviewId = response.data.interviewId;
-                    $scope.data.interviewStarted = true;
-                    $scope.data.interviewEnded = false;
+                	if (response.status === 200) {
+                		$scope.interviewId = response.data.interviewId;
+                		$scope.interview.interviewId = response.data.interviewId;
+                		$scope.data.interviewStarted = true;
+                		$scope.data.interviewEnded = false;
+                		InterviewsService.getNextQuestion($scope.interview).then(function (response){
+                			$scope.data.showedQuestion = response.data;
 
-                    InterviewsService.getNextQuestion(JSON.stringify({
-                        "interviewId": response.data.interviewId,
-                        "module": response.data.module
-                    })).then(function (qResponse) {
-                        if (qResponse.status === 200) {
-                            $scope.data.showedQuestion = qResponse.data;
-
-                            var elId = "node-" + qResponse.data.idNode;
-                            $scope.scrollTo(elId);
-                            angular.element(document.querySelector("#tree-root-interviewing #" + elId)).addClass('highlight');
-                        } else {
-                            console.log('ERROR on Get!');
-                        }
-                    });
+                			var elId = "node-" + response.data.idNode;
+                			$scope.scrollTo(elId);
+                			angular.element(document.querySelector("#tree-root-interviewing #" + elId)).addClass('highlight');
+                        })                          
+                     } else {
+                            console.log('ERROR on Start Interview!');
+                     }
+                    
                 });             
             });
         }

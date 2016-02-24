@@ -816,3 +816,8 @@ tr.angular-ui-tree-empty {
   font-size: 12px;
   line-height:2em;
 }
+.interview-radio-button {
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
+	
+}

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Interview;
+import org.occideas.entity.InterviewQuestionAnswer;
+import org.occideas.vo.InterviewQuestionAnswerVO;
 import org.occideas.vo.InterviewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,9 @@ public class InterviewMapperImpl implements InterviewMapper {
     
     @Autowired
 	private FragmentMapper fragmentMapper;
+    
+    @Autowired
+	private InterviewQuestionAnswerMapper iqaMapper;
 
     @Override
     public InterviewVO convertToInterviewVO(Interview interview) {
@@ -27,6 +32,10 @@ public class InterviewMapperImpl implements InterviewMapper {
         interviewVO.setReferenceNumber(interview.getReferenceNumber());
         interviewVO.setModule(moduleMapper.convertToModuleVO(interview.getModule(),false));
         interviewVO.setFragment(fragmentMapper.convertToFragmentVO(interview.getFragment(),false));
+        
+        List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
+        interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
+        
         return interviewVO;
     }
 
@@ -52,6 +61,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         interview.setReferenceNumber(interviewVO.getReferenceNumber());
         interview.setModule(moduleMapper.convertToModule(interviewVO.getModule()));
         interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment()));
+        List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
+        interview.setInterviewQuestionAnswers(iqaMapper.convertToInterviewQuestionAnswerList(questionsAsked));
         
         return interview;
     }

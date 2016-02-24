@@ -1,5 +1,6 @@
 package org.occideas.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +16,9 @@ public class InterviewVO {
     private long interviewId;
     private ModuleVO module;
     private FragmentVO fragment;
+    
+    private List<InterviewQuestionAnswerVO> questionsAsked;
+    
     
     private long questionId;
 
@@ -89,5 +93,15 @@ public class InterviewVO {
 		this.referenceNumber = referenceNumber;
 	}
 
+	public List<InterviewQuestionAnswerVO> getQuestionsAsked() {
+		if(questionsAsked==null){
+			questionsAsked = new ArrayList<InterviewQuestionAnswerVO>();
+		}
+		return questionsAsked;
+	}
+
+	public void setQuestionsAsked(List<InterviewQuestionAnswerVO> questionsAsked) {
+		this.questionsAsked = questionsAsked;
+	}
 
 }

@@ -6,24 +6,23 @@ package org.occideas.vo;
 
 public class InterviewQuestionAnswerVO {
 	private long id;
-	private String interviewQuestionAnswerfreeText;
+	private String interviewQuestionAnswerFreetext;
     private PossibleAnswerVO possibleAnswer;
-    private InterviewVO interview;
+    private long interviewId;
     private QuestionVO question;
     private int deleted;
-    
-    
+       
 	public long getId() {
 		return id;
 	}
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getInterviewQuestionAnswerfreeText() {
-		return interviewQuestionAnswerfreeText;
+	public String getInterviewQuestionAnswerFreetext() {
+		return interviewQuestionAnswerFreetext;
 	}
-	public void setInterviewQuestionAnswerfreeText(String interviewQuestionAnswerfreeText) {
-		this.interviewQuestionAnswerfreeText = interviewQuestionAnswerfreeText;
+	public void setInterviewQuestionAnswerFreetext(String interviewQuestionAnswerfreeText) {
+		this.interviewQuestionAnswerFreetext = interviewQuestionAnswerfreeText;
 	}
 	public PossibleAnswerVO getPossibleAnswer() {
 		return possibleAnswer;
@@ -31,12 +30,7 @@ public class InterviewQuestionAnswerVO {
 	public void setPossibleAnswer(PossibleAnswerVO possibleAnswer) {
 		this.possibleAnswer = possibleAnswer;
 	}
-	public InterviewVO getInterview() {
-		return interview;
-	}
-	public void setInterview(InterviewVO interview) {
-		this.interview = interview;
-	}
+	
 	public QuestionVO getQuestion() {
 		return question;
 	}
@@ -48,6 +42,12 @@ public class InterviewQuestionAnswerVO {
 	}
 	public void setDeleted(int deleted) {
 		this.deleted = deleted;
+	}
+	public long getInterviewId() {
+		return interviewId;
+	}
+	public void setInterviewId(long interviewId) {
+		this.interviewId = interviewId;
 	}
 
 }

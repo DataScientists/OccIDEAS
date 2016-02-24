@@ -1,17 +1,14 @@
 package org.occideas.interview.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.occideas.base.dao.BaseDao;
-import org.occideas.entity.*;
-import org.occideas.interview.dao.InterviewDao;
+import org.occideas.entity.Interview;
 import org.occideas.mapper.InterviewMapper;
-import org.occideas.mapper.QuestionMapper;
-import org.occideas.vo.InterviewVO;
 import org.occideas.vo.InterviewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class InterviewServiceImpl implements InterviewService {
@@ -60,7 +57,7 @@ public class InterviewServiceImpl implements InterviewService {
         dao.delete(mapper.convertToInterview(o));
     }
 
-    @Override
+    /*@Override
     public void saveAnswer(InterviewVO interviewVO) {
         if ("multiple".equals(interviewVO.getType())) {
             for (Long answerId : interviewVO.getMultipleAnswerId()) {
@@ -88,5 +85,5 @@ public class InterviewServiceImpl implements InterviewService {
 
             dao.save(iqa);
         }
-    }
+    }*/
 }
