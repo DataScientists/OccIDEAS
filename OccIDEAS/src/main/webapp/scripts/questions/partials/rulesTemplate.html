@@ -6,7 +6,7 @@
 	<div class="title">{{rule.idRule}} {{rule.agentName}}</div>
 		<input type="text" value="Nodes" disabled/>
 			<ul class="list-group" style="margin: 0 0 0 0;">
-    			<li popover-is-open="node.info['Node'+node.idNode].nodePopover.isOpen" 
+    			<li popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
 					popover-placement="top" ng-mouseenter="nodePopover.open(node)" 
 					uib-popover-template="nodePopover.templateUrl" class="list-group-item nodeNumber" 
 					ng-repeat="node in rule.conditions" 

@@ -985,11 +985,11 @@
 			  ]
 			];
 		
-		function addPopoverInfo(x){
+		function addPopoverInfo(x,idRule){
 			 if(angular.isUndefined(x[0].info)){
 	    		  x[0].info = [];
 	    	  }
-			 x[0].info["Node"+x[0].idNode] = {
+			 x[0].info["Node"+x[0].idNode+idRule] = {
 	    				  idNode:x[0].idNode,
 	    				  nodeclass:x[0].nodeclass,
 	    				  nodePopover:{
@@ -1007,11 +1007,12 @@
   			      });
 				  if(rules.length > 0){
 				  	for(var i=0;i<rules.length;i++){
-				  		$itemScope.rule = rules[i].rule;
-					  	var x = $itemScope.rule.conditions;
-					  	addPopoverInfo(x);
-					  	newNote($event.currentTarget.parentElement,$itemScope,$compile);
-					  	$scope.activeRuleDialog = $itemScope.rule;
+				  		var scope = $itemScope.$new();
+				  		scope.rule = rules[i].rule;
+					  	var x = scope.rule.conditions;
+					  	addPopoverInfo(x,scope.rule.idRule);
+					  	newNote($event.currentTarget.parentElement,scope,$compile);
+					  	$scope.activeRuleDialog = scope.rule;
 				  	}
 					  
 //					  $scope.activeRule = response.data[0];
@@ -1033,7 +1034,7 @@
 										$itemScope.rule = response.data[0];
 										$itemScope.rule.agentName = $itemScope.$parent.obj.name;
 										var x = $itemScope.rule.conditions;
-										addPopoverInfo(x);
+										addPopoverInfo(x,$itemScope.rule.idRule);
 										newNote($event.currentTarget.parentElement,$itemScope,$compile);									
 										$scope.activeRule = response.data[0];
 										if($itemScope.rules==null){
