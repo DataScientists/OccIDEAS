@@ -1,7 +1,8 @@
 <div class="col-md-6">
     <div ng-model="data">
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
-            <md-toolbar autofocus>{{data.showedQuestion.name}}</md-toolbar>
+            <md-toolbar autofocus>{{data.showedQuestion.name}}
+            <span class="badge">{{data.showedQuestion.number}}</span></md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
                 <li ng-repeat="node in data.showedQuestion.nodes">
                     <label id="answer-{{node.idNode}}" ng-click="multipleChoiceHandler(data.showedQuestion.idNode, node.idNode)" ng-if="node.type != 'P_freetext'">
