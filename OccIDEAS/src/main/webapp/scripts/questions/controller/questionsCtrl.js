@@ -1049,6 +1049,9 @@
 						    			        }
 						    			        catch (e) { }
 						    		    }
+						    			if(!$scope.data[0].moduleRule){
+						    				$scope.data[0].moduleRule = [];
+						    			}
 						    			$scope.data[0].moduleRule.push(result);
 						    			initAgentData();
 									}
