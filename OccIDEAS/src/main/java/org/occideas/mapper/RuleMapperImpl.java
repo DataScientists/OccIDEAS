@@ -3,13 +3,20 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Rule;
+import org.occideas.rule.constant.RuleLevelEnum;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.RuleVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RuleMapperImpl implements RuleMapper {
 
+	@Autowired
+	private PossibleAnswerMapper paMapper;
+	
     @Override
     public RuleVO convertToRuleVO(Rule ruleEntity) {
         if ( ruleEntity == null ) {
@@ -22,9 +29,13 @@ public class RuleMapperImpl implements RuleMapper {
         ruleVO.setLastUpdated( ruleEntity.getLastUpdated() ); 
         ruleVO.setAgentId(ruleEntity.getAgentId());
         ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
-        ruleVO.setLevel(ruleEntity.getLevel());
+        ruleVO.setLevel(RuleLevelEnum.getDescriptionByValue(ruleEntity.getLevel()));
         ruleVO.setType(ruleEntity.getType());
-        return ruleVO;
+        List<PossibleAnswer> conditions = ruleEntity.getConditions();
+		if (!CommonUtil.isListEmpty(conditions)) {
+			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOList(conditions,false));
+		}
+         return ruleVO;
     }
 
     @Override
@@ -48,7 +59,17 @@ public class RuleMapperImpl implements RuleMapper {
         }
         Rule rule = new Rule();
         rule.setIdRule( ruleVO.getIdRule() );
-        rule.setLastUpdated( ruleVO.getLastUpdated() );            
+        rule.setAgentId(ruleVO.getAgentId());
+        rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
+        int level = RuleLevelEnum.getValueByDescription(ruleVO.getLevel());
+        if(level == -1){
+        	level = 5;
+        }
+        rule.setLevel(level);
+        rule.setType(ruleVO.getType());
+        rule.setConditions(paMapper.convertToPossibleAnswerList(ruleVO.getConditions()));
+        rule.setAdditionalfields(ruleVO.getAdditionalfields());
+        
         return rule;
     }
 
@@ -65,6 +86,41 @@ public class RuleMapperImpl implements RuleMapper {
 
         return list;
     }
+
+	@Override
+	public RuleVO convertToRuleVOExcPa(Rule rule) {
+		if ( rule == null ) {
+            return null;
+        }
+
+        RuleVO ruleVO = new RuleVO();
+
+        ruleVO.setIdRule( rule.getIdRule() );
+        ruleVO.setLastUpdated( rule.getLastUpdated() ); 
+        ruleVO.setAgentId(rule.getAgentId());
+        ruleVO.setLegacyRuleId(rule.getLegacyRuleId());
+        ruleVO.setLevel(RuleLevelEnum.getDescriptionByValue(rule.getLevel()));
+        ruleVO.setType(rule.getType());
+        List<PossibleAnswer> conditions = rule.getConditions();
+		if (!CommonUtil.isListEmpty(conditions)) {
+			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOExModRuleList(conditions));
+		}
+        return ruleVO;
+	}
+
+	@Override
+	public List<RuleVO> convertToRuleVOExcPaList(List<Rule> ruleEntity) {
+		 if ( ruleEntity == null ) {
+	            return null;
+	        }
+
+	        List<RuleVO> list = new ArrayList<RuleVO>();
+	        for ( Rule rule : ruleEntity ) {
+	            list.add( convertToRuleVOExcPa( rule ) );
+	        }
+
+	        return list;
+	}
     
 }
 

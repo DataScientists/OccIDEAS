@@ -103,17 +103,4 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		}
 		return Response.ok().build();
 	}
-
-    @GET
-    @Path(value="/getNextQuestion")
-    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
-    public Response getNextQuestion(@QueryParam("idNode") Long id) {
-        QuestionVO questionVO = new QuestionVO();
-        try{
-            questionVO = service.getNextQuestion(id);
-        }catch(Throwable e){
-            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-        }
-        return Response.ok(questionVO).build();
-    }
 }

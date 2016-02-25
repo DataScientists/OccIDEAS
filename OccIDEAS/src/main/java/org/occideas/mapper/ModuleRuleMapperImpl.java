@@ -13,7 +13,7 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
 
 	@Autowired
 	private RuleMapper ruleMapper;
-	
+
 	@Override
     public ModuleRuleVO convertToModuleRuleVO(ModuleRule moduleEntity) {
         if ( moduleEntity == null ) {
@@ -26,7 +26,8 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
         moduleVO.setModuleName(moduleEntity.getModuleName());
         moduleVO.setIdNode(moduleEntity.getIdNode());
         moduleVO.setNodeNumber(moduleEntity.getNodeNumber());
-        moduleVO.setRule(ruleMapper.convertToRuleVO(moduleEntity.getRule()));
+        moduleVO.setRuleLevel(moduleEntity.getRuleLevel());
+        moduleVO.setRule(ruleMapper.convertToRuleVOExcPa(moduleEntity.getRule()));
         return moduleVO;
     }
 

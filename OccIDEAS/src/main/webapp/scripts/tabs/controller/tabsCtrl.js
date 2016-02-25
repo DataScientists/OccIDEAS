@@ -1,8 +1,8 @@
 (function() {
 	angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
-	TabsCtrl.$inject = ['$scope','$state'];
-	function TabsCtrl($scope,$state) {
+	TabsCtrl.$inject = ['$scope','$state','$rootScope'];
+	function TabsCtrl($scope,$state,$rootScope) {
 		$scope.loading = false;
 		$scope.tabOptions = [];
 		$scope.tabOptions[0] = {
@@ -17,7 +17,11 @@
 			state: "tabs.agents",
 			data: ""
 		};
-				
+		$scope.tabOptions[3] = {
+				state: "tabs.assessments",
+				data: ""
+			};
+		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
 			var state = null;
 			var data = null;
@@ -37,29 +41,33 @@
 			}else{
 				state = "tabs.modules";
 			}
+			console.log("going to state "+state);
 			$state.go(state,data);
 
 		});
 
 		var tabs = [ {
 			title : 'Module List',
-			viewName: 'moduleView',
+			viewName: 'modules@tabs',
 		}, {
 			title : 'Fragment List',
-			viewName: 'fragmentView'
+			viewName: 'fragments@tabs'
 		},
 		{
 			title : 'Agent List',
-			viewName: 'agentView'
+			viewName: 'agents@tabs'
+		},
+		{
+			title : 'Assessment List',
+			viewName: 'assessments@tabs'
 		}], selected = null, previous = null;
 		$scope.tabs = tabs;
 		$scope.selectedIndex = 0;
 
 		$scope.addFragmentTab = function(row) {
-			
 			tabs.push({
 				title : row.name,
-				viewName: 'getfragmentView',
+				viewName: 'fragment@tabs',
 				canClose: true,
 				disabled : false
 			});
@@ -70,27 +78,39 @@
 			
 		};
 		$scope.addModuleTab = function(row) {
+			$rootScope.tabsLoading = true;
 			var check = _.some( tabs, function( el ) {
 			    return el.title === row.name;
 			} );
-			if(!check){
+			
+			if(!check && ($scope.questionsCount < 3)){
+				var questionState = '';
+				if($scope.questionsCount > 0){
+					questionState = $scope.questionsCount;
+				}
 			tabs.push({
 				title : row.name,
-				viewName: 'questionsView',
+				viewName: null,
 				canClose: true,
 				disabled : false
 			});
 			$scope.tabOptions.push({
-				state: "tabs.questions",
+				state: "tabs.questions"+questionState,
 				data: {row:row.idNode}
 			});
-			}else{
+			$scope.questionsCount++;
+			}
+			else if($scope.questionsCount > 2){
+				alert("Unable to have more than 3 questions tab opened at the same time.");
+			}
+			else{
 				_.find(tabs, function(el, index){ 
 					if(el.title === row.name){
 						$scope.selectedIndex = index;
 				    } 
 				});
 			}
+			console.log("addModuleTab questionsLoading end");
 		};
         $scope.addRulesTab = function(scope) {
             var nodeData = scope.$modelValue;
@@ -101,7 +121,7 @@
             if(!check){
                 tabs.push({
                     title : tabTitle,
-                    viewName: 'rulesView',
+                    viewName: 'rules@tabs',
                     canClose: true,
                     disabled : false
                 });
@@ -126,7 +146,7 @@
             if(!check){
                 tabs.push({
                     title : tabTitle,
-                    viewName: 'interviewView',
+                    viewName: 'interview@tabs',
                     canClose: true,
                     disabled : false
                 });
@@ -146,9 +166,11 @@
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);
 			$scope.tabOptions.splice(index, 1);
-			if($scope.selectedIndex==3){
+			/*if($scope.selectedIndex==4){
 				$scope.selectedIndex=0;
-			}
+			}*/
+			$scope.questionsCount--;
+			$scope.agentsData = null;
 		};
 		$scope.turnOffProgressBar = function turnOffProgressBar(){
 			$scope.loading = false;

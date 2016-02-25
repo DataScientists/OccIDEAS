@@ -14,34 +14,38 @@
                 </a>
             </td>
         </tr>
-        <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
+        <tr ng-hide="group.$hideRows" ng-repeat="node in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
             <td data-title="'Module'" groupable="'moduleName'" >
-            	{{row.moduleName}}
+            	{{node.moduleName}}
           	</td>
             <td data-title="'Agent'" groupable="'agentName'" >
-            	{{row.agentName}}
+            	{{node.agentName}}
           	</td>
-            <td data-title="'Rule Id'">
+            <td data-title="'Rule Id'" >
 				<div>
-					<span>{{row.rule.idRule}}</span>				
+					<span>{{node.rule.idRule}}</span>				
 				</div>
 			</td>
-			<td data-title="'Rule Level'">
+			<td data-title="'Rule Level'" groupable="'ruleLevel'" >
 				<div>
-					<span>{{row.rule.level}}</span>				
+					<span>{{node.ruleLevel}}</span>				
 				</div>
 			</td>
-			<td data-title="'Node Number'">
+			<td data-title="'Node Number'" groupable="'nodeNumber'" >
 				<div>
-					<span>{{row.nodeNumber}}</span>				
+					
+    			<span popover-is-open="node.info['Node'+node.idNode].nodePopover.isOpen" 
+    				popover-placement="top" 
+    				ng-mouseenter="nodePopover.open(node)" 
+    				ng-mouseleave="nodePopover.close(node)"
+    				uib-popover-template="nodePopover.templateUrl" >
+					{{node.nodeNumber}}
+					
+				</span>
+  									
 				</div>
 			</td>			
-			<td>				
-				<button class="btn btn-default btn-sm"
-					ng-click="addModuleTab(row)" ng-if="!row.isEditing">
-					<span class="glyphicon glyphicon-list-alt"></span>
-				</button>			
-			</td>
+			
         </tr>
     </tbody>
 	</table>

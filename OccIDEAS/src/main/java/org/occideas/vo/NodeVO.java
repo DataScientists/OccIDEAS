@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@JsonIgnoreProperties({"editEnabled","warning","placeholder","isEditing","showAgentSlider","id"})
+@JsonIgnoreProperties({"editEnabled","info","warning","placeholder","isEditing","showAgentSlider","id","collapsed"})
 public abstract class NodeVO {
 
 	protected long idNode;

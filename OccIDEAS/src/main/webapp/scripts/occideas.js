@@ -18,7 +18,9 @@ angular
     "occIDEASApp.Modules",
     "occIDEASApp.Agents",
     "occIDEASApp.Rules",
-    "occIDEASApp.Fragments"
+    "occIDEASApp.Fragments",
+    "occIDEASApp.Assessments",
+    "occIDEASApp.ModuleRule"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })

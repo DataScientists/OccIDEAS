@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -23,12 +23,14 @@ public class ModuleRule  implements java.io.Serializable{
 	
 	private long idModule;
 	private String moduleName;
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "idRule")
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="idRule",referencedColumnName="idRule",insertable=false,updatable=false)
 	private Rule rule;
+	private String idRule;
 	private long idAgent;
-
 	private String agentName;
+	private String ruleLevel;
+	
 	private long idNode;
 	private String nodeNumber;	
 
@@ -103,5 +105,22 @@ public class ModuleRule  implements java.io.Serializable{
 		this.rule = rule;
 	}
 
+	public String getIdRule() {
+		return idRule;
+	}
+
+	public void setIdRule(String idRule) {
+		this.idRule = idRule;
+	}
+
+	public String getRuleLevel() {
+		return ruleLevel;
+	}
+
+	public void setRuleLevel(String ruleLevel) {
+		this.ruleLevel = ruleLevel;
+	}
+	
+	
 	
 }

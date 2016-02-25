@@ -23,7 +23,6 @@ public class AgentInfo implements Serializable {
 	private long idAgent;
 	private String name;
 	private String description;
-
 	private Date lastUpdated;
 	private int deleted;
 

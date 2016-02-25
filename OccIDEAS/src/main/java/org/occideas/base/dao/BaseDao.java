@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +17,8 @@ public class BaseDao{
     @Autowired
     private SessionFactory sessionFactory;
 
-    @SuppressWarnings("unchecked")
-	public <T> T save(final T o){
-      return (T) sessionFactory.getCurrentSession().save(o);
+    public long save(final Object o){
+      return (long) sessionFactory.getCurrentSession().save(o);
     }
 
 
@@ -45,5 +45,13 @@ public class BaseDao{
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(type);
       return crit.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+   	public <T> List<T> getListbyId(final Class<T> type,final Long id) {
+         final Session session = sessionFactory.getCurrentSession();
+         final Criteria crit = session.createCriteria(type);
+         crit.add(Restrictions.eq("idNode", id));
+         return crit.list();
     }
 }

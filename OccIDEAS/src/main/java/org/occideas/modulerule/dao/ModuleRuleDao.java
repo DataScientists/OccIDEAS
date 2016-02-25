@@ -4,14 +4,9 @@ package org.occideas.modulerule.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.LongType;
-import org.occideas.entity.Module;
 import org.occideas.entity.ModuleRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -56,6 +51,13 @@ public class ModuleRuleDao {
     		  						.add(Restrictions.eq("idModule",moduleId));
       return crit.list();
     }
+    @SuppressWarnings("unchecked")
+   	public List<ModuleRule> getRulesByIdNode(Long idNode) {
+         final Session session = sessionFactory.getCurrentSession();
+         final Criteria crit = session.createCriteria(ModuleRule.class)
+       		  						.add(Restrictions.eq("idNode",idNode));
+         return crit.list();
+       }
     @SuppressWarnings("unchecked")
 	public List<ModuleRule> getRulesByAgent(Long agentId) {
       final Session session = sessionFactory.getCurrentSession();

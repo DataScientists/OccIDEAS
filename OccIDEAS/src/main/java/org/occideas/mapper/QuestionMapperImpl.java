@@ -41,7 +41,7 @@ public class QuestionMapperImpl implements QuestionMapper {
 		questionVO.setLastUpdated(question.getLastUpdated());
 		List<PossibleAnswer> childNodes = question.getChildNodes();
 		if (!CommonUtil.isListEmpty(childNodes)) {
-			questionVO.setChildNodes(mapper.convertToPossibleAnswerVOList(childNodes));
+			questionVO.setChildNodes(mapper.convertToPossibleAnswerVOList(childNodes,true));
 		}
 		questionVO.setOriginalId(question.getOriginalId());
 		questionVO.setDeleted(question.getDeleted());

@@ -4,26 +4,58 @@
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
-	                          '$anchorScroll','$location','$mdMedia','$window','$state','templateData',
-	                          'agentsData','RulesService','$compile'];
+	                          '$anchorScroll','$location','$mdMedia','$window','$state',
+	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope','ModuleRuleService'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
-			$anchorScroll,$location,$mdMedia,$window,$state,templateData,
-			agentsData,RulesService,$compile) {
+			$anchorScroll,$location,$mdMedia,$window,$state,
+			AgentsService,RulesService,$compile,TabsCache,$rootScope,ModuleRuleService) {
 		var self = this;
+		console.log('inside QuestionsCtrl');
 		$scope.data = data;	
+		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
 		$scope.activeNodeId = 0;
-		/*$scope.data.showAgentSlider = true;*/
 		$anchorScroll.yOffset = 200;
-		$scope.templateData = templateData.template;
-		$scope.agentsData = initAgentData(agentsData);
-		$scope.aJSMData = templateData.ajsm;
-    	$scope.frequencyData = templateData.frequency;
     	$scope.rulesObj = [];
+    	$scope.rulesInt = [];
+    	$scope.agentsData = null;
+    	$scope.nodePopover = {
+    		    templateUrl: 'scripts/questions/partials/nodePopover.html',
+    		    open: function(x,idRule) {
+    		    	var nodeclass = 'P';
+    		    	if(angular.isUndefined(x.info)){
+  		    		  x.info = [];
+  		    	  	}
+    		    	 x.info["Node"+x.idNode+idRule] = {
+							    				  idNode:x.idNode,
+							    				  nodeclass:nodeclass,
+							    				  nodePopover:{
+							    					  isOpen: false
+							    				  },
+							    				  nodePopoverInProgress : false
+		    		  							};
+    		    	 var nodeInPopup = x.info["Node"+x.idNode+idRule];
+    		    	 nodeInPopup.nodePopoverInProgress = true;
+    		         var deffered = $q.defer();
+    		         QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
+    		    		nodeInPopup.data = data.data[0];
+    		    		nodeInPopup.idRule =idRule;
+   						nodeInPopup.nodePopoverInProgress = false;
+   						deffered.resolve();
+ 					 });
+    		         deffered.promise.then(function(){
+    		        	 nodeInPopup.nodePopover.isOpen = true;
+    		    	 })
+    		    },   		    
+  		        close: function close(x,idRule) {
+  		        	x.info["Node"+x.idNode+idRule].nodePopover.isOpen = false;
+  		        }
+    	};
     	
-    	function initAgentData(agent){
+    	function initAgentData(){
+    		AgentsService.get().then(function(agent) {
     		var group = _.groupBy(agent, function(b) { 
     			return b.groupName;
     		});
@@ -41,7 +73,37 @@
         		} );
         	}
     		group = setOrder(group);
-    		return group;
+    		$scope.agentsLoading = false;
+    		$scope.agentsData = group;
+    		});
+    	}
+    	
+    	function initFragmentData(){
+    		$scope.fragmentsLoading = true;
+    		 FragmentsService.get().then(function(data) {	
+	    			var object = {};
+	    			var ajsms = [];
+	    			var templates = [];
+	    			var frequencies = [];
+	    			for(var i=0;i < data.length;i++){
+	    				var node = data[i];
+	    				node.idnode = "";
+	    				node.nodeclass = "Q";
+	    				if(node.type=='F_ajsm'){
+	    					node.type = "Q_linkedajsm";
+	    					ajsms.push(node);
+	    				}else if(node.type=='F_template'){
+	    					templates.push(node);
+	    				}else if(node.type=='F_frequency'){
+	    					frequencies.push(node);
+	    				}
+	    			}
+	    			$scope.templateData = templates;
+	    			$scope.frequencyData = frequencies;
+	    			$scope.aJSMData = ajsms;
+	    			$scope.fragmentsLoading = false;
+	    			return object;
+    		 });
     	}
     	
     	function setOrder (obj) {
@@ -51,8 +113,6 @@
     	    });
     	    return out;
     	}
-    	
-    	
     	
 		$scope.toggleRulesObj = function (agents){
 			if(_.findIndex($scope.rulesObj, function(o) { 
@@ -69,7 +129,26 @@
     	$scope.getRulesIfAny = function(node,agents){
     		var filteredAgent = _.filter(node.moduleRule, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
-				return _.reduce(filteredAgent, function(memo, current) { return _.extend(memo, current) },  {});
+				/*var rules=  _.reduce(filteredAgent, function(memo, current) { 
+					return _.extend(memo, current) 
+					},  {});
+				var id = rules.idRule;
+				var existRules = _.filter($scope.rulesInt, { 'id': id});
+				if(existRules.length > 0){
+					existRules[0].nodes.push({
+						nodeNumber:node.number,
+						idNode:node.idNode
+					});
+				}else{
+				$scope.rulesInt.push({
+					'id':id,
+					nodes:[{
+						nodeNumber:node.number,
+						idNode:node.idNode
+					}]
+				});
+				}*/
+				return filteredAgent;
 			}
 			return null;			
     	}
@@ -384,7 +463,6 @@
 					}
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
-					reorderSequence(destNode.nodes);
 					if(sourceNode.warning != 'warning'){
 						if($scope.isClonable){						
 							saveModuleAndReload();
@@ -392,7 +470,6 @@
 						}else{
 							saveModuleWithoutReload();
 						}
-						
 					}
 				}
 		}
@@ -439,6 +516,10 @@
 		    else{
 		      $scope.rightNav = "slideFrag";
 		    }
+		    if(angular.isUndefined($scope.templateData) || angular.isUndefined($scope.aJSMData)
+		    			|| angular.isUndefined($scope.frequencyData)){
+				initFragmentData();
+			}
 		};
 		
 		$scope.leftNav = "slideFragLeft";
@@ -449,6 +530,10 @@
 		    else{
 		      $scope.leftNav = "slideFragLeft";
 		    }
+		    if((angular.isUndefined($scope.agentsData))||($scope.agentsData == null)){
+		    	$scope.agentsLoading = true;
+				initAgentData();
+			}
 		};
 		
 		$scope.toggle = function(scope) {
@@ -462,6 +547,7 @@
 			}else{
 				scope.$modelValue.type = 'Q_multiple';
 			}
+			saveModuleWithoutReload();
 		};
 		$scope.deleteNode = function(scope) {
 			recordAction($scope.data);
@@ -699,7 +785,7 @@
 		          nodes: []
 		        });
 			}
-			reorderSequence(scope.$modelValue.nodes);
+			//reorderSequence(scope.$modelValue.nodes);
 			saveModuleWithoutReload(locationId);
 		};
 
@@ -751,6 +837,8 @@
 				var menuOptions;
 				if(scope.node.type=='Q_linkedmodule'){
 					menuOptions = $scope.linkedModuleMenuOptions;
+				}else if(scope.node.type=='Q_linkedajsm'){
+					menuOptions = $scope.linkedAjsmMenuOptions;
 				}else{
 					menuOptions = $scope.questionMenuOptions;
 				}
@@ -773,20 +861,19 @@
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
 					
-					var toggleChildren = function (scope) {
-		        		var i, subScope,
-		                nodes = scope.childNodes();
-			            for (i = 0; i < nodes.length; i++) {
-			              subScope = nodes[i].$childNodesScope;
-			              if (subScope) {
-			            	  var collapsed = !subScope.collapsed;
-			            	  for (i = 0; i < nodes.length; i++) {
-			    	              collapsed ? nodes[i].collapse() : nodes[i].expand();    	              
-			    	            }
-			              }
+				  var collapseOrExpand = function (scope) {
+			          var i, subScope,
+			              nodes = scope.childNodes();
+			          for (i = 0; i < nodes.length; i++) {
+			        	var collapsed = nodes[i].collapsed;
+			            !collapsed ? nodes[i].collapse() : nodes[i].expand();
+			            subScope = nodes[i].$childNodesScope;
+			            if (subScope) {
+			              collapseOrExpand(subScope);
 			            }
-		              };
-		              toggleChildren($itemScope);
+			          }
+			        };
+			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Dividier
 			  [ 'Run Interview', function($itemScope) {
@@ -824,18 +911,7 @@
 				  
 				  $mdDialog.show({
 					  //scope: $scope,
-					  controller: QuestionsCtrl,
-					  resolve: {					  
-						  data: function () {
-							  return $scope.selectedNode;
-		                    },
-		                    templateData: function(){
-		                    	return templateData;
-		                    },
-		                    agentsData: function(){
-		                    	return agentsData;
-		                    }
-					  },
+					  scope: $scope.$new(),
 					  /*locals: {
 						  addFragmentTab: $scope.addFragmentTab
 				         },*/
@@ -871,15 +947,22 @@
 		              };
 		              toggleChildren($itemScope);
 					} 
-				  ],
-				  [ 'Open as aJSM', function($itemScope) {	
-	  					var node = $itemScope.node;
-	  					node.idNode = node.link;
-	  					node.type = 'F_ajsm';
-	  					node.classtype = 'F';
-	  					$scope.addFragmentTab(node);
-	  				} 
 				  ]
+			];
+		$scope.linkedAjsmMenuOptions =
+			[
+			  [ 'Remove (Toggle)', function($itemScope) {
+					$scope.deleteNode($itemScope);
+					}
+			  ],
+			  [ 'Open as aJSM', function($itemScope) {	
+					var node = angular.copy($itemScope.node);
+					node.idNode = node.link;
+					node.type = 'F_ajsm';
+					node.classtype = 'F';
+					$scope.addFragmentTab(node);
+				} 
+			  ]
 			];
 		$scope.linkedModuleMenuOptions =
 			[
@@ -888,7 +971,7 @@
 					}
 			  ],
 			  [ 'Open as Module', function($itemScope) {
-	  					var node = $itemScope.node;
+				  		var node = angular.copy($itemScope.node);
 	  					node.idNode = node.link;
 	  					node.type = 'M_Module';
 	  					node.classtype = 'M';
@@ -896,11 +979,85 @@
 	  				}
 			  ]
 			];
+		
+		function addPopoverInfo(x,idRule){
+			 if(angular.isUndefined(x[0].info)){
+	    		  x[0].info = [];
+	    	  }
+			 x[0].info["Node"+x[0].idNode+idRule] = {
+	    				  idNode:x[0].idNode,
+	    				  idRule:idRule,
+	    				  nodeclass:x[0].nodeclass,
+	    				  nodePopover:{
+	    					  isOpen: false
+	    				  },
+	    				  nodePopoverInProgress : false
+	          };
+		}
+		
 		$scope.rulesMenuOptions =
 			[
-			  [ 'Show Rules', function($itemScope,node) {
-				  newNote(node.currentTarget.parentElement,$itemScope,$compile);
-			  }
+			  [ 'Show Rules', function($itemScope, $event, model) {
+				  var rules =_.filter(model.moduleRule, function(r){
+  					return $itemScope.$parent.obj.idAgent === r.idAgent; 
+  			      });
+				  if(rules.length > 0){
+				  	for(var i=0;i<rules.length;i++){
+				  		var scope = $itemScope.$new();
+				  		scope.model = model;
+				  		scope.rule = rules[i].rule;
+				  		scope.agentName = rules[i].agentName;
+					  	var x = scope.rule.conditions;
+					  	x.idRule = scope.rule.idRule;
+					  	addPopoverInfo(x,scope.rule.idRule);
+					  	newNote($event.currentTarget.parentElement,scope,$compile);
+					  	$scope.activeRule = scope.rule;
+				  	}
+				  }	  
+				  
+			  	}			  
+			  ],
+			  [ 'Add Rule', function($itemScope, $event, model) {
+			  	  var conditions = [];
+			  	  conditions.push(model);
+			  	  $itemScope.model = model;
+				  var rule = {agentId:$itemScope.$parent.obj.idAgent,conditions:conditions};
+				  RulesService.create(rule).then(function(response){
+	    				if(response.status === 200){
+	    					if(response.data.idRule){
+	    						ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
+							  
+									if(response.status === 200){
+										var result = response.data[response.data.length-1];
+										$itemScope.rule = result.rule;
+										$itemScope.agentName = result.agentName;
+										var x = $itemScope.rule.conditions;
+										addPopoverInfo(x,$itemScope.rule.idRule);
+										newNote($event.currentTarget.parentElement,$itemScope,$compile);									
+										$scope.activeRule = result.rule;
+										if($itemScope.rules==null){
+											$itemScope.rules = [];
+										}
+										if(angular.isUndefined(model.moduleRule)){
+											model.moduleRule = [];
+										}
+										
+										_.merge(model.moduleRule, response.data);
+						    			if (!model.moduleRule.$$phase) {
+						    			        try {
+						    			        	model.moduleRule.$digest();
+						    			        }
+						    			        catch (e) { }
+						    		    }
+									}
+									});
+								}else{
+									  alert("Try reload");
+								}
+	    				}
+	    			});
+					  
+			  	}			  
 			  ]
 			];
 		
@@ -915,11 +1072,10 @@
 			  ],
 			  [ 'Show/Hide Children', function($itemScope) {
 					
-					var toggleChildren = function (scope) {
-		        		var i, subScope,
-		                nodes = scope.childNodes();
-			            for (i = 0; i < nodes.length; i++) {
-			              subScope = nodes[i].$childNodesScope;
+					var toggleChildren = function (nodes) {
+		                //var nodes = $itemScope.childNodes();
+			            for (var i = 0; i < nodes.length; i++) {
+			              var subScope = nodes[i].$childNodesScope;
 			              if (subScope) {
 			            	  var collapsed = !subScope.collapsed;
 			            	  for (i = 0; i < nodes.length; i++) {
@@ -928,7 +1084,7 @@
 			              }
 			            }
 		              };
-		              toggleChildren($itemScope);
+		              toggleChildren($itemScope.childNodes());
 					} 
 			   ]
 			];
@@ -952,9 +1108,10 @@
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
+								TabsCache.put(data.data.idNode,data.data);
 								$scope.data = data.data;
 								if(locationId){
-									$scope.scrollTo(locationId);
+									//$scope.scrollTo(locationId);
 								}
 							});
 						}else{
@@ -978,8 +1135,9 @@
 					QuestionsService.saveNode($scope.data[0]).then(function(response){
 						if(response.status === 200){
 							console.log('Save was Successful! Not Reloading');
+							TabsCache.put(response.data.idNode,response.data);
 							if(locationId && locationId != ''){
-								$scope.scrollTo(locationId);
+								//$scope.scrollTo(locationId);
 							}
 							if(deffered){
 								deffered.resolve();
@@ -1013,8 +1171,7 @@
 							nodeclass : "F",
 							nodes : []
 						};
-					var childNodes = [];
-					angular.copy(data.nodes,childNodes);
+					var childNodes = angular.copy(data.nodes);
 					destNode.nodes.unshift({
 						name : data.name,
 						description : data.description,
@@ -1038,13 +1195,15 @@
 				    				var node = template[i];
 				    				node.nodeclass = "Q";
 				    			}
+				    			if($scope.templateData != null){
 				    			_.merge($scope.templateData, template);
-				    				if (!$scope.templateData.$$phase) {
+				    			if (!$scope.templateData.$$phase) {
 				    			        try {
 				    			        	$scope.templateData.$digest();
 				    			        }
 				    			        catch (e) { }
 				    			    }
+				    			}
 				    				deffered.resolve();
 				    		});
 							FragmentsService.getByType('F_ajsm').then(function(data) {
@@ -1053,6 +1212,7 @@
 			        				node.type = "Q_linkedajsm";
 			        				node.nodeclass = "Q";
 			        			}
+			        			if($scope.aJSMData != null){
 			        			_.merge($scope.aJSMData, data);
 			        			if (!$scope.aJSMData.$$phase) {
 			    			        try {
@@ -1060,6 +1220,7 @@
 			    			        }
 			    			        catch (e) { }
 			    			    }
+			        			}
 			        			deffered.resolve();
 			        		});
 							FragmentsService.getByType('F_frequency').then(function(data) {	
@@ -1068,13 +1229,15 @@
 			        				//node.type = "Q_linkedtemplate";
 			        				node.nodeclass = "Q";
 			        			}
-			        			_.merge($scope.frequencyData, data);
+			        			if($scope.frequencyData != null){
+				    			_.merge($scope.frequencyData, data);
 			        			if (!$scope.frequencyData.$$phase) {
 			    			        try {
 			    			        	$scope.frequencyData.$digest();
 			    			        }
 			    			        catch (e) { }
 			    			    }
+			        			}
 			        			deffered.resolve();
 			        		});
 						   
@@ -1095,7 +1258,7 @@
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
-					console.log(node.name)
+					
 					node.sequence = i;
 					if(!node.idNode){
 						increment =(increment + 1);
@@ -1123,7 +1286,7 @@
 			if(arrayInp.length > 0){
 				var i=0;
 				_.each(arrayInp, function(node) {
-					console.log(node.name)
+					
 					node.sequence = i;
 					node.topNodeId = topNodeId;
 					if(node.nodeclass=='Q'){
@@ -1220,13 +1383,126 @@
 			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
 		};
 
-        $scope.highlightNode = function(rule){
-        	var elementId = 'node-'+rule.idNode;
+        $scope.highlightNode = function(idNode){
+        	var elementId = 'node-'+idNode;
         	$scope.scrollTo(elementId);
         	$('#'+elementId).toggleClass('highlight');  
         	   setTimeout(function(){
         	     $('#'+elementId).toggleClass('highlight');  
         	   },5000);
+        }
+        
+        $scope.toggleCollapse = function(node,scope){
+        	scope.toggle();
+        	if(node.collapsed){
+        		node.collapsed = false;
+        	}else{
+        		node.collapsed = true;
+        	}
+        	var o = getObject(TabsCache.get(moduleIdNode)[0].nodes,node.idNode);
+        	if(!angular.isUndefined(o)){
+        		o.collapsed = node.collapsed;
+        	}
+        }
+        
+        function getObject (array,idNode){
+        	var object = _.find(array, _.matchesProperty('idNode', idNode));
+        	if(object != null || !angular.isUndefined(object)){
+    			return object;
+    		}
+        	_.forEach(array,function(v,k) {
+        		if(v.nodes){
+        			return getObject(v.nodes,idNode);
+        		}
+        	});
+        }
+        $rootScope.tabsLoading = false;
+        
+        $scope.setActiveRule = function(rule,el){
+        	$scope.activeRuleDialog = el;
+        	$scope.activeRule = rule;
+        }
+        $scope.addToActiveRule = function(node,rules){
+        	
+        	var rule = $scope.activeRule;
+        	var bAlreadyInRule = false;
+        	for(var i=0;i<rule.conditions.length;i++){
+        		var iCondition = rule.conditions[i];
+        		if(iCondition.idNode==node.idNode){
+        			bAlreadyInRule = true;
+        			break;
+        		}
+        	}
+        	if(!bAlreadyInRule){
+        		rule.conditions.push(node);
+            	if(rules.rules==null){
+            		rules.rules = [];
+            	}
+            	var ruleLevel = "";
+            	if(rule.level==0){
+            		ruleLevel = "probHigh";
+            	}else if(rule.level==1){
+            		ruleLevel = "probMedium";
+            	}else if(rule.level==2){
+            		ruleLevel = "probLow";
+            	}else if(rule.level==3){
+            		ruleLevel = "probUnknown";
+            	}else if(rule.level==4){
+            		ruleLevel = "possUnknown";
+            	}else if(rule.level==5){
+            		ruleLevel = "noExposure";
+            	}
+            	rules.rules.push({
+            		ruleLevel:ruleLevel,
+            		idNode:node.idNode
+            		})
+            	RulesService.save(rule).then(function(response){
+    				if(response.status === 200){
+    					console.log('Rule Save was Successful!');
+    					
+    				}
+    			});
+        	}
+        }
+        $scope.saveRule = function(rule,model){
+        	RulesService.save(rule).then(function(response){
+    			if(response.status === 200){
+    				console.log('Rule Save was Successful!');	
+    				ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
+						if(response.status === 200){
+							var result = response.data[response.data.length-1];
+							if(angular.isUndefined(model.moduleRule)){
+								model.moduleRule = [];
+							}
+							_.merge(model.moduleRule, response.data);
+			    			if (!model.moduleRule.$$phase) {
+			    			        try {
+			    			        	model.moduleRule.$digest();
+			    			        }
+			    			        catch (e) { }
+			    		    }
+						}
+						});
+    			}
+    		});
+        	
+        }
+        $scope.removeNodeFromRule = function(node){
+        	var rule = $scope.activeRule;
+        	
+        	for(var i=0;i<rule.conditions.length;i++){
+        		var iCondition = rule.conditions[i];
+        		if(iCondition.idNode==node.idNode){
+        			rule.conditions.splice(i,1);
+        			
+        		}
+        	}
+        	RulesService.save(rule).then(function(response){
+				if(response.status === 200){
+					console.log('Rule Save was Successful!');
+					
+				}
+			});
         }
 	}
 })();

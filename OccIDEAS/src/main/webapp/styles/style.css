@@ -59,6 +59,23 @@
     background-color: #A7B3E2;
     border-radius: 10px;
 }
+.badge-parent {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #A7B3E2;
+    border-radius: 10px;
+}
+.popover-content {
+    padding: 3px 5px 0px 5px !important;
+}
 .badge-deleted {
     display: inline-block;
     min-width: 10px;
@@ -353,7 +370,7 @@ label.fraglabel {
 }
 
 .selected{
-    border: 1px solid #7c9eb2;
+    border: 0;
     background: #7c9eb2;
 }
 
@@ -461,8 +478,8 @@ label.fraglabel {
 }
 
 .agentACell {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     font-size: 14px;
     font-weight: 600;
     text-align: center;
@@ -471,13 +488,12 @@ label.fraglabel {
     border: 3px solid #FFF;
     box-shadow: 1px 1px 3px rgba(0,0,0,.4);
     text-shadow: 1px 1px 2px rgba(0,0,0,.4);
-    margin: 0px 2px 0px 2px;
+    margin: -15px 2px 0px 2px;
     float: left;
     overflow: hidden;
     background: #686868;
 }
 
-<<<<<<< HEAD
 /** Rules Dialog */
 /* * Hide from both screenreaders and browsers: h5bp.com/u */
 .hidden {
@@ -579,9 +595,9 @@ a:focus {
 	display: block;
 	position: absolute;
 	top:0px;
-	left:700px;
+	left:530px;
 	padding: 0 0 0 0;
-	width: 240px;
+	width: 170px;
 	min-height: 130px;
 	margin: 0 30px 30px 0;
 	background: #4478a0;
@@ -698,6 +714,125 @@ a:focus {
     overflow: scroll; height: 700px;
 }
 
-.highlight{
-    background: #ffff00;
+.highlight-interview{
+    background: #DDDFE8;
+}
+
+/** UI Tree*/
+.angular-ui-tree .btn {
+    margin-right: 8px;
+}
+
+.angular-ui-tree-handle {
+    background: #f8faff;
+    border: 1px solid #dae2ea;
+    color: #7c9eb2;
+    min-height: 38px !important;
+    padding-top: 8px;
+}
+.angular-ui-tree-nodes {
+    padding-left: 0px; 
+}
+.angular-ui-tree-handle:hover {
+    color: #438eb9;
+    background: #f4f6f7;
+    border-color: #dce2e8;
+}
+
+.angular-ui-tree-placeholder {
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+tr.angular-ui-tree-empty {
+    height:500px
+}
+
+
+.tree-node {
+    border: 1px solid #dae2ea;
+    background: #f8faff;
+    color: #7c9eb2;
+}
+.tree-spacer-div{
+	padding: 0px 10px 10px 10px;
+}
+/* --- End Tree --- */
+.angular-ui-tree .group-title {
+    background-color: #687074 !important;
+    color: #FFF !important;
+}
+
+.angular-ui-tree .warning {
+    border: 2px solid #C53E3E !important;
+}
+
+.angular-ui-tree .nodrop {
+    background-color: #f2dede;
+}
+
+.angular-ui-tree .tree-node-content {
+    /* margin: 10px; */
+    
+}
+.angular-ui-tree .tree-handle {
+
+    background: #E3F0F6;
+    color: #7D89B7;
+
+}
+
+.angular-ui-tree-placeholder {
+    background: #f0f9ff;
+    border: 2px dashed #bed2db;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0.0; }
+}
+
+.popoverTitle {
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #5189B5;
+  border-width: 0px 0px 1px 0px;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  background: #5C9CCE;
+  box-shadow: 0px 1px 4px rgba(68, 120, 160, 0.1);
+  font-size: 12px;
+  line-height:2em;
+}
+.interview-radio-button {
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
+	
+}
+md-checkbox {
+  margin: 8px;
+  cursor: pointer;
+  padding-left: 18px;
+  padding-right: 0;
+  line-height: 26px;
+  min-width: 18px;
+  min-height: 18px;
+}
+md-checkbox.md-checked.green .md-icon {
+ background-color: rgba(199, 155, 28, 0.81);
+}
+.interview-radio-button:not([disabled]).md-primary .md-on {
+    background-color: rgba(199, 155, 28, 0.81) !important;
 }

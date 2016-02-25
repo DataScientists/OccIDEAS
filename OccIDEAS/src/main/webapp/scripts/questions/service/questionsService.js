@@ -12,9 +12,29 @@
 			}else if(type=='F'){
 				restUrl = 'rest/fragment/get?id=' + idNode;
 				
+			}else if(type=='P'){
+				restUrl = 'rest/answer/getById?id='+idNode;
 			}else{
 				restUrl = 'rest/question/get?id=' + idNode;
 			}
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		function findQuestion(idNode) {
+			var restUrl = 'rest/question/get?id=' + idNode;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		function findPossibleAnswer(idNode) {
+			var restUrl = 'rest/answer/getById?id='+idNode;
+			
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -92,6 +112,8 @@
 		
 		return {
 			findQuestions: findQuestions,
+			findQuestion: findQuestion,
+			findPossibleAnswer: findPossibleAnswer,
 			save:save,
 			saveNode:saveNode,
 			getMaxId:getMaxId,

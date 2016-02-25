@@ -1,0 +1,32 @@
+<div ng-if="$window.sliderVal.idNode.showAgentSlider" id="agentDropContainer" ng-class="leftNav" class="ui-widget">
+<div class="agent-contain">
+<div class="agentSticker" ng-click="toggleLeft()" style="cursor: pointer;">Agents</div> 
+<label for="agentDragDrop" class="fraglabel">Drag Drop Agents: </label>
+<div id="agentDragDrop"><ul></ul>
+<div>
+	<div class="panel panel-default"">
+		<div class="panel-heading">
+    		<h4 class="panel-title">Agents List</h4>
+  		</div>
+  		<div class="panel-body">
+  		 <md-progress-circular ng-if="agentsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+		<uib-accordion close-others="oneAtATime" ng-if="!agentsLoading" ng-repeat="agent in agentsData | orderBy:'-total' track by $index">
+     	 <uib-accordion-group>
+     	 	<uib-accordion-heading>
+     	 	{{agent.key}}
+     	 		<span class="badge pull-right">{{agent.total || 0}}</span>
+     	 	</uib-accordion-heading>
+     	 		<div>
+					<ul class="list-group">
+						<li class="list-group-item" ng-repeat="subNode in agent.value | orderBy:'-total' track by $index " ng-click="toggleRulesObj(subNode)">
+							{{subNode.name}} <span class="badge pull-right">{{subNode.total || 0}}</span></li>
+					</ul>
+				</div>
+     	 </uib-accordion-group>
+     	 </uib-accordion>
+     	 </div>
+	</div>
+</div>
+</div>
+</div>
+</div>

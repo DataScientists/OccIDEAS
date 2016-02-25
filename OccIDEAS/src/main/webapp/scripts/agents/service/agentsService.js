@@ -2,16 +2,15 @@
 	angular.module('occIDEASApp.Agents')
 	.service('AgentsService',AgentsService);
 
-	AgentsService.$inject = ['$http','AgentsCache'];
-	function AgentsService($http,AgentsCache){
+	AgentsService.$inject = ['$http'];
+	function AgentsService($http){
 		var apiUrl = '/occideas/rest/';
 		var modulesUrl = apiUrl + 'agent';
 		var apiKey = '';
 		
 		var getAgents = function() {
-		  return $http.get(modulesUrl+'/getlist').then(function(response) {
+		  return $http.get(modulesUrl+'/getlist',{ cache: true}).then(function(response) {
 		    var data = response.data;
-		    AgentsCache.put("all",data);
 		    return data;
 		  });
 		};
