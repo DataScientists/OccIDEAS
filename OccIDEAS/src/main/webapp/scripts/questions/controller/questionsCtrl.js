@@ -1006,6 +1006,7 @@
 				  		var scope = $itemScope.$new();
 				  		scope.model = model;
 				  		scope.rule = rules[i].rule;
+				  		scope.agentName = rules[i].agentName;
 					  	var x = scope.rule.conditions;
 					  	x.idRule = scope.rule.idRule;
 					  	addPopoverInfo(x,scope.rule.idRule);
@@ -1029,7 +1030,7 @@
 									if(response.status === 200){
 										var result = response.data[response.data.length-1];
 										$itemScope.rule = result.rule;
-										$itemScope.rule.agentName = result.agentName;
+										$itemScope.agentName = result.agentName;
 										var x = $itemScope.rule.conditions;
 										addPopoverInfo(x,$itemScope.rule.idRule);
 										newNote($event.currentTarget.parentElement,$itemScope,$compile);									
