@@ -66,7 +66,7 @@
         			  var ruleArray =_.filter($scope.data[0].moduleRule, function(r){
         					return v.idAgent === r.idAgent; 
         			  });
-        			  v.total = ruleArray.length;
+        			  v.total = _.uniq(ruleArray, 'rule.idRule').length;
         			  totalVal = totalVal + v.total;
         			});
         		x.total = totalVal;
@@ -1049,6 +1049,8 @@
 						    			        }
 						    			        catch (e) { }
 						    		    }
+						    			$scope.data[0].moduleRule.push(result);
+						    			initAgentData();
 									}
 									});
 								}else{
@@ -1108,7 +1110,7 @@
 						if(response.status === 200){
 							console.log('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
-								TabsCache.put(data.data.idNode,data.data);
+								TabsCache.removeAll();
 								$scope.data = data.data;
 								if(locationId){
 									//$scope.scrollTo(locationId);
