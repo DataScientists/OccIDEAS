@@ -60,6 +60,7 @@ public class InterviewMapperImpl implements InterviewMapper {
         }
         Interview interview = new Interview();
         
+        interview.setIdinterview(interviewVO.getInterviewId());
         interview.setReferenceNumber(interviewVO.getReferenceNumber());
         interview.setModule(moduleMapper.convertToModule(interviewVO.getModule()));
         interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment()));

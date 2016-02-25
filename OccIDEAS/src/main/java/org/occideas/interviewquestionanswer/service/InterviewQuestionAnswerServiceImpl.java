@@ -21,7 +21,7 @@ public class InterviewQuestionAnswerServiceImpl implements InterviewQuestionAnsw
 
     @Override
     public List<InterviewQuestionAnswerVO> listAll() {
-        return mapper.convertToInterviewQuestionAnswerVOList(dao.getAll());
+        return mapper.convertToInterviewQuestionAnswerVOList(dao.getAllActive());
     }
 
     @Override
