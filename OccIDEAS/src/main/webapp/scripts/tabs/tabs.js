@@ -72,7 +72,7 @@
 			}
 		}).state('tabs.questions', {
 			url: '/questions/:row',
-			sticky: true,
+			sticky: false,
 		    deepStateRedirect: true,
 			views:{
 				'questions@tabs':{
