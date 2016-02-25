@@ -836,3 +836,7 @@ md-checkbox.md-checked.green .md-icon {
 .interview-radio-button:not([disabled]).md-primary .md-on {
     background-color: rgba(199, 155, 28, 0.81) !important;
 }
+
+.activeRule{
+	border-color:rgb(221,44,0) !important;	
+}

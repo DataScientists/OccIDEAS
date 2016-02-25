@@ -1420,9 +1420,26 @@
         }
         $rootScope.tabsLoading = false;
         
+        $scope.deleteNote = function(elem,$event) {
+        	$($event.target).closest('.note').remove();
+        	$scope.activeRuleDialog = '';
+        	if (!$scope.activeRuleDialog.$$phase) {
+		        try {
+		        	$scope.activeRuleDialog.$digest();
+		        }
+		        catch (e) { }
+        	}
+        };
+        
         $scope.setActiveRule = function(rule,el){
-        	$scope.activeRuleDialog = el;
+        	$scope.activeRuleDialog = el.model.idNode;
         	$scope.activeRule = rule;
+        	if (!$scope.activeRuleDialog.$$phase) {
+		        try {
+		        	$scope.activeRuleDialog.$digest();
+		        }
+		        catch (e) { }
+        	}
         }
         $scope.addToActiveRule = function(node,rules){
         	

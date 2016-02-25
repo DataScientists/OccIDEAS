@@ -47,11 +47,7 @@
 	
 })();
 
-var noteZindex = 1050;
-function deleteNote(elem) {
-	angular.element(elem).parent().remove();
-};
-
+var noteZindex = 1050;3
 function newNote(element,$itemScope,$compile) {
 	if($itemScope.rule == null){
 		return;
