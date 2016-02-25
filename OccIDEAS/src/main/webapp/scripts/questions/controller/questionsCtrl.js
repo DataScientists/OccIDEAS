@@ -66,7 +66,7 @@
         			  var ruleArray =_.filter($scope.data[0].moduleRule, function(r){
         					return v.idAgent === r.idAgent; 
         			  });
-        			  v.total = ruleArray.length;
+        			  v.total = _.uniq(ruleArray, 'rule.idRule').length;
         			  totalVal = totalVal + v.total;
         			});
         		x.total = totalVal;
@@ -1049,6 +1049,8 @@
 						    			        }
 						    			        catch (e) { }
 						    		    }
+						    			$scope.data[0].moduleRule.push(result);
+						    			initAgentData();
 									}
 									});
 								}else{
