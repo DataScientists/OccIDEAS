@@ -1010,10 +1010,8 @@
 					  	x.idRule = scope.rule.idRule;
 					  	addPopoverInfo(x,scope.rule.idRule);
 					  	newNote($event.currentTarget.parentElement,scope,$compile);
-					  	$scope.activeRuleDialog = scope.rule;
+					  	$scope.activeRule = scope.rule;
 				  	}
-					  
-//					  $scope.activeRule = response.data[0];
 				  }	  
 				  
 			  	}			  
@@ -1035,7 +1033,7 @@
 										var x = $itemScope.rule.conditions;
 										addPopoverInfo(x,$itemScope.rule.idRule);
 										newNote($event.currentTarget.parentElement,$itemScope,$compile);									
-										$scope.activeRule = response.data[0];
+										$scope.activeRule = result.rule;
 										if($itemScope.rules==null){
 											$itemScope.rules = [];
 										}
@@ -1419,17 +1417,9 @@
         }
         $rootScope.tabsLoading = false;
         
-        $scope.activeRule = null;
-        $scope.activeRuleDialog = null;
-        
-        $scope.setActiveRule = function(rule){
-        	$scope.activeRuleDialog = rule;
-        	RulesService.getRule(rule.idRule).then(function(response) {
-        		if(response.status === 200){
-					console.log('Found rule id:'+response.data[0].idRule);
-					$scope.activeRule = response.data[0];
-				}
-		    });
+        $scope.setActiveRule = function(rule,el){
+        	$scope.activeRuleDialog = el;
+        	$scope.activeRule = rule;
         }
         $scope.addToActiveRule = function(node,rules){
         	
