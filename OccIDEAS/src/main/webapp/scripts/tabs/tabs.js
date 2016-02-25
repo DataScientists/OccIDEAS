@@ -60,6 +60,16 @@
 					controller: 'AgentCtrl as vm'
 				}
 			}
+		}).state('tabs.assessments', {
+			url: '/assessments/',
+			sticky: false,
+		    deepStateRedirect: true,
+			views:{
+				'assessments@tabs':{
+					templateUrl : "scripts/assessments/view/assessmentsTable.html",
+					controller: 'AssessmentsCtrl as vm'
+				}
+			}
 		}).state('tabs.questions', {
 			url: '/questions/:row',
 			sticky: true,

@@ -5,12 +5,9 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.InterviewQuestionAnswer;
-import org.occideas.entity.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +42,7 @@ public class InterviewQuestionAnswerDao {
     @SuppressWarnings("unchecked")
 	public List<InterviewQuestionAnswer> getAll() {
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(InterviewQuestionAnswer.class)
-    		  						.setResultTransformer(Transformers.aliasToBean(InterviewQuestionAnswer.class));
+      final Criteria crit = session.createCriteria(InterviewQuestionAnswer.class);
       return crit.list();
     }
     @SuppressWarnings("unchecked")
@@ -70,6 +66,16 @@ public class InterviewQuestionAnswerDao {
         }
         if (answerId != null) {
             crit.add(Restrictions.eq("answer_idNode", answerId));
+        }
+        return crit.list();
+    }
+    @SuppressWarnings("unchecked")
+    public List<InterviewQuestionAnswer> findByInterviewId(Long interviewId) {
+        final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(InterviewQuestionAnswer.class)
+					.setResultTransformer(Transformers.aliasToBean(InterviewQuestionAnswer.class));
+        if (interviewId != null) {
+            crit.add(Restrictions.eq("idinterview", interviewId));
         }
         return crit.list();
     }

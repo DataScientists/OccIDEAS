@@ -17,6 +17,10 @@
 			state: "tabs.agents",
 			data: ""
 		};
+		$scope.tabOptions[3] = {
+				state: "tabs.assessments",
+				data: ""
+			};
 		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
 			var state = null;
@@ -52,6 +56,10 @@
 		{
 			title : 'Agent List',
 			viewName: 'agents@tabs'
+		},
+		{
+			title : 'Assessment List',
+			viewName: 'assessments@tabs'
 		}], selected = null, previous = null;
 		$scope.tabs = tabs;
 		$scope.selectedIndex = 0;
@@ -158,9 +166,9 @@
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);
 			$scope.tabOptions.splice(index, 1);
-			if($scope.selectedIndex==3){
+			/*if($scope.selectedIndex==4){
 				$scope.selectedIndex=0;
-			}
+			}*/
 			$scope.questionsCount--;
 			$scope.agentsData = null;
 		};

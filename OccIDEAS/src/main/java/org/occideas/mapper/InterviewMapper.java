@@ -9,12 +9,13 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface InterviewMapper {
 
-	InterviewVO convertToInterviewVO(Interview Interview);
-
-	List<InterviewVO> convertToInterviewVOList(List<Interview> InterviewList);
+	
+	List<InterviewVO> convertToInterviewVOList(List<Interview> InterviewList, boolean includeChildNodes);
 
 	Interview convertToInterview(InterviewVO InterviewVO);
 	
 	List<Interview> convertToInterviewList(List<InterviewVO> InterviewVO);
+
+	InterviewVO convertToInterviewVO(Interview interview, boolean includeChildNodes);
 	
 }

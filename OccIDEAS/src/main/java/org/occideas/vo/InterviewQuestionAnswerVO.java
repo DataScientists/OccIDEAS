@@ -8,9 +8,10 @@ public class InterviewQuestionAnswerVO {
 	private long id;
 	private String interviewQuestionAnswerFreetext;
     private PossibleAnswerVO possibleAnswer;
-    private long interviewId;
+    private InterviewVO interview;
     private QuestionVO question;
     private int deleted;
+    private String referenceNumber;
        
 	public long getId() {
 		return id;
@@ -43,11 +44,23 @@ public class InterviewQuestionAnswerVO {
 	public void setDeleted(int deleted) {
 		this.deleted = deleted;
 	}
-	public long getInterviewId() {
-		return interviewId;
+	
+	public String getReferenceNumber() {
+		if(this.referenceNumber==null){
+			if(this.getInterview()!=null){
+				referenceNumber = this.getInterview().getReferenceNumber();
+			}	    
+		}
+		return referenceNumber;
 	}
-	public void setInterviewId(long interviewId) {
-		this.interviewId = interviewId;
+	public void setReferenceNumber(String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
+	public InterviewVO getInterview() {
+		return interview;
+	}
+	public void setInterview(InterviewVO interview) {
+		this.interview = interview;
 	}
 
 }

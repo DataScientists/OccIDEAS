@@ -23,7 +23,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 	private InterviewQuestionAnswerMapper iqaMapper;
 
     @Override
-    public InterviewVO convertToInterviewVO(Interview interview) {
+    public InterviewVO convertToInterviewVO(Interview interview,boolean includeChildNodes) {
         if (interview == null) {
             return null;
         }
@@ -32,21 +32,23 @@ public class InterviewMapperImpl implements InterviewMapper {
         interviewVO.setReferenceNumber(interview.getReferenceNumber());
         interviewVO.setModule(moduleMapper.convertToModuleVO(interview.getModule(),false));
         interviewVO.setFragment(fragmentMapper.convertToFragmentVO(interview.getFragment(),false));
+        if(includeChildNodes){
+        	List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
+        	interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
+        }      
         
-        List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
-        interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
         
         return interviewVO;
     }
 
     @Override
-    public List<InterviewVO> convertToInterviewVOList(List<Interview> interviewEntity) {
+    public List<InterviewVO> convertToInterviewVOList(List<Interview> interviewEntity,boolean includeChildNodes) {
         if (interviewEntity == null) {
             return null;
         }
         List<InterviewVO> list = new ArrayList<InterviewVO>();
         for (Interview interview : interviewEntity) {
-            list.add(convertToInterviewVO(interview));
+            list.add(convertToInterviewVO(interview,includeChildNodes));
         }
         return list;
     }

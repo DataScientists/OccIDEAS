@@ -16,6 +16,9 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
     
     @Autowired
 	private PossibleAnswerMapper possibleAnswerMapper;
+    
+    @Autowired
+	private InterviewMapper interviewMapper;
 
     @Override
     public InterviewQuestionAnswerVO convertToInterviewQuestionAnswerVO(InterviewQuestionAnswer interview) {
@@ -26,6 +29,7 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
         interviewVO.setId(interview.getId());
         interviewVO.setQuestion(questionMapper.convertToQuestionVO(interview.getQuestion()));
         interviewVO.setPossibleAnswer(possibleAnswerMapper.convertToPossibleAnswerVO(interview.getAnswer(), false));
+        interviewVO.setInterview(interviewMapper.convertToInterviewVO(interview.getInterview(),false));
         interviewVO.setInterviewQuestionAnswerFreetext(interview.getInterviewQuestionAnswerFreetext());
         interviewVO.setDeleted(interview.getDeleted());
         return interviewVO;
