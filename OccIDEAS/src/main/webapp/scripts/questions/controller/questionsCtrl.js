@@ -1466,7 +1466,21 @@
             	RulesService.save(rule).then(function(response){
     				if(response.status === 200){
     					console.log('Rule Save was Successful!');
-    					
+    					ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
+    						if(response.status === 200){
+    							var result = response.data[response.data.length-1];
+    							if(angular.isUndefined(node.moduleRule)){
+    								node.moduleRule = [];
+    							}
+    							_.merge(node.moduleRule, response.data);
+    			    			if (!node.moduleRule.$$phase) {
+    			    			        try {
+    			    			        	node.moduleRule.$digest();
+    			    			        }
+    			    			        catch (e) { }
+    			    		    }
+    						}
+    						});
     				}
     			});
         	}
@@ -1501,13 +1515,39 @@
         		var iCondition = rule.conditions[i];
         		if(iCondition.idNode==node.idNode){
         			rule.conditions.splice(i,1);
-        			
         		}
         	}
         	RulesService.save(rule).then(function(response){
 				if(response.status === 200){
 					console.log('Rule Save was Successful!');
-					
+					ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
+						if(response.status === 200){
+							var result = response.data[response.data.length-1];
+							if(angular.isUndefined(node.moduleRule)){
+								node.moduleRule = [];
+							}
+							_.each(node.moduleRule, function(mr) {
+								var isExist = false;
+								_.each(response.data, function(dt) {
+									if(mr.rule.idRule === dt.rule.idRule){
+										isExist = true;
+									}
+								});
+								if(isExist == false){
+									var index = node.moduleRule.indexOf(mr);
+									if (index > -1) {
+										node.moduleRule.splice(index, 1);
+									}
+								}
+							})
+			    			if (!node.moduleRule.$$phase) {
+			    			        try {
+			    			        	model.moduleRule.$digest();
+			    			        }
+			    			        catch (e) { }
+			    		    }
+						}
+						});
 				}
 			});
         }
