@@ -3,6 +3,7 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Rule;
 import org.occideas.rule.constant.RuleLevelEnum;
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RuleMapperImpl implements RuleMapper {
-
+	private Logger log = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private PossibleAnswerMapper paMapper;
 	
@@ -29,7 +31,7 @@ public class RuleMapperImpl implements RuleMapper {
         ruleVO.setLastUpdated( ruleEntity.getLastUpdated() ); 
         ruleVO.setAgentId(ruleEntity.getAgentId());
         ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
-        ruleVO.setLevel(RuleLevelEnum.getDescriptionByValue(ruleEntity.getLevel()));
+        ruleVO.setLevel(getDescriptionByValue(ruleEntity.getLevel()));
         ruleVO.setType(ruleEntity.getType());
         List<PossibleAnswer> conditions = ruleEntity.getConditions();
 		if (!CommonUtil.isListEmpty(conditions)) {
@@ -61,9 +63,9 @@ public class RuleMapperImpl implements RuleMapper {
         rule.setIdRule( ruleVO.getIdRule() );
         rule.setAgentId(ruleVO.getAgentId());
         rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
-        int level = RuleLevelEnum.getValueByDescription(ruleVO.getLevel());
+        int level = getValueByDescription(ruleVO.getLevel());
         if(level == -1){
-        	level = 5;
+        	log.warn("level returned -1:"+ruleVO.getLevel());
         }
         rule.setLevel(level);
         rule.setType(ruleVO.getType());
@@ -99,7 +101,7 @@ public class RuleMapperImpl implements RuleMapper {
         ruleVO.setLastUpdated( rule.getLastUpdated() ); 
         ruleVO.setAgentId(rule.getAgentId());
         ruleVO.setLegacyRuleId(rule.getLegacyRuleId());
-        ruleVO.setLevel(RuleLevelEnum.getDescriptionByValue(rule.getLevel()));
+        ruleVO.setLevel(getDescriptionByValue(rule.getLevel()));
         ruleVO.setType(rule.getType());
         List<PossibleAnswer> conditions = rule.getConditions();
 		if (!CommonUtil.isListEmpty(conditions)) {
@@ -120,6 +122,24 @@ public class RuleMapperImpl implements RuleMapper {
 	        }
 
 	        return list;
+	}
+	
+	private String getDescriptionByValue(int value){
+		for(RuleLevelEnum x: RuleLevelEnum.values()){
+			if(x.getValue() == value){
+				return x.getDescription();
+			}
+		}
+		return "";
+	}
+	
+	private int getValueByDescription(String description){
+		for(RuleLevelEnum x: RuleLevelEnum.values()){
+			if(x.getDescription().equals(description)){
+				return x.getValue();
+			}
+		}
+		return -1;
 	}
     
 }

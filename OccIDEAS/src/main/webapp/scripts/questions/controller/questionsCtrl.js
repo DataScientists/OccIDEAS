@@ -1460,22 +1460,7 @@
             	if(rules.rules==null){
             		rules.rules = [];
             	}
-            	var ruleLevel = "";
-            	if(rule.level==0){
-            		ruleLevel = "probHigh";
-            	}else if(rule.level==1){
-            		ruleLevel = "probMedium";
-            	}else if(rule.level==2){
-            		ruleLevel = "probLow";
-            	}else if(rule.level==3){
-            		ruleLevel = "probUnknown";
-            	}else if(rule.level==4){
-            		ruleLevel = "possUnknown";
-            	}else if(rule.level==5){
-            		ruleLevel = "noExposure";
-            	}
             	rules.rules.push({
-            		ruleLevel:ruleLevel,
             		idNode:node.idNode
             		})
             	RulesService.save(rule).then(function(response){
@@ -1505,12 +1490,6 @@
 			    		    }
 						}
 						});
-    				if (!rule.$$phase) {
-    			        try {
-    			        	rule.$digest();
-    			        }
-    			        catch (e) { }
-    				}
     			}
     		});
         	

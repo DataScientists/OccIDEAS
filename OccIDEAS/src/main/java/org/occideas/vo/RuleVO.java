@@ -48,40 +48,10 @@ public class RuleVO {
 	}
 
 	public String getLevel() {
-		if(level!=null){
-			if(level.equalsIgnoreCase("0")){
-				level = "probHigh";
-			}else if(level.equalsIgnoreCase("1")){
-				level = "probMedium";
-			}else if(level.equalsIgnoreCase("2")){
-				level = "probLow";
-			}else if(level.equalsIgnoreCase("3")){
-				level = "probUnknown";
-			}else if(level.equalsIgnoreCase("4")){
-				level = "possUnknown";
-			}else if(level.equalsIgnoreCase("5")){
-				level = "noExposure";
-			}
-		}
-		return level;
+		return this.level;
 	}
 
 	public void setLevel(String level) {
-		if(level!=null){
-			if(level.equalsIgnoreCase("probHigh")){
-				level = "0";
-			}else if(level.equalsIgnoreCase("probMedium")){
-				level = "1";
-			}else if(level.equalsIgnoreCase("probLow")){
-				level = "2";
-			}else if(level.equalsIgnoreCase("probUnknown")){
-				level = "3";
-			}else if(level.equalsIgnoreCase("possUnknown")){
-				level = "4";
-			}else if(level.equalsIgnoreCase("noExposure")){
-				level = "5";
-			}
-		}
 		this.level = level;
 	}
 
