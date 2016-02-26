@@ -1505,6 +1505,12 @@
 			    		    }
 						}
 						});
+    				if (!rule.$$phase) {
+    			        try {
+    			        	rule.$digest();
+    			        }
+    			        catch (e) { }
+    				}
     			}
     		});
         	
