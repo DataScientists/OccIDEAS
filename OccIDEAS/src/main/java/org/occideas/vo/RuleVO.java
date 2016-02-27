@@ -21,7 +21,7 @@ public class RuleVO {
 	private List<PossibleAnswerVO> conditions;
 	private Long legacyRuleId;
 	@JsonInclude(Include.NON_NULL)
-	private List<AdditionalField> additionalfields;
+	private List<AdditionalFieldVO> additionalfields;
 
 	public long getIdRule() {
 		return idRule;
@@ -79,11 +79,11 @@ public class RuleVO {
 		this.legacyRuleId = legacyRuleId;
 	}
 
-	public List<AdditionalField> getAdditionalfields() {
+	public List<AdditionalFieldVO> getAdditionalfields() {
 		return additionalfields;
 	}
 
-	public void setAdditionalfields(List<AdditionalField> additionalfields) {
+	public void setAdditionalfields(List<AdditionalFieldVO> additionalfields) {
 		this.additionalfields = additionalfields;
 	}
 }

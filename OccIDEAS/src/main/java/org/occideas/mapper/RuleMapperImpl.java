@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.occideas.entity.AdditionalField;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Rule;
 import org.occideas.rule.constant.RuleLevelEnum;
@@ -18,6 +19,9 @@ public class RuleMapperImpl implements RuleMapper {
 	
 	@Autowired
 	private PossibleAnswerMapper paMapper;
+	
+	@Autowired
+	private AdditionalFieldMapper additionalFieldMapper;
 	
     @Override
     public RuleVO convertToRuleVO(Rule ruleEntity) {
@@ -37,7 +41,11 @@ public class RuleMapperImpl implements RuleMapper {
 		if (!CommonUtil.isListEmpty(conditions)) {
 			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOList(conditions,false));
 		}
-         return ruleVO;
+		List<AdditionalField> additionalFields = ruleEntity.getAdditionalfields();
+		if (!CommonUtil.isListEmpty(additionalFields)) {
+			ruleVO.setAdditionalfields(additionalFieldMapper.convertToAdditionalFieldVOList(additionalFields));
+		}
+        return ruleVO;
     }
 
     @Override
@@ -70,7 +78,7 @@ public class RuleMapperImpl implements RuleMapper {
         rule.setLevel(level);
         rule.setType(ruleVO.getType());
         rule.setConditions(paMapper.convertToPossibleAnswerList(ruleVO.getConditions()));
-        rule.setAdditionalfields(ruleVO.getAdditionalfields());
+        rule.setAdditionalfields(additionalFieldMapper.convertToAdditionalFieldList(ruleVO.getAdditionalfields()));
         
         return rule;
     }
