@@ -21,11 +21,14 @@
     			<li class="list-group-item additionalField" 
 					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
 					>
-					{{additionalFields.additionalfield.type}}:
-					{{additionalFields.value}}
-					<div class="pull-right">
-						<span ng-if="$index>0" class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeNodeFromRule(node)"></span>
-					</div>
+					<div>{{additionalFields.additionalfield.type}}</div>
+					<div class="pull-right">			
+					<input type="text" 
+             			ng-model="additionalFields.value" 
+             			ng-focus="focus=true;blur=false;" 
+             			class="form-control"  
+             			ng-keypress="(($event.which === 13))?saveRule(rule,model):0">
+					<div>
 				</li>
   			</ul>
 			<ul class="list-group" style="margin: 0 0 0 0;">

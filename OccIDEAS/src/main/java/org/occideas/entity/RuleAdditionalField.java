@@ -10,7 +10,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 @Entity
+@DynamicUpdate(value=true)
+@DynamicInsert(value=true)
 @Table(name = "Rule_AdditionalField")
 public class RuleAdditionalField  implements java.io.Serializable{
 	/**
