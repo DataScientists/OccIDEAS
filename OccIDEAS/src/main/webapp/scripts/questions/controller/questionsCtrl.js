@@ -1021,7 +1021,7 @@
 			  	  var conditions = [];
 			  	  conditions.push(model);
 			  	  $itemScope.model = model;
-				  var rule = {agentId:$itemScope.$parent.obj.idAgent,conditions:conditions,level:'probHigh'};
+				  var rule = {agentId:$itemScope.$parent.obj.idAgent,conditions:conditions,level:'noExposure'};
 				  RulesService.create(rule).then(function(response){
 	    				if(response.status === 200){
 	    					if(response.data.idRule){
