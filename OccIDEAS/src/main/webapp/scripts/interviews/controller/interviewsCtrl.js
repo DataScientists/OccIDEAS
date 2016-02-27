@@ -125,13 +125,14 @@
             });                  
         }
         $scope.startInterview = function (data) {
+        	$scope.referenceNumber = data.referenceNumber;
         	QuestionsService.findQuestions($scope.data[0].idNode,'M')
             .then(function(response){
                 console.log("Data getting from questions AJAX ...");
                 $scope.data = response.data;
                 var interview = {};
                 interview.module = $scope.data[0];
-                interview.referenceNumber = "H"+Math.floor((Math.random() * 100) + 1);
+                interview.referenceNumber = $scope.referenceNumber;
                 interview.type = 'intromodule';
                 $scope.interviews = [];
                 $scope.interviews.push(interview);

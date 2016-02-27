@@ -27,7 +27,7 @@
 					    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 					      	<label>Free Text</label>
         			  		<input md-maxlength="30" ng-model="node.name">
-        			  		<div ng-messages="projectForm.description.$error">
+        			  		<div ng-messages="node.name.$error">
           						<div ng-message="md-maxlength">The text has to be less than 30 characters long.</div>
         			  		</div>
 					    </md-input-container>
@@ -37,11 +37,21 @@
 			      </div>
 			   </md-radio-group>
             </div>
-            <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">
+            
+            <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">       
                 <span>NEXT</span>
             </md-button>
         </ul>
         <div ng-if="!data.interviewStarted">
+        	<md-input-container md-no-float class="md-block">
+				<label>Reference Number</label>
+        		<input md-maxlength="8" minlength="8" required ng-model="data.referenceNumber" placeholder="H___-___">
+        		<div ng-messages="data.referenceNumber.$error">
+          			<div ng-message="required">This is required!</div>
+      				<div ng-message="md-maxlength">That's too long!</div>
+      				<div ng-message="minlength">That's too short!</div>
+        		</div>
+			</md-input-container>
             <md-button ng-click="startInterview(data)" class="md-fab md-raised ">
                 <span>START</span>
             </md-button>
