@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.occideas.entity.AdditionalField;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Rule;
+import org.occideas.entity.RuleAdditionalField;
 import org.occideas.rule.constant.RuleLevelEnum;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.RuleVO;
@@ -21,7 +21,7 @@ public class RuleMapperImpl implements RuleMapper {
 	private PossibleAnswerMapper paMapper;
 	
 	@Autowired
-	private AdditionalFieldMapper additionalFieldMapper;
+	private RuleAdditionalFieldMapper additionalFieldMapper;
 	
     @Override
     public RuleVO convertToRuleVO(Rule ruleEntity) {
@@ -41,9 +41,9 @@ public class RuleMapperImpl implements RuleMapper {
 		if (!CommonUtil.isListEmpty(conditions)) {
 			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOList(conditions,false));
 		}
-		List<AdditionalField> additionalFields = ruleEntity.getAdditionalfields();
+		List<RuleAdditionalField> additionalFields = ruleEntity.getRuleAdditionalfields();
 		if (!CommonUtil.isListEmpty(additionalFields)) {
-			ruleVO.setAdditionalfields(additionalFieldMapper.convertToAdditionalFieldVOList(additionalFields));
+			ruleVO.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldVOList(additionalFields));
 		}
         return ruleVO;
     }
@@ -78,7 +78,7 @@ public class RuleMapperImpl implements RuleMapper {
         rule.setLevel(level);
         rule.setType(ruleVO.getType());
         rule.setConditions(paMapper.convertToPossibleAnswerList(ruleVO.getConditions()));
-        rule.setAdditionalfields(additionalFieldMapper.convertToAdditionalFieldList(ruleVO.getAdditionalfields()));
+        rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(ruleVO.getRuleAdditionalfields()));
         
         return rule;
     }
@@ -114,6 +114,10 @@ public class RuleMapperImpl implements RuleMapper {
         List<PossibleAnswer> conditions = rule.getConditions();
 		if (!CommonUtil.isListEmpty(conditions)) {
 			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOExModRuleList(conditions));
+		}
+		List<RuleAdditionalField> additionalFields = rule.getRuleAdditionalfields();
+		if (!CommonUtil.isListEmpty(additionalFields)) {
+			ruleVO.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldVOList(additionalFields));
 		}
         return ruleVO;
 	}

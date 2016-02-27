@@ -3,8 +3,6 @@ package org.occideas.vo;
 import java.sql.Date;
 import java.util.List;
 
-import org.occideas.entity.AdditionalField;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -21,7 +19,7 @@ public class RuleVO {
 	private List<PossibleAnswerVO> conditions;
 	private Long legacyRuleId;
 	@JsonInclude(Include.NON_NULL)
-	private List<AdditionalFieldVO> additionalfields;
+	private List<RuleAdditionalFieldVO> ruleAdditionalfields;
 
 	public long getIdRule() {
 		return idRule;
@@ -79,11 +77,12 @@ public class RuleVO {
 		this.legacyRuleId = legacyRuleId;
 	}
 
-	public List<AdditionalFieldVO> getAdditionalfields() {
-		return additionalfields;
+	public List<RuleAdditionalFieldVO> getRuleAdditionalfields() {
+		return ruleAdditionalfields;
 	}
 
-	public void setAdditionalfields(List<AdditionalFieldVO> additionalfields) {
-		this.additionalfields = additionalfields;
+	public void setRuleAdditionalfields(List<RuleAdditionalFieldVO> ruleAdditionalfields) {
+		this.ruleAdditionalfields = ruleAdditionalfields;
 	}
+	
 }

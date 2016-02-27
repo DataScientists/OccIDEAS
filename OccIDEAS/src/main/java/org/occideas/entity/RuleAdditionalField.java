@@ -1,11 +1,14 @@
 package org.occideas.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "Rule_AdditionalField")
@@ -16,17 +19,16 @@ public class RuleAdditionalField  implements java.io.Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue
 	private long idRuleAdditionalField;
-	@ManyToOne
-    @JoinColumn(name = "idRule")
+	@Transient
 	private Rule rule;
-	@ManyToOne
-    @JoinColumn(name = "idAdditionalField")
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="idadditionalfield",referencedColumnName="idadditionalfield",insertable=false,updatable=false)
 	private AdditionalField additionalfield;
+	@Column(name = "value", nullable = false)
 	private String value;
 	
 	public RuleAdditionalField() {
 	}
-
 	
 	public Rule getRule() {
 		return rule;

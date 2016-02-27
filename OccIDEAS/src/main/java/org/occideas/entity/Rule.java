@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -44,12 +45,11 @@ public class Rule implements Serializable {
 	private List<PossibleAnswer> conditions;
 	private Long legacyRuleId;
 	
-	@ManyToMany
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@OneToMany(fetch=FetchType.LAZY)
     @JoinTable(name="Rule_AdditionalField", 
                 joinColumns={@JoinColumn(name="idRule")}, 
-                inverseJoinColumns={@JoinColumn(name="idAdditionalField")})
-	private List<AdditionalField> additionalfields;
+                inverseJoinColumns={@JoinColumn(name="idRuleAdditionalField")})
+	private List<RuleAdditionalField> ruleAdditionalfields;
 	
 	public Rule() {
 		super();
@@ -109,13 +109,13 @@ public class Rule implements Serializable {
 	public void setConditions(List<PossibleAnswer> conditions) {
 		this.conditions = conditions;
 	}
-	
-	public List<AdditionalField> getAdditionalfields() {
-		return additionalfields;
+	public List<RuleAdditionalField> getRuleAdditionalfields() {
+		return ruleAdditionalfields;
+	}
+	public void setRuleAdditionalfields(List<RuleAdditionalField> ruleAdditionalfields) {
+		this.ruleAdditionalfields = ruleAdditionalfields;
 	}
 	
-	public void setAdditionalfields(List<AdditionalField> additionalfields) {
-		this.additionalfields = additionalfields;
-	}
+	
 	
 }

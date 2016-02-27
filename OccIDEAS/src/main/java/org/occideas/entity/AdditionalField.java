@@ -2,13 +2,15 @@ package org.occideas.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.AssociationOverride;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 
 
 @Entity 
-
 public class AdditionalField implements Serializable {
 	/**
 	 * 
@@ -19,6 +21,14 @@ public class AdditionalField implements Serializable {
 
 	private String type;
 
+	@AssociationOverride(
+	          name="value",
+	          joinTable=@JoinTable(
+	             name="value",
+	             joinColumns=@JoinColumn(name="idAdditionalField"),
+	             inverseJoinColumns=@JoinColumn(name="idadditionalfield")
+	          )
+	        )
 	private String value;
 
 	

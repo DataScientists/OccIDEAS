@@ -3,7 +3,7 @@
 	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="deleteNote(this,$event)" aria-label="Left Align">
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
-	<div class="title">{{rule.idRule}} {{agentName}}</div>
+	<div class="title">{{rule.idRule}} {{agentName}} </div>
 		
 			<ul class="list-group" style="margin: 0 0 0 0;">
     			<li popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
@@ -19,9 +19,9 @@
   			</ul>
 			<ul class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item additionalField" 
-					ng-repeat="additionalFields in rule.additionalFields" 
+					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
 					>
-					{{additionalFields.type}}:
+					{{additionalFields.additionalfield.type}}:
 					{{additionalFields.value}}
 					<div class="pull-right">
 						<span ng-if="$index>0" class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeNodeFromRule(node)"></span>
