@@ -875,11 +875,11 @@
 			        };
 			        collapseOrExpand($itemScope);
 					} 
-				  ], null, // Dividier
+				  ], null, // Divider
 			  [ 'Run Interview', function($itemScope) {
                   $scope.addInterviewTab($itemScope);
 				} 
-			  ],
+			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
 					alert('under development');
 				} 

@@ -16,6 +16,7 @@ public class InterviewVO {
     private long interviewId;
     private ModuleVO module;
     private FragmentVO fragment;
+    private boolean active;
     
     private List<InterviewQuestionAnswerVO> questionsAsked;
     
@@ -102,6 +103,14 @@ public class InterviewVO {
 
 	public void setQuestionsAsked(List<InterviewQuestionAnswerVO> questionsAsked) {
 		this.questionsAsked = questionsAsked;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

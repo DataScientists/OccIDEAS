@@ -4,8 +4,8 @@
 
     InterviewsService.$inject = ['$http', '$q'];
     function InterviewsService($http, $q) {
-        function findQuestions(idNode) {
-            var restUrl = 'rest/module/get?id=' + idNode;
+        function get(idNode) {
+            var restUrl = 'rest/interview/get?id=' + idNode;
             var request = $http({
                 method: 'GET',
                 url: restUrl
@@ -66,8 +66,8 @@
         }
 
         return {
-            findQuestions: findQuestions,
             save: save,
+            get: get,
             startInterview:startInterview,
             getNextQuestion: getNextQuestion
         };

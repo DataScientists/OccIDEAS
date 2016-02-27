@@ -22,26 +22,18 @@
            <td data-title="'Module'"  >
             	{{node.interview.module.name}}
           	</td>
+           <td data-title="'aJSM'"  >
+            	{{node.interview.fragment.name}}
+          	</td>
            <td data-title="'Question'"  >
             	{{node.question.name}}
           	</td>
             <td data-title="'Answer'"  >
-            	{{node.possibleAnswer.name}}
+            	{{node.interviewQuestionAnswerFreetext}}
           	</td>
             
 			<td data-title="'Node Number'" >
-				<div>
-					
-    			<span popover-is-open="node.info['Node'+node.idNode].nodePopover.isOpen" 
-    				popover-placement="top" 
-    				ng-mouseenter="nodePopover.open(node)" 
-    				ng-mouseleave="nodePopover.close(node)"
-    				uib-popover-template="nodePopover.templateUrl" >
-					{{node.possibleAnswer.number}}
-					
-				</span>
-  									
-				</div>
+				{{node.possibleAnswer.number}}
 			</td>			
 			
         </tr>
