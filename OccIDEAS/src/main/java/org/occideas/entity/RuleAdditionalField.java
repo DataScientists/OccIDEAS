@@ -8,39 +8,31 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 @Entity
-@DynamicUpdate(value=true)
-@DynamicInsert(value=true)
+@DynamicUpdate(value = true)
+@DynamicInsert(value = true)
+@SelectBeforeUpdate(value = true)
 @Table(name = "Rule_AdditionalField")
-public class RuleAdditionalField  implements java.io.Serializable{
+public class RuleAdditionalField implements java.io.Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	private long idRuleAdditionalField;
-	@Transient
-	private Rule rule;
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="idadditionalfield",referencedColumnName="idadditionalfield",insertable=false,updatable=false)
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idadditionalfield", referencedColumnName = "idadditionalfield", insertable = false, updatable = false)
 	private AdditionalField additionalfield;
 	@Column(name = "value", nullable = false)
 	private String value;
-	
-	public RuleAdditionalField() {
-	}
-	
-	public Rule getRule() {
-		return rule;
-	}
 
-	public void setRule(Rule rule) {
-		this.rule = rule;
+	public RuleAdditionalField() {
 	}
 
 	public AdditionalField getAdditionalfield() {
@@ -50,14 +42,21 @@ public class RuleAdditionalField  implements java.io.Serializable{
 	public void setAdditionalfield(AdditionalField additionalfield) {
 		this.additionalfield = additionalfield;
 	}
-	
+
 	public String getValue() {
 		return value;
 	}
+
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	
+
+	public long getIdRuleAdditionalField() {
+		return idRuleAdditionalField;
+	}
+
+	public void setIdRuleAdditionalField(long idRuleAdditionalField) {
+		this.idRuleAdditionalField = idRuleAdditionalField;
+	}
 
 }

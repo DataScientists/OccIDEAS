@@ -16,5 +16,7 @@ public interface RuleAdditionalFieldMapper {
 	RuleAdditionalField convertToRuleAdditionalField(RuleAdditionalFieldVO additionalFieldVO);
 	
 	List<RuleAdditionalField> convertToRuleAdditionalFieldList(List<RuleAdditionalFieldVO> additionalFieldVO);
-	
+
+	RuleAdditionalField convertToRuleAdditionalFieldWithId(RuleAdditionalFieldVO vo);
+
 }

@@ -9,6 +9,8 @@ import org.occideas.entity.Rule;
 import org.occideas.entity.RuleAdditionalField;
 import org.occideas.rule.constant.RuleLevelEnum;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.RuleAdditionalFieldVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -77,9 +79,14 @@ public class RuleMapperImpl implements RuleMapper {
         }
         rule.setLevel(level);
         rule.setType(ruleVO.getType());
-        rule.setConditions(paMapper.convertToPossibleAnswerList(ruleVO.getConditions()));
-        rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(ruleVO.getRuleAdditionalfields()));
-        
+        List<PossibleAnswerVO> conditions = ruleVO.getConditions();
+        if(!CommonUtil.isListEmpty(conditions)){
+        	rule.setConditions(paMapper.convertToPossibleAnswerList(conditions));
+        }
+        List<RuleAdditionalFieldVO> ruleAdditionalfields = ruleVO.getRuleAdditionalfields();
+        if(!CommonUtil.isListEmpty(ruleAdditionalfields)){
+        rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(ruleAdditionalfields));
+        }
         return rule;
     }
 

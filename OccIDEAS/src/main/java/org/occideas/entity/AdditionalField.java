@@ -21,14 +21,14 @@ public class AdditionalField implements Serializable {
 
 	private String type;
 
-	@AssociationOverride(
-	          name="value",
-	          joinTable=@JoinTable(
-	             name="value",
-	             joinColumns=@JoinColumn(name="idAdditionalField"),
-	             inverseJoinColumns=@JoinColumn(name="idadditionalfield")
-	          )
-	        )
+//	@AssociationOverride(
+//	          name="value",
+//	          joinTable=@JoinTable(
+//	             name="value",
+//	             joinColumns=@JoinColumn(name="idAdditionalField"),
+//	             inverseJoinColumns=@JoinColumn(name="idadditionalfield")
+//	          )
+//	        )
 	private String value;
 
 	

@@ -1508,6 +1508,28 @@
     		});
         	
         }
+        $scope.updateRule = function(rule,model){
+        	RulesService.update(rule).then(function(response){
+    			if(response.status === 200){
+    				console.log('Rule Save was Successful!');	
+    				ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
+						if(response.status === 200){
+							var result = response.data[response.data.length-1];
+							if(angular.isUndefined(model.moduleRule)){
+								model.moduleRule = [];
+							}
+							_.merge(model.moduleRule, response.data);
+			    			if (!model.moduleRule.$$phase) {
+			    			        try {
+			    			        	model.moduleRule.$digest();
+			    			        }
+			    			        catch (e) { }
+			    		    }
+						}
+						});
+    			}
+    		});
+        }
         $scope.removeNodeFromRule = function(node){
         	var rule = $scope.activeRule;
         	

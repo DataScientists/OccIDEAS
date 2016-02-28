@@ -15,17 +15,17 @@ public class RuleAdditionalFieldMapperImpl implements RuleAdditionalFieldMapper 
 	private AdditionalFieldMapper additionalFieldMapper;
 	
     @Override
-    public RuleAdditionalFieldVO convertToRuleAdditionalFieldVO(RuleAdditionalField moduleEntity) {
-        if ( moduleEntity == null ) {
+    public RuleAdditionalFieldVO convertToRuleAdditionalFieldVO(RuleAdditionalField entity) {
+        if ( entity == null ) {
             return null;
         }
 
-        RuleAdditionalFieldVO moduleVO = new RuleAdditionalFieldVO();
-
-        moduleVO.setAdditionalfield( additionalFieldMapper.convertToAdditionalFieldVO(moduleEntity.getAdditionalfield() ));
-        moduleVO.setValue( moduleEntity.getValue() );       
+        RuleAdditionalFieldVO vo = new RuleAdditionalFieldVO();
+        vo.setIdRuleAdditionalField(entity.getIdRuleAdditionalField());
+        vo.setAdditionalfield( additionalFieldMapper.convertToAdditionalFieldVO(entity.getAdditionalfield() ));
+        vo.setValue( entity.getValue() );       
         
-        return moduleVO;
+        return vo;
     }
 
     @Override
@@ -43,27 +43,43 @@ public class RuleAdditionalFieldMapperImpl implements RuleAdditionalFieldMapper 
     }
 
     @Override
-    public RuleAdditionalField convertToRuleAdditionalField(RuleAdditionalFieldVO moduleVO) {
-        if ( moduleVO == null ) {
+    public RuleAdditionalField convertToRuleAdditionalField(RuleAdditionalFieldVO vo) {
+        if ( vo == null ) {
             return null;
         }
-        RuleAdditionalField module = new RuleAdditionalField();
+        RuleAdditionalField entity = new RuleAdditionalField();
 
-        module.setAdditionalfield( additionalFieldMapper.convertToAdditionalField(moduleVO.getAdditionalfield() ));
-        module.setValue( moduleVO.getValue() );
+        entity.setAdditionalfield( additionalFieldMapper.convertToAdditionalField(vo.getAdditionalfield() ));
+        entity.setValue( vo.getValue() );
+        return entity;
+    }
+    
+    @Override
+    public RuleAdditionalField convertToRuleAdditionalFieldWithId(RuleAdditionalFieldVO vo) {
+        if ( vo == null ) {
+            return null;
+        }
+        RuleAdditionalField entity = new RuleAdditionalField();
 
-        return module;
+        entity.setAdditionalfield( additionalFieldMapper.convertToAdditionalField(vo.getAdditionalfield() ));
+        entity.setValue( vo.getValue() );
+        entity.setIdRuleAdditionalField(vo.getIdRuleAdditionalField());
+        return entity;
     }
 
     @Override
-    public List<RuleAdditionalField> convertToRuleAdditionalFieldList(List<RuleAdditionalFieldVO> moduleVO) {
-        if ( moduleVO == null ) {
+    public List<RuleAdditionalField> convertToRuleAdditionalFieldList(List<RuleAdditionalFieldVO> voList) {
+        if ( voList == null ) {
             return null;
         }
 
         List<RuleAdditionalField> list = new ArrayList<RuleAdditionalField>();
-        for ( RuleAdditionalFieldVO moduleVO_ : moduleVO ) {
-            list.add( convertToRuleAdditionalField( moduleVO_ ) );
+        for ( RuleAdditionalFieldVO vo : voList ) {
+        	if(vo.getIdRuleAdditionalField() != 0){
+        		list.add( convertToRuleAdditionalFieldWithId( vo ) );
+        	}else{
+        		list.add( convertToRuleAdditionalField( vo ) );
+        	}
         }
 
         return list;

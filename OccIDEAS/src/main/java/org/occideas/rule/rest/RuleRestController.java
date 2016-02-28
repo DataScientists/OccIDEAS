@@ -64,13 +64,13 @@ public class RuleRestController implements BaseRestController<RuleVO>{
 		return Response.ok(rule).build();
 	}
 
-	@Path(value="/update")
+	@Path(value="/saveOrUpdate")
 	@POST
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
-	public Response update(RuleVO json) {
+	public Response saveOrUpdate(RuleVO json) {
 		try{
-			service.update(json);
+			service.saveOrUpdate(json);
 		}catch(Throwable e){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
@@ -82,6 +82,23 @@ public class RuleRestController implements BaseRestController<RuleVO>{
 	public Response delete(RuleVO json) {
 		try{
 			service.delete(json);
+		}catch(Throwable e){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
+
+	@Path(value="/update")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	@Override
+	public Response update(RuleVO json) {
+		try{
+			if(json.getConditions() != null){
+				json.setConditions(null);
+			}
+			service.update(json);
 		}catch(Throwable e){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
