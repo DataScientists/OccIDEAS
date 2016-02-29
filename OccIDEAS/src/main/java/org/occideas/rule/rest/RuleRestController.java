@@ -95,9 +95,6 @@ public class RuleRestController implements BaseRestController<RuleVO>{
 	@Override
 	public Response update(RuleVO json) {
 		try{
-			if(json.getConditions() != null){
-				json.setConditions(null);
-			}
 			service.update(json);
 		}catch(Throwable e){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
