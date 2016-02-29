@@ -836,5 +836,18 @@ md-checkbox.md-checked.green .md-icon {
 }
 
 .activeRule{
-	border-color:rgb(221,44,0) !important;	
+	border-color:rgb(221,44,0) !important;
+	background-color: rgb(24, 221, 0) !important;	
+}
+
+.activeCell{
+	border-color:red;
+}
+
+.activeRule .title{
+	background-color:rgb(24, 221, 0) !important;
+}
+
+.activeRule input[type=text]{
+  background:rgb(24, 221, 0) !important;
 }

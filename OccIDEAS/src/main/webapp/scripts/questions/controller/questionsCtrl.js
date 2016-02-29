@@ -1440,13 +1440,14 @@
         };
         
         $scope.setActiveRule = function(rule,el){
-        	$scope.activeRuleDialog = el.model.idNode;
+        	$scope.activeRuleDialog = el.model.idNode+rule.agentId;
         	$scope.activeRule = rule;
         	if (!$scope.activeRuleDialog.$$phase) {
 		        try {
 		        	$scope.activeRuleDialog.$digest();
 		        }
-		        catch (e) { }
+		        catch (e) {
+		        }
         	}
         }
         $scope.addToActiveRule = function(node,rules){
