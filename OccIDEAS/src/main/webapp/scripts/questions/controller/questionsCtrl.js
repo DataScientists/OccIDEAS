@@ -1412,14 +1412,19 @@
         
         function getObject (array,idNode){
         	var object = _.find(array, _.matchesProperty('idNode', idNode));
-        	if(object != null || !angular.isUndefined(object)){
+        	if(object != null && !angular.isUndefined(object)){
     			return object;
     		}
+        	var obj;
         	_.forEach(array,function(v,k) {
         		if(v.nodes){
-        			return getObject(v.nodes,idNode);
+        			obj = getObject(v.nodes,idNode);
+        			if(obj!=null){
+        				return false;
+        			}
         		}
         	});
+        	return obj;
         }
         $rootScope.tabsLoading = false;
         
@@ -1489,25 +1494,35 @@
         	RulesService.save(rule).then(function(response){
     			if(response.status === 200){
     				console.log('Rule Save was Successful!');	
-    				ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
+    				_.each(model.moduleRule[0].rule.conditions,function(v,k){
+						ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
 						if(response.status === 200){
+							var node = getObject($scope.data[0].nodes,v.idNode);
+							if(!angular.isUndefined(node)){
 							var result = response.data[response.data.length-1];
-							if(angular.isUndefined(model.moduleRule)){
-								model.moduleRule = [];
+							if(angular.isUndefined(node.moduleRule)){
+								node.moduleRule = [];
 							}
-							_.merge(model.moduleRule, response.data);
-			    			if (!model.moduleRule.$$phase) {
-			    			        try {
-			    			        	model.moduleRule.$digest();
-			    			        }
-			    			        catch (e) { }
-			    		    }
+							_.merge(node.moduleRule, response.data);
+							safeDigest(node.moduleRule);
+							}
 						}
 						});
+					});
     			}
     		});
         	
         }
+        
+        var safeDigest = function (obj){
+        	if (!obj.$$phase) {
+		        try {
+		        	obj.$digest();
+		        }
+		        catch (e) { }
+        	}
+        }
+        
         $scope.updateRule = function(rule,model){
         	RulesService.update(rule).then(function(response){
     			if(response.status === 200){
