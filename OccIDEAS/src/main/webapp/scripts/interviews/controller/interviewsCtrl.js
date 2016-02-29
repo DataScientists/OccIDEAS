@@ -10,11 +10,12 @@
                             $anchorScroll, $location, $mdMedia, $window, $state, $rootScope) {
         var self = this;
         $scope.data = data;
-
+        $scope.multiSelected = [];
         $scope.saveAnswerQuestion = function (node) {       	
             var seletectedEl = node.selectedAnswer;
             if (node.type == 'Q_multiple') {
             	seletectedEl = $scope.multiSelected;
+            	$scope.multiSelected = [];
             }
             if (!seletectedEl && $scope.data.interviewStarted) {
                 alert("Please select an answer!");
@@ -58,7 +59,7 @@
                             	var newInterview = {};
                             	if(linkingQuestion.type=='Q_linkedajsm'){
                             		mtype = 'F_ajsm';
-                            		newInterview.fragment = {idNode:linkingQuestion.link,type:mtype};
+                            		newInterview.fragment = {idNode:linkingQuestion.link,name:linkingQuestion.name,type:mtype};
                             		newInterview.type = 'ajsm';
                             	}else if (linkingQuestion.type=='Q_linkedajsm'){
                             		mtype = 'M_Module';
@@ -126,6 +127,9 @@
         }
         $scope.startInterview = function (data) {
         	$scope.referenceNumber = data.referenceNumber;
+        	if(!$scope.referenceNumber){
+        		$scope.referenceNumber = 'TEST'+Math.floor((Math.random() * 100) + 1);
+        	}
         	QuestionsService.findQuestions($scope.data[0].idNode,'M')
             .then(function(response){
                 console.log("Data getting from questions AJAX ...");
@@ -186,7 +190,7 @@
 				}	
 			}
 		};
-        $scope.multiSelected = [];
+        
         $scope.multiToggle = function (item, list) {
           var idx = list.indexOf(item);
           if (idx > -1) list.splice(idx, 1);

@@ -56,34 +56,4 @@ public class InterviewServiceImpl implements InterviewService {
     public void delete(InterviewVO o) {
         dao.delete(mapper.convertToInterview(o));
     }
-
-    /*@Override
-    public void saveAnswer(InterviewVO interviewVO) {
-        if ("multiple".equals(interviewVO.getType())) {
-            for (Long answerId : interviewVO.getMultipleAnswerId()) {
-                InterviewQuestionAnswer iqa = new InterviewQuestionAnswer();
-
-                PossibleAnswer answer = dao.get(PossibleAnswer.class, answerId);
-                if ("P_freetext".equals(answer.getType())) {
-                    iqa.setInterviewQuestionAnswerFreetext(interviewVO.getFreeText());
-                }
-                iqa.setInterview(new Interview(interviewVO.getInterviewId()));
-                iqa.setQuestion(new Question(interviewVO.getQuestionId()));
-                iqa.setAnswer(new PossibleAnswer(answerId));
-
-                dao.save(iqa);
-            }
-        } else if ("single".equals(interviewVO.getType())) {
-            InterviewQuestionAnswer iqa = new InterviewQuestionAnswer();
-            PossibleAnswer answer = dao.get(PossibleAnswer.class, interviewVO.getSingleAnswerId());
-            if ("P_freetext".equals(answer.getType())) {
-                iqa.setInterviewQuestionAnswerFreetext(interviewVO.getFreeText());
-            }
-            iqa.setInterview(new Interview(interviewVO.getInterviewId()));
-            iqa.setQuestion(new Question(interviewVO.getQuestionId()));
-            iqa.setAnswer(new PossibleAnswer(interviewVO.getSingleAnswerId()));
-
-            dao.save(iqa);
-        }
-    }*/
 }

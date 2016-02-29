@@ -1,10 +1,29 @@
-<div class="col-md-6">
+<div class="col-md-4 moduleInterview" id="interivew-question-list">
+	<md-list-item ng-repeat="runningInterview in interviews">
+	    <!-- <div>{{interview | json}}</div> -->
+	    	<md-toolbar class="interviewAnswers" ng-if="runningInterview.module">
+	    	{{runningInterview.module.name}}:{{runningInterview.active}}:	    	
+	    		<md-list-item class="interviewAnswers" ng-repeat="qa in runningInterview.questionsAsked">
+	    		{{qa.question.name }}:{{qa.possibleAnswer.name }}
+	    		</md-list-item>
+	    	</md-toolbar>
+	    	<md-toolbar class="interviewAnswers" ng-if="runningInterview.fragment">{{runningInterview.fragment.name}}:{{runningInterview.active}}
+	    		<md-list-item class="interviewAnswers" ng-repeat="qa in runningInterview.questionsAsked">
+	    		{{qa.question.name }}:{{qa.possibleAnswer.name }}
+	    		</md-list-item>
+	    	
+	    	</md-toolbar>
+	    	
+	</md-list-item>
+</div>
+<div class="col-md-4">
     <div ng-model="data">
+	    
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
             <md-toolbar >{{data.showedQuestion.name}}
             <md-button ng-focus="focus=true;blur=false;" ><span class="badge">{{data.showedQuestion.number}}</span></md-button></md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
-	            <div flex="50" ng-repeat="node in data.showedQuestion.nodes">
+	            <div ng-repeat="node in data.showedQuestion.nodes">
               		<md-checkbox ng-checked="multiExists(node, multiSelected)"
                        ng-click="multiToggle(node, multiSelected)" class="green">
                 		{{ node.name }} 
@@ -63,8 +82,10 @@
     	
     	
     </div>
+    
 </div>
-<div class="col-md-6 moduleInterview" id="interivew-module-tree">
+
+<div class="col-md-4 moduleInterview" id="interivew-module-tree">
     <ng-include src="'scripts/interviews/partials/moduleTree.html'"></ng-include>
     <!-- Start scroll space for last questions -->
     <p>&nbsp;</p>
