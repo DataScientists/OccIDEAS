@@ -24,7 +24,7 @@ public class RuleAdditionalFieldMapperImpl implements RuleAdditionalFieldMapper 
         vo.setIdRuleAdditionalField(entity.getIdRuleAdditionalField());
         vo.setAdditionalfield( additionalFieldMapper.convertToAdditionalFieldVO(entity.getAdditionalfield() ));
         vo.setValue( entity.getValue() );       
-        
+        vo.setIdRule(entity.getIdRule());
         return vo;
     }
 
@@ -51,6 +51,7 @@ public class RuleAdditionalFieldMapperImpl implements RuleAdditionalFieldMapper 
 
         entity.setAdditionalfield( additionalFieldMapper.convertToAdditionalField(vo.getAdditionalfield() ));
         entity.setValue( vo.getValue() );
+        entity.setIdRule(vo.getIdRule());
         return entity;
     }
     
@@ -64,6 +65,7 @@ public class RuleAdditionalFieldMapperImpl implements RuleAdditionalFieldMapper 
         entity.setAdditionalfield( additionalFieldMapper.convertToAdditionalField(vo.getAdditionalfield() ));
         entity.setValue( vo.getValue() );
         entity.setIdRuleAdditionalField(vo.getIdRuleAdditionalField());
+        entity.setIdRule(vo.getIdRule());
         return entity;
     }
 

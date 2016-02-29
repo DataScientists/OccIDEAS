@@ -45,11 +45,11 @@ public class Rule implements Serializable {
 	private List<PossibleAnswer> conditions;
 	private Long legacyRuleId;
 	
-	@OneToMany(fetch=FetchType.LAZY)
+	@OneToMany(fetch=FetchType.LAZY,mappedBy = "idRule")
 	@Cascade(value={CascadeType.ALL})
-    @JoinTable(name="Rule_AdditionalField", 
-                joinColumns={@JoinColumn(name="idRule")}, 
-                inverseJoinColumns={@JoinColumn(name="idRuleAdditionalField")})
+//    @JoinTable(name="Rule_AdditionalField", 
+//                joinColumns={@JoinColumn(name="idRule")}, 
+//                inverseJoinColumns={@JoinColumn(name="idRuleAdditionalField")})
 	private List<RuleAdditionalField> ruleAdditionalfields;
 	
 	public Rule() {

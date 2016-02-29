@@ -8,6 +8,8 @@ public class RuleAdditionalFieldVO {
 	
 	private String value;
 
+	private long idRule;
+	
 	public long getIdRuleAdditionalField() {
 		return idRuleAdditionalField;
 	}
@@ -32,4 +34,13 @@ public class RuleAdditionalFieldVO {
 		this.additionalfield = additionalfield;
 	}
 
+	public long getIdRule() {
+		return idRule;
+	}
+
+	public void setIdRule(long idRule) {
+		this.idRule = idRule;
+	}
+	
+	
 }
