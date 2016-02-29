@@ -71,7 +71,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
-		//modulerule/getlist
+		function remove(data){
+			var restSaveUrl = 'rest/rule/delete';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||

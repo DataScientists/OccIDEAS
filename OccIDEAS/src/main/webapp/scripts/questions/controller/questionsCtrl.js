@@ -66,7 +66,12 @@
         			  var ruleArray =_.filter($scope.data[0].moduleRule, function(r){
         					return v.idAgent === r.idAgent; 
         			  });
-        			  v.total = _.uniq(ruleArray, 'rule.idRule').length;
+        			  var uniqueArray = _.map(_.groupBy(ruleArray,function(item){
+        				  return item.rule.idRule;
+        				}),function(grouped){
+        				  return grouped[0];
+        				});
+        			  v.total = uniqueArray.length;
         			  totalVal = totalVal + v.total;
         			});
         		x.total = totalVal;
@@ -1586,6 +1591,7 @@
 			    		    }
 						}
 						});
+					initAgentData();
 				}
 			});
         }
