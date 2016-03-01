@@ -15,8 +15,8 @@ public interface ModuleMapper {
 	List<ModuleVO> convertToModuleVOList(List<Module> moduleEntity,boolean includeChild);
 
 //	@Mapping(target = "notes", ignore=true)
-	Module convertToModule(ModuleVO moduleVO);
+	Module convertToModule(ModuleVO moduleVO,boolean includeChild);
 	
 //	@Mapping(target = "notes", ignore=true)
-	List<Module> convertToModuleList(List<ModuleVO> moduleVO);
+	List<Module> convertToModuleList(List<ModuleVO> moduleVO,boolean includeChild);
 }

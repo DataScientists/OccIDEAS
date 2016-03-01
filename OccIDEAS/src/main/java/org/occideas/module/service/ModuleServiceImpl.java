@@ -37,24 +37,24 @@ public class ModuleServiceImpl implements ModuleService {
 	
 	@Override
 	public ModuleVO create(ModuleVO module) {
-		Module moduleEntity = dao.save(mapper.convertToModule(module));
+		Module moduleEntity = dao.save(mapper.convertToModule(module,false));
 		return mapper.convertToModuleVO(moduleEntity,false);
 	}
 
 	@Override
 	public void update(ModuleVO module) {
 		generateIdIfNotExist(module);
-		dao.saveOrUpdate(mapper.convertToModule(module));
+		dao.saveOrUpdate(mapper.convertToModule(module,true));
 	}
 	
 	@Override
 	public void delete(ModuleVO module) {
-		dao.delete(mapper.convertToModule(module));
+		dao.delete(mapper.convertToModule(module,false));
 	}
 
 	@Override
 	public void merge(ModuleVO module) {
-		dao.merge(mapper.convertToModule(module));
+		dao.merge(mapper.convertToModule(module,true));
 	}
 
 	@Override

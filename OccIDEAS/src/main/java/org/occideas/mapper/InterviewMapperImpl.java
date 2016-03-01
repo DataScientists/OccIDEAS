@@ -62,8 +62,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         
         interview.setIdinterview(interviewVO.getInterviewId());
         interview.setReferenceNumber(interviewVO.getReferenceNumber());
-        interview.setModule(moduleMapper.convertToModule(interviewVO.getModule()));
-        interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment()));
+        interview.setModule(moduleMapper.convertToModule(interviewVO.getModule(),true));
+        interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment(),true));
         List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
         interview.setInterviewQuestionAnswers(iqaMapper.convertToInterviewQuestionAnswerList(questionsAsked));
         
