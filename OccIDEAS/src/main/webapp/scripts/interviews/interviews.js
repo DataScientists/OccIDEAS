@@ -3,20 +3,18 @@
 			.factory('InterviewsCache', InterviewsCache).factory(
 					'focus',
 					function($timeout, $window) {
-						return function(id) {
+						return function(elem) {
 							$timeout(function() {
-								var element = $window.document
-										.getElementById(id);
-								if (element)
-									element.focus();
+								if (elem)
+									elem.focus();
 							});
 						};
 					}).directive('eventFocus', function(focus) {
-				return function(scope, elem, attr) {
-						focus(elem[0].id);
-						scope.$on('$destroy', function() {
-						});
-				};
+						return function(scope, elem, attr) {
+							focus(elem[0]);
+							scope.$on('$destroy', function() {
+							});
+						};
 			});
 
 	Config.$inject = [ '$stateProvider' ];

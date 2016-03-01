@@ -226,6 +226,30 @@
 			} 
 			saveModuleWithoutReload();
 		}
+		$scope.setRuleType = function (rule,type){
+			rule.type = type; 
+			if(type=='NOISE'){
+				if(rule.ruleAdditionalfields==null){
+					rule.ruleAdditionalfields = [];
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 1,
+											type: 'NOISE_Db',
+											value: ''}
+							});
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 2,
+											type: 'NOISE_Percentage',
+											value: ''}
+							});
+				}
+			}
+		}
 		
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
@@ -834,9 +858,21 @@
 		}
 		$scope.showMenu = function(scope) {
 			if(scope.node.nodeclass=='M'){
-				return $scope.moduleMenuOptions;
+				var menu = $scope.moduleMenuOptions;
+				if(scope.node.type!='M_IntroModule'){
+					_.remove(menu, {
+					    0: 'Run Interview'
+					});
+				}
+				return menu;
+				
+				
 			}else if(scope.node.nodeclass=='F'){
-				return $scope.moduleMenuOptions;
+				var menu = $scope.moduleMenuOptions;			
+				_.remove(menu, {
+					0: 'Run Interview'
+				});			
+				return menu;
 			}else if(scope.node.nodeclass=='Q'){
 				$scope.selectedNode = scope.node;
 				var menuOptions;
@@ -881,8 +917,8 @@
 			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Divider
-			  [ 'Run Interview', function($itemScope) {
-                  $scope.addInterviewTab($itemScope);
+			  [ 'Run Interview', function($itemScope) {				  
+					 $scope.addInterviewTab($itemScope);			                   
 				} 
 			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
@@ -1496,7 +1532,7 @@
     			});
         	}
         }
-        $scope.saveRule = function(rule,model){
+        $scope.saveRule = function(rule){
         	RulesService.save(rule).then(function(response){
     			if(response.status === 200){
     				console.log('Rule Save was Successful!');

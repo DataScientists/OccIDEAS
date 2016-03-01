@@ -21,7 +21,7 @@
 	    
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
             <md-toolbar >{{data.showedQuestion.name}}
-            <md-button id="qButton" event-focus event-focus-id="qButton" ><span class="badge">{{data.showedQuestion.number}}</span></md-button></md-toolbar>
+            <md-button id="numId" event-focus><span class="badge">{{data.showedQuestion.number}}</span></md-button></md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
 	            <div ng-repeat="node in data.showedQuestion.nodes">
               		<md-checkbox ng-checked="multiExists(node, multiSelected)"
@@ -64,11 +64,12 @@
         <div ng-if="!data.interviewStarted">
         	<md-input-container md-no-float class="md-block">
 				<label>Reference Number</label>
-        		<input md-maxlength="8" minlength="8" required ng-model="data.referenceNumber" placeholder="H___-___">
+        		<input md-maxlength="8" minlength="8" required ng-model="data.referenceNumber" placeholder="H___-___" ng-pattern="refNoPattern" type="text">
         		<div ng-messages="data.referenceNumber.$error">
           			<div ng-message="required">This is required!</div>
       				<div ng-message="md-maxlength">That's too long!</div>
       				<div ng-message="minlength">That's too short!</div>
+                    <div ng-message="pattern">The correct format is H___-___</div>
         		</div>
 			</md-input-container>
             <md-button ng-click="startInterview(data)" class="md-fab md-raised ">
