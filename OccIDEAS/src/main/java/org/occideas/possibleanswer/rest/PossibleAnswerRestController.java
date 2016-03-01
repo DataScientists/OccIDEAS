@@ -12,7 +12,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
-import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

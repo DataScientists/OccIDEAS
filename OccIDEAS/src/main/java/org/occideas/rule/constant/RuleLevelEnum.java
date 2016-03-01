@@ -25,22 +25,4 @@ public enum RuleLevelEnum {
 		return description;
 	}
 
-	public static String getDescriptionByValue(int value){
-		for(RuleLevelEnum x: RuleLevelEnum.values()){
-			if(x.value == value){
-				return x.getDescription();
-			}
-		}
-		return "";
-	}
-	
-	public static int getValueByDescription(String description){
-		for(RuleLevelEnum x: RuleLevelEnum.values()){
-			if(x.description.equals(description)){
-				return x.getValue();
-			}
-		}
-		return -1;
-	}
-	
 }

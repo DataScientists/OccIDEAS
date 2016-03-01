@@ -48,15 +48,12 @@
 })();
 
 var noteZindex = 1050;
-function deleteNote(elem) {
-	angular.element(elem).parent().remove();
-};
-
 function newNote(element,$itemScope,$compile) {
 	if($itemScope.rule == null){
 		return;
 	}	
 	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
+	angular.element(tpl).zIndex(++noteZindex);
 	angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteZindex);

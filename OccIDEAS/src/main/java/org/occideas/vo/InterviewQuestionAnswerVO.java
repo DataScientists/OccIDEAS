@@ -1,10 +1,12 @@
 package org.occideas.vo;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 /**
  * Created by quangnn on 2/17/2016.
  */
 
-public class InterviewQuestionAnswerVO {
+public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAnswerVO>{
 	private long id;
 	private String interviewQuestionAnswerFreetext;
     private PossibleAnswerVO possibleAnswer;
@@ -62,5 +64,15 @@ public class InterviewQuestionAnswerVO {
 	public void setInterview(InterviewVO interview) {
 		this.interview = interview;
 	}
-
+	
+	@Override
+	public int compareTo(InterviewQuestionAnswerVO o) {
+		if((this.getPossibleAnswer()!=null) && (o.getPossibleAnswer()!=null)){
+			return this.getPossibleAnswer().compareTo(o.getPossibleAnswer());
+		}else{
+			return this.getQuestion().compareTo(o.getQuestion());
+		}
+		
+		      
+	}
 }

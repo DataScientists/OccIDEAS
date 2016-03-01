@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -24,6 +25,7 @@ public class InterviewQuestionAnswer implements java.io.Serializable {
     private long id;
     
     @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="interview_idinterview",referencedColumnName="idinterview",insertable=false,updatable=false)
     private Interview interview;   
     @ManyToOne(fetch=FetchType.LAZY)
     private Question question;

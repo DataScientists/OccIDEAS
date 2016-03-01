@@ -62,8 +62,8 @@
 						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in rulesObj | orderBy:'':true">
 						<div class="verticalrules">
 							<div class="rulescontainer">
-								<div class="agentACell" ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
-									<span class="cell-lable" ng-repeat="mrule in node.moduleRule">
+								<div class="agentACell {{activeRuleDialog === node.idNode+obj.idAgent?'activeCell':''}}" ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
+									<span class="cell-lable" ng-repeat="mrule in node.moduleRule" >
 										<div ng-class="mrule.rule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
 									</span>
 								</div>

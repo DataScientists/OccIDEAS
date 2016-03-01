@@ -3,8 +3,6 @@ package org.occideas.vo;
 import java.sql.Date;
 import java.util.List;
 
-import org.occideas.entity.AdditionalField;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -21,7 +19,7 @@ public class RuleVO {
 	private List<PossibleAnswerVO> conditions;
 	private Long legacyRuleId;
 	@JsonInclude(Include.NON_NULL)
-	private List<AdditionalField> additionalfields;
+	private List<RuleAdditionalFieldVO> ruleAdditionalfields;
 
 	public long getIdRule() {
 		return idRule;
@@ -48,40 +46,10 @@ public class RuleVO {
 	}
 
 	public String getLevel() {
-		if(level!=null){
-			if(level.equalsIgnoreCase("0")){
-				level = "probHigh";
-			}else if(level.equalsIgnoreCase("1")){
-				level = "probMedium";
-			}else if(level.equalsIgnoreCase("2")){
-				level = "probLow";
-			}else if(level.equalsIgnoreCase("3")){
-				level = "probUnknown";
-			}else if(level.equalsIgnoreCase("4")){
-				level = "possUnknown";
-			}else if(level.equalsIgnoreCase("5")){
-				level = "noExposure";
-			}
-		}
-		return level;
+		return this.level;
 	}
 
 	public void setLevel(String level) {
-		if(level!=null){
-			if(level.equalsIgnoreCase("probHigh")){
-				level = "0";
-			}else if(level.equalsIgnoreCase("probMedium")){
-				level = "1";
-			}else if(level.equalsIgnoreCase("probLow")){
-				level = "2";
-			}else if(level.equalsIgnoreCase("probUnknown")){
-				level = "3";
-			}else if(level.equalsIgnoreCase("possUnknown")){
-				level = "4";
-			}else if(level.equalsIgnoreCase("noExposure")){
-				level = "5";
-			}
-		}
 		this.level = level;
 	}
 
@@ -109,11 +77,12 @@ public class RuleVO {
 		this.legacyRuleId = legacyRuleId;
 	}
 
-	public List<AdditionalField> getAdditionalfields() {
-		return additionalfields;
+	public List<RuleAdditionalFieldVO> getRuleAdditionalfields() {
+		return ruleAdditionalfields;
 	}
 
-	public void setAdditionalfields(List<AdditionalField> additionalfields) {
-		this.additionalfields = additionalfields;
+	public void setRuleAdditionalfields(List<RuleAdditionalFieldVO> ruleAdditionalfields) {
+		this.ruleAdditionalfields = ruleAdditionalfields;
 	}
+	
 }

@@ -11,8 +11,7 @@
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(
 				{
-					group: "referenceNumber",
-					count: 50,
+					group: "referenceNumber"
 				}, 
 				{	
 					getData: function($defer,params) {					

@@ -45,6 +45,15 @@
 			return request.then(handleSuccess,handleError);
 		}
 		function save(data){
+			var restSaveUrl = 'rest/rule/saveOrUpdate';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		function update(data){
 			var restSaveUrl = 'rest/rule/update';
 			var request =  $http({
 				  method: 'POST',
@@ -62,7 +71,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
-		//modulerule/getlist
+		function remove(data){
+			var restSaveUrl = 'rest/rule/delete';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -86,8 +103,8 @@
 			create: create,
 			save: save,
 			getRule: getRule,
-			findRules: findRules
-			
+			findRules: findRules,
+			update:update
 		};
 	}
 })();

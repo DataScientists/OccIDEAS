@@ -39,6 +39,10 @@ public class BaseDao{
     public <T> void saveOrUpdate(final T o){
       sessionFactory.getCurrentSession().saveOrUpdate(o);
     }
+    
+    public <T> void update(final T o){
+        sessionFactory.getCurrentSession().update(o);
+      }
 
     @SuppressWarnings("unchecked")
 	public <T> List<T> getAll(final Class<T> type) {

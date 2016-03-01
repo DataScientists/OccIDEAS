@@ -43,7 +43,7 @@ public class AgentServiceImpl implements AgentService {
 
 	@Override
 	public void update(AgentVO o) {
-		dao.merge(mapper.convertToAgent(o));
+		dao.saveOrUpdate(mapper.convertToAgent(o));
 	}
 
 	@Override

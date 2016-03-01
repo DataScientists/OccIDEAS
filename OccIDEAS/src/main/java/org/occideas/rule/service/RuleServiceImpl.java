@@ -42,8 +42,13 @@ public class RuleServiceImpl implements RuleService {
     }
 
     @Override
-    public void update(RuleVO o) {
+    public void saveOrUpdate(RuleVO o) {
         dao.saveOrUpdate(mapper.convertToRule(o));
+    }
+    
+    @Override
+    public void update(RuleVO o) {
+        dao.update(mapper.convertToRule(o));
     }
 
     @Override

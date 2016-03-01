@@ -82,10 +82,10 @@
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
 			        		console.log("inside questions@tabs resolve");
-			        		if(TabsCache.get($stateParams.row)){
-			        			console.log("Data getting from questions Cache ...");
-			        			return TabsCache.get($stateParams.row);
-			        		}
+//			        		if(TabsCache.get($stateParams.row)){
+//			        			console.log("Data getting from questions Cache ...");
+//			        			return TabsCache.get($stateParams.row);
+//			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
@@ -115,7 +115,7 @@
 			}
 		}).state('tabs.questions1', {
 			url: '/questions1/:row',
-			sticky: true,
+			sticky: false,
 		    deepStateRedirect: true,
 			views:{
 				'questions1@tabs':{
@@ -158,7 +158,7 @@
 			}
 		}).state('tabs.questions2', {
 			url: '/questions2/:row',
-			sticky: true,
+			sticky: false,
 		    deepStateRedirect: true,
 			views:{
 				'questions2@tabs':{
@@ -201,7 +201,7 @@
 			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
-			sticky: true,
+			sticky: false,
 		    deepStateRedirect: true,
 			views:{
 				'fragment@tabs':{

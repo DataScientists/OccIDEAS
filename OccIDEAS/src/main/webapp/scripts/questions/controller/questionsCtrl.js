@@ -57,7 +57,7 @@
     	function initAgentData(){
     		AgentsService.get().then(function(agent) {
     		var group = _.groupBy(agent, function(b) { 
-    			return b.groupName;
+    			return b.agentGroup.name;
     		});
     		if($scope.data[0].moduleRule){
         		_.forOwn(group, function(x, key) { 
@@ -66,7 +66,12 @@
         			  var ruleArray =_.filter($scope.data[0].moduleRule, function(r){
         					return v.idAgent === r.idAgent; 
         			  });
-        			  v.total = _.uniq(ruleArray, 'rule.idRule').length;
+        			  var uniqueArray = _.map(_.groupBy(ruleArray,function(item){
+        				  return item.rule.idRule;
+        				}),function(grouped){
+        				  return grouped[0];
+        				});
+        			  v.total = uniqueArray.length;
         			  totalVal = totalVal + v.total;
         			});
         		x.total = totalVal;
@@ -875,11 +880,11 @@
 			        };
 			        collapseOrExpand($itemScope);
 					} 
-				  ], null, // Dividier
+				  ], null, // Divider
 			  [ 'Run Interview', function($itemScope) {
                   $scope.addInterviewTab($itemScope);
 				} 
-			  ],
+			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
 					alert('under development');
 				} 
@@ -1021,7 +1026,7 @@
 			  	  var conditions = [];
 			  	  conditions.push(model);
 			  	  $itemScope.model = model;
-				  var rule = {agentId:$itemScope.$parent.obj.idAgent,conditions:conditions};
+				  var rule = {agentId:$itemScope.$parent.obj.idAgent,conditions:conditions,level:'noExposure'};
 				  RulesService.create(rule).then(function(response){
 	    				if(response.status === 200){
 	    					if(response.data.idRule){
@@ -1049,6 +1054,9 @@
 						    			        }
 						    			        catch (e) { }
 						    		    }
+						    			if(!$scope.data[0].moduleRule){
+						    				$scope.data[0].moduleRule = [];
+						    			}
 						    			$scope.data[0].moduleRule.push(result);
 						    			initAgentData();
 									}
@@ -1409,20 +1417,43 @@
         
         function getObject (array,idNode){
         	var object = _.find(array, _.matchesProperty('idNode', idNode));
-        	if(object != null || !angular.isUndefined(object)){
+        	if(object != null && !angular.isUndefined(object)){
     			return object;
     		}
+        	var obj;
         	_.forEach(array,function(v,k) {
         		if(v.nodes){
-        			return getObject(v.nodes,idNode);
+        			obj = getObject(v.nodes,idNode);
+        			if(obj!=null){
+        				return false;
+        			}
         		}
         	});
+        	return obj;
         }
         $rootScope.tabsLoading = false;
         
+        $scope.deleteNote = function(elem,$event) {
+        	$($event.target).closest('.note').remove();
+        	$scope.activeRuleDialog = '';
+        	if (!$scope.activeRuleDialog.$$phase) {
+		        try {
+		        	$scope.activeRuleDialog.$digest();
+		        }
+		        catch (e) { }
+        	}
+        };
+        
         $scope.setActiveRule = function(rule,el){
-        	$scope.activeRuleDialog = el;
+        	$scope.activeRuleDialog = el.model.idNode+rule.agentId;
         	$scope.activeRule = rule;
+        	if (!$scope.activeRuleDialog.$$phase) {
+		        try {
+		        	$scope.activeRuleDialog.$digest();
+		        }
+		        catch (e) {
+		        }
+        	}
         }
         $scope.addToActiveRule = function(node,rules){
         	
@@ -1440,34 +1471,66 @@
             	if(rules.rules==null){
             		rules.rules = [];
             	}
-            	var ruleLevel = "";
-            	if(rule.level==0){
-            		ruleLevel = "probHigh";
-            	}else if(rule.level==1){
-            		ruleLevel = "probMedium";
-            	}else if(rule.level==2){
-            		ruleLevel = "probLow";
-            	}else if(rule.level==3){
-            		ruleLevel = "probUnknown";
-            	}else if(rule.level==4){
-            		ruleLevel = "possUnknown";
-            	}else if(rule.level==5){
-            		ruleLevel = "noExposure";
-            	}
             	rules.rules.push({
-            		ruleLevel:ruleLevel,
             		idNode:node.idNode
             		})
             	RulesService.save(rule).then(function(response){
     				if(response.status === 200){
     					console.log('Rule Save was Successful!');
-    					
+    					ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
+    						if(response.status === 200){
+    							var result = response.data[response.data.length-1];
+    							if(angular.isUndefined(node.moduleRule)){
+    								node.moduleRule = [];
+    							}
+    							_.merge(node.moduleRule, response.data);
+    			    			if (!node.moduleRule.$$phase) {
+    			    			        try {
+    			    			        	node.moduleRule.$digest();
+    			    			        }
+    			    			        catch (e) { }
+    			    		    }
+    						}
+    						});
     				}
     			});
         	}
         }
         $scope.saveRule = function(rule,model){
         	RulesService.save(rule).then(function(response){
+    			if(response.status === 200){
+    				console.log('Rule Save was Successful!');	
+    				_.each(model.moduleRule[0].rule.conditions,function(v,k){
+						ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
+						if(response.status === 200){
+							var node = getObject($scope.data[0].nodes,v.idNode);
+							if(!angular.isUndefined(node)){
+							var result = response.data[response.data.length-1];
+							if(angular.isUndefined(node.moduleRule)){
+								node.moduleRule = [];
+							}
+							_.merge(node.moduleRule, response.data);
+							safeDigest(node.moduleRule);
+							}
+						}
+						});
+					});
+    			}
+    		});
+        	
+        }
+        
+        var safeDigest = function (obj){
+        	if (!obj.$$phase) {
+		        try {
+		        	obj.$digest();
+		        }
+		        catch (e) { }
+        	}
+        }
+        
+        $scope.updateRule = function(rule,model){
+        	RulesService.update(rule).then(function(response){
     			if(response.status === 200){
     				console.log('Rule Save was Successful!');	
     				ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
@@ -1496,13 +1559,40 @@
         		var iCondition = rule.conditions[i];
         		if(iCondition.idNode==node.idNode){
         			rule.conditions.splice(i,1);
-        			
         		}
         	}
         	RulesService.save(rule).then(function(response){
 				if(response.status === 200){
 					console.log('Rule Save was Successful!');
-					
+					ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
+						if(response.status === 200){
+							var result = response.data[response.data.length-1];
+							if(angular.isUndefined(node.moduleRule)){
+								node.moduleRule = [];
+							}
+							_.each(node.moduleRule, function(mr) {
+								var isExist = false;
+								_.each(response.data, function(dt) {
+									if(mr.rule.idRule === dt.rule.idRule){
+										isExist = true;
+									}
+								});
+								if(isExist == false){
+									var index = node.moduleRule.indexOf(mr);
+									if (index > -1) {
+										node.moduleRule.splice(index, 1);
+									}
+								}
+							})
+			    			if (!node.moduleRule.$$phase) {
+			    			        try {
+			    			        	model.moduleRule.$digest();
+			    			        }
+			    			        catch (e) { }
+			    		    }
+						}
+						});
+					initAgentData();
 				}
 			});
         }

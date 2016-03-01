@@ -3,77 +3,69 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.entity.Agent;
-import org.occideas.vo.AgentVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.occideas.entity.AgentGroup;
+import org.occideas.vo.AgentGroupVO;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AgentMapperImpl implements AgentMapper {
+public class AgentGroupMapperImpl implements AgentGroupMapper {
 
-	@Autowired
-    private AgentGroupMapper agentGroupMapper;
-	
     @Override
-    public AgentVO convertToAgentVO(Agent moduleEntity) {
+    public AgentGroupVO convertToAgentGroupVO(AgentGroup moduleEntity) {
         if ( moduleEntity == null ) {
             return null;
         }
 
-        AgentVO moduleVO = new AgentVO();
+        AgentGroupVO moduleVO = new AgentGroupVO();
 
         moduleVO.setIdAgent( moduleEntity.getIdAgent() );
         moduleVO.setName( moduleEntity.getName() );
         moduleVO.setDescription( moduleEntity.getDescription() );       
         moduleVO.setLastUpdated( moduleEntity.getLastUpdated() ); 
-        moduleVO.setAgentGroup(agentGroupMapper.convertToAgentGroupVO(moduleEntity.getGroup()));
         moduleVO.setDeleted( moduleEntity.getDeleted() );
         return moduleVO;
     }
 
     @Override
-    public List<AgentVO> convertToAgentVOList(List<Agent> moduleEntity) {
+    public List<AgentGroupVO> convertToAgentGroupVOList(List<AgentGroup> moduleEntity) {
         if ( moduleEntity == null ) {
             return null;
         }
 
-        List<AgentVO> list = new ArrayList<AgentVO>();
-        for ( Agent module : moduleEntity ) {
-            list.add( convertToAgentVO( module ) );
+        List<AgentGroupVO> list = new ArrayList<AgentGroupVO>();
+        for ( AgentGroup module : moduleEntity ) {
+            list.add( convertToAgentGroupVO( module ) );
         }
 
         return list;
     }
 
     @Override
-    public Agent convertToAgent(AgentVO moduleVO) {
+    public AgentGroup convertToAgentGroup(AgentGroupVO moduleVO) {
         if ( moduleVO == null ) {
             return null;
         }
 
-        Agent module = new Agent();
+        AgentGroup module = new AgentGroup();
 
         module.setIdAgent( moduleVO.getIdAgent() );
         module.setName( moduleVO.getName() );
         module.setDescription( moduleVO.getDescription() );
-        
-        module.setGroup( agentGroupMapper.convertToAgentGroup(moduleVO.getAgentGroup()));
         module.setLastUpdated( moduleVO.getLastUpdated() );            
         module.setDeleted( moduleVO.getDeleted() );
-
 
         return module;
     }
 
     @Override
-    public List<Agent> convertToAgentList(List<AgentVO> moduleVO) {
+    public List<AgentGroup> convertToAgentGroupList(List<AgentGroupVO> moduleVO) {
         if ( moduleVO == null ) {
             return null;
         }
 
-        List<Agent> list = new ArrayList<Agent>();
-        for ( AgentVO moduleVO_ : moduleVO ) {
-            list.add( convertToAgent( moduleVO_ ) );
+        List<AgentGroup> list = new ArrayList<AgentGroup>();
+        for ( AgentGroupVO moduleVO_ : moduleVO ) {
+            list.add( convertToAgentGroup( moduleVO_ ) );
         }
 
         return list;
