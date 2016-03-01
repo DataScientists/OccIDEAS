@@ -834,9 +834,21 @@
 		}
 		$scope.showMenu = function(scope) {
 			if(scope.node.nodeclass=='M'){
-				return $scope.moduleMenuOptions;
+				var menu = $scope.moduleMenuOptions;
+				if(scope.node.type!='M_IntroModule'){
+					_.remove(menu, {
+					    0: 'Run Interview'
+					});
+				}
+				return menu;
+				
+				
 			}else if(scope.node.nodeclass=='F'){
-				return $scope.moduleMenuOptions;
+				var menu = $scope.moduleMenuOptions;			
+				_.remove(menu, {
+					0: 'Run Interview'
+				});			
+				return menu;
 			}else if(scope.node.nodeclass=='Q'){
 				$scope.selectedNode = scope.node;
 				var menuOptions;
@@ -881,8 +893,8 @@
 			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Divider
-			  [ 'Run Interview', function($itemScope) {
-                  $scope.addInterviewTab($itemScope);
+			  [ 'Run Interview', function($itemScope) {				  
+					 $scope.addInterviewTab($itemScope);			                   
 				} 
 			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
