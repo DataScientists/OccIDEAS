@@ -11,7 +11,7 @@ public interface FragmentMapper {
 	
 	List<FragmentVO> convertToFragmentVOList(List<Fragment> moduleEntity,boolean includeChild);
 
-	Fragment convertToFragment(FragmentVO moduleVO);
+	Fragment convertToFragment(FragmentVO moduleVO,boolean includeChild);
 	
-	List<Fragment> convertToFragmentList(List<FragmentVO> moduleVO);
+	List<Fragment> convertToFragmentList(List<FragmentVO> moduleVO,boolean includeChild);
 }

@@ -13,12 +13,15 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
+import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewQuestionAnswerVO;
 import org.occideas.vo.InterviewVO;
+import org.occideas.vo.ModuleVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,6 +34,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
     @Autowired
     private QuestionService questionService;
+    
+    @Autowired
+    private FragmentService fragmentService;
+    
+    @Autowired
+    private ModuleService moduleService;
 
     @GET
     @Path(value = "/getlist")
@@ -172,16 +181,16 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     		Collections.sort(questionsAsked);  	
     		for(InterviewQuestionAnswerVO iqa: questionsAsked){
     			//check for unanswered questions
-    			System.out.println(iqa.getQuestion().getNumber());
+    			//System.out.println(iqa.getQuestion().getNumber());
     			if(iqa.getPossibleAnswer()!=null){
-    				System.out.println(iqa.getPossibleAnswer().getNumber());
+    				//System.out.println(iqa.getPossibleAnswer().getNumber());
     				List<QuestionVO> questions = iqa.getPossibleAnswer().getChildNodes();
     				for(QuestionVO question: questions){   
-    					System.out.println("-"+question.getNumber());
+    					//System.out.println("-"+question.getNumber());
         				if(!isQuesitonAnswered(question,questionsAsked)){
-        					System.out.println("Found unanswered q "+question.getNumber());
+        				//	System.out.println("Found unanswered q "+question.getNumber());
         					if(question.compareTo(questionVO)<0){
-        						System.out.println("Smallest unanswered q is "+question.getNumber());
+        					//	System.out.println("Smallest unanswered q is "+question.getNumber());
         						questionVO = question;       						
         					}
         				}
@@ -191,14 +200,26 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     		}
     		if(questionVO==null){
     			if(interviewVO.getType().equals("ajsm")){
-        			for(QuestionVO question: interviewVO.getFragment().getChildNodes()){     				
+    				List<QuestionVO> childQuestions = interviewVO.getFragment().getChildNodes();
+    				if(childQuestions.size()==0){					
+    					for(FragmentVO fragment:fragmentService.findById(interviewVO.getFragment().getIdNode())){
+    						childQuestions = fragment.getChildNodes();
+    					}
+    				}
+        			for(QuestionVO question: childQuestions){     				
         				if(!isQuesitonAnswered(question,questionsAsked)){					
         					questionVO = question;	
         					break;
         				}
         			}
         		}else {
-        			for(QuestionVO question: interviewVO.getModule().getChildNodes()){     				
+        			List<QuestionVO> childQuestions = interviewVO.getModule().getChildNodes();
+    				if(childQuestions.size()==0){					
+    					for(ModuleVO module:moduleService.findById(interviewVO.getModule().getIdNode())){
+    						childQuestions = module.getChildNodes();
+    					}
+    				}
+        			for(QuestionVO question: childQuestions){     				
         				if(!isQuesitonAnswered(question,questionsAsked)){
         					questionVO = question;	
         					break;

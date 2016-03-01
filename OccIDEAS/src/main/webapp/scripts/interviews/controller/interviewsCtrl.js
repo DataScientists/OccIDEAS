@@ -10,6 +10,10 @@
                             $anchorScroll, $location, $mdMedia, $window, $state, $rootScope) {
         var self = this;
         $scope.data = data;
+        $scope.showIntroModule = true;
+        $scope.showModule = false;
+        $scope.showAjsm = false;
+        
         $scope.multiSelected = [];
         $scope.saveAnswerQuestion = function (node) {       	
             var seletectedEl = node.selectedAnswer;
@@ -61,10 +65,27 @@
                             		mtype = 'F_ajsm';
                             		newInterview.fragment = {idNode:linkingQuestion.link,name:linkingQuestion.name,type:mtype};
                             		newInterview.type = 'ajsm';
-                            	}else if (linkingQuestion.type=='Q_linkedajsm'){
+                            		QuestionsService.findQuestions(linkingQuestion.link,'F')
+                                    .then(function(response){
+                                        console.log("Data getting from questions AJAX ...");
+                                        $scope.linkedAjsm = response.data;
+                                        $scope.showIntroModule = false;
+                                        $scope.showModule = false;
+                                        $scope.showAjsm = true;
+                                        
+                                    });
+                            	}else if (linkingQuestion.type=='Q_linkedmodule'){
                             		mtype = 'M_Module';
                             		newInterview.module = {idNode:linkingQuestion.link,type:mtype};
                             		newInterview.type = 'module';
+                            		QuestionsService.findQuestions(linkingQuestion.link,'M')
+                                    .then(function(response){
+                                        console.log("Data getting from questions AJAX ...");
+                                        $scope.linkedModule = response.data;
+                                        $scope.showIntroModule = false;
+                                        $scope.showModule = true;
+                                        $scope.showAjsm = false;
+                                    });
                             	}
                             	newInterview.referenceNumber = $scope.interviews[0].referenceNumber;
                             	newInterview.active = true;
@@ -101,6 +122,17 @@
                             	for(var i=0;i<$scope.interviews.length;i++){ 
                                 	if($scope.interviews[i].interviewId==question.activeInterviewId){
                                 		$scope.interviews[i].active = true;
+                                		if($scope.interviews[i].module){
+                                			if($scope.interviews[i].module.type=='M_IntroModule'){
+                                				$scope.showIntroModule = true;
+                                                $scope.showModule = false;
+                                                $scope.showAjsm = false;
+                                			}else{
+                                				$scope.showIntroModule = false;
+                                                $scope.showModule = true;
+                                                $scope.showAjsm = false;
+                                			}                             			
+                                		}
                                 	}else{
                                 		$scope.interviews[i].active = false;
                                 	}
@@ -179,7 +211,14 @@
             $scope.selectedIndex = -1;
         }
         $scope.scrollTo = function (target) {
-            var scrollPane = $('#interivew-module-tree');
+        	var scrollPane = null;
+        	if($scope.showIntroModule){
+        		scrollPane = $('#interivew-intromodule-tree');
+        	}else if($scope.showModule){
+        		scrollPane = $('#interivew-module-tree');
+        	}else if($scope.showAjsm){
+        		scrollPane = $('#interivew-ajsm-tree');
+        	}
 			var scrollTarget = $('#' + target);
 			if(scrollTarget){
 				if(scrollTarget.offset()){

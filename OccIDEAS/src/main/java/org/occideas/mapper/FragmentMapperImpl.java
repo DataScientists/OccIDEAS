@@ -68,7 +68,7 @@ public class FragmentMapperImpl implements FragmentMapper {
     }
 
     @Override
-    public Fragment convertToFragment(FragmentVO fragmentVO) {
+    public Fragment convertToFragment(FragmentVO fragmentVO,boolean includeChild) {
         if ( fragmentVO == null ) {
             return null;
         }
@@ -83,7 +83,7 @@ public class FragmentMapperImpl implements FragmentMapper {
         fragment.setParentId( fragmentVO.getParentId());
         fragment.setLastUpdated( fragmentVO.getLastUpdated() );
         List<QuestionVO> childNodes = fragmentVO.getChildNodes();
-        if(!CommonUtil.isListEmpty(childNodes)){
+        if(includeChild && !CommonUtil.isListEmpty(childNodes)){
         	fragment.setChildNodes( nodeMapper.convertToQuestionList( childNodes ) );
         }
         fragment.setNumber( fragmentVO.getNumber() );
@@ -97,14 +97,14 @@ public class FragmentMapperImpl implements FragmentMapper {
     }
 
     @Override
-    public List<Fragment> convertToFragmentList(List<FragmentVO> fragmentVO) {
+    public List<Fragment> convertToFragmentList(List<FragmentVO> fragmentVO,boolean includeChild) {
         if ( fragmentVO == null ) {
             return null;
         }
 
         List<Fragment> list = new ArrayList<Fragment>();
         for ( FragmentVO moduleVO_ : fragmentVO ) {
-            list.add( convertToFragment( moduleVO_ ) );
+            list.add( convertToFragment( moduleVO_,includeChild ) );
         }
 
         return list;

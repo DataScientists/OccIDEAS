@@ -40,19 +40,19 @@ public class FragmentServiceImpl implements FragmentService {
 	@Override
 	public void createFragment(FragmentVO fragmentVO) {
 		log.info("FragmentVO:"+fragmentVO);
-		dao.save(mapper.convertToFragment(fragmentVO));
+		dao.save(mapper.convertToFragment(fragmentVO,false));
 	}
 	
 	@Override
 	public void update(FragmentVO module) {
 		//generateIdIfNotExist(module);
-		dao.saveOrUpdate(mapper.convertToFragment(module));
+		dao.saveOrUpdate(mapper.convertToFragment(module,true));
 		
 	}
 
 	@Override
 	public void delete(FragmentVO module) {
-		dao.delete(mapper.convertToFragment(module));
+		dao.delete(mapper.convertToFragment(module,false));
 	}
 
 	@Override
@@ -62,6 +62,6 @@ public class FragmentServiceImpl implements FragmentService {
 	}
 	@Override
 	public void merge(FragmentVO module) {
-		dao.merge(mapper.convertToFragment(module));
+		dao.merge(mapper.convertToFragment(module,true));
 	}
 }
