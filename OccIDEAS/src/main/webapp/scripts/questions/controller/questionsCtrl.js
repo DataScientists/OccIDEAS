@@ -1499,13 +1499,12 @@
         $scope.saveRule = function(rule,model){
         	RulesService.save(rule).then(function(response){
     			if(response.status === 200){
-    				console.log('Rule Save was Successful!');	
-    				_.each(model.moduleRule[0].rule.conditions,function(v,k){
+    				console.log('Rule Save was Successful!');
+    				_.each(rule.conditions,function(v,k){
 						ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
 						if(response.status === 200){
 							var node = getObject($scope.data[0].nodes,v.idNode);
 							if(!angular.isUndefined(node)){
-							var result = response.data[response.data.length-1];
 							if(angular.isUndefined(node.moduleRule)){
 								node.moduleRule = [];
 							}
