@@ -226,6 +226,10 @@
 			} 
 			saveModuleWithoutReload();
 		}
+		$scope.setRuleType = function (rule,type){
+			rule.type = type; 
+			$scope.saveRule(rule)
+		}
 		
 		$scope.aJsmTreeOptions = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex) {
@@ -1508,7 +1512,7 @@
     			});
         	}
         }
-        $scope.saveRule = function(rule,model){
+        $scope.saveRule = function(rule){
         	RulesService.save(rule).then(function(response){
     			if(response.status === 200){
     				console.log('Rule Save was Successful!');
