@@ -21,7 +21,7 @@
 	    
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
             <md-toolbar >{{data.showedQuestion.name}}
-            <md-button id="qButton" event-focus event-focus-id="qButton" ><span class="badge">{{data.showedQuestion.number}}</span></md-button></md-toolbar>
+            <md-button id="numId" event-focus><span class="badge">{{data.showedQuestion.number}}</span></md-button></md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
 	            <div ng-repeat="node in data.showedQuestion.nodes">
               		<md-checkbox ng-checked="multiExists(node, multiSelected)"

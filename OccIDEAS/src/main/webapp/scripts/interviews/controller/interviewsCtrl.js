@@ -121,6 +121,7 @@
                         } else {
                             console.log('ERROR on Get!');
                         }
+                        angular.element('#numId').focus();
                     });
             	}          	
             });                  
