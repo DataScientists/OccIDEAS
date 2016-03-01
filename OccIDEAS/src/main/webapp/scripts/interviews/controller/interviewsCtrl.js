@@ -13,7 +13,7 @@
         $scope.showIntroModule = true;
         $scope.showModule = false;
         $scope.showAjsm = false;
-        
+        $scope.refNoPattern = "H([a-zA-Z0-9]){3}(-)([a-zA-Z0-9]){3}";
         $scope.multiSelected = [];
         $scope.saveAnswerQuestion = function (node) {       	
             var seletectedEl = node.selectedAnswer;
