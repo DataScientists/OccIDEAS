@@ -20,15 +20,37 @@
 			console.log(response.data.id);
 		  });
 		};
-		
+		function save(data){
+			var restSaveUrl = 'rest/agent/update';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		var deleteAgent = function(moduleObj) {
 			  return $http.post(modulesUrl+'/delete' + '?id='+moduleObj.id).then(function(response) {
 				console.log(response.data.id);
 			  });
 			}; 
+		function handleError( response ) {
+	            if (
+	                ! angular.isObject( response.data ) ||
+	                ! response.data.message
+	                ) {
+	                return( $q.reject( "An unknown error occurred." ) );
+	            }
+	            return( $q.reject( response.data.message ) );
+	        }
+
+		function handleSuccess( response ) {
+	            return(response);
+	        }
 
 		return {
 		      get: getAgents,
+		      save: save, 
 		      post: postNewAgent, 
 		      deleteAgent: deleteAgent
 		};

@@ -57,7 +57,7 @@
     	function initAgentData(){
     		AgentsService.get().then(function(agent) {
     		var group = _.groupBy(agent, function(b) { 
-    			return b.groupName;
+    			return b.agentGroup.name;
     		});
     		if($scope.data[0].moduleRule){
         		_.forOwn(group, function(x, key) { 
@@ -1549,6 +1549,7 @@
 						});
     			}
     		});
+        	
         }
         $scope.removeNodeFromRule = function(node){
         	var rule = $scope.activeRule;

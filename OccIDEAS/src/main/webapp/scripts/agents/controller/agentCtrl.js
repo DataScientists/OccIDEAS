@@ -1,14 +1,14 @@
 (function(){
 	angular.module('occIDEASApp.Agents')
-		   .controller('AgentCtrl',FragmentCtrl);
+		   .controller('AgentCtrl',AgentCtrl);
 	
-	FragmentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter'];
-	function FragmentCtrl(AgentsService,NgTableParams,$state,$scope,$filter){
+	AgentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter'];
+	function AgentCtrl(AgentsService,NgTableParams,$state,$scope,$filter){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
-		self.tableParams = new NgTableParams({group: "groupName",count: 100}, {	
+		self.tableParams = new NgTableParams({group: "agentGroup.name",count: 100}, {	
 	        getData: function($defer,params) {
 	        	if(params.filter().name || params.filter().description){	
 		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
@@ -39,14 +39,15 @@
 	    		self.isDeleting = true;
 	    	}
 	    }
-	    function add(groupName) {
-	        self.isEditing = true;
+	    function add(group) {
+	    	self.isEditing = true;
 	        self.isAdding = true;
+	        
 	        self.tableParams.settings().dataset.unshift({
-	          name: "",
-	          idNode:Math.max.apply(null, _.pluck(self.tableParams.settings().dataset, "idNode"))+1,
-	          groupName: groupName,
-	          description: null
+	        	name: "New Agent",
+	        	agentGroup: group.data[0].agentGroup,
+		        description: "New Agent Description",
+		        isEditing: true
 	        });
 	        self.originalData = angular.copy(self.tableParams.settings().dataset);
 	        self.tableParams.sorting({});
@@ -78,9 +79,13 @@
 	        return window._.findWhere(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
-	        var originalRow = resetRow(row, rowForm);
-	        angular.extend(originalRow, row);
-	        self.isAdding = false;
+	    	row.isEditing = false;
+	        AgentsService.save(row).then(function(response){
+				if(response.status === 200){
+					console.log('Agent Save was Successful!');
+					
+				}
+			});
 	    }
 	    function setInvalid(isInvalid) {
 	        self.$invalid = isInvalid;
