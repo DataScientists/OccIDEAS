@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -19,6 +21,7 @@ public class Agent extends AgentInfo{
 	private static final long serialVersionUID = 1L;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
+	/*@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})*/
 	@Fetch(FetchMode.SELECT)
 	private AgentGroup agentGroup;
 

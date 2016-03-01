@@ -1,20 +1,16 @@
 package org.occideas.vo;
 
 import java.util.Date;
+import java.util.List;
 
-import org.occideas.entity.AgentGroup;
+import org.occideas.entity.Agent;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties({"isEditing"})
-public class AgentVO {
+public class AgentGroupVO {
 
 	private long idAgent;
 	private String name;
 	private String description;
-
-	private AgentGroupVO agentGroup;
-	
+	private List<Agent> agents;
 	private Date lastUpdated;
 	private Integer total = 0;
 	private Integer deleted = 0;
@@ -67,12 +63,12 @@ public class AgentVO {
 		this.total = total;
 	}
 
-	public AgentGroupVO getAgentGroup() {
-		return agentGroup;
+	public List<Agent> getAgents() {
+		return agents;
 	}
 
-	public void setAgentGroup(AgentGroupVO agentGroup) {
-		this.agentGroup = agentGroup;
+	public void setAgents(List<Agent> agents) {
+		this.agents = agents;
 	}
 
 }
