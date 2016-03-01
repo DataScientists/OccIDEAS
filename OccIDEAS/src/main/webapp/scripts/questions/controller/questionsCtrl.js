@@ -228,7 +228,27 @@
 		}
 		$scope.setRuleType = function (rule,type){
 			rule.type = type; 
-			$scope.saveRule(rule)
+			if(type=='NOISE'){
+				if(rule.ruleAdditionalfields==null){
+					rule.ruleAdditionalfields = [];
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 1,
+											type: 'NOISE_Db',
+											value: ''}
+							});
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 2,
+											type: 'NOISE_Percentage',
+											value: ''}
+							});
+				}
+			}
 		}
 		
 		$scope.aJsmTreeOptions = {
