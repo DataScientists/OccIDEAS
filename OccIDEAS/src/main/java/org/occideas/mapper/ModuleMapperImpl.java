@@ -68,7 +68,7 @@ public class ModuleMapperImpl implements ModuleMapper {
     }
 
     @Override
-    public Module convertToModule(ModuleVO moduleVO) {
+    public Module convertToModule(ModuleVO moduleVO,boolean includeChild) {
         if ( moduleVO == null ) {
             return null;
         }
@@ -83,7 +83,7 @@ public class ModuleMapperImpl implements ModuleMapper {
         module.setParentId( moduleVO.getParentId() );
         module.setLastUpdated( moduleVO.getLastUpdated() );
         List<QuestionVO> childNodes = moduleVO.getChildNodes();
-        if(!CommonUtil.isListEmpty(childNodes)){
+        if(includeChild && !CommonUtil.isListEmpty(childNodes)){
         	module.setChildNodes( nodeMapper.convertToQuestionList(childNodes) );
         }
         module.setNumber( moduleVO.getNumber() );
@@ -97,14 +97,14 @@ public class ModuleMapperImpl implements ModuleMapper {
     }
 
     @Override
-    public List<Module> convertToModuleList(List<ModuleVO> moduleVO) {
+    public List<Module> convertToModuleList(List<ModuleVO> moduleVO,boolean includeChild) {
         if ( moduleVO == null ) {
             return null;
         }
 
         List<Module> list = new ArrayList<Module>();
         for ( ModuleVO moduleVO_ : moduleVO ) {
-            list.add( convertToModule( moduleVO_ ) );
+            list.add( convertToModule( moduleVO_,includeChild ) );
         }
 
         return list;
