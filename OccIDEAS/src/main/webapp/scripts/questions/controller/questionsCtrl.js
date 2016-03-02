@@ -198,6 +198,10 @@
 					return true;
 				}else if(node.type.indexOf('M_IntroModule')>-1){
 					return true;
+				}else if(node.type.indexOf('F_template')>-1){
+					return true;
+				}else if(node.type.indexOf('F_ajsm')>-1){
+					return true;
 				}else{
 					return false;
 				}
