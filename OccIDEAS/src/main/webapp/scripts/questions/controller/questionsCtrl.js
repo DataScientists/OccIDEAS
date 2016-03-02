@@ -1474,7 +1474,7 @@
         }
         $rootScope.tabsLoading = false;
         
-        $scope.deleteNote = function(elem,$event) {
+        $scope.closeRuleDialog = function(elem,$event) {
         	$($event.target).closest('.note').remove();
         	$scope.activeRuleDialog = '';
         	if (!$scope.activeRuleDialog.$$phase) {
@@ -1664,7 +1664,7 @@
 							}
 							
 							}
-							$scope.deleteNote($event);
+							$scope.closeRuleDialog(model,$event);
 							initAgentData();
 						}
 						});
