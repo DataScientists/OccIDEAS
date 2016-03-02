@@ -10,7 +10,6 @@ import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
-import org.occideas.interview.dao.InterviewDao;
 import org.occideas.interviewquestionanswer.dao.InterviewQuestionAnswerDao;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
@@ -30,9 +29,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private PossibleAnswerMapper paMapper;
 
-    @Autowired
-    private InterviewDao interviewDao;
-    
     @Autowired
     private InterviewQuestionAnswerDao iqaDao;
 

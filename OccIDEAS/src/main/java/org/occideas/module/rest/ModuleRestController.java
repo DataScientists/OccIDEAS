@@ -32,6 +32,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		try{
 			list = service.listAll();
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -45,6 +46,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		try{
 			list = service.findById(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -59,6 +61,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		try{
 			service.create(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -72,6 +75,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		try{
 			service.update(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -83,6 +87,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		try{
 			service.merge(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();

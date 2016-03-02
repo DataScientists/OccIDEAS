@@ -2,8 +2,6 @@ package org.occideas.vo;
 
 import java.util.Date;
 
-import org.occideas.entity.AgentGroup;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"isEditing"})

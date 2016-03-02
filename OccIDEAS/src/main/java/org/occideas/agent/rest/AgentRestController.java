@@ -32,6 +32,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 		try{
 			list = service.listAll();
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -45,6 +46,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 		try{
 			list = service.findById(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -58,6 +60,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 		try{
 			service.create(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -71,6 +74,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 		try{
 			service.update(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -82,6 +86,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 		try{
 			service.delete(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();

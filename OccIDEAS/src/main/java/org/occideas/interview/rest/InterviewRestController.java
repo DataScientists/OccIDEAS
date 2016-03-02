@@ -57,6 +57,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		try{
 			list = service.findById(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -71,6 +72,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         try {
             interviewVO = service.create(json);
         } catch (Throwable e) {
+        	e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
         return Response.ok(interviewVO).build();
@@ -84,6 +86,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	try{
 			service.update(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -95,6 +98,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         try {
             service.delete(json);
         } catch (Throwable e) {
+        	e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
         return Response.ok().build();
@@ -119,6 +123,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
                 questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getSingleAnswerId());
             }
         } catch (Throwable e) {
+        	e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
         return Response.ok(questionVO).build();

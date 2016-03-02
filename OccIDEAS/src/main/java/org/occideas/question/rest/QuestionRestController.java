@@ -36,6 +36,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		try{
 			list = service.listAll();
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -49,6 +50,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		try{
 			list = service.findById(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -62,6 +64,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		try{
 			longVal = moduleService.getMaxId();
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(longVal).build();
@@ -75,6 +78,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		try{
 			service.create(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -88,6 +92,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		try{
 			service.update(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -99,6 +104,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		try{
 			service.delete(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
