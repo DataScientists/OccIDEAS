@@ -40,7 +40,7 @@ public class FragmentServiceImpl implements FragmentService {
 	@Override
 	public void createFragment(FragmentVO fragmentVO) {
 		log.info("FragmentVO:"+fragmentVO);
-		dao.save(mapper.convertToFragment(fragmentVO,false));
+		dao.save(mapper.convertToFragment(fragmentVO,true));
 	}
 	
 	@Override

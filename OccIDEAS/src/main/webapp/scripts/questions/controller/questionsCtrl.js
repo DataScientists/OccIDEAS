@@ -199,6 +199,10 @@
 					return true;
 				}else if(node.type.indexOf('M_IntroModule')>-1){
 					return true;
+				}else if(node.type.indexOf('F_template')>-1){
+					return true;
+				}else if(node.type.indexOf('F_ajsm')>-1){
+					return true;
 				}else{
 					return false;
 				}
@@ -1470,7 +1474,7 @@
         }
         $rootScope.tabsLoading = false;
         
-        $scope.deleteNote = function($event) {
+        $scope.deleteNote = function(elem,$event) {
         	$($event.target).closest('.note').remove();
         	$scope.activeRuleDialog = '';
         	if (!$scope.activeRuleDialog.$$phase) {
