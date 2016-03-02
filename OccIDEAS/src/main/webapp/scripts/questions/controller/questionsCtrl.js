@@ -1469,7 +1469,7 @@
         }
         $rootScope.tabsLoading = false;
         
-        $scope.deleteNote = function(elem,$event) {
+        $scope.deleteNote = function($event) {
         	$($event.target).closest('.note').remove();
         	$scope.activeRuleDialog = '';
         	if (!$scope.activeRuleDialog.$$phase) {
@@ -1630,6 +1630,38 @@
 					initAgentData();
 				}
 			});
+        }
+        
+        $scope.deleteRule = function(rule,model,$event){
+        	RulesService.remove(rule).then(function(response){
+    			if(response.status === 200){
+    				console.log('Rule Save was Successful!');	
+    				_.each(rule.conditions,function(v,k){
+						ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
+						if(response.status === 200){
+							var node = getObject($scope.data[0].nodes,v.idNode);
+							if(!angular.isUndefined(node)){
+							var index = _.findIndex($scope.data[0].moduleRule, function(item) 
+		    						{ return item.idNode === v.idNode });
+							if(response.data.length < 1){
+								node.moduleRule = [];
+								safeDigest(node.moduleRule);
+								$scope.data[0].moduleRule.splice(index,1);
+							}else{
+							node.moduleRule = response.data;
+							$scope.data[0].moduleRule.splice(index,1);
+							safeDigest(node.moduleRule);
+							}
+							
+							}
+							$scope.deleteNote($event);
+						}
+						});
+					});
+    				initAgentData();
+    			}
+    		});
+        	
         }
 	}
 })();

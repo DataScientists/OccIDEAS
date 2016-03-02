@@ -72,10 +72,10 @@
 			return request.then(handleSuccess,handleError);
 		}
 		function remove(data){
-			var restSaveUrl = 'rest/rule/delete';
+			var restDeleteUrl = 'rest/rule/delete';
 			var request =  $http({
 				  method: 'POST',
-				  url: restSaveUrl,
+				  url: restDeleteUrl,
 				  data:data
 				})
 			return request.then(handleSuccess,handleError);
@@ -104,7 +104,8 @@
 			save: save,
 			getRule: getRule,
 			findRules: findRules,
-			update:update
+			update:update,
+			remove:remove
 		};
 	}
 })();
