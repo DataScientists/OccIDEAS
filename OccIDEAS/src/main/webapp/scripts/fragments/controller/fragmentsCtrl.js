@@ -109,7 +109,7 @@
 	        row.isEditing = false;
 	        rowForm.$setPristine();
 	        self.tableTracker.untrack(row);
-	        return window._.findWhere(self.originalData,{idNode:row.idNode});
+	        return window._.find(self.originalData,{idNode:row.idNode});
 	    }
 	    function save(row, rowForm) {
 	    	self.isEditing = false;

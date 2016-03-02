@@ -1,6 +1,6 @@
 <script id="rules-template" type="text/x-custom-template">
 <div class="note {{activeRuleDialog === model.idNode+rule.agentId?'activeRule':''}}" prevent-right-click ng-click="setActiveRule(rule,this)">
-	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="deleteNote(this,$event)" aria-label="Left Align">
+	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="deleteNote($event)" aria-label="Left Align">
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
 	<div class="title">{{rule.idRule}} {{agentName}} </div>
@@ -44,7 +44,7 @@
   			</ul>
 		<div style="margin-left:2px;margin-top: 2px;">
 			<div class="pull-left">
-  				<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+  				<span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="deleteRule(rule,model,$event)"></span>
 			</div>
 			<div  class="pull-right">
 				<md-fab-speed-dial md-open="model.isOpen" md-direction="right"

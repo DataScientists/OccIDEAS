@@ -13,6 +13,9 @@
 .F_ajsm{
 	display: none !important;
 }
+.F_template{
+	display: none !important;
+}
 .Q_linkedajsm{
 	border: 2px solid #80ADDA !important;
 	background: #92DAEA !important;
@@ -55,7 +58,7 @@
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    vertical-align: middle;
+    vertical-align: top;
     background-color: #A7B3E2;
     border-radius: 10px;
 }
@@ -69,7 +72,7 @@
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    vertical-align: middle;
+    vertical-align: top;
     background-color: #A7B3E2;
     border-radius: 10px;
 }
@@ -86,7 +89,7 @@
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    vertical-align: middle;
+    vertical-align: top;
     background-color: #A54949;
     border-radius: 10px;
 }
@@ -861,4 +864,11 @@ md-toolbar.interviewAnswers{
 }
 md-list-item.interviewAnswers{
 	min-height: 12px !important;	
+}
+.treeNodeText{
+	display: inline-block;
+    width: 700px;
+}
+.btn {  
+    vertical-align: top !important;	
 }

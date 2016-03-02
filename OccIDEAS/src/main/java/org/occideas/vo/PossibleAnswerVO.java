@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.occideas.utilities.CommonUtil;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonIgnoreProperties({"isOpen","selectedAnswer","editEnabled","info","warning","placeholder","isEditing","showAgentSlider","id","collapsed"})
 public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswerVO>{
 
 	@JsonInclude(Include.NON_NULL)

@@ -34,7 +34,7 @@
 	      <span ng-if="!node.idNode || node.idNode===0" class="badge-multi">Unsaved</span>
 	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
           
-          <span ng-if="!node.editEnabled" ng-click="enable(this)" data-nodrag>{{node.name}}</span>
+          <span class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(this)" data-nodrag>{{node.name}}</span>
           <div ng-if="node.editEnabled" class="editBox">
       		<input type="text" 
              ng-model="node.name" 
