@@ -32,13 +32,13 @@
 	angular
 	.module('occIDEASApp.Questions')
 	.directive(
-			'deleteNote',
+			'closeRuleDialog',
 			function() {
 				return {
 					restrict : 'A',
 					link : function(scope, element, attrs) {
 						element.on( "click", function() {
-							deleteNote(element);
+							closeRuleDialog(element);
 						});
 					}
 				};
