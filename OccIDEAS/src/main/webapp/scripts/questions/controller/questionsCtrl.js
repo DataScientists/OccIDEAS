@@ -80,6 +80,7 @@
     		group = setOrder(group);
     		$scope.agentsLoading = false;
     		$scope.agentsData = group;
+    		safeDigest($scope.agentsData);
     		});
     	}
     	
@@ -1641,24 +1642,29 @@
 						if(response.status === 200){
 							var node = getObject($scope.data[0].nodes,v.idNode);
 							if(!angular.isUndefined(node)){
-							var index = _.findIndex($scope.data[0].moduleRule, function(item) 
-		    						{ return item.idNode === v.idNode });
+							var moduleRuleIndex = _.findIndex($scope.data[0].moduleRule, function(item) { 
+								return item.idNode === v.idNode && item.idAgent === rule.agentId 
+							});
 							if(response.data.length < 1){
 								node.moduleRule = [];
 								safeDigest(node.moduleRule);
-								$scope.data[0].moduleRule.splice(index,1);
+								if(moduleRuleIndex != -1){
+									$scope.data[0].moduleRule.splice(moduleRuleIndex,1);
+								}
 							}else{
 							node.moduleRule = response.data;
-							$scope.data[0].moduleRule.splice(index,1);
+							if(moduleRuleIndex != -1){
+								$scope.data[0].moduleRule.splice(moduleRuleIndex,1);
+							}
 							safeDigest(node.moduleRule);
 							}
 							
 							}
 							$scope.deleteNote($event);
+							initAgentData();
 						}
 						});
 					});
-    				initAgentData();
     			}
     		});
         	
