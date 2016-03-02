@@ -1473,7 +1473,7 @@
         }
         $rootScope.tabsLoading = false;
         
-        $scope.deleteNote = function($event) {
+        $scope.deleteNote = function(elem,$event) {
         	$($event.target).closest('.note').remove();
         	$scope.activeRuleDialog = '';
         	if (!$scope.activeRuleDialog.$$phase) {
