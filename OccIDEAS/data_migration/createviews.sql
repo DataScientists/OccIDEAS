@@ -14,4 +14,4 @@ INNER JOIN Node m ON n.topNodeId = m.idNode
 INNER JOIN Node_Rule nr ON n.idNode = nr.idNode
 INNER JOIN Rule r ON nr.idRule = r.idRule
 INNER JOIN AgentInfo a ON r.agentId = a.idAgent
-WHERE m.deleted=0
+WHERE m.deleted=0 and n.deleted=0
