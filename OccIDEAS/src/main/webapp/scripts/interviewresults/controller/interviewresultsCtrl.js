@@ -1,9 +1,9 @@
 (function(){
-	angular.module('occIDEASApp.Assessments')
-		   .controller('AssessmentsCtrl',AssessmentsCtrl);
-	AssessmentsCtrl.$inject = ['AssessmentsService','ngTableParams','$state','$scope','$filter',
+	angular.module('occIDEASApp.InterviewResults')
+		   .controller('InterviewResultsCtrl',InterviewResultsCtrl);
+	InterviewResultsCtrl.$inject = ['InterviewResultsService','ngTableParams','$state','$scope','$filter',
                           '$anchorScroll','$location'];
-	function AssessmentsCtrl(AssessmentsService,NgTableParams,$state,$scope,$filter,
+	function InterviewResultsCtrl(InterviewResultsService,NgTableParams,$state,$scope,$filter,
 			$anchorScroll,$location){
 		var self = this;
 		self.isDeleting = false;
@@ -22,7 +22,7 @@
 				        	  return self.tableParams.settings().dataset;
 				          }
 				          
-				          return  AssessmentsService.getAssessments().then(function(data) {
+				          return  InterviewResultsService.getInterviews().then(function(data) {
 				        	  console.log("Data getting from interviews ajax ... id:");        	 
 				        	  self.originalData = angular.copy(data);
 				        	  self.tableParams.settings().dataset = data;

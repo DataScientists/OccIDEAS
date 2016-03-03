@@ -1613,9 +1613,11 @@
 							_.each(node.moduleRule, function(mr) {
 								var isExist = false;
 								_.each(response.data, function(dt) {
-									if(mr.rule.idRule === dt.rule.idRule){
-										isExist = true;
-									}
+									if(mr.rule){
+										if(mr.rule.idRule === dt.rule.idRule){
+											isExist = true;
+										}
+									}								
 								});
 								if(isExist == false){
 									var index = node.moduleRule.indexOf(mr);

@@ -1,9 +1,9 @@
 (function () {
-    angular.module('occIDEASApp.Assessments')
-        .service('AssessmentsService', AssessmentsService);
+    angular.module('occIDEASApp.InterviewResults')
+        .service('InterviewResultsService', InterviewResultsService);
 
-    AssessmentsService.$inject = ['$http', '$q'];
-    function AssessmentsService($http, $q) {
+    InterviewResultsService.$inject = ['$http', '$q'];
+    function InterviewResultsService($http, $q) {
     	function listByInterview(idInterview) {
 			var restUrl = 'rest/interviewquestionanswer/getbyinterview?id=' + idInterview;
 			var request =  $http({
@@ -14,14 +14,6 @@
 		}
     	function getInterviews() {
 			var restUrl = 'rest/interviewquestionanswer/getlist';
-			var request =  $http({
-				  method: 'GET',
-				  url: restUrl
-				})
-			return request.then(handleSuccess1,handleError);
-		}
-    	function getAssessments() {
-			var restUrl = 'rest/interviewquestionanswer/getassessments';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl

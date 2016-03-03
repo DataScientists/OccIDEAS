@@ -60,6 +60,18 @@
 					controller: 'AgentCtrl as vm'
 				}
 			}
+		}).state('tabs.interviewresults', {
+			url: '/interviewresults/',
+			sticky: function(){ 
+				return false
+				},
+		    deepStateRedirect: true,
+			views:{
+				'interviewresults@tabs':{
+					templateUrl : "scripts/interviewresults/view/interviewresultsTable.html",
+					controller: 'InterviewResultsCtrl as vm'
+				}
+			}
 		}).state('tabs.assessments', {
 			url: '/assessments/',
 			sticky: false,

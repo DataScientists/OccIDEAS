@@ -17,7 +17,7 @@
 					</div>
 				</li>
   			</ul>
-			<ul class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="(rule.type)" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item additionalField" 
 					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
 					>

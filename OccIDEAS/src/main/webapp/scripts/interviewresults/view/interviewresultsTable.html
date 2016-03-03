@@ -22,11 +22,18 @@
            <td data-title="'Module'"  groupable="'interview.module.name'" >
             	{{node.interview.module.name}}
           	</td>
-           <td>
-				<button class="btn btn-default btn-sm"
-					ng-click="addAssessmentTab(row)" >
-					<span class="glyphicon glyphicon-list-alt"></span>
-				</button>	
+           <td data-title="'aJSM'"  >
+            	{{node.interview.fragment.name}}
+          	</td>
+           <td data-title="'Question'"  >
+            	{{node.question.name}}
+          	</td>
+            <td data-title="'Answer'"  >
+            	{{node.interviewQuestionAnswerFreetext}}
+          	</td>
+            
+			<td data-title="'Node Number'" >
+				{{node.possibleAnswer.number}}
 			</td>			
 			
         </tr>

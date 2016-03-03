@@ -18,6 +18,10 @@
 			data: ""
 		};
 		$scope.tabOptions[3] = {
+				state: "tabs.interviewresults",
+				data: ""
+			};
+		$scope.tabOptions[4] = {
 				state: "tabs.assessments",
 				data: ""
 			};
@@ -58,7 +62,11 @@
 			viewName: 'agents@tabs'
 		},
 		{
-			title : 'Assessment List',
+			title : 'Interview Results',
+			viewName: 'interviewresults@tabs'
+		},
+		{
+			title : 'Assessments',
 			viewName: 'assessments@tabs'
 		}], selected = null, previous = null;
 		$scope.tabs = tabs;
@@ -73,6 +81,19 @@
 			});
 			$scope.tabOptions.push({
 				state: "tabs.fragment",
+				data: {row:row.idNode}
+			});
+			
+		};
+		$scope.addAssessmentsTab = function(row) {
+			tabs.push({
+				title : row.name,
+				viewName: 'assessments@tabs',
+				canClose: true,
+				disabled : false
+			});
+			$scope.tabOptions.push({
+				state: "tabs.assessment",
 				data: {row:row.idNode}
 			});
 			
