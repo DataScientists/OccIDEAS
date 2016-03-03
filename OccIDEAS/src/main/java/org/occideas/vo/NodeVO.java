@@ -1,5 +1,6 @@
 package org.occideas.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -159,6 +160,9 @@ public abstract class NodeVO {
 	}
 	
 	public List<ModuleRuleVO> getModuleRule() {
+		if(moduleRule==null){
+			moduleRule = new ArrayList<ModuleRuleVO>();
+		}
 		return moduleRule;
 	}
 

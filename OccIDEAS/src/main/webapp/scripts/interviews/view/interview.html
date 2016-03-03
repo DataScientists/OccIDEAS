@@ -7,14 +7,22 @@
 	    		{{qa.question.name }}:{{qa.possibleAnswer.name }}
 	    		</md-list-item>
 	    	</md-toolbar>
-	    	<md-toolbar class="interviewAnswers" ng-if="runningInterview.fragment">{{runningInterview.fragment.name}}:{{runningInterview.active}}
+	    	<md-toolbar class="interviewAnswers" ng-if="runningInterview.fragment">{{runningInterview.fragment.name}}{{runningInterview.module.name}}:{{runningInterview.active}}
 	    		<md-list-item class="interviewAnswers" ng-repeat="qa in runningInterview.questionsAsked">
 	    		{{qa.question.name }}:{{qa.possibleAnswer.name }}
 	    		</md-list-item>
-	    	
+	    		
 	    	</md-toolbar>
 	    	
+	    		<md-list-item ng-repeat="rule in runningInterview.firedRules">
+	     			<div ng-click="showRule(rule)" class="{{rule.level}}">{{rule.idRule}}</div> 
+				</md-list-item>
+	    		
+	    	
+	    	
+	    	
 	</md-list-item>
+	
 </div>
 <div class="col-md-4">
     <div ng-model="data">

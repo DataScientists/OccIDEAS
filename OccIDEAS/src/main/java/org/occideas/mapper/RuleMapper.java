@@ -19,6 +19,10 @@ public interface RuleMapper {
 
 	Rule convertToRule(RuleVO ruleVO);
 	
+	Rule convertToRuleExcPa(RuleVO ruleVO);
+	
 	List<Rule> convertToRuleList(List<RuleVO> ruleVO);
+	
+	List<Rule> convertToRuleExcPaList(List<RuleVO> ruleVO);
 	
 }

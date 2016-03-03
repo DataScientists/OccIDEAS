@@ -20,6 +20,7 @@ public class InterviewVO {
     
     private List<InterviewQuestionAnswerVO> questionsAsked;
     
+    private List<RuleVO> firedRules;
     
     private long questionId;
 
@@ -111,6 +112,14 @@ public class InterviewVO {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public List<RuleVO> getFiredRules() {
+		return firedRules;
+	}
+
+	public void setFiredRules(List<RuleVO> firedRules) {
+		this.firedRules = firedRules;
 	}
 
 }

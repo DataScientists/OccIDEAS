@@ -2,7 +2,9 @@ package org.occideas.interview.rest;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -21,8 +23,11 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewQuestionAnswerVO;
 import org.occideas.vo.InterviewVO;
+import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -133,10 +138,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getNextQuestion(List<InterviewVO> list) {
-
+    	
         QuestionVO questionVO = null;
         try {
         	for(InterviewVO interviewVO:list){
+        		this.determineFiredRules(interviewVO);
         		if(interviewVO.isActive()){
         			questionVO = this.getNearestQuestion(interviewVO);
         		}  
@@ -260,6 +266,63 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	for(InterviewQuestionAnswerVO iqa: questionsAsked){
     		if(iqa.getQuestion().getIdNode()==q.getIdNode()){
     			retValue = true;
+    		}
+    	}
+    	return retValue;
+    }
+    private void determineFiredRules(InterviewVO interview){
+    	ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
+    	ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
+    	if(interview.getModule()!=null){
+    		ModuleVO module=null;
+    		for(ModuleVO m: moduleService.findById(interview.getModule().getIdNode())){
+    			module = m;
+    		}
+    		
+    		for(ModuleRuleVO moduleRule : module.getModuleRule()){
+    			rules.add(moduleRule.getRule());
+    		}
+    		rules = removeDuplicates(rules);   		
+    		
+    	}else if(interview.getFragment()!=null){
+    		FragmentVO module = interview.getFragment();
+    		for(ModuleRuleVO moduleRule : module.getModuleRule()){
+    			rules.add(moduleRule.getRule());
+    		}
+    		//remove duplicates
+    		Set<RuleVO> hs = new HashSet<RuleVO>();
+    		hs.addAll(rules);
+    		rules.clear();
+    		rules.addAll(hs);
+    	}
+    	for(RuleVO rule: rules){
+			boolean bFired = false;
+			for(PossibleAnswerVO  pa: rule.getConditions()){
+				for(InterviewQuestionAnswerVO iqa: interview.getQuestionsAsked()){
+    	    		if(pa.getIdNode()==iqa.getPossibleAnswer().getIdNode()){
+    	    			bFired = true;
+    	    			break;
+    	    		}else{
+    	    			bFired = false;
+    	    		}
+    	    	}
+			}
+			if(bFired){
+				firedRules.add(rule);
+			}			
+		}
+    	firedRules = removeDuplicates(firedRules);
+    	for(RuleVO rule: firedRules){
+       		rule.setConditions(null);	
+    	}
+    	interview.setFiredRules(firedRules);
+    	service.update(interview);
+    }
+    private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules){
+    	ArrayList<RuleVO> retValue = new ArrayList<RuleVO>();
+    	for(RuleVO rule: rules){
+    		if(!retValue.contains(rule)){
+    			retValue.add(rule);
     		}
     	}
     	return retValue;

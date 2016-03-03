@@ -146,10 +146,20 @@
                             	$scope.data.interviewEnded = true;
                             }                           
                         } else if (response.status == 204) {
-                            //alert("End interview!");
-                            $scope.data.interviewStarted = false;
+                        	for(var i=0;i<$scope.interviews.length;i++){ 
+                        		InterviewsService.get($scope.interviews[i].interviewId).then(function (response) {
+                                	if (response.status === 200) {
+                                		for(var i=0;i<$scope.interviews.length;i++){ 
+                                        	if($scope.interviews[i].interviewId==response.data[0].interviewId){
+                                        		$scope.interviews[i]=response.data[0];
+                                        	}
+                                        }                     		
+                                	}
+                            	}); 
+                           }
+                        	$scope.data.interviewStarted = false;
                             $scope.data.interviewEnded = true;
-                            return false;
+                        	                      
                         } else {
                             console.log('ERROR on Get!');
                         }
@@ -157,6 +167,12 @@
                     });
             	}          	
             });                  
+        }
+        $scope.showRule = function (scope){
+        	/*var x = scope.rule.conditions;
+		  	x.idRule = scope.rule.idRule;
+		  	addPopoverInfo(x,scope.rule.idRule);
+		  	newNote($event.currentTarget.parentElement,scope,$compile);*/
         }
         $scope.startInterview = function (data) {
         	$scope.referenceNumber = data.referenceNumber;

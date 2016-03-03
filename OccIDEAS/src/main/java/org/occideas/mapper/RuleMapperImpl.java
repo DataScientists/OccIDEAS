@@ -85,10 +85,30 @@ public class RuleMapperImpl implements RuleMapper {
         }
         List<RuleAdditionalFieldVO> ruleAdditionalfields = ruleVO.getRuleAdditionalfields();
         if(!CommonUtil.isListEmpty(ruleAdditionalfields)){
-        rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(ruleAdditionalfields));
+        	rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(ruleAdditionalfields));
         }
         return rule;
     }
+    @Override
+    public Rule convertToRuleExcPa(RuleVO ruleVO) {
+        if ( ruleVO == null ) {
+            return null;
+        }
+        Rule rule = new Rule();
+        rule.setIdRule( ruleVO.getIdRule() );
+        rule.setAgentId(ruleVO.getAgentId());
+        rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
+        int level = getValueByDescription(ruleVO.getLevel());
+        if(level == -1){
+        	log.warn("level returned -1:"+ruleVO.getLevel());
+        }
+        rule.setLevel(level);
+        rule.setType(ruleVO.getType());
+        
+        
+        return rule;
+    }
+
 
     @Override
     public List<Rule> convertToRuleList(List<RuleVO> ruleVO) {
@@ -159,6 +179,20 @@ public class RuleMapperImpl implements RuleMapper {
 			}
 		}
 		return -1;
+	}
+
+	@Override
+	public List<Rule> convertToRuleExcPaList(List<RuleVO> ruleVO) {
+		if ( ruleVO == null ) {
+            return null;
+        }
+
+        List<Rule> list = new ArrayList<Rule>();
+        for ( RuleVO ruleVO_ : ruleVO ) {
+            list.add( convertToRuleExcPa( ruleVO_ ) );
+        }
+
+        return list;
 	}
     
 }

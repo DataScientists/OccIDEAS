@@ -47,7 +47,8 @@
 
         return {
         	listByInterview: listByInterview,
-        	getInterviews: getInterviews         
+        	getInterviews: getInterviews,
+        	getAssessments: getAssessments 
         };
     }
 })();
