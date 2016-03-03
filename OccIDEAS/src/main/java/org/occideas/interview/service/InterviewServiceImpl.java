@@ -51,6 +51,10 @@ public class InterviewServiceImpl implements InterviewService {
     public void update(InterviewVO o) {
         dao.saveOrUpdate(mapper.convertToInterview(o));
     }
+    @Override
+    public void merge(InterviewVO o) {
+        dao.merge(mapper.convertToInterview(o));
+    }
 
     @Override
     public void delete(InterviewVO o) {

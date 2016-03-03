@@ -114,7 +114,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response saveAndNextQuestion(InterviewVO interviewVO) {
-        service.update(interviewVO);
+        service.merge(interviewVO);
 
         QuestionVO questionVO;
         try {
@@ -312,11 +312,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			}			
 		}
     	firedRules = removeDuplicates(firedRules);
-    	for(RuleVO rule: firedRules){
-       		rule.setConditions(null);	
-    	}
     	interview.setFiredRules(firedRules);
-    	service.update(interview);
+    	service.merge(interview);
     }
     private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules){
     	ArrayList<RuleVO> retValue = new ArrayList<RuleVO>();
