@@ -313,7 +313,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		}
     	firedRules = removeDuplicates(firedRules);
     	interview.setFiredRules(firedRules);
-    	service.merge(interview);
+    	service.update(interview);
     }
     private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules){
     	ArrayList<RuleVO> retValue = new ArrayList<RuleVO>();

@@ -8,10 +8,9 @@ public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAn
 	private long id;
 	private String interviewQuestionAnswerFreetext;
     private PossibleAnswerVO possibleAnswer;
-    private InterviewVO interview;
+    private long idInterview;
     private QuestionVO question;
     private int deleted;
-    private String referenceNumber;
        
 	public long getId() {
 		return id;
@@ -45,24 +44,6 @@ public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAn
 		this.deleted = deleted;
 	}
 	
-	public String getReferenceNumber() {
-		if(this.referenceNumber==null){
-			if(this.getInterview()!=null){
-				referenceNumber = this.getInterview().getReferenceNumber();
-			}	    
-		}
-		return referenceNumber;
-	}
-	public void setReferenceNumber(String referenceNumber) {
-		this.referenceNumber = referenceNumber;
-	}
-	public InterviewVO getInterview() {
-		return interview;
-	}
-	public void setInterview(InterviewVO interview) {
-		this.interview = interview;
-	}
-	
 	@Override
 	public int compareTo(InterviewQuestionAnswerVO o) {
 		if((this.getPossibleAnswer()!=null) && (o.getPossibleAnswer()!=null)){
@@ -72,5 +53,11 @@ public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAn
 		}
 		
 		      
+	}
+	public long getIdInterview() {
+		return idInterview;
+	}
+	public void setIdInterview(long idInterview) {
+		this.idInterview = idInterview;
 	}
 }

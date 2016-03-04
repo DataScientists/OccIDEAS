@@ -39,6 +39,7 @@
                 var answerIds = [];
                 for (var i = 0; i < answers.length; i++) {
                 	var newQuestionAsked = {possibleAnswer:answers[i],
+                			idInterview:interview.interviewId,
                 			question:node,
     						interviewQuestionAnswerFreetext:answers[i].name}
                 	
@@ -46,6 +47,7 @@
                 }
             } else {
             	var newQuestionAsked = {possibleAnswer:seletectedEl,
+            			idInterview:interview.interviewId,
             			question:node,
 						interviewQuestionAnswerFreetext:seletectedEl.name}
             	interview.questionsAsked.push(newQuestionAsked);               
@@ -110,6 +112,7 @@
                                 	activeInterview.questionsAsked = [];
                             	}
                             	var newQuestionAsked = {question:question.linkingQuestion,
+                            			idInterview:activeInterview.interviewId,
                 						interviewQuestionAnswerFreetext:'Q_linked'}
                             	activeInterview.questionsAsked.push(newQuestionAsked);
                             	

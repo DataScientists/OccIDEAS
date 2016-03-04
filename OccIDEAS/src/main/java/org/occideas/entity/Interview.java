@@ -41,8 +41,14 @@ public class Interview implements java.io.Serializable {
 	@JoinColumn(name="fragment_idNode",referencedColumnName="idNode")
 	private Fragment fragment;
 	
-	@OneToMany(fetch=FetchType.LAZY)
-	@JoinColumn(name="interview_idinterview",referencedColumnName="idinterview")
+	/*@OneToMany(fetch = FetchType.EAGER)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@JoinTable(
+            name="Interview_Question_Answer",
+            joinColumns = @JoinColumn( name="interview_idinterview"),
+            inverseJoinColumns = @JoinColumn( name="id")
+    )*/
+	@OneToMany(mappedBy="idInterview",targetEntity=InterviewQuestionAnswer.class)
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
 	private List<InterviewQuestionAnswer> interviewQuestionAnswers;
 	
