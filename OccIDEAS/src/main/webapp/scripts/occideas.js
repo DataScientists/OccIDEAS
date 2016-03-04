@@ -70,6 +70,17 @@ angular
       });
   }])
   .run(configureDefaults)
+  .provider({
+	  $exceptionHandler: function(){
+	        var handler = function(exception, cause) {
+	            alert(exception);
+	        };
+
+	        this.$get = function() {
+	            return handler;
+	        };
+	    }
+  })
   .factory('ErrorHandler',ErrorHandler);	
 
    configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope'];

@@ -1,8 +1,8 @@
 (function() {
 	angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
-	TabsCtrl.$inject = ['$scope','$state','$rootScope'];
-	function TabsCtrl($scope,$state,$rootScope) {
+	TabsCtrl.$inject = ['$scope','$state','$rootScope','$log'];
+	function TabsCtrl($scope,$state,$rootScope,$log) {
 		$scope.loading = false;
 		$scope.tabOptions = [];
 		$scope.tabOptions[0] = {
@@ -31,21 +31,21 @@
 			var data = null;
 			if($scope.tabOptions[current]){
 				if($scope.tabOptions[current].state){
-					console.log("Navigating to "+$scope.tabOptions[current].state);
+					$log.info("Navigating to "+$scope.tabOptions[current].state);
 					state = $scope.tabOptions[current].state;
 				}else{
 					state = "tabs.modules";
 				}
 				if($scope.tabOptions[current].data){
-					console.log("with data: "+$scope.tabOptions[current].data)
-					console.log("with idNode: "+$scope.tabOptions[current].data.row)
+					$log.info("with data: "+$scope.tabOptions[current].data)
+					$log.info("with idNode: "+$scope.tabOptions[current].data.row)
 					data = $scope.tabOptions[current].data;
 				}
 				
 			}else{
 				state = "tabs.modules";
 			}
-			console.log("going to state "+state);
+			$log.info("going to state "+state);
 			$state.go(state,data);
 
 		});
@@ -131,7 +131,7 @@
 				    } 
 				});
 			}
-			console.log("addModuleTab questionsLoading end");
+			$log.info("addModuleTab questionsLoading end");
 		};
         $scope.addRulesTab = function(scope) {
             var nodeData = scope.$modelValue;

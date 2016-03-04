@@ -5,13 +5,13 @@
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
-	                          'AgentsService','RulesService','$compile','TabsCache','$rootScope','ModuleRuleService'];
+	                          'AgentsService','RulesService','$compile',
+	                          'TabsCache','$rootScope','ModuleRuleService','$log'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			AgentsService,RulesService,$compile,TabsCache,$rootScope,ModuleRuleService) {
+			AgentsService,RulesService,$compile,TabsCache,$rootScope,ModuleRuleService,$log) {
 		var self = this;
-		console.log('inside QuestionsCtrl');
 		$scope.data = data;	
 		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
@@ -81,6 +81,7 @@
     		$scope.agentsLoading = false;
     		$scope.agentsData = group;
     		safeDigest($scope.agentsData);
+    		$log.info("Agent slider has been reloaded ........");
     		});
     	}
     	
@@ -108,6 +109,7 @@
 	    			$scope.frequencyData = frequencies;
 	    			$scope.aJSMData = ajsms;
 	    			$scope.fragmentsLoading = false;
+	    			$log.info("Fragment slider has been reloaded....");
 	    			return object;
     		 });
     	}
@@ -135,31 +137,11 @@
     	$scope.getRulesIfAny = function(node,agents){
     		var filteredAgent = _.filter(node.moduleRule, _.matches({ 'idAgent': agents.idAgent }));
 			if(filteredAgent.length > 0){
-				/*var rules=  _.reduce(filteredAgent, function(memo, current) { 
-					return _.extend(memo, current) 
-					},  {});
-				var id = rules.idRule;
-				var existRules = _.filter($scope.rulesInt, { 'id': id});
-				if(existRules.length > 0){
-					existRules[0].nodes.push({
-						nodeNumber:node.number,
-						idNode:node.idNode
-					});
-				}else{
-				$scope.rulesInt.push({
-					'id':id,
-					nodes:[{
-						nodeNumber:node.number,
-						idNode:node.idNode
-					}]
-				});
-				}*/
 				return filteredAgent;
 			}
 			return null;			
     	}
     	
-		//typesetting
 		$scope.topDirections = ['left', 'up'];
 		$scope.bottomDirections = ['down', 'right'];
 		self.isOpen = false;
@@ -272,7 +254,7 @@
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
-					console.log("source"+sourceNode.type);
+					$log.info("source"+sourceNode.type);
 					
 						
 					
@@ -329,7 +311,7 @@
 				beforeDrop:function(event){
 					var sourceNode = event.source.nodeScope.node;
 					var destNode = event.dest.nodesScope.node;
-					console.log("source"+sourceNode.type);
+					$log.info("source"+sourceNode.type);
 					if(!destNode){
 						$scope.isDragging = false;
 						return false;					
@@ -391,7 +373,7 @@
 					}else{
 						if(sourceNode.nodeclass=='Q'){
 							if(destNode.nodeclass=='Q'){
-								console.log("Hovering Q on Q");
+								$log.info("Hovering Q on Q");
 								
 								wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
 								sourceNode.warning = 'warning';		
@@ -401,11 +383,11 @@
 							}			
 						}else if(sourceNode.nodeclass=='P'){
 							if(destNode.nodeclass=='P'){
-								console.log("Hovering P on P");
+								$log.info("Hovering P on P");
 								wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
 								sourceNode.warning = 'warning';		
 							}else if(destNode.nodeclass=='M'){
-								console.log("Hovering P on M");
+								$log.info("Hovering P on M");
 								wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
 								sourceNode.warning = 'warning';				
 							}else{
@@ -433,15 +415,15 @@
 					}else{
 						if(sourceNode.nodeclass=='Q'){
 							if(destNode.nodeclass=='Q'){
-								console.log("dropped Q on Q");							
+								$log.info("dropped Q on Q");							
 								retValue=false;		
 							}			
 						}else if(sourceNode.nodeclass=='P'){
 							if(destNode.nodeclass=='P'){
-								console.log("Dropped P on P");
+								$log.info("Dropped P on P");
 								retValue=false;		
 							}else if(destNode.nodeclass=='M'){
-								console.log("Dropped P on M");
+								$log.info("Dropped P on M");
 								retValue=false;			
 							}else{
 								sourceNode.warning = '';
@@ -484,15 +466,17 @@
 					sourceNode.warning = null;
 					var destNode = event.dest.nodesScope.node;
 					if($scope.isClonable){
-						console.log("Just cloned so turning undo off ");
+						$log.info("Just cloned so turning undo off ");
 						$scope.undoEnable = false;
 					}
 					
-					console.log("source"+sourceNode.type);
+					$log.info("source"+sourceNode.type);
 					if(!destNode){
-						sourceNode.warning = 'warning';						
+						sourceNode.warning = 'warning';	
+						$log.warning("Node is dropped on the wrong spot -"
+								+": source"+sourceNode+ "dest:" +destNode);
 					}else{
-						console.log("dest "+destNode.type);
+						$log.info("dest "+destNode.type);
 						
 					}
 					sourceNode.parentId = destNode.idNode;
@@ -512,6 +496,7 @@
 			_.each(arrayList, function(data) {
 				 data.sequence = seq++;			
 			})
+			$log.info("reorderSequence:"+data);
 		}
 		function cascadeTemplateNullIds(nodes){
 			var seq = 1;
@@ -531,7 +516,8 @@
 					data.nodes = [];
 				}
 						 
-			})
+			});
+			$log.info("cascadeTemplateNullIds:"+nodes);
 		}
 
 		ModulesService.getActiveModules().then(function(data) {	
@@ -1157,7 +1143,7 @@
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
 					QuestionsService.saveNode($scope.data[0]).then(function(response){
 						if(response.status === 200){
-							console.log('Save was Successful Now Reloading!');
+							$log.info('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
 								TabsCache.removeAll();
 								$scope.data = data.data;
@@ -1166,11 +1152,13 @@
 								}
 							});
 						}else{
-							console.log('ERROR on Save!');
+							$log.error('ERROR on Save!');
+							throw response;
 						}
 					});
 				}else{
-					console.log('ERROR on Save!');	
+					$log.error('ERROR on Save!');	
+					throw response;
 				}
 			});
 		}
@@ -1185,26 +1173,24 @@
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
 					QuestionsService.saveNode($scope.data[0]).then(function(response){
 						if(response.status === 200){
-							console.log('Save was Successful! Not Reloading');
-							TabsCache.put(response.data.idNode,response.data);
-							if(locationId && locationId != ''){
-								//$scope.scrollTo(locationId);
-							}
+							$log.info('Save was Successful! Not Reloading');
 							if(deffered){
 								deffered.resolve();
 							}
 						}
 						else{
-							console.log('ERROR on Save!');
+							$log.error('ERROR on Save!'+response.status.message);
 							if(deffered){
 								deffered.reject();
+								throw response;
 							}
 						}
 					});
 					}else{
-						console.log('ERROR on Get max ID!');
+						$log.error('ERROR on Get max ID!'+response.status.message);
 						if(deffered){
 							deffered.reject();
+							throw response;
 						}
 					}
 			});	
@@ -1240,7 +1226,7 @@
 					var deffered = $q.defer();
 					FragmentsService.createFragment(destNode).then(function(response){
 						if(response.status === 200){
-							console.log("Fragment saved");
+							$log.info("Fragment saved");
 							FragmentsService.getByType('F_template').then(function(template) {	
 				    			for(var i=0;i < template.length;i++){
 				    				var node = template[i];
@@ -1252,7 +1238,9 @@
 				    			        try {
 				    			        	$scope.templateData.$digest();
 				    			        }
-				    			        catch (e) { }
+				    			        catch (e) {
+				    			        	$log.error(e);
+				    			        }
 				    			    }
 				    			}
 				    				deffered.resolve();
@@ -1269,7 +1257,9 @@
 			    			        try {
 			    			        	$scope.aJSMData.$digest();
 			    			        }
-			    			        catch (e) { }
+			    			        catch (e) {
+			    			        	$log.error(e);
+			    			        }
 			    			    }
 			        			}
 			        			deffered.resolve();
@@ -1277,7 +1267,6 @@
 							FragmentsService.getByType('F_frequency').then(function(data) {	
 			        			for(var i=0;i < data.length;i++){
 			        				var node = data[i];
-			        				//node.type = "Q_linkedtemplate";
 			        				node.nodeclass = "Q";
 			        			}
 			        			if($scope.frequencyData != null){
@@ -1286,7 +1275,9 @@
 			    			        try {
 			    			        	$scope.frequencyData.$digest();
 			    			        }
-			    			        catch (e) { }
+			    			        catch (e) { 
+			    			        	$log.error(e);
+			    			        }
 			    			    }
 			        			}
 			        			deffered.resolve();
@@ -1294,6 +1285,8 @@
 						   
 						}else{
 							deffered.reject();
+							$log.error(response.status);
+							throw response.status.message;
 						}
 					});
 					deffered.promise.then(function(){
@@ -1415,6 +1408,7 @@
 		}
 		
 		$scope.undo = function(){
+			$log.info("Undo is being processed ........");
 			$scope.data = $window.beforeNode;
 			saveModuleWithoutReload();
 			$scope.undoEnable = false;
@@ -1517,7 +1511,7 @@
             		})
             	RulesService.save(rule).then(function(response){
     				if(response.status === 200){
-    					console.log('Rule Save was Successful!');
+    					$log.info('Rule Save was Successful!' +rule);
     					ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
     						if(response.status === 200){
     							var result = response.data[response.data.length-1];
@@ -1540,7 +1534,7 @@
         $scope.saveRule = function(rule){
         	RulesService.save(rule).then(function(response){
     			if(response.status === 200){
-    				console.log('Rule Save was Successful!');
+    				$log.info('Rule Save was Successful!'+rule);
     				_.each(rule.conditions,function(v,k){
 						ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
 						if(response.status === 200){
@@ -1572,7 +1566,7 @@
         $scope.updateRule = function(rule,model){
         	RulesService.update(rule).then(function(response){
     			if(response.status === 200){
-    				console.log('Rule Save was Successful!');	
+    				$log.info('Rule Save was Successful!'+rule);	
     				ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
 						if(response.status === 200){
 							var result = response.data[response.data.length-1];
@@ -1603,7 +1597,7 @@
         	}
         	RulesService.save(rule).then(function(response){
 				if(response.status === 200){
-					console.log('Rule Save was Successful!');
+					$log.info('Rule Save was Successful!'+rule);
 					ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
 						if(response.status === 200){
 							var result = response.data[response.data.length-1];
@@ -1642,7 +1636,7 @@
         $scope.deleteRule = function(rule,model,$event){
         	RulesService.remove(rule).then(function(response){
     			if(response.status === 200){
-    				console.log('Rule Save was Successful!');	
+    				$log.info('Rule Save was Successful!'+rule);	
     				_.each(rule.conditions,function(v,k){
 						ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
 						if(response.status === 200){
