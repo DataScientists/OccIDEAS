@@ -110,30 +110,6 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     }
 
     @POST
-    @Path(value = "/saveAndNextQ")
-    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
-    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response saveAndNextQuestion(InterviewVO interviewVO) {
-        service.merge(interviewVO);
-
-        QuestionVO questionVO;
-        try {
-            if ((interviewVO.getModule()!=null) && interviewVO.getInterviewId() > 0) { //moving into module
-                questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getModule().getIdNode());
-            } else if ((interviewVO.getFragment() != null) && interviewVO.getInterviewId() > 0) { //moving into fragment aJSM
-                questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getFragment().getIdNode());
-            } else if ("multiple".equals(interviewVO.getType())) {
-                questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getMultipleAnswerId().get(0));
-            } else {
-                questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getSingleAnswerId());
-            }
-        } catch (Throwable e) {
-        	e.printStackTrace();
-            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-        }
-        return Response.ok(questionVO).build();
-    }
-    @POST
     @Path(value = "/nextquestion")
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -142,7 +118,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         QuestionVO questionVO = null;
         try {
         	for(InterviewVO interviewVO:list){
-        		this.determineFiredRules(interviewVO);
+        		//this.determineFiredRules(interviewVO);
         		if(interviewVO.isActive()){
         			questionVO = this.getNearestQuestion(interviewVO);
         		}  
@@ -152,9 +128,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         	}
         	if(questionVO==null){
         		for(InterviewVO interviewVO:list){
-            		if(interviewVO.getType().equalsIgnoreCase("module")){
-            			questionVO = this.getNearestQuestion(interviewVO);
-            			
+            		if(interviewVO.getModule()!=null){
+            			if(interviewVO.getModule().getType()!="Intro_Module"){
+            				questionVO = this.getNearestQuestion(interviewVO);
+            			}          			           			
             		} 
             		if(questionVO!=null){
             			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
@@ -164,9 +141,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			}
         	if(questionVO==null){
         		for(InterviewVO interviewVO:list){
-            		if(interviewVO.getType().equalsIgnoreCase("intromodule")){
-            			questionVO = this.getNearestQuestion(interviewVO);
-            		}   
+        			if(interviewVO.getModule().getType()=="Intro_Module"){
+        				questionVO = this.getNearestQuestion(interviewVO);
+        			}  
             		if(questionVO!=null){
             			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
             			break;
@@ -210,7 +187,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     			
     		}
     		if(questionVO==null){
-    			if(interviewVO.getType().equals("ajsm")){
+    			if(interviewVO.getFragment()!=null){
     				List<QuestionVO> childQuestions = interviewVO.getFragment().getChildNodes();
     				if(childQuestions.size()==0){					
     					for(FragmentVO fragment:fragmentService.findById(interviewVO.getFragment().getIdNode())){

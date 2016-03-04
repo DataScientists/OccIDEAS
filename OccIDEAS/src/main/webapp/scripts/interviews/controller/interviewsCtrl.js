@@ -54,124 +54,139 @@
             }
             InterviewsService.save(interview).then(function (response) {
             	if (response.status === 200) {
-                	InterviewsService.getNextQuestion($scope.interviews).then(function (response) {
+            		var interviewId = 0;
+            		for(var i=0;i<$scope.interviews.length;i++){ 
+                    	if($scope.interviews[i].active){
+                    		interviewId = $scope.interviews[i].interviewId;
+                    		
+                    	}
+                    }
+            		InterviewsService.get(interviewId).then(function (response) {
                         if (response.status === 200) {
-                        	var question = response.data;
-                            $scope.data.showedQuestion = question;
-                            resetSelectedIndex();
-                            if(question.linkingQuestion){                             	
-                            	var linkingQuestion = question.linkingQuestion;
-                            	var mtype;
-                            	var newInterview = {};
-                            	if(linkingQuestion.type=='Q_linkedajsm'){
-                            		mtype = 'F_ajsm';
-                            		newInterview.fragment = {idNode:linkingQuestion.link,name:linkingQuestion.name,type:mtype};
-                            		newInterview.type = 'ajsm';
-                            		QuestionsService.findQuestions(linkingQuestion.link,'F')
-                                    .then(function(response){
-                                        console.log("Data getting from questions AJAX ...");
-                                        $scope.linkedAjsm = response.data;
-                                        $scope.showIntroModule = false;
-                                        $scope.showModule = false;
-                                        $scope.showAjsm = true;
-                                        
-                                    });
-                            	}else if (linkingQuestion.type=='Q_linkedmodule'){
-                            		mtype = 'M_Module';
-                            		newInterview.module = {idNode:linkingQuestion.link,type:mtype};
-                            		newInterview.type = 'module';
-                            		QuestionsService.findQuestions(linkingQuestion.link,'M')
-                                    .then(function(response){
-                                        console.log("Data getting from questions AJAX ...");
-                                        $scope.linkedModule = response.data;
-                                        $scope.showIntroModule = false;
-                                        $scope.showModule = true;
-                                        $scope.showAjsm = false;
-                                    });
+                        	for(var i=0;i<$scope.interviews.length;i++){ 
+                            	if($scope.interviews[i].active){
+                            		var interview = response.data[0];
+                            		interview.active = true;
+                            		$scope.interviews[i] = interview;
                             	}
-                            	newInterview.referenceNumber = $scope.interviews[0].referenceNumber;
-                            	newInterview.active = true;
-                                var activeInterview;
-                                for(var i=0;i<$scope.interviews.length;i++){ 
-                                	if($scope.interviews[i].active){
-                                		activeInterview = $scope.interviews[i];
-                                		activeInterview.active=false;
-                                	}
-                                }
-                                $scope.interviews.push(newInterview);
-                                InterviewsService.startInterview(newInterview).then(function (response) {
-                                	if (response.status === 200) {
-                                		for(var i=0;i<$scope.interviews.length;i++){ 
-                                        	if($scope.interviews[i].active){
-                                        		$scope.interviews[i].interviewId = response.data.interviewId;
-                                        	}
-                                        }
-                                	}
-                                });                                                                 
-                                if(!activeInterview.questionsAsked){
-                                	activeInterview.questionsAsked = [];
-                            	}
-                            	var newQuestionAsked = {question:question.linkingQuestion,
-                            			idInterview:activeInterview.interviewId,
-                						interviewQuestionAnswerFreetext:'Q_linked'}
-                            	activeInterview.questionsAsked.push(newQuestionAsked);
-                            	
-                            	InterviewsService.save(activeInterview).then(function (response) {
-                            		if (response.status === 200) {
-                            			console.log('Added liking question');
-                            		}
-                            	});
-                            } else if(question.activeInterviewId){
-                            	for(var i=0;i<$scope.interviews.length;i++){ 
-                                	if($scope.interviews[i].interviewId==question.activeInterviewId){
-                                		$scope.interviews[i].active = true;
-                                		if($scope.interviews[i].module){
-                                			if($scope.interviews[i].module.type=='M_IntroModule'){
-                                				$scope.showIntroModule = true;
+                            }
+                        	InterviewsService.getNextQuestion($scope.interviews).then(function (response) {
+                                if (response.status === 200) {
+                                	var question = response.data;
+                                    $scope.data.showedQuestion = question;
+                                    resetSelectedIndex();
+                                    if(question.linkingQuestion){                             	
+                                    	var linkingQuestion = question.linkingQuestion;
+                                    	var newInterview = {};
+                                    	if(linkingQuestion.type=='Q_linkedajsm'){
+                                    		newInterview.fragment = {idNode:linkingQuestion.link,name:linkingQuestion.name};
+                                    		QuestionsService.findQuestions(linkingQuestion.link,'F')
+                                            .then(function(response){
+                                                console.log("Data getting from questions AJAX ...");
+                                                $scope.linkedAjsm = response.data;
+                                                $scope.showIntroModule = false;
                                                 $scope.showModule = false;
-                                                $scope.showAjsm = false;
-                                			}else{
-                                				$scope.showIntroModule = false;
+                                                $scope.showAjsm = true;
+                                                
+                                            });
+                                    	}else if (linkingQuestion.type=='Q_linkedmodule'){
+                                    		newInterview.module = {idNode:linkingQuestion.link};
+                                    		QuestionsService.findQuestions(linkingQuestion.link,'M')
+                                            .then(function(response){
+                                                console.log("Data getting from questions AJAX ...");
+                                                $scope.linkedModule = response.data;
+                                                $scope.showIntroModule = false;
                                                 $scope.showModule = true;
                                                 $scope.showAjsm = false;
-                                			}                             			
-                                		}
-                                	}else{
-                                		$scope.interviews[i].active = false;
-                                	}
-                                }
-                            }                                                            
-                            if(response.data.idNode){
-                                var elId = "node-" + response.data.idNode;
-                                $scope.scrollTo(elId);   
-                            }else{
-                            	$scope.data.interviewStarted = false;
-                            	$scope.data.interviewEnded = true;
-                            }                           
-                        } else if (response.status == 204) {
-                        	for(var i=0;i<$scope.interviews.length;i++){ 
-                        		InterviewsService.get($scope.interviews[i].interviewId).then(function (response) {
-                                	if (response.status === 200) {
-                                		for(var i=0;i<$scope.interviews.length;i++){ 
-                                        	if($scope.interviews[i].interviewId==response.data[0].interviewId){
-                                        		$scope.interviews[i]=response.data[0];
+                                            });
+                                    	}
+                                    	newInterview.referenceNumber = $scope.interviews[0].referenceNumber;
+                                    	newInterview.active = true;
+                                        var activeInterview;
+                                        for(var i=0;i<$scope.interviews.length;i++){ 
+                                        	if($scope.interviews[i].active){
+                                        		activeInterview = $scope.interviews[i];
+                                        		activeInterview.active=false;
                                         	}
-                                        }                     		
-                                	}
-                            	}); 
-                           }
-                        	$scope.data.interviewStarted = false;
-                            $scope.data.interviewEnded = true;
-                        	                      
-                        } else {
-                            console.log('ERROR on Get!');
+                                        }
+                                        $scope.interviews.push(newInterview);
+                                        InterviewsService.startInterview(newInterview).then(function (response) {
+                                        	if (response.status === 200) {
+                                        		for(var i=0;i<$scope.interviews.length;i++){ 
+                                                	if($scope.interviews[i].active){
+                                                		$scope.interviews[i].interviewId = response.data.interviewId;
+                                                	}
+                                                }
+                                        	}
+                                        });                                                                 
+                                        if(!activeInterview.questionsAsked){
+                                        	activeInterview.questionsAsked = [];
+                                    	}
+                                    	var newQuestionAsked = {question:question.linkingQuestion,
+                                    			idInterview:activeInterview.interviewId,
+                        						interviewQuestionAnswerFreetext:'Q_linked'}
+                                    	activeInterview.questionsAsked.push(newQuestionAsked);
+                                    	
+                                    	InterviewsService.save(activeInterview).then(function (response) {
+                                    		if (response.status === 200) {
+                                    			console.log('Added liking question');
+                                    		}
+                                    	});
+                                    } else if(question.activeInterviewId){
+                                    	for(var i=0;i<$scope.interviews.length;i++){ 
+                                        	if($scope.interviews[i].interviewId==question.activeInterviewId){
+                                        		$scope.interviews[i].active = true;
+                                        		if($scope.interviews[i].module){
+                                        			if($scope.interviews[i].module.type=='M_IntroModule'){
+                                        				$scope.showIntroModule = true;
+                                                        $scope.showModule = false;
+                                                        $scope.showAjsm = false;
+                                        			}else{
+                                        				$scope.showIntroModule = false;
+                                                        $scope.showModule = true;
+                                                        $scope.showAjsm = false;
+                                        			}                             			
+                                        		}
+                                        	}else{
+                                        		$scope.interviews[i].active = false;
+                                        	}
+                                        }
+                                    }                                                            
+                                    if(response.data.idNode){
+                                        var elId = "node-" + response.data.idNode;
+                                        $scope.scrollTo(elId);   
+                                    }else{
+                                    	$scope.data.interviewStarted = false;
+                                    	$scope.data.interviewEnded = true;
+                                    }                           
+                                } else if (response.status == 204) {
+                                	for(var i=0;i<$scope.interviews.length;i++){ 
+                                		InterviewsService.get($scope.interviews[i].interviewId).then(function (response) {
+                                        	if (response.status === 200) {
+                                        		for(var i=0;i<$scope.interviews.length;i++){ 
+                                                	if($scope.interviews[i].interviewId==response.data[0].interviewId){
+                                                		$scope.interviews[i]=response.data[0];
+                                                	}
+                                                }                     		
+                                        	}
+                                    	}); 
+                                   }
+                                	$scope.data.interviewStarted = false;
+                                    $scope.data.interviewEnded = true;
+                                	                      
+                                } else {
+                                    console.log('ERROR on Get!');
+                                }
+                                angular.element('#numId').focus();
+                            });
                         }
-                        angular.element('#numId').focus();
-                    });
+            		});
+                	
             	}          	
             });                  
         }
-        $scope.showRule = function (scope){
+        $scope.showRule = function (scope){ 
+        	//Todo implement show dialog on 
         	/*var x = scope.rule.conditions;
 		  	x.idRule = scope.rule.idRule;
 		  	addPopoverInfo(x,scope.rule.idRule);
@@ -189,7 +204,6 @@
                 var interview = {};
                 interview.module = $scope.data[0];
                 interview.referenceNumber = $scope.referenceNumber;
-                interview.type = 'intromodule';
                 $scope.interviews = [];
                 $scope.interviews.push(interview);
                 

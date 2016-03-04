@@ -10,7 +10,6 @@ import java.util.List;
 public class InterviewVO {
 	private String referenceNumber;
 	private String freeText;
-    private String type;
     private long singleAnswerId;
     private List<Long> multipleAnswerId;
     private long interviewId;
@@ -54,14 +53,6 @@ public class InterviewVO {
 
     public void setFreeText(String freeText) {
         this.freeText = freeText;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public long getSingleAnswerId() {
