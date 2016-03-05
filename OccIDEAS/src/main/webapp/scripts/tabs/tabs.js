@@ -24,6 +24,7 @@
 
 	Config.$inject = ['$stateProvider','$windowProvider','$rootScopeProvider','$stickyStateProvider'];
 	function Config($stateProvider,$windowProvider,$rootScopeProvider,$stickyStateProvider) {
+		var $log =  angular.injector(['ng']).get('$log');
 		var $window = $windowProvider.$get();
 		$rootScopeProvider.$window = $window;
 		$stateProvider.state('tabs', {
@@ -93,15 +94,15 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions@tabs resolve");
+			        		$log.info("inside questions@tabs resolve");
 //			        		if(TabsCache.get($stateParams.row)){
-//			        			console.log("Data getting from questions Cache ...");
+//			        			$log.info("Data getting from questions Cache ...");
 //			        			return TabsCache.get($stateParams.row);
 //			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -136,15 +137,15 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions1@tabs resolve");
+			        		$log.info("inside questions1@tabs resolve");
 			        		if(TabsCache.get($stateParams.row)){
-			        			console.log("Data getting from questions Cache ...");
+			        			$log.info("Data getting from questions Cache ...");
 			        			return TabsCache.get($stateParams.row);
 			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -179,15 +180,15 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions2@tabs resolve");
+			        		$log.info("inside questions2@tabs resolve");
 			        		if(TabsCache.get($stateParams.row)){
-			        			console.log("Data getting from questions Cache ...");
+			        			$log.info("Data getting from questions Cache ...");
 			        			return TabsCache.get($stateParams.row);
 			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -222,15 +223,15 @@
 			        params:{row: null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions1@tabs resolve");
+			        		$log.info("inside questions1@tabs resolve");
 			        		if(TabsCache.get($stateParams.row)){
-			        			console.log("Data getting from questions Cache ...");
+			        			$log.info("Data getting from questions Cache ...");
 			        			return TabsCache.get($stateParams.row);
 			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'F')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -267,7 +268,7 @@
                         data: function($stateParams,QuestionsService) {
                             return QuestionsService.findQuestions($stateParams.row,'M')
                                 .then(function(response){
-                                    console.log("Data getting from questions AJAX ...");
+                                    $log.info("Data getting from questions AJAX ...");
                                     return response.data;
                                 });
                         }
@@ -287,7 +288,7 @@
                         data: function($stateParams,RulesService) {
                             return RulesService.listByModule($stateParams.row)
                                 .then(function(data){
-                                    console.log("Data getting from module rules AJAX ... for "+$stateParams.row);
+                                    $log.info("Data getting from module rules AJAX ... for "+$stateParams.row);
                                     var viewData = data;
                                     return viewData;
                                 })

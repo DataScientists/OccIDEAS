@@ -11,7 +11,6 @@
 		var getModules = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
 		    var data = response.data;
-		   //ModulesCache.put("all",data);
 		    return data;
 		  });
 		};
