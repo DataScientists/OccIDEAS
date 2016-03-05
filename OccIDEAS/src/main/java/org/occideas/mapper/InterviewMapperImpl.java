@@ -72,7 +72,7 @@ public class InterviewMapperImpl implements InterviewMapper {
         List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
         interview.setInterviewQuestionAnswers(iqaMapper.convertToInterviewQuestionAnswerList(questionsAsked));
         List<RuleVO> firedRules = interviewVO.getFiredRules();
-        interview.setFiredRules(ruleMapper.convertToRuleList(firedRules));
+        interview.setFiredRules(ruleMapper.convertToRuleExcPaList(firedRules));
         
         return interview;
     }
