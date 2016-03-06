@@ -85,7 +85,7 @@
 			}
 		}).state('tabs.questions', {
 			url: '/questions/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions@tabs':{
@@ -128,7 +128,7 @@
 			}
 		}).state('tabs.questions1', {
 			url: '/questions1/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions1@tabs':{
@@ -171,7 +171,7 @@
 			}
 		}).state('tabs.questions2', {
 			url: '/questions2/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions2@tabs':{

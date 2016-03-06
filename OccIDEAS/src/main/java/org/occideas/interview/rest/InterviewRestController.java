@@ -2,9 +2,7 @@ package org.occideas.interview.rest;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.log4j.Logger;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
@@ -34,6 +33,9 @@ import org.springframework.http.MediaType;
 @Path("/interview")
 public class InterviewRestController implements BaseRestController<InterviewVO> {
 
+	private Logger log = Logger.getLogger(this.getClass());
+	private final String INTRO_MODULE = "Intro_Module";
+	
     @Autowired
     private InterviewService service;
 
@@ -115,77 +117,86 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getNextQuestion(List<InterviewVO> list) {
     	
-        QuestionVO questionVO = null;
         try {
-        	for(InterviewVO interviewVO:list){
-        		//this.determineFiredRules(interviewVO);
-        		if(interviewVO.isActive()){
-        			questionVO = this.getNearestQuestion(interviewVO);
-        		}  
-        		if(questionVO!=null){
-        			break;
-        		}
-        	}
-        	if(questionVO==null){
-        		for(InterviewVO interviewVO:list){
-            		if(interviewVO.getModule()!=null){
-            			if(!interviewVO.getModule().getType().equalsIgnoreCase("Intro_Module")){
-            				questionVO = this.getNearestQuestion(interviewVO);
-            			}          			           			
-            		} 
-            		if(questionVO!=null){
-            			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-            			break;
-            		}
-            	}
-			}
-        	if(questionVO==null){
-        		for(InterviewVO interviewVO:list){
-        			if(interviewVO.getModule().getType().equalsIgnoreCase("Intro_Module")){
-        				questionVO = this.getNearestQuestion(interviewVO);
-        			}  
-            		if(questionVO!=null){
-            			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-            			break;
-            		}
-            	}
-			}     	     	
+        	 QuestionVO questionVO = getInterviewQuestion(list);
+        	 if(questionVO!=null){
+             	return Response.ok(questionVO).build();
+             }else{
+             	try {
+             		for(InterviewVO interviewVO:list){
+                 		this.determineFiredRules(interviewVO);
+                 	}
+             	}catch (Throwable e) {
+                 	 log.error("getNextQuestion badRequest:"+list, e);
+                     return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+                 }        	
+             	return Response.status(Response.Status.NO_CONTENT).build();
+             }   
         } catch (Throwable e) {
         	e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
-        if(questionVO!=null){
-        	return Response.ok(questionVO).build();
-        }else{
-        	try {
-        		for(InterviewVO interviewVO:list){
-            		this.determineFiredRules(interviewVO);
-            	}
-        	}catch (Throwable e) {
-            	e.printStackTrace();
-                return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-            }        	
-        	return Response.status(Response.Status.NO_CONTENT).build();
-        }     
     }
+
+	private QuestionVO getInterviewQuestion(List<InterviewVO> list) {
+		QuestionVO questionVO = null;
+		for(InterviewVO interviewVO:list){
+			if(interviewVO.isActive()){
+				questionVO = this.getNearestQuestion(interviewVO);
+			}  
+			if(questionVO!=null){
+				break;
+			}
+		}
+		processNonIntroModuleInterview(list, questionVO);
+    	processIntroModuleInterview(list, questionVO);     	
+		return questionVO;
+	}
+
+	private QuestionVO processIntroModuleInterview(List<InterviewVO> list, QuestionVO questionVO) {
+		if(questionVO==null){
+    		for(InterviewVO interviewVO:list){
+    			if(interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+    				questionVO = this.getNearestQuestion(interviewVO);
+    			}  
+        		if(questionVO!=null){
+        			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+        			break;
+        		}
+        	}
+		}
+		return questionVO;
+	}
+
+	private QuestionVO processNonIntroModuleInterview(List<InterviewVO> list, QuestionVO questionVO) {
+		if(questionVO==null){
+    		for(InterviewVO interviewVO:list){
+        		if(interviewVO.getModule()!=null){
+        			if(!interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+        				questionVO = this.getNearestQuestion(interviewVO);
+        			}          			           			
+        		} 
+        		if(questionVO!=null){
+        			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+        			break;
+        		}
+        	}
+		}
+		return questionVO;
+	}
     
+	//@TODO need to refactor below code, line per method should be max 10 for readability
 	private QuestionVO getNearestQuestion(InterviewVO interviewVO){
     	QuestionVO questionVO = null;
     	if(interviewVO.getQuestionsAsked().size()>0){
     		List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
     		Collections.sort(questionsAsked);  	
     		for(InterviewQuestionAnswerVO iqa: questionsAsked){
-    			//check for unanswered questions
-    			//System.out.println(iqa.getQuestion().getNumber());
     			if(iqa.getPossibleAnswer()!=null){
-    				//System.out.println(iqa.getPossibleAnswer().getNumber());
     				List<QuestionVO> questions = iqa.getPossibleAnswer().getChildNodes();
     				for(QuestionVO question: questions){   
-    					//System.out.println("-"+question.getNumber());
         				if(!isQuesitonAnswered(question,questionsAsked)){
-        				//	System.out.println("Found unanswered q "+question.getNumber());
         					if(question.compareTo(questionVO)<0){
-        					//	System.out.println("Smallest unanswered q is "+question.getNumber());
         						questionVO = question;       						
         					}
         				}
@@ -259,7 +270,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
     	if(interview.getModule()!=null){
     		ModuleVO module=null;
-    		for(ModuleVO m: moduleService.findById(interview.getModule().getIdNode())){
+    		List<ModuleVO> moduleVOList = moduleService.findById(interview.getModule().getIdNode());
+    		for(ModuleVO m: moduleVOList){
     			module = m;
     		}
     		

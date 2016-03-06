@@ -255,6 +255,22 @@
             $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
+        
+        $scope.cascadeIdCleanse = function(arrayInp){
+			if(arrayInp.length > 0){
+				_.each(arrayInp, function(obj) {
+					  _.each(obj, function(value, key) {
+					    if(key === 'idNode') {
+					      obj[key] = "";
+					    }
+					  });
+					if(obj.nodes.length > 0){
+						cascadeIdCleanse(obj.nodes);
+					}
+				});
+				
+			}
+		}
 
         $scope.childNodes = function () {
           var i, nodes = [];
@@ -722,10 +738,13 @@
               element.after(hiddenPlaceElm);
               if (dragInfo.isClone() && scope.sourceOnly) {
                 dragElm.append(cloneElm);
-              } else {
-                dragElm.append(element);
               }
-
+              else if(dragInfo.isClone()){
+            	  dragElm.append(cloneElm);
+              }
+              else {
+            		 dragElm.append(element);
+              }
               $rootElement.append(dragElm);
 
               dragElm.css({
@@ -893,10 +912,11 @@
                     next = dragInfo.next();
                     if (!next) {
                       target = dragInfo.parentNode(); // As a sibling of it's parent node
+                      var indexCount = target.index() +1;
                       if (target
-                        && target.$parentNodesScope.accept(scope, target.index() + 1)) {
+                        && target.$parentNodesScope.accept(scope, indexCount)) {
                         target.$element.after(placeElm);
-                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
+                        dragInfo.moveTo(target.$parentNodesScope, target.siblings(), indexCount);
                       }
                     }
                   }
@@ -953,6 +973,7 @@
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
                       } else {
                         targetElm.after(placeElm);
+                        
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                       }
                     } else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
@@ -1248,10 +1269,11 @@
           },
 
           dragInfo: function (node) {
+        	var clonedNode = angular.copy(node.$modelValue);
             return {
               source: node,
               sourceInfo: {
-                cloneModel: node.$treeScope.cloneEnabled === true ? angular.copy(node.$modelValue) : undefined,
+                cloneModel: node.$treeScope.cloneEnabled === true ? clonedNode : undefined,
                 nodeScope: node,
                 index: node.index(),
                 nodesScope: node.$parentNodesScope
@@ -1268,13 +1290,16 @@
                 // If source node is in the target nodes
                 var i = this.siblings.indexOf(this.source);
                 if (i > -1) {
+                  if(!this.isClone()){
                   this.siblings.splice(i, 1);
-                  if (this.source.index() < index) {
+                  }
+                  if (this.source.index() < index && !this.isClone()) {
                     index--;
                   }
                 }
-
+                if(!this.isClone()){
                 this.siblings.splice(index, 0, this.source);
+                }
                 this.index = index;
               },
 
@@ -1337,12 +1362,15 @@
                 }
 
                 // node was dropped in the same place - do nothing
-                if (!this.isDirty()) {
+                if (!this.isDirty() && !this.isClone()) {
                   return;
                 }
 
                 // cloneEnabled and cross-tree so copy and do not remove from source
-                if (this.isClone() && this.isForeign()) {
+                if (this.isClone()) {
+                  this.sourceInfo.cloneModel.name = this.sourceInfo.cloneModel.name +'(Copy)';
+                  this.sourceInfo.cloneModel.idNode = "";
+                  this.parent.cascadeIdCleanse(this.sourceInfo.cloneModel.nodes);
                   this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
                 } else { // Any other case, remove and reinsert
                   this.source.remove();

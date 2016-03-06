@@ -3,6 +3,8 @@ package org.occideas.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * Created by quangnn on 2/17/2016.
  */
@@ -113,4 +115,9 @@ public class InterviewVO {
 		this.firedRules = firedRules;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+	
 }

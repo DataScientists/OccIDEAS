@@ -6,11 +6,11 @@
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile',
-	                          'TabsCache','$rootScope','ModuleRuleService','$log'];
+	                          'TabsCache','$rootScope','ModuleRuleService','$log','$timeout'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			AgentsService,RulesService,$compile,TabsCache,$rootScope,ModuleRuleService,$log) {
+			AgentsService,RulesService,$compile,TabsCache,$rootScope,ModuleRuleService,$log,$timeout) {
 		var self = this;
 		$scope.data = data;	
 		var moduleIdNode = $scope.data[0].idNode;
@@ -446,17 +446,6 @@
 						return true;
 					}
 				},
-				dragStart: function(event){
-					if($scope.isClonable){
-
-						event.elements.placeholder.replaceWith(event.elements.dragging.find('li').clone()[0]);
-
-						event.source.nodeScope.node.idNode = "";
-						var name = event.source.nodeScope.node.name;
-						event.source.nodeScope.node.name = name+"(Copy)";
-						cascadeIdCleanse(event.source.nodeScope.node.nodes);
-					}
-				},
 				dragStop: function(event){
 					
 				},
@@ -482,9 +471,12 @@
 					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
 					if(sourceNode.warning != 'warning'){
-						if($scope.isClonable){						
-							saveModuleAndReload();
-							$scope.isClonable = false;												
+						if($scope.isClonable){		
+							$scope.isClonable = false;	
+							safeDigest($scope.isClonable);
+							reorderSequence($scope.data);
+							saveModuleWithoutReload();
+							event.source.nodeScope.$treeScope.cloneEnabled = false;
 						}else{
 							saveModuleWithoutReload();
 						}
@@ -492,9 +484,13 @@
 				}
 		}
 		function reorderSequence(arrayList){
-			var seq = 1;
+			var seq = 0;
 			_.each(arrayList, function(data) {
-				 data.sequence = seq++;			
+				 data.sequence = seq;
+				 seq++;
+				 if(data.nodes.length > 0){
+					 reorderSequence(data.nodes);
+				 }
 			})
 			$log.info("reorderSequence:"+data);
 		}
@@ -582,6 +578,7 @@
 			saveModuleWithoutReload('',deffered);
 			deffered.promise.then(function(resolve){
 				searchAndRemoveNode($scope.data,scope);
+				reorderSequence($scope.data);
 			});
 		};
 		
@@ -1162,6 +1159,7 @@
 				}
 			});
 		}
+		
 		function saveModuleWithoutReload(locationId,deffered){
 			QuestionsService.getMaxId().then(function(response){
 				if(response.status === 200){
@@ -1415,9 +1413,11 @@
 		}
 		
 		$scope.isClonable = false;
-		$scope.copy = function(event){
+		$scope.copy = function(event,$treeScope){
 			if (event.ctrlKey) {
 				$scope.isClonable = true;
+				$treeScope.cloneEnabled = true;
+				safeDigest($treeScope);
 			} 
 		}
 
@@ -1471,16 +1471,14 @@
         $scope.closeRuleDialog = function(elem,$event) {
         	$($event.target).closest('.note').remove();
         	$scope.activeRuleDialog = '';
-        	if (!$scope.activeRuleDialog.$$phase) {
-		        try {
-		        	$scope.activeRuleDialog.$digest();
-		        }
-		        catch (e) { }
-        	}
+        	$scope.activeRuleCell = '';
+        	safeDigest($scope.activeRuleDialog);
+        	safeDigest($scope.activeRuleCell);
         };
         
         $scope.setActiveRule = function(rule,el){
-        	$scope.activeRuleDialog = el.model.idNode+rule.agentId;
+        	$scope.activeRuleDialog = el.model.idNode+'-'+rule.agentId+'-'+rule.idRule;
+        	$scope.activeRuleCell = el.model.idNode+rule.agentId;
         	$scope.activeRule = rule;
         	if (!$scope.activeRuleDialog.$$phase) {
 		        try {

@@ -53,21 +53,18 @@ public class Interview implements java.io.Serializable {
 	private List<InterviewQuestionAnswer> interviewQuestionAnswers;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
     @JoinTable(name="Interview_FiredRules", 
                 joinColumns={@JoinColumn(name="idinterview")}, 
                 inverseJoinColumns={@JoinColumn(name="idRule")})
 	private List<Rule> firedRules;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
     @JoinTable(name="Interview_AutoAssessedRules", 
                 joinColumns={@JoinColumn(name="idinterview")}, 
                 inverseJoinColumns={@JoinColumn(name="idRule")})
 	private List<Rule> autoAssessedRules;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
     @JoinTable(name="Interview_ManualAssessedRules", 
                 joinColumns={@JoinColumn(name="idinterview")}, 
                 inverseJoinColumns={@JoinColumn(name="idRule")})

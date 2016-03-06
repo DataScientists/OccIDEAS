@@ -26,7 +26,7 @@ angular
 	  $rootScopeProvider.digestTtl(100);
   })
   .constant('_', window._)
-  .config(['$urlRouterProvider', '$stateProvider','$httpProvider', function($urlRouterProvider, $stateProvider,$httpProvider) {
+  .config(['$urlRouterProvider', '$stateProvider','$httpProvider',function($urlRouterProvider, $stateProvider,$httpProvider) {
 	$httpProvider.interceptors.push('ErrorHandler');
     $urlRouterProvider.otherwise('/');
     $stateProvider
@@ -72,8 +72,10 @@ angular
   .run(configureDefaults)
   .provider({
 	  $exceptionHandler: function(){
+		   var $log =  angular.injector(['ng']).get('$log');
 	        var handler = function(exception, cause) {
-	            alert(exception);
+	            alert("Exception:"+exception+":Cause:"+cause);
+	            $log.error("Exception:"+exception+":Cause:"+cause);
 	        };
 
 	        this.$get = function() {
