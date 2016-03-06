@@ -187,7 +187,7 @@
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);
 			$scope.tabOptions.splice(index, 1);
-			if($scope.selectedIndex==5){
+			if($scope.selectedIndex==6){
 				$scope.selectedIndex=0;
 			}
 			$scope.questionsCount--;

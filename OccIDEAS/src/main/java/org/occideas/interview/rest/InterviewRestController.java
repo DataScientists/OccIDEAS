@@ -129,7 +129,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         	if(questionVO==null){
         		for(InterviewVO interviewVO:list){
             		if(interviewVO.getModule()!=null){
-            			if(interviewVO.getModule().getType()!="Intro_Module"){
+            			if(!interviewVO.getModule().getType().equalsIgnoreCase("Intro_Module")){
             				questionVO = this.getNearestQuestion(interviewVO);
             			}          			           			
             		} 
@@ -141,7 +141,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			}
         	if(questionVO==null){
         		for(InterviewVO interviewVO:list){
-        			if(interviewVO.getModule().getType()=="Intro_Module"){
+        			if(interviewVO.getModule().getType().equalsIgnoreCase("Intro_Module")){
         				questionVO = this.getNearestQuestion(interviewVO);
         			}  
             		if(questionVO!=null){
@@ -149,8 +149,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
             			break;
             		}
             	}
-			}
-        	     	
+			}     	     	
         } catch (Throwable e) {
         	e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -158,6 +157,14 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         if(questionVO!=null){
         	return Response.ok(questionVO).build();
         }else{
+        	try {
+        		for(InterviewVO interviewVO:list){
+            		this.determineFiredRules(interviewVO);
+            	}
+        	}catch (Throwable e) {
+            	e.printStackTrace();
+                return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+            }        	
         	return Response.status(Response.Status.NO_CONTENT).build();
         }     
     }
@@ -267,10 +274,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     			rules.add(moduleRule.getRule());
     		}
     		//remove duplicates
-    		Set<RuleVO> hs = new HashSet<RuleVO>();
-    		hs.addAll(rules);
-    		rules.clear();
-    		rules.addAll(hs);
+    		rules = removeDuplicates(rules); 
     	}
     	for(RuleVO rule: rules){
 			boolean bFired = false;

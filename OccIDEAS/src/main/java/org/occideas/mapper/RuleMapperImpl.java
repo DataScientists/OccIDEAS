@@ -104,7 +104,14 @@ public class RuleMapperImpl implements RuleMapper {
         }
         rule.setLevel(level);
         rule.setType(ruleVO.getType());
-        
+        List<PossibleAnswerVO> conditions = ruleVO.getConditions();
+		if (!CommonUtil.isListEmpty(conditions)) {
+			rule.setConditions(paMapper.convertToPossibleAnswerExModRuleList(conditions));
+		}
+		List<RuleAdditionalFieldVO> additionalFields = ruleVO.getRuleAdditionalfields();
+		if (!CommonUtil.isListEmpty(additionalFields)) {
+			rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(additionalFields));
+		}
         
         return rule;
     }

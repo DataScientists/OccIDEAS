@@ -7,6 +7,10 @@ import org.occideas.vo.PossibleAnswerVO;
 
 public interface PossibleAnswerMapper {
 
+	PossibleAnswer convertToPossibleAnswerExModRule(PossibleAnswerVO answerVO);
+	
+	List<PossibleAnswer> convertToPossibleAnswerExModRuleList(List<PossibleAnswerVO> answerVO);
+	
 	PossibleAnswer convertToPossibleAnswer(PossibleAnswerVO answerVO);
 	
 	List<PossibleAnswer> convertToPossibleAnswerList(List<PossibleAnswerVO> answerVO);

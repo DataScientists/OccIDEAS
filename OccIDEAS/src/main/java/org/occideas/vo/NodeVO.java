@@ -138,9 +138,12 @@ public abstract class NodeVO {
 
 	public String getNodeclass() {
 		nodeclass = "";
-		if(this.getType().length()>0){
-			nodeclass = this.getType().substring(0,1);
+		if(this.getType()!=null){
+			if(this.getType().length()>0){
+				nodeclass = this.getType().substring(0,1);
+			}
 		}
+		
 		return nodeclass;
 	}
 

@@ -97,6 +97,30 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 	        possibleAnswer.setNodeclass( answerVO.getNodeclass() );
 	        return possibleAnswer;
 	}
+	@Override
+	public PossibleAnswer convertToPossibleAnswerExModRule(PossibleAnswerVO answerVO) {
+		 if ( answerVO == null ) {
+	            return null;
+	        }
+
+		 PossibleAnswer possibleAnswer = new PossibleAnswer();
+
+	        possibleAnswer.setIdNode( answerVO.getIdNode() );
+	        possibleAnswer.setName( answerVO.getName() );
+	        possibleAnswer.setDescription( answerVO.getDescription() );
+	        possibleAnswer.setType( answerVO.getType() );
+	        possibleAnswer.setSequence( answerVO.getSequence() );
+	        possibleAnswer.setParentId( answerVO.getParentId() );
+	        possibleAnswer.setLastUpdated( answerVO.getLastUpdated() );
+	        
+	        possibleAnswer.setNumber( answerVO.getNumber() );
+	        possibleAnswer.setLink( answerVO.getLink() );
+	        possibleAnswer.setTopNodeId( answerVO.getTopNodeId() );
+	        possibleAnswer.setOriginalId( answerVO.getOriginalId() );
+	        possibleAnswer.setDeleted( answerVO.getDeleted() );
+	        possibleAnswer.setNodeclass( answerVO.getNodeclass() );
+	        return possibleAnswer;
+	}
 
 	@Override
 	public List<PossibleAnswer> convertToPossibleAnswerList(List<PossibleAnswerVO> answerVO) {
@@ -107,6 +131,19 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         List<PossibleAnswer> list = new ArrayList<PossibleAnswer>();
         for ( PossibleAnswerVO answer_ : answerVO ) {
             list.add( convertToPossibleAnswer( answer_ ) );
+        }
+
+        return list;
+	}
+	@Override
+	public List<PossibleAnswer> convertToPossibleAnswerExModRuleList(List<PossibleAnswerVO> answerVO) {
+		if ( answerVO == null ) {
+            return null;
+        }
+
+        List<PossibleAnswer> list = new ArrayList<PossibleAnswer>();
+        for ( PossibleAnswerVO answer_ : answerVO ) {
+            list.add( convertToPossibleAnswerExModRule( answer_ ) );
         }
 
         return list;
