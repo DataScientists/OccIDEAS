@@ -78,7 +78,7 @@
                                 if (response.status === 200) {
                                     var question = response.data;
                                     $scope.data.showedQuestion = question;
-                                    if (question.description.indexOf('[] FA_freq') > -1) {
+                                    /*if (question.description.indexOf('[] FA_freq') > -1) {
                                         debugger;
                                         var ans = question.nodes[0].name.split("-");
                                         var startP = parseInt(ans[0].split(" ")[1]);
@@ -89,7 +89,7 @@
                                         }
 
                                         $scope.data.showedQuestion.freqAns = freqAns;
-                                    }
+                                    }*/
                                     resetSelectedIndex();
                                     if (question.linkingQuestion) {
                                         var linkingQuestion = question.linkingQuestion;

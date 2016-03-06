@@ -49,7 +49,7 @@ public class InterviewQuestionAnswerDao {
 	public List<InterviewQuestionAnswer> getAllActive() {
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(InterviewQuestionAnswer.class)
-				.add(Restrictions.eq("deleted", 0)).add(Restrictions.isNotNull("interview"));
+				.add(Restrictions.eq("deleted", 0));
 		return crit.list();
 	}
     @SuppressWarnings("unchecked")
