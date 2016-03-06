@@ -14,10 +14,10 @@
 	</div>
 </div>
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div id="module-tree" class="angular-ui-tree">
+  <div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}">
      <div class="tree-node" id="{{node.anchorId}}">
         <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="" 
-			ng-mousedown="copy($event)">
+			ng-mousedown="copy($event,$treeScope)">
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
@@ -109,6 +109,6 @@
      </div>
   </div>
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
+    <li ng-repeat="node in node.nodes | orderBy:'sequence'" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
   </ol>
 </script>
