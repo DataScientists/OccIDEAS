@@ -38,24 +38,36 @@
             	</div>
             </div>
             <div ng-if="data.showedQuestion.type == 'Q_single' || data.showedQuestion.type == 'Q_simple'">
-                <md-radio-group ng-model="data.showedQuestion.selectedAnswer" >
-			      <div ng-repeat='node in data.showedQuestion.nodes' >
-			        <div flex layout-align="start center" >
-			          <md-radio-button flex ng-value="node"
-			              class="md-primary interview-radio-button" >
-			            <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
-					    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
-					      	<label>Free Text</label>
-        			  		<input md-maxlength="30" ng-model="node.name">
-        			  		<div ng-messages="node.name.$error">
-          						<div ng-message="md-maxlength">The text has to be less than 30 characters long.</div>
-        			  		</div>
-					    </md-input-container>
-			          </md-radio-button>
-			          
-			        </div>
-			      </div>
-			   </md-radio-group>
+                <div ng-if="data.showedQuestion.description.indexOf('[] FA_freq') > -1">
+                    <md-input-container>
+                        <label>Select a number</label>
+                        <md-select ng-model="node.name" class="selected">
+                            <md-option ng-repeat="numb in data.showedQuestion.freqAns" value="{{numb}}">
+                                {{numb}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div ng-if="data.showedQuestion.description.indexOf('[] FA_freq') == -1">
+                    <md-radio-group ng-model="data.showedQuestion.selectedAnswer" >
+                        <div ng-repeat='node in data.showedQuestion.nodes' >
+                            <div flex layout-align="start center" >
+                                <md-radio-button flex ng-value="node"
+                                                 class="md-primary interview-radio-button" >
+                                    <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
+                                    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
+                                        <label>Free Text</label>
+                                        <input md-maxlength="30" ng-model="node.name">
+                                        <div ng-messages="node.name.$error">
+                                            <div ng-message="md-maxlength">The text has to be less than 30 characters long.</div>
+                                        </div>
+                                    </md-input-container>
+                                </md-radio-button>
+
+                            </div>
+                        </div>
+                    </md-radio-group>
+                </div>
             </div>
             
             <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">       
