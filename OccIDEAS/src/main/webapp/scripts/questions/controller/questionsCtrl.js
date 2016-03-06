@@ -1471,16 +1471,14 @@
         $scope.closeRuleDialog = function(elem,$event) {
         	$($event.target).closest('.note').remove();
         	$scope.activeRuleDialog = '';
-        	if (!$scope.activeRuleDialog.$$phase) {
-		        try {
-		        	$scope.activeRuleDialog.$digest();
-		        }
-		        catch (e) { }
-        	}
+        	$scope.activeRuleCell = '';
+        	safeDigest($scope.activeRuleDialog);
+        	safeDigest($scope.activeRuleCell);
         };
         
         $scope.setActiveRule = function(rule,el){
-        	$scope.activeRuleDialog = el.model.idNode+rule.agentId;
+        	$scope.activeRuleDialog = el.model.idNode+'-'+rule.agentId+'-'+rule.idRule;
+        	$scope.activeRuleCell = el.model.idNode+rule.agentId;
         	$scope.activeRule = rule;
         	if (!$scope.activeRuleDialog.$$phase) {
 		        try {
