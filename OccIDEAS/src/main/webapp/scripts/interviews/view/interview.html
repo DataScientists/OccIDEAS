@@ -1,28 +1,21 @@
-<div class="col-md-4 moduleInterview" id="interivew-question-list">
-	<md-list-item ng-repeat="runningInterview in interviews">
-	    <!-- <div>{{interview | json}}</div> -->
-	    	<md-toolbar class="interviewAnswers" ng-if="runningInterview.module">
-	    	{{runningInterview.module.name}}{{runningInterview.fragment.name}}:{{runningInterview.active}}:	    	
-	    		<md-list-item class="interviewAnswers" ng-repeat="qa in runningInterview.questionsAsked">
-	    		{{qa.question.name }}:{{qa.possibleAnswer.name }}
-	    		</md-list-item>
-	    	</md-toolbar>
-	    	<md-toolbar class="interviewAnswers" ng-if="runningInterview.fragment">{{runningInterview.fragment.name}}{{runningInterview.module.name}}:{{runningInterview.active}}
-	    		<md-list-item class="interviewAnswers" ng-repeat="qa in runningInterview.questionsAsked">
-	    		{{qa.question.name }}:{{qa.possibleAnswer.name }}
-	    		</md-list-item>
-	    		
-	    	</md-toolbar>
-	    	
-	    		<md-list-item ng-repeat="rule in runningInterview.firedRules">
-	     			<div ng-click="showRule(rule)" class="{{rule.level}}">{{rule.idRule}}</div> 
-				</md-list-item>
-	    		
-	    	
-	    	
-	    	
-	</md-list-item>
-	
+<div class="col-md-4 moduleInterview" id="interivew-question-list" ui-tree="" id="tree-root">
+	<ol style="list-style-type: none;">
+		<li>
+		<div class="angular-ui-tree">
+			<div class="tree-node">
+				{{interviews[0].module.name}}{{interviews[0].fragment.name}}
+				<ol>
+    				<li ng-repeat="qa in interviews[0].questionsAsked">
+    					{{qa.question.name }}
+    					<ol style="list-style-type: disc;">
+    						<li>{{qa.possibleAnswer.name }}</li>
+    					</ol>
+    				</li>
+  				</ol>
+			</div>
+		</div>
+		</li>
+	</ol>
 </div>
 <div class="col-md-4">
     <div ng-model="data">
