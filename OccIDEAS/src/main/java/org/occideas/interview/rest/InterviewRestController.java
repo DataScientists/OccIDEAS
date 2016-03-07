@@ -34,7 +34,7 @@ import org.springframework.http.MediaType;
 public class InterviewRestController implements BaseRestController<InterviewVO> {
 
 	private Logger log = Logger.getLogger(this.getClass());
-	private final String INTRO_MODULE = "Intro_Module";
+	private final String INTRO_MODULE = "M_IntroModule";
 	
     @Autowired
     private InterviewService service;
@@ -148,40 +148,44 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 				break;
 			}
 		}
-		processNonIntroModuleInterview(list, questionVO);
-    	processIntroModuleInterview(list, questionVO);     	
+		if(questionVO==null){
+			questionVO = processNonIntroModuleInterview(list);
+		}
+		if(questionVO==null){
+			questionVO = processIntroModuleInterview(list);   
+		}
+		
+		 	  	
 		return questionVO;
 	}
 
-	private QuestionVO processIntroModuleInterview(List<InterviewVO> list, QuestionVO questionVO) {
-		if(questionVO==null){
-    		for(InterviewVO interviewVO:list){
-    			if(interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+	private QuestionVO processIntroModuleInterview(List<InterviewVO> list) {
+		QuestionVO questionVO = null;	
+		for(InterviewVO interviewVO:list){
+			if(interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+				questionVO = this.getNearestQuestion(interviewVO);
+			}  
+    		if(questionVO!=null){
+    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+    			break;
+    		}
+    	}	
+		return questionVO;
+	}
+
+	private QuestionVO processNonIntroModuleInterview(List<InterviewVO> list) {
+		QuestionVO questionVO = null;		
+		for(InterviewVO interviewVO:list){
+    		if(interviewVO.getModule()!=null){
+    			if(!interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
     				questionVO = this.getNearestQuestion(interviewVO);
-    			}  
-        		if(questionVO!=null){
-        			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-        			break;
-        		}
-        	}
-		}
-		return questionVO;
-	}
-
-	private QuestionVO processNonIntroModuleInterview(List<InterviewVO> list, QuestionVO questionVO) {
-		if(questionVO==null){
-    		for(InterviewVO interviewVO:list){
-        		if(interviewVO.getModule()!=null){
-        			if(!interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
-        				questionVO = this.getNearestQuestion(interviewVO);
-        			}          			           			
-        		} 
-        		if(questionVO!=null){
-        			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-        			break;
-        		}
-        	}
-		}
+    			}          			           			
+    		} 
+    		if(questionVO!=null){
+    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+    			break;
+    		}
+    	}	
 		return questionVO;
 	}
     
@@ -292,12 +296,14 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			boolean bFired = false;
 			for(PossibleAnswerVO  pa: rule.getConditions()){
 				for(InterviewQuestionAnswerVO iqa: interview.getQuestionsAsked()){
-    	    		if(pa.getIdNode()==iqa.getPossibleAnswer().getIdNode()){
-    	    			bFired = true;
-    	    			break;
-    	    		}else{
-    	    			bFired = false;
-    	    		}
+					if(iqa.getPossibleAnswer()!=null){
+						if(pa.getIdNode()==iqa.getPossibleAnswer().getIdNode()){
+	    	    			bFired = true;
+	    	    			break;
+	    	    		}else{
+	    	    			bFired = false;
+	    	    		}
+					}	    		
     	    	}
 			}
 			if(bFired){

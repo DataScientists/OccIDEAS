@@ -1,21 +1,27 @@
-<div class="col-md-4 moduleInterview" id="interivew-question-list" ui-tree="" id="tree-root">
+<div class="col-md-4 moduleInterview" id="interivew-question-list" >
+	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews">
 	<ol style="list-style-type: none;">
 		<li>
 		<div class="angular-ui-tree">
 			<div class="tree-node">
-				{{interviews[0].module.name}}{{interviews[0].fragment.name}}
+				{{interview.module.name}}{{interview.fragment.name}}
 				<ol>
-    				<li ng-repeat="qa in interviews[0].questionsAsked">
-    					{{qa.question.name }}
+    				<li ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
+    				    ng-repeat="qa in interview.questionsAsked">
+    					<div >
+    					{{ qa.question.name }}
     					<ol style="list-style-type: disc;">
     						<li>{{qa.possibleAnswer.name }}</li>
     					</ol>
+    					</div>
+    					
     				</li>
   				</ol>
 			</div>
 		</div>
 		</li>
 	</ol>
+	</div>
 </div>
 <div class="col-md-4">
     <div ng-model="data">
