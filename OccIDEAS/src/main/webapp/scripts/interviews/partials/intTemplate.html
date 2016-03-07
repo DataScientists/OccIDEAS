@@ -1,0 +1,18 @@
+<script id="interview-template" type="text/x-custom-template">
+<div class="int-note {{activeIntRuleDialog === $id?'activeRule':''}}" prevent-right-click ng-click="setActiveIntRule(model,this)">
+	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeIntDialog(this,$event)" aria-label="Left Align">
+		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+	</button>
+	<div class="title">Possible Answer Here</div>
+	<table class="table">
+		<th>Agent Id</th>
+		<th>Rule</th>
+		<th>Level</th>
+		<tr ng-repeat="rule in model">
+			<td>{{rule.agentId}}</td>
+			<td>{{rule.idRule}}</td>
+			<td><div ng-class="rule.level"></div></td>
+		</tr>
+	</table>
+</div>
+</script>

@@ -1,3 +1,4 @@
+<div id="interview-wrapper">
 <div class="col-md-4 moduleInterview" id="interivew-question-list" >
 	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews">
 	<ol style="list-style-type: none;">
@@ -8,10 +9,25 @@
 				<ol>
     				<li ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
     				    ng-repeat="qa in interview.questionsAsked">
+    				   
+<!--     				    <div class="pull-right" ng-if="(interview.firedRules.length > 0)" -->
+<!-- 						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in interview.firedRules"> -->
+<!-- 						<div class="verticalrules"> -->
+<!-- 							<div class="rulescontainer"> -->
+<!-- 								<div class="agentACell"> -->
+<!-- 									<span class="cell-lable"> -->
+<!-- 										<div></div> -->
+<!-- 									</span> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 						</div> -->
     					<div >
     					{{ qa.question.name }}
     					<ol style="list-style-type: disc;">
-    						<li>{{qa.possibleAnswer.name }}</li>
+    						<li>{{qa.possibleAnswer.name }}
+    							 <span class="glyphicon glyphicon-eye-open pull-right {{activeIntRuleDialog === $id?'activeIntRuleCell':''}}"  context-menu="vm.showRulesMenu(this)" style="margin-right:3px;" aria-hidden="true" model="interview.firedRules" ng-if="(interview.firedRules.length > 0)"></span>
+    						</li>
     					</ol>
     					</div>
     					
@@ -408,3 +424,5 @@
     <p>&nbsp;</p>
     <!-- End scroll space for last questions -->
 </div>
+</div>
+<ng-include src="'scripts/interviews/partials/intTemplate.html'"></ng-include>

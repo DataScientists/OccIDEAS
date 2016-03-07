@@ -63,3 +63,17 @@ function newNote(element,$itemScope,$compile) {
 
 	return false;
 };
+
+var noteIntZindex = 1050;
+function newInterviewNote(element,$itemScope,$compile) {
+	var tpl = $compile(angular.element("#interview-template").html())($itemScope);	
+	angular.element(tpl).zIndex(++noteIntZindex);
+	angular.element(tpl).hide().appendTo("#interview-wrapper").show("fade", 300).draggable().on(
+		'dragstart', function() {
+			angular.element(this).zIndex(++noteIntZindex);
+		});
+	angular.element('textarea').autogrow();
+	angular.element('.int-note');
+
+	return false;
+};

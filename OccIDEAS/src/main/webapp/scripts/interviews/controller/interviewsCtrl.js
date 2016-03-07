@@ -4,10 +4,10 @@
 
     InterviewsCtrl.$inject = ['data', '$scope', '$mdDialog', 'FragmentsService',
         '$q', 'QuestionsService', 'ModulesService', 'InterviewsService',
-        '$anchorScroll', '$location', '$mdMedia', '$window', '$state', '$rootScope'];
+        '$anchorScroll', '$location', '$mdMedia', '$window', '$state', '$rootScope','$compile'];
     function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService,
                             $q, QuestionsService, ModulesService, InterviewsService,
-                            $anchorScroll, $location, $mdMedia, $window, $state, $rootScope) {
+                            $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile) {
         var self = this;
         $scope.data = data;
         $scope.showIntroModule = true;
@@ -15,6 +15,36 @@
         $scope.showAjsm = false;
         $scope.refNoPattern = "H([a-zA-Z0-9]){3}(-)([a-zA-Z0-9]){3}";
         $scope.multiSelected = [];
+        
+        self.showRulesMenu = function(scope){
+			return self.rulesMenuOptions;
+		}
+        
+        self.rulesMenuOptions =
+			[
+			  [ 'Show Rules', function($itemScope, $event, model) {
+				  	var scope = $itemScope.$new();
+			  		scope.model = model;
+			  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+			  	}			  
+			  ]
+			];
+        
+        $scope.closeIntDialog = function(elem,$event) {
+        	$($event.target).closest('.int-note').remove();
+        };
+        
+        $scope.setActiveIntRule = function(model,el){
+        	$scope.activeIntRuleDialog = el.$id;
+        	if (!$scope.activeIntRuleDialog.$$phase) {
+		        try {
+		        	$scope.activeIntRuleDialog.$digest();
+		        }
+		        catch (e) {
+		        }
+        	}
+        }
+        
         $scope.saveAnswerQuestion = function (node) {
             var seletectedEl = node.selectedAnswer;
             if (node.type == 'Q_multiple') {
