@@ -168,13 +168,15 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	private QuestionVO processIntroModuleInterview(List<InterviewVO> list) {
 		QuestionVO questionVO = null;	
 		for(InterviewVO interviewVO:list){
-			if(interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
-				questionVO = this.getNearestQuestion(interviewVO);
-			}  
-    		if(questionVO!=null){
-    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-    			break;
-    		}
+			if(interviewVO.getModule()!=null){
+				if(interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+					questionVO = this.getNearestQuestion(interviewVO);
+				}  
+	    		if(questionVO!=null){
+	    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+	    			break;
+	    		}
+			}		
     	}	
 		return questionVO;
 	}

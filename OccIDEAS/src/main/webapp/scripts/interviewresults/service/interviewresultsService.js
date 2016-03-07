@@ -18,7 +18,7 @@
 				  method: 'GET',
 				  url: restUrl
 				})
-			return request.then(handleSuccess,handleError);
+			return request.then(handleSuccess1,handleError);
 		}
     	function getInterviews() {
 			var restUrl = 'rest/interviewquestionanswer/getlist';
@@ -26,7 +26,7 @@
 				  method: 'GET',
 				  url: restUrl
 				})
-			return request.then(handleSuccess,handleError);
+			return request.then(handleSuccess1,handleError);
 		}
         function handleError(response) {
             if (
