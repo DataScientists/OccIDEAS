@@ -19,8 +19,18 @@
             <td data-title="'ReferenceNumber'" groupable="'referenceNumber'" >
             	{{node.referenceNumber}}
           	</td>
-           <td data-title="'Module'"  groupable="'interview.module.name'" >
-            	{{node.interview.module.name}}
+           <td data-title="'Module'"  groupable="'node.module.name'" >
+            	{{node.module.name}}
+          	</td>
+           <td data-title="'AJSM'"  groupable="'node.fragment.name'" >
+            	{{node.fragment.name}}
+          	</td>
+           <td data-title="'Fired Rules'" >
+           		
+            	<div class="{{rule.type}}" ng-repeat="rule in node.firedRules" >
+            	{{rule.idRule}}
+            	</div>
+            	
           	</td>
            <td>
 				<button class="btn btn-default btn-sm"

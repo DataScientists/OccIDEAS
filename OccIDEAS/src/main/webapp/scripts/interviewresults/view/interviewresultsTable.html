@@ -17,7 +17,7 @@
         </tr>
         <tr ng-hide="group.$hideRows" ng-repeat="node in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
             <td data-title="'ReferenceNumber'" groupable="'referenceNumber'" >
-            	{{node.referenceNumber}}
+            	{{node | json}}
           	</td>
            <td data-title="'Module'"  groupable="'interview.module.name'" >
             	{{node.interview.module.name}}

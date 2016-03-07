@@ -12,15 +12,22 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+    	function listAllInterviews() {
+			var restUrl = 'rest/interview/getlist';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
     	function getInterviews() {
 			var restUrl = 'rest/interviewquestionanswer/getlist';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
 				})
-			return request.then(handleSuccess1,handleError);
+			return request.then(handleSuccess,handleError);
 		}
-
         function handleError(response) {
             if (
                 !angular.isObject(response.data) || !response.data.message

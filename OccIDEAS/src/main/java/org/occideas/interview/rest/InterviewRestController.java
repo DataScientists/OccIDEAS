@@ -52,8 +52,14 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Path(value = "/getlist")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response listAll() {
-        // TODO: Implement this in case required
-        return null;
+    	List<InterviewVO> list = new ArrayList<InterviewVO>();
+		try{
+			list = service.listAll();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
     }
 
     @GET
