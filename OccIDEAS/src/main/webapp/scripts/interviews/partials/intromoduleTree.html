@@ -13,10 +13,9 @@
 </div>
 <script type="text/ng-template" id="nodes_renderer.html">
     <div id="interview-tree" class="angular-ui-tree">
-        <div class="tree-node" id="{{node.anchorId}}" data-nodrag>
+        <div class="tree-node" data-nodrag  >
             <!-- start content -->
-            <div disabled-sticky="!((node.nodeclass === 'M')||(node.nodeclass === 'F'))"
-                 class="tree-node-content {{node.nodeclass}}" id="node-{{node.idNode}}">             
+            <div class="tree-node-content {{node.nodeclass}}" ng-click="debug(this)" id="interviewnode-{{node.idNode}}">             
                 <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
                 <span>{{node.name}}</span>
 

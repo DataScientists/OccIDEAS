@@ -2,9 +2,10 @@
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','ngTableParams','$state','$scope','$filter',
-                          '$anchorScroll','$location'];
+                          '$anchorScroll','$location','data'];
 	function AssessmentsCtrl(AssessmentsService,NgTableParams,$state,$scope,$filter,
-			$anchorScroll,$location){
+			$anchorScroll,$location,data){
+		$scope.data = data;
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];

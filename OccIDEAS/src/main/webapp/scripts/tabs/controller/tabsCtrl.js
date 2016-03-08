@@ -85,16 +85,16 @@
 			});
 			
 		};
-		$scope.addAssessmentsTab = function(row) {
+		$scope.addAssessmentTab = function(row) {
 			tabs.push({
-				title : row.name,
-				viewName: 'assessments@tabs',
+				title : row.referenceNumber,
+				viewName: 'assessment@tabs',
 				canClose: true,
 				disabled : false
 			});
 			$scope.tabOptions.push({
 				state: "tabs.assessment",
-				data: {row:row.idNode}
+				data: {row:row.interviewId}
 			});
 			
 		};

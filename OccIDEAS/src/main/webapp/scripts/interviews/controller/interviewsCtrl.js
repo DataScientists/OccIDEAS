@@ -139,7 +139,8 @@
 
                                                 });
                                         } else if (linkingQuestion.type == 'Q_linkedmodule') {
-                                            newInterview.module = {idNode: linkingQuestion.link};
+                                            newInterview.module = {idNode: linkingQuestion.link,
+                                                    name: linkingQuestion.name};
                                             QuestionsService.findQuestions(linkingQuestion.link, 'M')
                                                 .then(function (response) {
                                                     console.log("Data getting from questions AJAX ...");
@@ -166,6 +167,8 @@
                                                         $scope.interviews[i].interviewId = response.data.interviewId;
                                                     }
                                                 }
+                                                var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
+                                                $scope.scrollTo(elId);
                                             }
                                         });
                                         if (!activeInterview.questionsAsked) {
@@ -203,13 +206,6 @@
                                             }
                                         }
                                     }
-                                    if (response.data.idNode) {
-                                        var elId = "node-" + response.data.idNode;
-                                        $scope.scrollTo(elId);
-                                    } else {
-                                        $scope.data.interviewStarted = false;
-                                        $scope.data.interviewEnded = true;
-                                    }
                                 } else if (response.status == 204) {
                                     for (var i = 0; i < $scope.interviews.length; i++) {
                                         InterviewsService.get($scope.interviews[i].interviewId).then(function (response) {
@@ -229,6 +225,8 @@
                                     console.log('ERROR on Get!');
                                 }
                                 angular.element('#numId').focus();
+                                var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
+                                $scope.scrollTo(elId);
                             });
                         }
                     });
@@ -268,9 +266,8 @@
                             InterviewsService.getNextQuestion($scope.interviews).then(function (response) {
                                 $scope.data.showedQuestion = response.data;
 
-                                var elId = "node-" + response.data.idNode;
+                                var elId = "interviewnode-" + response.data.idNode;
                                 $scope.scrollTo(elId);
-                                angular.element(document.querySelector("#tree-root-interviewing #" + elId)).addClass('highlight');
                             })
                         } else {
                             console.log('ERROR on Start Interview!');
@@ -299,16 +296,25 @@
         $scope.scrollTo = function (target) {
             var scrollPane = null;
             if ($scope.showIntroModule) {
-                scrollPane = $('#interivew-intromodule-tree');
+                scrollPane = $('#interview-intromodule-tree');
             } else if ($scope.showModule) {
-                scrollPane = $('#interivew-module-tree');
+                scrollPane = $('#interview-module-tree');
             } else if ($scope.showAjsm) {
-                scrollPane = $('#interivew-ajsm-tree');
+                scrollPane = $('#interview-ajsm-tree');
             }
             var scrollTarget = $('#' + target);
             if (scrollTarget) {
                 if (scrollTarget.offset()) {
-                    var scrollY = scrollTarget.offset().top - 150;
+                	var currentScroll = 0;
+                	if(scrollPane.scrollTop()){
+                		currentScroll = scrollPane.scrollTop();
+                	}
+                	var offset = 150;
+                	var top = scrollTarget.offset().top;
+                	//alert(top);
+                	var currentScroll = scrollPane.scrollTop();
+                	//alert(currentScroll);
+                    var scrollY =  top - offset + currentScroll;
                     scrollPane.animate({scrollTop: scrollY}, 2000, 'swing');
                     angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
                     angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');
@@ -324,5 +330,18 @@
         $scope.multiExists = function (item, list) {
             return list.indexOf(item) > -1;
         };
+        $scope.debug = function(element){
+        	var scrollPane = $('#interview-intromodule-tree');    	
+        	//var top = element.$element.context.offsetTop;     	    	
+        	//alert(top);
+        	//scrollPane.animate({scrollTop: (top-150)}, 2000, 'swing');
+        	var jQObject = $('#interviewnode-'+element.$modelValue.idNode);
+        	var top = jQObject.offset().top;
+        	alert(top);
+        	var currentScroll = scrollPane.scrollTop();
+        	alert(currentScroll);
+        	scrollPane.animate({scrollTop: (top-150+currentScroll)}, 2000, 'swing');
+        	
+        }
     }
 })();

@@ -17,7 +17,7 @@
 					</div>
 				</li>
   			</ul>
-			<ul ng-if="(rule.type)" class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item additionalField" 
 					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
 					>
@@ -31,7 +31,7 @@
 					<div>
 				</li>
   			</ul>
-			<ul class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item">
 	<select ng-model="rule.level" ng-change="saveRule(rule)">
       <option value="probHigh">PROBABLE_HIGH</option>

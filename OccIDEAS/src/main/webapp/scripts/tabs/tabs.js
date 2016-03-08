@@ -63,9 +63,7 @@
 			}
 		}).state('tabs.interviewresults', {
 			url: '/interviewresults/',
-			sticky: function(){ 
-				return false
-				},
+			sticky: false,
 		    deepStateRedirect: true,
 			views:{
 				'interviewresults@tabs':{
@@ -80,8 +78,49 @@
 			views:{
 				'assessments@tabs':{
 					templateUrl : "scripts/assessments/view/assessmentsTable.html",
-					controller: 'AssessmentsCtrl as vm'
+					controller: 'AssessmentsCtrl as vm',
+					resolve:{
+			        	data: function() {
+			        		return '';
+			        	}
+			        }
 				}
+			}
+		}).state('tabs.assessment', {
+			url: '/assessment/:row',
+			sticky: true,
+		    deepStateRedirect: true,
+			views:{
+				'assessment@tabs':{
+					templateUrl: 'scripts/assessments/view/assessment.html',
+			        controller: 'AssessmentsCtrl as vm',
+			        params:{row: null,module:null},
+			        resolve:{
+			        	data: function($stateParams,AssessmentsService,TabsCache) {
+			        		$log.info("inside questions@tabs resolve");
+//			        		if(TabsCache.get($stateParams.row)){
+//			        			$log.info("Data getting from questions Cache ...");
+//			        			return TabsCache.get($stateParams.row);
+//			        		}
+			        		
+			        		return AssessmentsService.getInterview($stateParams.row)
+			        				.then(function(response){
+			        					$log.info("Interview from questions AJAX ...");
+			        					var interview = response.data[0];
+			        					var agents = [];
+			        					if(interview.firedRules){
+			        						for(var i=0;i<interview.firedRules.length;i++){
+			        							var rule = interview.firedRules[i];
+				        						agents.push({agentId:rule.agentId})
+				        					}
+			        					}
+			        					interview.agents = agents;
+			        					TabsCache.put($stateParams.row,response.data);
+						        		return interview;
+		    				});
+			        }
+			     }
+			}
 			}
 		}).state('tabs.questions', {
 			url: '/questions/:row',
@@ -257,8 +296,8 @@
 			}
 		}).state('tabs.interview', {
             url: '/interview/:row',
-            sticky: false,
-		    deepStateRedirect: false,
+            sticky: true,
+		    deepStateRedirect: true,
             views:{
                 'interview@tabs':{
                     templateUrl: 'scripts/interviews/view/interview.html',

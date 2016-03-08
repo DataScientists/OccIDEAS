@@ -1010,3 +1010,14 @@ md-list-item.interviewAnswers{
 .btn {  
     vertical-align: top !important;	
 }
+.firedRulesWrapper{
+	height: 175px;
+    overflow: auto;
+    background: #F8FAFF;
+    border: 1px solid #DAE2EA;
+}
+.firedRulesScroller{
+	float: left;
+    margin-right: -30000px;
+    padding-left: 20px;
+}

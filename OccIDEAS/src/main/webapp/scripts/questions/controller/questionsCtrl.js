@@ -215,7 +215,7 @@
 		}
 		$scope.setRuleType = function (rule,type){
 			rule.type = type; 
-			if(type=='NOISE'){
+			if((type=='NOISE')||(type=='BACKGROUND')){
 				if(rule.ruleAdditionalfields==null){
 					rule.ruleAdditionalfields = [];
 					rule.ruleAdditionalfields.push(

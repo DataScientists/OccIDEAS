@@ -23,6 +23,8 @@ public class InterviewVO {
     
     private List<RuleVO> firedRules;
     
+    private List<AgentVO> agents;
+    
     private long questionId;
 
     public long getQuestionId() {
@@ -118,6 +120,22 @@ public class InterviewVO {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+
+	public List<AgentVO> getAgents() {
+		agents = new ArrayList<AgentVO>();
+		for(RuleVO rule:this.getFiredRules()){
+			AgentVO agent = new AgentVO();
+			agent.setIdAgent(rule.getAgentId());
+			if(!(agents.contains(agent))){
+				agents.add(agent);
+			}
+		}
+		return agents;
+	}
+
+	public void setAgents(List<AgentVO> agents) {
+		this.agents = agents;
 	}
 	
 }

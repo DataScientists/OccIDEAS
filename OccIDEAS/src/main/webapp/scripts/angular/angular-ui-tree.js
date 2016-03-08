@@ -261,7 +261,9 @@
 				_.each(arrayInp, function(obj) {
 					  _.each(obj, function(value, key) {
 					    if(key === 'idNode') {
-					      obj[key] = "";
+					      obj[key] = "";				      
+					    }else if(key === 'moduleRule') {
+					      obj[key] = [];				      
 					    }
 					  });
 					if(obj.nodes.length > 0){

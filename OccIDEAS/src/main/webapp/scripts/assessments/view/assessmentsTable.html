@@ -27,14 +27,15 @@
           	</td>
            <td data-title="'Fired Rules'" >
            		
-            	<div class="{{rule.type}}" ng-repeat="rule in node.firedRules" >
-            	{{rule.idRule}}
+            	<div ng-repeat="rule in node.firedRules" >
+            	<div class="{{rule.level}}"></div>
+            	<div >{{rule.idRule}}</div>
             	</div>
             	
           	</td>
            <td>
 				<button class="btn btn-default btn-sm"
-					ng-click="addAssessmentTab(row)" >
+					ng-click="addAssessmentTab(node)" >
 					<span class="glyphicon glyphicon-list-alt"></span>
 				</button>	
 			</td>			

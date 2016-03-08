@@ -21,3 +21,6 @@ CREATE TABLE `occideas`.`Interview_ManualAssessedRules` (
   `idinterview` INT NULL,
   `idRule` INT NULL,
   PRIMARY KEY (`idInterview_FiredRules`));
+
+ALTER TABLE `occideas`.`Rule` 
+ADD COLUMN `deleted` INT(11) NOT NULL DEFAULT 0 AFTER `type`;

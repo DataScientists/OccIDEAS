@@ -20,6 +20,14 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+    	function getInterview(idInterview) {
+			var restUrl = 'rest/interview/get?id=' + idInterview;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
     	function getAssessments() {
 			var restUrl = 'rest/interviews/getassessments';
 			var request =  $http({
@@ -47,6 +55,7 @@
 
         return {
         	listByInterview: listByInterview,
+        	getInterview: getInterview,
         	getInterviews: getInterviews,
         	getAssessments: getAssessments 
         };

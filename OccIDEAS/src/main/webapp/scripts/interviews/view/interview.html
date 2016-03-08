@@ -1,32 +1,20 @@
 <div id="interview-wrapper">
-<div class="col-md-4 moduleInterview" id="interivew-question-list" >
+<div class="col-md-4 moduleInterview" id="interview-question-list" >
 	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews">
 	<ol style="list-style-type: none;">
 		<li>
 		<div class="angular-ui-tree">
 			<div class="tree-node">
-				{{interview.module.name}}{{interview.fragment.name}}
+				{{interview.module.name}}{{interview.fragment.name}}:{{interview.active}}
 				<ol>
     				<li ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
     				    ng-repeat="qa in interview.questionsAsked">
     				   
-<!--     				    <div class="pull-right" ng-if="(interview.firedRules.length > 0)" -->
-<!-- 						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in interview.firedRules"> -->
-<!-- 						<div class="verticalrules"> -->
-<!-- 							<div class="rulescontainer"> -->
-<!-- 								<div class="agentACell"> -->
-<!-- 									<span class="cell-lable"> -->
-<!-- 										<div></div> -->
-<!-- 									</span> -->
-<!-- 								</div> -->
-<!-- 							</div> -->
-<!-- 						</div> -->
-<!-- 						</div> -->
+    				    
     					<div >
     					{{ qa.question.name }}
     					<ol style="list-style-type: disc;">
     						<li>{{qa.possibleAnswer.name }}
-    							 <span class="glyphicon glyphicon-eye-open pull-right {{activeIntRuleDialog === $id?'activeIntRuleCell':''}}"  context-menu="vm.showRulesMenu(this)" style="margin-right:3px;" aria-hidden="true" model="interview.firedRules" ng-if="(interview.firedRules.length > 0)"></span>
     						</li>
     					</ol>
     					</div>
@@ -36,7 +24,30 @@
 			</div>
 		</div>
 		</li>
+		
 	</ol>
+	
+	<div ng-if="interview.firedRules.length > 0" class="firedRulesWrapper" >
+		<div class="firedRulesScroller">
+			<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;" 
+		     		ng-repeat="agent in interview.agents">
+		     	<div class="verticalagents">
+					<div class="agentcontainer" >
+						<span class="rotatedagenttext">{{agent.idAgent}}</span>
+					</div>
+				</div>
+				<div class="verticalrules">
+					<div class="rulescontainer">
+						<div class="agentACell" id="{{agent.idAgent}}">
+							<span class="cell-lable" ng-repeat="mrule in interview.firedRules" >
+								<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	</div>
 </div>
 <div class="col-md-4">
@@ -139,7 +150,7 @@
     
 </div>
 
-<div ng-show="showIntroModule" class="col-md-4 moduleInterview" id="interivew-intromodule-tree">
+<div ng-show="showIntroModule" class="col-md-4 moduleInterview" id="interview-intromodule-tree">
     <ng-include src="'scripts/interviews/partials/intromoduleTree.html'"></ng-include>
     <!-- Start scroll space for last questions -->
     <p>&nbsp;</p>
@@ -234,7 +245,7 @@
     <p>&nbsp;</p>
     <!-- End scroll space for last questions -->
 </div>
-<div ng-if="linkedModule" ng-show="showModule" class="col-md-4 moduleInterview" id="interivew-module-tree">
+<div ng-if="linkedModule" ng-show="showModule" class="col-md-4 moduleInterview" id="interview-module-tree">
     <ng-include src="'scripts/interviews/partials/moduleTree.html'"></ng-include>
     <!-- Start scroll space for last questions -->
     <p>&nbsp;</p>
@@ -329,7 +340,7 @@
     <p>&nbsp;</p>
     <!-- End scroll space for last questions -->
 </div>
-<div ng-if="linkedAjsm" ng-show="showAjsm" class="col-md-4 moduleInterview" id="interivew-ajsm-tree">
+<div ng-if="linkedAjsm" ng-show="showAjsm" class="col-md-4 moduleInterview" id="interview-ajsm-tree">
     <ng-include src="'scripts/interviews/partials/ajsmTree.html'"></ng-include>
     <!-- Start scroll space for last questions -->
     <p>&nbsp;</p>
