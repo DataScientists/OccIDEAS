@@ -33,12 +33,13 @@
 		     		ng-repeat="agent in interview.agents">
 		     	<div class="verticalagents">
 					<div class="agentcontainer" >
-						<span class="rotatedagenttext">{{agent.idAgent}}</span>
+						<span class="rotatedagenttext">{{agent.name}}</span>
 					</div>
 				</div>
 				<div class="verticalrules">
 					<div class="rulescontainer">
-						<div class="agentACell" id="{{agent.idAgent}}">
+						<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
+						model="interview">
 							<span class="cell-lable" ng-repeat="mrule in interview.firedRules" >
 								<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
 							</span>

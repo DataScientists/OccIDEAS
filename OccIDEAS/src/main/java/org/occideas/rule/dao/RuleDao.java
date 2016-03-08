@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Rule;
@@ -44,7 +45,10 @@ public class RuleDao {
 	public List<Rule> getAll() {
          final Session session = sessionFactory.getCurrentSession();
          final Criteria crit = session.createCriteria(Rule.class)
-        		 					.add(Restrictions.eq("deleted", 0))     		  						
+        		 					.add(Restrictions.eq("deleted", 0))
+        		 					.setProjection(Projections.projectionList()
+        		 					.add(Projections.property("agentId"),"agentId")
+        		 					.add(Projections.property("agent"),"agent"))  						
        		  						.setResultTransformer(Transformers.aliasToBean(Rule.class));
          return crit.list();
        }

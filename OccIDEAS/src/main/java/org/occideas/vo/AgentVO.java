@@ -1,6 +1,7 @@
 package org.occideas.vo;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -16,6 +17,8 @@ public class AgentVO {
 	private Date lastUpdated;
 	private Integer total = 0;
 	private Integer deleted = 0;
+	
+	private List<RuleVO> rules;
 
 	public long getIdAgent() {
 		return idAgent;
@@ -71,6 +74,14 @@ public class AgentVO {
 
 	public void setAgentGroup(AgentGroupVO agentGroup) {
 		this.agentGroup = agentGroup;
+	}
+
+	public List<RuleVO> getRules() {
+		return rules;
+	}
+
+	public void setRules(List<RuleVO> rules) {
+		this.rules = rules;
 	}
 
 }

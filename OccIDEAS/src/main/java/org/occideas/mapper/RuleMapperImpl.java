@@ -21,6 +21,8 @@ public class RuleMapperImpl implements RuleMapper {
 	
 	@Autowired
 	private PossibleAnswerMapper paMapper;
+	@Autowired
+	private AgentMapper agentMapper;
 	
 	@Autowired
 	private RuleAdditionalFieldMapper additionalFieldMapper;
@@ -36,6 +38,7 @@ public class RuleMapperImpl implements RuleMapper {
         ruleVO.setIdRule( ruleEntity.getIdRule() );
         ruleVO.setLastUpdated( ruleEntity.getLastUpdated() ); 
         ruleVO.setAgentId(ruleEntity.getAgentId());
+        ruleVO.setAgent(agentMapper.convertToAgentVO(ruleEntity.getAgent(),false));
         ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
         ruleVO.setLevel(getDescriptionByValue(ruleEntity.getLevel()));
         ruleVO.setType(ruleEntity.getType());
@@ -72,6 +75,7 @@ public class RuleMapperImpl implements RuleMapper {
         Rule rule = new Rule();
         rule.setIdRule( ruleVO.getIdRule() );
         rule.setAgentId(ruleVO.getAgentId());
+        rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(),false));
         rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
         int level = getValueByDescription(ruleVO.getLevel());
         if(level == -1){
@@ -97,6 +101,7 @@ public class RuleMapperImpl implements RuleMapper {
         Rule rule = new Rule();
         rule.setIdRule( ruleVO.getIdRule() );
         rule.setAgentId(ruleVO.getAgentId());
+        rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(),false));
         rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
         int level = getValueByDescription(ruleVO.getLevel());
         if(level == -1){
@@ -142,6 +147,7 @@ public class RuleMapperImpl implements RuleMapper {
         ruleVO.setIdRule( rule.getIdRule() );
         ruleVO.setLastUpdated( rule.getLastUpdated() ); 
         ruleVO.setAgentId(rule.getAgentId());
+        ruleVO.setAgent(agentMapper.convertToAgentVO(rule.getAgent(),false));
         ruleVO.setLegacyRuleId(rule.getLegacyRuleId());
         ruleVO.setLevel(getDescriptionByValue(rule.getLevel()));
         ruleVO.setType(rule.getType());

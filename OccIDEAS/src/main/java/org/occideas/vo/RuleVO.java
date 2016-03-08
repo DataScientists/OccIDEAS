@@ -14,6 +14,7 @@ public class RuleVO {
 
 	private long idRule;
 	private long agentId;
+	private AgentVO agent;
 	private String type;
 	private String level;
 	private Date lastUpdated;
@@ -95,5 +96,13 @@ public class RuleVO {
     {
         return this.getIdRule()==((RuleVO)o).getIdRule();
     }
+
+	public AgentVO getAgent() {
+		return agent;
+	}
+
+	public void setAgent(AgentVO agent) {
+		this.agent = agent;
+	}
 	
 }

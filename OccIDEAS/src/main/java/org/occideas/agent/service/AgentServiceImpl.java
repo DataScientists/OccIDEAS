@@ -23,13 +23,13 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public List<AgentVO> listAll() {
 		
-		return mapper.convertToAgentVOList(dao.getAllActive());
+		return mapper.convertToAgentVOList(dao.getAllActive(),false);
 	}
 
 	@Override
 	public List<AgentVO> findById(Long id) {
 		Agent module = dao.get(id);
-		AgentVO moduleVO = mapper.convertToAgentVO(module);
+		AgentVO moduleVO = mapper.convertToAgentVO(module,true);
 		List<AgentVO> list = new ArrayList<AgentVO>();
 		list.add(moduleVO);
 		return list;
@@ -37,18 +37,18 @@ public class AgentServiceImpl implements AgentService {
 
 	@Override
 	public AgentVO create(AgentVO o) {
-		Agent moduleEntity = dao.save(mapper.convertToAgent(o));
-		return mapper.convertToAgentVO(moduleEntity);
+		Agent moduleEntity = dao.save(mapper.convertToAgent(o,false));
+		return mapper.convertToAgentVO(moduleEntity,false);
 	}
 
 	@Override
 	public void update(AgentVO o) {
-		dao.saveOrUpdate(mapper.convertToAgent(o));
+		dao.saveOrUpdate(mapper.convertToAgent(o,false));
 	}
 
 	@Override
 	public void delete(AgentVO o) {
-		dao.delete(mapper.convertToAgent(o));
+		dao.delete(mapper.convertToAgent(o,false));
 		
 	}
 }

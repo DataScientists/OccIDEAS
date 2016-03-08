@@ -125,8 +125,7 @@ public class InterviewVO {
 	public List<AgentVO> getAgents() {
 		agents = new ArrayList<AgentVO>();
 		for(RuleVO rule:this.getFiredRules()){
-			AgentVO agent = new AgentVO();
-			agent.setIdAgent(rule.getAgentId());
+			AgentVO agent = rule.getAgent();
 			if(!(agents.contains(agent))){
 				agents.add(agent);
 			}
