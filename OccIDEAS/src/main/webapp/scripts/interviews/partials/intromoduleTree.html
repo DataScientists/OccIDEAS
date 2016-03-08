@@ -15,7 +15,7 @@
     <div id="interview-tree" class="angular-ui-tree">
         <div class="tree-node" data-nodrag  >
             <!-- start content -->
-            <div class="tree-node-content {{node.nodeclass}}" ng-click="debug(this)" id="interviewnode-{{node.idNode}}">             
+            <div class="tree-node-content {{node.nodeclass}}" id="interviewnode-{{node.idNode}}">             
                 <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
                 <span>{{node.name}}</span>
 

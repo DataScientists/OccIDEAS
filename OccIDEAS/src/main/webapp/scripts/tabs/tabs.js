@@ -34,7 +34,7 @@
 		}).state('tabs.modules', {
 			url: '/modules/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'modules@tabs':{
 					templateUrl : "scripts/modules/view/modulesTable.html",
@@ -44,7 +44,7 @@
 		}).state('tabs.fragments', {
 			url: '/fragments/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'fragments@tabs':{
 					templateUrl : "scripts/fragments/view/fragmentsTable.html",
@@ -54,7 +54,7 @@
 		}).state('tabs.agents', {
 			url: '/agents/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'agents@tabs':{
 					templateUrl : "scripts/agents/view/agentsTable.html",
@@ -64,7 +64,7 @@
 		}).state('tabs.interviewresults', {
 			url: '/interviewresults/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'interviewresults@tabs':{
 					templateUrl : "scripts/interviewresults/view/interviewresultsTable.html",
@@ -74,7 +74,7 @@
 		}).state('tabs.assessments', {
 			url: '/assessments/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'assessments@tabs':{
 					templateUrl : "scripts/assessments/view/assessmentsTable.html",
@@ -253,7 +253,7 @@
 			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'fragment@tabs':{
@@ -317,7 +317,7 @@
         }).state('tabs.rules', {
             url: '/rules/:row',
             sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
             views:{
                 'rules@tabs':{
                     templateUrl: 'scripts/rules/view/rulesTable.html',
