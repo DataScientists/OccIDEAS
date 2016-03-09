@@ -6,10 +6,10 @@
 	<div class="title">{{rule.rule.idRule}} {{agentName}}</div>
 	<ul class="list-group" style="margin: 0 0 0 0;">
     			<li popover-is-open="node.info['Node'+node.idNode+rule.rule.idRule].nodePopover.isOpen" 
-					popover-placement="left" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
-					uib-popover-template="nodePopover.templateUrl" class="list-group-item nodeNumber" 
+					popover-placement="left" ng-mouseenter="$parent.$parent.$parent.$parent.nodePopover.open(node,rule.rule.idRule)" 
+					uib-popover-template="$parent.$parent.$parent.$parent.nodePopover.templateUrl" class="list-group-item nodeNumber" 
 					ng-repeat="node in rule.rule.conditions" 
-					ng-click="highlightNode(node.idNode)" ng-mouseleave="nodePopover.close(node,rule.rule.idRule)">
+					ng-click="highlightNode(node.idNode)" ng-mouseleave="$parent.$parent.$parent.$parent.nodePopover.close(node,rule.rule.idRule)">
 					{{node.number}}
 				</li>
   			</ul>

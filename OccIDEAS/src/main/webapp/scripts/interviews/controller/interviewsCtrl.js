@@ -20,6 +20,39 @@
 			return self.rulesMenuOptions;
 		}
         
+        $scope.nodePopover = {
+    		    templateUrl: 'scripts/interviews/partials/nodePopover.html',
+    		    open: function(x,idRule) {
+    		    	var nodeclass = 'P';
+    		    	if(angular.isUndefined(x.info)){
+  		    		  x.info = [];
+  		    	  	}
+    		    	 x.info["Node"+x.idNode+idRule] = {
+							    				  idNode:x.idNode,
+							    				  nodeclass:nodeclass,
+							    				  nodePopover:{
+							    					  isOpen: false
+							    				  },
+							    				  nodePopoverInProgress : false
+		    		  							};
+    		    	 var nodeInPopup = x.info["Node"+x.idNode+idRule];
+    		    	 nodeInPopup.nodePopoverInProgress = true;
+    		         var deffered = $q.defer();
+    		         QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
+    		    		nodeInPopup.data = data.data[0];
+    		    		nodeInPopup.idRule =idRule;
+   						nodeInPopup.nodePopoverInProgress = false;
+   						deffered.resolve();
+ 					 });
+    		         deffered.promise.then(function(){
+    		        	 nodeInPopup.nodePopover.isOpen = true;
+    		    	 })
+    		    },   		    
+  		        close: function close(x,idRule) {
+  		        	x.info["Node"+x.idNode+idRule].nodePopover.isOpen = false;
+  		        }
+    	};
+        
         self.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
