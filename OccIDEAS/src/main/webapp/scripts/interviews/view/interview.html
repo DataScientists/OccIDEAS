@@ -38,7 +38,7 @@
 				</div>
 				<div class="verticalrules">
 					<div class="rulescontainer">
-						<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
+						<div class="agentACell {{activeIntRuleCell === agent.idAgent?'activeCell':''}}" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
 						model="interview">
 							<span class="cell-lable" ng-repeat="mrule in interview.firedRules" >
 								<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>

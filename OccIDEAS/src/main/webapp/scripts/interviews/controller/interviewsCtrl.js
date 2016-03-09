@@ -23,8 +23,18 @@
         self.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
+				  	var ruleArray =_.filter(model.module.moduleRule, function(r){
+  						return $itemScope.agent.idAgent === r.idAgent; 
+				  	});
+				  	 var uniqueArray = _.map(_.groupBy(ruleArray,function(item){
+       				  return item.rule.idRule;
+       				}),function(grouped){
+       				  return grouped[0];
+       				});
 				  	var scope = $itemScope.$new();
 			  		scope.model = model;
+			  		scope.rule = uniqueArray[0];
+			  		scope.agentName = $itemScope.agent.name;
 			  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
 			  	}			  
 			  ]
@@ -32,16 +42,25 @@
         
         $scope.closeIntDialog = function(elem,$event) {
         	$($event.target).closest('.int-note').remove();
+        	$scope.activeIntRuleDialog = '';
+        	$scope.activeIntRuleCell = '';
+        	safeDigest($scope.activeIntRuleDialog);
+        	safeDigest($scope.activeIntRuleCell);
         };
         
         $scope.setActiveIntRule = function(model,el){
         	$scope.activeIntRuleDialog = el.$id;
-        	if (!$scope.activeIntRuleDialog.$$phase) {
+        	$scope.activeIntRuleCell = model.idAgent;
+        	safeDigest($scope.activeIntRuleDialog);
+        	safeDigest($scope.activeIntRuleCell);
+        }
+        
+        var safeDigest = function (obj){
+        	if (!obj.$$phase) {
 		        try {
-		        	$scope.activeIntRuleDialog.$digest();
+		        	obj.$digest();
 		        }
-		        catch (e) {
-		        }
+		        catch (e) { }
         	}
         }
         

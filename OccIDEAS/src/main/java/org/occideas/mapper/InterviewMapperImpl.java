@@ -34,9 +34,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         }
         InterviewVO interviewVO = new InterviewVO();
         interviewVO.setInterviewId(interview.getIdinterview());
-        interviewVO.setReferenceNumber(interview.getReferenceNumber());
         interviewVO.setModule(moduleMapper.convertToModuleVO(interview.getModule(),true));
-        interviewVO.setFragment(fragmentMapper.convertToFragmentVO(interview.getFragment(),true));
+//        interviewVO.setFragment(fragmentMapper.convertToFragmentVO(interview.getFragment(),true));
         if(includeChildNodes){
         	List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
         	interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
@@ -66,9 +65,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         Interview interview = new Interview();
         
         interview.setIdinterview(interviewVO.getInterviewId());
-        interview.setReferenceNumber(interviewVO.getReferenceNumber());
         interview.setModule(moduleMapper.convertToModule(interviewVO.getModule(),true));
-        interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment(),true));
+//        interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment(),true));
         List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
         interview.setInterviewQuestionAnswers(iqaMapper.convertToInterviewQuestionAnswerList(questionsAsked));
         List<RuleVO> firedRules = interviewVO.getFiredRules();

@@ -25,8 +25,7 @@ public class RuleDao {
     }
 
     public void delete(Rule rule){
-    	rule.setDeleted(1);
-    	sessionFactory.getCurrentSession().saveOrUpdate(rule);
+    	sessionFactory.getCurrentSession().delete(rule);
     }
 
 	public Rule get(Long id){
