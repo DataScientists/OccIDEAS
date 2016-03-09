@@ -4,10 +4,10 @@
 
     InterviewsCtrl.$inject = ['data', '$scope', '$mdDialog', 'FragmentsService',
         '$q', 'QuestionsService', 'ModulesService', 'InterviewsService',
-        '$anchorScroll', '$location', '$mdMedia', '$window', '$state', '$rootScope','$compile'];
+        '$anchorScroll', '$location', '$mdMedia', '$window', '$state', '$rootScope','$compile','$timeout'];
     function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService,
                             $q, QuestionsService, ModulesService, InterviewsService,
-                            $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile) {
+                            $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile,$timeout) {
         var self = this;
         $scope.data = data;
         $scope.showIntroModule = true;
@@ -319,7 +319,7 @@
                                 $scope.data.showedQuestion = response.data;
 
                                 var elId = "interviewnode-" + response.data.idNode;
-                                $scope.scrollTo(elId);
+                                scrollWithTimeout(elId);
                             })
                         } else {
                             console.log('ERROR on Start Interview!');
@@ -328,6 +328,13 @@
                     });
                 });
         }
+        
+        function scrollWithTimeout(elId){
+        	$timeout(function() {
+        		$scope.scrollTo(elId);
+            }, 500);
+        }
+        
         resetSelectedIndex();
 
         $scope.singleChoiceHandler = function ($index) {
@@ -367,7 +374,7 @@
                 	var currentScroll = scrollPane.scrollTop();
                 	//alert(currentScroll);
                     var scrollY =  top - offset + currentScroll;
-                    scrollPane.animate({scrollTop: scrollY}, 2000, 'swing');
+                    scrollPane.animate({scrollTop: scrollY}, 1000, 'swing');
                     angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
                     angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');
                 }
