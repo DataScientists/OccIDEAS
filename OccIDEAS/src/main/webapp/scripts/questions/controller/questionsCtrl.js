@@ -235,6 +235,26 @@
 											value: ''}
 							});
 				}
+			}else if((type=='VIBRATION')){
+				if(rule.ruleAdditionalfields==null){
+					rule.ruleAdditionalfields = [];
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 3,
+											type: 'VIBRATION_level',
+											value: ''}
+							});
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 4,
+											type: 'VIBRATION_Percentage',
+											value: ''}
+							});
+				}
 			}
 		}
 		

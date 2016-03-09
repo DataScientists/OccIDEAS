@@ -17,7 +17,7 @@
 					</div>
 				</li>
   			</ul>
-			<ul ng-if="(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item additionalField" 
 					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
 					>
@@ -56,7 +56,9 @@
           		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'')" class="md-fab md-raised md-mini">
             		<span>_</span>
           		</md-button>
-          		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'NOISE')" class="md-fab md-raised md-mini">
+          		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'VIBRATION')" class="md-fab md-raised md-mini">
+            	<span >V</span>
+          		</md-button><md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'NOISE')" class="md-fab md-raised md-mini">
             	<span >N</span>
           		</md-button>
           		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'BACKGROUND')" class="md-fab md-raised md-mini">
