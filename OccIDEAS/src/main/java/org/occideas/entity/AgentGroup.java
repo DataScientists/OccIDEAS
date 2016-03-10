@@ -17,8 +17,7 @@ public class AgentGroup extends AgentInfo{
 	 */
 	private static final long serialVersionUID = 1L;
 	@OneToMany(mappedBy="agentGroup",fetch=FetchType.EAGER)
-	@Column(name="agentGroup_idAgent")
-	
+	@Column(name="agentGroup_idAgent")	
 	private List<Agent> agents;
 	
 

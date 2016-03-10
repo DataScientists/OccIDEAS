@@ -3,6 +3,8 @@ package org.occideas.vo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * Created by quangnn on 2/17/2016.
  */
@@ -10,7 +12,6 @@ import java.util.List;
 public class InterviewVO {
 	private String referenceNumber;
 	private String freeText;
-    private String type;
     private long singleAnswerId;
     private List<Long> multipleAnswerId;
     private long interviewId;
@@ -20,6 +21,9 @@ public class InterviewVO {
     
     private List<InterviewQuestionAnswerVO> questionsAsked;
     
+    private List<RuleVO> firedRules;
+    
+    private List<AgentVO> agents;
     
     private long questionId;
 
@@ -53,14 +57,6 @@ public class InterviewVO {
 
     public void setFreeText(String freeText) {
         this.freeText = freeText;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public long getSingleAnswerId() {
@@ -113,4 +109,32 @@ public class InterviewVO {
 		this.active = active;
 	}
 
+	public List<RuleVO> getFiredRules() {
+		return firedRules;
+	}
+
+	public void setFiredRules(List<RuleVO> firedRules) {
+		this.firedRules = firedRules;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+
+	public List<AgentVO> getAgents() {
+		agents = new ArrayList<AgentVO>();
+		for(RuleVO rule:this.getFiredRules()){
+			AgentVO agent = rule.getAgent();
+			if(!(agents.contains(agent))){
+				agents.add(agent);
+			}
+		}
+		return agents;
+	}
+
+	public void setAgents(List<AgentVO> agents) {
+		this.agents = agents;
+	}
+	
 }

@@ -14,66 +14,75 @@ public class AgentMapperImpl implements AgentMapper {
 	@Autowired
     private AgentGroupMapper agentGroupMapper;
 	
+	@Autowired
+    private RuleMapper ruleMapper;
+	
     @Override
-    public AgentVO convertToAgentVO(Agent moduleEntity) {
-        if ( moduleEntity == null ) {
+    public AgentVO convertToAgentVO(Agent agent,boolean includeRules) {
+        if ( agent == null ) {
             return null;
         }
 
-        AgentVO moduleVO = new AgentVO();
+        AgentVO agentVO = new AgentVO();
 
-        moduleVO.setIdAgent( moduleEntity.getIdAgent() );
-        moduleVO.setName( moduleEntity.getName() );
-        moduleVO.setDescription( moduleEntity.getDescription() );       
-        moduleVO.setLastUpdated( moduleEntity.getLastUpdated() ); 
-        moduleVO.setAgentGroup(agentGroupMapper.convertToAgentGroupVO(moduleEntity.getGroup()));
-        moduleVO.setDeleted( moduleEntity.getDeleted() );
-        return moduleVO;
+        agentVO.setIdAgent( agent.getIdAgent() );
+        agentVO.setName( agent.getName() );
+        agentVO.setDescription( agent.getDescription() );       
+        agentVO.setLastUpdated( agent.getLastUpdated() ); 
+        agentVO.setAgentGroup(agentGroupMapper.convertToAgentGroupVO(agent.getGroup()));
+        agentVO.setDeleted( agent.getDeleted() );
+        if(includeRules){
+        	agentVO.setRules(ruleMapper.convertToRuleVOExcPaList(agent.getRules()));
+        }
+        return agentVO;
     }
 
     @Override
-    public List<AgentVO> convertToAgentVOList(List<Agent> moduleEntity) {
+    public List<AgentVO> convertToAgentVOList(List<Agent> moduleEntity,boolean includeRules) {
         if ( moduleEntity == null ) {
             return null;
         }
 
         List<AgentVO> list = new ArrayList<AgentVO>();
         for ( Agent module : moduleEntity ) {
-            list.add( convertToAgentVO( module ) );
+            list.add( convertToAgentVO( module, includeRules) );
         }
 
         return list;
     }
 
     @Override
-    public Agent convertToAgent(AgentVO moduleVO) {
-        if ( moduleVO == null ) {
+    public Agent convertToAgent(AgentVO agentVO,boolean includeRules) {
+        if ( agentVO == null ) {
             return null;
         }
 
-        Agent module = new Agent();
+        Agent agent = new Agent();
 
-        module.setIdAgent( moduleVO.getIdAgent() );
-        module.setName( moduleVO.getName() );
-        module.setDescription( moduleVO.getDescription() );
+        agent.setIdAgent( agentVO.getIdAgent() );
+        agent.setName( agentVO.getName() );
+        agent.setDescription( agentVO.getDescription() );
         
-        module.setGroup( agentGroupMapper.convertToAgentGroup(moduleVO.getAgentGroup()));
-        module.setLastUpdated( moduleVO.getLastUpdated() );            
-        module.setDeleted( moduleVO.getDeleted() );
+        agent.setGroup( agentGroupMapper.convertToAgentGroup(agentVO.getAgentGroup()));
+        agent.setLastUpdated( agentVO.getLastUpdated() );            
+        agent.setDeleted( agentVO.getDeleted() );
 
+        if(includeRules){
+        	agent.setRules(ruleMapper.convertToRuleExcPaList(agentVO.getRules()));
+        }
 
-        return module;
+        return agent;
     }
 
     @Override
-    public List<Agent> convertToAgentList(List<AgentVO> moduleVO) {
-        if ( moduleVO == null ) {
+    public List<Agent> convertToAgentList(List<AgentVO> agentVO,boolean includeRules) {
+        if ( agentVO == null ) {
             return null;
         }
 
         List<Agent> list = new ArrayList<Agent>();
-        for ( AgentVO moduleVO_ : moduleVO ) {
-            list.add( convertToAgent( moduleVO_ ) );
+        for ( AgentVO agent : agentVO ) {
+            list.add( convertToAgent( agent ,includeRules) );
         }
 
         return list;

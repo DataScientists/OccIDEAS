@@ -23,7 +23,10 @@ public class InterviewQuestionAnswerServiceImpl implements InterviewQuestionAnsw
     public List<InterviewQuestionAnswerVO> listAll() {
         return mapper.convertToInterviewQuestionAnswerVOList(dao.getAllActive());
     }
-
+    
+    public List<InterviewQuestionAnswerVO> listAllAssessments() {
+        return mapper.convertToInterviewQuestionAnswerVOList(dao.getAllActive());
+    }
     @Override
     public List<InterviewQuestionAnswerVO> findById(Long id) {
         InterviewQuestionAnswer interview = dao.get(id);

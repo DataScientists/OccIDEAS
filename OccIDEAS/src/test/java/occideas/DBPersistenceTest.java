@@ -109,7 +109,8 @@ public class DBPersistenceTest {
 		session.save(a);
 		
 		Rule sr = new Rule();
-		sr.setAgentId(a.getIdAgent());
+		
+		sr.setAgent(a);
 		sr.getConditions().add(pa);
 		session.save(sr);
 		
@@ -169,7 +170,7 @@ public class DBPersistenceTest {
 		session.save(a);
 		
 		Rule sr = new Rule();
-		sr.setAgentId(a.getIdAgent());
+		sr.setAgent(a);
 		sr.getConditions().add(pa1);
 		session.save(sr);
 		

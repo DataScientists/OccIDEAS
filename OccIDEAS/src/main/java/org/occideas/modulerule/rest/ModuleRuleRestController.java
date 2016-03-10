@@ -30,6 +30,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		try{
 			list = service.listAll();
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -43,6 +44,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		try{
 			list = service.findByModuleId(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -56,6 +58,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		try{
 			list = service.findByIdNode(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -69,6 +72,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		try{
 			list = service.findByAgentId(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();

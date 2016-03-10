@@ -17,27 +17,23 @@
         </tr>
         <tr ng-hide="group.$hideRows" ng-repeat="node in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
             <td data-title="'ReferenceNumber'" groupable="'referenceNumber'" >
-            	{{node.referenceNumber}}
+            	{{node.idInterview}}
           	</td>
-           <td data-title="'Module'"  groupable="'node.module.name'" >
-            	{{node.module.name}}
+           <td data-title="'Module'"  groupable="'interview.module.name'" >
+            	{{node.interview.module.name}}
           	</td>
-           <td data-title="'AJSM'"  groupable="'node.fragment.name'" >
-            	{{node.fragment.name}}
+           <td data-title="'aJSM'"  >
+            	{{node.interview.fragment.name}}
           	</td>
-           <td data-title="'Fired Rules'" >
-           		
-            	<div ng-repeat="rule in node.firedRules" >
-            	<div class="{{rule.level}}"></div>
-            	<div >{{rule.idRule}}</div>
-            	</div>
-            	
+           <td data-title="'Question'"  >
+            	{{node.question.name}}
           	</td>
-           <td>
-				<button class="btn btn-default btn-sm"
-					ng-click="addAssessmentTab(node)" >
-					<span class="glyphicon glyphicon-list-alt"></span>
-				</button>	
+            <td data-title="'Answer'"  >
+            	{{node.interviewQuestionAnswerFreetext}}
+          	</td>
+            
+			<td data-title="'Node Number'" >
+				{{node.possibleAnswer.number}}
 			</td>			
 			
         </tr>

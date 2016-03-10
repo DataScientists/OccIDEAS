@@ -1,8 +1,8 @@
 (function() {
 	angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
-	TabsCtrl.$inject = ['$scope','$state','$rootScope'];
-	function TabsCtrl($scope,$state,$rootScope) {
+	TabsCtrl.$inject = ['$scope','$state','$rootScope','$log'];
+	function TabsCtrl($scope,$state,$rootScope,$log) {
 		$scope.loading = false;
 		$scope.tabOptions = [];
 		$scope.tabOptions[0] = {
@@ -18,6 +18,10 @@
 			data: ""
 		};
 		$scope.tabOptions[3] = {
+				state: "tabs.interviewresults",
+				data: ""
+			};
+		$scope.tabOptions[4] = {
 				state: "tabs.assessments",
 				data: ""
 			};
@@ -27,21 +31,21 @@
 			var data = null;
 			if($scope.tabOptions[current]){
 				if($scope.tabOptions[current].state){
-					console.log("Navigating to "+$scope.tabOptions[current].state);
+					$log.info("Navigating to "+$scope.tabOptions[current].state);
 					state = $scope.tabOptions[current].state;
 				}else{
 					state = "tabs.modules";
 				}
 				if($scope.tabOptions[current].data){
-					console.log("with data: "+$scope.tabOptions[current].data)
-					console.log("with idNode: "+$scope.tabOptions[current].data.row)
+					$log.info("with data: "+$scope.tabOptions[current].data)
+					$log.info("with idNode: "+$scope.tabOptions[current].data.row)
 					data = $scope.tabOptions[current].data;
 				}
 				
 			}else{
 				state = "tabs.modules";
 			}
-			console.log("going to state "+state);
+			$log.info("going to state "+state);
 			$state.go(state,data);
 
 		});
@@ -58,7 +62,11 @@
 			viewName: 'agents@tabs'
 		},
 		{
-			title : 'Assessment List',
+			title : 'Interview Results',
+			viewName: 'interviewresults@tabs'
+		},
+		{
+			title : 'Assessments',
 			viewName: 'assessments@tabs'
 		}], selected = null, previous = null;
 		$scope.tabs = tabs;
@@ -74,6 +82,19 @@
 			$scope.tabOptions.push({
 				state: "tabs.fragment",
 				data: {row:row.idNode}
+			});
+			
+		};
+		$scope.addAssessmentTab = function(row) {
+			tabs.push({
+				title : row.referenceNumber,
+				viewName: 'assessment@tabs',
+				canClose: true,
+				disabled : false
+			});
+			$scope.tabOptions.push({
+				state: "tabs.assessment",
+				data: {row:row.interviewId}
 			});
 			
 		};
@@ -110,7 +131,7 @@
 				    } 
 				});
 			}
-			console.log("addModuleTab questionsLoading end");
+			$log.info("addModuleTab questionsLoading end");
 		};
         $scope.addRulesTab = function(scope) {
             var nodeData = scope.$modelValue;
@@ -166,7 +187,7 @@
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);
 			$scope.tabOptions.splice(index, 1);
-			if($scope.selectedIndex==4){
+			if($scope.selectedIndex==5){
 				$scope.selectedIndex=0;
 			}
 			$scope.questionsCount--;

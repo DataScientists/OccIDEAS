@@ -1,9 +1,9 @@
 (function () {
-    angular.module('occIDEASApp.Assessments')
-        .service('AssessmentsService', AssessmentsService);
+    angular.module('occIDEASApp.InterviewResults')
+        .service('InterviewResultsService', InterviewResultsService);
 
-    AssessmentsService.$inject = ['$http', '$q'];
-    function AssessmentsService($http, $q) {
+    InterviewResultsService.$inject = ['$http', '$q'];
+    function InterviewResultsService($http, $q) {
     	function listByInterview(idInterview) {
 			var restUrl = 'rest/interviewquestionanswer/getbyinterview?id=' + idInterview;
 			var request =  $http({
@@ -12,7 +12,7 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
-    	function getInterviews() {
+    	function listAllInterviews() {
 			var restUrl = 'rest/interview/getlist';
 			var request =  $http({
 				  method: 'GET',
@@ -20,23 +20,14 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
-    	function getInterview(idInterview) {
-			var restUrl = 'rest/interview/get?id=' + idInterview;
-			var request =  $http({
-				  method: 'GET',
-				  url: restUrl
-				})
-			return request.then(handleSuccess,handleError);
-		}
-    	function getAssessments() {
-			var restUrl = 'rest/interviews/getassessments';
+    	function getInterviews() {
+			var restUrl = 'rest/interviewquestionanswer/getlist';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
 				})
 			return request.then(handleSuccess1,handleError);
 		}
-
         function handleError(response) {
             if (
                 !angular.isObject(response.data) || !response.data.message
@@ -55,9 +46,7 @@
 
         return {
         	listByInterview: listByInterview,
-        	getInterview: getInterview,
-        	getInterviews: getInterviews,
-        	getAssessments: getAssessments 
+        	getInterviews: getInterviews         
         };
     }
 })();

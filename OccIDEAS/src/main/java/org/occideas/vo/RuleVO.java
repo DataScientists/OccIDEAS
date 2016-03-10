@@ -3,6 +3,8 @@ package org.occideas.vo;
 import java.sql.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -12,6 +14,7 @@ public class RuleVO {
 
 	private long idRule;
 	private long agentId;
+	private AgentVO agent;
 	private String type;
 	private String level;
 	private Date lastUpdated;
@@ -83,6 +86,23 @@ public class RuleVO {
 
 	public void setRuleAdditionalfields(List<RuleAdditionalFieldVO> ruleAdditionalfields) {
 		this.ruleAdditionalfields = ruleAdditionalfields;
+	}
+	@Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).toHashCode();
+    }
+	@Override
+    public boolean equals(Object o)
+    {
+        return this.getIdRule()==((RuleVO)o).getIdRule();
+    }
+
+	public AgentVO getAgent() {
+		return agent;
+	}
+
+	public void setAgent(AgentVO agent) {
+		this.agent = agent;
 	}
 	
 }

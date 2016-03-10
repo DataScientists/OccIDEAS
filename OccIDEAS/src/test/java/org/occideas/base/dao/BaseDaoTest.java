@@ -1,22 +1,18 @@
 package org.occideas.base.dao;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.occideas.entity.Module;
-import org.occideas.entity.Node;
-
-import static org.mockito.Mockito.*;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.internal.SessionImpl;
-
-import static org.junit.Assert.*;
 
 
 @RunWith(MockitoJUnitRunner.class)

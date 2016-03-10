@@ -30,11 +30,12 @@ public class InterviewQuestionAnswerRestController implements BaseRestController
 		try{
 			list = service.listAll();
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
 	}
-	
+
 	@GET
 	@Path(value="/getbyinterviewid")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
@@ -43,6 +44,7 @@ public class InterviewQuestionAnswerRestController implements BaseRestController
 		try{
 			list = service.findByInterviewId(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();

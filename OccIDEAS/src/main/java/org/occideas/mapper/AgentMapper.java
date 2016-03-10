@@ -9,12 +9,12 @@ import org.occideas.vo.AgentVO;
 @Mapper(componentModel = "spring")
 public interface AgentMapper {
 
-	AgentVO convertToAgentVO(Agent agent);
+	AgentVO convertToAgentVO(Agent agent,boolean includeRules);
 
-	List<AgentVO> convertToAgentVOList(List<Agent> agentList);
+	List<AgentVO> convertToAgentVOList(List<Agent> agentList,boolean includeRules);
 
-	Agent convertToAgent(AgentVO agentVO);
+	Agent convertToAgent(AgentVO agentVO,boolean includeRules);
 	
-	List<Agent> convertToAgentList(List<AgentVO> agentVO);
+	List<Agent> convertToAgentList(List<AgentVO> agentVO,boolean includeRules);
 	
 }

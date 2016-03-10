@@ -32,6 +32,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		try{
 			list = service.listAll();
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -45,6 +46,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		try{
 			list = service.findById(id);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
@@ -58,6 +60,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		try{
 			service.createFragment(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -71,6 +74,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		try{
 			service.update(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
@@ -82,6 +86,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		try{
 			service.merge(json);
 		}catch(Throwable e){
+			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();

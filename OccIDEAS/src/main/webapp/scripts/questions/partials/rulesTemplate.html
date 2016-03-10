@@ -1,5 +1,5 @@
 <script id="rules-template" type="text/x-custom-template">
-<div class="note {{activeRuleDialog === model.idNode+rule.agentId?'activeRule':''}}" prevent-right-click ng-click="setActiveRule(rule,this)">
+<div class="note {{activeRuleDialog === (model.idNode+'-'+rule.agentId+'-'+rule.idRule)?'activeRule':''}}" prevent-right-click ng-click="setActiveRule(rule,this)">
 	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleDialog(this,$event)" aria-label="Left Align">
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
@@ -17,7 +17,7 @@
 					</div>
 				</li>
   			</ul>
-			<ul class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item additionalField" 
 					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
 					>
@@ -31,7 +31,7 @@
 					<div>
 				</li>
   			</ul>
-			<ul class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item">
 	<select ng-model="rule.level" ng-change="saveRule(rule)">
       <option value="probHigh">PROBABLE_HIGH</option>
@@ -56,7 +56,9 @@
           		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'')" class="md-fab md-raised md-mini">
             		<span>_</span>
           		</md-button>
-          		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'NOISE')" class="md-fab md-raised md-mini">
+          		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'VIBRATION')" class="md-fab md-raised md-mini">
+            	<span >V</span>
+          		</md-button><md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'NOISE')" class="md-fab md-raised md-mini">
             	<span >N</span>
           		</md-button>
           		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'BACKGROUND')" class="md-fab md-raised md-mini">

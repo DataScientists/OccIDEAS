@@ -1,12 +1,14 @@
 package org.occideas.entity;
 
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -24,6 +26,10 @@ public class Agent extends AgentInfo{
 	/*@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})*/
 	@Fetch(FetchMode.SELECT)
 	private AgentGroup agentGroup;
+	
+	@OneToMany(mappedBy="agent",fetch=FetchType.LAZY)
+	@Column(name="idAgent")	
+	private List<Rule> rules;
 
 	public Agent() {
 		super();
@@ -59,5 +65,13 @@ public class Agent extends AgentInfo{
 
 		return (this.getIdAgent() == castOther.getIdAgent());
 
+	}
+
+	public List<Rule> getRules() {
+		return rules;
+	}
+
+	public void setRules(List<Rule> rules) {
+		this.rules = rules;
 	}
 }

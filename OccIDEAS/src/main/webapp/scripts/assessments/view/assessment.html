@@ -1,0 +1,34 @@
+<!-- <pre>{{data | json}}</pre> -->
+<div pull-right>
+	<div class="verticalagents">
+			<div class="agentcontainer" ng-repeat="agent in data.agents ">
+					<span class="rotatedagenttext">{{agent | json}}</span>
+			</div>
+	</div>
+</div>
+<div>Auto Assessed</div>
+<div class="pull-right" context-menu="showRulesMenu(this)" model="node"
+	style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in data.agents | orderBy:'':true">
+	<div class="verticalrules">
+		<div class="rulescontainer">
+			<div class="agentACell" id="{{obj.idAgent}}">
+				<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
+					<div ng-class="mrule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+<div>Manual Assessed</div>
+<div context-menu="showRulesMenu(this)" model="node"
+	style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in data.agents | orderBy:'':true">
+	<div class="verticalrules">
+		<div class="rulescontainer">
+			<div class="agentACell" id="{{obj.idAgent}}">
+				<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
+					<div ng-class="mrule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>

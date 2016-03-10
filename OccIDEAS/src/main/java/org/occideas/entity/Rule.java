@@ -12,12 +12,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
 @Entity 
@@ -33,9 +36,15 @@ public class Rule implements Serializable {
 	@Id @GeneratedValue
 	private long idRule;
 	private long agentId;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@Fetch(FetchMode.SELECT)
+	@JoinColumn(name="agentId",referencedColumnName="idAgent",insertable=false,updatable=false)
+	private Agent agent;
 	private String type;
 	private int level;
 	private Date lastUpdated;
+	private int deleted;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
@@ -47,9 +56,6 @@ public class Rule implements Serializable {
 	
 	@OneToMany(fetch=FetchType.LAZY,mappedBy = "idRule")
 	@Cascade(value={CascadeType.ALL})
-//    @JoinTable(name="Rule_AdditionalField", 
-//                joinColumns={@JoinColumn(name="idRule")}, 
-//                inverseJoinColumns={@JoinColumn(name="idRuleAdditionalField")})
 	private List<RuleAdditionalField> ruleAdditionalfields;
 	
 	public Rule() {
@@ -116,7 +122,16 @@ public class Rule implements Serializable {
 	public void setRuleAdditionalfields(List<RuleAdditionalField> ruleAdditionalfields) {
 		this.ruleAdditionalfields = ruleAdditionalfields;
 	}
-	
-	
-	
+	public int getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(int deleted) {
+		this.deleted = deleted;
+	}
+	public Agent getAgent() {
+		return agent;
+	}
+	public void setAgent(Agent agent) {
+		this.agent = agent;
+	}	
 }

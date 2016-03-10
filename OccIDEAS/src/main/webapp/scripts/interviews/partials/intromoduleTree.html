@@ -2,21 +2,20 @@
     <div class="col-sm-12">
         <div class="panel panel-default">
             <div class="panel-body">
-                <div ui-tree="moduleTreeOptions" id="tree-root-interviewing">
+                <div ui-tree="" id="tree-root-interviewing">
                     <ol ui-tree-nodes ng-model="data">
-                        <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                        <li ng-repeat="node in data" ui-tree-node ng-include="'interview_nodes_renderer.html'"></li>
                     </ol>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script type="text/ng-template" id="nodes_renderer.html">
+<script type="text/ng-template" id="interview_nodes_renderer.html">
     <div id="interview-tree" class="angular-ui-tree">
-        <div class="tree-node" id="{{node.anchorId}}" data-nodrag>
+        <div class="tree-node" data-nodrag  >
             <!-- start content -->
-            <div disabled-sticky="!((node.nodeclass === 'M')||(node.nodeclass === 'F'))"
-                 class="tree-node-content {{node.nodeclass}}" id="node-{{node.idNode}}">             
+            <div class="tree-node-content {{node.nodeclass}}" id="interviewnode-{{node.idNode}}">             
                 <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
                 <span>{{node.name}}</span>
 
@@ -29,6 +28,6 @@
         </div>
     </div>
     <ol ui-tree-nodes="" ng-model="node.nodes">
-        <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false" ></li>
+        <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'interview_nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false" ></li>
     </ol>
 </script>

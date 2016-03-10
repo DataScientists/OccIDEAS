@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewQuestionAnswer;
+import org.occideas.entity.Rule;
 import org.occideas.vo.InterviewQuestionAnswerVO;
 import org.occideas.vo.InterviewVO;
+import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,9 @@ public class InterviewMapperImpl implements InterviewMapper {
     
     @Autowired
 	private FragmentMapper fragmentMapper;
+    
+    @Autowired
+	private RuleMapper ruleMapper;
     
     @Autowired
 	private InterviewQuestionAnswerMapper iqaMapper;
@@ -36,8 +41,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         	List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
         	interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
         }      
-        
-        
+        List<Rule> firedRules = interview.getFiredRules();
+        interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
         return interviewVO;
     }
 
@@ -66,6 +71,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment(),true));
         List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
         interview.setInterviewQuestionAnswers(iqaMapper.convertToInterviewQuestionAnswerList(questionsAsked));
+        List<RuleVO> firedRules = interviewVO.getFiredRules();
+        interview.setFiredRules(ruleMapper.convertToRuleExcPaList(firedRules));
         
         return interview;
     }

@@ -2,12 +2,9 @@ package org.occideas.entity;
 
 import java.io.Serializable;
 
-import javax.persistence.AssociationOverride;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 
 
 @Entity 

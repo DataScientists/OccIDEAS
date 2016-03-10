@@ -24,6 +24,7 @@
 
 	Config.$inject = ['$stateProvider','$windowProvider','$rootScopeProvider','$stickyStateProvider'];
 	function Config($stateProvider,$windowProvider,$rootScopeProvider,$stickyStateProvider) {
+		var $log =  angular.injector(['ng']).get('$log');
 		var $window = $windowProvider.$get();
 		$rootScopeProvider.$window = $window;
 		$stateProvider.state('tabs', {
@@ -33,7 +34,7 @@
 		}).state('tabs.modules', {
 			url: '/modules/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'modules@tabs':{
 					templateUrl : "scripts/modules/view/modulesTable.html",
@@ -43,7 +44,7 @@
 		}).state('tabs.fragments', {
 			url: '/fragments/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'fragments@tabs':{
 					templateUrl : "scripts/fragments/view/fragmentsTable.html",
@@ -53,26 +54,77 @@
 		}).state('tabs.agents', {
 			url: '/agents/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'agents@tabs':{
 					templateUrl : "scripts/agents/view/agentsTable.html",
 					controller: 'AgentCtrl as vm'
 				}
 			}
+		}).state('tabs.interviewresults', {
+			url: '/interviewresults/',
+			sticky: false,
+		    deepStateRedirect: false,
+			views:{
+				'interviewresults@tabs':{
+					templateUrl : "scripts/interviewresults/view/interviewresultsTable.html",
+					controller: 'InterviewResultsCtrl as vm'
+				}
+			}
 		}).state('tabs.assessments', {
 			url: '/assessments/',
 			sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
 			views:{
 				'assessments@tabs':{
 					templateUrl : "scripts/assessments/view/assessmentsTable.html",
-					controller: 'AssessmentsCtrl as vm'
+					controller: 'AssessmentsCtrl as vm',
+					resolve:{
+			        	data: function() {
+			        		return '';
+			        	}
+			        }
 				}
+			}
+		}).state('tabs.assessment', {
+			url: '/assessment/:row',
+			sticky: true,
+		    deepStateRedirect: true,
+			views:{
+				'assessment@tabs':{
+					templateUrl: 'scripts/assessments/view/assessment.html',
+			        controller: 'AssessmentsCtrl as vm',
+			        params:{row: null,module:null},
+			        resolve:{
+			        	data: function($stateParams,AssessmentsService,TabsCache) {
+			        		$log.info("inside questions@tabs resolve");
+//			        		if(TabsCache.get($stateParams.row)){
+//			        			$log.info("Data getting from questions Cache ...");
+//			        			return TabsCache.get($stateParams.row);
+//			        		}
+			        		
+			        		return AssessmentsService.getInterview($stateParams.row)
+			        				.then(function(response){
+			        					$log.info("Interview from questions AJAX ...");
+			        					var interview = response.data[0];
+			        					var agents = [];
+			        					if(interview.firedRules){
+			        						for(var i=0;i<interview.firedRules.length;i++){
+			        							var rule = interview.firedRules[i];
+				        						agents.push({agentId:rule.agentId})
+				        					}
+			        					}
+			        					interview.agents = agents;
+			        					TabsCache.put($stateParams.row,response.data);
+						        		return interview;
+		    				});
+			        }
+			     }
+			}
 			}
 		}).state('tabs.questions', {
 			url: '/questions/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions@tabs':{
@@ -81,15 +133,15 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions@tabs resolve");
+			        		$log.info("inside questions@tabs resolve");
 //			        		if(TabsCache.get($stateParams.row)){
-//			        			console.log("Data getting from questions Cache ...");
+//			        			$log.info("Data getting from questions Cache ...");
 //			        			return TabsCache.get($stateParams.row);
 //			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -115,7 +167,7 @@
 			}
 		}).state('tabs.questions1', {
 			url: '/questions1/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions1@tabs':{
@@ -124,15 +176,15 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions1@tabs resolve");
+			        		$log.info("inside questions1@tabs resolve");
 			        		if(TabsCache.get($stateParams.row)){
-			        			console.log("Data getting from questions Cache ...");
+			        			$log.info("Data getting from questions Cache ...");
 			        			return TabsCache.get($stateParams.row);
 			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -158,7 +210,7 @@
 			}
 		}).state('tabs.questions2', {
 			url: '/questions2/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'questions2@tabs':{
@@ -167,15 +219,15 @@
 			        params:{row: null,module:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions2@tabs resolve");
+			        		$log.info("inside questions2@tabs resolve");
 			        		if(TabsCache.get($stateParams.row)){
-			        			console.log("Data getting from questions Cache ...");
+			        			$log.info("Data getting from questions Cache ...");
 			        			return TabsCache.get($stateParams.row);
 			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -201,7 +253,7 @@
 			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
-			sticky: false,
+			sticky: true,
 		    deepStateRedirect: true,
 			views:{
 				'fragment@tabs':{
@@ -210,15 +262,15 @@
 			        params:{row: null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService,TabsCache) {
-			        		console.log("inside questions1@tabs resolve");
+			        		$log.info("inside questions1@tabs resolve");
 			        		if(TabsCache.get($stateParams.row)){
-			        			console.log("Data getting from questions Cache ...");
+			        			$log.info("Data getting from questions Cache ...");
 			        			return TabsCache.get($stateParams.row);
 			        		}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'F')
 			        				.then(function(response){
-			        					console.log("Data getting from questions AJAX ...");
+			        					$log.info("Data getting from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -244,8 +296,8 @@
 			}
 		}).state('tabs.interview', {
             url: '/interview/:row',
-            sticky: false,
-		    deepStateRedirect: false,
+            sticky: true,
+		    deepStateRedirect: true,
             views:{
                 'interview@tabs':{
                     templateUrl: 'scripts/interviews/view/interview.html',
@@ -255,7 +307,7 @@
                         data: function($stateParams,QuestionsService) {
                             return QuestionsService.findQuestions($stateParams.row,'M')
                                 .then(function(response){
-                                    console.log("Data getting from questions AJAX ...");
+                                    $log.info("Data getting from questions AJAX ...");
                                     return response.data;
                                 });
                         }
@@ -265,7 +317,7 @@
         }).state('tabs.rules', {
             url: '/rules/:row',
             sticky: false,
-		    deepStateRedirect: true,
+		    deepStateRedirect: false,
             views:{
                 'rules@tabs':{
                     templateUrl: 'scripts/rules/view/rulesTable.html',
@@ -275,7 +327,7 @@
                         data: function($stateParams,RulesService) {
                             return RulesService.listByModule($stateParams.row)
                                 .then(function(data){
-                                    console.log("Data getting from module rules AJAX ... for "+$stateParams.row);
+                                    $log.info("Data getting from module rules AJAX ... for "+$stateParams.row);
                                     var viewData = data;
                                     return viewData;
                                 })

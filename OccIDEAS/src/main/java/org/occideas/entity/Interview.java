@@ -7,6 +7,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -39,10 +41,34 @@ public class Interview implements java.io.Serializable {
 	@JoinColumn(name="fragment_idNode",referencedColumnName="idNode")
 	private Fragment fragment;
 	
-	@OneToMany(fetch=FetchType.LAZY)
-	@JoinColumn(name="interview_idinterview",referencedColumnName="idinterview")
+	/*@OneToMany(fetch = FetchType.EAGER)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@JoinTable(
+            name="Interview_Question_Answer",
+            joinColumns = @JoinColumn( name="interview_idinterview"),
+            inverseJoinColumns = @JoinColumn( name="id")
+    )*/
+	@OneToMany(mappedBy="idInterview",targetEntity=InterviewQuestionAnswer.class)
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
 	private List<InterviewQuestionAnswer> interviewQuestionAnswers;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="Interview_FiredRules", 
+                joinColumns={@JoinColumn(name="idinterview")}, 
+                inverseJoinColumns={@JoinColumn(name="idRule")})
+	private List<Rule> firedRules;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="Interview_AutoAssessedRules", 
+                joinColumns={@JoinColumn(name="idinterview")}, 
+                inverseJoinColumns={@JoinColumn(name="idRule")})
+	private List<Rule> autoAssessedRules;
+	
+	@ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="Interview_ManualAssessedRules", 
+                joinColumns={@JoinColumn(name="idinterview")}, 
+                inverseJoinColumns={@JoinColumn(name="idRule")})
+	private List<Rule> manualAssessedRules;
 	
 	private String referenceNumber;
 
@@ -91,6 +117,30 @@ public class Interview implements java.io.Serializable {
 
 	public void setInterviewQuestionAnswers(List<InterviewQuestionAnswer> interviewQuestionAnswers) {
 		this.interviewQuestionAnswers = interviewQuestionAnswers;
+	}
+
+	public List<Rule> getFiredRules() {
+		return firedRules;
+	}
+
+	public void setFiredRules(List<Rule> firedRules) {
+		this.firedRules = firedRules;
+	}
+
+	public List<Rule> getAutoAssessedRules() {
+		return autoAssessedRules;
+	}
+
+	public void setAutoAssessedRules(List<Rule> autoAssessedRules) {
+		this.autoAssessedRules = autoAssessedRules;
+	}
+
+	public List<Rule> getManualAssessedRules() {
+		return manualAssessedRules;
+	}
+
+	public void setManualAssessedRules(List<Rule> manualAssessedRules) {
+		this.manualAssessedRules = manualAssessedRules;
 	}
 
 }

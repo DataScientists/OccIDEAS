@@ -7,4 +7,6 @@ import org.occideas.vo.InterviewQuestionAnswerVO;
 
 public interface InterviewQuestionAnswerService extends BaseService<InterviewQuestionAnswerVO> {
 	List<InterviewQuestionAnswerVO> findByInterviewId(Long id);
+
+	
 }
