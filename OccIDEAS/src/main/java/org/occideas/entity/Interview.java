@@ -37,9 +37,9 @@ public class Interview implements java.io.Serializable {
 	@JoinColumn(name="module_idNode",referencedColumnName="idNode")
 	private Module module;
 	
-//	@ManyToOne(fetch=FetchType.LAZY)
-//	@JoinColumn(name="fragment_idNode",referencedColumnName="idNode")
-//	private Fragment fragment;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="fragment_idNode",referencedColumnName="idNode")
+	private Fragment fragment;
 	
 	/*@OneToMany(fetch = FetchType.EAGER)
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
@@ -70,6 +70,8 @@ public class Interview implements java.io.Serializable {
                 inverseJoinColumns={@JoinColumn(name="idRule")})
 	private List<Rule> manualAssessedRules;
 	
+	private String referenceNumber;
+
 	public Interview() {
 	}
 	
@@ -93,13 +95,21 @@ public class Interview implements java.io.Serializable {
 		this.module = module;
 	}
 
-//	public Fragment getFragment() {
-//		return fragment;
-//	}
-//
-//	public void setFragment(Fragment fragment) {
-//		this.fragment = fragment;
-//	}
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
+
+	public void setReferenceNumber(String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
+
+	public Fragment getFragment() {
+		return fragment;
+	}
+
+	public void setFragment(Fragment fragment) {
+		this.fragment = fragment;
+	}
 
 	public List<InterviewQuestionAnswer> getInterviewQuestionAnswers() {
 		return interviewQuestionAnswers;

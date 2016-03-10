@@ -44,6 +44,7 @@ public class Rule implements Serializable {
 	private String type;
 	private int level;
 	private Date lastUpdated;
+	private int deleted;
 	
 	@ManyToMany(fetch=FetchType.LAZY)
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
@@ -120,6 +121,12 @@ public class Rule implements Serializable {
 	}
 	public void setRuleAdditionalfields(List<RuleAdditionalField> ruleAdditionalfields) {
 		this.ruleAdditionalfields = ruleAdditionalfields;
+	}
+	public int getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(int deleted) {
+		this.deleted = deleted;
 	}
 	public Agent getAgent() {
 		return agent;

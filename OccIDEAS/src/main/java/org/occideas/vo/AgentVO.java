@@ -84,4 +84,18 @@ public class AgentVO {
 		this.rules = rules;
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if ((this == other))
+			return true;
+		if ((other == null))
+			return false;
+		if (!(other instanceof AgentVO))
+			return false;
+		AgentVO castOther = (AgentVO) other;
+
+		return (this.getIdAgent() == castOther.getIdAgent());
+
+	}
+
 }

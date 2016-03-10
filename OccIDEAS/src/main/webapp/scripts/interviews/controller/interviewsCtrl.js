@@ -64,11 +64,13 @@
        				}),function(grouped){
        				  return grouped[0];
        				});
+				  	for(var i=0;i<ruleArray.length;i++){
 				  	var scope = $itemScope.$new();
 			  		scope.model = model;
-			  		scope.rule = uniqueArray[0];
+			  		scope.rule = uniqueArray[i];
 			  		scope.agentName = $itemScope.agent.name;
 			  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+				  	}
 			  	}			  
 			  ]
 			];
@@ -219,8 +221,8 @@
                                                         $scope.interviews[i].interviewId = response.data.interviewId;
                                                     }
                                                 }
-                                                var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
-                                                $scope.scrollTo(elId);
+                                               // var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
+                                              //  $scope.scrollWithTimeout(elId);
                                             }
                                         });
                                         if (!activeInterview.questionsAsked) {
@@ -278,7 +280,7 @@
                                 }
                                 angular.element('#numId').focus();
                                 var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
-                                $scope.scrollTo(elId);
+                                $scope.scrollWithTimeout(elId);
                             });
                         }
                     });
@@ -319,7 +321,7 @@
                                 $scope.data.showedQuestion = response.data;
 
                                 var elId = "interviewnode-" + response.data.idNode;
-                                scrollWithTimeout(elId);
+                                $scope.scrollWithTimeout(elId);
                             })
                         } else {
                             console.log('ERROR on Start Interview!');
@@ -329,7 +331,7 @@
                 });
         }
         
-        function scrollWithTimeout(elId){
+        $scope.scrollWithTimeout = function(elId){
         	$timeout(function() {
         		$scope.scrollTo(elId);
             }, 500);
