@@ -2,9 +2,9 @@
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
-                          '$anchorScroll','$location'];
+                          '$anchorScroll','$location','$log'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
-			$anchorScroll,$location){
+			$anchorScroll,$location,$log){
 		var self = this;
 		self.isDeleting = false;
 		
@@ -18,19 +18,19 @@
 					group: "type",
 				}, 
 				{	
-	        getData: function($defer,params) {
+	        getData: function(params) {
 	          if(params.filter().name || params.filter().description){	
 	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 	          }
 	          if(!self.tableParams.shouldGetData){
 	        	  return self.tableParams.settings().dataset;
 	          }
+	          $log.info("Data getting from modules ajax ..."); 
 	          return  ModulesService.get().then(function(data) {
-	        	  console.log("Data getting from modules ajax ...");        	 
+	        	  $log.info("Data received from modules ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.settings().dataset = data;
 	        	  self.tableParams.shouldGetData = true;
-	        	  $defer.resolve();
 	            return data;
 	          });
 	          },

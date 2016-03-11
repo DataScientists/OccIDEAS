@@ -6,11 +6,11 @@
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile',
-	                          'TabsCache','$rootScope','ModuleRuleService','$log','$timeout'];
+	                          '$rootScope','ModuleRuleService','$log','$timeout'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			AgentsService,RulesService,$compile,TabsCache,$rootScope,ModuleRuleService,$log,$timeout) {
+			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout) {
 		var self = this;
 		$scope.data = data;	
 		var moduleIdNode = $scope.data[0].idNode;
@@ -1162,7 +1162,7 @@
 						if(response.status === 200){
 							$log.info('Save was Successful Now Reloading!');
 							QuestionsService.findQuestions($scope.data[0].idNode,$scope.data[0].nodeclass).then(function(data) {	
-								TabsCache.removeAll();
+								
 								$scope.data = data.data;
 								if(locationId){
 									//$scope.scrollTo(locationId);
@@ -1455,19 +1455,6 @@
         	   setTimeout(function(){
         	     $('#'+elementId).toggleClass('highlight');  
         	   },5000);
-        }
-        
-        $scope.toggleCollapse = function(node,scope){
-        	scope.toggle();
-        	if(node.collapsed){
-        		node.collapsed = false;
-        	}else{
-        		node.collapsed = true;
-        	}
-        	var o = getObject(TabsCache.get(moduleIdNode)[0].nodes,node.idNode);
-        	if(!angular.isUndefined(o)){
-        		o.collapsed = node.collapsed;
-        	}
         }
         
         function getObject (array,idNode){
