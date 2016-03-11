@@ -10,6 +10,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 
 public class InterviewVO {
+	private final String INTRO_MODULE = "M_IntroModule";
+	
 	private String referenceNumber;
 	private String freeText;
     private long singleAnswerId;
@@ -18,6 +20,8 @@ public class InterviewVO {
     private ModuleVO module;
     private FragmentVO fragment;
     private boolean active;
+    private String moduleName;
+    private String interviewType;
     
     private List<InterviewQuestionAnswerVO> questionsAsked;
     
@@ -135,6 +139,36 @@ public class InterviewVO {
 
 	public void setAgents(List<AgentVO> agents) {
 		this.agents = agents;
+	}
+
+	public String getModuleName() {
+		if(this.getModule()!=null){
+			moduleName = this.getModule().getName();
+		}else if(this.getFragment()!=null){			
+			moduleName = this.getFragment().getName();
+		}
+		return moduleName;
+	}
+
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+
+	public String getInterviewType() {
+		if(this.getModule()!=null){
+			if(this.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+				interviewType = "Introduction Module";
+			}else {
+				interviewType = "Job Module";
+			}		
+		}else if(this.getFragment()!=null){			
+			interviewType = "Associate Job Module";
+		}
+		return interviewType;
+	}
+
+	public void setInterviewType(String interviewType) {
+		this.interviewType = interviewType;
 	}
 	
 }

@@ -5,7 +5,10 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Agent;
 import org.occideas.entity.Interview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -43,10 +46,8 @@ public class InterviewDao {
 	public List<Interview> getAll() {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(Interview.class)
-    		  						
+    		  						.addOrder(Order.asc("referenceNumber"))
     		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
       return crit.list();
     }
-    
-
 }
