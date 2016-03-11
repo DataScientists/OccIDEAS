@@ -1021,3 +1021,9 @@ md-list-item.interviewAnswers{
     margin-right: -30000px;
     padding-left: 20px;
 }
+.assessmentWrapper{
+	height: 475px;
+    overflow: auto;
+    background: #F8FAFF;
+    border: 1px solid #DAE2EA;
+}

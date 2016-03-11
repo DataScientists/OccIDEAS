@@ -41,6 +41,7 @@ public class RuleMapperImpl implements RuleMapper {
         ruleVO.setAgent(agentMapper.convertToAgentVO(ruleEntity.getAgent(),false));
         ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
         ruleVO.setLevel(getDescriptionByValue(ruleEntity.getLevel()));
+        ruleVO.setLevelValue(ruleEntity.getLevel());
         ruleVO.setType(ruleEntity.getType());
         List<PossibleAnswer> conditions = ruleEntity.getConditions();
 		if (!CommonUtil.isListEmpty(conditions)) {

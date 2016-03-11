@@ -1,34 +1,78 @@
-<!-- <pre>{{data | json}}</pre> -->
-<div pull-right>
-	<div class="verticalagents">
-			<div class="agentcontainer" ng-repeat="agent in data.agents ">
-					<span class="rotatedagenttext">{{agent | json}}</span>
-			</div>
-	</div>
-</div>
-<div>Auto Assessed</div>
-<div class="pull-right" context-menu="showRulesMenu(this)" model="node"
-	style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in data.agents | orderBy:'':true">
-	<div class="verticalrules">
-		<div class="rulescontainer">
-			<div class="agentACell" id="{{obj.idAgent}}">
-				<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
-					<div ng-class="mrule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
-				</span>
+ <!-- <pre>{{data | json}}</pre>    -->
+<div class="assessmentWrapper" >
+	
+	<div class="firedRulesScroller">
+		<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">	     	
+	     	<div class="verticalagents">
+				<div class="agentcontainer" >
+					<span class="rotatedagenttext">All Agents</span>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" context-menu="vm.showRulesMenu(this)" >
+						<span class="glyphicon glyphicon-console"></span>
+					</div>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell"  >
+						<span class="glyphicon glyphicon-download"></span>
+					</div>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" >
+						<span class="glyphicon glyphicon-ok"></span>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>
-<div>Manual Assessed</div>
-<div context-menu="showRulesMenu(this)" model="node"
-	style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in data.agents | orderBy:'':true">
-	<div class="verticalrules">
-		<div class="rulescontainer">
-			<div class="agentACell" id="{{obj.idAgent}}">
-				<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
-					<div ng-class="mrule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
-				</span>
+		<div ng-repeat="agent in data.agents" 
+			class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
+	     	
+	     	<div class="verticalagents">
+				<div class="agentcontainer" >
+					<span class="rotatedagenttext">{{agent.name | json}}</span>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
+					model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
+							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
+					model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.autoAssessedRules" >
+							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
+					model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
+							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
 			</div>
 		</div>
+		
+		
 	</div>
 </div>

@@ -23,6 +23,7 @@ public class RuleVO {
 	private Long legacyRuleId;
 	@JsonInclude(Include.NON_NULL)
 	private List<RuleAdditionalFieldVO> ruleAdditionalfields;
+	private int levelValue;
 
 	public long getIdRule() {
 		return idRule;
@@ -103,6 +104,14 @@ public class RuleVO {
 
 	public void setAgent(AgentVO agent) {
 		this.agent = agent;
+	}
+
+	public int getLevelValue() {
+		return levelValue;
+	}
+
+	public void setLevelValue(int levelValue) {
+		this.levelValue = levelValue;
 	}
 	
 }

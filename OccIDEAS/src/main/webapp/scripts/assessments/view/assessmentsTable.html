@@ -11,7 +11,10 @@
         
         <td title="'Module'" filter="{ moduleName: 'text'}" sortable="'moduleName'">
             {{interview.moduleName}}</td>
-        <td>
+        <td title="'Assessed Status'">
+			
+		</td>
+		<td>
 			<button class="btn btn-default btn-sm"
 					ng-click="addAssessmentTab(interview)" ng-if="interview.interviewType!='Introduction Module'">
 			<span class="glyphicon glyphicon-list-alt"></span>
