@@ -9,7 +9,7 @@
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams({group: "type"}, {	
-	        getData: function($defer,params) {
+	        getData: function(params) {
 	          if(params.filter().name || params.filter().description){	
 		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 		      }

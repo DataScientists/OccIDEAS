@@ -3,7 +3,7 @@
 	                                     'ct.ui.router.extras.dsr',
 	                                     'ct.ui.router.extras.sticky' ])
 	.config(Config)
-	.factory('TabsCache',TabsCache)
+	//.factory('TabsCache',TabsCache)
 	.run(function ($rootScope, $state, $window, $timeout) {
 		$rootScope.$state = $state;
 	})
@@ -17,10 +17,10 @@
 	}
 	});
 	
-	TabsCache.$inject = ['$cacheFactory'];
-	function TabsCache($cacheFactory){
-		return $cacheFactory('tabs-cache');
-	}
+	//TabsCache.$inject = ['$cacheFactory'];
+	//function TabsCache($cacheFactory){
+	//	return $cacheFactory('tabs-cache');
+	//}
 
 	Config.$inject = ['$stateProvider','$windowProvider','$rootScopeProvider','$stickyStateProvider'];
 	function Config($stateProvider,$windowProvider,$rootScopeProvider,$stickyStateProvider) {
@@ -96,7 +96,7 @@
 			        controller: 'AssessmentsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	data: function($stateParams,AssessmentsService,TabsCache) {
+			        	data: function($stateParams,AssessmentsService) {
 			        		$log.info("inside questions@tabs resolve");
 //			        		if(TabsCache.get($stateParams.row)){
 //			        			$log.info("Data getting from questions Cache ...");
@@ -115,8 +115,7 @@
 				        					}
 			        					}
 			        					interview.agents = agents;
-			        					TabsCache.put($stateParams.row,response.data);
-						        		return interview;
+			        					return interview;
 		    				});
 			        }
 			     }
@@ -132,16 +131,16 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions@tabs resolve");
 //			        		if(TabsCache.get($stateParams.row)){
 //			        			$log.info("Data getting from questions Cache ...");
 //			        			return TabsCache.get($stateParams.row);
 //			        		}
-			        		
+			        		$log.info("Data getting from questions AJAX ...");
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					$log.info("Data getting from questions AJAX ...");
+			        					$log.info("Data received from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -158,8 +157,7 @@
 			        						$window.sliderVal.idNode.showFragmentSlider =true;
 			        						$window.sliderVal.idNode.showModuleSlider = false;
 			        					}
-			        					TabsCache.put($stateParams.row,response.data);
-						        		return response.data;
+			        					return response.data;
 		    				});
 			        }
 			     }
@@ -175,16 +173,16 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions1@tabs resolve");
-			        		if(TabsCache.get($stateParams.row)){
-			        			$log.info("Data getting from questions Cache ...");
-			        			return TabsCache.get($stateParams.row);
-			        		}
-			        		
+			        		//if(TabsCache.get($stateParams.row)){
+			        		//	$log.info("Data getting from questions Cache ...");
+			        		//	return TabsCache.get($stateParams.row);
+			        		//}
+			        		$log.info("Data getting from questions AJAX ...");
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
-			        					$log.info("Data getting from questions AJAX ...");
+			        					$log.info("Data received from questions AJAX ...");
 			        					if(angular.isUndefined($window.sliderVal)){
 			        					$window.sliderVal = [];
 			        					}
@@ -201,8 +199,7 @@
 			        						$window.sliderVal.idNode.showFragmentSlider =true;
 			        						$window.sliderVal.idNode.showModuleSlider = false;
 			        					}
-			        					TabsCache.put($stateParams.row,response.data);
-						        		return response.data;
+			        					return response.data;
 		    				});
 			        }
 				}
@@ -218,12 +215,12 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null,module:null},
 			        resolve:{
-			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions2@tabs resolve");
-			        		if(TabsCache.get($stateParams.row)){
-			        			$log.info("Data getting from questions Cache ...");
-			        			return TabsCache.get($stateParams.row);
-			        		}
+			        		//if(TabsCache.get($stateParams.row)){
+			        		//	$log.info("Data getting from questions Cache ...");
+			        		//	return TabsCache.get($stateParams.row);
+			        		//}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'M')
 			        				.then(function(response){
@@ -244,7 +241,6 @@
 			        						$window.sliderVal.idNode.showFragmentSlider =true;
 			        						$window.sliderVal.idNode.showModuleSlider = false;
 			        					}
-			        					TabsCache.put($stateParams.row,response.data);
 						        		return response.data;
 		    				});
 			        }
@@ -261,12 +257,12 @@
 			        controller: 'QuestionsCtrl as vm',
 			        params:{row: null},
 			        resolve:{
-			        	data: function($stateParams,QuestionsService,TabsCache) {
+			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions1@tabs resolve");
-			        		if(TabsCache.get($stateParams.row)){
-			        			$log.info("Data getting from questions Cache ...");
-			        			return TabsCache.get($stateParams.row);
-			        		}
+			        		//if(TabsCache.get($stateParams.row)){
+			        		//	$log.info("Data getting from questions Cache ...");
+			        		//	return TabsCache.get($stateParams.row);
+			        		//}
 			        		
 			        		return QuestionsService.findQuestions($stateParams.row,'F')
 			        				.then(function(response){
@@ -287,8 +283,7 @@
 			        						$window.sliderVal.idNode.showFragmentSlider =true;
 			        						$window.sliderVal.idNode.showModuleSlider = false;
 			        					}
-			        					TabsCache.put($stateParams.row,response.data);
-						        		return response.data;
+			        					return response.data;
 		    				});
 			        }
 				}
