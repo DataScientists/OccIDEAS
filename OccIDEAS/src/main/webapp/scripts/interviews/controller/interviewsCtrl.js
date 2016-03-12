@@ -16,6 +16,19 @@
         $scope.refNoPattern = "H([a-zA-Z0-9]){3}(-)([a-zA-Z0-9]){3}";
         $scope.multiSelected = [];
         
+        $rootScope.$on('InterviewCtrl:update', function (event, elId) {
+        	$scope.addClassWithTimeout('IntResult'+elId);
+        	safeDigest($scope.interviews);
+    	});
+        
+        $scope.addClassWithTimeout = function(elId){
+        	$timeout(function() {
+        		if(!$('#'+elId).hasClass("highlight")){
+            	    $('#'+elId).addClass("highlight");
+            	}
+        	},1000);
+        };
+        
         self.editQuestion = function (interview,question){
         	_.find($scope.$parent.$parent.$parent.$parent.tabs, function(el, index){ 
 				if(el.title === interview.module.name){
@@ -23,7 +36,7 @@
 			    } 
 			});
         	$rootScope.$broadcast('QuestionsCtrl:scrollTo', question.idNode);
-        }
+        };
         
         self.showRulesMenu = function(scope){
 			return self.rulesMenuOptions;

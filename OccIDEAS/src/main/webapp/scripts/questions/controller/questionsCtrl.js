@@ -852,6 +852,13 @@
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
 			});
+			var val = _.find($scope.$parent.$parent.$parent.tabs, function(el, index){
+				var qModule = "Interview "+$scope.data[0].name;
+				if(el.title === qModule){
+					$scope.$parent.$parent.$parent.selectedIndex = index;
+					$rootScope.$broadcast('InterviewCtrl:update', scope.$modelValue.idNode);
+				} 
+			});
 			saveModuleWithoutReload();
 		};
 
@@ -1456,7 +1463,7 @@
 			var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
 			var scrollY = scrollTarget.offset().top - 150;
-			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
+			scrollPane.animate({scrollTop : scrollY }, 1000, 'swing');
 		};
 
         $scope.highlightNode = function(idNode){
@@ -1465,7 +1472,7 @@
         	$('#'+elementId).toggleClass('highlight');  
         	   setTimeout(function(){
         	     $('#'+elementId).toggleClass('highlight');  
-        	   },5000);
+        	   },1500);
         }
         
         function getObject (array,idNode){
