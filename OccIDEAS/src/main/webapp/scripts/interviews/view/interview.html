@@ -11,8 +11,8 @@
     				    ng-repeat="qa in interview.questionsAsked">
     				   
     				    
-    					<div >
-    					{{ qa.question.name }}
+    					<div>
+    					{{ qa.question.name }}<span class="glyphicon glyphicon-edit" style="margin-left:5px;" aria-hidden="true" ng-click="vm.editQuestion(interview,qa.question)"></span>
     					<ol style="list-style-type: disc;">
     						<li>{{qa.possibleAnswer.name }}
     						</li>

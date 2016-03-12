@@ -21,6 +21,17 @@
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	$scope.agentsData = null;
+    	
+    	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
+    		$scope.scrollWithTimeout(elId);
+    	});
+    	
+    	$scope.scrollWithTimeout = function(elId){
+        	$timeout(function() {
+        		$scope.highlightNode(elId);
+            }, 1000);
+        }
+    	
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
     		    open: function(x,idRule) {

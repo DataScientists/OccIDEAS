@@ -16,6 +16,15 @@
         $scope.refNoPattern = "H([a-zA-Z0-9]){3}(-)([a-zA-Z0-9]){3}";
         $scope.multiSelected = [];
         
+        self.editQuestion = function (interview,question){
+        	_.find($scope.$parent.$parent.$parent.$parent.tabs, function(el, index){ 
+				if(el.title === interview.module.name){
+					$scope.$parent.$parent.$parent.$parent.selectedIndex = index;
+			    } 
+			});
+        	$rootScope.$broadcast('QuestionsCtrl:scrollTo', question.idNode);
+        }
+        
         self.showRulesMenu = function(scope){
 			return self.rulesMenuOptions;
 		}
