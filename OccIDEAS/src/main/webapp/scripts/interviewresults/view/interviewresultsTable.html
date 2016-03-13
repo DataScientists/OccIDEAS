@@ -1,43 +1,38 @@
 <div ng-cloak>
 <div>
-<!-- <pre>debug{{vm | json}}</pre> -->
-	<table ng-table="vm.tableParams" ng-cloak
-		class="table table-bordered table-hover 
-  table-condensed editable-table moduleTable"
-		ng-form="tableForm" disable-filter="vm.isAdding"
-		demo-tracked-table="vm.tableTracker">     
-        <tbody ng-repeat="group in $groups">
-        <tr class="ng-table-group">
-            <td colspan="{{$columns.length}}">
-                <a href="" ng-click="group.$hideRows = !group.$hideRows">
-                    <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-                    <strong> {{ group.value }}</strong>
-                </a>
-            </td>
-        </tr>
-        <tr ng-hide="group.$hideRows" ng-repeat="node in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
-            <td data-title="'ReferenceNumber'" groupable="'referenceNumber'" >
-            	{{node.idInterview}}
+<table ng-table="vm.tableParams" class="table table-bordered table-hover 
+  table-condensed editable-table" show-filter="true">
+    <tr ng-repeat="interview in vm.tableParams.data">
+        <td title="'Module Type'" groupable="'interviewType'">
+            {{interview.interviewType}}</td>
+            <td title="'Reference Number'" filter="{ referenceNumber: 'text'}" sortable="'referenceNumber'">
+            {{interview.referenceNumber}}</td>
+           <td title="'Module'" filter="{ moduleName: 'text'}" sortable="'moduleName'">
+            {{interview.moduleName}}</td>
+           <td >
+           
+           		<table>
+           		<tr ng-repeat="iqa in interview.questionsAsked"> 
+           		<td data-title="'Question'"  >
+            	{{iqa.question.name}}
+          		</td>
+          		<td data-title="'Answer'"  >
+            	{{iqa.interviewQuestionAnswerFreetext}}
+          		</td>
+          		<td data-title="'Node Number'" >
+				{{interview.moduleName.substring(0, 4)}}_{{iqa.possibleAnswer.number}}
+				</td>
+				<td>
+					<button class="btn btn-default btn-sm"
+						ng-click="addAssessmentTab(node.interview)" ng-if="node.interview.interviewType!='Introduction Module'">
+						<span class="glyphicon glyphicon-list-alt"></span>
+					</button>
+				</td>
+           		</tr>
+           		</table>
           	</td>
-           <td data-title="'Module'"  groupable="'interview.module.name'" >
-            	{{node.interview.module.name}}
-          	</td>
-           <td data-title="'aJSM'"  >
-            	{{node.interview.fragment.name}}
-          	</td>
-           <td data-title="'Question'"  >
-            	{{node.question.name}}
-          	</td>
-            <td data-title="'Answer'"  >
-            	{{node.interviewQuestionAnswerFreetext}}
-          	</td>
-            
-			<td data-title="'Node Number'" >
-				{{node.possibleAnswer.number}}
-			</td>			
-			
-        </tr>
-    </tbody>
-	</table>
+    </tr>
+</table>
+	
 </div>
 </div>

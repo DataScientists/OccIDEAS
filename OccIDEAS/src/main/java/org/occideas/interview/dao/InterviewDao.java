@@ -52,7 +52,13 @@ public class InterviewDao {
     	       		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
     		  						.addOrder(Order.asc("referenceNumber"))
     		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
-      return crit.list();
+      List<Interview> retValue = new ArrayList<Interview>();
+      List<Interview> temp = crit.list();
+      for(Interview interview: temp){
+    	  interview = this.get(interview.getIdinterview()); //Todo fix this workaround and ask discuss with Jed about why hibernate is not populating firedRules
+    	  retValue.add(interview);
+      }
+      return retValue;
     }
     @SuppressWarnings("unchecked")
 	public List<Interview> getAssessments() {

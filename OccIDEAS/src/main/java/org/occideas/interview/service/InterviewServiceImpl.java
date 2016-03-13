@@ -27,6 +27,10 @@ public class InterviewServiceImpl implements InterviewService {
         return mapper.convertToInterviewVOList(interviewDao.getAll(),false);
     }
     @Override
+    public List<InterviewVO> listAllWithAnswers() {
+        return mapper.convertToInterviewVOList(interviewDao.getAll(),true);
+    }
+    @Override
     public List<InterviewVO> listAssessments() {
         return mapper.convertToInterviewVOList(interviewDao.getAssessments(),false);
     }

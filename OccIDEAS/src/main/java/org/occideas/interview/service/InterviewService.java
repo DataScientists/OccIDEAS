@@ -9,4 +9,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	void merge(InterviewVO o);
 
 	List<InterviewVO> listAssessments();
+
+	List<InterviewVO> listAllWithAnswers();
 }
