@@ -1,9 +1,9 @@
 (function(){
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
-	AssessmentsCtrl.$inject = ['AssessmentsService','ngTableParams','$scope','$filter',
+	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','ngTableParams','$scope','$filter',
                           'data','$log','$compile'];
-	function AssessmentsCtrl(AssessmentsService,NgTableParams,$scope,$filter,
+	function AssessmentsCtrl(AssessmentsService,InterviewsService,NgTableParams,$scope,$filter,
 			data,$log,$compile){
 		var self = this;
 		$scope.data = data;
@@ -102,9 +102,39 @@
 					  model.autoAssessedRules.push(rule);
 				  }
 				  $scope.data = model;
+				  InterviewsService.save(model).then(function (response) {
+		                if (response.status === 200) {
+		                	$log.info("Interview saved with auto assessments");
+		                }
+				  });
 			  	}			  
 			  ],
+			  [ 'Use Auto', function($itemScope, $event, model) {
+				  model.manualAssessedRules = model.autoAssessedRules;
+				  
+				  $scope.data = model;
+				  InterviewsService.save(model).then(function (response) {
+		                if (response.status === 200) {
+		                	$log.info("Interview saved with manual assessments");
+		                }
+				  });	
+			  	}
+			  ],
 			  [ 'Show Rules', function($itemScope, $event, model) {
+				  var ruleArray =_.filter(model.firedRules, function(r){
+						return $itemScope.agent.idAgent === r.idAgent; 
+				  	});
+				  	 
+				  	for(var i=0;i<ruleArray.length;i++){
+					  	var scope = $itemScope.$new();
+				  		scope.model = model;
+				  		scope.rule = ruleArray[i];
+				  		scope.agentName = $itemScope.agent.name;
+				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+				  	}
+			  	}			  
+			  ],
+			  [ 'Edit Assessment', function($itemScope, $event, model) {
 				  var ruleArray =_.filter(model.firedRules, function(r){
 						return $itemScope.agent.idAgent === r.idAgent; 
 				  	});

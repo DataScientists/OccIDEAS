@@ -27,6 +27,10 @@ public class InterviewVO {
     
     private List<RuleVO> firedRules;
     
+    private List<RuleVO> autoAssessedRules;
+    
+    private List<RuleVO> manualAssessedRules;
+    
     private List<AgentVO> agents;
     
     private long questionId;
@@ -169,6 +173,22 @@ public class InterviewVO {
 
 	public void setInterviewType(String interviewType) {
 		this.interviewType = interviewType;
+	}
+
+	public List<RuleVO> getAutoAssessedRules() {
+		return autoAssessedRules;
+	}
+
+	public void setAutoAssessedRules(List<RuleVO> autoAssessedRules) {
+		this.autoAssessedRules = autoAssessedRules;
+	}
+
+	public List<RuleVO> getManualAssessedRules() {
+		return manualAssessedRules;
+	}
+
+	public void setManualAssessedRules(List<RuleVO> manualAssessedRules) {
+		this.manualAssessedRules = manualAssessedRules;
 	}
 	
 }
