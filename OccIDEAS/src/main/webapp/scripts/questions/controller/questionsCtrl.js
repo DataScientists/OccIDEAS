@@ -1270,14 +1270,6 @@
 				    			}
 				    			if($scope.templateData != null){
 				    			_.merge($scope.templateData, template);
-				    			if (!$scope.templateData.$$phase) {
-				    			        try {
-				    			        	$scope.templateData.$digest();
-				    			        }
-				    			        catch (e) {
-				    			        	$log.error(e);
-				    			        }
-				    			    }
 				    			}
 				    				deffered.resolve();
 				    		});
@@ -1289,14 +1281,6 @@
 			        			}
 			        			if($scope.aJSMData != null){
 			        			_.merge($scope.aJSMData, data);
-			        			if (!$scope.aJSMData.$$phase) {
-			    			        try {
-			    			        	$scope.aJSMData.$digest();
-			    			        }
-			    			        catch (e) {
-			    			        	$log.error(e);
-			    			        }
-			    			    }
 			        			}
 			        			deffered.resolve();
 			        		});
@@ -1307,14 +1291,6 @@
 			        			}
 			        			if($scope.frequencyData != null){
 				    			_.merge($scope.frequencyData, data);
-			        			if (!$scope.frequencyData.$$phase) {
-			    			        try {
-			    			        	$scope.frequencyData.$digest();
-			    			        }
-			    			        catch (e) { 
-			    			        	$log.error(e);
-			    			        }
-			    			    }
 			        			}
 			        			deffered.resolve();
 			        		});

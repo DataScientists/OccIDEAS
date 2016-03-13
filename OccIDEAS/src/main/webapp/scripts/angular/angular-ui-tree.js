@@ -267,7 +267,7 @@
 					    }
 					  });
 					if(obj.nodes.length > 0){
-						cascadeIdCleanse(obj.nodes);
+						$scope.cascadeIdCleanse(obj.nodes);
 					}
 				});
 				
@@ -1372,7 +1372,9 @@
                 if (this.isClone()) {
                   this.sourceInfo.cloneModel.name = this.sourceInfo.cloneModel.name +'(Copy)';
                   this.sourceInfo.cloneModel.idNode = "";
+                  if(this.parent){
                   this.parent.cascadeIdCleanse(this.sourceInfo.cloneModel.nodes);
+                  }
                   this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
                 } else { // Any other case, remove and reinsert
                   this.source.remove();
