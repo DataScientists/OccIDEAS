@@ -9,6 +9,7 @@ angular
     "ngSanitize",
     "angular-confirm",
     "sticky",
+    "fsm",
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
     "occIDEASApp.Tabs",
