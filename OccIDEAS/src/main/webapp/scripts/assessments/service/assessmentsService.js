@@ -37,7 +37,7 @@
 			return request.then(handleSuccess,handleError);
 		}
     	function getAssessments() {
-			var restUrl = 'rest/interviews/getassessments';
+			var restUrl = 'rest/interview/getassessments';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
