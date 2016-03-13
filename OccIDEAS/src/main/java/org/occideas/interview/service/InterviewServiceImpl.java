@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Interview;
+import org.occideas.interview.dao.InterviewDao;
 import org.occideas.mapper.InterviewMapper;
 import org.occideas.vo.InterviewVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +14,26 @@ import org.springframework.stereotype.Service;
 @Service
 public class InterviewServiceImpl implements InterviewService {
 
-    @Autowired
+	@Autowired
     private BaseDao dao;
+	@Autowired
+    private InterviewDao interviewDao;
 
     @Autowired
     private InterviewMapper mapper;
 
     @Override
     public List<InterviewVO> listAll() {
-        return mapper.convertToInterviewVOList(dao.getAll(Interview.class),true);
+        return mapper.convertToInterviewVOList(interviewDao.getAll(),false);
+    }
+    @Override
+    public List<InterviewVO> listAssessments() {
+        return mapper.convertToInterviewVOList(interviewDao.getAssessments(),false);
     }
 
     @Override
     public List<InterviewVO> findById(Long id) {
-        Interview interview = dao.get(Interview.class, id);
+        Interview interview = interviewDao.get( id);
         InterviewVO InterviewVO = mapper.convertToInterviewVO(interview,true);
         List<InterviewVO> list = new ArrayList<InterviewVO>();
         list.add(InterviewVO);

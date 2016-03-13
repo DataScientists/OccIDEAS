@@ -22,6 +22,7 @@ public class InterviewVO {
     private boolean active;
     private String moduleName;
     private String interviewType;
+    private String assessedStatus;
     
     private List<InterviewQuestionAnswerVO> questionsAsked;
     
@@ -132,10 +133,12 @@ public class InterviewVO {
 
 	public List<AgentVO> getAgents() {
 		agents = new ArrayList<AgentVO>();
-		for(RuleVO rule:this.getFiredRules()){
-			AgentVO agent = rule.getAgent();
-			if(!(agents.contains(agent))){
-				agents.add(agent);
+		if(this.getFiredRules()!=null){
+			for(RuleVO rule:this.getFiredRules()){
+				AgentVO agent = rule.getAgent();
+				if(!(agents.contains(agent))){
+					agents.add(agent);
+				}
 			}
 		}
 		return agents;
@@ -189,6 +192,21 @@ public class InterviewVO {
 
 	public void setManualAssessedRules(List<RuleVO> manualAssessedRules) {
 		this.manualAssessedRules = manualAssessedRules;
+	}
+
+	public String getAssessedStatus() {		
+		if(this.getManualAssessedRules()!=null){
+			if(this.getManualAssessedRules().size()>0){
+				assessedStatus = "Complete";
+			}else{
+				assessedStatus = "Incomplete";
+			}
+		}
+		return assessedStatus;
+	}
+
+	public void setAssessedStatus(String assessedStatus) {
+		this.assessedStatus = assessedStatus;
 	}
 	
 }

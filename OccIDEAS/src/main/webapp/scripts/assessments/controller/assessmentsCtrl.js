@@ -37,7 +37,7 @@
 					    	return self.tableParams.settings().dataset;
 					    }
 					    $log.info("Data getting from interviews ajax ..."); 
-					    return AssessmentsService.getInterviews().then(function(data) {
+					    return AssessmentsService.getAssessments().then(function(data) {
 					        	  $log.info("Data received from interviews ajax ...");        	 
 					        	  self.originalData = angular.copy(data);
 					        	  self.tableParams.settings().dataset = data;
@@ -144,7 +144,7 @@
 			  	}			  
 			  ],
 			  [ 'Use Auto', function($itemScope, $event, model) {
-                    if(!(model.manualAssessedRules)){
+                    if(model.manualAssessedRules.length==0){
                       model.manualAssessedRules = [];
                   	  var assessments = angular.copy(model.autoAssessedRules);
                   	  for(var i=0;i<assessments.length;i++){
