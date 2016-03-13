@@ -13,7 +13,7 @@
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.question.number}}</span>
                 		</div>  
-    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
+    					<span class="glyphicon glyphicon-edit" ng-if="data.interviewEnded" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
 	    							ng-click="vm.editQuestion(interview,qa.question)"></span>
 	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
     					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
@@ -128,8 +128,11 @@
                 </div> -->
             </div>
             
-            <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">       
+            <md-button ng-if="!updateAnswers" ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">       
                 <span>NEXT</span>
+            </md-button>
+            <md-button ng-if="updateAnswers" ng-click="updateAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">       
+                <span>Update</span>
             </md-button>
         </ul>
         <div ng-if="!data.interviewStarted">
