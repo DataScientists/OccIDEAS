@@ -15,14 +15,12 @@
     <div id="interview-tree" class="angular-ui-tree">
         <div class="tree-node" id="{{node.anchorId}}" data-nodrag>
             <!-- start content -->
-            <div class="tree-node-content {{node.nodeclass}}" id="interviewnode-{{node.idNode}}">             
+            <div class="tree-node-content {{node.nodeclass}}" id="interviewnode-{{node.idNode}}">    
+				<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   <span class="badge">{{node.number}}</span>
+                </div>         
                 <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
                 <span>{{node.name}}</span>
-
-                <div class="form-group pull-right" style="margin-top: 5px;">
-                    
-					<span class="badge">{{node.number}}</span>
-                </div>
             </div>
             <!-- end content -->
         </div>

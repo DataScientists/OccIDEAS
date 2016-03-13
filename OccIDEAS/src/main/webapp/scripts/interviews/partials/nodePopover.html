@@ -1,16 +1,16 @@
 <div class="form-group">
 	<div class="popoverTitle">
 	</div>
-	<md-progress-circular ng-if="node.info['Node'+node.idNode+rule.rule.idRule].nodePopoverInProgress" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
-	<div ng-if="!node.info['Node'+node.idNode+rule.rule.idRule].nodePopoverInProgress">
+	<md-progress-circular ng-if="node.info['Node'+node.idNode+rule.idRule].nodePopoverInProgress" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+	<div ng-if="!node.info['Node'+node.idNode+rule.idRule].nodePopoverInProgress">
 		<form>
 	<div class="form-group" >
-  		 <span class="badge-parent">{{node.info["Node"+node.idNode+rule.rule.idRule].data.parent.number}}</span>
-  		 {{node.info["Node"+node.idNode+rule.rule.idRule].data.parent.name}}
+  		 <span class="badge-parent">{{node.info["Node"+node.idNode+rule.idRule].data.parent.number}}</span>
+  		 {{node.info["Node"+node.idNode+rule.idRule].data.parent.name}}
   	</div>
   <div>
-    <span class="badge-parent">{{node.info["Node"+node.idNode+rule.rule.idRule].data.number}}</span>
-    {{node.info["Node"+node.idNode+rule.rule.idRule].data.name}}
+    <span class="badge-parent">{{node.info["Node"+node.idNode+rule.idRule].data.number}}</span>
+    {{node.info["Node"+node.idNode+rule.idRule].data.name}}
   </div>
   
 </form>

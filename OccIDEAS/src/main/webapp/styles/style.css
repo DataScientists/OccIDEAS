@@ -121,6 +121,10 @@
   min-width: 90px;
 }
 /**Node Types*/
+.M_Interview {
+    font-size: 24px;
+    color: #676262 !important;
+}
 .M{
 	height: 110px;
     font-size: 22px;
@@ -141,6 +145,17 @@
     
     border-bottom: 2px solid;
     border-bottom-color: #4657B7;
+    
+}
+.Q_interviewresult{
+	height: 40px;
+    padding-left: 20px;
+    border-bottom: 2px solid;
+    border-bottom-color: #4657B7;
+    max-width:320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .P{
 	height: 40px;
@@ -148,6 +163,18 @@
     background: #FDFBF5 !important;
     border-bottom: 1px solid;
     border-bottom-color: #C79B1C; !important;
+
+}
+.P_interviewresult{
+	height: 40px;
+    padding-left: 20px;
+    background: #FDFBF5 !important;
+    border-bottom: 1px solid;
+    border-bottom-color: #C79B1C; !important;
+    max-width:320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /** Editable table
@@ -482,6 +509,23 @@ label.fraglabel {
 
 .agentACell {
     width: 28px;
+    height: 28px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 21px;
+    color: #FFF;
+    border: 3px solid #FFF;
+    box-shadow: 1px 1px 3px rgba(0,0,0,.4);
+    text-shadow: 1px 1px 2px rgba(0,0,0,.4);
+    margin: -15px 2px 0px 2px;
+    float: left;
+    overflow: hidden;
+    background: #686868;
+}
+
+.assessmentDescription {
+    width: 208px;
     height: 28px;
     font-size: 14px;
     font-weight: 600;
@@ -1005,7 +1049,8 @@ md-list-item.interviewAnswers{
 }
 .treeNodeText{
 	display: inline-block;
-    width: 700px;
+    max-width: 700px;
+    
 }
 .btn {  
     vertical-align: top !important;	

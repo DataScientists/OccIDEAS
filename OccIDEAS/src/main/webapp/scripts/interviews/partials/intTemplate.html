@@ -1,21 +1,21 @@
 <script id="interview-template" type="text/x-custom-template">
-<div class="int-note {{activeIntRuleDialog === $id?'activeRule':''}}" prevent-right-click ng-click="setActiveIntRule(rule,this)">
+<div class="int-note activeRule" prevent-right-click >
 	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeIntDialog(this,$event)" aria-label="Left Align">
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
-	<div class="title">{{rule.rule.idRule}} {{agentName}}</div>
+	<div class="title">{{rule.idRule}} {{agentName}}</div>
 	<ul class="list-group" style="margin: 0 0 0 0;">
-    			<li popover-is-open="node.info['Node'+node.idNode+rule.rule.idRule].nodePopover.isOpen" 
-					popover-placement="left" ng-mouseenter="$parent.$parent.$parent.$parent.nodePopover.open(node,rule.rule.idRule)" 
+    			<li popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
+					popover-placement="left" ng-mouseenter="$parent.$parent.$parent.$parent.nodePopover.open(node,rule.idRule)" 
 					uib-popover-template="$parent.$parent.$parent.$parent.nodePopover.templateUrl" class="list-group-item nodeNumber" 
-					ng-repeat="node in rule.rule.conditions" 
-					ng-click="highlightNode(node.idNode)" ng-mouseleave="$parent.$parent.$parent.$parent.nodePopover.close(node,rule.rule.idRule)">
+					ng-repeat="node in rule.conditions" 
+					ng-click="highlightNode(node.idNode)" ng-mouseleave="$parent.$parent.$parent.$parent.nodePopover.close(node,rule.idRule)">
 					{{node.number}}
 				</li>
   			</ul>
-			<ul ng-if="(rule.rule.type=='VIBRATION')||(rule.rule.type=='NOISE')||(rule.rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item additionalField" 
-					ng-repeat="additionalFields in rule.rule.ruleAdditionalfields" 
+					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
 					>
 					<div>{{additionalFields.additionalfield.type}}</div>
 					<div class="pull-right">			
@@ -23,13 +23,13 @@
 					<div>
 				</li>
   			</ul>
-			<ul ng-if="!(rule.rule.type)" class="list-group" style="margin: 0 0 0 0;">
+			<ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item">
-					{{rule.rule.level == 'probHigh'?'PROBABLE_HIGH'
-					:rule.rule.level == 'probMedium'?'PROBABLE_MEDIUM'
-					:rule.rule.level == 'probLow'?'PROBABLE_LOW'
-					:rule.rule.level == 'probUnknown'?'PROBABLE_UNKNOWN'
-					:rule.rule.level == 'possUnknown'?'POSSIBLE_UNKNOWN':'NO_EXPOSURE'}}
+					{{rule.level == 'probHigh'?'PROBABLE_HIGH'
+					:rule.level == 'probMedium'?'PROBABLE_MEDIUM'
+					:rule.level == 'probLow'?'PROBABLE_LOW'
+					:rule.level == 'probUnknown'?'PROBABLE_UNKNOWN'
+					:rule.level == 'possUnknown'?'POSSIBLE_UNKNOWN':'NO_EXPOSURE'}}
 				</li>
   			</ul>
 </div>

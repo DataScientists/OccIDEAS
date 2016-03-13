@@ -1,29 +1,37 @@
 <div id="interview-wrapper">
 <div class="col-md-4 moduleInterview" id="interview-question-list" >
 	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews">
-	<ol style="list-style-type: none;">
-		<li>
+	
 		<div class="angular-ui-tree">
 			<div class="tree-node">
-				{{interview.module.name}}{{interview.fragment.name}}:{{interview.active}}
-				<ol>
-    				<li ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
+				<span class="M_Interview {{interview.active ? 'highlight':''}}">
+				{{interview.module.name}}{{interview.fragment.name}}</span>
+				<div>
+    				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
     				    ng-repeat="qa in interview.questionsAsked">
-    					<div>
-    					<span id="{{'IntResult'+qa.question.idNode}}">{{ qa.question.name }}<span class="glyphicon glyphicon-edit" style="margin-left:5px;" aria-hidden="true" ng-click="vm.editQuestion(interview,qa.question)"></span></span>
-    					<ol style="list-style-type: disc;">
-    						<li id="{{'IntResult'+qa.possibleAnswer.idNode}}">{{qa.possibleAnswer.name }}
-    						</li>
-    					</ol>
+    					<div class="tree-node-content Q_interviewresult">
+    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   			<span class="badge">{{qa.question.number}}</span>
+                		</div>  
+    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
+	    							ng-click="vm.editQuestion(interview,qa.question)"></span>
+	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
+	    					
+    					</span>  					
     					</div>
-    					
-    				</li>
-  				</ol>
+    					<div class="tree-node-content P_interviewresult">
+    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
+                			</div>
+    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.possibleAnswer.name }}
+    						</span>
+    					</div>
+    				</div>
+  				</div>
 			</div>
 		</div>
-		</li>
 		
-	</ol>
 	
 	<div ng-if="interview.firedRules.length > 0" class="firedRulesWrapper" >
 		<div class="firedRulesScroller">

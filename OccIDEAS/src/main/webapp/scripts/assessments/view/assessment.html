@@ -5,27 +5,27 @@
 		<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">	     	
 	     	<div class="verticalagents">
 				<div class="agentcontainer" >
-					<span class="rotatedagenttext">All Agents</span>
+					<span class="rotatedagenttext"></span>
 				</div>
 			</div>			
 			<div class="verticalrules">
 				<div class="rulescontainer">
-					<div class="agentACell" context-menu="vm.showRulesMenu(this)" >
-						<span class="glyphicon glyphicon-console"></span>
+					<div class="assesssmentDescription" context-menu="vm.showRulesMenu(this)" model="data">
+						Fired Rules
 					</div>
 				</div>
 			</div>			
 			<div class="verticalrules">
 				<div class="rulescontainer">
-					<div class="agentACell"  >
-						<span class="glyphicon glyphicon-download"></span>
+					<div class="assesssmentDescription" context-menu="vm.showRulesMenu(this)" model="data">
+						Auto Assessed
 					</div>
 				</div>
 			</div>			
 			<div class="verticalrules">
 				<div class="rulescontainer">
-					<div class="agentACell" >
-						<span class="glyphicon glyphicon-ok"></span>
+					<div class=""assesssmentDescription"" >
+						Manual Assessed
 					</div>
 				</div>
 			</div>
@@ -35,14 +35,13 @@
 	     	
 	     	<div class="verticalagents">
 				<div class="agentcontainer" >
-					<span class="rotatedagenttext">{{agent.name | json}}</span>
+					<span class="rotatedagenttext">{{agent.name}}</span>
 				</div>
 			</div>
 			
 			<div class="verticalrules">
 				<div class="rulescontainer">
-					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
-					model="data">
+					<div class="agentACell" id="{{agent.idAgent}}" >
 						<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
 							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
 						</span>
@@ -52,8 +51,7 @@
 			
 			<div class="verticalrules">
 				<div class="rulescontainer">
-					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
-					model="data">
+					<div class="agentACell" id="{{agent.idAgent}}" >
 						<span class="cell-lable" ng-repeat="mrule in data.autoAssessedRules" >
 							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
 						</span>
@@ -63,8 +61,7 @@
 			
 			<div class="verticalrules">
 				<div class="rulescontainer">
-					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
-					model="data">
+					<div class="agentACell" id="{{agent.idAgent}}" >
 						<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
 							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
 						</span>
@@ -76,3 +73,4 @@
 		
 	</div>
 </div>
+<ng-include src="'scripts/interviews/partials/intTemplate.html'"></ng-include>

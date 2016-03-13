@@ -93,7 +93,7 @@
 					  var rule = {levelValue:99};
 					  for(var j=0;j<model.firedRules.length;j++){
 						  var firedRule = model.firedRules[j];
-						  if(agentAssessing.idAgent === firedRule.agent.idAgent){
+						  if(agentAssessing.idAgent == firedRule.agent.idAgent){
 							  if(firedRule.levelValue<rule.levelValue){
 								  rule = firedRule;
 							  }
@@ -105,16 +105,16 @@
 			  	}			  
 			  ],
 			  [ 'Show Rules', function($itemScope, $event, model) {
-				  	var ruleArray =_.filter(model.firedRules, function(r){
-						return $itemScope.agent.idAgent === r.agentId; 
+				  var ruleArray =_.filter(model.firedRules, function(r){
+						return $itemScope.agent.idAgent === r.idAgent; 
 				  	});
 				  	 
 				  	for(var i=0;i<ruleArray.length;i++){
-				  	var scope = $itemScope.$new();
-			  		scope.model = model;
-			  		scope.rule = ruleArray[i];
-			  		scope.agentName = $itemScope.agent.name;
-			  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+					  	var scope = $itemScope.$new();
+				  		scope.model = model;
+				  		scope.rule = ruleArray[i];
+				  		scope.agentName = $itemScope.agent.name;
+				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
 				  	}
 			  	}			  
 			  ]

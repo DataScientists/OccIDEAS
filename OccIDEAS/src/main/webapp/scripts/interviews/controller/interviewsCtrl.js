@@ -78,20 +78,20 @@
         self.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
-				  	var ruleArray =_.filter(model.module.moduleRule, function(r){
-  						return $itemScope.agent.idAgent === r.idAgent; 
+				  	var ruleArray =_.filter(model.firedRules, function(r){
+  						return $itemScope.agent.idAgent === r.agent.idAgent; 
 				  	});
 				  	 var uniqueArray = _.map(_.groupBy(ruleArray,function(item){
-       				  return item.rule.idRule;
+       				  return item.idRule;
        				}),function(grouped){
        				  return grouped[0];
        				});
-				  	for(var i=0;i<ruleArray.length;i++){
-				  	var scope = $itemScope.$new();
-			  		scope.model = model;
-			  		scope.rule = uniqueArray[i];
-			  		scope.agentName = $itemScope.agent.name;
-			  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+				  	for(var i=0;i<uniqueArray.length;i++){
+					  	var scope = $itemScope.$new();
+				  		scope.model = model;
+				  		scope.rule = uniqueArray[i];
+				  		scope.agentName = $itemScope.agent.name;
+				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
 				  	}
 			  	}			  
 			  ]
@@ -107,7 +107,7 @@
         
         $scope.setActiveIntRule = function(model,el){
         	$scope.activeIntRuleDialog = el.$id;
-        	$scope.activeIntRuleCell = model.idAgent;
+        	$scope.activeIntRuleCell = model.agentId;
         	safeDigest($scope.activeIntRuleDialog);
         	safeDigest($scope.activeIntRuleCell);
         }
