@@ -1,0 +1,35 @@
+<script id="editAssessment-template" type="text/x-custom-template">
+<div class="int-note activeRule" prevent-right-click >
+	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeIntDialog(this,$event)" aria-label="Left Align">
+		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+	</button>
+	<div class="title">{{rule.idRule}} {{agentName}}</div>
+	
+			<ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
+    			<li class="list-group-item additionalField" 
+					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
+					>
+					<div>{{additionalFields.additionalfield.type}}</div>
+					<div class="pull-right">			
+						{{additionalFields.value}}
+					<div>
+				</li>
+  			</ul>
+			<ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
+    			<li class="list-group-item">
+	<select ng-model="rule.level" ng-change="saveRule(rule)">
+      <option value="probHigh">PROBABLE_HIGH</option>
+      <option value="probMedium">PROBABLE_MEDIUM</option>
+      <option value="probLow">PROBABLE_LOW</option>
+	  <option value="probUnknown">PROBABLE_UNKNOWN</option>
+	  <option value="possUnknown">POSSIBLE_UNKNOWN</option>
+	  <option value="noExposure">NO_EXPOSURE</option>
+    </select></li>
+  			</ul>
+		<div style="margin-left:2px;margin-top: 2px;">
+			<div class="pull-left">
+  				<span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="deleteAssessment(rule,model,$event)"></span>
+			</div>
+		</div>
+</div>
+</script>
