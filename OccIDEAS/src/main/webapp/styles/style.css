@@ -429,6 +429,13 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
+.assessment.probHigh{
+	width: 23px;
+    height: 23px;
+    background: rgb(214, 58, 58);
+    border-radius: 2px;
+    float: left;
+}
 
 .probMedium{
 	width: 6px;
@@ -437,7 +444,13 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
-
+.assessment.probMedium{
+	width: 23px;
+    height: 23px;
+    background: #ffa500;;
+    border-radius: 2px;
+    float: left;
+}
 .probLow{
 	width: 6px;
     height: 6px;
@@ -445,7 +458,13 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
-
+.assessment.probLow{
+	width: 23px;
+    height: 23px;
+    background: #E8E853;
+    border-radius: 2px;
+    float: left;
+}
 .probUnknown{
 	width: 6px;
     height: 6px;
@@ -453,7 +472,13 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
-
+.assessment.probUnknown{
+	width: 23px;
+    height: 23px;
+    background: #ffc0cb;
+    border-radius: 2px;
+    float: left;
+}
 .possUnknown{
 	width: 6px;
     height: 6px;
@@ -461,7 +486,13 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
-
+.assessment.possUnknown{
+	width: 23px;
+    height: 23px;
+    background: #add8e6;
+    border-radius: 2px;
+    float: left;
+}
 .noExposure{
 	width: 6px;
     height: 6px;
@@ -469,7 +500,13 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
-	
+.assessment.noExposure{
+	width: 23px;
+    height: 23px;
+    background: #e5e5e5;
+    border-radius: 2px;
+    float: left;
+}	
 
 .rulescontainer {
     position: relative;
@@ -1067,7 +1104,7 @@ md-list-item.interviewAnswers{
     padding-left: 20px;
 }
 .assessmentWrapper{
-	height: 475px;
+	height: 275px;
     overflow: auto;
     background: #F8FAFF;
     border: 1px solid #DAE2EA;

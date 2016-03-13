@@ -77,3 +77,15 @@ function newInterviewNote(element,$itemScope,$compile) {
 
 	return false;
 };
+function editAssessmentDialog(element,$itemScope,$compile) {
+	var tpl = $compile(angular.element("#editAssessment-template").html())($itemScope);	
+	angular.element(tpl).zIndex(++noteIntZindex);
+	angular.element(tpl).hide().appendTo("#interview-wrapper").show("fade", 300).draggable().on(
+		'dragstart', function() {
+			angular.element(this).zIndex(++noteIntZindex);
+		});
+	angular.element('textarea').autogrow();
+	angular.element('.int-note');
+
+	return false;
+};

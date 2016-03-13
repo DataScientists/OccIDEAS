@@ -1633,6 +1633,7 @@
         }
         
         $scope.deleteRule = function(rule,model,$event){
+        	$scope.closeRuleDialog(model,$event);
         	RulesService.remove(rule).then(function(response){
     			if(response.status === 200){
     				$log.info('Rule Save was Successful!'+rule);	
@@ -1659,7 +1660,7 @@
 							}
 							
 							}
-							$scope.closeRuleDialog(model,$event);
+							
 							initAgentData();
 						}
 						});

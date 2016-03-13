@@ -19,6 +19,7 @@ import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.rule.service.RuleService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewQuestionAnswerVO;
 import org.occideas.vo.InterviewVO;
@@ -48,6 +49,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Autowired
     private ModuleService moduleService;
 
+    @Autowired
+    private RuleService ruleService;
+
     @GET
     @Path(value = "/getlist")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -69,6 +73,22 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	List<InterviewVO> list = new ArrayList<InterviewVO>();
 		try{
 			list = service.findById(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+    }
+    @GET
+    @Path(value = "/updatefiredrules")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response updateFiredRules(@QueryParam("id") Long id) {
+    	List<InterviewVO> list = new ArrayList<InterviewVO>();
+		try{
+			list = service.findById(id);
+			for(InterviewVO interviewVO:list){
+				interviewVO = this.determineFiredRules(interviewVO);
+         	}
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -97,6 +117,16 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response update(InterviewVO json) {
     	try{
+    		if(json.getManualAssessedRules()!=null){
+    			List<RuleVO> manualAssessedRules = new ArrayList<RuleVO>();
+    			for(RuleVO rule:json.getManualAssessedRules()){
+        			if(rule.getIdRule()==0){
+        				RuleVO newAssessmentRule = ruleService.create(rule);
+        				manualAssessedRules.add(newAssessmentRule);
+        			}
+        		}
+    			json.setManualAssessedRules(manualAssessedRules);
+    		}  		
 			service.update(json);
 		}catch(Throwable e){
 			e.printStackTrace();
@@ -277,7 +307,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	}
     	return retValue;
     }
-    private void determineFiredRules(InterviewVO interview){
+    private InterviewVO determineFiredRules(InterviewVO interview){
     	ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
     	ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
     	if(interview.getModule()!=null){
@@ -321,6 +351,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	firedRules = removeDuplicates(firedRules);
     	interview.setFiredRules(firedRules);
     	service.update(interview);
+    	return interview;
     }
     private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules){
     	ArrayList<RuleVO> retValue = new ArrayList<RuleVO>();

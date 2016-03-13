@@ -1,9 +1,9 @@
 (function(){
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
-	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','ngTableParams','$scope','$filter',
+	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
                           'data','$log','$compile'];
-	function AssessmentsCtrl(AssessmentsService,InterviewsService,NgTableParams,$scope,$filter,
+	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
 			data,$log,$compile){
 		var self = this;
 		$scope.data = data;
@@ -16,6 +16,12 @@
 			}
 		self.showRulesMenu = function(scope){
 			return self.rulesMenuOptions;
+		}
+		self.showAssessmentsMenu = function(scope){
+			return self.assessmentsMenuOptions;
+		}
+		self.showEditAssessmentMenu = function(scope){
+			return self.editAssessmentsMenuOptions;
 		}
 		self.tableParams = new NgTableParams(
 				{}, 
@@ -86,6 +92,34 @@
     	};
 		self.rulesMenuOptions =
 			[
+			  [ 'Show Rules', function($itemScope, $event, model) {
+				  var ruleArray =_.filter(model.firedRules, function(r){
+						return $itemScope.agent.idAgent === r.agentId; 
+				  	});
+				  	 
+				  	for(var i=0;i<ruleArray.length;i++){
+					  	var scope = $itemScope.$new();
+				  		scope.model = model;
+				  		scope.rule = ruleArray[i];
+				  		scope.agentName = $itemScope.agent.name;
+				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+				  	}
+			  	}			  
+			  ]
+			];
+		self.assessmentsMenuOptions =
+			[
+			  [ 'Update Fired Rules', function($itemScope, $event, model) {
+				  
+				  
+				  AssessmentsService.updateFiredRules(model.interviewId).then(function (response) {
+		                if (response.status === 200) {
+		                	$log.info("Updated Fired Rules");
+		                	$scope.data = response.data[0];
+		                }
+				  });
+			  	}			  
+			  ],
 			  [ 'Run Auto Assessmemt', function($itemScope, $event, model) {
 				  model.autoAssessedRules = [];
 				  for(var i=0;i<model.agents.length;i++){
@@ -110,33 +144,29 @@
 			  	}			  
 			  ],
 			  [ 'Use Auto', function($itemScope, $event, model) {
-				  model.manualAssessedRules = model.autoAssessedRules;
-				  
-				  $scope.data = model;
-				  InterviewsService.save(model).then(function (response) {
-		                if (response.status === 200) {
-		                	$log.info("Interview saved with manual assessments");
-		                }
-				  });	
+                    if(!(model.manualAssessedRules)){
+                      model.manualAssessedRules = [];
+                  	  var assessments = angular.copy(model.autoAssessedRules);
+                  	  for(var i=0;i<assessments.length;i++){
+  						  var assessment = assessments[i];
+  						  assessment.idRule = '';
+  						  assessment.conditions = [];
+  						  model.manualAssessedRules.push(assessment);
+  					  }
+      				  InterviewsService.save(model).then(function (response) {
+      		                if (response.status === 200) {
+      		                	$log.info("Interview saved with manual assessments");
+      		                }
+      				  });
+                    }	  
 			  	}
-			  ],
-			  [ 'Show Rules', function($itemScope, $event, model) {
-				  var ruleArray =_.filter(model.firedRules, function(r){
-						return $itemScope.agent.idAgent === r.idAgent; 
-				  	});
-				  	 
-				  	for(var i=0;i<ruleArray.length;i++){
-					  	var scope = $itemScope.$new();
-				  		scope.model = model;
-				  		scope.rule = ruleArray[i];
-				  		scope.agentName = $itemScope.agent.name;
-				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
-				  	}
-			  	}			  
-			  ],
+			  ]
+			];
+		self.editAssessmentsMenuOptions =
+			[
 			  [ 'Edit Assessment', function($itemScope, $event, model) {
-				  var ruleArray =_.filter(model.firedRules, function(r){
-						return $itemScope.agent.idAgent === r.idAgent; 
+				  var ruleArray =_.filter(model.manualAssessedRules, function(r){
+						return $itemScope.agent.idAgent === r.agentId; 
 				  	});
 				  	 
 				  	for(var i=0;i<ruleArray.length;i++){
@@ -144,12 +174,11 @@
 				  		scope.model = model;
 				  		scope.rule = ruleArray[i];
 				  		scope.agentName = $itemScope.agent.name;
-				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+				  		editAssessmentDialog($event.currentTarget.parentElement,scope,$compile);
 				  	}
 			  	}			  
 			  ]
 			];
-        
         $scope.closeIntDialog = function(elem,$event) {
         	$($event.target).closest('.int-note').remove();
         	$scope.activeIntRuleDialog = '';
@@ -163,6 +192,22 @@
         	$scope.activeIntRuleCell = model.idAgent;
         	safeDigest($scope.activeIntRuleDialog);
         	safeDigest($scope.activeIntRuleCell);
+        }
+        var safeDigest = function (obj){
+        	if (!obj.$$phase) {
+		        try {
+		        	obj.$digest();
+		        }
+		        catch (e) { }
+        	}
+        }
+        $scope.saveRule = function(rule){
+        	RulesService.save(rule).then(function(response){
+    			if(response.status === 200){
+    				$log.info('Rule Save was Successful!'+rule);
+    			}
+    		});
+        	
         }
 	}
 })();

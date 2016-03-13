@@ -28,6 +28,14 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+    	function updateFiredRules(idInterview) {
+			var restUrl = 'rest/interview/updatefiredrules?id=' + idInterview;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
     	function getAssessments() {
 			var restUrl = 'rest/interviews/getassessments';
 			var request =  $http({
@@ -54,6 +62,7 @@
         }
 
         return {
+        	updateFiredRules: updateFiredRules,
         	listByInterview: listByInterview,
         	getInterview: getInterview,
         	getInterviews: getInterviews,
