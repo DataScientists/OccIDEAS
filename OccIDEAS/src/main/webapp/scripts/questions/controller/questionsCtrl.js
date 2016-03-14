@@ -499,7 +499,6 @@
 						$log.info("dest "+destNode.type);
 						
 					}
-					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
 					if(sourceNode.warning != 'warning'){
 						if($scope.isClonable){		

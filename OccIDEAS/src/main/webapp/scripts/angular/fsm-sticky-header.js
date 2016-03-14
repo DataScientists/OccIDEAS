@@ -7,6 +7,7 @@
         return {
             restrict: 'EA',
             replace: false,
+            priority: 10000,
             scope: { 
                 scrollBody: '=',
                 scrollStop: '=',
@@ -14,6 +15,9 @@
                 contentOffset: '='
             },
             link: function(scope, element, attributes, control){
+            	if(attributes.fsmStickyHeader==="false"){
+            		return;
+            	}
                 var header = $(element, this);
                 var clonedHeader = null;
                 var content = $(scope.scrollBody);

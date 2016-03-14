@@ -1,27 +1,95 @@
-<div class="row ">
-	<div class="col-sm-12">
-	<div class="panel panel-default">
- 	 <div class="panel-body">
- 	 <md-progress-circular ng-if="tabsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
-  	<div ng-if="!tabsLoading" ui-tree="moduleTreeOptions" id="tree-root">
-		<ol ui-tree-nodes ng-model="data">
-			<li ng-repeat="node in data" ui-tree-node 
-				ng-include="'nodes_renderer.html'" id="moduleTreeBody"></li>
-		</ol>
-	</div>
-  </div>
-</div>
-	</div>
-</div>
-<script type="text/ng-template" id="nodes_renderer.html">
-  <div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}">
+<div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}">
      <div class="tree-node" id="{{node.anchorId}}">
         <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="" 
 			ng-mousedown="copy($event,$treeScope)">
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
+		<div context-menu="showMenu(this)" ng-if="node.nodeclass === 'M'" fsm-sticky-header  scroll-body="'#moduleTreeBody'" scroll-stop='0' class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
+        <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
+            <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
+              'glyphicon-chevron-right': collapsed,
+              'glyphicon-chevron-down': !collapsed
+              }">
+            </span>
+          </a>
+          <span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>
+	      <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
+	      <span ng-if="!node.idNode || node.idNode===0" class="badge-multi">Unsaved</span>
+	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+          
+          <span class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(this)" data-nodrag>{{node.name}}</span>
+          <div ng-if="node.editEnabled" class="editBox">
+      		<input type="text" 
+             ng-model="node.name" 
+             ng-focus="focus=true;blur=false;" 
+             ng-blur="saveEdit(this)" 
+             class="form-control"  
+             data-nodrag 
+			 ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
+     	  </div>
+			 <button type="button" 
+              class="btn btn-default btn-lg btn-save" 
+              ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && undoEnable" 
+              ng-click="undo()">
+              Undo	
+             </button>
+			<div class="agentheader expanded pull-right" 
+			ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this,node)">
+				<div class="verticalagents">
+						<div class="agentcontainer" ng-repeat="agent in rulesObj ">
+								<span class="rotatedagenttext">{{agent.name}}</span>
+						</div>
+				</div>
+			</div>
+			<div class="pull-right" ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this)" model="node"
+						style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in rulesObj | orderBy:'':true">
+						<div class="verticalrules">
+							<div class="rulescontainer">
+								<div class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}" ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
+									<span class="cell-lable" ng-repeat="mrule in node.moduleRule" >
+										<div ng-class="mrule.rule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
+									</span>
+								</div>
+							</div>
+						</div>
+			</div>
+				
+
+		  <div class="form-group pull-right" style="margin-top: 5px;">
+    		<span class="badge">{{node.number}}</span>
+		  </div>
+
+
+
+<!-- start fab menu for changing type of module --> 
+          <div ng-if="isModuleHeaderNode(node)" class="typesetting">
+     		<md-fab-speed-dial md-open="vm.isOpen" md-direction="{{selectedDirection}}"
+                         ng-class="selectedMode">
+        	<md-fab-trigger>
+          	<md-button aria-label="menu" >
+            <span class="badge">Type:{{node.type}}</span>
+          	</md-button>
+        	</md-fab-trigger>
+        	<md-fab-actions>
+          	<md-button ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')" class="md-fab md-raised md-mini">
+            	<span>Prod</span>
+          	</md-button>
+          	<md-button ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')" class="md-fab md-raised md-mini">
+            <span >Dev</span>
+          	</md-button>
+          	<md-button ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')" class="md-fab md-raised md-mini">
+           	<span >Test</span>
+          	</md-button>
+		  	<md-button ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')" class="md-fab md-raised md-mini">
+           	<span >Intro</span>
+          	</md-button>
+        	</md-fab-actions>
+      		</md-fab-speed-dial>
+		  </div>
+<!-- end fab menu for changing type of module --> 
+       </div> 
+        <div context-menu="showMenu(this)"  ng-if="node.nodeclass != 'M'" class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
 		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,
@@ -111,4 +179,3 @@
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
     <li ng-repeat="node in node.nodes | orderBy:'sequence'" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
   </ol>
-</script>
