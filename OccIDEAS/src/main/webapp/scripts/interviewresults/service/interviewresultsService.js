@@ -13,7 +13,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
     	function listAllInterviews() {
-			var restUrl = 'rest/interview/getlist';
+			var restUrl = 'rest/interview/getlistwithanswers';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -45,6 +45,7 @@
         }
 
         return {
+        	listAllInterviews: listAllInterviews,
         	listByInterview: listByInterview,
         	getInterviews: getInterviews         
         };

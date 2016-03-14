@@ -11,7 +11,7 @@
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(
 				{
-					group: "referenceNumber"
+					
 				}, 
 				{	
 					getData: function($defer,params) {					
@@ -22,7 +22,7 @@
 				        	  return self.tableParams.settings().dataset;
 				          }
 				          
-				          return  InterviewResultsService.getInterviews().then(function(data) {
+				          return  InterviewResultsService.listAllInterviews().then(function(data) {
 				        	  console.log("Data getting from interviews ajax ... id:");        	 
 				        	  self.originalData = angular.copy(data);
 				        	  self.tableParams.settings().dataset = data;
