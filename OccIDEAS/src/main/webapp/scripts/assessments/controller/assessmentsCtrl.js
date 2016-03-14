@@ -15,11 +15,13 @@
 		      });
 			}
 		self.showRulesMenu = function(scope){
-			var menu = self.rulesMenuOptions;
+			var menu = angular.copy(self.rulesMenuOptions);
 			if(scope.agent.idAgent!=116){
 				_.remove(menu, {
-				    0: 'Run Interview'
+				    0: 'Run Noise Assessment'
 				});
+			}else{
+				
 			}
 			return menu;
 		}
