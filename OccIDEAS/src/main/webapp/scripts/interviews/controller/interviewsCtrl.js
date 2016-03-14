@@ -33,7 +33,6 @@
         };
         
         self.editQuestion = function(interview,question){
-        	if($scope.data.interviewEnded){
         	_.find($scope.questionHistory,function(el,index){
         		if(el.idNode === question.idNode){
         			$scope.data.showedQuestion = el;
@@ -47,7 +46,6 @@
                 	safeDigest($scope.updateAnswers);
         		}
         	});
-        	}
         };
         
         $scope.updateAnswerQuestion = function(node){
@@ -111,6 +109,8 @@
                     safeDigest($scope.data.interviewStarted);
                     $scope.data.interviewEnded = true;
                     safeDigest($scope.data.interviewEnded);
+                    $scope.updateAnswers = false;
+                    safeDigest($scope.updateAnswers);
                 }
             });
         };
@@ -237,7 +237,14 @@
                         question: node,
                         interviewQuestionAnswerFreetext: answers[i].name
                     }
-
+                    if($scope.updateAnswers){
+                    	 _.find(interview.questionsAsked,function(val,ind){
+                         	if(val.question.idNode === node.idNode){
+                         		interview.questionsAsked[ind].deleted = 1;
+                         		safeDigest(interview.questionsAsked);
+                         	}
+                         });
+                    }
                     interview.questionsAsked.push(newQuestionAsked);
                 }
             } else if (node.type == 'Q_frequency') {
@@ -256,7 +263,15 @@
                         question: node,
                         interviewQuestionAnswerFreetext: answerValue
                     }
-                    interview.questionsAsked.push(newQuestionAsked);
+                if($scope.updateAnswers){
+               	 _.find(interview.questionsAsked,function(val,ind){
+                    	if(val.question.idNode === node.idNode){
+                    		interview.questionsAsked[ind].deleted = 1;
+                    		safeDigest(interview.questionsAsked);
+                    	}
+                    });
+                }
+               	interview.questionsAsked.push(newQuestionAsked);
             } else {
             	var seletectedEl = node.selectedAnswer;
                 var newQuestionAsked = {
@@ -264,6 +279,14 @@
                     idInterview: interview.interviewId,
                     question: node,
                     interviewQuestionAnswerFreetext: seletectedEl.name
+                }
+                if($scope.updateAnswers){
+               	 _.find(interview.questionsAsked,function(val,ind){
+                  	if(val.question.idNode === node.idNode){
+                  		interview.questionsAsked[ind].deleted = 1;
+                  		safeDigest(interview.questionsAsked);
+                  	}
+                  });
                 }
                 interview.questionsAsked.push(newQuestionAsked);
             }
@@ -289,7 +312,9 @@
                                 if (response.status === 200) {
                                     var question = response.data;
                                     $scope.data.showedQuestion = question;
-                                    $scope.questionHistory.push(question);
+                                    if(!$scope.updateAnswers){
+                                    	$scope.questionHistory.push(question);
+                                    }
                                     resetSelectedIndex();
                                     if(question.type=='Q_frequency'){
                                     	$scope.hoursArray = $scope.getShiftHoursArray();
@@ -335,7 +360,17 @@
                                                 activeInterview.active = false;
                                             }
                                         }
-                                        $scope.interviews.push(newInterview);
+                                        if($scope.updateAnswers){
+                                         	 _.find($scope.interviews,function(val,ind){
+                                            	if(val.referenceNumber === newInterview.referenceNumber){
+                                            		$scope.interviews[ind].active = true;
+                                            		safeDigest($scope.interviews);
+                                            	}
+                                            });
+                                          }
+                                          else{
+                                        	  $scope.interviews.push(newInterview);
+                                          }
                                         InterviewsService.startInterview(newInterview).then(function (response) {
                                             if (response.status === 200) {
                                                 for (var i = 0; i < $scope.interviews.length; i++) {
@@ -353,8 +388,17 @@
                                             idInterview: activeInterview.interviewId,
                                             interviewQuestionAnswerFreetext: 'Q_linked'
                                         }
-                                        activeInterview.questionsAsked.push(newQuestionAsked);
-
+                                        if($scope.updateAnswers){
+                                          	 _.find(activeInterview.questionsAsked,function(val,ind){
+                                             	if(val.question.idNode === node.idNode){
+                                             		activeInterview.questionsAsked[ind] = newQuestionAsked;
+                                             		safeDigest(activeInterview.questionsAsked);
+                                             	}
+                                             });
+                                           }
+                                           else{
+                                        	   activeInterview.questionsAsked.push(newQuestionAsked);
+                                           }
                                         InterviewsService.save(activeInterview).then(function (response) {
                                             if (response.status === 200) {
                                                 console.log('Added liking question');
@@ -397,6 +441,10 @@
 
                                 } else {
                                     console.log('ERROR on Get!');
+                                }
+                                if($scope.updateAnswers){
+                                $scope.updateAnswers = false;
+                                safeDigest($scope.updateAnswers);
                                 }
                                 angular.element('#numId').focus();
                                 var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
@@ -441,7 +489,9 @@
                             	$scope.updateAnswers = false;
                             	safeDigest($scope.updateAnswers);
                             	$scope.data.showedQuestion = response.data;
-                                $scope.questionHistory.push(response.data);
+                            	if(!$scope.updateAnswers){
+                            		$scope.questionHistory.push(response.data);
+                            	}
                                 var elId = "interviewnode-" + response.data.idNode;
                                 $scope.scrollWithTimeout(elId);
                             })

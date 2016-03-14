@@ -5,8 +5,11 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Agent;
 import org.occideas.entity.InterviewQuestionAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -28,7 +31,14 @@ public class InterviewQuestionAnswerDao {
     }
 
 	public InterviewQuestionAnswer get(Long id){
-      return (InterviewQuestionAnswer) sessionFactory.getCurrentSession().get(InterviewQuestionAnswer.class, id);
+		final Criteria crit = sessionFactory.getCurrentSession().createCriteria(InterviewQuestionAnswer.class)
+					.add(Restrictions.eq("deleted", 0))
+					.add(Restrictions.eq("interview_idinterview", id));
+		List list = crit.list();
+		if(list.isEmpty()){
+			return new InterviewQuestionAnswer();
+		}
+      return (InterviewQuestionAnswer) list.get(0);
     }
 	
 	public InterviewQuestionAnswer merge(InterviewQuestionAnswer iqa)   {
