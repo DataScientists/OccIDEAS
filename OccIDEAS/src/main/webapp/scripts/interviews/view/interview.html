@@ -8,7 +8,7 @@
 				{{interview.module.name}}{{interview.fragment.name}}</span>
 				<div>
     				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interview.questionsAsked | orderBy:'question.number'">
+    				    ng-repeat="qa in interview.questionsAsked | qaFilter:0 | orderBy:'question.number'">
     					<div class="tree-node-content Q_interviewresult">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.question.number}}</span>

@@ -235,16 +235,17 @@
                         possibleAnswer: answers[i],
                         idInterview: interview.interviewId,
                         question: node,
+                        deleted:0,
                         interviewQuestionAnswerFreetext: answers[i].name
                     }
-                    if($scope.updateAnswers){
+//                    if($scope.updateAnswers){
                     	 _.find(interview.questionsAsked,function(val,ind){
                          	if(val.question.idNode === node.idNode){
                          		interview.questionsAsked[ind].deleted = 1;
                          		safeDigest(interview.questionsAsked);
                          	}
                          });
-                    }
+//                    }
                     interview.questionsAsked.push(newQuestionAsked);
                 }
             } else if (node.type == 'Q_frequency') {
@@ -261,16 +262,17 @@
                         possibleAnswer: node.nodes[0],
                         idInterview: interview.interviewId,
                         question: node,
+                        deleted:0,
                         interviewQuestionAnswerFreetext: answerValue
                     }
-                if($scope.updateAnswers){
+//                if($scope.updateAnswers){
                	 _.find(interview.questionsAsked,function(val,ind){
                     	if(val.question.idNode === node.idNode){
                     		interview.questionsAsked[ind].deleted = 1;
                     		safeDigest(interview.questionsAsked);
                     	}
                     });
-                }
+//                }
                	interview.questionsAsked.push(newQuestionAsked);
             } else {
             	var seletectedEl = node.selectedAnswer;
@@ -278,16 +280,17 @@
                     possibleAnswer: seletectedEl,
                     idInterview: interview.interviewId,
                     question: node,
+                    deleted:0,
                     interviewQuestionAnswerFreetext: seletectedEl.name
                 }
-                if($scope.updateAnswers){
+//                if($scope.updateAnswers){
                	 _.find(interview.questionsAsked,function(val,ind){
                   	if(val.question.idNode === node.idNode){
                   		interview.questionsAsked[ind].deleted = 1;
                   		safeDigest(interview.questionsAsked);
                   	}
                   });
-                }
+//                }
                 interview.questionsAsked.push(newQuestionAsked);
             }
             InterviewsService.save(interview).then(function (response) {
