@@ -44,6 +44,8 @@
         			safeDigest($scope.interviews);
         			$scope.updateAnswers = true;
                 	safeDigest($scope.updateAnswers);
+                	var elId = "interviewnode-" +  el.idNode;
+                    $scope.scrollWithTimeout(elId);
         		}
         	});
         };
