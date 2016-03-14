@@ -13,6 +13,7 @@
 			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout) {
 		var self = this;
 		$scope.data = data;	
+		saveModuleWithoutReload();
 		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
@@ -545,7 +546,7 @@
 			});
 			$log.info("cascadeTemplateNullIds:"+nodes);
 		}
-
+		
 		ModulesService.getActiveModules().then(function(data) {	
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
@@ -604,11 +605,12 @@
 				scope.$modelValue.deleted = 1;
 				cascadeDelete(scope.$modelValue.nodes,1);
 			}
+			
 			var deffered = $q.defer();
 			saveModuleWithoutReload('',deffered);
 			deffered.promise.then(function(resolve){
+				saveModuleWithoutReload();
 				searchAndRemoveNode($scope.data,scope);
-				reorderSequence($scope.data);
 			});
 		};
 		
@@ -942,7 +944,7 @@
 			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Divider
-			  [ 'Run Interview', function($itemScope) {				  
+			  [ 'Run Interview', function($itemScope) {		
 					 $scope.addInterviewTab($itemScope);			                   
 				} 
 			  ], null, // Divider
@@ -1022,11 +1024,17 @@
 					}
 			  ],
 			  [ 'Open as aJSM', function($itemScope) {	
-					var node = angular.copy($itemScope.node);
-					node.idNode = node.link;
-					node.type = 'F_ajsm';
-					node.classtype = 'F';
-					$scope.addFragmentTab(node);
+				  FragmentsService.checkExists($itemScope.node.link).then(function(response){
+					  if(response){
+						  var node = angular.copy($itemScope.node);
+						  node.idNode = node.link;
+						  node.type = 'F_ajsm';
+						  node.classtype = 'F';
+						  $scope.addFragmentTab(node);
+					  }else{
+						  $itemScope.node.warning = 'warning';
+					  } 
+				  });					
 				} 
 			  ]
 			];
@@ -1625,12 +1633,11 @@
 			    			        catch (e) { }
 			    		    }
 						}
-						});
+					});
 					initAgentData();
 				}
 			});
         }
-        
         $scope.deleteRule = function(rule,model,$event){
         	$scope.closeRuleDialog(model,$event);
         	RulesService.remove(rule).then(function(response){
@@ -1665,8 +1672,7 @@
 						});
 					});
     			}
-    		});
-        	
+    		});      	
         }
 	}
 })();

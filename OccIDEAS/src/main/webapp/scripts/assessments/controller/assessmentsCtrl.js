@@ -15,7 +15,13 @@
 		      });
 			}
 		self.showRulesMenu = function(scope){
-			return self.rulesMenuOptions;
+			var menu = self.rulesMenuOptions;
+			if(scope.agent.idAgent!=116){
+				_.remove(menu, {
+				    0: 'Run Interview'
+				});
+			}
+			return menu;
 		}
 		self.showAssessmentsMenu = function(scope){
 			return self.assessmentsMenuOptions;
@@ -38,7 +44,8 @@
 					    }
 					    $log.info("Data getting from interviews ajax ..."); 
 					    return AssessmentsService.getAssessments().then(function(data) {
-					        	  $log.info("Data received from interviews ajax ...");        	 
+					        	  $log.info("Data received from interviews ajax ...");  
+					        	  data = _.uniqBy(data, 'interviewId');
 					        	  self.originalData = angular.copy(data);
 					        	  self.tableParams.settings().dataset = data;
 					            return data;
@@ -105,6 +112,168 @@
 				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
 				  	}
 			  	}			  
+			  ],
+			  [ 'Run Noise Assessment', function($itemScope, $event, model) {
+				  var bFoundNoiseRules = false;
+				  var noiseRules = [];
+				  for(var i=0;i<model.agents.length;i++){
+					  var agentAssessing = model.agents[i]
+					  var rule = {levelValue:99};
+					  for(var j=0;j<model.firedRules.length;j++){
+						  var firedRule = model.firedRules[j];
+						  if(agentAssessing.idAgent == firedRule.agent.idAgent){
+							  if(firedRule.agent.idAgent==116){
+								  bFoundNoiseRules = true;
+								  noiseRules.push(firedRule);
+							  }
+						  }	  
+					  }  
+				  }
+				  if(bFoundNoiseRules){
+					  var totalPartialExposure = 0;
+					  var totalPartialExposurePerAdj = 0;
+					  var peakNoise = 0;
+					  var maxBackgroundPartialExposure = 0;
+					  var maxBackgroundHours = 0;
+					  
+					  $scope.noiseRows = [];
+					  var totalFrequency = 0;
+					  var backgroundHours = 0;
+					  var shiftHours = 0;
+					  for(var m=0;m<model.questionsAsked.length;m++){
+						  var iqa = model.questionsAsked[m];
+						  if(iqa.possibleAnswer.type=='P_frequencyshifthours'){
+							  shiftHours = iqa.interviewQuestionAnswerFreetext;
+							  break;
+						  }
+					  }
+					  for(var k=0;k<noiseRules.length;k++){
+						  var noiseRule = noiseRules[k];
+						  if(noiseRule.type!='BACKGROUND'){
+							  var parentNode = noiseRule.conditions[0];
+							  cascadeFindNode(model.module.nodes,parentNode);
+							  var answeredValue = 0;
+							  if($scope.foundNode){
+								  if($scope.foundNode.nodes[0]){
+									  if($scope.foundNode.nodes[0].nodes[0]){
+										  var frequencyHoursIdNode = $scope.foundNode.nodes[0].nodes[0].idNode;
+										  for(var l=0;l<model.questionsAsked.length;l++){
+											  var iqa = model.questionsAsked[l];
+											  if(iqa.possibleAnswer.idNode==frequencyHoursIdNode){
+												  answeredValue = iqa.interviewQuestionAnswerFreetext;
+												  break;
+											  }
+										  }
+									  } 
+								  }
+								  $scope.foundNode=null;
+							  }
+							  
+							  totalFrequency += Number(answeredValue);
+						  }
+					  }
+					  var useRatio = false;
+					  var ratio = 1.0;
+					  if(totalFrequency>shiftHours){
+						  useRatio = true;
+						  ratio = parseFloat(totalFrequency)/parseFloat(shiftHours);
+						  ratio = ratio.toFixed(4);
+					  }
+					  var level = 0;
+					  var peakNoise = 0;
+					  for(var k=0;k<noiseRules.length;k++){
+						  var noiseRule = noiseRules[k];
+						  if(noiseRule.type=='BACKGROUND'){
+							var hoursbg = shiftHours-totalFrequency;
+							if(hoursbg<0){
+								hoursbg = 0;
+							}
+							var partialExposure = 4*hoursbg*(Math.pow(10,(level-100)/10));
+							partialExposure = partialExposure.toFixed(4);
+							hoursbg = hoursbg.toFixed(4);
+							level = noiseRule.ruleAdditionalfields[0].value;
+							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
+											dB:level+'B',
+											backgroundhours: hoursbg,
+											partialExposure:partialExposure,
+											type:'backgroundNoise'}
+							
+							$scope.noiseRows.push(noiseRow);
+							if(partialExposure>maxBackgroundPartialExposure){
+								maxBackgroundPartialExposure = partialExposure;
+								maxBackgroundHours = hoursbg;
+							}
+						  }else{
+							var hours = 0.0;
+							var frequencyhours = 0;
+							var parentNode = noiseRule.conditions[0];
+							  cascadeFindNode(model.module.nodes,parentNode);
+							  if($scope.foundNode){
+								  if($scope.foundNode.nodes[0]){
+									  if($scope.foundNode.nodes[0].nodes[0]){
+										  var frequencyHoursIdNode = $scope.foundNode.nodes[0].nodes[0].idNode;
+										  for(var l=0;l<model.questionsAsked.length;l++){
+											  var iqa = model.questionsAsked[l];
+											  if(iqa.possibleAnswer.idNode==frequencyHoursIdNode){
+												  frequencyhours = iqa.interviewQuestionAnswerFreetext;
+											  }
+										  }
+									  } 
+								  }
+								  $scope.foundNode=null;
+							  }
+							if(useRatio){
+								hours = parseFloat(frequencyhours)/ratio;		
+							}else{
+								hours = parseFloat(frequencyhours);		
+							}
+							level = noiseRule.ruleAdditionalfields[0].value;
+							var percentage = 100;
+							var partialExposure = 4*hours*(Math.pow(10,(level-100)/10));
+							var ajustedHours = hours*(percentage/100);
+							var partialExposurePercentageAdjusted = 4*ajustedHours*(Math.pow(10,(level-100)/10));
+							partialExposure = partialExposure.toFixed(4);				
+							partialExposurePercentageAdjusted = partialExposurePercentageAdjusted.toFixed(4);				
+							hours = hours.toFixed(4);
+							var modHours = "";
+							if(useRatio){
+								modHours = "*"+hours+"*";
+							}else{
+								modHours = hours;
+							}
+							
+							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
+									dB:level,
+									backgroundhours: modHours,
+									percentage: percentage,
+									partialExposure:partialExposurePercentageAdjusted}
+					
+							$scope.noiseRows.push(noiseRow);	
+							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
+							totalPartialExposurePerAdj = (parseFloat(totalPartialExposurePerAdj)+parseFloat(partialExposurePercentageAdjusted));
+							
+						  }
+						  if(peakNoise<level){
+							peakNoise = level;
+						  }
+					  }
+					  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
+					  	totalPartialExposure = totalPartialExposure.toFixed(4);
+						totalPartialExposurePerAdj = (parseFloat(totalPartialExposurePerAdj)+parseFloat(maxBackgroundPartialExposure));
+						totalPartialExposurePerAdj = totalPartialExposurePerAdj.toFixed(4);
+						totalFrequency += maxBackgroundHours;
+
+						var autoExposureLevel = 10*(Math.log10(totalPartialExposure/(3.2*(Math.pow(10,-9)))))
+						autoExposureLevel = autoExposureLevel.toFixed(4);
+						var autoExposureLevelPerAdj = 10*(Math.log10(totalPartialExposurePerAdj/(3.2*(Math.pow(10,-9)))))
+						autoExposureLevelPerAdj = autoExposureLevelPerAdj.toFixed(4);
+						$scope.totalPartialExposure = totalPartialExposure;
+						$scope.totalPartialExposurePerAdj = totalPartialExposurePerAdj;
+						$scope.autoExposureLevel = autoExposureLevel;
+						$scope.autoExposureLevelPerAdj = autoExposureLevelPerAdj;
+						$scope.peakNoise = peakNoise;
+				  }
+			  	}			  
 			  ]
 			];
 		self.assessmentsMenuOptions =
@@ -120,8 +289,8 @@
 				  });
 			  	}			  
 			  ],
-			  [ 'Run Auto Assessmemt', function($itemScope, $event, model) {
-				  model.autoAssessedRules = [];
+			  [ 'Run Auto Assessment', function($itemScope, $event, model) {
+				  model.autoAssessedRules = [];			  
 				  for(var i=0;i<model.agents.length;i++){
 					  var agentAssessing = model.agents[i]
 					  var rule = {levelValue:99};
@@ -141,6 +310,7 @@
 		                	$log.info("Interview saved with auto assessments");
 		                }
 				  });
+				  
 			  	}			  
 			  ],
 			  [ 'Use Auto', function($itemScope, $event, model) {
@@ -209,6 +379,20 @@
     		});
         	
         }
+        function cascadeFindNode(nodes,node){
+			_.each(nodes, function(data) {
+				if(data.idNode == node.idNode){
+					$scope.foundNode = data;
+				}else{
+					if(data.nodes){
+						if(data.nodes.length>0){
+							cascadeFindNode(data.nodes,node);
+						}
+					}
+				}	
+						 
+			});
+		}
 	}
 })();
 

@@ -69,7 +69,7 @@ public class InterviewDao {
 								  		.add(Projections.property("module"),"module")
 								  		.add(Projections.property("idinterview"),"idinterview")
 								  		.add(Projections.property("referenceNumber"),"referenceNumber")
-								  		.add( Projections.groupProperty("referenceNumber").as("referenceNumber")))
+								  		)
     		  						.createAlias("firedRules", "firedRules")
     		  						.addOrder(Order.asc("referenceNumber"))
     		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));

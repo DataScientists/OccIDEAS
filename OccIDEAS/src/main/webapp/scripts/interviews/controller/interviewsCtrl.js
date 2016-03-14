@@ -10,6 +10,7 @@
                             $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile,$timeout) {
         var self = this;
         $scope.data = data;
+        
         $scope.showIntroModule = true;
         $scope.showModule = false;
         $scope.showAjsm = false;
@@ -207,15 +208,14 @@
         }
         
         $scope.saveAnswerQuestion = function (node) {
-            var seletectedEl = node.selectedAnswer;
-            if (node.type == 'Q_multiple') {
-                seletectedEl = $scope.multiSelected;
-                $scope.multiSelected = [];
-            }
-            if (!seletectedEl && $scope.data.interviewStarted) {
-                alert("Please select an answer!");
-                return false;
-            }
+            
+            //if (node.type == 'Q_multiple') {
+                
+            //}
+            //if (!seletectedEl && $scope.data.interviewStarted) {
+           //     alert("Please select an answer!");
+            //    return false;
+            //}
             var interview;
             for (var i = 0; i < $scope.interviews.length; i++) {
                 if ($scope.interviews[i].active) {
@@ -226,6 +226,8 @@
                 interview.questionsAsked = [];
             }
             if (node.type == 'Q_multiple') {
+            	var seletectedEl = $scope.multiSelected;
+                $scope.multiSelected = [];
                 var answers = seletectedEl;
                 var answerIds = [];
                 for (var i = 0; i < answers.length; i++) {
@@ -238,7 +240,25 @@
 
                     interview.questionsAsked.push(newQuestionAsked);
                 }
+            } else if (node.type == 'Q_frequency') {
+                var hours = 0;
+                if(node.hours){
+                	hours = node.hours;
+                }
+                var minutes = 0;
+                if(node.minutes){
+                	minutes = node.minutes;
+                }
+                var answerValue = Number(hours) + (Number(minutes)/60);
+                var newQuestionAsked = {
+                        possibleAnswer: node.nodes[0],
+                        idInterview: interview.interviewId,
+                        question: node,
+                        interviewQuestionAnswerFreetext: answerValue
+                    }
+                    interview.questionsAsked.push(newQuestionAsked);
             } else {
+            	var seletectedEl = node.selectedAnswer;
                 var newQuestionAsked = {
                     possibleAnswer: seletectedEl,
                     idInterview: interview.interviewId,
@@ -271,6 +291,12 @@
                                     $scope.data.showedQuestion = question;
                                     $scope.questionHistory.push(question);
                                     resetSelectedIndex();
+                                    if(question.type=='Q_frequency'){
+                                    	$scope.hoursArray = $scope.getShiftHoursArray();
+                                    	$scope.minutesArray = $scope.getShiftMinutesArray();
+                                    	$scope.weeks = $scope.getWeeksArray();
+                                    	
+                                    }
                                     if (question.linkingQuestion) {
                                         var linkingQuestion = question.linkingQuestion;
                                         var newInterview = {};
@@ -500,5 +526,24 @@
         	scrollPane.animate({scrollTop: (top-150+currentScroll)}, 2000, 'swing');
         	
         }
+        $scope.getWeeksArray = function(){
+        	var weeks = [];
+        	for(var i=0;i<53;i++){
+        		weeks.push(i);
+        	}
+        	return weeks;
+        };
+        $scope.getShiftHoursArray = function(){
+        	var hours = [];
+        	for(var i=0;i<25;i++){
+        		hours.push(i);
+        	}
+        	return hours;
+        };
+        $scope.getShiftMinutesArray= function(){
+        	var minutes = [0,1,2,5,10,15,20,25,30,35,40,45,50,55];
+        	
+        	return minutes;
+        };
     }
 })();

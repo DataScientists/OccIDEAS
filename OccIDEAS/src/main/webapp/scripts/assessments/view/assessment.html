@@ -74,6 +74,31 @@
 		
 	</div>
 	</div>
+	<div class="noiseAssessmentWrapper" ng-if="noiseRows.length>0">
+		<table class="table table-bordered ">
+		<thead>
+		<tr>
+			<td>Node Number</td>
+			<td>dB</td>
+			<td>Hours</td>
+			<td>partialExposure</td>
+		</tr>
+		</thead> 
+		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
+			<td>{{noiseRow.nodeNumber}}</td>
+			<td>{{noiseRow.dB}}</td>
+			<td>{{noiseRow.backgroundhours}}</td>
+			<td>{{noiseRow.partialExposure}}</td>
+		</tr>
+		</table>
+		
+		<div>Total Partial Exposure: {{totalPartialExposure}}</div>
+		<div>Total Partial Exposure Adjusted: {{totalPartialExposurePerAdj}}</div>
+		<div>Auto Exposure Level: {{autoExposureLevel}}</div>
+		<div>Auto Exposure Level Adjusted: {{autoExposureLevelPerAdj}}</div>
+		<div>Peak Noise: {{peakNoise}}</div>
+		
+	</div>
 </div>
 <div class="col-md-4 moduleInterview" id="interview-question-list" >
 	
@@ -98,7 +123,7 @@
     						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    				<span class="badge">{{qa.possibleAnswer.number}}</span>
                 			</div>
-    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.possibleAnswer.name }}
+    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
     						</span>
     					</div>
     				</div>
