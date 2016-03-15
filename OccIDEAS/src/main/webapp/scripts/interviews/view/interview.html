@@ -1,56 +1,5 @@
 <div id="interview-wrapper">
-<div class="col-md-4 moduleInterview" id="interview-question-list" >
-	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews">
-	<ol style="list-style-type: none;">
-		<li>
-		<div class="angular-ui-tree">
-			<div class="tree-node">
-				{{interview.module.name}}{{interview.fragment.name}}:{{interview.active}}
-				<ol>
-    				<li ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interview.questionsAsked">
-    				   
-    				    
-    					<div >
-    					{{ qa.question.name }}
-    					<ol style="list-style-type: disc;">
-    						<li>{{qa.possibleAnswer.name }}
-    						</li>
-    					</ol>
-    					</div>
-    					
-    				</li>
-  				</ol>
-			</div>
-		</div>
-		</li>
-		
-	</ol>
-	
-	<div ng-if="interview.firedRules.length > 0" class="firedRulesWrapper" >
-		<div class="firedRulesScroller">
-			<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;" 
-		     		ng-repeat="agent in interview.agents">
-		     	<div class="verticalagents">
-					<div class="agentcontainer" >
-						<span class="rotatedagenttext">{{agent.name}}</span>
-					</div>
-				</div>
-				<div class="verticalrules">
-					<div class="rulescontainer">
-						<div class="agentACell {{activeIntRuleCell === agent.idAgent?'activeCell':''}}" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
-						model="interview">
-							<span class="cell-lable" ng-repeat="mrule in interview.firedRules" >
-								<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
-							</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	</div>
-</div>
+
 <div class="col-md-4">
     <div ng-model="data">
 	    
@@ -61,15 +10,70 @@
 	            <div ng-repeat="node in data.showedQuestion.nodes">
               		<md-checkbox ng-checked="multiExists(node, multiSelected)"
                        ng-click="multiToggle(node, multiSelected)" class="green">
-                		{{ node.name }} 
-          				<div ng-if="node.type=='P_freetext'" class="editBox">
-      						<input type="text" 
-					             ng-model="node.name" 
-					             ng-focus="focus=true;blur=false;" 
-					             class="form-control">
-					    </div>
+                		<span ng-if="node.type!='P_freetext'">{{node.name}}</span>
+					    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
+					      	<label>Free Text</label>
+        			  		<input md-maxlength="30" ng-model="node.name">
+        			  		<!-- <div ng-messages="node.name.$error">
+          						<div ng-message="md-maxlength">The text has to be less than 30 characters long.</div>
+        			  		</div> -->
+					    </md-input-container>
               		</md-checkbox>
             	</div>
+            </div>
+            <div ng-if="data.showedQuestion.type == 'Q_frequency'" >
+            	<div ng-repeat="node in data.showedQuestion.nodes">
+            	<!-- <div>{{node.type}}</div> -->
+		            <div ng-switch="node.type" >
+	  					<div ng-switch-when="P_frequencyweeks">
+	  					<md-input-container>
+        					<label>Weeks</label>
+        					<md-select ng-model="node.name">
+          					<md-option ng-repeat="week in weeks" value="{{week}}" >
+            				{{week}}
+          					</md-option>
+        					</md-select>
+      					</md-input-container>
+	  					</div>
+	  					<div ng-switch-when="P_frequencyshifthours">
+	  					<md-input-container>
+        					<label>Hours</label>
+        					<md-select ng-model="data.showedQuestion.hours">
+          					<md-option ng-repeat="hour in hoursArray" value="{{hour}}" >
+            				{{hour}}
+          					</md-option>
+        					</md-select>
+        				</md-input-container>
+        				<md-input-container>
+        					<label>Minutes</label>
+        					<md-select ng-model="data.showedQuestion.minutes">
+          					<md-option ng-repeat="minute in minutesArray" value="{{minute}}" >
+            				{{minute}}
+          					</md-option>
+        					</md-select>
+      					</md-input-container>
+	  					</div>
+	  					<div ng-switch-when="P_frequencyhoursminute">
+	  					<md-input-container>
+        					<label>Hours</label>
+        					<md-select ng-model="data.showedQuestion.hours">
+          					<md-option ng-repeat="hour in hoursArray" value="{{hour}}" >
+            				{{hour}}
+          					</md-option>
+        					</md-select>
+        				</md-input-container>
+        				<md-input-container>
+        					<label>Minutes</label>
+        					<md-select ng-model="data.showedQuestion.minutes">
+          					<md-option ng-repeat="minute in minutesArray" value="{{minute}}" >
+            				{{minute}}
+          					</md-option>
+        					</md-select>
+      					</md-input-container>
+	  					</div>
+	  					<div ng-switch-default>Unknown Frequency Type:{{node.type}}</div>
+					</div>
+				</div>
             </div>
             <div ng-if="data.showedQuestion.type == 'Q_single' || data.showedQuestion.type == 'Q_simple'">
                 <md-radio-group ng-model="data.showedQuestion.selectedAnswer" >
@@ -89,37 +93,6 @@
 			          
 			        </div>
 			      </div>
-                
-                <!-- <div ng-if="data.showedQuestion.description.indexOf('[] FA_freq') > -1">
-                    <md-input-container>
-                        <label>Select a number</label>
-                        <md-select ng-model="node.name" class="selected">
-                            <md-option ng-repeat="numb in data.showedQuestion.freqAns" value="{{numb}}">
-                                {{numb}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
-                </div>
-                <div ng-if="data.showedQuestion.description.indexOf('[] FA_freq') == -1">
-                    <md-radio-group ng-model="data.showedQuestion.selectedAnswer" >
-                        <div ng-repeat='node in data.showedQuestion.nodes' >
-                            <div flex layout-align="start center" >
-                                <md-radio-button flex ng-value="node"
-                                                 class="md-primary interview-radio-button" >
-                                    <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
-                                    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
-                                        <label>Free Text</label>
-                                        <input md-maxlength="30" ng-model="node.name">
-                                        <div ng-messages="node.name.$error">
-                                            <div ng-message="md-maxlength">The text has to be less than 30 characters long.</div>
-                                        </div>
-                                    </md-input-container>
-                                </md-radio-button>
-
-                            </div>
-                        </div>
-                    </md-radio-group>
-                </div> -->
             </div>
             
             <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">       
@@ -150,10 +123,66 @@
     </div>
     
 </div>
-
-<div ng-show="showIntroModule" class="col-md-4 moduleInterview" id="interview-intromodule-tree">
+<div class="col-md-8 moduleInterview" id="interview-question-list" >
+	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews">
+	
+		<div class="angular-ui-tree">
+			<div class="tree-node">
+				<span class="M_Interview {{interview.active ? 'highlight':''}}">
+				{{interview.module.name}}{{interview.fragment.name}}</span>
+				<div>
+    				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
+    				    ng-repeat="qa in interview.questionsAsked | qaFilter:0 | orderBy:'question.number'">
+    					<div class="tree-node-content Q_interviewresult">
+    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   			<span class="badge">{{qa.question.number}}</span>
+                		</div>  
+    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
+	    							ng-click="vm.editQuestion(interview,qa.question)"></span>
+	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
+	    					
+    					</span>  					
+    					</div>
+    					<div class="tree-node-content P_interviewresult">
+    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
+                			</div>
+    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
+    						</span>
+    					</div>
+    				</div>
+  				</div>
+			</div>
+		</div>
+	<div ng-if="interview.firedRules.length > 0" class="firedRulesWrapper" >
+		<div class="firedRulesScroller">
+			<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;" 
+		     		ng-repeat="agent in interview.agents">
+		     	<div class="verticalagents">
+					<div class="agentcontainer" >
+						<span class="rotatedagenttext">{{agent.name}}</span>
+					</div>
+				</div>
+				<div class="verticalrules">
+					<div class="rulescontainer">
+						<div class="agentACell {{activeIntRuleCell === agent.idAgent?'activeCell':''}}" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)"
+						model="interview">
+							<span class="cell-lable" ng-repeat="mrule in interview.firedRules" >
+								<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</div>
+ <!--  
+ <div ng-show="showIntroModule" class="col-md-4 moduleInterview" id="interview-intromodule-tree">
     <ng-include src="'scripts/interviews/partials/intromoduleTree.html'"></ng-include>
-    <!-- Start scroll space for last questions -->
+    < ! -- Start scroll space for last questions -- >
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -244,11 +273,11 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <!-- End scroll space for last questions -->
+    End scroll space for last questions
 </div>
 <div ng-if="linkedModule" ng-show="showModule" class="col-md-4 moduleInterview" id="interview-module-tree">
     <ng-include src="'scripts/interviews/partials/moduleTree.html'"></ng-include>
-    <!-- Start scroll space for last questions -->
+    Start scroll space for last questions
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -339,11 +368,11 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <!-- End scroll space for last questions -->
+    End scroll space for last questions
 </div>
 <div ng-if="linkedAjsm" ng-show="showAjsm" class="col-md-4 moduleInterview" id="interview-ajsm-tree">
     <ng-include src="'scripts/interviews/partials/ajsmTree.html'"></ng-include>
-    <!-- Start scroll space for last questions -->
+    Start scroll space for last questions
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -434,7 +463,7 @@
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <!-- End scroll space for last questions -->
-</div>
-</div>
+    End scroll space for last questions
+</div> -->
+</div> 
 <ng-include src="'scripts/interviews/partials/intTemplate.html'"></ng-include>

@@ -13,6 +13,7 @@
 			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout) {
 		var self = this;
 		$scope.data = data;	
+		saveModuleWithoutReload();
 		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
@@ -21,6 +22,17 @@
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	$scope.agentsData = null;
+    	
+    	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
+    		$scope.scrollWithTimeout(elId);
+    	});
+    	
+    	$scope.scrollWithTimeout = function(elId){
+        	$timeout(function() {
+        		$scope.highlightNode(elId);
+            }, 1000);
+        }
+    	
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
     		    open: function(x,idRule) {
@@ -488,7 +500,6 @@
 						$log.info("dest "+destNode.type);
 						
 					}
-					sourceNode.parentId = destNode.idNode;
 					$scope.isDragging = false;
 					if(sourceNode.warning != 'warning'){
 						if($scope.isClonable){		
@@ -535,7 +546,7 @@
 			});
 			$log.info("cascadeTemplateNullIds:"+nodes);
 		}
-
+		
 		ModulesService.getActiveModules().then(function(data) {	
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
@@ -594,11 +605,12 @@
 				scope.$modelValue.deleted = 1;
 				cascadeDelete(scope.$modelValue.nodes,1);
 			}
+			
 			var deffered = $q.defer();
 			saveModuleWithoutReload('',deffered);
 			deffered.promise.then(function(resolve){
+				saveModuleWithoutReload();
 				searchAndRemoveNode($scope.data,scope);
-				reorderSequence($scope.data);
 			});
 		};
 		
@@ -841,6 +853,13 @@
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
 			});
+//			var val = _.find($scope.$parent.$parent.$parent.tabs, function(el, index){
+//				var qModule = "Interview "+$scope.data[0].name;
+//				if(el.title === qModule){
+//					$scope.$parent.$parent.$parent.selectedIndex = index;
+//					$rootScope.$broadcast('InterviewCtrl:update', scope.$modelValue.idNode);
+//				} 
+//			});
 			saveModuleWithoutReload();
 		};
 
@@ -925,7 +944,7 @@
 			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Divider
-			  [ 'Run Interview', function($itemScope) {				  
+			  [ 'Run Interview', function($itemScope) {		
 					 $scope.addInterviewTab($itemScope);			                   
 				} 
 			  ], null, // Divider
@@ -1005,11 +1024,17 @@
 					}
 			  ],
 			  [ 'Open as aJSM', function($itemScope) {	
-					var node = angular.copy($itemScope.node);
-					node.idNode = node.link;
-					node.type = 'F_ajsm';
-					node.classtype = 'F';
-					$scope.addFragmentTab(node);
+				  FragmentsService.checkExists($itemScope.node.link).then(function(response){
+					  if(response){
+						  var node = angular.copy($itemScope.node);
+						  node.idNode = node.link;
+						  node.type = 'F_ajsm';
+						  node.classtype = 'F';
+						  $scope.addFragmentTab(node);
+					  }else{
+						  $itemScope.node.warning = 'warning';
+					  } 
+				  });					
 				} 
 			  ]
 			];
@@ -1252,14 +1277,6 @@
 				    			}
 				    			if($scope.templateData != null){
 				    			_.merge($scope.templateData, template);
-				    			if (!$scope.templateData.$$phase) {
-				    			        try {
-				    			        	$scope.templateData.$digest();
-				    			        }
-				    			        catch (e) {
-				    			        	$log.error(e);
-				    			        }
-				    			    }
 				    			}
 				    				deffered.resolve();
 				    		});
@@ -1271,14 +1288,6 @@
 			        			}
 			        			if($scope.aJSMData != null){
 			        			_.merge($scope.aJSMData, data);
-			        			if (!$scope.aJSMData.$$phase) {
-			    			        try {
-			    			        	$scope.aJSMData.$digest();
-			    			        }
-			    			        catch (e) {
-			    			        	$log.error(e);
-			    			        }
-			    			    }
 			        			}
 			        			deffered.resolve();
 			        		});
@@ -1289,14 +1298,6 @@
 			        			}
 			        			if($scope.frequencyData != null){
 				    			_.merge($scope.frequencyData, data);
-			        			if (!$scope.frequencyData.$$phase) {
-			    			        try {
-			    			        	$scope.frequencyData.$digest();
-			    			        }
-			    			        catch (e) { 
-			    			        	$log.error(e);
-			    			        }
-			    			    }
 			        			}
 			        			deffered.resolve();
 			        		});
@@ -1445,7 +1446,7 @@
 			var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
 			var scrollY = scrollTarget.offset().top - 150;
-			scrollPane.animate({scrollTop : scrollY }, 2000, 'swing');
+			scrollPane.animate({scrollTop : scrollY }, 1000, 'swing');
 		};
 
         $scope.highlightNode = function(idNode){
@@ -1454,7 +1455,7 @@
         	$('#'+elementId).toggleClass('highlight');  
         	   setTimeout(function(){
         	     $('#'+elementId).toggleClass('highlight');  
-        	   },5000);
+        	   },1500);
         }
         
         function getObject (array,idNode){
@@ -1632,13 +1633,13 @@
 			    			        catch (e) { }
 			    		    }
 						}
-						});
+					});
 					initAgentData();
 				}
 			});
         }
-        
         $scope.deleteRule = function(rule,model,$event){
+        	$scope.closeRuleDialog(model,$event);
         	RulesService.remove(rule).then(function(response){
     			if(response.status === 200){
     				$log.info('Rule Save was Successful!'+rule);	
@@ -1665,14 +1666,13 @@
 							}
 							
 							}
-							$scope.closeRuleDialog(model,$event);
+							
 							initAgentData();
 						}
 						});
 					});
     			}
-    		});
-        	
+    		});      	
         }
 	}
 })();

@@ -51,6 +51,18 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		}
 		return Response.ok(list).build();
 	}
+	@GET
+	@Path(value="/checkexists")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response checkExists(@QueryParam("id") Long id) {
+		boolean bExists = false;
+		try{
+			bExists = service.checkExists(id);
+		}catch(Throwable e){
+			bExists = false;
+		}
+		return Response.ok(bExists).build();
+	}
 
 	@Path(value="/create")
 	@POST

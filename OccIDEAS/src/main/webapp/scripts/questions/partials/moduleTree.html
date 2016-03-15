@@ -6,7 +6,7 @@
   	<div ng-if="!tabsLoading" ui-tree="moduleTreeOptions" id="tree-root">
 		<ol ui-tree-nodes ng-model="data">
 			<li ng-repeat="node in data" ui-tree-node 
-				ng-include="'nodes_renderer.html'"></li>
+				ng-include="'nodes_renderer.html'" id="moduleTreeBody"></li>
 		</ol>
 	</div>
   </div>
@@ -21,7 +21,7 @@
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div context-menu="showMenu(this)" sticky disabled-sticky="!((node.nodeclass === 'M')||(node.nodeclass === 'F'))" class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
+        <div context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
 		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,

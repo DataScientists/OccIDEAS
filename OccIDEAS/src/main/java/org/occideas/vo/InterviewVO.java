@@ -10,6 +10,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 
 public class InterviewVO {
+	private final String INTRO_MODULE = "M_IntroModule";
+	
 	private String referenceNumber;
 	private String freeText;
     private long singleAnswerId;
@@ -18,10 +20,17 @@ public class InterviewVO {
     private ModuleVO module;
     private FragmentVO fragment;
     private boolean active;
+    private String moduleName;
+    private String interviewType;
+    private String assessedStatus;
     
     private List<InterviewQuestionAnswerVO> questionsAsked;
     
     private List<RuleVO> firedRules;
+    
+    private List<RuleVO> autoAssessedRules;
+    
+    private List<RuleVO> manualAssessedRules;
     
     private List<AgentVO> agents;
     
@@ -124,10 +133,12 @@ public class InterviewVO {
 
 	public List<AgentVO> getAgents() {
 		agents = new ArrayList<AgentVO>();
-		for(RuleVO rule:this.getFiredRules()){
-			AgentVO agent = rule.getAgent();
-			if(!(agents.contains(agent))){
-				agents.add(agent);
+		if(this.getFiredRules()!=null){
+			for(RuleVO rule:this.getFiredRules()){
+				AgentVO agent = rule.getAgent();
+				if(!(agents.contains(agent))){
+					agents.add(agent);
+				}
 			}
 		}
 		return agents;
@@ -135,6 +146,67 @@ public class InterviewVO {
 
 	public void setAgents(List<AgentVO> agents) {
 		this.agents = agents;
+	}
+
+	public String getModuleName() {
+		if(this.getModule()!=null){
+			moduleName = this.getModule().getName();
+		}else if(this.getFragment()!=null){			
+			moduleName = this.getFragment().getName();
+		}
+		return moduleName;
+	}
+
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
+
+	public String getInterviewType() {
+		if(this.getModule()!=null){
+			if(this.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+				interviewType = "Introduction Module";
+			}else {
+				interviewType = "Job Module";
+			}		
+		}else if(this.getFragment()!=null){			
+			interviewType = "Associate Job Module";
+		}
+		return interviewType;
+	}
+
+	public void setInterviewType(String interviewType) {
+		this.interviewType = interviewType;
+	}
+
+	public List<RuleVO> getAutoAssessedRules() {
+		return autoAssessedRules;
+	}
+
+	public void setAutoAssessedRules(List<RuleVO> autoAssessedRules) {
+		this.autoAssessedRules = autoAssessedRules;
+	}
+
+	public List<RuleVO> getManualAssessedRules() {
+		return manualAssessedRules;
+	}
+
+	public void setManualAssessedRules(List<RuleVO> manualAssessedRules) {
+		this.manualAssessedRules = manualAssessedRules;
+	}
+
+	public String getAssessedStatus() {		
+		if(this.getManualAssessedRules()!=null){
+			if(this.getManualAssessedRules().size()>0){
+				assessedStatus = "Complete";
+			}else{
+				assessedStatus = "Incomplete";
+			}
+		}
+		return assessedStatus;
+	}
+
+	public void setAssessedStatus(String assessedStatus) {
+		this.assessedStatus = assessedStatus;
 	}
 	
 }

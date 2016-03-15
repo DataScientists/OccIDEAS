@@ -7,4 +7,6 @@ public interface FragmentService extends BaseService<FragmentVO>{
 	public void createFragment(FragmentVO fragmentVO);
 
 	public void merge(FragmentVO json);
+
+	boolean checkExists(Long id);
 }

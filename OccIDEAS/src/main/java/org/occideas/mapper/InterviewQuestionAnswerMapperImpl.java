@@ -40,7 +40,9 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
         }
         List<InterviewQuestionAnswerVO> list = new ArrayList<InterviewQuestionAnswerVO>();
         for (InterviewQuestionAnswer interview : interviewEntity) {
+        	if(interview.getDeleted() == 0){
             list.add(convertToInterviewQuestionAnswerVO(interview));
+        	}
         }
         return list;
     }

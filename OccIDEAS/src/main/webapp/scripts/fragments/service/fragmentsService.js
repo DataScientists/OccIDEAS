@@ -58,10 +58,14 @@
 				  url: restUrl
 				})
 			return request.then(handleSuccess,handleError);
-			/*return $http.get(restUrl).then(function(response) {
-			    var data = response.data;
-			    return data;
-			  });*/
+		}
+		function checkExists(idNode) {
+			var restUrl = 'rest/fragment/checkexists?id=' + idNode;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
 		}
 
 		var deleteFragment = function(moduleObj) {
@@ -83,6 +87,7 @@
 		};
 
 		return {		  
+			checkExists: checkExists,
 			getByType: getFragmentsByType,
 			get: getFragments,
 		    save: save, 	

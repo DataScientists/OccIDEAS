@@ -1,34 +1,141 @@
-<!-- <pre>{{data | json}}</pre> -->
-<div pull-right>
-	<div class="verticalagents">
-			<div class="agentcontainer" ng-repeat="agent in data.agents ">
-					<span class="rotatedagenttext">{{agent | json}}</span>
-			</div>
-	</div>
-</div>
-<div>Auto Assessed</div>
-<div class="pull-right" context-menu="showRulesMenu(this)" model="node"
-	style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in data.agents | orderBy:'':true">
-	<div class="verticalrules">
-		<div class="rulescontainer">
-			<div class="agentACell" id="{{obj.idAgent}}">
-				<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
-					<div ng-class="mrule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
-				</span>
+ <!-- <pre>{{data | json}}</pre>    -->
+
+<div class="col-md-8"  >
+	<div class="assessmentWrapper" >
+	<div class="firedRulesScroller">
+		<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">	     	
+	     	<div class="verticalagents">
+				<div class="agentcontainer" >
+					<span class="rotatedagenttext"></span>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
+						Fired Rules
+					</div>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
+						Auto 
+					</div>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="assessmentDescription" prevent-right-click >
+						Manual 
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>
-<div>Manual Assessed</div>
-<div context-menu="showRulesMenu(this)" model="node"
-	style="height:40px;width: 27px;border-right: solid aliceblue 1px;" ng-repeat="obj in data.agents | orderBy:'':true">
-	<div class="verticalrules">
-		<div class="rulescontainer">
-			<div class="agentACell" id="{{obj.idAgent}}">
-				<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
-					<div ng-class="mrule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
-				</span>
+		<div ng-repeat="agent in data.agents" 
+			class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
+	     	
+	     	<div class="verticalagents">
+				<div class="agentcontainer" >
+					<span class="rotatedagenttext">{{agent.name}}</span>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)" model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
+							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" prevent-right-click >
+						<span class="cell-lable" ng-repeat="mrule in data.autoAssessedRules" >
+							<div ng-class="mrule.level" class="assessment" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showEditAssessmentMenu(this)" model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
+							<div ng-class="mrule.level" class="assessment" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
 			</div>
 		</div>
+		
+		
+	</div>
+	</div>
+	<div class="noiseAssessmentWrapper" ng-if="noiseRows.length>0">
+		<table class="table table-bordered ">
+		<thead>
+		<tr>
+			<td>Node Number</td>
+			<td>dB</td>
+			<td>Hours</td>
+			<td>Partial Exposure</td>
+		</tr>
+		</thead> 
+		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
+			<td>{{noiseRow.nodeNumber}}</td>
+			<td>{{noiseRow.dB}}</td>
+			<td>{{noiseRow.backgroundhours}}</td>
+			<td>{{noiseRow.partialExposure}}</td>
+		</tr>
+		</table>
+		
+		<div>Total Partial Exposure: {{totalPartialExposure}}</div>
+		<div>Total Partial Exposure Adjusted: {{totalPartialExposurePerAdj}}</div>
+		<div>Auto Exposure Level: {{autoExposureLevel}}</div>
+		<div>Auto Exposure Level Adjusted: {{autoExposureLevelPerAdj}}</div>
+		<div>Peak Noise: {{peakNoise}}</div>
+		
 	</div>
 </div>
+<div class="col-md-4 moduleInterview" id="interview-question-list" >
+	
+		<div class="angular-ui-tree">
+			<div class="tree-node">
+				<span class="M_Interview ">
+				{{data.module.name}}{{data.fragment.name}}</span>
+				<div>
+    				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
+    				    ng-repeat="qa in data.questionsAsked">
+    					<div class="tree-node-content Q_interviewresult">
+    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   			<span class="badge">{{qa.question.number}}</span>
+                		</div>  
+    					
+	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
+	    					
+    					</span>  					
+    					</div>
+    					<div class="tree-node-content P_interviewresult">
+    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
+                			</div>
+    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
+    						</span>
+    					</div>
+    				</div>
+  				</div>
+			</div>
+		</div>
+	
+	
+
+</div>
+<div id="interview-wrapper">
+&nbsp;
+</div>
+<ng-include src="'scripts/interviews/partials/intTemplate.html'"></ng-include>
+<ng-include src="'scripts/assessments/partials/editAssessmentTemplate.html'"></ng-include>

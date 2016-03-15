@@ -43,6 +43,11 @@ public class InterviewMapperImpl implements InterviewMapper {
         }      
         List<Rule> firedRules = interview.getFiredRules();
         interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
+        List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
+        interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
+        List<Rule> manualAssessedRules = interview.getManualAssessedRules();
+        interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
+        
         return interviewVO;
     }
 
@@ -73,6 +78,10 @@ public class InterviewMapperImpl implements InterviewMapper {
         interview.setInterviewQuestionAnswers(iqaMapper.convertToInterviewQuestionAnswerList(questionsAsked));
         List<RuleVO> firedRules = interviewVO.getFiredRules();
         interview.setFiredRules(ruleMapper.convertToRuleExcPaList(firedRules));
+        List<RuleVO> autoAssessedRules = interviewVO.getAutoAssessedRules();
+        interview.setAutoAssessedRules(ruleMapper.convertToRuleExcPaList(autoAssessedRules));
+        List<RuleVO> manualAssessedRules = interviewVO.getManualAssessedRules();
+        interview.setManualAssessedRules(ruleMapper.convertToRuleExcPaList(manualAssessedRules));
         
         return interview;
     }

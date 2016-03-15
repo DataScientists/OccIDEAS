@@ -10425,7 +10425,7 @@ md-content {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 80;
+  z-index: 11000;
   overflow: hidden; }
 
 md-dialog {

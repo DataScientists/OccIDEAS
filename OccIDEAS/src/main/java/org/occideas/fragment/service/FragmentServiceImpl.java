@@ -36,6 +36,14 @@ public class FragmentServiceImpl implements FragmentService {
 		list.add(moduleVO);
 		return list;
 	}
+	@Override
+	public boolean checkExists(Long id) {
+		Fragment fragment = dao.get(id);
+		if(fragment!=null){
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	public void createFragment(FragmentVO fragmentVO) {

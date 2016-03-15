@@ -106,16 +106,7 @@
 			        		return AssessmentsService.getInterview($stateParams.row)
 			        				.then(function(response){
 			        					$log.info("Interview from questions AJAX ...");
-			        					var interview = response.data[0];
-			        					var agents = [];
-			        					if(interview.firedRules){
-			        						for(var i=0;i<interview.firedRules.length;i++){
-			        							var rule = interview.firedRules[i];
-				        						agents.push({agentId:rule.agentId})
-				        					}
-			        					}
-			        					interview.agents = agents;
-			        					return interview;
+			        					return response.data[0];
 		    				});
 			        }
 			     }

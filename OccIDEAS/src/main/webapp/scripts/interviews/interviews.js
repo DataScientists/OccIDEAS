@@ -15,6 +15,22 @@
 							scope.$on('$destroy', function() {
 							});
 						};
+			}).filter('qaFilter', function() {
+					return function( items, deleted) {
+						var filtered = [];
+
+							if(deleted === undefined || deleted === ''){
+									return items;
+							}
+
+							angular.forEach(items, function(item) {          
+								if(item.deleted === deleted){
+									filtered.push(item);
+								}
+							});
+
+							return filtered;
+					};
 			});
 
 	Config.$inject = [ '$stateProvider' ];
