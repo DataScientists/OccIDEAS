@@ -152,7 +152,7 @@
     padding-left: 20px;
     border-bottom: 2px solid;
     border-bottom-color: #4657B7;
-    max-width:320px;
+    max-width:650px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -171,7 +171,7 @@
     background: #FDFBF5 !important;
     border-bottom: 1px solid;
     border-bottom-color: #C79B1C; !important;
-    max-width:320px;
+    max-width:650px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -255,8 +255,8 @@
 							totalPartialExposurePerAdj = (parseFloat(totalPartialExposurePerAdj)+parseFloat(partialExposurePercentageAdjusted));
 							
 						  }
-						  if(peakNoise<level){
-							peakNoise = level;
+						  if(peakNoise<Number(level)){
+							peakNoise = Number(level);
 						  }
 					  }
 					  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
