@@ -510,7 +510,7 @@
 							$scope.isClonable = false;	
 							safeDigest($scope.isClonable);
 							reorderSequence($scope.data);
-							saveModuleWithoutReload();
+							saveModuleAndReload();
 							event.source.nodeScope.$treeScope.cloneEnabled = false;
 						}else{
 							saveModuleWithoutReload();
