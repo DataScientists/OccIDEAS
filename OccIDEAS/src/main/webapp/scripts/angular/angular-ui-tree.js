@@ -1370,12 +1370,17 @@
 
                 // cloneEnabled and cross-tree so copy and do not remove from source
                 if (this.isClone()) {
-                  this.sourceInfo.cloneModel.name = this.sourceInfo.cloneModel.name +'(Copy)';
-                  this.sourceInfo.cloneModel.idNode = "";
-                  if(this.parent){
-                  this.parent.cascadeIdCleanse(this.sourceInfo.cloneModel.nodes);
-                  }
-                  this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
+                	if(this.sourceInfo.cloneModel.type=='Q_linkedajsm'){
+                		this.sourceInfo.cloneModel.link = this.sourceInfo.cloneModel.idNode;
+                		this.sourceInfo.cloneModel.idNode = "";
+                	}else{
+                		this.sourceInfo.cloneModel.name = this.sourceInfo.cloneModel.name +'(Copy)';
+                        this.sourceInfo.cloneModel.idNode = "";
+                        if(this.parent){
+                        	this.parent.cascadeIdCleanse(this.sourceInfo.cloneModel.nodes);
+                        }
+                	}     
+                  this.parent.insertNode(this.index, this.sourceInfo.cloneModel);                
                 } else { // Any other case, remove and reinsert
                   this.source.remove();
                   this.parent.insertNode(this.index, nodeData);
