@@ -103,34 +103,17 @@
 			var check = _.some( tabs, function( el ) {
 			    return el.title === row.name;
 			} );
-			
-			if(!check && ($scope.questionsCount < 3)){
-				var questionState = '';
-				if($scope.questionsCount > 0){
-					questionState = $scope.questionsCount;
-				}
+					
 			tabs.push({
 				title : row.name,
-				viewName: null,
+				viewName: 'questions@tabs',
 				canClose: true,
 				disabled : false
 			});
 			$scope.tabOptions.push({
-				state: "tabs.questions"+questionState,
+				state: "tabs.questions",
 				data: {row:row.idNode}
 			});
-			$scope.questionsCount++;
-			}
-			else if($scope.questionsCount > 2){
-				alert("Unable to have more than 3 questions tab opened at the same time.");
-			}
-			else{
-				_.find(tabs, function(el, index){ 
-					if(el.title === row.name){
-						$scope.selectedIndex = index;
-				    } 
-				});
-			}
 			$log.info("addModuleTab questionsLoading end");
 		};
         $scope.addRulesTab = function(scope) {
