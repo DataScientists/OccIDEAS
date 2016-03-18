@@ -1,9 +1,12 @@
 package org.occideas.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by quangnn on 2/17/2016.
  */
 
+@JsonIgnoreProperties({"multiAnswers"})
 public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAnswerVO>{
 	private long id;
 	private String interviewQuestionAnswerFreetext;

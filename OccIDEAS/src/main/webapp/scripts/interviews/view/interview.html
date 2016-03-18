@@ -132,8 +132,8 @@
 				{{interview.module.name}}{{interview.fragment.name}}</span>
 				<div>
     				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interview.questionsAsked | qaFilter:0 | orderBy:'question.number'">
-    					<div class="tree-node-content Q_interviewresult">
+    				    ng-repeat="qa in interview.questionsAsked | qaFilter:0 | orderBy:'question.number' track by $index">
+    					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.question.number}}</span>
                 		</div>  

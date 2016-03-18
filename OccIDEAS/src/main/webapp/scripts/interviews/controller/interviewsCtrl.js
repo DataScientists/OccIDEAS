@@ -208,9 +208,8 @@
 		        catch (e) { }
         	}
         }
-        
+        $scope.qaView = [];
         $scope.saveAnswerQuestion = function (node) {
-            
             //if (node.type == 'Q_multiple') {
                 
             //}
@@ -222,19 +221,39 @@
             for (var i = 0; i < $scope.interviews.length; i++) {
                 if ($scope.interviews[i].active) {
                     interview = $scope.interviews[i];
+                    var isExistInQaView = _.find($scope.qaView,function(val,ind){
+                     	return val.interviewId === interview.interviewId;
+                     });
+                    if(!isExistInQaView){
+                    $scope.qaView.push({
+                    	interviewId:interview.interviewId
+                    });
+                    }
                 }
             }
             if (!interview.questionsAsked) {
                 interview.questionsAsked = [];
+                _.find($scope.qaView,function(val,ind){
+                 	if(val.interviewId === interview.interviewId){
+                 		val.questionsAsked = [];
+                 		safeDigest($scope.qaView);
+                 	}
+                 });
             }
             if (node.type == 'Q_multiple') {
+            	$scope.multiAnswers = false;
             	var seletectedEl = $scope.multiSelected;
                 $scope.multiSelected = [];
                 var answers = seletectedEl;
                 var answerIds = [];
                 for (var i = 0; i < answers.length; i++) {
                 	var answer = answers[i];
+                	var multiAnswers = false;
+                	if(i > 0){
+                		multiAnswers = true;
+                	}
                     var newQuestionAsked = {
+                    	multiAnswers: multiAnswers,
                         possibleAnswer: answer,
                         idInterview: interview.interviewId,
                         question: node,
@@ -248,7 +267,9 @@
                          		safeDigest(interview.questionsAsked);
                          	}
                          });
+                    	 deleteQaView(interview,node.idNode);
                     }
+                    updateQaView(interview,newQuestionAsked);
                     interview.questionsAsked.push(newQuestionAsked);
                 }
             } else if (node.type == 'Q_frequency') {
@@ -263,6 +284,7 @@
                 var answerValue = Number(hours) + (Number(minutes)/60);
                 var answer = node.nodes[0];
                 var newQuestionAsked = {
+                		multiAnswers: false,
                         possibleAnswer: answer,
                         idInterview: interview.interviewId,
                         question: node,
@@ -276,11 +298,14 @@
                     		safeDigest(interview.questionsAsked);
                     	}
                     });
+              	 deleteQaView(interview,node.idNode);
                 }
+                updateQaView(interview,newQuestionAsked);
                	interview.questionsAsked.push(newQuestionAsked);
             } else {
             	var answer = node.selectedAnswer;
                 var newQuestionAsked = {
+                	multiAnswers: false,
                     possibleAnswer: answer,
                     idInterview: interview.interviewId,
                     question: node,
@@ -294,7 +319,9 @@
                   		safeDigest(interview.questionsAsked);
                   	}
                   });
+              	 deleteQaView(interview,node.idNode);
                 }
+                updateQaView(interview,newQuestionAsked);
                 interview.questionsAsked.push(newQuestionAsked);
             }
             InterviewsService.save(interview).then(function (response) {
@@ -440,6 +467,14 @@
                                 } else {
                                     console.log('ERROR on Get!');
                                 }
+                                for (var i = 0; i < $scope.interviews.length; i++) {
+                                	_.find($scope.qaView,function(val,ind){
+                                     	if(val.interviewId === $scope.interviews[i].interviewId){
+                                     			$scope.interviews[i].questionsAsked = angular.copy(val.questionsAsked);
+                                     			safeDigest($scope.interviews);
+                                     	}
+                                    });
+                                }
                                 if($scope.updateAnswers){
                                 $scope.updateAnswers = false;
                                 safeDigest($scope.updateAnswers);
@@ -454,6 +489,28 @@
                 }
             });
         }
+        
+        function updateQaView(interview,newQuestionAsked){
+           _.find($scope.qaView,function(val,ind){
+              	if(val.interviewId === interview.interviewId){
+              		val.questionsAsked.push(newQuestionAsked);
+              		safeDigest($scope.qaView);
+              	}
+           });
+        }
+        
+        function deleteQaView(interview,idNode){
+            _.find($scope.qaView,function(val,ind){
+               	if(val.interviewId === interview.interviewId){
+               		_.find(val.questionsAsked,function(qa,counter){
+               			if(qa.question.idNode === idNode){
+               				qa.deleted = 1;
+               			}
+               		})
+               	}
+            });
+         }
+        
         $scope.showRule = function (scope) {
             //Todo implement show dialog on
             /*var x = scope.rule.conditions;
