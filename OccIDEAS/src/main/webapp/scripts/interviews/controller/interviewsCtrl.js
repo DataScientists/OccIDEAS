@@ -312,19 +312,7 @@
                     deleted:0,
                     interviewQuestionAnswerFreetext: answer.name
                 }
-                function deleteChildQuestions(questionsAsked,parentiqa){
-                	_.find(questionsAsked,function(val,ind){
-                		if(!(val.deleted)){
-                			if(val.question.parentId == parentiqa.possibleAnswer.idNode){
-                          		var iqa = questionsAsked[ind];
-                          		iqa.deleted = 1;
-                          		deleteChildQuestions(questionsAsked,iqa);
-                          		safeDigest(interview.questionsAsked);
-                          	}
-                      	}
-                      	
-                      });
-                }
+                
                 if($scope.updateAnswers){
                	 _.find(interview.questionsAsked,function(val,ind){
                   	if(val.question.idNode === node.idNode){
@@ -524,7 +512,19 @@
                	}
             });
          }
-        
+        function deleteChildQuestions(questionsAsked,parentiqa){
+        	_.find(questionsAsked,function(val,ind){
+        		if(!(val.deleted)){
+        			if(val.question.parentId == parentiqa.possibleAnswer.idNode){
+                  		var iqa = questionsAsked[ind];
+                  		iqa.deleted = 1;
+                  		deleteChildQuestions(questionsAsked,iqa);
+                  		safeDigest(interview.questionsAsked);
+                  	}
+              	}
+              	
+              });
+        }
         $scope.showRule = function (scope) {
             //Todo implement show dialog on
             /*var x = scope.rule.conditions;
