@@ -333,7 +333,20 @@
 				},
 				dropped: function (event){
 					$scope.isDragging = false;
-					saveModuleAndReload();
+					var sourceNode = event.source.nodeScope.node;
+					sourceNode.warning = null;
+					var destNode = event.dest.nodesScope.node;
+					
+					$log.info("source"+sourceNode.type);
+					if(!destNode){
+						$log.warning("Node is dropped on the wrong spot -"
+								+": source"+sourceNode+ "dest:" +destNode);
+					}else{
+						$log.info("dest "+destNode.type);
+						
+					}
+					reorderSequence($scope.data);
+					saveModuleWithoutReload();
 				}
 		}
 		$scope.templateTreeOptions = {
@@ -510,7 +523,7 @@
 							$scope.isClonable = false;	
 							safeDigest($scope.isClonable);
 							reorderSequence($scope.data);
-							saveModuleAndReload();
+							saveModuleWithoutReload();
 							event.source.nodeScope.$treeScope.cloneEnabled = false;
 						}else{
 							saveModuleWithoutReload();
