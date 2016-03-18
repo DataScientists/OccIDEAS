@@ -13,7 +13,7 @@
 			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout) {
 		var self = this;
 		$scope.data = data;	
-		//saveModuleWithoutReload();
+		saveModuleWithoutReload();
 		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
@@ -1357,6 +1357,7 @@
 				var i=0;
 				_.each(arrayInp, function(node) {
 					
+					node.parentId = parentId;
 					node.sequence = i;
 					node.topNodeId = topNodeId;
 					if(node.nodeclass=='Q'){
@@ -1387,14 +1388,9 @@
 						}
 
 					}
-
 					if(!node.idNode){
 						maxIdIncrement =(maxIdIncrement + 1);
 						node.idNode = maxIdIncrement;
-						
-						if(parentId){
-							node.parentId = parentId;
-						}
 					}  
 					if(node.nodes){
 						if(node.nodes.length > 0){
@@ -1402,8 +1398,7 @@
 						}
 					}
 					i++;
-				});
-				
+				});				
 			}
 		}
 		$scope.getNextKey = function(key) {

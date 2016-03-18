@@ -153,7 +153,11 @@
 						  var noiseRule = noiseRules[k];
 						  if(noiseRule.type!='BACKGROUND'){
 							  var parentNode = noiseRule.conditions[0];
-							  cascadeFindNode(model.module.nodes,parentNode);
+							  if(model.module){
+								  cascadeFindNode(model.module.nodes,parentNode);
+							  }else{
+								  cascadeFindNode(model.fragment.nodes,parentNode); 
+							  }
 							  var answeredValue = 0;
 							  if($scope.foundNode){
 								  if($scope.foundNode.nodes[0]){
@@ -209,7 +213,11 @@
 							var hours = 0.0;
 							var frequencyhours = 0;
 							var parentNode = noiseRule.conditions[0];
-							  cascadeFindNode(model.module.nodes,parentNode);
+							if(model.module){
+								  cascadeFindNode(model.module.nodes,parentNode);
+							  }else{
+								  cascadeFindNode(model.fragment.nodes,parentNode); 
+							  }
 							  if($scope.foundNode){
 								  if($scope.foundNode.nodes[0]){
 									  if($scope.foundNode.nodes[0].nodes[0]){
