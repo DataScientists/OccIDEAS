@@ -406,18 +406,33 @@
                                                 idInterview: runningInterview.interviewId,
                                                 interviewQuestionAnswerFreetext: 'Q_linked'
                                             }
-                                            _.find(interview.questionsAsked,function(val,ind){
-                                             	if(val.interviewQuestionAnswerFreetext == 'Q_linked'){
-                                             		interview.questionsAsked[ind].deleted = 1;
-                                             		safeDigest(interview.questionsAsked);
+                                            var isExistInQa = _.find(runningInterview.questionsAsked,function(val,ind){
+                                             	var retValue = false;
+                                             	if(val.idInterview == runningInterview.interviewId){
+                                             		if(val.question.idNode == linkedQuestionAsked.question.idNode){
+                                             			if(val.interviewQuestionAnswerFreetext == 'Q_linked'){
+                                             				retValue = true;
+                                                     	}
+                                                 	}
                                              	}
+                                            	return retValue;
                                              });
-                                            runningInterview.questionsAsked.push(linkedQuestionAsked);
-                                            
-                                            
+                                            if(!isExistInQa){
+                                            	runningInterview.questionsAsked.push(linkedQuestionAsked);
+                                            }
                                             InterviewsService.save(runningInterview).then(function (response) {
                                                 if (response.status === 200) {
                                                     console.log('Added liking question');
+                                                    
+                                                }
+                                            });
+                                            InterviewsService.get(runningInterview.interviewId).then(function (response) {
+                                                if (response.status === 200) {
+                                                    for (var i = 0; i < $scope.interviews.length; i++) {
+                                                        if ($scope.interviews[i].interviewId == response.data[0].interviewId) {
+                                                            $scope.interviews[i] = response.data[0];
+                                                        }
+                                                    }
                                                 }
                                             });
                                         }
