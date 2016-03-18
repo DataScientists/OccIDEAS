@@ -14,6 +14,8 @@
         }
 
         function save(data) {
+        	console.log("Saving interview");
+        	console.dir(data);
             var restSaveUrl = 'rest/interview/update';
             var request = $http({
                 method: 'POST',
