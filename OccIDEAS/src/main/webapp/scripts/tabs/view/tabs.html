@@ -12,12 +12,8 @@
         <md-tab-body ng-cloak ng-class="tab.style" layout="column" layout-fill >
                 <div class="tab{{$index%4}}" >
 				<ng-view ng-cloak ui-view="{{tab.viewName}}" ng-if="tab.viewName != null"></ng-view>
-				<div ng-cloak ui-view="questions" ng-show="$state.includes('tabs.questions')">
-				</div>
-         		<div ng-cloak ui-view="questions1" ng-show="$state.includes('tabs.questions1')">
-         		</div>
-         		<div ng-cloak ui-view="questions2" ng-show="$state.includes('tabs.questions2')">
-         		</div>
+				
+         		
          		</div>
         </md-tab-body>
       </md-tab>

@@ -13,7 +13,7 @@
 			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout) {
 		var self = this;
 		$scope.data = data;	
-		saveModuleWithoutReload();
+		//saveModuleWithoutReload();
 		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
@@ -106,7 +106,7 @@
 	    			var frequencies = [];
 	    			for(var i=0;i < data.length;i++){
 	    				var node = data[i];
-	    				node.idnode = "";
+	    				//node.idNode = "";
 	    				node.nodeclass = "Q";
 	    				if(node.type=='F_ajsm'){
 	    					node.type = "Q_linkedajsm";
@@ -312,7 +312,7 @@
 							}			
 						}
 						
-						destNode.nodes.unshift({
+						/*destNode.nodes.unshift({
 								
 								name : sourceNode.name,
 								description : sourceNode.description,
@@ -322,14 +322,18 @@
 								link : sourceNode.idNode,
 								parentId : destNode.idNode,
 								nodes : []
-						});
-						$scope.isDragging = false;
-						saveModuleWithoutReload();
-						return false;
+						});*/
+						
+						//reorderSequence(destNode.nodes);
+						//saveModuleAndReload();
+						
+						return true;
 					}
 					
 				},
 				dropped: function (event){
+					$scope.isDragging = false;
+					saveModuleAndReload();
 				}
 		}
 		$scope.templateTreeOptions = {
@@ -506,7 +510,7 @@
 							$scope.isClonable = false;	
 							safeDigest($scope.isClonable);
 							reorderSequence($scope.data);
-							saveModuleWithoutReload();
+							saveModuleAndReload();
 							event.source.nodeScope.$treeScope.cloneEnabled = false;
 						}else{
 							saveModuleWithoutReload();
@@ -933,12 +937,15 @@
 			          var i, subScope,
 			              nodes = scope.childNodes();
 			          for (i = 0; i < nodes.length; i++) {
-			        	var collapsed = nodes[i].collapsed;
-			            !collapsed ? nodes[i].collapse() : nodes[i].expand();
-			            subScope = nodes[i].$childNodesScope;
-			            if (subScope) {
-			              collapseOrExpand(subScope);
-			            }
+			        	  var node = nodes[i];
+			        	  if(node.childNodes().length>0){
+			        		  var collapsed = node.collapsed;
+					            !collapsed ? nodes[i].collapse() : nodes[i].expand();
+					            subScope = nodes[i].$childNodesScope;
+					            if (subScope) {
+					              collapseOrExpand(subScope);
+					            }
+			        	  }	
 			          }
 			        };
 			        collapseOrExpand($itemScope);
