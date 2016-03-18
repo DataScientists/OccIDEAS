@@ -21,6 +21,7 @@ angular
     "occIDEASApp.Rules",
     "occIDEASApp.Fragments",
     "occIDEASApp.Assessments",
+    "occIDEASApp.Participants",
     "occIDEASApp.InterviewResults",
     "occIDEASApp.ModuleRule"
   ], function($rootScopeProvider){

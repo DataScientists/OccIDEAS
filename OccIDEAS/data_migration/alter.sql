@@ -24,3 +24,14 @@ CREATE TABLE `occideas`.`Interview_ManualAssessedRules` (
 
 ALTER TABLE `occideas`.`Rule` 
 ADD COLUMN `deleted` INT(11) NOT NULL DEFAULT 0 AFTER `type`;
+
+CREATE TABLE `occideas`.`Participant` (
+  `idParticipant` int(11) NOT NULL AUTO_INCREMENT,
+  `reference` varchar(20) NOT NULL,
+  `status` int(11) NOT NULL,
+  `lastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`idparticipant`)
+);
+ALTER TABLE `occideas`.`Interview` 
+ADD COLUMN `idParticipant` BIGINT(20) NOT NULL;

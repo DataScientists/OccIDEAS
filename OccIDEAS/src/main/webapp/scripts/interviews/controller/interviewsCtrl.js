@@ -3,10 +3,10 @@
         .controller('InterviewsCtrl', InterviewsCtrl);
 
     InterviewsCtrl.$inject = ['data', '$scope', '$mdDialog', 'FragmentsService',
-        '$q', 'QuestionsService', 'ModulesService', 'InterviewsService',
+        '$q', 'QuestionsService', 'ModulesService', 'InterviewsService', 'ParticipantsService',
         '$anchorScroll', '$location', '$mdMedia', '$window', '$state', '$rootScope','$compile','$timeout'];
     function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService,
-                            $q, QuestionsService, ModulesService, InterviewsService,
+                            $q, QuestionsService, ModulesService, InterviewsService, ParticipantsService,
                             $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile,$timeout) {
         var self = this;
         $scope.data = data;
@@ -407,30 +407,41 @@
             if (!$scope.referenceNumber) {
                 $scope.referenceNumber = 'TEST' + Math.floor((Math.random() * 100) + 1);
             }
-            QuestionsService.findQuestions($scope.data[0].idNode, 'M')
-                .then(function (response) {
-                    console.log("Data getting from questions AJAX ...");
-                    $scope.data = response.data;
-                    var interview = {};
-                    interview.module = $scope.data[0];
-                    interview.referenceNumber = $scope.referenceNumber;
-                    $scope.interviews = [];
-                    $scope.interviews.push(interview);
+            var participant = {reference:$scope.referenceNumber,
+            		interviews:[]}
+            //$scope.participant = participant;
+            ParticipantsService.createParticipant(participant).then(function (response){
+            	if (response.status === 200) {
+            		$scope.participant = response.data;
+            		QuestionsService.findQuestions($scope.data[0].idNode, 'M')
+                    .then(function (response) {
+                        console.log("Data getting from questions AJAX ...");
+                        $scope.data = response.data;
+                        var interview = {};
+                        interview.module = $scope.data[0];
+                        interview.referenceNumber = $scope.referenceNumber;
+                        interview.participant = $scope.participant;
+                        $scope.interviews = [];
+                        $scope.interviews.push(interview);
 
-                    InterviewsService.startInterview(interview).then(function (response) {
-                        if (response.status === 200) {
-                            $scope.interviewId = response.data.interviewId;
-                            $scope.interviews[0].interviewId = response.data.interviewId;
-                            $scope.interviews[0].active = true;
-                            $scope.data.interviewStarted = true;
-                            $scope.data.interviewEnded = false;
-                            showNextQuestion();
-                        } else {
-                            console.log('ERROR on Start Interview!');
-                        }
+                        InterviewsService.startInterview(interview).then(function (response) {
+                            if (response.status === 200) {
+                                $scope.interviewId = response.data.interviewId;
+                                $scope.interviews[0].interviewId = response.data.interviewId;
+                                $scope.interviews[0].active = true;
+                                $scope.data.interviewStarted = true;
+                                $scope.data.interviewEnded = false;
+                                
+                                showNextQuestion();
+                            } else {
+                                console.log('ERROR on Start Interview!');
+                            }
 
+                        });
                     });
-                });
+            	}	
+            });
+            
         }
         
         $scope.scrollWithTimeout = function(elId){

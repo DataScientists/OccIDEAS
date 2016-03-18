@@ -1,0 +1,22 @@
+<div ng-cloak>
+<div>
+<!-- <pre>debug{{vm.tableParams.data| json}}</pre>   -->
+<table ng-table="vm.tableParams" class="table table-bordered table-hover 
+  table-condensed editable-table" show-filter="true">
+    <tr ng-repeat="participant in $data">
+        
+        <td title="'Reference Number'" filter="{ referenceNumber: 'text'}" sortable="'referenceNumber'">
+            {{participant.referenceNumber}}</td>
+        <td title="'Status'">
+			{{participant.status}}
+		</td>
+		<td>
+			<button class="btn btn-default btn-sm"
+					ng-click="addAssessmentTab(interview)" >
+			<span class="glyphicon glyphicon-list-alt"></span>
+			</button>
+		</td>
+    </tr>
+</table>
+</div>
+</div>
