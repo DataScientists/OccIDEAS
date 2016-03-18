@@ -1370,7 +1370,8 @@
 
                 // cloneEnabled and cross-tree so copy and do not remove from source
                 if (this.isClone()) {
-                	if(this.sourceInfo.cloneModel.type=='Q_linkedajsm'){
+                	var qType = this.sourceInfo.cloneModel.type;
+                	if((qType=='Q_linkedajsm')||(qType=='Q_linkedmodule')){
                 		this.sourceInfo.cloneModel.link = this.sourceInfo.cloneModel.idNode;
                 		this.sourceInfo.cloneModel.idNode = "";
                 	}else{
