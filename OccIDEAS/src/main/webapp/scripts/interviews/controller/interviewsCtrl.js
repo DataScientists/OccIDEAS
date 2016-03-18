@@ -320,7 +320,7 @@
                   	if(val.question.idNode === node.idNode){
                   		var iqa = interview.questionsAsked[ind];
                   		iqa.deleted = 1;
-                  		deleteChildQuestions(interview.questionsAsked,iqa);
+                  		deleteChildQuestions(interview,iqa);
                   		safeDigest(interview.questionsAsked);
                   	}
                   });
@@ -382,7 +382,8 @@
                	}
             });
          }
-        function deleteChildQuestions(questionsAsked,parentiqa){
+        function deleteChildQuestions(interview,parentiqa){
+        	var questionsAsked = interview.questionsAsked;
         	_.find(questionsAsked,function(val,ind){
         		if(!(val.deleted)){
         			if(val.question.parentId == parentiqa.possibleAnswer.idNode){
