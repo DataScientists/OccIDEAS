@@ -342,20 +342,26 @@
                     for (var i = 0; i < $scope.interviews.length; i++) {
                         if ($scope.interviews[i].active) {
                             interviewId = $scope.interviews[i].interviewId;
+                            if(!(interviewId)){
+                            	//alert("Questions still loading");
+                            }else{
+                            	InterviewsService.get(interviewId).then(function (response) {
+                                    if (response.status === 200) {
+                                        for (var i = 0; i < $scope.interviews.length; i++) {
+                                            if ($scope.interviews[i].active) {
+                                                var interview = response.data[0];
+                                                interview.active = true;
+                                                $scope.interviews[i] = interview;
+                                            }
+                                        }
+                                        showNextQuestion();
+                                    }
+                                });
+                            }
+                            break;
                         }
                     }
-                    InterviewsService.get(interviewId).then(function (response) {
-                        if (response.status === 200) {
-                            for (var i = 0; i < $scope.interviews.length; i++) {
-                                if ($scope.interviews[i].active) {
-                                    var interview = response.data[0];
-                                    interview.active = true;
-                                    $scope.interviews[i] = interview;
-                                }
-                            }
-                            showNextQuestion();
-                        }
-                    });
+                    
 
                 }
             });
@@ -540,6 +546,7 @@
         function showLinkingQuestion(newInterview,question){
         	newInterview.referenceNumber = $scope.interviews[0].referenceNumber;
             newInterview.active = true;
+            newInterview.participant = $scope.participant;
             var runningInterview;
             for (var i = 0; i < $scope.interviews.length; i++) {
             	runningInterview = $scope.interviews[i];
