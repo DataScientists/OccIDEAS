@@ -210,10 +210,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			}
 		}
 		if(questionVO==null){
-			questionVO = processNonIntroModuleInterview(list);
+			//questionVO = processNonIntroModuleInterview(list);
 		}
 		if(questionVO==null){
-			questionVO = processIntroModuleInterview(list);   
+			//questionVO = processIntroModuleInterview(list);   
 		}
 		
 		 	  	
