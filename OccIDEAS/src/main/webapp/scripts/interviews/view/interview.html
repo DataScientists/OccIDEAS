@@ -124,7 +124,7 @@
     
 </div>
 <div class="col-md-8 moduleInterview" id="interview-question-list" >
-	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews">
+	<div ui-tree="" id="tree-root" ng-repeat="interview in interviews track by $index">
 	
 		<div class="angular-ui-tree">
 			<div class="tree-node">
@@ -132,8 +132,8 @@
 				{{interview.module.name}}{{interview.fragment.name}}</span>
 				<div>
     				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interview.questionsAsked | qaFilter:0 | orderBy:'question.number'">
-    					<div class="tree-node-content Q_interviewresult">
+    				    ng-repeat="qa in interview.questionsAsked | qaFilter:0 | orderBy:'question.number' track by $index">
+    					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.question.number}}</span>
                 		</div>  
@@ -158,7 +158,7 @@
 	<div ng-if="interview.firedRules.length > 0" class="firedRulesWrapper" >
 		<div class="firedRulesScroller">
 			<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;" 
-		     		ng-repeat="agent in interview.agents">
+		     		ng-repeat="agent in interview.agents track by $index">
 		     	<div class="verticalagents">
 					<div class="agentcontainer" >
 						<span class="rotatedagenttext">{{agent.name}}</span>

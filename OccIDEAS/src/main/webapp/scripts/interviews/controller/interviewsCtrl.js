@@ -3,10 +3,10 @@
         .controller('InterviewsCtrl', InterviewsCtrl);
 
     InterviewsCtrl.$inject = ['data', '$scope', '$mdDialog', 'FragmentsService',
-        '$q', 'QuestionsService', 'ModulesService', 'InterviewsService',
+        '$q', 'QuestionsService', 'ModulesService', 'InterviewsService', 'ParticipantsService',
         '$anchorScroll', '$location', '$mdMedia', '$window', '$state', '$rootScope','$compile','$timeout'];
     function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService,
-                            $q, QuestionsService, ModulesService, InterviewsService,
+                            $q, QuestionsService, ModulesService, InterviewsService, ParticipantsService,
                             $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile,$timeout) {
         var self = this;
         $scope.data = data;
@@ -208,9 +208,8 @@
 		        catch (e) { }
         	}
         }
-        
+        $scope.qaView = [];
         $scope.saveAnswerQuestion = function (node) {
-            
             //if (node.type == 'Q_multiple') {
                 
             //}
@@ -222,19 +221,39 @@
             for (var i = 0; i < $scope.interviews.length; i++) {
                 if ($scope.interviews[i].active) {
                     interview = $scope.interviews[i];
+                    var isExistInQaView = _.find($scope.qaView,function(val,ind){
+                     	return val.interviewId === interview.interviewId;
+                     });
+                    if(!isExistInQaView){
+                    $scope.qaView.push({
+                    	interviewId:interview.interviewId
+                    });
+                    }
                 }
             }
             if (!interview.questionsAsked) {
                 interview.questionsAsked = [];
+                _.find($scope.qaView,function(val,ind){
+                 	if(val.interviewId === interview.interviewId){
+                 		val.questionsAsked = [];
+                 		safeDigest($scope.qaView);
+                 	}
+                 });
             }
             if (node.type == 'Q_multiple') {
+            	$scope.multiAnswers = false;
             	var seletectedEl = $scope.multiSelected;
                 $scope.multiSelected = [];
                 var answers = seletectedEl;
                 var answerIds = [];
                 for (var i = 0; i < answers.length; i++) {
                 	var answer = answers[i];
+                	var multiAnswers = false;
+                	if(i > 0){
+                		multiAnswers = true;
+                	}
                     var newQuestionAsked = {
+                    	multiAnswers: multiAnswers,
                         possibleAnswer: answer,
                         idInterview: interview.interviewId,
                         question: node,
@@ -248,9 +267,12 @@
                          		safeDigest(interview.questionsAsked);
                          	}
                          });
+                    	 deleteQaView(interview,node.idNode);
                     }
+                    updateQaView(interview,newQuestionAsked);
                     interview.questionsAsked.push(newQuestionAsked);
                 }
+                saveAndGetInterview(interview);
             } else if (node.type == 'Q_frequency') {
                 var hours = 0;
                 if(node.hours){
@@ -263,6 +285,7 @@
                 var answerValue = Number(hours) + (Number(minutes)/60);
                 var answer = node.nodes[0];
                 var newQuestionAsked = {
+                		multiAnswers: false,
                         possibleAnswer: answer,
                         idInterview: interview.interviewId,
                         question: node,
@@ -276,183 +299,108 @@
                     		safeDigest(interview.questionsAsked);
                     	}
                     });
+              	 deleteQaView(interview,node.idNode);
                 }
+                updateQaView(interview,newQuestionAsked);
                	interview.questionsAsked.push(newQuestionAsked);
+               	saveAndGetInterview(interview);
             } else {
             	var answer = node.selectedAnswer;
                 var newQuestionAsked = {
+                	multiAnswers: false,
                     possibleAnswer: answer,
                     idInterview: interview.interviewId,
                     question: node,
                     deleted:0,
                     interviewQuestionAnswerFreetext: answer.name
                 }
+                
                 if($scope.updateAnswers){
                	 _.find(interview.questionsAsked,function(val,ind){
                   	if(val.question.idNode === node.idNode){
-                  		interview.questionsAsked[ind].deleted = 1;
+                  		var iqa = interview.questionsAsked[ind];
+                  		iqa.deleted = 1;
+                  		deleteChildQuestions(interview,iqa);
                   		safeDigest(interview.questionsAsked);
                   	}
                   });
+              	 deleteQaView(interview,node.idNode);
                 }
+                updateQaView(interview,newQuestionAsked);
                 interview.questionsAsked.push(newQuestionAsked);
+                saveAndGetInterview(interview);
             }
-            InterviewsService.save(interview).then(function (response) {
+            
+        }
+        function saveAndGetInterview(interview){
+        	for(var i=0;i<interview.questionsAsked.length;i++){
+        		console.log("idInterview:"+interview.questionsAsked[i].idInterview);
+        	}
+        	InterviewsService.save(interview).then(function (response) {
                 if (response.status === 200) {
                     var interviewId = 0;
                     for (var i = 0; i < $scope.interviews.length; i++) {
                         if ($scope.interviews[i].active) {
                             interviewId = $scope.interviews[i].interviewId;
-
+                            if(!(interviewId)){
+                            	//alert("Questions still loading");
+                            }else{
+                            	InterviewsService.get(interviewId).then(function (response) {
+                                    if (response.status === 200) {
+                                        for (var i = 0; i < $scope.interviews.length; i++) {
+                                            if ($scope.interviews[i].active) {
+                                                var interview = response.data[0];
+                                                interview.active = true;
+                                                $scope.interviews[i] = interview;
+                                            }
+                                        }
+                                        showNextQuestion();
+                                    }
+                                });
+                            }
+                            break;
                         }
                     }
-                    InterviewsService.get(interviewId).then(function (response) {
-                        if (response.status === 200) {
-                            for (var i = 0; i < $scope.interviews.length; i++) {
-                                if ($scope.interviews[i].active) {
-                                    var interview = response.data[0];
-                                    interview.active = true;
-                                    $scope.interviews[i] = interview;
-                                }
-                            }
-                            InterviewsService.getNextQuestion($scope.interviews).then(function (response) {
-                                if (response.status === 200) {
-                                    var question = response.data;
-                                    $scope.data.showedQuestion = question;
-                                    if(!$scope.updateAnswers){
-                                    	$scope.questionHistory.push(question);
-                                    }
-                                    resetSelectedIndex();
-                                    if(question.type=='Q_frequency'){
-                                    	$scope.hoursArray = $scope.getShiftHoursArray();
-                                    	$scope.minutesArray = $scope.getShiftMinutesArray();
-                                    	$scope.weeks = $scope.getWeeksArray();
-                                    	
-                                    }
-                                    if (question.linkingQuestion) {
-                                        var linkingQuestion = question.linkingQuestion;
-                                        var newInterview = {};
-                                        if (linkingQuestion.type == 'Q_linkedajsm') {
-                                            newInterview.fragment = {
-                                                idNode: linkingQuestion.link,
-                                                name: linkingQuestion.name
-                                            };
-                                            QuestionsService.findQuestions(linkingQuestion.link, 'F')
-                                                .then(function (response) {
-                                                    console.log("Data getting from questions AJAX ...");
-                                                    $scope.linkedAjsm = response.data;
-                                                    $scope.showIntroModule = false;
-                                                    $scope.showModule = false;
-                                                    $scope.showAjsm = true;
-
-                                                });
-                                        } else if (linkingQuestion.type == 'Q_linkedmodule') {
-                                            newInterview.module = {idNode: linkingQuestion.link,
-                                                    name: linkingQuestion.name};
-                                            QuestionsService.findQuestions(linkingQuestion.link, 'M')
-                                                .then(function (response) {
-                                                    console.log("Data getting from questions AJAX ...");
-                                                    $scope.linkedModule = response.data;
-                                                    $scope.showIntroModule = false;
-                                                    $scope.showModule = true;
-                                                    $scope.showAjsm = false;
-                                                });
-                                        }
-                                        newInterview.referenceNumber = $scope.interviews[0].referenceNumber;
-                                        newInterview.active = true;
-                                        var runningInterview;
-                                        for (var i = 0; i < $scope.interviews.length; i++) {
-                                        	runningInterview = $scope.interviews[i];
-                                            if ($scope.interviews[i].active) {
-                                                
-                                            	runningInterview.active = false;
-                                                
-                                            }
-                                            if (!runningInterview.questionsAsked) {
-                                            	runningInterview.questionsAsked = [];
-                                            }
-                                            var linkedQuestionAsked = {
-                                                question: question.linkingQuestion,
-                                                idInterview: runningInterview.interviewId,
-                                                interviewQuestionAnswerFreetext: 'Q_linked'
-                                            }
-                                            _.find(interview.questionsAsked,function(val,ind){
-                                             	if(val.interviewQuestionAnswerFreetext == 'Q_linked'){
-                                             		interview.questionsAsked[ind].deleted = 1;
-                                             		safeDigest(interview.questionsAsked);
-                                             	}
-                                             });
-                                            runningInterview.questionsAsked.push(linkedQuestionAsked);
-                                            
-                                            
-                                            InterviewsService.save(runningInterview).then(function (response) {
-                                                if (response.status === 200) {
-                                                    console.log('Added liking question');
-                                                }
-                                            });
-                                        }
-                                        $scope.interviews.push(newInterview);
-                                        InterviewsService.startInterview(newInterview).then(function (response) {
-                                            if (response.status === 200) {
-                                                for (var i = 0; i < $scope.interviews.length; i++) {
-                                                    if ($scope.interviews[i].active) {
-                                                        $scope.interviews[i].interviewId = response.data.interviewId;
-                                                    }
-                                                }
-                                            }
-                                        });
-                                        
-                                    } else if (question.activeInterviewId) {
-                                        for (var i = 0; i < $scope.interviews.length; i++) {
-                                            if ($scope.interviews[i].interviewId == question.activeInterviewId) {
-                                                $scope.interviews[i].active = true;
-                                                if ($scope.interviews[i].module) {
-                                                    if ($scope.interviews[i].module.type == 'M_IntroModule') {
-                                                        $scope.showIntroModule = true;
-                                                        $scope.showModule = false;
-                                                        $scope.showAjsm = false;
-                                                    } else {
-                                                        $scope.showIntroModule = false;
-                                                        $scope.showModule = true;
-                                                        $scope.showAjsm = false;
-                                                    }
-                                                }
-                                            } else {
-                                                $scope.interviews[i].active = false;
-                                            }
-                                        }
-                                    }
-                                } else if (response.status == 204) {
-                                    for (var i = 0; i < $scope.interviews.length; i++) {
-                                        InterviewsService.get($scope.interviews[i].interviewId).then(function (response) {
-                                            if (response.status === 200) {
-                                                for (var i = 0; i < $scope.interviews.length; i++) {
-                                                    if ($scope.interviews[i].interviewId == response.data[0].interviewId) {
-                                                        $scope.interviews[i] = response.data[0];
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
-                                    $scope.data.interviewStarted = false;
-                                    $scope.data.interviewEnded = true;
-
-                                } else {
-                                    console.log('ERROR on Get!');
-                                }
-                                if($scope.updateAnswers){
-                                $scope.updateAnswers = false;
-                                safeDigest($scope.updateAnswers);
-                                }
-                                angular.element('#numId').focus();
-                                var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
-                                $scope.scrollWithTimeout(elId);
-                            });
-                        }
-                    });
+                    
 
                 }
             });
+        }
+        function updateQaView(interview,newQuestionAsked){
+           _.find($scope.qaView,function(val,ind){
+              	if(val.interviewId === interview.interviewId){
+              		if(!val.questionsAsked){
+              			val.questionsAsked = [];
+              		}
+              		val.questionsAsked.push(newQuestionAsked);
+              		safeDigest($scope.qaView);
+              	}
+           });
+        }
+        function deleteQaView(interview,idNode){
+            _.find($scope.qaView,function(val,ind){
+               	if(val.interviewId === interview.interviewId){
+               		_.find(val.questionsAsked,function(qa,counter){
+               			if(qa.question.idNode === idNode){
+               				qa.deleted = 1;
+               			}
+               		})
+               	}
+            });
+         }
+        function deleteChildQuestions(interview,parentiqa){
+        	var questionsAsked = interview.questionsAsked;
+        	_.find(questionsAsked,function(val,ind){
+        		if(!(val.deleted)){
+        			if(val.question.parentId == parentiqa.possibleAnswer.idNode){
+                  		var iqa = questionsAsked[ind];
+                  		iqa.deleted = 1;
+                  		deleteChildQuestions(questionsAsked,iqa);
+                  		safeDigest(interview.questionsAsked);
+                  	}
+              	}
+              	
+              });
         }
         $scope.showRule = function (scope) {
             //Todo implement show dialog on
@@ -466,39 +414,41 @@
             if (!$scope.referenceNumber) {
                 $scope.referenceNumber = 'TEST' + Math.floor((Math.random() * 100) + 1);
             }
-            QuestionsService.findQuestions($scope.data[0].idNode, 'M')
-                .then(function (response) {
-                    console.log("Data getting from questions AJAX ...");
-                    $scope.data = response.data;
-                    var interview = {};
-                    interview.module = $scope.data[0];
-                    interview.referenceNumber = $scope.referenceNumber;
-                    $scope.interviews = [];
-                    $scope.interviews.push(interview);
+            var participant = {reference:$scope.referenceNumber,
+            		interviews:[]}
+            //$scope.participant = participant;
+            ParticipantsService.createParticipant(participant).then(function (response){
+            	if (response.status === 200) {
+            		$scope.participant = response.data;
+            		QuestionsService.findQuestions($scope.data[0].idNode, 'M')
+                    .then(function (response) {
+                        console.log("Data getting from questions AJAX ...");
+                        $scope.data = response.data;
+                        var interview = {};
+                        interview.module = $scope.data[0];
+                        interview.referenceNumber = $scope.referenceNumber;
+                        interview.participant = $scope.participant;
+                        $scope.interviews = [];
+                        $scope.interviews.push(interview);
 
-                    InterviewsService.startInterview(interview).then(function (response) {
-                        if (response.status === 200) {
-                            $scope.interviewId = response.data.interviewId;
-                            $scope.interviews[0].interviewId = response.data.interviewId;
-                            $scope.interviews[0].active = true;
-                            $scope.data.interviewStarted = true;
-                            $scope.data.interviewEnded = false;
-                            InterviewsService.getNextQuestion($scope.interviews).then(function (response) {
-                            	$scope.updateAnswers = false;
-                            	safeDigest($scope.updateAnswers);
-                            	$scope.data.showedQuestion = response.data;
-                            	if(!$scope.updateAnswers){
-                            		$scope.questionHistory.push(response.data);
-                            	}
-                                var elId = "interviewnode-" + response.data.idNode;
-                                $scope.scrollWithTimeout(elId);
-                            })
-                        } else {
-                            console.log('ERROR on Start Interview!');
-                        }
+                        InterviewsService.startInterview(interview).then(function (response) {
+                            if (response.status === 200) {
+                                $scope.interviewId = response.data.interviewId;
+                                $scope.interviews[0].interviewId = response.data.interviewId;
+                                $scope.interviews[0].active = true;
+                                $scope.data.interviewStarted = true;
+                                $scope.data.interviewEnded = false;
+                                
+                                showNextQuestion();
+                            } else {
+                                console.log('ERROR on Start Interview!');
+                            }
 
+                        });
                     });
-                });
+            	}	
+            });
+            
         }
         
         $scope.scrollWithTimeout = function(elId){
@@ -593,5 +543,160 @@
         	
         	return minutes;
         };
+        function showLinkingQuestion(newInterview,question){
+        	newInterview.referenceNumber = $scope.interviews[0].referenceNumber;
+            newInterview.active = true;
+            newInterview.participant = $scope.participant;
+            var runningInterview;
+            for (var i = 0; i < $scope.interviews.length; i++) {
+            	runningInterview = $scope.interviews[i];
+                if ($scope.interviews[i].active) {
+                    
+                	runningInterview.active = false;
+                    
+                }
+                if (!runningInterview.questionsAsked) {
+                	runningInterview.questionsAsked = [];
+                }
+                var linkedQuestionAsked = {
+                    question: question.linkingQuestion,
+                    idInterview: runningInterview.interviewId,
+                    interviewQuestionAnswerFreetext: 'Q_linked'
+                }
+                var isExistInQa = _.find(runningInterview.questionsAsked,function(val,ind){
+                 	var retValue = false;
+                 	if(val.idInterview == runningInterview.interviewId){
+                 		if(val.question.idNode == linkedQuestionAsked.question.idNode){
+                 			if(val.interviewQuestionAnswerFreetext == 'Q_linked'){
+                 				retValue = true;
+                         	}
+                     	}
+                 	}
+                	return retValue;
+                 });
+                if(!isExistInQa){
+                	runningInterview.questionsAsked.push(linkedQuestionAsked);
+                }
+                var deffered = $q.defer();
+                saveAndGetInterview(runningInterview);
+				deffered.resolve();
+				deffered.promise.then(function(){
+					$scope.interviews.push(newInterview);
+                    InterviewsService.startInterview(newInterview).then(function (response) {
+                        if (response.status === 200) {
+                            for (var i = 0; i < $scope.interviews.length; i++) {
+                                if ($scope.interviews[i].active) {
+                                    $scope.interviews[i].interviewId = response.data.interviewId;
+                                }
+                            }
+                        }
+                    });
+		    	 })
+            }
+            
+        }
+        function showNextQuestion(){
+        	InterviewsService.getNextQuestion($scope.interviews).then(function (response) {
+                if (response.status === 200) {
+                    var question = response.data;
+                    $scope.data.showedQuestion = question;
+                    if(!$scope.updateAnswers){
+                    	$scope.questionHistory.push(question);
+                    }
+                    resetSelectedIndex();
+                    if(question.type=='Q_frequency'){
+                    	$scope.hoursArray = $scope.getShiftHoursArray();
+                    	$scope.minutesArray = $scope.getShiftMinutesArray();
+                    	$scope.weeks = $scope.getWeeksArray();
+                    	
+                    }
+                    if (question.linkingQuestion) {
+                        var linkingQuestion = question.linkingQuestion;
+                        var newInterview = {};
+                        if (linkingQuestion.type == 'Q_linkedajsm') {
+                            newInterview.fragment = {
+                                idNode: linkingQuestion.link,
+                                name: linkingQuestion.name
+                            };
+                            QuestionsService.findQuestions(linkingQuestion.link, 'F')
+                                .then(function (response) {
+                                    console.log("Data getting from questions AJAX ...");
+                                    $scope.linkedAjsm = response.data;
+                                    $scope.showIntroModule = false;
+                                    $scope.showModule = false;
+                                    $scope.showAjsm = true;
+                                    showLinkingQuestion(newInterview,question);
+                                });
+                        } else if (linkingQuestion.type == 'Q_linkedmodule') {
+                            newInterview.module = {idNode: linkingQuestion.link,
+                                    name: linkingQuestion.name};
+                            QuestionsService.findQuestions(linkingQuestion.link, 'M')
+                                .then(function (response) {
+                                    console.log("Data getting from questions AJAX ...");
+                                    $scope.linkedModule = response.data;
+                                    $scope.showIntroModule = false;
+                                    $scope.showModule = true;
+                                    $scope.showAjsm = false;
+                                    showLinkingQuestion(newInterview,question);
+                                });
+                        }
+                        
+                        
+                        
+                    } else if (question.activeInterviewId) {
+                        for (var i = 0; i < $scope.interviews.length; i++) {
+                            if ($scope.interviews[i].interviewId == question.activeInterviewId) {
+                                $scope.interviews[i].active = true;
+                                if ($scope.interviews[i].module) {
+                                    if ($scope.interviews[i].module.type == 'M_IntroModule') {
+                                        $scope.showIntroModule = true;
+                                        $scope.showModule = false;
+                                        $scope.showAjsm = false;
+                                    } else {
+                                        $scope.showIntroModule = false;
+                                        $scope.showModule = true;
+                                        $scope.showAjsm = false;
+                                    }
+                                }
+                            } else {
+                                $scope.interviews[i].active = false;
+                            }
+                        }
+                    }
+                } else if (response.status == 204) {
+                    for (var i = 0; i < $scope.interviews.length; i++) {
+                        InterviewsService.get($scope.interviews[i].interviewId).then(function (response) {
+                            if (response.status === 200) {
+                                for (var i = 0; i < $scope.interviews.length; i++) {
+                                    if ($scope.interviews[i].interviewId == response.data[0].interviewId) {
+                                        $scope.interviews[i] = response.data[0];
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    $scope.data.interviewStarted = false;
+                    $scope.data.interviewEnded = true;
+
+                } else {
+                    console.log('ERROR on Get!');
+                }
+                /*for (var i = 0; i < $scope.interviews.length; i++) {
+                	_.find($scope.qaView,function(val,ind){
+                     	if(val.interviewId === $scope.interviews[i].interviewId){
+                     			$scope.interviews[i].questionsAsked = angular.copy(val.questionsAsked);
+                     			safeDigest($scope.interviews);
+                     	}
+                    });
+                }*/
+                if($scope.updateAnswers){
+                $scope.updateAnswers = false;
+                safeDigest($scope.updateAnswers);
+                }
+                angular.element('#numId').focus();
+                var elId = "interviewnode-" +  $scope.data.showedQuestion.idNode;
+                $scope.scrollWithTimeout(elId);
+            });
+        }
     }
 })();

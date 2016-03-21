@@ -23,6 +23,7 @@ public class InterviewVO {
     private String moduleName;
     private String interviewType;
     private String assessedStatus;
+    private ParticipantVO participant;
     
     private List<InterviewQuestionAnswerVO> questionsAsked;
     
@@ -207,6 +208,14 @@ public class InterviewVO {
 
 	public void setAssessedStatus(String assessedStatus) {
 		this.assessedStatus = assessedStatus;
+	}
+
+	public ParticipantVO getParticipant() {
+		return participant;
+	}
+
+	public void setParticipant(ParticipantVO participant) {
+		this.participant = participant;
 	}
 	
 }

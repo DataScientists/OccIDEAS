@@ -25,6 +25,9 @@ public class InterviewMapperImpl implements InterviewMapper {
 	private RuleMapper ruleMapper;
     
     @Autowired
+	private ParticipantMapper participantMapper;
+    
+    @Autowired
 	private InterviewQuestionAnswerMapper iqaMapper;
 
     @Override
@@ -47,7 +50,7 @@ public class InterviewMapperImpl implements InterviewMapper {
         interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
         List<Rule> manualAssessedRules = interview.getManualAssessedRules();
         interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
-        
+        interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(),false));
         return interviewVO;
     }
 
@@ -82,7 +85,7 @@ public class InterviewMapperImpl implements InterviewMapper {
         interview.setAutoAssessedRules(ruleMapper.convertToRuleExcPaList(autoAssessedRules));
         List<RuleVO> manualAssessedRules = interviewVO.getManualAssessedRules();
         interview.setManualAssessedRules(ruleMapper.convertToRuleExcPaList(manualAssessedRules));
-        
+        interview.setParticipant(participantMapper.convertToParticipant(interviewVO.getParticipant(),false));
         return interview;
     }
 

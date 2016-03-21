@@ -210,10 +210,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			}
 		}
 		if(questionVO==null){
-			questionVO = processNonIntroModuleInterview(list);
+			//questionVO = processNonIntroModuleInterview(list);
 		}
 		if(questionVO==null){
-			questionVO = processIntroModuleInterview(list);   
+			//questionVO = processIntroModuleInterview(list);   
 		}
 		
 		 	  	
@@ -318,6 +318,44 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
             	QuestionVO linkingQuestion = questionVO.clone();
         		Long linkingmoduleId = questionVO.getLink();
         		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingmoduleId);
+        		if(questionVO!=null){
+            		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
+            			InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
+            			iqa.setQuestion(linkingQuestion);
+            			iqa.setIdInterview(interviewVO.getInterviewId());
+            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
+            			interviewVO.getQuestionsAsked().add(iqa);
+            			service.update(interviewVO);
+                		linkingQuestion = questionVO.clone();
+                		Long linkingAjsmId = questionVO.getLink();
+                		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
+                		questionVO.setLinkingQuestion(linkingQuestion);
+                    }else if("Q_linkedmodule".equalsIgnoreCase(questionVO.getType())){
+            			InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
+            			iqa.setQuestion(linkingQuestion);
+            			iqa.setIdInterview(interviewVO.getInterviewId());
+            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
+            			interviewVO.getQuestionsAsked().add(iqa);
+            			service.update(interviewVO);
+                		linkingQuestion = questionVO.clone();
+                		Long linkingAjsmId = questionVO.getLink();
+                		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
+                		if(questionVO!=null){
+                    		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
+                    			linkingQuestion = questionVO.clone();
+                    			InterviewQuestionAnswerVO iqa1 = new InterviewQuestionAnswerVO();
+                    			iqa1.setQuestion(linkingQuestion);
+                    			iqa1.setIdInterview(interviewVO.getInterviewId());
+                    			iqa1.setInterviewQuestionAnswerFreetext("Q_linked");
+                    			interviewVO.getQuestionsAsked().add(iqa1);
+                    			service.update(interviewVO);
+                        		linkingAjsmId = questionVO.getLink();
+                        		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
+                        		questionVO.setLinkingQuestion(linkingQuestion);
+                            }
+                    	}
+                    }
+            	}
         		questionVO.setLinkingQuestion(linkingQuestion);
             }
     	}

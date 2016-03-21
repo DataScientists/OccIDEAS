@@ -16,6 +16,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
 /**
@@ -71,6 +73,11 @@ public class Interview implements java.io.Serializable {
 	private List<Rule> manualAssessedRules;
 	
 	private String referenceNumber;
+	
+	@ManyToOne(fetch=FetchType.LAZY)
+	@Fetch(FetchMode.SELECT)
+	@JoinColumn(name="idParticipant",referencedColumnName="idParticipant")
+	private Participant participant;
 
 	public Interview() {
 	}
@@ -141,6 +148,14 @@ public class Interview implements java.io.Serializable {
 
 	public void setManualAssessedRules(List<Rule> manualAssessedRules) {
 		this.manualAssessedRules = manualAssessedRules;
+	}
+
+	public Participant getParticipant() {
+		return participant;
+	}
+
+	public void setParticipant(Participant participant) {
+		this.participant = participant;
 	}
 
 }

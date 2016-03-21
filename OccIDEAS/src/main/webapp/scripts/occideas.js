@@ -21,6 +21,7 @@ angular
     "occIDEASApp.Rules",
     "occIDEASApp.Fragments",
     "occIDEASApp.Assessments",
+    "occIDEASApp.Participants",
     "occIDEASApp.InterviewResults",
     "occIDEASApp.ModuleRule"
   ], function($rootScopeProvider){
@@ -72,17 +73,17 @@ angular
   }])
   .run(configureDefaults)
   .provider({
-	  $exceptionHandler: function(){
-		   var $log =  angular.injector(['ng']).get('$log');
-	        var handler = function(exception, cause) {
-	            alert("Exception:"+exception+":Cause:"+cause);
-	            $log.error("Exception:"+exception+":Cause:"+cause);
-	        };
-
-	        this.$get = function() {
-	            return handler;
-	        };
-	    }
+//	  $exceptionHandler: function(){
+//		   var $log =  angular.injector(['ng']).get('$log');
+//	        var handler = function(exception, cause) {
+//	            alert("Exception:"+exception+":Cause:"+cause);
+//	            $log.error("Exception:"+exception+":Cause:"+cause);
+//	        };
+//
+//	        this.$get = function() {
+//	            return handler;
+//	        };
+//	    }
   })
   .factory('ErrorHandler',ErrorHandler);	
 
