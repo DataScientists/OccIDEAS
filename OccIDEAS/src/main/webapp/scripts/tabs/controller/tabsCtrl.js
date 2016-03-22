@@ -116,6 +116,26 @@
 			});
 			$log.info("addModuleTab questionsLoading end");
 		};
+		
+		$scope.addIntroTab = function(row) {
+			$rootScope.tabsLoading = true;
+			var check = _.some( tabs, function( el ) {
+			    return el.title === row.name;
+			} );
+					
+			tabs.push({
+				title : row.name,
+				viewName: 'intro@tabs',
+				canClose: true,
+				disabled : false
+			});
+			$scope.tabOptions.push({
+				state: "tabs.intro",
+				data: {row:row.idNode}
+			});
+			$log.info("addIntroTab called");
+		};
+		
         $scope.addRulesTab = function(scope) {
             var nodeData = scope.$modelValue;
             var tabTitle = "Rules "+nodeData.name;

@@ -190,6 +190,44 @@
 			     }
 			}
 			}
+		}).state('tabs.intro', {
+			url: '/intro/:row',
+			sticky: true,
+		    deepStateRedirect: true,
+			views:{
+				'intro@tabs':{
+					template: '<div scope-question></div>',
+			        controller: 'QuestionsCtrl as vm',
+			        params:{row: null,module:null},
+			        resolve:{
+			        	data: function($stateParams,QuestionsService) {
+			        		$log.info("inside intro@tabs resolve");
+			        		$log.info("Data getting from questions AJAX ...");
+			        		return QuestionsService.findQuestions($stateParams.row,'M')
+			        				.then(function(response){
+			        					$log.info("Data received from questions AJAX ...");
+			        					if(angular.isUndefined($window.sliderVal)){
+			        					$window.sliderVal = [];
+			        					}
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
+			        							showFragmentSlider:true,
+			        							showModuleSlider:true,
+			        							showAgentSlider:true
+			        					};
+			        					if(response.data[0].type=='M_IntroModule'){
+			        						$window.sliderVal.idNode.showFragmentSlider =false;
+			        						$window.sliderVal.idNode.showModuleSlider = true;
+			        					}else{
+			        						$window.sliderVal.idNode.showFragmentSlider =true;
+			        						$window.sliderVal.idNode.showModuleSlider = false;
+			        					}
+			        					return response.data;
+		    				});
+			        }
+			     }
+			}
+			}
 		}).state('tabs.fragment', {
 			url: '/fragment/:row',
 			sticky: true,
