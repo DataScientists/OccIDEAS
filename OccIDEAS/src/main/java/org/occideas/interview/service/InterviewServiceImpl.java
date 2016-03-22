@@ -24,21 +24,21 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public List<InterviewVO> listAll() {
-        return mapper.convertToInterviewVOList(interviewDao.getAll(),false);
+        return mapper.convertToInterviewVOList(interviewDao.getAll());
     }
     @Override
     public List<InterviewVO> listAllWithAnswers() {
-        return mapper.convertToInterviewVOList(interviewDao.getAll(),true);
+        return mapper.convertToInterviewVOList(interviewDao.getAll());
     }
     @Override
     public List<InterviewVO> listAssessments() {
-        return mapper.convertToInterviewVOList(interviewDao.getAssessments(),false);
+        return mapper.convertToInterviewVOList(interviewDao.getAssessments());
     }
 
     @Override
     public List<InterviewVO> findById(Long id) {
         Interview interview = interviewDao.get( id);
-        InterviewVO InterviewVO = mapper.convertToInterviewVO(interview,true);
+        InterviewVO InterviewVO = mapper.convertToInterviewVO(interview);
         List<InterviewVO> list = new ArrayList<InterviewVO>();
         list.add(InterviewVO);
         return list;
@@ -55,7 +55,7 @@ public class InterviewServiceImpl implements InterviewService {
             intervew = dao.get(Interview.class, (Long) obj);
         }
 
-        return mapper.convertToInterviewVO(intervew,true);
+        return mapper.convertToInterviewVO(intervew);
     }
 
     @Override

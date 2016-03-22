@@ -15,9 +15,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.hibernate.annotations.Where;
 
 @Entity
 @DynamicUpdate(value=true)
@@ -32,6 +30,7 @@ public class Participant implements Serializable {
 	private long idParticipant;
 	
 	@OneToMany(mappedBy="participant", fetch = FetchType.EAGER)
+	@Where(clause = "parentId = 0")
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
 	private List<Interview> interviews;
 	private int status;
@@ -52,6 +51,9 @@ public class Participant implements Serializable {
 	}
 
 	public Integer getDeleted() {
+		if(deleted==null){
+			deleted = 0;
+		}
 		return deleted;
 	}
 

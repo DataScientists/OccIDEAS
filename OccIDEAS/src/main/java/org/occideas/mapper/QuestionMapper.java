@@ -10,8 +10,12 @@ import org.occideas.vo.QuestionVO;
 public interface QuestionMapper {
 
 	QuestionVO convertToQuestionVO(Question question);
+	
+	QuestionVO convertToInterviewQuestionVO(Question question);
 
 	List<QuestionVO> convertToQuestionVOList(List<Question> questionList);
+
+	List<QuestionVO> convertToInterviewQuestionVOList(List<Question> questionList);
 
 	Question convertToQuestion(QuestionVO questionVO);
 	

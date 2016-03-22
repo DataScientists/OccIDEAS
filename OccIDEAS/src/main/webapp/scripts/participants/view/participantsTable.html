@@ -4,15 +4,18 @@
 <table ng-table="vm.tableParams" class="table table-bordered table-hover 
   table-condensed editable-table" show-filter="true">
     <tr ng-repeat="participant in $data">
-        
-        <td title="'Reference Number'" filter="{ referenceNumber: 'text'}" sortable="'referenceNumber'">
-            {{participant.referenceNumber}}</td>
+        <td title="'Participant Id'">
+			{{participant.idParticipant}}
+		</td>
+        <td title="'Reference Number'" filter="{ reference: 'text'}" sortable="'reference'">
+            {{participant.reference}}</td>
         <td title="'Status'">
 			{{participant.status}}
 		</td>
+		
 		<td>
 			<button class="btn btn-default btn-sm"
-					ng-click="addAssessmentTab(interview)" >
+					ng-click="addParticipantTab(participant)" >
 			<span class="glyphicon glyphicon-list-alt"></span>
 			</button>
 		</td>

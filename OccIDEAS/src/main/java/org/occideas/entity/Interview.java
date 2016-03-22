@@ -35,6 +35,9 @@ public class Interview implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue
 	private long idinterview;
+	
+	private long parentId;
+	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="module_idNode",referencedColumnName="idNode")
 	private Module module;
@@ -76,8 +79,13 @@ public class Interview implements java.io.Serializable {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	@Fetch(FetchMode.SELECT)
-	@JoinColumn(name="idParticipant",referencedColumnName="idParticipant")
+	@JoinColumn(name="idParticipant",referencedColumnName="idParticipant",updatable=false)
 	private Participant participant;
+	
+	@OneToMany(mappedBy="parentId",targetEntity=Interview.class)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	private List<Interview> interviews;
+	
 
 	public Interview() {
 	}
@@ -156,6 +164,22 @@ public class Interview implements java.io.Serializable {
 
 	public void setParticipant(Participant participant) {
 		this.participant = participant;
+	}
+
+	public List<Interview> getInterviews() {
+		return interviews;
+	}
+
+	public void setInterviews(List<Interview> interviews) {
+		this.interviews = interviews;
+	}
+
+	public long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(long parentId) {
+		this.parentId = parentId;
 	}
 
 }

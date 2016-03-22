@@ -1,0 +1,39 @@
+<div id="participant-wrapper">
+
+<div class="col-md-4">
+    <div ng-model="participant">
+	      <div>{{reference}}</div>
+	      <div>Interviewed Modules</div>  
+    </div>
+</div>
+<div class="row ">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div ui-tree="" id="tree-root-interviews">
+                    <ol ui-tree-nodes ng-model="participant">
+                        <li ng-repeat="interview in participant.interviews" ui-tree-node ng-include="'interview_modules_renderer.html'"></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="interview_modules_renderer.html">
+    <div id="interview-tree" class="angular-ui-tree">
+        <div class="tree-node" data-nodrag  >
+            <!-- start content -->
+            <div class="tree-node-content " >    
+				<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   <span class="badge">{{interview.module.name}}{{interview.fragment.name}}</span>
+                </div>         
+            </div>
+            <!-- end content -->
+        </div>
+    </div>
+    <ol ui-tree-nodes="" ng-model="node.nodes">
+        <li ng-repeat="interview in interview.interviews" ui-tree-node ng-include="'interview_modules_renderer.html'" class="angular-ui-tree-node" ></li>
+    </ol>
+</script>
+ 
+</div> 

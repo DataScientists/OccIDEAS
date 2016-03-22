@@ -18,7 +18,7 @@
 			data: ""
 		};
 		$scope.tabOptions[3] = {
-				state: "tabs.interviewresults",
+				state: "tabs.participants",
 				data: ""
 			};
 		$scope.tabOptions[4] = {
@@ -62,8 +62,8 @@
 			viewName: 'agents@tabs'
 		},
 		{
-			title : 'Interview Results',
-			viewName: 'interviewresults@tabs'
+			title : 'Participants',
+			viewName: 'participants@tabs'
 		},
 		{
 			title : 'Assessments',
@@ -157,6 +157,31 @@
                 $scope.tabOptions.push({
                     state: "tabs.interview",
                     data: {row:nodeData.idNode}
+                });
+            }else{
+                _.find(tabs, function(el, index){
+                    if(el.title === tabTitle){
+                        $scope.selectedIndex = index;
+                    }
+                });
+            }
+        };
+        $scope.addParticipantTab = function(participant) {
+            //var participant = scope.$modelValue;
+            var tabTitle = "Participant "+participant.reference;
+            var check = _.some( tabs, function( el ) {
+                return el.title === tabTitle;
+            } );
+            if(!check){
+                tabs.push({
+                    title : tabTitle,
+                    viewName: 'participant@tabs',
+                    canClose: true,
+                    disabled : false
+                });
+                $scope.tabOptions.push({
+                    state: "tabs.participant",
+                    data: {row:participant.idParticipant}
                 });
             }else{
                 _.find(tabs, function(el, index){

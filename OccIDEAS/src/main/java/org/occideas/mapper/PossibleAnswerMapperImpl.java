@@ -45,14 +45,39 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         	if(!CommonUtil.isListEmpty(childNodes)){
                 answerVO.setChildNodes( mapper.convertToQuestionVOList( childNodes ) );
             }
+        	List<ModuleRule> moduleRule = answerEntity.getModuleRule();
+            if(!CommonUtil.isListEmpty(moduleRule)){
+            	answerVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+            }
         }
         answerVO.setOriginalId( answerEntity.getOriginalId() );
         answerVO.setDeleted( answerEntity.getDeleted() );
         answerVO.setNodeclass( answerEntity.getNodeclass() );
-        List<ModuleRule> moduleRule = answerEntity.getModuleRule();
-        if(!CommonUtil.isListEmpty(moduleRule)){
-        	answerVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+        
+        return answerVO;
+	}
+	@Override
+	public PossibleAnswerVO convertToInterviewPossibleAnswerVO(PossibleAnswer answerEntity) {
+		if ( answerEntity == null ) {
+            return null;
         }
+
+		PossibleAnswerVO answerVO = new PossibleAnswerVO();
+
+        answerVO.setIdNode( answerEntity.getIdNode() );
+        answerVO.setName( answerEntity.getName() );
+        answerVO.setDescription( answerEntity.getDescription() );
+        answerVO.setType( answerEntity.getType() );
+        answerVO.setSequence( answerEntity.getSequence() );
+        answerVO.setNumber( answerEntity.getNumber() );
+        answerVO.setParentId( answerEntity.getParentId());
+        answerVO.setLink( answerEntity.getLink() );
+        answerVO.setTopNodeId( answerEntity.getTopNodeId() );
+        answerVO.setLastUpdated( answerEntity.getLastUpdated() );
+        answerVO.setOriginalId( answerEntity.getOriginalId() );
+        answerVO.setDeleted( answerEntity.getDeleted() );
+        answerVO.setNodeclass( answerEntity.getNodeclass() );
+        
         return answerVO;
 	}
 
@@ -65,6 +90,19 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
         for ( PossibleAnswer answer : answerEntity ) {
             list.add( convertToPossibleAnswerVO( answer,includeChildNodes) );
+        }
+
+        return list;
+	}
+	@Override
+	public List<PossibleAnswerVO> convertToInterviewPossibleAnswerVOList(List<PossibleAnswer> answerEntity) {
+		if ( answerEntity == null ) {
+            return null;
+        }
+
+        List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
+        for ( PossibleAnswer answer : answerEntity ) {
+            list.add( convertToInterviewPossibleAnswerVO( answer) );
         }
 
         return list;

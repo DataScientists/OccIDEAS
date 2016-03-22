@@ -35,7 +35,11 @@ public class InterviewVO {
     
     private List<AgentVO> agents;
     
+    private List<InterviewVO> interviews;
+    
     private long questionId;
+    
+    private long parentId;
 
     public long getQuestionId() {
         return questionId;
@@ -216,6 +220,25 @@ public class InterviewVO {
 
 	public void setParticipant(ParticipantVO participant) {
 		this.participant = participant;
+	}
+
+	public List<InterviewVO> getInterviews() {
+		if(interviews==null){
+			interviews = new ArrayList<InterviewVO>();
+		}
+		return interviews;
+	}
+
+	public void setInterviews(List<InterviewVO> interviews) {
+		this.interviews = interviews;
+	}
+
+	public long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(long parentId) {
+		this.parentId = parentId;
 	}
 	
 }

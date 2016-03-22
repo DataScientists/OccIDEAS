@@ -50,7 +50,7 @@ public class Node implements Cloneable {
 	protected long topNodeId;
 	protected Date lastUpdated;
 	
-	@OneToMany(mappedBy="node", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="node", fetch = FetchType.LAZY)
 	@JsonInclude(Include.NON_EMPTY)
 	protected List<Note> notes;
 	protected long originalId;

@@ -35,7 +35,6 @@ import org.springframework.http.MediaType;
 public class InterviewRestController implements BaseRestController<InterviewVO> {
 
 	private Logger log = Logger.getLogger(this.getClass());
-	private final String INTRO_MODULE = "M_IntroModule";
 	
     @Autowired
     private InterviewService service;
@@ -220,38 +219,6 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		return questionVO;
 	}
 
-	private QuestionVO processIntroModuleInterview(List<InterviewVO> list) {
-		QuestionVO questionVO = null;	
-		for(InterviewVO interviewVO:list){
-			if(interviewVO.getModule()!=null){
-				if(interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
-					questionVO = this.getNearestQuestion(interviewVO);
-				}  
-	    		if(questionVO!=null){
-	    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-	    			break;
-	    		}
-			}		
-    	}	
-		return questionVO;
-	}
-
-	private QuestionVO processNonIntroModuleInterview(List<InterviewVO> list) {
-		QuestionVO questionVO = null;		
-		for(InterviewVO interviewVO:list){
-    		if(interviewVO.getModule()!=null){
-    			if(!interviewVO.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
-    				questionVO = this.getNearestQuestion(interviewVO);
-    			}          			           			
-    		} 
-    		if(questionVO!=null){
-    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-    			break;
-    		}
-    	}	
-		return questionVO;
-	}
-    
 	//@TODO need to refactor below code, line per method should be max 10 for readability
 	private QuestionVO getNearestQuestion(InterviewVO interviewVO){
     	QuestionVO questionVO = null;
@@ -365,7 +332,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	boolean retValue = false;
     	for(InterviewQuestionAnswerVO iqa: questionsAsked){
     		if(iqa.getQuestion().getIdNode()==q.getIdNode()){
-    			retValue = true;
+    			if((iqa.getDeleted()==0)){//not deleted
+    				retValue = true;
+    			}
     		}
     	}
     	return retValue;

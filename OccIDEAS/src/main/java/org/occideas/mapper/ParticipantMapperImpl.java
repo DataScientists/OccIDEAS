@@ -23,8 +23,9 @@ public class ParticipantMapperImpl implements ParticipantMapper {
         participantVO.setIdParticipant(participant.getIdParticipant());
         participantVO.setReference(participant.getReference());
         participantVO.setStatus(participant.getStatus());
+        participantVO.setDeleted(participant.getDeleted());
         if(includeInterviews){
-        	participantVO.setInterviews(interviewMapper.convertToInterviewVOList(participant.getInterviews(), false));           
+        	participantVO.setInterviews(interviewMapper.convertToInterviewVOList(participant.getInterviews()));           
         }
         return participantVO;
     }
@@ -51,6 +52,7 @@ public class ParticipantMapperImpl implements ParticipantMapper {
         participant.setIdParticipant(participantVO.getIdParticipant());
         participant.setReference(participantVO.getReference());
         participant.setStatus(participantVO.getStatus());
+        participant.setDeleted(participantVO.getDeleted());
         if(includeInterviews){
         	participant.setInterviews(interviewMapper.convertToInterviewList(participantVO.getInterviews())); 
         }

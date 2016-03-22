@@ -61,7 +61,42 @@
 					controller: 'AgentCtrl as vm'
 				}
 			}
-		}).state('tabs.interviewresults', {
+		})
+		.state('tabs.participants', {
+			url: '/participants/',
+			sticky: false,
+		    deepStateRedirect: false,
+			views:{
+				'participants@tabs':{
+					templateUrl : "scripts/participants/view/participantsTable.html",
+					controller: 'ParticipantsCtrl as vm'
+				}
+			}
+		})
+		.state('tabs.participant', {
+			url: '/participant/:row',
+			sticky: false,
+		    deepStateRedirect: false,
+		    views:{
+				'participant@tabs':{
+					templateUrl: 'scripts/participants/view/participant.html',
+			        controller: 'ParticipantsCtrl as vm',
+			        params:{row: null},
+			        resolve:{
+			        	data: function($stateParams,ParticipantsService) {
+			        		$log.info("inside participant@tabs resolve");
+			        		$log.info("findParticipant :"+$stateParams.row);
+			        		return ParticipantsService.findParticipant($stateParams.row)
+			        				.then(function(response){
+			        					$log.info("Found Participant :"+response.data[0].idParticipant);
+			        					return response.data[0];
+		    				});
+			        }
+			     }
+				}
+			}
+		})
+		/*.state('tabs.interviewresults', {
 			url: '/interviewresults/',
 			sticky: false,
 		    deepStateRedirect: false,
@@ -71,7 +106,8 @@
 					controller: 'InterviewResultsCtrl as vm'
 				}
 			}
-		}).state('tabs.assessments', {
+		})*/
+		.state('tabs.assessments', {
 			url: '/assessments/',
 			sticky: false,
 		    deepStateRedirect: false,
