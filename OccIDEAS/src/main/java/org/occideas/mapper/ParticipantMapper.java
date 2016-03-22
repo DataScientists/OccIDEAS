@@ -18,4 +18,6 @@ public interface ParticipantMapper {
 
 	ParticipantVO convertToParticipantVO(Participant interview,boolean includeInterviews);
 	
+	ParticipantVO convertToInterviewParticipantVO(Participant interview);
+	
 }

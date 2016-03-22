@@ -33,6 +33,14 @@ public class ParticipantServiceImpl implements ParticipantService {
         return list;
     }
     @Override
+    public List<ParticipantVO> findByIdForInterview(Long id) {
+        Participant participant = participantDao.get( id);
+        ParticipantVO ParticipantVO = mapper.convertToInterviewParticipantVO(participant);
+        List<ParticipantVO> list = new ArrayList<ParticipantVO>();
+        list.add(ParticipantVO);
+        return list;
+    }
+    @Override
     public void update(ParticipantVO o) {
     	participantDao.saveOrUpdate(mapper.convertToParticipant(o,true));
     }

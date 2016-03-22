@@ -73,6 +73,19 @@ public class ParticipantRestController implements BaseRestController<Participant
 		}
 		return Response.ok(list).build();
     }
+    @GET
+    @Path(value = "/getinterviewparticipant")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getInterviewParticipant(@QueryParam("id") Long id) {
+    	List<ParticipantVO> list = new ArrayList<ParticipantVO>();
+		try{
+			list = service.findByIdForInterview(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+    }
     @Path(value = "/create")
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)

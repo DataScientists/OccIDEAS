@@ -2,9 +2,13 @@
 	angular.module('occIDEASApp.Participants')
 		   .controller('ParticipantsCtrl',ParticipantsCtrl);
 	
-	ParticipantsCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter'];
-	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter){
+	ParticipantsCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter','data'];
+	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter,data){
 		var self = this;
+		$scope.data = data;
+		$scope.setSelectedInterview = function(interview){
+			$scope.selectedInterview = interview;
+		}
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];

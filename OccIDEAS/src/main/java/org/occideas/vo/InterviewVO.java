@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Created by quangnn on 2/17/2016.
  */
@@ -35,6 +38,7 @@ public class InterviewVO {
     
     private List<AgentVO> agents;
     
+    @JsonInclude(Include.NON_NULL)
     private List<InterviewVO> interviews;
     
     private long questionId;

@@ -69,7 +69,12 @@
 			views:{
 				'participants@tabs':{
 					templateUrl : "scripts/participants/view/participantsTable.html",
-					controller: 'ParticipantsCtrl as vm'
+					controller: 'ParticipantsCtrl as vm',
+					resolve:{
+				        data: function() {
+				        	return '';
+				        }
+				    }
 				}
 			}
 		})

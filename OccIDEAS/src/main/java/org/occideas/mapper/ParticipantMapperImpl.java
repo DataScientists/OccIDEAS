@@ -29,6 +29,22 @@ public class ParticipantMapperImpl implements ParticipantMapper {
         }
         return participantVO;
     }
+    
+    @Override
+    public ParticipantVO convertToInterviewParticipantVO(Participant participant) {
+        if (participant == null) {
+            return null;
+        }
+        ParticipantVO participantVO = new ParticipantVO();
+        participantVO.setIdParticipant(participant.getIdParticipant());
+        participantVO.setReference(participant.getReference());
+        participantVO.setStatus(participant.getStatus());
+        participantVO.setDeleted(participant.getDeleted());
+        
+        participantVO.setInterviews(interviewMapper.convertToInterviewVOList(participant.getInterviews()));           
+        
+        return participantVO;
+    }
 
     @Override
     public List<ParticipantVO> convertToParticipantVOList(List<Participant> participantEntity,boolean includeInterviews) {

@@ -32,6 +32,14 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+		function findInterviewParticipant(idParticipant) {
+			var restUrl = 'rest/participant/getinterviewparticipant?id=' + idParticipant;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
 		function checkExists(reference) {
 			var restUrl = 'rest/participant/checkexists?reference=' + reference;
 			var request =  $http({
