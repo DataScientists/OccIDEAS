@@ -10,6 +10,7 @@ angular
     "angular-confirm",
     "sticky",
     "fsm",
+    "angular.filter",
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
     "occIDEASApp.Tabs",
