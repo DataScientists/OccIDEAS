@@ -52,7 +52,31 @@ public class FragmentMapperImpl implements FragmentMapper {
         }
         return fragmentVO;
     }
+    @Override
+    public FragmentVO convertToInterviewFragmentVO(Fragment moduleEntity) {
+        if ( moduleEntity == null ) {
+            return null;
+        }
 
+        FragmentVO fragmentVO = new FragmentVO();
+
+        fragmentVO.setIdNode( moduleEntity.getIdNode() );
+        fragmentVO.setName( moduleEntity.getName() );
+        fragmentVO.setDescription( moduleEntity.getDescription() );
+        fragmentVO.setType( moduleEntity.getType() );
+        fragmentVO.setSequence( moduleEntity.getSequence() );
+        fragmentVO.setNumber( moduleEntity.getNumber() );
+        fragmentVO.setParentId( moduleEntity.getParentId());
+        fragmentVO.setLink( moduleEntity.getLink() );
+        fragmentVO.setTopNodeId( moduleEntity.getTopNodeId() );
+        fragmentVO.setLastUpdated( moduleEntity.getLastUpdated() );
+        fragmentVO.setOriginalId( moduleEntity.getOriginalId() );
+        fragmentVO.setDeleted( moduleEntity.getDeleted() );
+        fragmentVO.setNodeclass( moduleEntity.getNodeclass() );
+        List<Question> childNodes = moduleEntity.getChildNodes();
+        fragmentVO.setChildNodes( nodeMapper.convertToInterviewQuestionVOList( childNodes ) );
+        return fragmentVO;
+    }
     @Override
     public List<FragmentVO> convertToFragmentVOList(List<Fragment> moduleEntity,boolean includeChild) {
         if ( moduleEntity == null ) {
@@ -66,7 +90,19 @@ public class FragmentMapperImpl implements FragmentMapper {
 
         return list;
     }
+    @Override
+    public List<FragmentVO> convertToInterviewFragmentVOList(List<Fragment> moduleEntity) {
+        if ( moduleEntity == null ) {
+            return null;
+        }
 
+        List<FragmentVO> list = new ArrayList<FragmentVO>();
+        for ( Fragment module : moduleEntity ) {
+            list.add( convertToInterviewFragmentVO( module) );
+        }
+
+        return list;
+    }
     @Override
     public Fragment convertToFragment(FragmentVO fragmentVO,boolean includeChild) {
         if ( fragmentVO == null ) {

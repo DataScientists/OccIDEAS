@@ -27,26 +27,35 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     public List<ParticipantVO> findById(Long id) {
         Participant participant = participantDao.get( id);
-        ParticipantVO ParticipantVO = mapper.convertToParticipantVO(participant,false);
+        ParticipantVO ParticipantVO = mapper.convertToParticipantVO(participant,true);
+        List<ParticipantVO> list = new ArrayList<ParticipantVO>();
+        list.add(ParticipantVO);
+        return list;
+    }
+    @Override
+    public List<ParticipantVO> findByIdForInterview(Long id) {
+        Participant participant = participantDao.get( id);
+        ParticipantVO ParticipantVO = mapper.convertToInterviewParticipantVO(participant);
         List<ParticipantVO> list = new ArrayList<ParticipantVO>();
         list.add(ParticipantVO);
         return list;
     }
     @Override
     public void update(ParticipantVO o) {
-    	participantDao.saveOrUpdate(mapper.convertToParticipant(o,false));
+    	participantDao.saveOrUpdate(mapper.convertToParticipant(o,true));
     }
     
     @Override
     public void delete(ParticipantVO o) {
-    	participantDao.delete(mapper.convertToParticipant(o,false));
+    	o.setDeleted(1);
+    	participantDao.saveOrUpdate(mapper.convertToParticipant(o,false));
     }
 
 	@Override
 	public ParticipantVO create(ParticipantVO o) {
 		Participant entity = new Participant();
-		entity.setIdParticipant(participantDao.save(mapper.convertToParticipant(o,false)));
+		entity.setIdParticipant(participantDao.save(mapper.convertToParticipant(o,true)));
 		entity.setReference(o.getReference());
-		return mapper.convertToParticipantVO(entity,false);
+		return mapper.convertToParticipantVO(entity,true);
 	}
 }

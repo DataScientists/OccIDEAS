@@ -10,12 +10,12 @@ import java.util.List;
 public interface InterviewMapper {
 
 	
-	List<InterviewVO> convertToInterviewVOList(List<Interview> InterviewList, boolean includeChildNodes);
+	List<InterviewVO> convertToInterviewVOList(List<Interview> InterviewList);
 
 	Interview convertToInterview(InterviewVO InterviewVO);
 	
 	List<Interview> convertToInterviewList(List<InterviewVO> InterviewVO);
 
-	InterviewVO convertToInterviewVO(Interview interview, boolean includeChildNodes);
+	InterviewVO convertToInterviewVO(Interview interview);
 	
 }

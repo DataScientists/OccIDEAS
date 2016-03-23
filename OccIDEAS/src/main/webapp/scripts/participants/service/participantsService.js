@@ -30,7 +30,15 @@
 				  method: 'GET',
 				  url: restUrl
 				})
-			return request.then(handleSuccess,handleError);
+			return request.then(handleSuccess1,handleError);
+		}
+		function findInterviewParticipant(idParticipant) {
+			var restUrl = 'rest/participant/getinterviewparticipant?id=' + idParticipant;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
 		}
 		function checkExists(reference) {
 			var restUrl = 'rest/participant/checkexists?reference=' + reference;
@@ -58,11 +66,21 @@
 				})
 		    return request.then(handleSuccess1,handleError);
 		};
-
+		function getNextQuestion(data) {
+            var nextQ = 'rest/participant/nextquestion';
+            var request = $http({
+                method: 'POST',
+                url: nextQ,
+                data: data
+            })
+            return request.then(handleSuccess1, handleError);
+        }
 		return {		  
+			getNextQuestion: getNextQuestion,
 			checkExists: checkExists,
 			getParticipants: getParticipants,
 		    save: save, 	
+		    findInterviewParticipant: findInterviewParticipant,
 		    findParticipant: findParticipant,
 		    deleteParticipant: deleteParticipant,
 		    createParticipant:createParticipant

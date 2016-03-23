@@ -52,6 +52,31 @@ public class ModuleMapperImpl implements ModuleMapper {
         }
         return moduleVO;
     }
+    @Override
+    public ModuleVO convertToInterviewModuleVO(Module moduleEntity) {
+        if ( moduleEntity == null ) {
+            return null;
+        }
+
+        ModuleVO moduleVO = new ModuleVO();
+
+        moduleVO.setIdNode( moduleEntity.getIdNode() );
+        moduleVO.setName( moduleEntity.getName() );
+        moduleVO.setDescription( moduleEntity.getDescription() );
+        moduleVO.setType( moduleEntity.getType() );
+        moduleVO.setSequence( moduleEntity.getSequence() );
+        moduleVO.setNumber( moduleEntity.getNumber() );
+        moduleVO.setParentId( moduleEntity.getParentId());
+        moduleVO.setLink( moduleEntity.getLink() );
+        moduleVO.setTopNodeId( moduleEntity.getTopNodeId() );
+        moduleVO.setLastUpdated( moduleEntity.getLastUpdated() );
+        moduleVO.setOriginalId( moduleEntity.getOriginalId() );
+        moduleVO.setDeleted( moduleEntity.getDeleted() );
+        moduleVO.setNodeclass( moduleEntity.getNodeclass() );
+        List<Question> childNodes = moduleEntity.getChildNodes();
+        moduleVO.setChildNodes( nodeMapper.convertToInterviewQuestionVOList( childNodes ) );
+        return moduleVO;
+    }
 
     @Override
     public List<ModuleVO> convertToModuleVOList(List<Module> moduleEntity,boolean includeChild) {

@@ -31,37 +31,41 @@ public class InterviewMapperImpl implements InterviewMapper {
 	private InterviewQuestionAnswerMapper iqaMapper;
 
     @Override
-    public InterviewVO convertToInterviewVO(Interview interview,boolean includeChildNodes) {
+    public InterviewVO convertToInterviewVO(Interview interview) {
         if (interview == null) {
             return null;
         }
         InterviewVO interviewVO = new InterviewVO();
         interviewVO.setInterviewId(interview.getIdinterview());
         interviewVO.setReferenceNumber(interview.getReferenceNumber());
-        interviewVO.setModule(moduleMapper.convertToModuleVO(interview.getModule(),true));
-        interviewVO.setFragment(fragmentMapper.convertToFragmentVO(interview.getFragment(),true));
-        if(includeChildNodes){
-        	List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
-        	interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
-        }      
+        interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
+        interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
+        List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
+    	interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
+    	
         List<Rule> firedRules = interview.getFiredRules();
         interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
         List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
         interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
         List<Rule> manualAssessedRules = interview.getManualAssessedRules();
         interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
+              
         interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(),false));
+        interviewVO.setParentId(interview.getParentId());
+        List<Interview> childInterviews = interview.getInterviews();
+        interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
+        
         return interviewVO;
     }
 
     @Override
-    public List<InterviewVO> convertToInterviewVOList(List<Interview> interviewEntity,boolean includeChildNodes) {
+    public List<InterviewVO> convertToInterviewVOList(List<Interview> interviewEntity) {
         if (interviewEntity == null) {
             return null;
         }
         List<InterviewVO> list = new ArrayList<InterviewVO>();
         for (Interview interview : interviewEntity) {
-            list.add(convertToInterviewVO(interview,includeChildNodes));
+            list.add(convertToInterviewVO(interview));
         }
         return list;
     }
@@ -86,6 +90,9 @@ public class InterviewMapperImpl implements InterviewMapper {
         List<RuleVO> manualAssessedRules = interviewVO.getManualAssessedRules();
         interview.setManualAssessedRules(ruleMapper.convertToRuleExcPaList(manualAssessedRules));
         interview.setParticipant(participantMapper.convertToParticipant(interviewVO.getParticipant(),false));
+        interview.setParentId(interviewVO.getParentId());
+        List<InterviewVO> interviews = interviewVO.getInterviews();
+        interview.setInterviews(this.convertToInterviewList(interviews));
         return interview;
     }
 

@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Created by quangnn on 2/17/2016.
  */
@@ -35,7 +38,12 @@ public class InterviewVO {
     
     private List<AgentVO> agents;
     
+    @JsonInclude(Include.NON_NULL)
+    private List<InterviewVO> interviews;
+    
     private long questionId;
+    
+    private long parentId;
 
     public long getQuestionId() {
         return questionId;
@@ -216,6 +224,25 @@ public class InterviewVO {
 
 	public void setParticipant(ParticipantVO participant) {
 		this.participant = participant;
+	}
+
+	public List<InterviewVO> getInterviews() {
+		if(interviews==null){
+			interviews = new ArrayList<InterviewVO>();
+		}
+		return interviews;
+	}
+
+	public void setInterviews(List<InterviewVO> interviews) {
+		this.interviews = interviews;
+	}
+
+	public long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(long parentId) {
+		this.parentId = parentId;
 	}
 	
 }

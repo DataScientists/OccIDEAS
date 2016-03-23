@@ -12,7 +12,22 @@
             })
             return request.then(handleSuccess, handleError);
         }
-
+        function findModule(idNode) {
+			var restUrl = 'rest/module/getinterviewmodule?id=' + idNode;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+        function findFragment(idNode) {
+			var restUrl = 'rest/fragment/getinterviewfragment?id=' + idNode;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
         function save(data) {
         	console.log("Saving interview");
         	console.dir(data);
@@ -35,10 +50,10 @@
             return request.then(handleSuccess, handleError);
         }
         function getNextQuestion(data) {
-            var saveAndNextQ = 'rest/interview/nextquestion';
+            var nextQ = 'rest/interview/nextquestion';
             var request = $http({
                 method: 'POST',
-                url: saveAndNextQ,
+                url: nextQ,
                 data: data
             })
             return request.then(handleSuccess, handleError);
@@ -68,7 +83,9 @@
         }
 
         return {
-            save: save,
+        	findFragment: findFragment,
+        	findModule: findModule,
+        	save: save,
             get: get,
             startInterview:startInterview,
             getNextQuestion: getNextQuestion

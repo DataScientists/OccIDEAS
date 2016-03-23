@@ -34,6 +34,14 @@ public class ModuleServiceImpl implements ModuleService {
 		list.add(moduleVO);
 		return list;
 	}
+	@Override
+	public List<ModuleVO> findByIdForInterview(Long id) {
+		Module module = dao.get(id);
+		ModuleVO moduleVO = mapper.convertToModuleVO(module,false);
+		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		list.add(moduleVO);
+		return list;
+	}
 	
 	@Override
 	public ModuleVO create(ModuleVO module) {

@@ -25,9 +25,8 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
         InterviewQuestionAnswerVO interviewVO = new InterviewQuestionAnswerVO();
         interviewVO.setId(interview.getId());
         interviewVO.setIdInterview(interview.getIdInterview());
-        interviewVO.setQuestion(questionMapper.convertToQuestionVO(interview.getQuestion()));
-        interviewVO.setPossibleAnswer(possibleAnswerMapper.convertToPossibleAnswerVO(interview.getAnswer(), true));
-        //interviewVO.setInterview(interviewMapper.convertToInterviewVO(interview.getInterview(),false));
+        interviewVO.setQuestion(questionMapper.convertToInterviewQuestionVO(interview.getQuestion()));
+        interviewVO.setPossibleAnswer(possibleAnswerMapper.convertToInterviewPossibleAnswerVO(interview.getAnswer()));
         interviewVO.setInterviewQuestionAnswerFreetext(interview.getInterviewQuestionAnswerFreetext());
         interviewVO.setDeleted(interview.getDeleted());
         return interviewVO;

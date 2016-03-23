@@ -7,10 +7,6 @@
 			$anchorScroll,$location,$log){
 		var self = this;
 		self.isDeleting = false;
-		
-		
-		
-		
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(

@@ -1,22 +1,26 @@
 (function(){
 	angular.module('occIDEASApp.Participants')
-		   .controller('ParticipantCtrl',ParticipantCtrl);
+		   .controller('ParticipantsCtrl',ParticipantsCtrl);
 	
-	ParticipantCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter'];
-	function ParticipantCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter){
+	ParticipantsCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter','data'];
+	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter,data){
 		var self = this;
+		$scope.data = data;
+		$scope.setSelectedInterview = function(interview){
+			$scope.selectedInterview = interview;
+		}
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
-		self.tableParams = new NgTableParams({group: "type"}, {	
+		self.tableParams = new NgTableParams({}, {	
 	        getData: function(params) {
-	          if(params.filter().name || params.filter().description){	
+	          if(params.filter().reference ){	
 		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 		      }
 	          if(!self.tableParams.shouldGetData){
 	        	  return self.tableParams.settings().dataset;
 	          }
-	          return  ParticipantsService.get().then(function(data) {
+	          return  ParticipantsService.getParticipants().then(function(data) {
 	        	  console.log("Data get list from fragments ajax ...");        	 
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.settings().dataset = data;
