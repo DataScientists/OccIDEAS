@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.occideas.entity.Fragment;
+import org.occideas.entity.Module;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,14 @@ public class FragmentServiceImpl implements FragmentService {
 	public List<FragmentVO> findById(Long id) {
 		Fragment module = dao.get(id);
 		FragmentVO moduleVO = mapper.convertToFragmentVO(module,true);
+		List<FragmentVO> list = new ArrayList<FragmentVO>();
+		list.add(moduleVO);
+		return list;
+	}
+	@Override
+	public List<FragmentVO> findByIdForInterview(Long id) {
+		Fragment module = dao.get(id);
+		FragmentVO moduleVO = mapper.convertToFragmentVO(module,false);
 		List<FragmentVO> list = new ArrayList<FragmentVO>();
 		list.add(moduleVO);
 		return list;

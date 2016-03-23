@@ -131,7 +131,7 @@ public class ParticipantRestController implements BaseRestController<Participant
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getNextQuestion(ParticipantVO participant) {
-    	participant = service.findById(participant.getIdParticipant()).get(0);
+    	participant = service.findByIdForInterview(participant.getIdParticipant()).get(0);
         try {
         	 QuestionVO questionVO = getNextInterviewQuestion(participant);
         	 if(questionVO!=null){
@@ -223,12 +223,12 @@ public class ParticipantRestController implements BaseRestController<Participant
 		childInterviewVO.setParentId(questionVO.getActiveInterviewId());
 		childInterviewVO.setParticipant(interviewVO.getParticipant());
 		if(questionVO.getType().equalsIgnoreCase("Q_linkedmodule")){
-			for(ModuleVO module:moduleService.findById(questionVO.getLink())){
+			for(ModuleVO module:moduleService.findByIdForInterview(questionVO.getLink())){
 				childInterviewVO.setModule(module);
 				linkedModuleName = "Module:"+module.getIdNode()+":"+module.getName();
 			}
 		} else if(questionVO.getType().equalsIgnoreCase("Q_linkedajsm")){
-			for(FragmentVO fragment:fragmentService.findById(questionVO.getLink())){
+			for(FragmentVO fragment:fragmentService.findByIdForInterview(questionVO.getLink())){
 				childInterviewVO.setFragment(fragment);
 				linkedModuleName = "AJSM:"+fragment.getIdNode()+":"+fragment.getName();
 			}
@@ -258,7 +258,6 @@ public class ParticipantRestController implements BaseRestController<Participant
     	//first check child interviews
 		if(!(interviewVO.getInterviews().isEmpty())){ //has child interviews
 			for(InterviewVO childInterview:interviewVO.getInterviews()){
-				System.out.println("Checking "+interviewVO.getInterviewId());
 				questionVO = getNearestQuestion(childInterview);
 			}
 		}

@@ -2,7 +2,7 @@
 
 <div class="col-md-4">
     <div ng-model="data">
-	    
+	    <div>{{participant.reference}}</div>
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
             <md-toolbar >{{data.showedQuestion.name}}
             <md-button id="numId" event-focus>
@@ -219,6 +219,9 @@
 		</div>
 		</div>
 		</div>
+	</div>
+	<div>
+	
 	</div>
 </div>
 </div> 

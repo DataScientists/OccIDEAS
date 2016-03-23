@@ -80,6 +80,7 @@
 			checkExists: checkExists,
 			getParticipants: getParticipants,
 		    save: save, 	
+		    findInterviewParticipant: findInterviewParticipant,
 		    findParticipant: findParticipant,
 		    deleteParticipant: deleteParticipant,
 		    createParticipant:createParticipant

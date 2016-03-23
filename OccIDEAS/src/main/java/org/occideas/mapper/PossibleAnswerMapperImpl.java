@@ -77,7 +77,12 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         answerVO.setOriginalId( answerEntity.getOriginalId() );
         answerVO.setDeleted( answerEntity.getDeleted() );
         answerVO.setNodeclass( answerEntity.getNodeclass() );
+        List<Question> childNodes = new ArrayList<Question>();
         
+        childNodes = answerEntity.getChildNodes();
+        if(!CommonUtil.isListEmpty(childNodes)){
+            answerVO.setChildNodes( mapper.convertToInterviewQuestionVOList( childNodes ) );
+        }
         return answerVO;
 	}
 

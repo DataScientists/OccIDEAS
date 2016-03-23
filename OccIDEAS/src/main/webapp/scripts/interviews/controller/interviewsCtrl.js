@@ -31,7 +31,10 @@
             	}
         	},1000);
         };
-        
+        $window.setInterval(function() {
+        	  var elem = document.getElementById('interview-question-list');
+        	  elem.scrollTop = elem.scrollHeight;
+        	}, 5000);
         self.editQuestion = function(interview,question){
         	_.find($scope.questionHistory,function(el,index){
         		if(el.idNode === question.idNode){
@@ -144,7 +147,7 @@
             return interview;
         }
         function findActiveInterviewInParticipant(interviewId){
-        	ParticipantsService.findParticipant($scope.participant.idParticipant).then(function (response) {
+        	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
                 if (response.status === 200) {
                 	$scope.participant = response.data[0];
                 }
@@ -247,7 +250,7 @@
         }
         
         $scope.saveAnswerQuestion = function (node) {
-        	ParticipantsService.findParticipant($scope.participant.idParticipant).then(function (response) {
+        	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
                 if (response.status === 200) {
                 	$scope.participant = response.data[0];
                 	
@@ -383,7 +386,7 @@
                         interview.participant = copyParticipant;
                         $scope.participant.interviews = [];
                         $scope.participant.interviews.push(interview);
-
+                        $scope.activeInterview = interview;
                         ParticipantsService.save($scope.participant).then(function (response) {
                             if (response.status === 200) {
                             	$scope.data.interviewStarted = true;
@@ -543,7 +546,7 @@
             
         }
         function showNextQuestion(){
-        	ParticipantsService.findParticipant($scope.participant.idParticipant).then(function (response) {
+        	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
                 if (response.status === 200) {
                 	$scope.participant = response.data[0];
                 	ParticipantsService.getNextQuestion($scope.participant).then(function (response) {
