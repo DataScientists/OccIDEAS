@@ -120,6 +120,7 @@
 		$scope.addIntroTab = function(row) {
 			$rootScope.tabsLoading = true;
 			var state = "tabs.intro";
+			$stickyState.reset(state);
 			if(!checkIfTabIsOpen(tabs,row.name)){
 			tabs.push({
 				title : row.name,
@@ -131,8 +132,6 @@
 				state: state,
 				data: {row:row.idNode}
 			});
-			}else{
-				$stickyState.reset(state);
 			}
 			$log.info("addIntroTab called");
 		};
@@ -141,6 +140,7 @@
             var nodeData = scope.$modelValue;
             var tabTitle = "Rules "+nodeData.name;
             var state = "tabs.rules";
+            $stickyState.reset(state);
             if(!checkIfTabIsOpen(tabs,tabTitle)){
                 tabs.push({
                     title : tabTitle,
@@ -152,14 +152,13 @@
                     state: state,
                     data: {row:nodeData.idNode}
                 });
-            }else{
-            	$stickyState.reset(state);
             }
         };
         $scope.addInterviewTab = function(scope) {
             var nodeData = scope.$modelValue;
             var tabTitle = "Interview "+nodeData.name;
             var state = "tabs.interview";
+            $stickyState.reset(state);
             if(!checkIfTabIsOpen(tabs,tabTitle)){
                 tabs.push({
                     title : tabTitle,
@@ -171,14 +170,13 @@
                     state: state,
                     data: {row:nodeData.idNode}
                 });
-            }else{
-            	$stickyState.reset(state);
             }
         };
         $scope.addParticipantTab = function(participant) {
             //var participant = scope.$modelValue;
             var tabTitle = "Participant "+participant.reference;
             var state = "tabs.participant";
+            $stickyState.reset(state);
             if(!checkIfTabIsOpen(tabs,tabTitle)){
                 tabs.push({
                     title : tabTitle,
@@ -190,8 +188,6 @@
                     state: state,
                     data: {row:participant.idParticipant}
                 });
-            }else{
-            	$stickyState.reset(state);
             }
         };
 		$scope.removeTab = function(tab) {
