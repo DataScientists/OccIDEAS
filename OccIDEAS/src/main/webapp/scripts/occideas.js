@@ -91,7 +91,6 @@ angular
    configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope'];
    function configureDefaults(ngTableDefaults,$state,$rootScope) {
 	   	$rootScope._ = window._; 
-	   	   
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
         

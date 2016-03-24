@@ -7,6 +7,7 @@
 	.run(function ($rootScope, $state, $window, $timeout) {
 		$rootScope.$state = $state;
 	})
+	.run(['$state', function ($state) {}])
 	.directive("scopeQuestion", function () {
 	return {
 		template: '<ng-include src="\'scripts/questions/partials/moduleTree.html\'"></ng-include>'+
@@ -27,11 +28,13 @@
 		var $log =  angular.injector(['ng']).get('$log');
 		var $window = $windowProvider.$get();
 		$rootScopeProvider.$window = $window;
-		$stateProvider.state('tabs', {
-			abstract : true,
+		$stateProvider.state({
+			name: 'tabs',
 			templateUrl : "scripts/tabs/view/tabs.html",
-			controller: 'TabsCtrl as vm'
-		}).state('tabs.modules', {
+			controller: 'TabsCtrl as vm',
+			deepStateRedirect: true,
+		}).state({
+			name:'tabs.modules',
 			url: '/modules/',
 			sticky: false,
 		    deepStateRedirect: false,
@@ -41,7 +44,8 @@
 					controller: 'ModuleCtrl as vm'
 				}
 			}
-		}).state('tabs.fragments', {
+		}).state({
+			name:'tabs.fragments',
 			url: '/fragments/',
 			sticky: false,
 		    deepStateRedirect: false,
@@ -51,7 +55,8 @@
 					controller: 'FragmentCtrl as vm'
 				}
 			}
-		}).state('tabs.agents', {
+		}).state({
+			name:'tabs.agents',
 			url: '/agents/',
 			sticky: false,
 		    deepStateRedirect: false,
@@ -62,7 +67,8 @@
 				}
 			}
 		})
-		.state('tabs.participants', {
+		.state( {
+			name:'tabs.participants',
 			url: '/participants/',
 			sticky: false,
 		    deepStateRedirect: false,
@@ -78,7 +84,8 @@
 				}
 			}
 		})
-		.state('tabs.participant', {
+		.state({
+			name:'tabs.participant',
 			url: '/participant/:row',
 			sticky: false,
 		    deepStateRedirect: false,
@@ -112,7 +119,8 @@
 				}
 			}
 		})*/
-		.state('tabs.assessments', {
+		.state( {
+			name:'tabs.assessments',
 			url: '/assessments/',
 			sticky: false,
 		    deepStateRedirect: false,
@@ -127,7 +135,8 @@
 			        }
 				}
 			}
-		}).state('tabs.assessment', {
+		}).state( {
+			name:'tabs.assessment',
 			url: '/assessment/:row',
 			sticky: true,
 		    deepStateRedirect: true,
@@ -153,7 +162,8 @@
 			     }
 			}
 			}
-		}).state('tabs.questions', {
+		}).state( {
+			name:'tabs.questions',
 			url: '/questions/:row',
 			sticky: true,
 		    deepStateRedirect: true,
@@ -195,10 +205,10 @@
 			     }
 			}
 			}
-		}).state('tabs.intro', {
+		}).state( {
+			name:'tabs.intro',
 			url: '/intro/:row',
 			sticky: true,
-		    deepStateRedirect: true,
 			views:{
 				'intro@tabs':{
 					template: '<div scope-question></div>',
@@ -233,7 +243,8 @@
 			     }
 			}
 			}
-		}).state('tabs.fragment', {
+		}).state( {
+			name:'tabs.fragment',
 			url: '/fragment/:row',
 			sticky: true,
 		    deepStateRedirect: true,
@@ -275,8 +286,9 @@
 				}
 				}
 			}
-		}).state('tabs.interview', {
-            url: '/interview/:row',
+		}).state( {
+            name:'tabs.interview',
+			url: '/interview/:row',
             sticky: true,
 		    deepStateRedirect: true,
             views:{
@@ -295,8 +307,9 @@
                     }
                 }
             }
-        }).state('tabs.rules', {
-            url: '/rules/:row',
+        }).state( {
+            name:'tabs.rules',
+        	url: '/rules/:row',
             sticky: false,
 		    deepStateRedirect: false,
             views:{
