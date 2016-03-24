@@ -877,6 +877,9 @@
 			if(!scope.$modelValue.name){
 				scope.$modelValue.name = 'Blank';
 			}
+			if(!scope.$modelValue.number){
+				scope.$modelValue.nodeclass='Q'; 
+			}
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
 			});
