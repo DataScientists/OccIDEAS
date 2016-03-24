@@ -36,6 +36,11 @@
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
     		    open: function(x,idRule) {
+    		    	if(x.info){
+    		    		if(x.info["Node"+x.idNode+idRule].nodePopover.isOpen){
+    		    			return;
+    		    		}
+    		    	}
     		    	var nodeclass = 'P';
     		    	if(angular.isUndefined(x.info)){
   		    		  x.info = [];
