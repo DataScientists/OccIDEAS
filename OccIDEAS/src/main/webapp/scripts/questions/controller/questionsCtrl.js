@@ -539,11 +539,13 @@
 		
 		
 		function updateRuleDialogIfExist(sourceNode){
+			if(sourceNode.moduleRule && sourceNode.moduleRule.length > 0){
 				var ruleDialogId = sourceNode.idNode+'-'+ sourceNode.moduleRule[0].idAgent +'-'
 				+sourceNode.moduleRule[0].rule.idRule;
 				if(angular.element("#"+ruleDialogId)){
 					angular.element("#"+ruleDialogId).remove();
 				}
+			}			
 		}
 		
 		function reorderSequence(arrayList){
