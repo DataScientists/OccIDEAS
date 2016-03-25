@@ -31,10 +31,10 @@
             	}
         	},1000);
         };
-        $window.setInterval(function() {
+       /* $window.setInterval(function() {
         	  var elem = document.getElementById('interview-question-list');
         	  elem.scrollTop = elem.scrollHeight;
-        	}, 5000);
+        	}, 5000);*/
         self.editQuestion = function(interview,question){
         	_.find($scope.questionHistory,function(el,index){
         		if(el.idNode === question.idNode){
