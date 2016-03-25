@@ -11,7 +11,7 @@
 					<span popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
 					popover-placement="left" popover-popup-delay="1000" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
 					uib-popover-template="nodePopover.templateUrl" style="font-size:1.5em;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-					<span style="margin-left:3px;">{{node.number}}</span>
+					<span>{{node.number}}</span>
 					<div class="pull-right">
 						<span ng-if="$index>0" class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeNodeFromRule(node)"></span>
 					</div>
