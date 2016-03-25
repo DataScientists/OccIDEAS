@@ -259,6 +259,10 @@ public class ParticipantRestController implements BaseRestController<Participant
 		if(!(interviewVO.getInterviews().isEmpty())){ //has child interviews
 			for(InterviewVO childInterview:interviewVO.getInterviews()){
 				questionVO = getNearestQuestion(childInterview);
+				if(questionVO!=null){
+					questionVO.setActiveInterviewId(childInterview.getInterviewId());
+				}
+				
 			}
 		}
 		List<InterviewQuestionAnswerVO> questionsAsked = new ArrayList<InterviewQuestionAnswerVO>();
