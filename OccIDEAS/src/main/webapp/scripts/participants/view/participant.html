@@ -23,7 +23,7 @@
 				{{selectedInterview.module.name}}{{selectedInterview.fragment.name}}</span>
 				<div>
     				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in selectedInterview.questionsAsked | qaFilter:0 | orderBy:'question.number' track by $index">
+    				    ng-repeat="qa in selectedInterview.questionsAsked | qaFilter:0 | orderBy:'question.number' ">
     					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.question.number}}</span>
