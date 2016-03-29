@@ -9,7 +9,7 @@
 					ng-repeat="node in rule.conditions" 
 					ng-click="highlightNode(node.idNode)" ng-mouseleave="nodePopover.close(node,rule.idRule)">
 					<span popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
-					popover-placement="left" popover-popup-delay="1000" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
+					popover-placement="left" popover-append-to-body="true" popover-popup-delay="1000" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
 					uib-popover-template="nodePopover.templateUrl" style="font-size:1.5em;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
 					<span>{{node.number}}</span>
 					<div class="pull-right">
