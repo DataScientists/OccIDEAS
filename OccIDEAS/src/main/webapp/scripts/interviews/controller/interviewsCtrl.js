@@ -150,16 +150,16 @@
         	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
                 if (response.status === 200) {
                 	$scope.participant = response.data[0];
+                	var interview = cascadeFindInterview($scope.participant.interviews, interviewId);      	     	
+                	if(!interview){
+                		return null;
+                	}
+                    if (!interview.questionsAsked) {
+                        interview.questionsAsked = [];
+                    }
+                    return interview;
                 }
         	});
-        	var interview = cascadeFindInterview($scope.participant.interviews, interviewId);      	     	
-        	if(!interview){
-        		return null;
-        	}
-            if (!interview.questionsAsked) {
-                interview.questionsAsked = [];
-            }
-            return interview;
         }
         function cascadeFindInterview(interviews, interviewId){
         	//var retValue = null;
@@ -545,6 +545,18 @@
             }
             
         }
+        $scope.questionheader = {};
+        function validateActiveInterview(question){
+        	var interviewModuleId = question.topNodeId;
+        	 QuestionsService.findQuestions(question.topNodeId, 'M')
+             .then(function (response) {
+                 console.log("Data getting from questions AJAX ...");
+                 if(response.data[0]){
+                 $scope.questionheader.name = response.data[0].name;
+                 }
+             });
+        }
+        
         function showNextQuestion(){
         	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
                 if (response.status === 200) {
@@ -553,6 +565,7 @@
                         if (response.status === 200) {
                             var question = response.data;
                             $scope.data.showedQuestion = question;
+                            validateActiveInterview($scope.data.showedQuestion);
                             if(!$scope.updateAnswers){
                             	$scope.questionHistory.push(question);
                             }

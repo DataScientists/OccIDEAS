@@ -6,7 +6,7 @@
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
             <md-toolbar >{{data.showedQuestion.name}}
             <md-button id="numId" event-focus>
-            <span class="badge">{{activeInterview.module.name}}{{activeInterview.fragment.name}}</span>
+            <span class="badge">{{questionheader.name}}</span>
             <span class="badge">{{data.showedQuestion.number}}</span>
             </md-button></md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
