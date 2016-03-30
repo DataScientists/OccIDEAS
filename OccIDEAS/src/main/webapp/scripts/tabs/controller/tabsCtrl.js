@@ -27,6 +27,8 @@
 			};
 		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
+//			$scope.loading = true;
+			safeDigest($scope.loading);
 			var state = null;
 			var data = null;
 			if($scope.tabOptions[current]){
@@ -99,7 +101,6 @@
 			
 		};
 		$scope.addModuleTab = function(row) {
-			$rootScope.tabsLoading = true;
 			var state = "tabs.questions";
 			if(!checkIfTabIsOpen(tabs,row.name)){
 				tabs.push({
@@ -118,7 +119,6 @@
 		};
 		
 		$scope.addIntroTab = function(row) {
-			$rootScope.tabsLoading = true;
 			var state = "tabs.intro";
 			$stickyState.reset(state);
 			if(!checkIfTabIsOpen(tabs,row.name)){
