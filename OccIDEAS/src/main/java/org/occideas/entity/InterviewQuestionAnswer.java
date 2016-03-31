@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -32,22 +34,14 @@ public class InterviewQuestionAnswer implements java.io.Serializable {
     @Column(name = "interview_idinterview")
     private long idInterview;
     @OneToOne(fetch=FetchType.LAZY)
-    private Question question;
-    @OneToOne(fetch=FetchType.LAZY)
-    private PossibleAnswer answer;
-    @Column(length=2048)
-    private String interviewQuestionAnswerFreetext;
+    @JoinColumns({
+        @JoinColumn(name="question_id",referencedColumnName="question_id"),
+        @JoinColumn(name="interview_idinterview", referencedColumnName="idinterview")
+    })
+    private InterviewQuestion question;
     private int deleted;
 
     public InterviewQuestionAnswer() {
-    }
-
-    public String getInterviewQuestionAnswerFreetext() {
-        return this.interviewQuestionAnswerFreetext;
-    }
-
-    public void setInterviewQuestionAnswerFreetext(String interviewQuestionAnswerFreetext) {
-        this.interviewQuestionAnswerFreetext = interviewQuestionAnswerFreetext;
     }
 
     public int getDeleted() {
@@ -58,19 +52,11 @@ public class InterviewQuestionAnswer implements java.io.Serializable {
         this.deleted = deleted;
     }
 
-	public PossibleAnswer getAnswer() {
-		return answer;
-	}
-
-	public void setAnswer(PossibleAnswer answer) {
-		this.answer = answer;
-	}
-
-	public Question getQuestion() {
+	public InterviewQuestion getQuestion() {
 		return question;
 	}
 
-	public void setQuestion(Question question) {
+	public void setQuestion(InterviewQuestion question) {
 		this.question = question;
 	}
 

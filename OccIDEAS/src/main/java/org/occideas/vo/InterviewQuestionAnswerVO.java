@@ -1,18 +1,13 @@
 package org.occideas.vo;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * Created by quangnn on 2/17/2016.
  */
 
-@JsonIgnoreProperties({"multiAnswers"})
-public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAnswerVO>{
+public class InterviewQuestionAnswerVO{
 	private long id;
-	private String interviewQuestionAnswerFreetext;
-    private PossibleAnswerVO possibleAnswer;
     private long idInterview;
-    private QuestionVO question;
+    private InterviewQuestionVO question;
     private int deleted;
        
 	public long getId() {
@@ -21,23 +16,11 @@ public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAn
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getInterviewQuestionAnswerFreetext() {
-		return interviewQuestionAnswerFreetext;
-	}
-	public void setInterviewQuestionAnswerFreetext(String interviewQuestionAnswerfreeText) {
-		this.interviewQuestionAnswerFreetext = interviewQuestionAnswerfreeText;
-	}
-	public PossibleAnswerVO getPossibleAnswer() {
-		return possibleAnswer;
-	}
-	public void setPossibleAnswer(PossibleAnswerVO possibleAnswer) {
-		this.possibleAnswer = possibleAnswer;
-	}
 	
-	public QuestionVO getQuestion() {
+	public InterviewQuestionVO getQuestion() {
 		return question;
 	}
-	public void setQuestion(QuestionVO question) {
+	public void setQuestion(InterviewQuestionVO question) {
 		this.question = question;
 	}
 	public int getDeleted() {
@@ -47,16 +30,6 @@ public class InterviewQuestionAnswerVO implements Comparable<InterviewQuestionAn
 		this.deleted = deleted;
 	}
 	
-	@Override
-	public int compareTo(InterviewQuestionAnswerVO o) {
-		if((this.getPossibleAnswer()!=null) && (o.getPossibleAnswer()!=null)){
-			return this.getPossibleAnswer().compareTo(o.getPossibleAnswer());
-		}else{
-			return this.getQuestion().compareTo(o.getQuestion());
-		}
-		
-		      
-	}
 	public long getIdInterview() {
 		return idInterview;
 	}

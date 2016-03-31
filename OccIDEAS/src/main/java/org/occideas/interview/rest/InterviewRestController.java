@@ -224,18 +224,18 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	QuestionVO questionVO = null;
     	if(interviewVO.getQuestionsAsked().size()>0){
     		List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
-    		Collections.sort(questionsAsked);  	
+//    		Collections.sort(questionsAsked);  	
     		for(InterviewQuestionAnswerVO iqa: questionsAsked){
-    			if(iqa.getPossibleAnswer()!=null){
-    				List<QuestionVO> questions = iqa.getPossibleAnswer().getChildNodes();
-    				for(QuestionVO question: questions){   
-        				if(!isQuesitonAnswered(question,questionsAsked)){
-        					if(question.compareTo(questionVO)<0){
-        						questionVO = question;       						
-        					}
-        				}
-        			}				
-    			}
+//    			if(iqa.getPossibleAnswer()!=null){
+//    				List<QuestionVO> questions = iqa.getPossibleAnswer().getChildNodes();
+//    				for(QuestionVO question: questions){   
+//        				if(!isQuesitonAnswered(question,questionsAsked)){
+//        					if(question.compareTo(questionVO)<0){
+//        						questionVO = question;       						
+//        					}
+//        				}
+//        			}				
+//    			}
     			
     		}
     		if(questionVO==null){
@@ -288,9 +288,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         		if(questionVO!=null){
             		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
             			InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
-            			iqa.setQuestion(linkingQuestion);
+//            			iqa.setQuestion(linkingQuestion);
             			iqa.setIdInterview(interviewVO.getInterviewId());
-            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
+//            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
             			interviewVO.getQuestionsAsked().add(iqa);
             			service.update(interviewVO);
                 		linkingQuestion = questionVO.clone();
@@ -299,9 +299,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
                 		questionVO.setLinkingQuestion(linkingQuestion);
                     }else if("Q_linkedmodule".equalsIgnoreCase(questionVO.getType())){
             			InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
-            			iqa.setQuestion(linkingQuestion);
+//            			iqa.setQuestion(linkingQuestion);
             			iqa.setIdInterview(interviewVO.getInterviewId());
-            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
+//            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
             			interviewVO.getQuestionsAsked().add(iqa);
             			service.update(interviewVO);
                 		linkingQuestion = questionVO.clone();
@@ -311,9 +311,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
                     		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
                     			linkingQuestion = questionVO.clone();
                     			InterviewQuestionAnswerVO iqa1 = new InterviewQuestionAnswerVO();
-                    			iqa1.setQuestion(linkingQuestion);
+//                    			iqa1.setQuestion(linkingQuestion);
                     			iqa1.setIdInterview(interviewVO.getInterviewId());
-                    			iqa1.setInterviewQuestionAnswerFreetext("Q_linked");
+//                    			iqa1.setInterviewQuestionAnswerFreetext("Q_linked");
                     			interviewVO.getQuestionsAsked().add(iqa1);
                     			service.update(interviewVO);
                         		linkingAjsmId = questionVO.getLink();
@@ -331,11 +331,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     private boolean isQuesitonAnswered(QuestionVO q,List<InterviewQuestionAnswerVO> questionsAsked){
     	boolean retValue = false;
     	for(InterviewQuestionAnswerVO iqa: questionsAsked){
-    		if(iqa.getQuestion().getIdNode()==q.getIdNode()){
-    			if((iqa.getDeleted()==0)){//not deleted
-    				retValue = true;
-    			}
-    		}
+//    		if(iqa.getQuestion().getIdNode()==q.getIdNode()){
+//    			if((iqa.getDeleted()==0)){//not deleted
+//    				retValue = true;
+//    			}
+//    		}
     	}
     	return retValue;
     }
@@ -366,24 +366,25 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			boolean bFired = false;
 			for(PossibleAnswerVO  pa: rule.getConditions()){
 				for(InterviewQuestionAnswerVO iqa: interview.getQuestionsAsked()){
-					if(iqa.getPossibleAnswer()!=null){
-						if(pa.getIdNode()==iqa.getPossibleAnswer().getIdNode()){
-	    	    			bFired = true;
-	    	    			break;
-	    	    		}else{
-	    	    			bFired = false;
-	    	    		}
+//					if(iqa.getPossibleAnswer()!=null){
+//						if(pa.getIdNode()==iqa.getPossibleAnswer().getIdNode()){
+//	    	    			bFired = true;
+//	    	    			break;
+//	    	    		}else{
+//	    	    			bFired = false;
+//	    	    		}
 					}	    		
     	    	}
 			}
-			if(bFired){
-				firedRules.add(rule);
-			}			
-		}
-    	firedRules = removeDuplicates(firedRules);
-    	interview.setFiredRules(firedRules);
-    	service.update(interview);
-    	return interview;
+//			if(bFired){
+//				firedRules.add(rule);
+//			}			
+//		}
+//    	firedRules = removeDuplicates(firedRules);
+//    	interview.setFiredRules(firedRules);
+//    	service.update(interview);
+//    	return interview;
+    	return null;
     }
     private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules){
     	ArrayList<RuleVO> retValue = new ArrayList<RuleVO>();

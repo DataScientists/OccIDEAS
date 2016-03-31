@@ -1,42 +1,15 @@
-package org.occideas.entity;
+package org.occideas.vo;
 
 import java.math.BigInteger;
-import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+public class InterviewLinkedVO {
 
-@Entity
-@Table(name = "Interview_Linked")
-public class InterviewLinked {
-
-	@Id
-	@Column(name = "id")
-	private BigInteger id;
-	@Column(name = "idInterview")
 	private BigInteger idInterview;
-	@Column(name = "parentQuestionId")
 	private BigInteger parentQuestionId;
-	@Column(name = "linkedId")
 	private BigInteger linkedId;
-	@Column(name = "name")
 	private String name;
-	@Column(name = "description")
 	private String description;
-	@Column(name = "deleted")
 	private Integer deleted;
-	@Column(name = "lastUpdated")
-	private Date lastUpdated;
-
-	public BigInteger getId() {
-		return id;
-	}
-
-	public void setId(BigInteger id) {
-		this.id = id;
-	}
 
 	public BigInteger getIdInterview() {
 		return idInterview;
@@ -84,14 +57,6 @@ public class InterviewLinked {
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
-	}
-
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
-
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
 	}
 
 }

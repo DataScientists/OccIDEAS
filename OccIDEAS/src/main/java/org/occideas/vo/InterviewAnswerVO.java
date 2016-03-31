@@ -1,50 +1,19 @@
-package org.occideas.entity;
+package org.occideas.vo;
 
 import java.math.BigInteger;
-import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+public class InterviewAnswerVO {
 
-@Entity
-@Table(name = "Interview_Answer")
-public class InterviewAnswer {
-
-	@Id
-	@Column(name = "id")
-	private BigInteger id;
-	@Column(name = "idinterview")
 	private BigInteger idInterview;
-	@Column(name = "topQuestionId")
 	private BigInteger topQuestionId;
-	@Column(name = "parentQuestionId")
 	private BigInteger parentQuestionId;
-	@Column(name = "answerId")
 	private BigInteger answerId;
-	@Column(name = "name")
 	private String name;
-	@Column(name = "description")
 	private String description;
-	@Column(name = "nodeClass")
 	private String nodeClass;
-	@Column(name = "number")
 	private String number;
-	@Column(name = "type")
 	private String type;
-	@Column(name = "deleted")
 	private Integer deleted;
-	@Column(name = "lastUpdated")
-	private Date lastUpdated;
-
-	public BigInteger getId() {
-		return id;
-	}
-
-	public void setId(BigInteger id) {
-		this.id = id;
-	}
 
 	public BigInteger getIdInterview() {
 		return idInterview;
@@ -54,20 +23,20 @@ public class InterviewAnswer {
 		this.idInterview = idInterview;
 	}
 
-	public BigInteger getParentQuestionId() {
-		return parentQuestionId;
-	}
-
-	public void setParentQuestionId(BigInteger parentQuestionId) {
-		this.parentQuestionId = parentQuestionId;
-	}
-
 	public BigInteger getTopQuestionId() {
 		return topQuestionId;
 	}
 
 	public void setTopQuestionId(BigInteger topQuestionId) {
 		this.topQuestionId = topQuestionId;
+	}
+
+	public BigInteger getParentQuestionId() {
+		return parentQuestionId;
+	}
+
+	public void setParentQuestionId(BigInteger parentQuestionId) {
+		this.parentQuestionId = parentQuestionId;
 	}
 
 	public BigInteger getAnswerId() {
@@ -124,14 +93,6 @@ public class InterviewAnswer {
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
-	}
-
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
-
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
 	}
 
 }

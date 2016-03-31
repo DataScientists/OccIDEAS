@@ -97,14 +97,14 @@ public class QuestionServiceImpl implements QuestionService {
         // Get question who is father of answer
         Question father = dao.get(Question.class, Long.valueOf(node.getParentId()));
 
-        if ("Q_multiple".equals(father.getType())) {
+//        if ("Q_multiple".equals(father.getType())) {
             // Get list interview-question-answer by interview and question
             List<InterviewQuestionAnswer> iqas = iqaDao.findById(interviewId, father.getIdNode(), null);
             for (int i = 0; i < iqas.size(); i++) {
-                if (node.getIdNode() == iqas.get(i).getAnswer().getIdNode()) {// If found current answer in answer list
+//                if (node.getIdNode() == iqas.get(i).getAnswer().getIdNode()) {// If found current answer in answer list
                     if (i < iqas.size() - 1) {
-                        return inspectNextQuestion(interviewId, dao.get(PossibleAnswer.class, iqas.get(i + 1).getAnswer().getIdNode()));
-                    } else {
+//                        return inspectNextQuestion(interviewId, dao.get(PossibleAnswer.class, iqas.get(i + 1).getAnswer().getIdNode()));
+//                    } else {
                         PossibleAnswer grandFather = dao.get(PossibleAnswer.class, Long.valueOf(father.getParentId()));
                         if (grandFather == null) {
                             Module grandFatherModule = dao.get(Module.class, Long.valueOf(father.getParentId()));
@@ -120,16 +120,16 @@ public class QuestionServiceImpl implements QuestionService {
                         } else {
                             return getNearestQuestion(interviewId, grandFather);
                         }
-                    }
-                }
+//                    }
+//                }
             }
 
-        } else {
+//        } else {
             PossibleAnswer grandFather = dao.get(PossibleAnswer.class, Long.valueOf(father.getParentId()));
 
             if (grandFather == null) {
                 Module grandFatherModule = dao.get(Module.class, Long.valueOf(father.getParentId()));
-                for (int i = 0; i < grandFatherModule.getChildNodes().size(); i++) {
+//                for (int i = 0; i < grandFatherModule.getChildNodes().size(); i++) {
                     if (grandFatherModule.getChildNodes().get(i).getIdNode() == father.getIdNode()) {
                         if (i < grandFatherModule.getChildNodes().size() - 1) {
                             return grandFatherModule.getChildNodes().get(i + 1);
@@ -137,9 +137,9 @@ public class QuestionServiceImpl implements QuestionService {
                             return null;
                         }
                     }
-                }
+//                }
             } else {
-                for (int i = 0; i < grandFather.getChildNodes().size(); i++) {
+//                for (int i = 0; i < grandFather.getChildNodes().size(); i++) {
                     if (grandFather.getChildNodes().get(i).getIdNode() == father.getIdNode()) {
                         if (i < grandFather.getChildNodes().size() - 1) {
                             return grandFather.getChildNodes().get(i + 1);
@@ -147,7 +147,7 @@ public class QuestionServiceImpl implements QuestionService {
                             return getNearestQuestion(interviewId, grandFather);
                         }
                     }
-                }
+//                }
             }
         }
 

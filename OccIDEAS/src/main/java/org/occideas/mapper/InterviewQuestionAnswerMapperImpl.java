@@ -12,11 +12,8 @@ import org.springframework.stereotype.Component;
 public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswerMapper {
     
     @Autowired
-	private QuestionMapper questionMapper;
+	private InterviewQuestionMapper questionMapper;
     
-    @Autowired
-	private PossibleAnswerMapper possibleAnswerMapper;
-
     @Override
     public InterviewQuestionAnswerVO convertToInterviewQuestionAnswerVO(InterviewQuestionAnswer interview) {
         if (interview == null) {
@@ -26,8 +23,6 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
         interviewVO.setId(interview.getId());
         interviewVO.setIdInterview(interview.getIdInterview());
         interviewVO.setQuestion(questionMapper.convertToInterviewQuestionVO(interview.getQuestion()));
-        interviewVO.setPossibleAnswer(possibleAnswerMapper.convertToInterviewPossibleAnswerVO(interview.getAnswer()));
-        interviewVO.setInterviewQuestionAnswerFreetext(interview.getInterviewQuestionAnswerFreetext());
         interviewVO.setDeleted(interview.getDeleted());
         return interviewVO;
     }
@@ -53,12 +48,10 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
         }
         InterviewQuestionAnswer interview = new InterviewQuestionAnswer();
         
-        interview.setQuestion(questionMapper.convertToQuestion(interviewVO.getQuestion()));
-        interview.setAnswer(possibleAnswerMapper.convertToPossibleAnswer(interviewVO.getPossibleAnswer()));
+        interview.setQuestion(questionMapper.convertToInterviewQuestion(interviewVO.getQuestion()));
         interview.setDeleted(interviewVO.getDeleted());
         interview.setId(interviewVO.getId());
         interview.setIdInterview(interviewVO.getIdInterview());
-        interview.setInterviewQuestionAnswerFreetext(interviewVO.getInterviewQuestionAnswerFreetext());
         
         return interview;
     }
