@@ -22,7 +22,7 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
         InterviewQuestionAnswerVO interviewVO = new InterviewQuestionAnswerVO();
         interviewVO.setId(interview.getId());
         interviewVO.setIdInterview(interview.getIdInterview());
-        interviewVO.setQuestion(questionMapper.convertToInterviewQuestionVO(interview.getQuestion()));
+        interviewVO.setQuestion(questionMapper.convertToInterviewQuestionVOList(interview.getQuestion()));
         interviewVO.setDeleted(interview.getDeleted());
         return interviewVO;
     }
@@ -48,7 +48,7 @@ public class InterviewQuestionAnswerMapperImpl implements InterviewQuestionAnswe
         }
         InterviewQuestionAnswer interview = new InterviewQuestionAnswer();
         
-        interview.setQuestion(questionMapper.convertToInterviewQuestion(interviewVO.getQuestion()));
+        interview.setQuestion(questionMapper.convertToInterviewQuestionList(interviewVO.getQuestion()));
         interview.setDeleted(interviewVO.getDeleted());
         interview.setId(interviewVO.getId());
         interview.setIdInterview(interviewVO.getIdInterview());

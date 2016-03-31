@@ -1,5 +1,7 @@
 package org.occideas.vo;
 
+import java.util.List;
+
 /**
  * Created by quangnn on 2/17/2016.
  */
@@ -7,7 +9,7 @@ package org.occideas.vo;
 public class InterviewQuestionAnswerVO{
 	private long id;
     private long idInterview;
-    private InterviewQuestionVO question;
+    private List<InterviewQuestionVO> question;
     private int deleted;
        
 	public long getId() {
@@ -17,12 +19,14 @@ public class InterviewQuestionAnswerVO{
 		this.id = id;
 	}
 	
-	public InterviewQuestionVO getQuestion() {
+	public List<InterviewQuestionVO> getQuestion() {
 		return question;
 	}
-	public void setQuestion(InterviewQuestionVO question) {
+	
+	public void setQuestion(List<InterviewQuestionVO> question) {
 		this.question = question;
 	}
+	
 	public int getDeleted() {
 		return deleted;
 	}

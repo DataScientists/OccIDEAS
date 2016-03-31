@@ -1,5 +1,7 @@
 package org.occideas.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -33,12 +36,12 @@ public class InterviewQuestionAnswer implements java.io.Serializable {
     private long id;
     @Column(name = "interview_idinterview")
     private long idInterview;
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToMany(fetch=FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name="question_id",referencedColumnName="question_id"),
         @JoinColumn(name="interview_idinterview", referencedColumnName="idinterview")
     })
-    private InterviewQuestion question;
+    private List<InterviewQuestion> question;
     private int deleted;
 
     public InterviewQuestionAnswer() {
@@ -52,11 +55,11 @@ public class InterviewQuestionAnswer implements java.io.Serializable {
         this.deleted = deleted;
     }
 
-	public InterviewQuestion getQuestion() {
+	public List<InterviewQuestion> getQuestion() {
 		return question;
 	}
 
-	public void setQuestion(InterviewQuestion question) {
+	public void setQuestion(List<InterviewQuestion> question) {
 		this.question = question;
 	}
 
