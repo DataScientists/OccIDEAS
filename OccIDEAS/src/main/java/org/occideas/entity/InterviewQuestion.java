@@ -2,10 +2,16 @@ package org.occideas.entity;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -21,6 +27,16 @@ public class InterviewQuestion {
 
 	@Column(name = "question_id")
 	private BigInteger questionId;
+
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumns({ @JoinColumn(name = "question_id", referencedColumnName = "topQuestionId"),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
+	private List<InterviewAnswer> answers;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumns({ @JoinColumn(name = "question_id", referencedColumnName = "parentQuestionId"),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
+	private InterviewLinked linkingQuestion;
 
 	@Column(name = "name")
 	private String name;
@@ -65,6 +81,22 @@ public class InterviewQuestion {
 
 	public void setQuestionId(BigInteger questionId) {
 		this.questionId = questionId;
+	}
+
+	public List<InterviewAnswer> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(List<InterviewAnswer> answers) {
+		this.answers = answers;
+	}
+	
+	public InterviewLinked getLinkingQuestion() {
+		return linkingQuestion;
+	}
+
+	public void setLinkingQuestion(InterviewLinked linkingQuestion) {
+		this.linkingQuestion = linkingQuestion;
 	}
 
 	public String getName() {
