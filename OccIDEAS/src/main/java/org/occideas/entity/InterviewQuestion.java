@@ -34,13 +34,17 @@ public class InterviewQuestion implements java.io.Serializable {
 	private long questionId;
 
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
+	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"
+			,insertable=false,updatable=false),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
+					,insertable=false,updatable=false) })
 	private List<InterviewAnswer> answers;
 
-//	@OneToOne(fetch = FetchType.LAZY)
-//	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"),
-//			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumns({ @JoinColumn(name = "question_id", referencedColumnName = "parentQuestionId"
+			,insertable=false,updatable=false),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
+					,insertable=false,updatable=false) })
 	private InterviewLinked linkingQuestion;
 
 	@Column(name = "name")

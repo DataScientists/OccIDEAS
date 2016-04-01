@@ -19,7 +19,7 @@ public class InterviewLinked implements java.io.Serializable {
 	@Id
 	@GeneratedValue
 	private long id;
-	@Column(name = "idInterview")
+	@Column(name = "idinterview")
 	private long idInterview;
 	@Column(name = "parentQuestionId")
 	private long parentQuestionId;
