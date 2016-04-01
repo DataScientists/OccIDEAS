@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.occideas.entity.InterviewLinked;
 import org.occideas.vo.InterviewLinkedVO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InterviewLinkMapperImpl implements InterviewLinkMapper{
 
 	@Override

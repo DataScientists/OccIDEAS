@@ -5,8 +5,8 @@ import java.util.List;
 
 public class InterviewQuestionVO {
 
-	private BigInteger idInterview;
-	private BigInteger questionId;
+	private long idInterview;
+	private long questionId;
 	private String name;
 	private String description;
 	private String nodeClass;
@@ -17,19 +17,19 @@ public class InterviewQuestionVO {
 	private InterviewLinkedVO linkingQuestion;
 	
 	
-	public BigInteger getIdInterview() {
+	public long getIdInterview() {
 		return idInterview;
 	}
 
-	public void setIdInterview(BigInteger idInterview) {
+	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
 	}
 
-	public BigInteger getQuestionId() {
+	public long getQuestionId() {
 		return questionId;
 	}
 
-	public void setQuestionId(BigInteger questionId) {
+	public void setQuestionId(long questionId) {
 		this.questionId = questionId;
 	}
 

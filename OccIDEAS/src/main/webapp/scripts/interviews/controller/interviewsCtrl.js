@@ -364,14 +364,17 @@
              addPopoverInfo(x,scope.rule.idRule);
              newNote($event.currentTarget.parentElement,scope,$compile);*/
         }
-        $scope.startInterview = function (data) {
-            $scope.referenceNumber = data.referenceNumber;
-            if (!$scope.referenceNumber) {
-                $scope.referenceNumber = 'TEST' + Math.floor((Math.random() * 100) + 1);
-            }
-            var participant = {reference:$scope.referenceNumber,
+        
+        function createReferenceNumber(data){
+        	 $scope.referenceNumber = data.referenceNumber;
+             if (!$scope.referenceNumber) {
+                 $scope.referenceNumber = 'TEST' + Math.floor((Math.random() * 100) + 1);
+             }
+        }
+        
+        function createParticipant(data){
+        	var participant = {reference:$scope.referenceNumber,
             		interviews:[]}
-            //$scope.participant = participant;
             ParticipantsService.createParticipant(participant).then(function (response){
             	if (response.status === 200) {
             		$scope.participant = response.data;
@@ -395,12 +398,15 @@
                             } else {
                                 console.log('ERROR on Start Interview!');
                             }
-
                         });
                     });
             	}	
             });
-            
+        }
+        
+        $scope.startInterview = function (data) {
+           createReferenceNumber(data);
+           createParticipant(data);
         }
         
         $scope.scrollWithTimeout = function(elId){
@@ -565,7 +571,6 @@
                         if (response.status === 200) {
                             var question = response.data;
                             $scope.data.showedQuestion = question;
-                            validateActiveInterview($scope.data.showedQuestion);
                             if(!$scope.updateAnswers){
                             	$scope.questionHistory.push(question);
                             }
@@ -591,88 +596,6 @@
                     });
                 }
         	});
-        }
-        function showNextQuestionOld(){
-        	InterviewsService.getNextQuestion($scope.interviews).then(function (response) {
-                if (response.status === 200) {
-                    var question = response.data;
-                    $scope.data.showedQuestion = question;
-                    if(!$scope.updateAnswers){
-                    	$scope.questionHistory.push(question);
-                    }
-                    resetSelectedIndex();
-                    if(question.type=='Q_frequency'){
-                    	$scope.hoursArray = $scope.getShiftHoursArray();
-                    	$scope.minutesArray = $scope.getShiftMinutesArray();
-                    	$scope.weeks = $scope.getWeeksArray();
-                    	
-                    }
-                    if (question.linkingQuestion) {
-                        var linkingQuestion = question.linkingQuestion;
-                        var newInterview = {};
-                        if (linkingQuestion.type == 'Q_linkedajsm') {
-                            newInterview.fragment = {
-                                idNode: linkingQuestion.link,
-                                name: linkingQuestion.name
-                            };
-                            QuestionsService.findQuestions(linkingQuestion.link, 'F')
-                                .then(function (response) {
-                                    console.log("Data getting from questions AJAX ...");
-                                    $scope.linkedAjsm = response.data;
-                                    $scope.showIntroModule = false;
-                                    $scope.showModule = false;
-                                    $scope.showAjsm = true;
-                                    showLinkingQuestion(newInterview,question);
-                                });
-                        } else if (linkingQuestion.type == 'Q_linkedmodule') {
-                            newInterview.module = {idNode: linkingQuestion.link,
-                                    name: linkingQuestion.name};
-                            QuestionsService.findQuestions(linkingQuestion.link, 'M')
-                                .then(function (response) {
-                                    console.log("Data getting from questions AJAX ...");
-                                    $scope.linkedModule = response.data;
-                                    $scope.showIntroModule = false;
-                                    $scope.showModule = true;
-                                    $scope.showAjsm = false;
-                                    showLinkingQuestion(newInterview,question);
-                                });
-                        }
-                        
-                        
-                        
-                    } else if (question.activeInterviewId) {
-                        for (var i = 0; i < $scope.interviews.length; i++) {
-                            if ($scope.interviews[i].interviewId == question.activeInterviewId) {
-                                $scope.interviews[i].active = true;
-                                if ($scope.interviews[i].module) {
-                                    if ($scope.interviews[i].module.type == 'M_IntroModule') {
-                                        $scope.showIntroModule = true;
-                                        $scope.showModule = false;
-                                        $scope.showAjsm = false;
-                                    } else {
-                                        $scope.showIntroModule = false;
-                                        $scope.showModule = true;
-                                        $scope.showAjsm = false;
-                                    }
-                                }
-                            } else {
-                                $scope.interviews[i].active = false;
-                            }
-                        }
-                    }
-                } else if (response.status == 204) {
-                    $scope.data.interviewStarted = false;
-                    $scope.data.interviewEnded = true;
-                    saveInterview();
-                } else {
-                    console.log('ERROR on Get!');
-                }
-                if($scope.updateAnswers){
-                    $scope.updateAnswers = false;
-                    safeDigest($scope.updateAnswers);
-                }
-                angular.element('#numId').focus();
-            });
         }
     }
 })();

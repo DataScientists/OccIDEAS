@@ -1,12 +1,12 @@
 package org.occideas.entity;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
@@ -16,26 +16,31 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "interview_question")
-public class InterviewQuestion {
+public class InterviewQuestion implements java.io.Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "id")
-	private BigInteger id;
+	@GeneratedValue
+	private long id;
 
 	@Column(name = "idinterview")
-	private BigInteger idInterview;
+	private long idInterview;
 
 	@Column(name = "question_id")
-	private BigInteger questionId;
+	private long questionId;
 
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumns({ @JoinColumn(name = "question_id", referencedColumnName = "topQuestionId"),
+	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"),
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
 	private List<InterviewAnswer> answers;
-	
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumns({ @JoinColumn(name = "question_id", referencedColumnName = "parentQuestionId"),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
+
+//	@OneToOne(fetch = FetchType.LAZY)
+//	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"),
+//			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
 	private InterviewLinked linkingQuestion;
 
 	@Column(name = "name")
@@ -59,27 +64,27 @@ public class InterviewQuestion {
 	@Column(name = "lastUpdated")
 	private Date lastUpdated;
 
-	public BigInteger getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(BigInteger id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public BigInteger getIdInterview() {
+	public long getIdInterview() {
 		return idInterview;
 	}
 
-	public void setIdInterview(BigInteger idInterview) {
+	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
 	}
 
-	public BigInteger getQuestionId() {
+	public long getQuestionId() {
 		return questionId;
 	}
 
-	public void setQuestionId(BigInteger questionId) {
+	public void setQuestionId(long questionId) {
 		this.questionId = questionId;
 	}
 
@@ -90,7 +95,7 @@ public class InterviewQuestion {
 	public void setAnswers(List<InterviewAnswer> answers) {
 		this.answers = answers;
 	}
-	
+
 	public InterviewLinked getLinkingQuestion() {
 		return linkingQuestion;
 	}

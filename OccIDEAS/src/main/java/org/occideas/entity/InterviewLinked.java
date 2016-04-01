@@ -1,26 +1,30 @@
 package org.occideas.entity;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "Interview_Linked")
-public class InterviewLinked {
+public class InterviewLinked implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
-	@Column(name = "id")
-	private BigInteger id;
+	@GeneratedValue
+	private long id;
 	@Column(name = "idInterview")
-	private BigInteger idInterview;
+	private long idInterview;
 	@Column(name = "parentQuestionId")
-	private BigInteger parentQuestionId;
+	private long parentQuestionId;
 	@Column(name = "linkedId")
-	private BigInteger linkedId;
+	private long linkedId;
 	@Column(name = "name")
 	private String name;
 	@Column(name = "description")
@@ -30,35 +34,35 @@ public class InterviewLinked {
 	@Column(name = "lastUpdated")
 	private Date lastUpdated;
 
-	public BigInteger getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(BigInteger id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public BigInteger getIdInterview() {
+	public long getIdInterview() {
 		return idInterview;
 	}
 
-	public void setIdInterview(BigInteger idInterview) {
+	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
 	}
 
-	public BigInteger getParentQuestionId() {
+	public long getParentQuestionId() {
 		return parentQuestionId;
 	}
 
-	public void setParentQuestionId(BigInteger parentQuestionId) {
+	public void setParentQuestionId(long parentQuestionId) {
 		this.parentQuestionId = parentQuestionId;
 	}
 
-	public BigInteger getLinkedId() {
+	public long getLinkedId() {
 		return linkedId;
 	}
 
-	public void setLinkedId(BigInteger linkedId) {
+	public void setLinkedId(long linkedId) {
 		this.linkedId = linkedId;
 	}
 

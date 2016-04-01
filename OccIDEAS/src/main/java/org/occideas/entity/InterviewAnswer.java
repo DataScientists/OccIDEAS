@@ -1,28 +1,32 @@
 package org.occideas.entity;
 
-import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "Interview_Answer")
-public class InterviewAnswer {
+public class InterviewAnswer implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
-	@Column(name = "id")
-	private BigInteger id;
+	@GeneratedValue
+	private long id;
 	@Column(name = "idinterview")
-	private BigInteger idInterview;
+	private long idInterview;
 	@Column(name = "topQuestionId")
-	private BigInteger topQuestionId;
+	private long topQuestionId;
 	@Column(name = "parentQuestionId")
-	private BigInteger parentQuestionId;
+	private long parentQuestionId;
 	@Column(name = "answerId")
-	private BigInteger answerId;
+	private long answerId;
 	@Column(name = "name")
 	private String name;
 	@Column(name = "description")
@@ -38,43 +42,43 @@ public class InterviewAnswer {
 	@Column(name = "lastUpdated")
 	private Date lastUpdated;
 
-	public BigInteger getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(BigInteger id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
-	public BigInteger getIdInterview() {
+	public long getIdInterview() {
 		return idInterview;
 	}
 
-	public void setIdInterview(BigInteger idInterview) {
+	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
 	}
 
-	public BigInteger getParentQuestionId() {
-		return parentQuestionId;
-	}
-
-	public void setParentQuestionId(BigInteger parentQuestionId) {
-		this.parentQuestionId = parentQuestionId;
-	}
-
-	public BigInteger getTopQuestionId() {
+	public long getTopQuestionId() {
 		return topQuestionId;
 	}
 
-	public void setTopQuestionId(BigInteger topQuestionId) {
+	public void setTopQuestionId(long topQuestionId) {
 		this.topQuestionId = topQuestionId;
 	}
 
-	public BigInteger getAnswerId() {
+	public long getParentQuestionId() {
+		return parentQuestionId;
+	}
+
+	public void setParentQuestionId(long parentQuestionId) {
+		this.parentQuestionId = parentQuestionId;
+	}
+
+	public long getAnswerId() {
 		return answerId;
 	}
 
-	public void setAnswerId(BigInteger answerId) {
+	public void setAnswerId(long answerId) {
 		this.answerId = answerId;
 	}
 

@@ -1,13 +1,11 @@
 package org.occideas.vo;
 
-import java.math.BigInteger;
-
 public class InterviewAnswerVO {
 
-	private BigInteger idInterview;
-	private BigInteger topQuestionId;
-	private BigInteger parentQuestionId;
-	private BigInteger answerId;
+	private long idInterview;
+	private long topQuestionId;
+	private long parentQuestionId;
+	private long answerId;
 	private String name;
 	private String description;
 	private String nodeClass;
@@ -15,35 +13,35 @@ public class InterviewAnswerVO {
 	private String type;
 	private Integer deleted;
 
-	public BigInteger getIdInterview() {
+	public long getIdInterview() {
 		return idInterview;
 	}
 
-	public void setIdInterview(BigInteger idInterview) {
+	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
 	}
 
-	public BigInteger getTopQuestionId() {
+	public long getTopQuestionId() {
 		return topQuestionId;
 	}
 
-	public void setTopQuestionId(BigInteger topQuestionId) {
+	public void setTopQuestionId(long topQuestionId) {
 		this.topQuestionId = topQuestionId;
 	}
 
-	public BigInteger getParentQuestionId() {
+	public long getParentQuestionId() {
 		return parentQuestionId;
 	}
 
-	public void setParentQuestionId(BigInteger parentQuestionId) {
+	public void setParentQuestionId(long parentQuestionId) {
 		this.parentQuestionId = parentQuestionId;
 	}
 
-	public BigInteger getAnswerId() {
+	public long getAnswerId() {
 		return answerId;
 	}
 
-	public void setAnswerId(BigInteger answerId) {
+	public void setAnswerId(long answerId) {
 		this.answerId = answerId;
 	}
 

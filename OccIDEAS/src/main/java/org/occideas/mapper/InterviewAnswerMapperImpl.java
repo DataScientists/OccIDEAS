@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.vo.InterviewAnswerVO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 
 	@Override

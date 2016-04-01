@@ -6,7 +6,12 @@ CREATE TABLE `Interview_Question_Answer` (
   `deleted` int(11) NOT NULL,
   `interview_idinterview` bigint(20) DEFAULT NULL,
   `question_id` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `sequence` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+   KEY `FK_jxnbqas7e5yffvln5e2e0m8vj` (`interview_idinterview`),
+  KEY `FK_8yoopbue4scj7hoyprv44gdep` (`question_id`),
+  CONSTRAINT `FK_8yoopbue4scj7hoyprv44gdep` FOREIGN KEY (`question_id`) REFERENCES `Node` (`idNode`),
+  CONSTRAINT `FK_jxnbqas7e5yffvln5e2e0m8vj` FOREIGN KEY (`interview_idinterview`) REFERENCES `Interview` (`idinterview`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3397 DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `Interview_Question`;

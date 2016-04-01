@@ -1,37 +1,35 @@
 package org.occideas.vo;
 
-import java.math.BigInteger;
-
 public class InterviewLinkedVO {
 
-	private BigInteger idInterview;
-	private BigInteger parentQuestionId;
-	private BigInteger linkedId;
+	private long idInterview;
+	private long parentQuestionId;
+	private long linkedId;
 	private String name;
 	private String description;
 	private Integer deleted;
 
-	public BigInteger getIdInterview() {
+	public long getIdInterview() {
 		return idInterview;
 	}
 
-	public void setIdInterview(BigInteger idInterview) {
+	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
 	}
 
-	public BigInteger getParentQuestionId() {
+	public long getParentQuestionId() {
 		return parentQuestionId;
 	}
 
-	public void setParentQuestionId(BigInteger parentQuestionId) {
+	public void setParentQuestionId(long parentQuestionId) {
 		this.parentQuestionId = parentQuestionId;
 	}
 
-	public BigInteger getLinkedId() {
+	public long getLinkedId() {
 		return linkedId;
 	}
 
-	public void setLinkedId(BigInteger linkedId) {
+	public void setLinkedId(long linkedId) {
 		this.linkedId = linkedId;
 	}
 

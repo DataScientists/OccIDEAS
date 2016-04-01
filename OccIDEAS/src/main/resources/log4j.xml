@@ -29,7 +29,7 @@
 	</logger>
 
 	<logger name="org.hibernate" additivity="false">
-		<level value="INFO" />
+		<level value="trace" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate.type" additivity="false">
@@ -37,7 +37,7 @@
 		<appender-ref ref="console" />
 	</logger>
 	<root>
-		<priority value="info"></priority>
+		<priority value="trace"></priority>
 		<appender-ref ref="FILE" />
 		<appender-ref ref="console" />
 	</root>

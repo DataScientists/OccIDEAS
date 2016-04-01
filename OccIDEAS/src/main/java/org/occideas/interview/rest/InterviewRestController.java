@@ -208,18 +208,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 				break;
 			}
 		}
-		if(questionVO==null){
-			//questionVO = processNonIntroModuleInterview(list);
-		}
-		if(questionVO==null){
-			//questionVO = processIntroModuleInterview(list);   
-		}
-		
-		 	  	
 		return questionVO;
 	}
 
-	//@TODO need to refactor below code, line per method should be max 10 for readability
 	private QuestionVO getNearestQuestion(InterviewVO interviewVO){
     	QuestionVO questionVO = null;
     	if(interviewVO.getQuestionsAsked().size()>0){
@@ -334,6 +325,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 //    		if(iqa.getQuestion().getIdNode()==q.getIdNode()){
 //    			if((iqa.getDeleted()==0)){//not deleted
 //    				retValue = true;
+//    				break;
 //    			}
 //    		}
     	}
