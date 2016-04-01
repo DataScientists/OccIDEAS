@@ -5,9 +5,18 @@ import java.util.List;
 
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.vo.InterviewQuestionVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 
+	@Autowired
+	private InterviewAnswerMapper answerMapper;
+	
+	@Autowired
+	private InterviewLinkMapper linkMapper;
+	
 	@Override
 	public InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question) {
 		if (question == null) {
@@ -22,6 +31,8 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setType(question.getType());
 		vo.setDescription(question.getDescription());
 		vo.setDeleted(question.getDeleted());
+		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
+		vo.setLinkingQuestion(linkMapper.convertToInterviewLinkVO(question.getLinkingQuestion()));
 		return vo;
 	}
 
@@ -53,6 +64,8 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		question.setNumber(questionVO.getNumber());
 		question.setQuestionId(questionVO.getQuestionId());
 		question.setType(questionVO.getType());
+		question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
+		question.setLinkingQuestion(linkMapper.convertToInterviewLink(questionVO.getLinkingQuestion()));
 		return question;
 	}
 

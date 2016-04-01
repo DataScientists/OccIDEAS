@@ -1,6 +1,7 @@
 package org.occideas.vo;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public class InterviewQuestionVO {
 
@@ -12,7 +13,10 @@ public class InterviewQuestionVO {
 	private String number;
 	private String type;
 	private Integer deleted;
-
+	private List<InterviewAnswerVO> answers;
+	private InterviewLinkedVO linkingQuestion;
+	
+	
 	public BigInteger getIdInterview() {
 		return idInterview;
 	}
@@ -75,6 +79,22 @@ public class InterviewQuestionVO {
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
+	}
+
+	public List<InterviewAnswerVO> getAnswers() {
+		return answers;
+	}
+
+	public void setAnswers(List<InterviewAnswerVO> answers) {
+		this.answers = answers;
+	}
+
+	public InterviewLinkedVO getLinkingQuestion() {
+		return linkingQuestion;
+	}
+
+	public void setLinkingQuestion(InterviewLinkedVO linkingQuestion) {
+		this.linkingQuestion = linkingQuestion;
 	}
 
 }
