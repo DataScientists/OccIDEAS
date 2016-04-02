@@ -1,12 +1,12 @@
 package org.occideas.vo;
 
-import java.math.BigInteger;
 import java.util.List;
 
 public class InterviewQuestionVO {
 
 	private long idInterview;
 	private long questionId;
+	private long parentId;
 	private String name;
 	private String description;
 	private String nodeClass;
@@ -15,8 +15,7 @@ public class InterviewQuestionVO {
 	private Integer deleted;
 	private List<InterviewAnswerVO> answers;
 	private InterviewLinkedVO linkingQuestion;
-	
-	
+
 	public long getIdInterview() {
 		return idInterview;
 	}
@@ -95,6 +94,14 @@ public class InterviewQuestionVO {
 
 	public void setLinkingQuestion(InterviewLinkedVO linkingQuestion) {
 		this.linkingQuestion = linkingQuestion;
+	}
+
+	public long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(long parentId) {
+		this.parentId = parentId;
 	}
 
 }

@@ -14,46 +14,46 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class InterviewVO {
 	private final String INTRO_MODULE = "M_IntroModule";
-	
+
 	private String referenceNumber;
 	private String freeText;
-    private long singleAnswerId;
-    private List<Long> multipleAnswerId;
-    private long interviewId;
-    private ModuleVO module;
-    private FragmentVO fragment;
-    private boolean active;
-    private String moduleName;
-    private String interviewType;
-    private String assessedStatus;
-    private ParticipantVO participant;
-    
-    private List<InterviewQuestionAnswerVO> questionsAsked;
-    
-    private List<RuleVO> firedRules;
-    
-    private List<RuleVO> autoAssessedRules;
-    
-    private List<RuleVO> manualAssessedRules;
-    
-    private List<AgentVO> agents;
-    
-    @JsonInclude(Include.NON_NULL)
-    private List<InterviewVO> interviews;
-    
-    private long questionId;
-    
-    private long parentId;
+	private long singleAnswerId;
+	private List<Long> multipleAnswerId;
+	private long interviewId;
+	private ModuleVO module;
+	private FragmentVO fragment;
+	private boolean active;
+	private String moduleName;
+	private String interviewType;
+	private String assessedStatus;
+	private ParticipantVO participant;
 
-    public long getQuestionId() {
-        return questionId;
-    }
+	private List<InterviewQuestionVO> actualQuestion = new ArrayList<>();
 
-    public void setQuestionId(long questionId) {
-        this.questionId = questionId;
-    }
+	private List<RuleVO> firedRules;
 
-    public ModuleVO getModule() {
+	private List<RuleVO> autoAssessedRules;
+
+	private List<RuleVO> manualAssessedRules;
+
+	private List<AgentVO> agents;
+
+	@JsonInclude(Include.NON_NULL)
+	private List<InterviewVO> interviews;
+
+	private long questionId;
+
+	private long parentId;
+
+	public long getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(long questionId) {
+		this.questionId = questionId;
+	}
+
+	public ModuleVO getModule() {
 		return module;
 	}
 
@@ -70,37 +70,38 @@ public class InterviewVO {
 	}
 
 	public String getFreeText() {
-        return freeText;
-    }
+		return freeText;
+	}
 
-    public void setFreeText(String freeText) {
-        this.freeText = freeText;
-    }
+	public void setFreeText(String freeText) {
+		this.freeText = freeText;
+	}
 
-    public long getSingleAnswerId() {
-        return singleAnswerId;
-    }
+	public long getSingleAnswerId() {
+		return singleAnswerId;
+	}
 
-    public void setSingleAnswerId(long singleAnswerId) {
-        this.singleAnswerId = singleAnswerId;
-    }
+	public void setSingleAnswerId(long singleAnswerId) {
+		this.singleAnswerId = singleAnswerId;
+	}
 
-    public List<Long> getMultipleAnswerId() {
-        return multipleAnswerId;
-    }
+	public List<Long> getMultipleAnswerId() {
+		return multipleAnswerId;
+	}
 
-    public void setMultipleAnswerId(List<Long> multipleAnswerId) {
-        this.multipleAnswerId = multipleAnswerId;
-    }
+	public void setMultipleAnswerId(List<Long> multipleAnswerId) {
+		this.multipleAnswerId = multipleAnswerId;
+	}
 
-    public long getInterviewId() {
-        return interviewId;
-    }
+	public long getInterviewId() {
+		return interviewId;
+	}
 
-    public void setInterviewId(long interviewId) {
-        this.interviewId = interviewId;
-    }
-    public String getReferenceNumber() {
+	public void setInterviewId(long interviewId) {
+		this.interviewId = interviewId;
+	}
+
+	public String getReferenceNumber() {
 		return referenceNumber;
 	}
 
@@ -108,15 +109,12 @@ public class InterviewVO {
 		this.referenceNumber = referenceNumber;
 	}
 
-	public List<InterviewQuestionAnswerVO> getQuestionsAsked() {
-		if(questionsAsked==null){
-			questionsAsked = new ArrayList<InterviewQuestionAnswerVO>();
-		}
-		return questionsAsked;
+	public List<InterviewQuestionVO> getActualQuestion() {
+		return actualQuestion;
 	}
 
-	public void setQuestionsAsked(List<InterviewQuestionAnswerVO> questionsAsked) {
-		this.questionsAsked = questionsAsked;
+	public void setActualQuestion(List<InterviewQuestionVO> actualQuestion) {
+		this.actualQuestion = actualQuestion;
 	}
 
 	public boolean isActive() {
@@ -142,10 +140,10 @@ public class InterviewVO {
 
 	public List<AgentVO> getAgents() {
 		agents = new ArrayList<AgentVO>();
-		if(this.getFiredRules()!=null){
-			for(RuleVO rule:this.getFiredRules()){
+		if (this.getFiredRules() != null) {
+			for (RuleVO rule : this.getFiredRules()) {
 				AgentVO agent = rule.getAgent();
-				if(!(agents.contains(agent))){
+				if (!(agents.contains(agent))) {
 					agents.add(agent);
 				}
 			}
@@ -158,9 +156,9 @@ public class InterviewVO {
 	}
 
 	public String getModuleName() {
-		if(this.getModule()!=null){
+		if (this.getModule() != null) {
 			moduleName = this.getModule().getName();
-		}else if(this.getFragment()!=null){			
+		} else if (this.getFragment() != null) {
 			moduleName = this.getFragment().getName();
 		}
 		return moduleName;
@@ -171,13 +169,13 @@ public class InterviewVO {
 	}
 
 	public String getInterviewType() {
-		if(this.getModule()!=null){
-			if(this.getModule().getType().equalsIgnoreCase(INTRO_MODULE)){
+		if (this.getModule() != null) {
+			if (this.getModule().getType().equalsIgnoreCase(INTRO_MODULE)) {
 				interviewType = "Introduction Module";
-			}else {
+			} else {
 				interviewType = "Job Module";
-			}		
-		}else if(this.getFragment()!=null){			
+			}
+		} else if (this.getFragment() != null) {
 			interviewType = "Associate Job Module";
 		}
 		return interviewType;
@@ -203,11 +201,11 @@ public class InterviewVO {
 		this.manualAssessedRules = manualAssessedRules;
 	}
 
-	public String getAssessedStatus() {		
-		if(this.getManualAssessedRules()!=null){
-			if(this.getManualAssessedRules().size()>0){
+	public String getAssessedStatus() {
+		if (this.getManualAssessedRules() != null) {
+			if (this.getManualAssessedRules().size() > 0) {
 				assessedStatus = "Complete";
-			}else{
+			} else {
 				assessedStatus = "Incomplete";
 			}
 		}
@@ -227,7 +225,7 @@ public class InterviewVO {
 	}
 
 	public List<InterviewVO> getInterviews() {
-		if(interviews==null){
+		if (interviews == null) {
 			interviews = new ArrayList<InterviewVO>();
 		}
 		return interviews;
@@ -244,5 +242,5 @@ public class InterviewVO {
 	public void setParentId(long parentId) {
 		this.parentId = parentId;
 	}
-	
+
 }

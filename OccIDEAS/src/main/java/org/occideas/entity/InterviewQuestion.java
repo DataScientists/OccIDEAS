@@ -14,6 +14,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 @Entity
 @Table(name = "interview_question")
 public class InterviewQuestion implements java.io.Serializable {
@@ -32,15 +35,18 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@Column(name = "question_id")
 	private long questionId;
+	
+	@Column(name = "parentId")
+	private long parentId;
 
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"
-			,insertable=false,updatable=false),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
-					,insertable=false,updatable=false) })
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
 	private List<InterviewAnswer> answers;
 
 	@OneToOne(fetch = FetchType.LAZY)
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
 	@JoinColumns({ @JoinColumn(name = "question_id", referencedColumnName = "parentQuestionId"
 			,insertable=false,updatable=false),
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
@@ -164,4 +170,13 @@ public class InterviewQuestion implements java.io.Serializable {
 		this.lastUpdated = lastUpdated;
 	}
 
+	public long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(long parentId) {
+		this.parentId = parentId;
+	}
+
+	
 }

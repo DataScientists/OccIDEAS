@@ -127,30 +127,30 @@
     
 </div>
 <div class="col-md-8 moduleInterview" id="interview-question-list" >
-	<div ui-tree="" id="tree-root1_$index" ng-repeat="interviewIntro in participant.interviews ">
+	<div ui-tree="" id="tree-root1_$index">
 		<div class="angular-ui-tree">
 			<div class="tree-node">
 				<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}">
-				{{interviewIntro.module.name}}{{interviewIntro.fragment.name}}</span>
+				{{interview.module.name}}
+<!-- 				{{participant.interviews.module.name}}{{participant.interviews.fragment.name}}</span> -->
+				</span>
 				<div>
-    				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interviewIntro.questionsAsked | qaFilter:0 | orderBy:'question.number' ">
-    					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
+    				<div ng-repeat="qa in activeInterview.questionsAsked">
+    					<div class="tree-node-content Q_interviewresult">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   			<span class="badge">{{qa.question.number}}</span>
+                   			<span class="badge">{{qa.number}}</span>
                 		</div>  
     					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
 	    							ng-click="vm.editQuestion(interviewIntro,qa.question)"></span>
 	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
-	    					
+    					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
     					</span>  					
     					</div>
-    					<div class="tree-node-content P_interviewresult">
+    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers">
     						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
+                   				<span class="badge">{{as.number}}</span>
                 			</div>
-    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
+    						<span id="{{'IntResult'+as.idNode}}" >{{as.name }}
     						</span>
     					</div>
     				</div>

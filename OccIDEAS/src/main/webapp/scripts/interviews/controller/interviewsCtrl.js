@@ -237,16 +237,39 @@
         function processQuestion(interview,node){
         	var answer = node.selectedAnswer;
             var newQuestionAsked = {
-            	multiAnswers: false,
-                possibleAnswer: answer,
-                idInterview: interview.interviewId,
-                question: node,
-                deleted:0,
-                interviewQuestionAnswerFreetext: answer.name
+            	  idInterview:$scope.interviewId,
+            	  questionId:node.idNode,
+            	  parentId:node.parentId,
+            	  name:node.name,
+            	  description:node.description,
+            	  nodeClass:node.nodeclass,
+            	  number: node.number,
+            	  type: node.type,
+            	  deleted: 0,
+            	  answers: [{
+            		  idInterview:$scope.interviewId,
+            		  topQuestionId:node.topNodeId,
+            		  parentQuestionId:node.idNode,
+            		  answerId:answer.idNode,
+            		  name:answer.name,
+            		  description:answer.description,
+            		  nodeClass:answer.nodeclass,
+            		  number:answer.number,
+            		  type:answer.type,
+            		  deleted:0
+            	  }]
             }
-            verifyIfUpdate(interview,node);
             interview.questionsAsked.push(newQuestionAsked);
-            showNextQuestion();
+            InterviewsService.saveQuestion(newQuestionAsked).then(function (response) {
+    			if (response.status === 200) {
+    				var actualQuestion =
+                	{
+            	        parentId:answer.idNode,
+            	        number:answer.number
+                	}
+    				showNextQuestion(actualQuestion);
+    			}
+    		});
         }
         
         $scope.saveAnswerQuestion = function (node) {
@@ -254,7 +277,6 @@
                 if (response.status === 200) {
                 	$scope.participant = response.data[0];
                 	
-                	cascadeFindInterview($scope.participant.interviews, node.activeInterviewId); 
                 	var interview = $scope.activeInterview;
                 	if(!interview){
                 		return null;
@@ -269,8 +291,8 @@
                     } else {
                     	processQuestion(interview,node);
                     }
-                    saveInterview(interview);
-                    checkUpdateAnswersFlag();
+//                    saveInterview(interview);
+//                    checkUpdateAnswersFlag();
                 }
         	}); 
         }
@@ -387,16 +409,29 @@
                         interview.referenceNumber = $scope.referenceNumber;
                         var copyParticipant = angular.copy($scope.participant);
                         interview.participant = copyParticipant;
-                        $scope.participant.interviews = [];
-                        $scope.participant.interviews.push(interview);
+                        $scope.interview = {};
+                        $scope.interview = interview;
                         $scope.activeInterview = interview;
-                        ParticipantsService.save($scope.participant).then(function (response) {
+                        interview.active = true;
+                        $scope.interviews = [];
+                        $scope.interviews[0] = {};
+                        InterviewsService.startInterview(interview).then(function (response) {
                             if (response.status === 200) {
-                            	$scope.data.interviewStarted = true;
-                                $scope.data.interviewEnded = false;
-                                showNextQuestion();
-                            } else {
-                                console.log('ERROR on Start Interview!');
+                            	$scope.interviewId = response.data.interviewId;
+                            	ParticipantsService.save($scope.participant).then(function (response) {
+                                    if (response.status === 200) {
+                                    	$scope.data.interviewStarted = true;
+                                        $scope.data.interviewEnded = false;
+                                        var actualQuestion =
+                                        	{
+                                    	        parentId:interview.module.idNode,
+                                    	        number:'0'
+                                        	}
+                                        showNextQuestion(actualQuestion);
+                                    } else {
+                                        console.log('ERROR on Start Interview!');
+                                    }
+                                });
                             }
                         });
                     });
@@ -563,39 +598,38 @@
              });
         }
         
-        function showNextQuestion(){
-        	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
-                if (response.status === 200) {
-                	$scope.participant = response.data[0];
-                	ParticipantsService.getNextQuestion($scope.participant).then(function (response) {
-                        if (response.status === 200) {
-                            var question = response.data;
-                            $scope.data.showedQuestion = question;
-                            if(!$scope.updateAnswers){
-                            	$scope.questionHistory.push(question);
-                            }
-                            resetSelectedIndex();
-                            if(question.type=='Q_frequency'){
-                            	$scope.hoursArray = $scope.getShiftHoursArray();
-                            	$scope.minutesArray = $scope.getShiftMinutesArray();
-                            	$scope.weeks = $scope.getWeeksArray();
-                            	
-                            }
-                        } else if (response.status == 204) {
-                            $scope.data.interviewStarted = false;
-                            $scope.data.interviewEnded = true;
-                            //saveParticipant();
-                        } else {
+        function showNextQuestion(actualQuestion){
+        	  var parentIdTemp = actualQuestion.parentId;
+              InterviewsService.getNextQuestion(actualQuestion).then(function (response) {
+                    if (response.status === 200) {
+                       var question = response.data;
+                       $scope.data.showedQuestion = question;
+                       resetSelectedIndex();
+                       if(question.type=='Q_frequency'){
+                          	$scope.hoursArray = $scope.getShiftHoursArray();
+                          	$scope.minutesArray = $scope.getShiftMinutesArray();
+                           	$scope.weeks = $scope.getWeeksArray();
+                       }
+                       } else if (response.status == 204) {
+                    	   var q = _.find($scope.activeInterview.questionsAsked,function(val,index){
+                    		   return val.questionId === parentIdTemp;
+                    	   });
+                    	   if(!q){
+                    		   $scope.data.interviewStarted = false;
+                    		   $scope.data.interviewEnded = true;
+                    	   }else{
+                    		   var actualQuestion =
+                           		{
+                    				   parentId:q.parentId,
+                    				   number:q.number
+                           		}
+                    		   showNextQuestion(actualQuestion);
+                    	   }
+                       } else {
                             console.log('ERROR on Get!');
-                        }
-                        if($scope.updateAnswers){
-                            $scope.updateAnswers = false;
-                            safeDigest($scope.updateAnswers);
-                        }
-                        angular.element('#numId').focus();
+                       }
+                       angular.element('#numId').focus();
                     });
-                }
-        	});
-        }
+              }
     }
 })();

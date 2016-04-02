@@ -1,7 +1,6 @@
 package org.occideas.interview.rest;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -21,7 +20,7 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.service.RuleService;
 import org.occideas.vo.FragmentVO;
-import org.occideas.vo.InterviewQuestionAnswerVO;
+import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.ModuleVO;
@@ -175,21 +174,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Path(value = "/nextquestion")
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response getNextQuestion(List<InterviewVO> list) {
-    	
+    public Response getNextQuestion(InterviewQuestionVO actualQuestionVO) {
         try {
-        	 QuestionVO questionVO = getInterviewQuestion(list);
+        	 QuestionVO questionVO = getNearestQuestion(actualQuestionVO);
         	 if(questionVO!=null){
              	return Response.ok(questionVO).build();
              }else{
-             	try {
-             		for(InterviewVO interviewVO:list){
-                 		this.determineFiredRules(interviewVO);
-                 	}
-             	}catch (Throwable e) {
-                 	 log.error("getNextQuestion badRequest:"+list, e);
-                     return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-                 }        	
              	return Response.status(Response.Status.NO_CONTENT).build();
              }   
         } catch (Throwable e) {
@@ -198,139 +188,21 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         }
     }
 
-	private QuestionVO getInterviewQuestion(List<InterviewVO> list) {
-		QuestionVO questionVO = null;
-		for(InterviewVO interviewVO:list){
-			if(interviewVO.isActive()){
-				questionVO = this.getNearestQuestion(interviewVO);
-			}  
-			if(questionVO!=null){
-				break;
-			}
-		}
-		return questionVO;
-	}
-
-	private QuestionVO getNearestQuestion(InterviewVO interviewVO){
-    	QuestionVO questionVO = null;
-    	if(interviewVO.getQuestionsAsked().size()>0){
-    		List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
-//    		Collections.sort(questionsAsked);  	
-    		for(InterviewQuestionAnswerVO iqa: questionsAsked){
-//    			if(iqa.getPossibleAnswer()!=null){
-//    				List<QuestionVO> questions = iqa.getPossibleAnswer().getChildNodes();
-//    				for(QuestionVO question: questions){   
-//        				if(!isQuesitonAnswered(question,questionsAsked)){
-//        					if(question.compareTo(questionVO)<0){
-//        						questionVO = question;       						
-//        					}
-//        				}
-//        			}				
-//    			}
-    			
-    		}
-    		if(questionVO==null){
-    			if(interviewVO.getFragment()!=null){
-    				List<QuestionVO> childQuestions = interviewVO.getFragment().getChildNodes();
-    				if(childQuestions.size()==0){					
-    					for(FragmentVO fragment:fragmentService.findById(interviewVO.getFragment().getIdNode())){
-    						childQuestions = fragment.getChildNodes();
-    					}
-    				}
-        			for(QuestionVO question: childQuestions){     				
-        				if(!isQuesitonAnswered(question,questionsAsked)){					
-        					questionVO = question;	
-        					break;
-        				}
-        			}
-        		}else {
-        			List<QuestionVO> childQuestions = interviewVO.getModule().getChildNodes();
-    				if(childQuestions.size()==0){					
-    					for(ModuleVO module:moduleService.findById(interviewVO.getModule().getIdNode())){
-    						childQuestions = module.getChildNodes();
-    					}
-    				}
-        			for(QuestionVO question: childQuestions){     				
-        				if(!isQuesitonAnswered(question,questionsAsked)){
-        					questionVO = question;	
-        					break;
-        				}
-        			}
-        		}
-    		}
-    	} else if ((interviewVO.getModule()!=null) && interviewVO.getInterviewId() > 0) { //moving into module
-            questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getModule().getIdNode());
-            questionVO.setLink(interviewVO.getModule().getIdNode());
-            
-        } else if ((interviewVO.getFragment() != null) && interviewVO.getInterviewId() > 0) { //moving into fragment aJSM
-            questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), interviewVO.getFragment().getIdNode());
-            questionVO.setLink(interviewVO.getModule().getIdNode());
-        } 
-    	if(questionVO!=null){
-    		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
-        		QuestionVO linkingQuestion = questionVO.clone();
-        		Long linkingAjsmId = questionVO.getLink();
-        		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
-        		questionVO.setLinkingQuestion(linkingQuestion);
-            }else if("Q_linkedmodule".equalsIgnoreCase(questionVO.getType())){
-            	QuestionVO linkingQuestion = questionVO.clone();
-        		Long linkingmoduleId = questionVO.getLink();
-        		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingmoduleId);
-        		if(questionVO!=null){
-            		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
-            			InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
-//            			iqa.setQuestion(linkingQuestion);
-            			iqa.setIdInterview(interviewVO.getInterviewId());
-//            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
-            			interviewVO.getQuestionsAsked().add(iqa);
-            			service.update(interviewVO);
-                		linkingQuestion = questionVO.clone();
-                		Long linkingAjsmId = questionVO.getLink();
-                		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
-                		questionVO.setLinkingQuestion(linkingQuestion);
-                    }else if("Q_linkedmodule".equalsIgnoreCase(questionVO.getType())){
-            			InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
-//            			iqa.setQuestion(linkingQuestion);
-            			iqa.setIdInterview(interviewVO.getInterviewId());
-//            			iqa.setInterviewQuestionAnswerFreetext("Q_linked");
-            			interviewVO.getQuestionsAsked().add(iqa);
-            			service.update(interviewVO);
-                		linkingQuestion = questionVO.clone();
-                		Long linkingAjsmId = questionVO.getLink();
-                		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
-                		if(questionVO!=null){
-                    		if("Q_linkedajsm".equalsIgnoreCase(questionVO.getType())){
-                    			linkingQuestion = questionVO.clone();
-                    			InterviewQuestionAnswerVO iqa1 = new InterviewQuestionAnswerVO();
-//                    			iqa1.setQuestion(linkingQuestion);
-                    			iqa1.setIdInterview(interviewVO.getInterviewId());
-//                    			iqa1.setInterviewQuestionAnswerFreetext("Q_linked");
-                    			interviewVO.getQuestionsAsked().add(iqa1);
-                    			service.update(interviewVO);
-                        		linkingAjsmId = questionVO.getLink();
-                        		questionVO = questionService.getNextQuestion(interviewVO.getInterviewId(), linkingAjsmId);
-                        		questionVO.setLinkingQuestion(linkingQuestion);
-                            }
-                    	}
-                    }
-            	}
-        		questionVO.setLinkingQuestion(linkingQuestion);
-            }
-    	}
-    	return questionVO;
+	private QuestionVO getNearestQuestion(InterviewQuestionVO actualQuestionVO){
+    	return questionService.determineNextQuestionByCurrentNumber(String.valueOf(actualQuestionVO.getParentId()),actualQuestionVO.getNumber());
     }
-    private boolean isQuesitonAnswered(QuestionVO q,List<InterviewQuestionAnswerVO> questionsAsked){
-    	boolean retValue = false;
-    	for(InterviewQuestionAnswerVO iqa: questionsAsked){
+//    private boolean isQuesitonAnswered(QuestionVO q,List<InterviewQuestionAnswerVO> questionsAsked){
+//    	boolean retValue = false;
+//    	for(InterviewQuestionAnswerVO iqa: questionsAsked){
 //    		if(iqa.getQuestion().getIdNode()==q.getIdNode()){
 //    			if((iqa.getDeleted()==0)){//not deleted
 //    				retValue = true;
 //    				break;
 //    			}
 //    		}
-    	}
-    	return retValue;
-    }
+//    	}
+//    	return retValue;
+//    }
     private InterviewVO determineFiredRules(InterviewVO interview){
     	ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
     	ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
@@ -357,7 +229,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	for(RuleVO rule: rules){
 			boolean bFired = false;
 			for(PossibleAnswerVO  pa: rule.getConditions()){
-				for(InterviewQuestionAnswerVO iqa: interview.getQuestionsAsked()){
+//				for(InterviewQuestionAnswerVO iqa: interview.getQuestionsAsked()){
 //					if(iqa.getPossibleAnswer()!=null){
 //						if(pa.getIdNode()==iqa.getPossibleAnswer().getIdNode()){
 //	    	    			bFired = true;
@@ -367,7 +239,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 //	    	    		}
 					}	    		
     	    	}
-			}
+//			}
 //			if(bFired){
 //				firedRules.add(rule);
 //			}			

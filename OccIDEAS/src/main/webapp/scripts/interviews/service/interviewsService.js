@@ -69,6 +69,16 @@
             return request.then(handleSuccess, handleError);
         }
 
+        function saveQuestion(data) {
+			var restUrl = 'rest/interviewquestionanswer/save';
+			var request =  $http({
+				  method: 'POST',
+				  url: restUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+        
         function handleError(response) {
             if (
                 !angular.isObject(response.data) || !response.data.message
@@ -88,7 +98,8 @@
         	save: save,
             get: get,
             startInterview:startInterview,
-            getNextQuestion: getNextQuestion
+            getNextQuestion: getNextQuestion,
+            saveQuestion:saveQuestion
         };
     }
 })();

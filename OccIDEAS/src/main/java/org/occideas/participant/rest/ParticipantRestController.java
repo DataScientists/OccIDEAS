@@ -1,7 +1,6 @@
 package org.occideas.participant.rest;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -19,7 +18,6 @@ import org.occideas.interview.service.InterviewService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.vo.FragmentVO;
-import org.occideas.vo.InterviewQuestionAnswerVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.ModuleVO;
@@ -174,7 +172,7 @@ public class ParticipantRestController implements BaseRestController<Participant
     	for(RuleVO rule: rules){
 			boolean bFired = false;
 			for(PossibleAnswerVO  pa: rule.getConditions()){
-				for(InterviewQuestionAnswerVO iqa: interview.getQuestionsAsked()){
+//				for(InterviewQuestionAnswerVO iqa: interview.getQuestionsAsked()){
 //					if(iqa.getPossibleAnswer()!=null){
 //						if(pa.getIdNode()==iqa.getPossibleAnswer().getIdNode()){
 //	    	    			bFired = true;
@@ -183,7 +181,7 @@ public class ParticipantRestController implements BaseRestController<Participant
 //	    	    			bFired = false;
 //	    	    		}
 //					}	    		
-    	    	}
+//    	    	}
 			}
 			if(bFired){
 				firedRules.add(rule);
@@ -214,45 +212,45 @@ public class ParticipantRestController implements BaseRestController<Participant
 		}	  	
 		return questionVO;
 	}
-	private QuestionVO getNextInterviewQuestionFromLinkedInterview(QuestionVO questionVO,InterviewVO interviewVO) {
-		QuestionVO retValue = null;
-		String linkedModuleName = "";
-		//create a new child interview			
-		InterviewVO	childInterviewVO = new InterviewVO();
-		childInterviewVO.setReferenceNumber(interviewVO.getParticipant().getReference());
-		childInterviewVO.setParentId(questionVO.getActiveInterviewId());
-		childInterviewVO.setParticipant(interviewVO.getParticipant());
-		if(questionVO.getType().equalsIgnoreCase("Q_linkedmodule")){
-			for(ModuleVO module:moduleService.findByIdForInterview(questionVO.getLink())){
-				childInterviewVO.setModule(module);
-				linkedModuleName = "Module:"+module.getIdNode()+":"+module.getName();
-			}
-		} else if(questionVO.getType().equalsIgnoreCase("Q_linkedajsm")){
-			for(FragmentVO fragment:fragmentService.findByIdForInterview(questionVO.getLink())){
-				childInterviewVO.setFragment(fragment);
-				linkedModuleName = "AJSM:"+fragment.getIdNode()+":"+fragment.getName();
-			}
-		} 
+//	private QuestionVO getNextInterviewQuestionFromLinkedInterview(QuestionVO questionVO,InterviewVO interviewVO) {
+//		QuestionVO retValue = null;
+//		String linkedModuleName = "";
+//		//create a new child interview			
+//		InterviewVO	childInterviewVO = new InterviewVO();
+//		childInterviewVO.setReferenceNumber(interviewVO.getParticipant().getReference());
+//		childInterviewVO.setParentId(questionVO.getActiveInterviewId());
+//		childInterviewVO.setParticipant(interviewVO.getParticipant());
+//		if(questionVO.getType().equalsIgnoreCase("Q_linkedmodule")){
+//			for(ModuleVO module:moduleService.findByIdForInterview(questionVO.getLink())){
+//				childInterviewVO.setModule(module);
+//				linkedModuleName = "Module:"+module.getIdNode()+":"+module.getName();
+//			}
+//		} else if(questionVO.getType().equalsIgnoreCase("Q_linkedajsm")){
+//			for(FragmentVO fragment:fragmentService.findByIdForInterview(questionVO.getLink())){
+//				childInterviewVO.setFragment(fragment);
+//				linkedModuleName = "AJSM:"+fragment.getIdNode()+":"+fragment.getName();
+//			}
+//		} 
 		//save child interview
-		childInterviewVO = interviewService.create(childInterviewVO);		
+//		childInterviewVO = interviewService.create(childInterviewVO);		
 		
 		//save linking question
-		InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
+//		InterviewQuestionAnswerVO iqa = new InterviewQuestionAnswerVO();
 //		iqa.setQuestion(questionVO);
-		iqa.setIdInterview(questionVO.getActiveInterviewId());
+//		iqa.setIdInterview(questionVO.getActiveInterviewId());
 		
-		if(childInterviewVO.getModule()!=null){
-			linkedModuleName = "Module:"+childInterviewVO.getModule().getIdNode()+":"+childInterviewVO.getModule().getName();
-		}
-		if(childInterviewVO.getFragment()!=null){
-			linkedModuleName = "Fragment:"+childInterviewVO.getFragment().getIdNode()+":"+childInterviewVO.getFragment().getName();
-		}
+//		if(childInterviewVO.getModule()!=null){
+//			linkedModuleName = "Module:"+childInterviewVO.getModule().getIdNode()+":"+childInterviewVO.getModule().getName();
+//		}
+//		if(childInterviewVO.getFragment()!=null){
+//			linkedModuleName = "Fragment:"+childInterviewVO.getFragment().getIdNode()+":"+childInterviewVO.getFragment().getName();
+//		}
 //		iqa.setInterviewQuestionAnswerFreetext("Linked "+linkedModuleName);
-		interviewVO.getQuestionsAsked().add(iqa);
-		interviewService.update(interviewVO);	
-		retValue = this.getNearestQuestion(childInterviewVO);
-		return retValue;
-	}
+//		interviewVO.getQuestionsAsked().add(iqa);
+//		interviewService.update(interviewVO);	
+//		retValue = this.getNearestQuestion(childInterviewVO);
+//		return retValue;
+//	}
 	private QuestionVO getNearestQuestion(InterviewVO interviewVO){
     	QuestionVO questionVO = null;
     	//first check child interviews
@@ -265,20 +263,20 @@ public class ParticipantRestController implements BaseRestController<Participant
 				
 			}
 		}
-		List<InterviewQuestionAnswerVO> questionsAsked = new ArrayList<InterviewQuestionAnswerVO>();
-		if(questionVO==null){//not found in child interviews
-			if(interviewVO.getQuestionsAsked().size()==0){//this is the first question in the module
-	    		if(interviewVO.getModule()!=null){
-	    			questionVO = interviewVO.getModule().getChildNodes().get(0);
-	    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-				}else if(interviewVO.getFragment()!=null){
-					questionVO = interviewVO.getFragment().getChildNodes().get(0);
-					questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-				} 		
-	    	}else{
-	    		questionsAsked = interviewVO.getQuestionsAsked();
+//		List<InterviewQuestionAnswerVO> questionsAsked = new ArrayList<InterviewQuestionAnswerVO>();
+//		if(questionVO==null){//not found in child interviews
+//			if(interviewVO.getQuestionsAsked().size()==0){//this is the first question in the module
+//	    		if(interviewVO.getModule()!=null){
+//	    			questionVO = interviewVO.getModule().getChildNodes().get(0);
+//	    			questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+//				}else if(interviewVO.getFragment()!=null){
+//					questionVO = interviewVO.getFragment().getChildNodes().get(0);
+//					questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+//				} 		
+//	    	}else{
+//	    		questionsAsked = interviewVO.getQuestionsAsked();
 //	    		Collections.sort(questionsAsked);  	
-	    		for(InterviewQuestionAnswerVO iqa: questionsAsked){
+//	    		for(InterviewQuestionAnswerVO iqa: questionsAsked){
 //	    			if(iqa.getPossibleAnswer()!=null){
 //	    				List<QuestionVO> questions = iqa.getPossibleAnswer().getChildNodes();
 //	    				for(QuestionVO question: questions){   
@@ -290,57 +288,57 @@ public class ParticipantRestController implements BaseRestController<Participant
 //	        				}
 //	        			}				
 //	    			}
-	    		}
-	    	}
-		} 	
-    	if(questionVO==null){//if not found
+//	    		}
+//	    	}
+//		} 	
+//    	if(questionVO==null){//if not found
     		//then check root questions
-			if(interviewVO.getFragment()!=null){//if a aJSM check in root questions list
-				List<QuestionVO> childQuestions = interviewVO.getFragment().getChildNodes();
-				if(childQuestions.size()==0){					
-					for(FragmentVO fragment:fragmentService.findById(interviewVO.getFragment().getIdNode())){
-						childQuestions = fragment.getChildNodes();
-					}
-				}
-    			for(QuestionVO question: childQuestions){     				
-    				if(!isQuesitonAnswered(question,questionsAsked)){					
-    					questionVO = question;	
-    					questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-    					break;
-    				}
-    			}
-    		}else { //must be a module check in module root questions list
-    			List<QuestionVO> childQuestions = interviewVO.getModule().getChildNodes();
-				if(childQuestions.size()==0){					
-					for(ModuleVO module:moduleService.findById(interviewVO.getModule().getIdNode())){
-						childQuestions = module.getChildNodes();
-					}
-				}
-    			for(QuestionVO question: childQuestions){     				
-    				if(!isQuesitonAnswered(question,questionsAsked)){
-    					questionVO = question;	
-    					questionVO.setActiveInterviewId(interviewVO.getInterviewId());
-    					break;
-    				}
-    			}
-    		}	
-    	}
-    	if(questionVO!=null){//if not null check if a linking question
-			if(questionVO.getLink()>0){//this is a linking question
-				questionVO = this.getNextInterviewQuestionFromLinkedInterview(questionVO,interviewVO);				
-			}
-		}
+//			if(interviewVO.getFragment()!=null){//if a aJSM check in root questions list
+//				List<QuestionVO> childQuestions = interviewVO.getFragment().getChildNodes();
+//				if(childQuestions.size()==0){					
+//					for(FragmentVO fragment:fragmentService.findById(interviewVO.getFragment().getIdNode())){
+//						childQuestions = fragment.getChildNodes();
+//					}
+//				}
+//    			for(QuestionVO question: childQuestions){     				
+//    				if(!isQuesitonAnswered(question,questionsAsked)){					
+//    					questionVO = question;	
+//    					questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+//    					break;
+//    				}
+//    			}
+//    		}else { //must be a module check in module root questions list
+//    			List<QuestionVO> childQuestions = interviewVO.getModule().getChildNodes();
+//				if(childQuestions.size()==0){					
+//					for(ModuleVO module:moduleService.findById(interviewVO.getModule().getIdNode())){
+//						childQuestions = module.getChildNodes();
+//					}
+//				}
+//    			for(QuestionVO question: childQuestions){     				
+//    				if(!isQuesitonAnswered(question,questionsAsked)){
+//    					questionVO = question;	
+//    					questionVO.setActiveInterviewId(interviewVO.getInterviewId());
+//    					break;
+//    				}
+//    			}
+//    		}	
+//    	}
+//    	if(questionVO!=null){//if not null check if a linking question
+//			if(questionVO.getLink()>0){//this is a linking question
+//				questionVO = this.getNextInterviewQuestionFromLinkedInterview(questionVO,interviewVO);				
+//			}
+//		}
     	return questionVO;
     }
-	private boolean isQuesitonAnswered(QuestionVO q,List<InterviewQuestionAnswerVO> questionsAsked){
-    	boolean retValue = false;
-    	for(InterviewQuestionAnswerVO iqa: questionsAsked){
+//	private boolean isQuesitonAnswered(QuestionVO q,List<InterviewQuestionAnswerVO> questionsAsked){
+//    	boolean retValue = false;
+//    	for(InterviewQuestionAnswerVO iqa: questionsAsked){
 //    		if(iqa.getQuestion().getIdNode()==q.getIdNode()){
 //    			if((iqa.getDeleted()==0)){//not deleted
 //    				retValue = true;
 //    			}
 //    		}
-    	}
-    	return retValue;
+//    	}
+//    	return retValue;
     }
-}
+//}

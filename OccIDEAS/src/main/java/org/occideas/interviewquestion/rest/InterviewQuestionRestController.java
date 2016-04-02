@@ -1,9 +1,11 @@
-package org.occideas.interviewquestionanswer.rest;
+package org.occideas.interviewquestion.rest;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -11,22 +13,22 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
-import org.occideas.interviewquestionanswer.service.InterviewQuestionAnswerService;
-import org.occideas.vo.InterviewQuestionAnswerVO;
+import org.occideas.interviewquestion.service.InterviewQuestionService;
+import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @Path("/interviewquestionanswer")
-public class InterviewQuestionAnswerRestController implements BaseRestController<InterviewQuestionAnswerVO>{
+public class InterviewQuestionRestController implements BaseRestController<InterviewQuestionVO>{
 
 	@Autowired
-	private InterviewQuestionAnswerService service;	
+	private InterviewQuestionService service;	
 	
 	@GET
 	@Path(value="/getlist")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response listAll() {
-		List<InterviewQuestionAnswerVO> list = new ArrayList<InterviewQuestionAnswerVO>();
+		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
 		try{
 			list = service.listAll();
 		}catch(Throwable e){
@@ -40,7 +42,7 @@ public class InterviewQuestionAnswerRestController implements BaseRestController
 	@Path(value="/getbyinterviewid")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getByModuleId(@QueryParam("id") Long id) {
-		List<InterviewQuestionAnswerVO> list = new ArrayList<InterviewQuestionAnswerVO>();
+		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
 		try{
 			list = service.findByInterviewId(id);
 		}catch(Throwable e){
@@ -57,19 +59,22 @@ public class InterviewQuestionAnswerRestController implements BaseRestController
 	}
 
 	@Override
-	public Response create(InterviewQuestionAnswerVO json) {
+	public Response create(InterviewQuestionVO json) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@POST
+	@Path(value="/save")
+	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
 	@Override
-	public Response update(InterviewQuestionAnswerVO json) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response update(InterviewQuestionVO vo) {
+		service.update(vo);
+		return Response.ok().build();
 	}
 
 	@Override
-	public Response delete(InterviewQuestionAnswerVO json) {
+	public Response delete(InterviewQuestionVO json) {
 		// TODO Auto-generated method stub
 		return null;
 	}
