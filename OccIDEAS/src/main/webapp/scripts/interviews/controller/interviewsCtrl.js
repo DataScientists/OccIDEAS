@@ -239,7 +239,7 @@
             var newQuestionAsked = {
             	  idInterview:$scope.interviewId,
             	  questionId:node.idNode,
-            	  parentId:node.parentId,
+            	  parentId:$scope.parentQId?$scope.parentQId:node.parentId,
             	  name:node.name,
             	  description:node.description,
             	  nodeClass:node.nodeclass,
@@ -264,10 +264,11 @@
     			if (response.status === 200) {
     				var actualQuestion =
                 	{
+    					questionId:node.idNode,
             	        parentId:answer.idNode,
             	        number:answer.number
                 	}
-    				showNextQuestion(actualQuestion);
+    				showNextQuestion(actualQuestion,true);
     			}
     		});
         }
@@ -597,39 +598,47 @@
                  }
              });
         }
-        
-        function showNextQuestion(actualQuestion){
-        	  var parentIdTemp = actualQuestion.parentId;
+
+        function showNextQuestion(actualQuestion,isAnswer){
+        	var actualQuestionTemp = actualQuestion;
               InterviewsService.getNextQuestion(actualQuestion).then(function (response) {
                     if (response.status === 200) {
                        var question = response.data;
                        $scope.data.showedQuestion = question;
+                       if(isAnswer){
+                    	   $scope.parentQId = actualQuestionTemp.questionId;
+                       }else{
+                    	   $scope.parentQId = undefined;
+                       }
                        resetSelectedIndex();
                        if(question.type=='Q_frequency'){
                           	$scope.hoursArray = $scope.getShiftHoursArray();
                           	$scope.minutesArray = $scope.getShiftMinutesArray();
                            	$scope.weeks = $scope.getWeeksArray();
                        }
-                       } else if (response.status == 204) {
-                    	   var q = _.find($scope.activeInterview.questionsAsked,function(val,index){
-                    		   return val.questionId === parentIdTemp;
-                    	   });
-                    	   if(!q){
-                    		   $scope.data.interviewStarted = false;
-                    		   $scope.data.interviewEnded = true;
-                    	   }else{
-                    		   var actualQuestion =
-                           		{
-                    				   parentId:q.parentId,
-                    				   number:q.number
-                           		}
-                    		   showNextQuestion(actualQuestion);
-                    	   }
-                       } else {
-                            console.log('ERROR on Get!');
-                       }
+                    } else if (response.status == 204) {
+                    	var results =_.find($scope.activeInterview.questionsAsked,function(val,index){
+                  		   return val.questionId === actualQuestionTemp.questionId;
+                  	    });
+                    	
+                    	if(results){
+                    		var actualQuestion =
+                      		{
+              				   questionId:results.parentId,	  
+               				   parentId:results.parentId,
+               				   number:results.number
+                      		}
+              			   showNextQuestion(actualQuestion);
+                    	}
+                    	else{
+                       		$scope.data.interviewStarted = false;
+                   		   $scope.data.interviewEnded = true;
+                    	}
+                    } else {
+                       console.log('ERROR on Get!');
+                    }
                        angular.element('#numId').focus();
                     });
               }
-    }
+         }
 })();

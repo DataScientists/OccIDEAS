@@ -70,7 +70,7 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	@Override
 	public Response update(InterviewQuestionVO vo) {
 		service.update(vo);
-		return Response.ok().build();
+		return Response.ok(vo).build();
 	}
 
 	@Override
