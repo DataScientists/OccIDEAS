@@ -8,6 +8,7 @@ public class InterviewAnswerVO {
 	private long answerId;
 	private String name;
 	private String description;
+	private String answerFreetext;
 	private String nodeClass;
 	private String number;
 	private String type;
@@ -91,6 +92,14 @@ public class InterviewAnswerVO {
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
+	}
+
+	public String getAnswerFreetext() {
+		return answerFreetext;
+	}
+
+	public void setAnswerFreetext(String answerFreetext) {
+		this.answerFreetext = answerFreetext;
 	}
 
 }

@@ -31,6 +31,8 @@ public class InterviewAnswer implements java.io.Serializable {
 	private String name;
 	@Column(name = "description")
 	private String description;
+	@Column(name = "answerFreetext")
+	private String answerFreetext;
 	@Column(name = "nodeClass")
 	private String nodeClass;
 	@Column(name = "number")
@@ -136,6 +138,14 @@ public class InterviewAnswer implements java.io.Serializable {
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+
+	public String getAnswerFreetext() {
+		return answerFreetext;
+	}
+
+	public void setAnswerFreetext(String answerFreetext) {
+		this.answerFreetext = answerFreetext;
 	}
 
 }

@@ -18,7 +18,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 @Entity
-@Table(name = "interview_question")
+@Table(name = "Interview_Question")
 public class InterviewQuestion implements java.io.Serializable {
 
 	/**

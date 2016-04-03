@@ -209,6 +209,51 @@
             $scope.multiAnswers = false;
             showNextQuestion();
         }
+        function processInterviewQuestionsWithMultipleAnswers(interview,node){
+        	var newQuestionAsked = {
+              	  idInterview:$scope.interviewId,
+              	  questionId:node.idNode,
+              	  parentId:$scope.parentQId?$scope.parentQId:node.parentId,
+              	  name:node.name,
+              	  description:node.description,
+              	  nodeClass:node.nodeclass,
+              	  number: node.number,
+              	  type: node.type,
+              	  deleted: 0,
+              	  answers: []
+              }
+        	  var selectedEl = $scope.multiSelected;
+              $scope.multiSelected = [];
+              verifyIfUpdate(interview,node);
+              _.each(selectedEl,function(value,i){
+            	 
+            	 var actualAnswer = {
+            		  idInterview:$scope.interviewId,
+               		  topQuestionId:node.topNodeId,
+               		  parentQuestionId:node.idNode,
+               		  answerId:value.idNode,
+               		  name:value.name,
+               		  answerFreetext:value.name,
+             		  nodeClass:value.nodeclass,
+               		  number:value.number,
+               		  type:value.type,
+               		  deleted:0
+                 }
+            	 newQuestionAsked.answers.push(actualAnswer);
+              });
+              interview.questionsAsked.push(newQuestionAsked);
+              InterviewsService.saveQuestion(newQuestionAsked).then(function (response) {
+      			if (response.status === 200) {
+      				var actualQuestion =
+                  	{
+      					questionId:node.idNode,
+              	        parentId:node.topIdNode,
+              	        number:node.number
+                  	}
+      				showNextQuestion(actualQuestion,true);
+      			}
+      		});
+        }
         
         function processFrequency(interview,node){
         	var hours = 0;
@@ -286,7 +331,7 @@
                         interview.questionsAsked = [];
                     }
                     if (node.type == 'Q_multiple') {
-                    	processQuestionsWithMultipleAnswers(interview,node);
+                    	processInterviewQuestionsWithMultipleAnswers(interview,node);
                     } else if (node.type == 'Q_frequency') {
                         processFrequency(interview,node);
                     } else {

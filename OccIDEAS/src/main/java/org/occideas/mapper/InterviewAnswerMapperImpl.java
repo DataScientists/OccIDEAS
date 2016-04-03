@@ -26,6 +26,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		vo.setParentQuestionId(answer.getParentQuestionId());
 		vo.setTopQuestionId(answer.getTopQuestionId());
 		vo.setType(answer.getType());
+		vo.setAnswerFreetext(answer.getAnswerFreetext());
 		return vo;
 	}
 
@@ -57,6 +58,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		answer.setParentQuestionId(answerVO.getParentQuestionId());
 		answer.setTopQuestionId(answerVO.getTopQuestionId());
 		answer.setType(answerVO.getType());
+		answer.setAnswerFreetext(answerVO.getAnswerFreetext());
 		return answer;
 	}
 
