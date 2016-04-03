@@ -193,11 +193,22 @@
         function processQuestionsWithMultipleAnswers(interview,node){
         	var selectedEl = $scope.multiSelected;
             $scope.multiSelected = [];
-            verifyIfUpdate(interview,node);
+            var newQuestionAsked = {
+              	  idInterview:$scope.interviewId,
+              	  topNodeId:node.topNodeId,
+              	  questionId:node.idNode,
+              	  parentId:$scope.parentQId?$scope.parentQId:node.parentId,
+              	  name:node.name,
+              	  description:node.description,
+              	  nodeClass:node.nodeclass,
+              	  number: node.number,
+              	  type: node.type,
+              	  deleted: 0,
+              	  answers: []
+             };
+            
             _.each(selectedEl,function(value,i){
-            	var multiAnswers = i > 0?true:false;
             	var newQuestionAsked = {
-            			multiAnswers:multiAnswers,
                         possibleAnswer: value,
                         idInterview: interview.interviewId,
                         question: node,
@@ -212,6 +223,7 @@
         function processInterviewQuestionsWithMultipleAnswers(interview,node){
         	var newQuestionAsked = {
               	  idInterview:$scope.interviewId,
+              	  topNodeId:node.topNodeId,
               	  questionId:node.idNode,
               	  parentId:$scope.parentQId?$scope.parentQId:node.parentId,
               	  name:node.name,
@@ -221,12 +233,11 @@
               	  type: node.type,
               	  deleted: 0,
               	  answers: []
-              }
+              };
+        	
         	  var selectedEl = $scope.multiSelected;
               $scope.multiSelected = [];
-              verifyIfUpdate(interview,node);
               _.each(selectedEl,function(value,i){
-            	 
             	 var actualAnswer = {
             		  idInterview:$scope.interviewId,
                		  topQuestionId:node.topNodeId,
@@ -241,14 +252,19 @@
                  }
             	 newQuestionAsked.answers.push(actualAnswer);
               });
-              interview.questionsAsked.push(newQuestionAsked);
+              var mod = _.find(interview.modules,function(val,ind){
+              	return val.idNode === node.topNodeId;
+              });
+              mod.questionsAsked.push(newQuestionAsked);
               InterviewsService.saveQuestion(newQuestionAsked).then(function (response) {
       			if (response.status === 200) {
+      				var answer = newQuestionAsked.answers[0];
       				var actualQuestion =
                   	{
-      					questionId:node.idNode,
-              	        parentId:node.topIdNode,
-              	        number:node.number
+      						topNodeId:node.topNodeId,
+        					questionId:node.idNode,
+                	        parentId:answer.answerId,
+                	        number:answer.number
                   	}
       				showNextQuestion(actualQuestion,true);
       			}
@@ -283,6 +299,7 @@
         	var answer = node.selectedAnswer;
             var newQuestionAsked = {
             	  idInterview:$scope.interviewId,
+            	  topNodeId:node.topNodeId,
             	  questionId:node.idNode,
             	  parentId:$scope.parentQId?$scope.parentQId:node.parentId,
             	  name:node.name,
@@ -304,11 +321,15 @@
             		  deleted:0
             	  }]
             }
-            interview.questionsAsked.push(newQuestionAsked);
+            var mod = _.find(interview.modules,function(val,ind){
+            	return val.idNode === node.topNodeId;
+            });
+            mod.questionsAsked.push(newQuestionAsked);
             InterviewsService.saveQuestion(newQuestionAsked).then(function (response) {
     			if (response.status === 200) {
     				var actualQuestion =
                 	{
+    					topNodeId:node.topNodeId,
     					questionId:node.idNode,
             	        parentId:answer.idNode,
             	        number:answer.number
@@ -327,9 +348,6 @@
                 	if(!interview){
                 		return null;
                 	}
-                    if (!interview.questionsAsked) {
-                        interview.questionsAsked = [];
-                    }
                     if (node.type == 'Q_multiple') {
                     	processInterviewQuestionsWithMultipleAnswers(interview,node);
                     } else if (node.type == 'Q_frequency') {
@@ -453,14 +471,18 @@
                         var interview = {};
                         interview.module = $scope.data[0];
                         interview.referenceNumber = $scope.referenceNumber;
+                        interview.modules = [];
+                        interview.modules.push({
+                        	name:interview.module.name,
+                        	idNode:interview.module.idNode,
+                        	questionsAsked:[]
+                        });
                         var copyParticipant = angular.copy($scope.participant);
                         interview.participant = copyParticipant;
                         $scope.interview = {};
                         $scope.interview = interview;
                         $scope.activeInterview = interview;
                         interview.active = true;
-                        $scope.interviews = [];
-                        $scope.interviews[0] = {};
                         InterviewsService.startInterview(interview).then(function (response) {
                             if (response.status === 200) {
                             	$scope.interviewId = response.data.interviewId;
@@ -649,19 +671,26 @@
               InterviewsService.getNextQuestion(actualQuestion).then(function (response) {
                     if (response.status === 200) {
                        var question = response.data;
+                       if(question.link === 0){
                        $scope.data.showedQuestion = question;
+                       }
                        if(isAnswer){
                     	   $scope.parentQId = actualQuestionTemp.questionId;
                        }else{
                     	   $scope.parentQId = undefined;
                        }
                        if(question.link !== 0){
-                       var actualQuestion =
-                       {
+                    	   $scope.activeInterview.modules.push({
+                           	name:question.name,
+                           	idNode:question.link,
+                           	questionsAsked:[]
+                           });
+                    	   var actualQuestion =
+                    	   {
                     		   parentId:question.link,
                     		   number:'0'
-                   		}
-                       showNextQuestion(actualQuestion);
+                   			}
+                    	   showNextQuestion(actualQuestion);
                        }
                        resetSelectedIndex();
                        if(question.type=='Q_frequency'){
@@ -670,13 +699,17 @@
                            	$scope.weeks = $scope.getWeeksArray();
                        }
                     } else if (response.status == 204) {
-                    	var results =_.find($scope.activeInterview.questionsAsked,function(val,index){
+                    	 var mod = _.find($scope.activeInterview.modules,function(val,ind){
+                         	return val.idNode === actualQuestionTemp.topNodeId;
+                         });
+                    	var results =_.find(mod.questionsAsked,function(val,index){
                   		   return val.questionId === actualQuestionTemp.questionId;
                   	    });
                     	
                     	if(results){
                     		var actualQuestion =
                       		{
+                    		   topNodeId:results.topNodeId,
               				   questionId:results.parentId,	  
                				   parentId:results.parentId,
                				   number:results.number

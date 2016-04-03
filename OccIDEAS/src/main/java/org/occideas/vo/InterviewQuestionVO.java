@@ -7,6 +7,7 @@ public class InterviewQuestionVO {
 	private long idInterview;
 	private long questionId;
 	private long parentId;
+	private long topNodeId;
 	private String name;
 	private String description;
 	private String nodeClass;
@@ -104,4 +105,13 @@ public class InterviewQuestionVO {
 		this.parentId = parentId;
 	}
 
+	public long getTopNodeId() {
+		return topNodeId;
+	}
+
+	public void setTopNodeId(long topNodeId) {
+		this.topNodeId = topNodeId;
+	}
+
+	
 }

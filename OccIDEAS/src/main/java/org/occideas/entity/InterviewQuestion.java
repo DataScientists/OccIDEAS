@@ -38,6 +38,9 @@ public class InterviewQuestion implements java.io.Serializable {
 	
 	@Column(name = "parentId")
 	private long parentId;
+	
+	@Column(name = "topNodeId")
+	private long topNodeId;
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
@@ -178,5 +181,14 @@ public class InterviewQuestion implements java.io.Serializable {
 		this.parentId = parentId;
 	}
 
+	public long getTopNodeId() {
+		return topNodeId;
+	}
+
+	public void setTopNodeId(long topNodeId) {
+		this.topNodeId = topNodeId;
+	}
+
+	
 	
 }

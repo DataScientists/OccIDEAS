@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS `Interview_Question`;
 CREATE TABLE `Interview_Question` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `idinterview` bigint(20) NOT NULL,
+  `topNodeId` bigint(20) NOT NULL,
   `question_id` bigint(20) DEFAULT NULL,
   `parentId` bigint(20) NOT NULL,
   `name` varchar(2048) DEFAULT NULL,
