@@ -680,17 +680,7 @@
                     	   $scope.parentQId = undefined;
                        }
                        if(question.link !== 0){
-                    	   $scope.activeInterview.modules.push({
-                           	name:question.name,
-                           	idNode:question.link,
-                           	questionsAsked:[]
-                           });
-                    	   var actualQuestion =
-                    	   {
-                    		   parentId:question.link,
-                    		   number:'0'
-                   			}
-                    	   showNextQuestion(actualQuestion);
+                    	   processLinkingQuestion(question,actualQuestionTemp);
                        }
                        resetSelectedIndex();
                        if(question.type=='Q_frequency'){
@@ -715,10 +705,11 @@
                				   number:results.number
                       		}
               			   showNextQuestion(actualQuestion);
+                    	}else if(mod.parentNode){
+                    	   verifyQuestionInParentModule(mod);
                     	}
                     	else{
-                       		$scope.data.interviewStarted = false;
-                   		   $scope.data.interviewEnded = true;
+                    	   endInterview();
                     	}
                     } else {
                        console.log('ERROR on Get!');
@@ -726,5 +717,48 @@
                        angular.element('#numId').focus();
                     });
               }
+        
+        function processLinkingQuestion(question,actualQuestionTemp){
+        	$scope.activeInterview.modules.push({
+               	name:question.name,
+               	idNode:question.link,
+               	topNode:question.topNodeId,
+               	parentNode:actualQuestionTemp.questionId,
+               	questionsAsked:[]
+               });
+        	   var actualQuestion =
+        	   {
+        		   parentId:question.link,
+        		   number:'0'
+       			}
+        	   showNextQuestion(actualQuestion);
+        }
+        
+        function verifyQuestionInParentModule(mod){
+        	var tempMod = angular.copy(mod);
+     	   var mod = _.find($scope.activeInterview.modules,function(val,ind){
+               return val.idNode === tempMod.topNode;
+            });
+     	   var results =_.find(mod.questionsAsked,function(val,index){
+       		   return val.questionId === tempMod.parentNode;
+       	   });
+     	   if(results){
+        		var actualQuestion =
+          		{
+        		   topNodeId:results.topNodeId,
+  				   questionId:results.parentId,	  
+   				   parentId:results.parentId,
+   				   number:results.number
+          		}
+  			   showNextQuestion(actualQuestion);
+     	   }else{
+     		   endInterview();
+     	   }
+        }
+        
+        function endInterview(){
+        	$scope.data.interviewStarted = false;
+    		$scope.data.interviewEnded = true;
+        }
          }
 })();
