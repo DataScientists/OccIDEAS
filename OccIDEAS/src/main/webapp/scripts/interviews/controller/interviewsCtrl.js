@@ -285,16 +285,46 @@
             var answerValue = Number(hours) + (Number(minutes)/60);
             var answer = node.nodes[0];
             var newQuestionAsked = {
-            		multiAnswers: false,
-                    possibleAnswer: answer,
-                    idInterview: interview.interviewId,
-                    question: node,
-                    deleted:0,
-                    interviewQuestionAnswerFreetext: answerValue
+            	  idInterview:$scope.interviewId,
+            	  topNodeId:node.topNodeId,
+            	  questionId:node.idNode,
+            	  parentId:$scope.parentQId?$scope.parentQId:node.parentId,
+            	  name:node.name,
+            	  description:node.description,
+            	  nodeClass:node.nodeclass,
+            	  number: node.number,
+            	  type: node.type,
+            	  deleted: 0,
+            	  answers: [{
+            		  idInterview:$scope.interviewId,
+            		  topQuestionId:node.topNodeId,
+            		  parentQuestionId:node.idNode,
+            		  answerId:answer.idNode,
+            		  name:answer.name,
+            		  description:answer.description,
+            		  nodeClass:answer.nodeclass,
+            		  number:answer.number,
+            		  type:answer.type,
+            		  answerFreetext:answerValue,
+            		  deleted:0
+            	  }]
             }
-            verifyIfUpdate(interview,node);
-           	interview.questionsAsked.push(newQuestionAsked);
-           	showNextQuestion();
+            var mod = _.find(interview.modules,function(val,ind){
+            	return val.idNode === node.topNodeId;
+            });
+            mod.questionsAsked.push(newQuestionAsked);
+            InterviewsService.saveQuestion(newQuestionAsked).then(function (response) {
+    			if (response.status === 200) {
+    				var actualQuestion =
+                	{
+    					topNodeId:node.topNodeId,
+    					questionId:node.idNode,
+            	        parentId:answer.idNode,
+            	        number:answer.number
+                	}
+    				showNextQuestion(actualQuestion,true);
+    			}
+    		});
         }
         
         function processQuestion(interview,node){
