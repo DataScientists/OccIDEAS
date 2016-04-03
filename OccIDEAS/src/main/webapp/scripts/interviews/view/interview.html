@@ -127,15 +127,17 @@
     
 </div>
 <div class="col-md-8 moduleInterview" id="interview-question-list" >
-	<div ui-tree="" id="tree-root1_$index">
+	<div ui-tree="" id="tree-root1_$index" ng-repeat="modules in interview.modules>
 		<div class="angular-ui-tree">
 			<div class="tree-node">
 				<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}">
-				{{interview.module.name}}
+<!-- 				{{interview.module.name}} -->
+					{{modules.name}}
 <!-- 				{{participant.interviews.module.name}}{{participant.interviews.fragment.name}}</span> -->
 				</span>
 				<div>
-    				<div ng-repeat="qa in activeInterview.questionsAsked">
+						<div ng-repeat="qa in modules.questionsAsked">
+<!--     				<div ng-repeat="qa in activeInterview.questionsAsked"> -->
     					<div class="tree-node-content Q_interviewresult">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.number}}</span>

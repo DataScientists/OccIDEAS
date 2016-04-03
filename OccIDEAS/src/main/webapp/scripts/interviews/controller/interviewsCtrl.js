@@ -610,6 +610,14 @@
                        }else{
                     	   $scope.parentQId = undefined;
                        }
+                       if(question.link !== 0){
+                       var actualQuestion =
+                       {
+                    		   parentId:question.link,
+                    		   number:'0'
+                   		}
+                       showNextQuestion(actualQuestion);
+                       }
                        resetSelectedIndex();
                        if(question.type=='Q_frequency'){
                           	$scope.hoursArray = $scope.getShiftHoursArray();
