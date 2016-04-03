@@ -248,7 +248,8 @@
              		  nodeClass:value.nodeclass,
                		  number:value.number,
                		  type:value.type,
-               		  deleted:0
+               		  deleted:0,
+               		  isProcessed:false
                  }
             	 newQuestionAsked.answers.push(actualAnswer);
               });
@@ -258,6 +259,7 @@
               mod.questionsAsked.push(newQuestionAsked);
               InterviewsService.saveQuestion(newQuestionAsked).then(function (response) {
       			if (response.status === 200) {
+      				newQuestionAsked.answers[0].isProcessed = true;
       				var answer = newQuestionAsked.answers[0];
       				var actualQuestion =
                   	{
@@ -696,7 +698,23 @@
                   		   return val.questionId === actualQuestionTemp.questionId;
                   	    });
                     	
-                    	if(results){
+                    	var multiAnswer = results?_.find(results.answers,function(val,ind){
+                    		return val.isProcessed == false;
+                    	}):undefined;
+                    	
+                    	if(multiAnswer){
+                    		multiAnswer.isProcessed = true;
+              				var answer = multiAnswer;
+              				var actualQuestion =
+                          	{
+              						topNodeId:results.topNodeId,
+                					questionId:results.questionId,
+                        	        parentId:answer.answerId,
+                        	        number:answer.number
+                          	}
+              				showNextQuestion(actualQuestion,true);
+                    	}
+                    	else if(results){
                     		var actualQuestion =
                       		{
                     		   topNodeId:results.topNodeId,
@@ -705,7 +723,8 @@
                				   number:results.number
                       		}
               			   showNextQuestion(actualQuestion);
-                    	}else if(mod.parentNode){
+                    	}
+                    	else if(mod.parentNode){
                     	   verifyQuestionInParentModule(mod);
                     	}
                     	else{

@@ -2,6 +2,9 @@ package org.occideas.vo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"isProcessed"})
 public class InterviewQuestionVO {
 
 	private long idInterview;
