@@ -35,21 +35,62 @@
         	  var elem = document.getElementById('interview-question-list');
         	  elem.scrollTop = elem.scrollHeight;
         	}, 5000);*/
-        self.editQuestion = function(interview,question){
-        	_.find($scope.questionHistory,function(el,index){
-        		if(el.idNode === question.idNode){
-        			$scope.data.showedQuestion = el;
-        			safeDigest($scope.data.showedQuestion);
-        			$scope.data.interviewStarted = true;
-        			$scope.data.interviewEnded = false;
-        			safeDigest($scope.data.interviewStarted);
-        			interview.active = true;
-        			safeDigest($scope.participant);
-        			$scope.updateAnswers = true;
-                	safeDigest($scope.updateAnswers);
+        self.editQuestion = function(question){
+        	var interview = $scope.activeInterview;
+        	if(!interview){
+        		return null;
+        	}
+        	refreshInterview();
+        	var number = (question.number.substr(question.number.length - 1) - 1);
+        	if(number == 0 && question.number.length > 1){
+        		if(question.number.substr(question.number.length - 2)){
+        			if(str.match(/[a-z]/i)){
+        				
+        			}
         		}
-        	});
+        	}
+        	
+        	var actualQuestion =
+        	{
+				topNodeId:question.topNodeId,
+				questionId:question.questionId,
+    	        parentId:question.parentId,
+    	        number:question.number.slice(0, -1) +number
+        	}
+			showNextQuestion(actualQuestion,true);
+			$scope.data.showedQuestion = question;
+//			deleteQuestion(question);
         };
+
+        function refreshInterview(){
+        	$scope.data.interviewStarted = true;
+			$scope.data.interviewEnded = false;
+			safeDigest($scope.data.interviewStarted);
+        }
+        
+        function deleteQuestion(question){
+        	var mod = _.find($scope.activeInterview.modules,function(val,ind){
+             	return val.idNode === question.topNodeId;
+             });
+        	var results =_.find(mod.questionsAsked,function(val,index){
+      		   return val.questionId === question.questionId;
+      	    });
+        	
+        	if(results){
+        		results.deleted = 1;
+        		_.each(results.answers,function(ans){
+        			ans.deleted = 1;
+        		})
+        		InterviewsService.saveQuestion(results).then(function (response) {
+        			if (response.status === 200) {
+        				console.log("Delete question successful...");
+        				_.remove(mod.questionsAsked,function(val){
+        	        		return val.questionId === results.questionId;
+        	        	});
+        			}
+        		});
+        	}
+        }
         
         
         self.showRulesMenu = function(scope){
@@ -220,8 +261,9 @@
             $scope.multiAnswers = false;
             showNextQuestion();
         }
-        function processInterviewQuestionsWithMultipleAnswers(interview,node){
-        	var newQuestionAsked = {
+        
+        function populateNewQuestionAskedJsonByNode(interview,node){
+        	return {
               	  idInterview:$scope.interviewId,
               	  topNodeId:node.topNodeId,
               	  questionId:node.idNode,
@@ -233,24 +275,33 @@
               	  type: node.type,
               	  deleted: 0,
               	  answers: []
-              };
+            };
+        }
+        
+        function populateAnswerJsonByNode(value,node){
+        	return {
+      		  idInterview:$scope.interviewId,
+       		  topQuestionId:node.topNodeId,
+       		  parentQuestionId:node.idNode,
+       		  answerId:value.idNode,
+       		  name:value.name,
+       		  answerFreetext:value.name,
+     		  nodeClass:value.nodeclass,
+       		  number:value.number,
+       		  type:value.type,
+       		  deleted:0,
+       		  isProcessed:false
+        	};
+        }
+        
+        function processInterviewQuestionsWithMultipleAnswers(interview,node){
+        	
+        	var newQuestionAsked = populateNewQuestionAskedJsonByNode(interview,node);
         	
         	  var selectedEl = $scope.multiSelected;
               $scope.multiSelected = [];
               _.each(selectedEl,function(value,i){
-            	 var actualAnswer = {
-            		  idInterview:$scope.interviewId,
-               		  topQuestionId:node.topNodeId,
-               		  parentQuestionId:node.idNode,
-               		  answerId:value.idNode,
-               		  name:value.name,
-               		  answerFreetext:value.name,
-             		  nodeClass:value.nodeclass,
-               		  number:value.number,
-               		  type:value.type,
-               		  deleted:0,
-               		  isProcessed:false
-                 }
+            	 var actualAnswer = populateAnswerJsonByNode(value,node);
             	 newQuestionAsked.answers.push(actualAnswer);
               });
               var mod = _.find(interview.modules,function(val,ind){
@@ -387,8 +438,6 @@
                     } else {
                     	processQuestion(interview,node);
                     }
-//                    saveInterview(interview);
-//                    checkUpdateAnswersFlag();
                 }
         	}); 
         }
@@ -703,8 +752,10 @@
               InterviewsService.getNextQuestion(actualQuestion).then(function (response) {
                     if (response.status === 200) {
                        var question = response.data;
+                       resetSelectedIndex();
                        if(question.link === 0){
-                       $scope.data.showedQuestion = question;
+                    	   $scope.data.showedQuestion = question;
+                    	   safeDigest($scope.data.showedQuestion);
                        }
                        if(isAnswer){
                     	   $scope.parentQId = actualQuestionTemp.questionId;
@@ -712,9 +763,13 @@
                     	   $scope.parentQId = undefined;
                        }
                        if(question.link !== 0){
-                    	   processLinkingQuestion(question,actualQuestionTemp);
+                    	   var isExist = _.find($scope.activeInterview.modules,function(val,ind){
+                           		return val.idNode == question.link;
+                          });
+                    	   if(!isExist){
+                    		   return processLinkingQuestion(question,actualQuestionTemp);
+                    	   }
                        }
-                       resetSelectedIndex();
                        if(question.type=='Q_frequency'){
                           	$scope.hoursArray = $scope.getShiftHoursArray();
                           	$scope.minutesArray = $scope.getShiftMinutesArray();
@@ -750,14 +805,16 @@
                     		   topNodeId:results.topNodeId,
               				   questionId:results.parentId,	  
                				   parentId:results.parentId,
-               				   number:results.number
+               				   number:results.number,
+               				   lQid: results.questionId
                       		}
+                    		
               			   showNextQuestion(actualQuestion);
                     	}
                     	else if(mod.parentNode){
                     	   verifyQuestionInParentModule(mod);
                     	}
-                    	else{
+                    	else {
                     	   endInterview();
                     	}
                     } else {
@@ -768,15 +825,36 @@
               }
         
         function processLinkingQuestion(question,actualQuestionTemp){
+//        	if(actualQuestionTemp.parentId == actualQuestionTemp.questionId){
+//        	   var mod = _.find($scope.activeInterview.modules,function(val,ind){
+//                   return val.idNode === question.topNodeId;
+//               });
+//           	   var questionTemp =_.find(mod.questionsAsked,function(val,index){
+//           			   return val.questionId === actualQuestionTemp.lQid;
+//           	   });
+//           	  
+////           	   var results;
+////           	   if(question){
+////           		  results = _.find(question.answers,function(val,index){
+////              		   return val.answerId === tempMod.answerNode;
+////              	  });
+////           	   }
+//        		actualQuestionTemp.questionId = questionTemp.parentId;
+//        	}
+        	
         	$scope.activeInterview.modules.push({
                	name:question.name,
                	idNode:question.link,
                	topNode:question.topNodeId,
                	parentNode:actualQuestionTemp.questionId,
+               	answerNode:actualQuestionTemp.parentId,
+               	number:question.number,
                	questionsAsked:[]
                });
         	   var actualQuestion =
         	   {
+        		   topNodeId:question.topNodeId,
+   				   questionId:question.idNode,
         		   parentId:question.link,
         		   number:'0'
        			}
@@ -788,20 +866,34 @@
      	   var mod = _.find($scope.activeInterview.modules,function(val,ind){
                return val.idNode === tempMod.topNode;
             });
-     	   var results =_.find(mod.questionsAsked,function(val,index){
-       		   return val.questionId === tempMod.parentNode;
-       	   });
+     	   var question =_.find(mod.questionsAsked,function(val,index){
+     		   return val.questionId === tempMod.parentNode;
+     	   });
+     	  
+     	   var results;
+     	   if(question){
+     		  results = _.find(question.answers,function(val,index){
+        		   return val.answerId === tempMod.answerNode;
+        	  });
+     	   }
      	   if(results){
         		var actualQuestion =
           		{
-        		   topNodeId:results.topNodeId,
-  				   questionId:results.parentId,	  
-   				   parentId:results.parentId,
-   				   number:results.number
+        		   topNodeId:results.topQuestionId,
+  				   questionId:results.parentQuestionId,	  
+   				   parentId:results.answerId,
+   				   number:tempMod.number
           		}
-  			   showNextQuestion(actualQuestion);
+  			   showNextQuestion(actualQuestion,true);
      	   }else{
-     		   endInterview();
+     		 var actualQuestion =
+       		 {
+  				   topNodeId:question.topNodeId,
+    				   questionId:question.questionId,	  
+     				   parentId:question.parentId,
+     				   number:question.number
+       		 }
+  		     showNextQuestion(actualQuestion);
      	   }
         }
         
