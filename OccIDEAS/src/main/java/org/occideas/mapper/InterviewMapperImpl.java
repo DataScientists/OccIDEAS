@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Interview;
-import org.occideas.entity.InterviewQuestionAnswer;
+import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Rule;
-import org.occideas.vo.InterviewQuestionAnswerVO;
+import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 	private ParticipantMapper participantMapper;
     
     @Autowired
-	private InterviewQuestionAnswerMapper iqaMapper;
+	private InterviewQuestionMapper iqMapper;
 
     @Override
     public InterviewVO convertToInterviewVO(Interview interview) {
@@ -40,8 +40,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         interviewVO.setReferenceNumber(interview.getReferenceNumber());
         interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
         interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
-        List<InterviewQuestionAnswer> questionsAsked = interview.getInterviewQuestionAnswers();
-    	interviewVO.setQuestionsAsked(iqaMapper.convertToInterviewQuestionAnswerVOList(questionsAsked));
+        List<InterviewQuestion> questionsAsked = interview.getActualQuestion();
+    	interviewVO.setActualQuestion(iqMapper.convertToInterviewQuestionVOList(questionsAsked));
     	
         List<Rule> firedRules = interview.getFiredRules();
         interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
@@ -81,8 +81,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         interview.setReferenceNumber(interviewVO.getReferenceNumber());
         interview.setModule(moduleMapper.convertToModule(interviewVO.getModule(),true));
         interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment(),true));
-        List<InterviewQuestionAnswerVO> questionsAsked = interviewVO.getQuestionsAsked();
-        interview.setInterviewQuestionAnswers(iqaMapper.convertToInterviewQuestionAnswerList(questionsAsked));
+        List<InterviewQuestionVO> questionsAsked = interviewVO.getActualQuestion();
+        interview.setActualQuestion(iqMapper.convertToInterviewQuestionList(questionsAsked));
         List<RuleVO> firedRules = interviewVO.getFiredRules();
         interview.setFiredRules(ruleMapper.convertToRuleExcPaList(firedRules));
         List<RuleVO> autoAssessedRules = interviewVO.getAutoAssessedRules();

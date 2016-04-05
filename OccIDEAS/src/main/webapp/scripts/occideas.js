@@ -10,6 +10,7 @@ angular
     "angular-confirm",
     "sticky",
     "fsm",
+    "angular.filter",
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
     "occIDEASApp.Tabs",
@@ -90,7 +91,6 @@ angular
    configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope'];
    function configureDefaults(ngTableDefaults,$state,$rootScope) {
 	   	$rootScope._ = window._; 
-	   	   
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
         

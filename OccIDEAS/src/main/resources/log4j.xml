@@ -29,7 +29,7 @@
 	</logger>
 
 	<logger name="org.hibernate" additivity="false">
-		<level value="INFO" />
+		<level value="info" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate.type" additivity="false">

@@ -4,5 +4,6 @@ import org.occideas.base.service.BaseService;
 import org.occideas.vo.QuestionVO;
 
 public interface QuestionService extends BaseService<QuestionVO> {
-    public QuestionVO getNextQuestion(long interviewId, long idNode);
+
+	QuestionVO determineNextQuestionByCurrentNumber(String moduleId,String nodeNumber);
 }

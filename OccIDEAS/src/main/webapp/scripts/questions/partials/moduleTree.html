@@ -109,6 +109,6 @@
      </div>
   </div>
   <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <li ng-repeat="node in node.nodes | orderBy:'sequence'" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
+    <li ng-repeat="node in node.nodes | orderBy:'sequence' " ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
   </ol>
 </script>

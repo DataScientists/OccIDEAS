@@ -3,10 +3,11 @@
 <div class="col-md-4">
     <div ng-model="data">
 	    <div>{{participant.reference}}</div>
-        <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
+	    <md-progress-circular ng-if="inProgress" md-mode="indeterminate"></md-progress-circular>
+        <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted && !inProgress">
             <md-toolbar >{{data.showedQuestion.name}}
             <md-button id="numId" event-focus>
-            <span class="badge">{{activeInterview.module.name}}{{activeInterview.fragment.name}}</span>
+            <span class="badge">{{questionheader.name}}</span>
             <span class="badge">{{data.showedQuestion.number}}</span>
             </md-button></md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
@@ -127,44 +128,43 @@
     
 </div>
 <div class="col-md-8 moduleInterview" id="interview-question-list" >
-	<div ui-tree="" id="tree-root1_$index" ng-repeat="interviewIntro in participant.interviews track by $index">
+	<div ui-tree="" id="tree-root1_$index" ng-repeat="modules in interview.modules">
 		<div class="angular-ui-tree">
 			<div class="tree-node">
 				<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}">
-				{{interviewIntro.module.name}}{{interviewIntro.fragment.name}}</span>
+					{{modules.name}}
+				</span>
 				<div>
-    				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interviewIntro.questionsAsked | qaFilter:0 | orderBy:'question.number' track by $index">
-    					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
+						<div ng-repeat="qa in modules.questionsAsked">
+    					<div class="tree-node-content Q_interviewresult">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   			<span class="badge">{{qa.question.number}}</span>
+                   			<span class="badge">{{qa.number}}</span>
                 		</div>  
     					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-	    							ng-click="vm.editQuestion(interviewIntro,qa.question)"></span>
+	    							ng-click="vm.editQuestion(qa)"></span>
 	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
-	    					
+    					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
     					</span>  					
     					</div>
-    					<div class="tree-node-content P_interviewresult">
+    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers">
     						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
+                   				<span class="badge">{{as.number}}</span>
                 			</div>
-    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
+    						<span id="{{'IntResult'+as.idNode}}" >{{as.name }}
     						</span>
     					</div>
     				</div>
   				</div>
 			</div>
 		</div>
-		<div ui-tree="" id="tree-root2_$index" ng-repeat="interviewModule in interviewIntro.interviews track by $index">
+		<div ui-tree="" id="tree-root2_$index" ng-repeat="interviewModule in interviewIntro.interviews ">
 		<div class="angular-ui-tree">
 			<div class="tree-node">
 				<span class="M_Interview {{interviewModule.active ? 'highlight':''}}">
 				{{interviewModule.module.name}}{{interviewModule.fragment.name}}</span>
 				<div>
     				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interviewModule.questionsAsked | qaFilter:0 | orderBy:'question.number' track by $index">
+    				    ng-repeat="qa in interviewModule.questionsAsked | qaFilter:0 | orderBy:'question.number' ">
     					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.question.number}}</span>
@@ -187,14 +187,14 @@
   				</div>
 			</div>
 		</div>
-		<div ui-tree="" id="tree-root3_$index" ng-repeat="interviewAJSM in interviewModule.interviews track by $index">
+		<div ui-tree="" id="tree-root3_$index" ng-repeat="interviewAJSM in interviewModule.interviews ">
 		<div class="angular-ui-tree">
 			<div class="tree-node">
 				<span class="M_Interview {{interviewAJSM.active ? 'highlight':''}}">
 				{{interviewAJSM.module.name}}{{interviewAJSM.fragment.name}}</span>
 				<div>
     				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interviewAJSM.questionsAsked | qaFilter:0 | orderBy:'question.number' track by $index">
+    				    ng-repeat="qa in interviewAJSM.questionsAsked | qaFilter:0 | orderBy:'question.number' ">
     					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.question.number}}</span>

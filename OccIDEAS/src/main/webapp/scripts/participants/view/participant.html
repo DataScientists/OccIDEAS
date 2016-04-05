@@ -9,13 +9,13 @@
         <div class="panel-body">
             <div ui-tree="interviewTree" id="tree-root-interview">
                 <ol ui-tree-nodes ng-model="data.interviews">
-                    <li ng-repeat="interview in data.interviews" ui-tree-node ng-include="'interview_renderer.html'"></li>
+                    <li ng-repeat="interview in data.interviews track by $index" ui-tree-node ng-include="'interview_renderer.html'"></li>
                 </ol>
             </div>
         </div>
     </div>
 </div>
-
+<div class="col-md-8">
 <div ui-tree="" id="tree-root1" >
 		<div class="angular-ui-tree">
 			<div class="tree-node">
@@ -23,31 +23,31 @@
 				{{selectedInterview.module.name}}{{selectedInterview.fragment.name}}</span>
 				<div>
     				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in selectedInterview.questionsAsked | qaFilter:0 | orderBy:'question.number' track by $index">
+    				    ng-repeat="qa in selectedInterview.actualQuestion | qaFilter:0 | orderBy:'question.number' track by $index">
     					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   			<span class="badge">{{qa.question.number}}</span>
+                   			<span class="badge">{{qa.number}}</span>
                 		</div>  
     					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-	    							ng-click="vm.editQuestion(interviewIntro,qa.question)"></span>
-	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
+	    							ng-click="vm.editQuestion(interviewIntro,qa)"></span>
+	    				<span ng-if="qa.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+    					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
 	    					
     					</span>  					
     					</div>
-    					<div class="tree-node-content P_interviewresult">
-    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
-                			</div>
-    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
-    						</span>
-    					</div>
+    					<div ui-tree="actualAnswerTree" id="tree-root-actualanswer">
+			                <ol ui-tree-nodes ng-model="qa.answers">
+			                    <li ng-repeat="answer in qa.answers track by $index" ui-tree-node ng-include="'answer_renderer.html'"></li>
+			                </ol>
+			            </div>
+    					
+    					
     				</div>
   				</div>
 			</div>
 		</div>
 	</div>
-
+</div>
 
 <script type="text/ng-template" id="interview_renderer.html">
     <div id="interview-tree" class="angular-ui-tree">
@@ -62,8 +62,22 @@
         </div>
     </div>
     <ol ui-tree-nodes="" ng-model="node.nodes" ng-if="interview.interviews.length>0">
-        <li ng-repeat="interview in interview.interviews" ui-tree-node ng-include="'interview_renderer.html'" class="angular-ui-tree-node" ></li>
+        <li ng-repeat="interview in interview.interviews track by $index" ui-tree-node ng-include="'interview_renderer.html'" class="angular-ui-tree-node" ></li>
     </ol>
 </script>
- 
+<script type="text/ng-template" id="answer_renderer.html">
+    <div id="answer-tree" class="angular-ui-tree">
+        <div class="tree-node" data-nodrag  >
+            <!-- start content -->
+            <div class="tree-node-content P_interviewresult">
+    			<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+                   	<span class="badge">{{answer.number}}</span>
+                </div>
+    			<span id="{{'IntResult'+answer.idNode}}" >{{answer.name }}{{answer.answerFreetext }}
+    			</span>
+    		</div>
+            <!-- end content -->
+        </div>
+    </div>
+</script> 
 </div> 

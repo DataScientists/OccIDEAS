@@ -16,6 +16,7 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Autowired
     private BaseDao dao;
+	
 	@Autowired
     private InterviewDao interviewDao;
 

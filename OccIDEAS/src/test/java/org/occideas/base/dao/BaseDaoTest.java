@@ -12,14 +12,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.occideas.entity.Module;
 
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaseDaoTest {
 
-	private Module module;
-	
 	@Mock
 	private SessionFactory sessionFactory;
 	@Mock
@@ -30,13 +27,12 @@ public class BaseDaoTest {
 	
 	@Before
 	public void init(){
-		module = new Module();
 	}
 	
 	@Test
 	public void saveTest(){
 		when(sessionFactory.getCurrentSession()).thenReturn(session);
-		when(sessionFactory.getCurrentSession().save(any(Object.class))).thenReturn(module);
+		when(sessionFactory.getCurrentSession().save(any(Object.class))).thenReturn(1L);
 		assertNotNull(baseDao.save(new Object()));
 	}
 	

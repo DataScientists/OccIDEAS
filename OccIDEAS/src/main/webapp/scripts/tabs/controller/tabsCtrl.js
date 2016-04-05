@@ -1,8 +1,8 @@
 (function() {
 	angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
-	TabsCtrl.$inject = ['$scope','$state','$rootScope','$log'];
-	function TabsCtrl($scope,$state,$rootScope,$log) {
+	TabsCtrl.$inject = ['$scope','$state','$rootScope','$log','$stickyState'];
+	function TabsCtrl($scope,$state,$rootScope,$log,$stickyState) {
 		$scope.loading = false;
 		$scope.tabOptions = [];
 		$scope.tabOptions[0] = {
@@ -27,6 +27,8 @@
 			};
 		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
+//			$scope.loading = true;
+			safeDigest($scope.loading);
 			var state = null;
 			var data = null;
 			if($scope.tabOptions[current]){
@@ -99,30 +101,27 @@
 			
 		};
 		$scope.addModuleTab = function(row) {
-			$rootScope.tabsLoading = true;
-			var check = _.some( tabs, function( el ) {
-			    return el.title === row.name;
-			} );
-					
-			tabs.push({
-				title : row.name,
-				viewName: 'questions@tabs',
-				canClose: true,
-				disabled : false
-			});
-			$scope.tabOptions.push({
-				state: "tabs.questions",
-				data: {row:row.idNode}
-			});
+			var state = "tabs.questions";
+			if(!checkIfTabIsOpen(tabs,row.name)){
+				tabs.push({
+					title : row.name,
+					viewName: 'questions@tabs',
+					canClose: true,
+					disabled : false
+				});
+				$scope.tabOptions.push({
+					state: state,
+					data: {row:row.idNode}
+				});
+			}
+			$stickyState.reset(state);
 			$log.info("addModuleTab questionsLoading end");
 		};
 		
 		$scope.addIntroTab = function(row) {
-			$rootScope.tabsLoading = true;
-			var check = _.some( tabs, function( el ) {
-			    return el.title === row.name;
-			} );
-					
+			var state = "tabs.intro";
+			$stickyState.reset(state);
+			if(!checkIfTabIsOpen(tabs,row.name)){
 			tabs.push({
 				title : row.name,
 				viewName: 'intro@tabs',
@@ -130,19 +129,19 @@
 				disabled : false
 			});
 			$scope.tabOptions.push({
-				state: "tabs.intro",
+				state: state,
 				data: {row:row.idNode}
 			});
+			}
 			$log.info("addIntroTab called");
 		};
 		
         $scope.addRulesTab = function(scope) {
             var nodeData = scope.$modelValue;
             var tabTitle = "Rules "+nodeData.name;
-            var check = _.some( tabs, function( el ) {
-                return el.title === tabTitle;
-            } );
-            if(!check){
+            var state = "tabs.rules";
+            $stickyState.reset(state);
+            if(!checkIfTabIsOpen(tabs,tabTitle)){
                 tabs.push({
                     title : tabTitle,
                     viewName: 'rules@tabs',
@@ -150,24 +149,17 @@
                     disabled : false
                 });
                 $scope.tabOptions.push({
-                    state: "tabs.rules",
+                    state: state,
                     data: {row:nodeData.idNode}
-                });
-            }else{
-                _.find(tabs, function(el, index){
-                    if(el.title === tabTitle){
-                        $scope.selectedIndex = index;
-                    }
                 });
             }
         };
         $scope.addInterviewTab = function(scope) {
             var nodeData = scope.$modelValue;
             var tabTitle = "Interview "+nodeData.name;
-            var check = _.some( tabs, function( el ) {
-                return el.title === tabTitle;
-            } );
-            if(!check){
+            var state = "tabs.interview";
+            $stickyState.reset(state);
+            if(!checkIfTabIsOpen(tabs,tabTitle)){
                 tabs.push({
                     title : tabTitle,
                     viewName: 'interview@tabs',
@@ -175,24 +167,17 @@
                     disabled : false
                 });
                 $scope.tabOptions.push({
-                    state: "tabs.interview",
+                    state: state,
                     data: {row:nodeData.idNode}
-                });
-            }else{
-                _.find(tabs, function(el, index){
-                    if(el.title === tabTitle){
-                        $scope.selectedIndex = index;
-                    }
                 });
             }
         };
         $scope.addParticipantTab = function(participant) {
             //var participant = scope.$modelValue;
             var tabTitle = "Participant "+participant.reference;
-            var check = _.some( tabs, function( el ) {
-                return el.title === tabTitle;
-            } );
-            if(!check){
+            var state = "tabs.participant";
+            $stickyState.reset(state);
+            if(!checkIfTabIsOpen(tabs,tabTitle)){
                 tabs.push({
                     title : tabTitle,
                     viewName: 'participant@tabs',
@@ -200,14 +185,8 @@
                     disabled : false
                 });
                 $scope.tabOptions.push({
-                    state: "tabs.participant",
+                    state: state,
                     data: {row:participant.idParticipant}
-                });
-            }else{
-                _.find(tabs, function(el, index){
-                    if(el.title === tabTitle){
-                        $scope.selectedIndex = index;
-                    }
                 });
             }
         };
@@ -225,5 +204,26 @@
 			$scope.loading = false;
 			return 'Done';
 		}
+		
+		function checkIfTabIsOpen(tabs,title){
+			var openedTab = false;
+			 _.find( tabs, function(el,ind) {
+			    if(el.title === title){
+			    	$scope.selectedIndex = ind;
+			    	safeDigest($scope.selectedIndex);
+			    	openedTab = true;
+			    }
+			} );
+			return openedTab;
+		}
+		
+		 var safeDigest = function (obj){
+	        	if (!obj.$$phase) {
+			        try {
+			        	obj.$digest();
+			        }
+			        catch (e) { }
+	        	}
+	        }
 	}
 })();

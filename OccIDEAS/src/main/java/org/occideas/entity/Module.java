@@ -18,7 +18,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Where;
 
-@Entity()
+@Entity
 @DiscriminatorValue("M")
 @DynamicUpdate(value=true)
 @DynamicInsert(value=true)

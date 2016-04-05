@@ -36,6 +36,11 @@
     	$scope.nodePopover = {
     		    templateUrl: 'scripts/questions/partials/nodePopover.html',
     		    open: function(x,idRule) {
+    		    	if(x.info){
+    		    		if(x.info["Node"+x.idNode+idRule].nodePopover.isOpen){
+    		    			return;
+    		    		}
+    		    	}
     		    	var nodeclass = 'P';
     		    	if(angular.isUndefined(x.info)){
   		    		  x.info = [];
@@ -507,7 +512,6 @@
 						$log.info("Just cloned so turning undo off ");
 						$scope.undoEnable = false;
 					}
-					
 					$log.info("source"+sourceNode.type);
 					if(!destNode){
 						sourceNode.warning = 'warning';	
@@ -515,7 +519,6 @@
 								+": source"+sourceNode+ "dest:" +destNode);
 					}else{
 						$log.info("dest "+destNode.type);
-						
 					}
 					$scope.isDragging = false;
 					if(sourceNode.warning != 'warning'){
@@ -525,12 +528,26 @@
 							reorderSequence($scope.data);
 							saveModuleWithoutReload();
 							event.source.nodeScope.$treeScope.cloneEnabled = false;
+							updateRuleDialogIfExist(sourceNode);
 						}else{
 							saveModuleWithoutReload();
-						}
+							updateRuleDialogIfExist(sourceNode);
+					   }
 					}
 				}
 		}
+		
+		
+		function updateRuleDialogIfExist(sourceNode){
+			if(sourceNode.moduleRule && sourceNode.moduleRule.length > 0){
+				var ruleDialogId = sourceNode.idNode+'-'+ sourceNode.moduleRule[0].idAgent +'-'
+				+sourceNode.moduleRule[0].rule.idRule;
+				if(angular.element("#"+ruleDialogId)){
+					angular.element("#"+ruleDialogId).remove();
+				}
+			}			
+		}
+		
 		function reorderSequence(arrayList){
 			var seq = 0;
 			_.each(arrayList, function(data) {
@@ -867,6 +884,9 @@
 			if(!scope.$modelValue.name){
 				scope.$modelValue.name = 'Blank';
 			}
+			if(!scope.$modelValue.number){
+				scope.$modelValue.nodeclass='Q'; 
+			}
 			$scope.safeApply(function() {
 				scope.$modelValue.editEnabled = false;
 			});
@@ -1089,18 +1109,30 @@
 	          };
 		}
 		
+		function getUpdatedModuleRule(model,deffered){
+			ModuleRuleService.getModuleRule(model.idNode).then(function(data) {	
+				if(data.data){
+					deffered.resolve(data.data);
+				}
+			});
+			return deffered.promise;
+		}
+		
 		$scope.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
-				  var rules =_.filter(model.moduleRule, function(r){
+				  var deffered = $q.defer();
+				  var promise = getUpdatedModuleRule(model,deffered);
+				  promise.then(function(data){
+				  var mRules =_.filter(data, function(r){
   					return $itemScope.$parent.obj.idAgent === r.idAgent; 
   			      });
-				  if(rules.length > 0){
-				  	for(var i=0;i<rules.length;i++){
+				  if(mRules.length > 0){
+				  	for(var i=0;i<mRules.length;i++){
 				  		var scope = $itemScope.$new();
 				  		scope.model = model;
-				  		scope.rule = rules[i].rule;
-				  		scope.agentName = rules[i].agentName;
+				  		scope.rule = mRules[i].rule;
+				  		scope.agentName = mRules[i].agentName;
 					  	var x = scope.rule.conditions;
 					  	x.idRule = scope.rule.idRule;
 					  	addPopoverInfo(x,scope.rule.idRule);
@@ -1108,7 +1140,7 @@
 					  	$scope.activeRule = scope.rule;
 				  	}
 				  }	  
-				  
+				  });
 			  	}			  
 			  ],
 			  [ 'Add Rule', function($itemScope, $event, model) {
