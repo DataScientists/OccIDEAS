@@ -3,7 +3,8 @@
 <div class="col-md-4">
     <div ng-model="data">
 	    <div>{{participant.reference}}</div>
-        <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted">
+	    <md-progress-circular ng-if="inProgress" md-mode="indeterminate"></md-progress-circular>
+        <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted && !inProgress">
             <md-toolbar >{{data.showedQuestion.name}}
             <md-button id="numId" event-focus>
             <span class="badge">{{questionheader.name}}</span>

@@ -9,6 +9,7 @@ public class InterviewAnswerVO {
 	private long topQuestionId;
 	private long parentQuestionId;
 	private long answerId;
+	private long link;
 	private String name;
 	private String description;
 	private String answerFreetext;
@@ -104,5 +105,15 @@ public class InterviewAnswerVO {
 	public void setAnswerFreetext(String answerFreetext) {
 		this.answerFreetext = answerFreetext;
 	}
+
+	public long getLink() {
+		return link;
+	}
+
+	public void setLink(long link) {
+		this.link = link;
+	}
+	
+	
 
 }

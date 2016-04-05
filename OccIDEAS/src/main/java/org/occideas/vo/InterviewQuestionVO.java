@@ -11,6 +11,7 @@ public class InterviewQuestionVO {
 	private long questionId;
 	private long parentId;
 	private long topNodeId;
+	private long link;
 	private String name;
 	private String description;
 	private String nodeClass;
@@ -116,5 +117,11 @@ public class InterviewQuestionVO {
 		this.topNodeId = topNodeId;
 	}
 
-	
+	public long getLink() {
+		return link;
+	}
+
+	public void setLink(long link) {
+		this.link = link;
+	}
 }

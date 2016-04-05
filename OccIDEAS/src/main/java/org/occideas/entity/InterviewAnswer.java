@@ -39,6 +39,8 @@ public class InterviewAnswer implements java.io.Serializable {
 	private String number;
 	@Column(name = "type")
 	private String type;
+	@Column(name = "link")
+	private long link;
 	@Column(name = "deleted")
 	private Integer deleted;
 	@Column(name = "lastUpdated")
@@ -148,4 +150,13 @@ public class InterviewAnswer implements java.io.Serializable {
 		this.answerFreetext = answerFreetext;
 	}
 
+	public long getLink() {
+		return link;
+	}
+
+	public void setLink(long link) {
+		this.link = link;
+	}
+
+	
 }

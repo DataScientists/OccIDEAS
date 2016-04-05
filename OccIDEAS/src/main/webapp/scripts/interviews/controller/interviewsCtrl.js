@@ -244,6 +244,7 @@
               	  nodeClass:node.nodeclass,
               	  number: node.number,
               	  type: node.type,
+              	  link: node.link,
               	  deleted: 0,
               	  answers: []
              };
@@ -273,6 +274,7 @@
               	  nodeClass:node.nodeclass,
               	  number: node.number,
               	  type: node.type,
+              	  link: node.link,
               	  deleted: 0,
               	  answers: []
             };
@@ -289,6 +291,7 @@
      		  nodeClass:value.nodeclass,
        		  number:value.number,
        		  type:value.type,
+       		  link: node.link,
        		  deleted:0,
        		  isProcessed:false
         	};
@@ -317,7 +320,8 @@
       						topNodeId:node.topNodeId,
         					questionId:node.idNode,
                 	        parentId:answer.answerId,
-                	        number:answer.number
+                	        number:answer.number,
+                	        link: node.link
                   	}
       				showNextQuestion(actualQuestion,true);
       			}
@@ -345,6 +349,7 @@
             	  nodeClass:node.nodeclass,
             	  number: node.number,
             	  type: node.type,
+            	  link: node.link,
             	  deleted: 0,
             	  answers: [{
             		  idInterview:$scope.interviewId,
@@ -357,6 +362,7 @@
             		  number:answer.number,
             		  type:answer.type,
             		  answerFreetext:answerValue,
+            		  link: answer.link,
             		  deleted:0
             	  }]
             }
@@ -371,7 +377,8 @@
     					topNodeId:node.topNodeId,
     					questionId:node.idNode,
             	        parentId:answer.idNode,
-            	        number:answer.number
+            	        number:answer.number,
+            	        link: node.link,
                 	}
     				showNextQuestion(actualQuestion,true);
     			}
@@ -390,6 +397,7 @@
             	  nodeClass:node.nodeclass,
             	  number: node.number,
             	  type: node.type,
+            	  link: node.link,
             	  deleted: 0,
             	  answers: [{
             		  idInterview:$scope.interviewId,
@@ -400,6 +408,7 @@
             		  description:answer.description,
             		  nodeClass:answer.nodeclass,
             		  number:answer.number,
+            		  link: answer.link,
             		  type:answer.type,
             		  deleted:0
             	  }]
@@ -415,7 +424,8 @@
     					topNodeId:node.topNodeId,
     					questionId:node.idNode,
             	        parentId:answer.idNode,
-            	        number:answer.number
+            	        number:answer.number,
+            	        link: node.link
                 	}
     				showNextQuestion(actualQuestion,true);
     			}
@@ -423,6 +433,7 @@
         }
         
         $scope.saveAnswerQuestion = function (node) {
+        	$scope.inProgress = true;
         	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
                 if (response.status === 200) {
                 	$scope.participant = response.data[0];
@@ -747,13 +758,19 @@
              });
         }
 
-        function showNextQuestion(actualQuestion,isAnswer){
+        function showNextQuestion(actualQuestion,isAnswer,statusRequired){
+        	var defer;
+        	if(statusRequired){
+        		defer = $q.defer();
+        	}
         	var actualQuestionTemp = actualQuestion;
-              InterviewsService.getNextQuestion(actualQuestion).then(function (response) {
+            return InterviewsService.getNextQuestion(actualQuestion).then(function (response) {
                     if (response.status === 200) {
                        var question = response.data;
                        resetSelectedIndex();
-                       if(question.link === 0){
+                       if(question.link == 0){
+                    	   $scope.inProgress = false;
+                    	   safeDigest($scope.inProgress);
                     	   $scope.data.showedQuestion = question;
                     	   safeDigest($scope.data.showedQuestion);
                        }
@@ -763,24 +780,27 @@
                     	   $scope.parentQId = undefined;
                        }
                        if(question.link !== 0){
-                    	   var isExist = _.find($scope.activeInterview.modules,function(val,ind){
-                           		return val.idNode == question.link;
-                          });
-                    	   if(!isExist){
-                    		   return processLinkingQuestion(question,actualQuestionTemp);
-                    	   }
+                    	   return processLinkingQuestion(question,actualQuestionTemp);
                        }
                        if(question.type=='Q_frequency'){
                           	$scope.hoursArray = $scope.getShiftHoursArray();
                           	$scope.minutesArray = $scope.getShiftMinutesArray();
                            	$scope.weeks = $scope.getWeeksArray();
                        }
+                       if(statusRequired){
+                      	   defer.resolve(response.status);
+                      	   return defer.promise;
+              	   	   }
                     } else if (response.status == 204) {
+                    	 if(statusRequired){
+                          	   defer.resolve(response.status);
+                          	   return defer.promise;
+                  	   	 }
                     	 var mod = _.find($scope.activeInterview.modules,function(val,ind){
-                         	return val.idNode === actualQuestionTemp.topNodeId;
+                         	return val.idNode == actualQuestionTemp.topNodeId;
                          });
                     	var results =_.find(mod.questionsAsked,function(val,index){
-                  		   return val.questionId === actualQuestionTemp.questionId;
+                  		   return val.questionId == actualQuestionTemp.questionId;
                   	    });
                     	
                     	var multiAnswer = results?_.find(results.answers,function(val,ind){
@@ -804,9 +824,9 @@
                       		{
                     		   topNodeId:results.topNodeId,
               				   questionId:results.parentId,	  
-               				   parentId:results.parentId,
+               				   parentId:results.link !=0?results.link:results.parentId,
                				   number:results.number,
-               				   lQid: results.questionId
+               				   link: results.link
                       		}
                     		
               			   showNextQuestion(actualQuestion);
@@ -815,6 +835,8 @@
                     	   verifyQuestionInParentModule(mod);
                     	}
                     	else {
+                    	   $scope.inProgress = false;
+                     	   safeDigest($scope.inProgress);
                     	   endInterview();
                     	}
                     } else {
@@ -825,38 +847,31 @@
               }
         
         function processLinkingQuestion(question,actualQuestionTemp){
-//        	if(actualQuestionTemp.parentId == actualQuestionTemp.questionId){
-//        	   var mod = _.find($scope.activeInterview.modules,function(val,ind){
-//                   return val.idNode === question.topNodeId;
-//               });
-//           	   var questionTemp =_.find(mod.questionsAsked,function(val,index){
-//           			   return val.questionId === actualQuestionTemp.lQid;
-//           	   });
-//           	  
-////           	   var results;
-////           	   if(question){
-////           		  results = _.find(question.answers,function(val,index){
-////              		   return val.answerId === tempMod.answerNode;
-////              	  });
-////           	   }
-//        		actualQuestionTemp.questionId = questionTemp.parentId;
-//        	}
-        	
         	$scope.activeInterview.modules.push({
                	name:question.name,
                	idNode:question.link,
                	topNode:question.topNodeId,
-               	parentNode:actualQuestionTemp.questionId,
+               	parentNode:actualQuestionTemp.link?actualQuestionTemp.link:actualQuestionTemp.questionId,
                	answerNode:actualQuestionTemp.parentId,
+               	link:actualQuestionTemp.link,
                	number:question.number,
                	questionsAsked:[]
                });
+        	   var num = 0;
+        	   _.find($scope.activeInterview.modules,function(val){
+        		   if(val.idNode == question.link){
+        			   if(val.questionsAsked.length > 0){
+        				   num = val.questionsAsked.slice(-1)[0].number;
+        			   }
+        		   }
+        	   });
         	   var actualQuestion =
         	   {
         		   topNodeId:question.topNodeId,
    				   questionId:question.idNode,
         		   parentId:question.link,
-        		   number:'0'
+        		   link:actualQuestionTemp.link,
+        		   number:num
        			}
         	   showNextQuestion(actualQuestion);
         }
@@ -876,6 +891,35 @@
         		   return val.answerId === tempMod.answerNode;
         	  });
      	   }
+     	  if(!question){
+     		 var actualQuestion =
+       			{
+     		       topNodeId:mod.topNode,
+				   questionId:mod.answerNode,	  
+				   parentId:mod.idNode,
+				   number:tempMod.number
+       			}
+			   var status = showNextQuestion(actualQuestion,null,true);
+     		 if(status){
+     		   status.then(function(data){
+     		   if(data == 204){
+     			  var modParent = _.find($scope.activeInterview.modules,function(val,ind){
+     	               return val.idNode === mod.topNode;
+     	          }); 
+     			  var modQuestion = modParent.questionsAsked.slice(-1)[0];
+     			  var actualQuestion =
+         		   {
+       		       topNodeId:modQuestion.topNodeId,
+  				   questionId:modQuestion.questionId,	  
+  				   parentId:modQuestion.link > 0?modQuestion.link:modQuestion.parentId,
+  				   number:modQuestion.number
+         		   }
+     			  return showNextQuestion(actualQuestion,null,false);
+     		   }
+     		  });
+     		 }
+     		 return;
+     	  }
      	   if(results){
         		var actualQuestion =
           		{
@@ -884,7 +928,7 @@
    				   parentId:results.answerId,
    				   number:tempMod.number
           		}
-  			   showNextQuestion(actualQuestion,true);
+  			   return showNextQuestion(actualQuestion,true);
      	   }else{
      		 var actualQuestion =
        		 {
@@ -893,7 +937,7 @@
      				   parentId:question.parentId,
      				   number:question.number
        		 }
-  		     showNextQuestion(actualQuestion);
+  		     return showNextQuestion(actualQuestion);
      	   }
         }
         

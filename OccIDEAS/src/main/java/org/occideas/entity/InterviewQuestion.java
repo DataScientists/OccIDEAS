@@ -35,25 +35,27 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@Column(name = "question_id")
 	private long questionId;
-	
+
 	@Column(name = "parentId")
 	private long parentId;
-	
+
 	@Column(name = "topNodeId")
 	private long topNodeId;
 
+	@Column(name = "link")
+	private long link;
+
 	@OneToMany(fetch = FetchType.LAZY)
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
 	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"),
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
 	private List<InterviewAnswer> answers;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
-	@JoinColumns({ @JoinColumn(name = "question_id", referencedColumnName = "parentQuestionId"
-			,insertable=false,updatable=false),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
-					,insertable=false,updatable=false) })
+	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
+	@JoinColumns({
+			@JoinColumn(name = "question_id", referencedColumnName = "parentQuestionId", insertable = false, updatable = false),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false) })
 	private InterviewLinked linkingQuestion;
 
 	@Column(name = "name")
@@ -189,6 +191,12 @@ public class InterviewQuestion implements java.io.Serializable {
 		this.topNodeId = topNodeId;
 	}
 
-	
-	
+	public long getLink() {
+		return link;
+	}
+
+	public void setLink(long link) {
+		this.link = link;
+	}
+
 }
