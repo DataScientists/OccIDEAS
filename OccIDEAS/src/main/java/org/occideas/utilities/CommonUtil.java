@@ -19,13 +19,20 @@ public class CommonUtil {
 
 	public static String getNextQuestionByCurrentNumber(String number) {
 		StringBuilder sb = new StringBuilder(number);
-		String lastLetter = sb.substring(sb.length() - 1);
-		if(isInteger(lastLetter)){
-			sb.replace(sb.length() - 1, sb.length(), 
-					String.valueOf(Integer.parseInt(lastLetter) + 1));
+		if(isInteger(number)){
+			Integer iNumber = Integer.parseInt(number);
+			iNumber = iNumber + 1;
+			sb = new StringBuilder(iNumber.toString());
 		}else{
-			sb.append("1");
+			String lastLetter = sb.substring(sb.length() - 1);
+			if(isInteger(lastLetter)){
+				sb.replace(sb.length() - 1, sb.length(), 
+						String.valueOf(Integer.parseInt(lastLetter) + 1));
+			}else{
+				sb.append("1");
+			}
 		}
+		
 		return sb.toString();
 	}
 
