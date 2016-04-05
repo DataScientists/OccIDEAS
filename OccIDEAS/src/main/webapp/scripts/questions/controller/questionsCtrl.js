@@ -901,10 +901,14 @@
 		};
 
 		$scope.enable = function(scope) {
-			recordAction($scope.data);
-			$scope.safeApply(function() {
-				scope.$modelValue.editEnabled = true;
-			});
+			if(scope.$modelValue.nodeclass!='M'){
+				if(scope.$modelValue.nodeclass!='F'){
+					recordAction($scope.data);
+					$scope.safeApply(function() {
+						scope.$modelValue.editEnabled = true;
+					});
+				}				
+			}		
 		};
 
 		$scope.safeApply = function(fn) {
