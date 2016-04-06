@@ -41,6 +41,9 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@Column(name = "topNodeId")
 	private long topNodeId;
+	
+	@Column(name = "parentAnswerId")
+	private long parentAnswerId;
 
 	@Column(name = "link")
 	private long link;
@@ -197,6 +200,14 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	public void setLink(long link) {
 		this.link = link;
+	}
+
+	public long getParentAnswerId() {
+		return parentAnswerId;
+	}
+
+	public void setParentAnswerId(long parentAnswerId) {
+		this.parentAnswerId = parentAnswerId;
 	}
 
 }

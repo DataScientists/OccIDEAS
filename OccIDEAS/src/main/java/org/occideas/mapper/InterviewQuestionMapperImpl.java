@@ -33,6 +33,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setDeleted(question.getDeleted());
 		vo.setParentId(question.getParentId());
 		vo.setTopNodeId(question.getTopNodeId());
+		vo.setParentAnswerId(question.getParentAnswerId());
 		vo.setLink(question.getLink());
 		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
 		vo.setLinkingQuestion(linkMapper.convertToInterviewLinkVO(question.getLinkingQuestion()));
@@ -69,6 +70,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		question.setType(questionVO.getType());
 		question.setParentId(questionVO.getParentId());
 		question.setTopNodeId(questionVO.getTopNodeId());
+		question.setParentAnswerId(questionVO.getParentAnswerId());
 		question.setLink(questionVO.getLink());
 		question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
 		question.setLinkingQuestion(linkMapper.convertToInterviewLink(questionVO.getLinkingQuestion()));

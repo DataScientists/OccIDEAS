@@ -10,6 +10,7 @@ public class InterviewQuestionVO {
 	private long idInterview;
 	private long questionId;
 	private long parentId;
+	private long parentAnswerId;
 	private long topNodeId;
 	private long link;
 	private String name;
@@ -124,4 +125,14 @@ public class InterviewQuestionVO {
 	public void setLink(long link) {
 		this.link = link;
 	}
+
+	public long getParentAnswerId() {
+		return parentAnswerId;
+	}
+
+	public void setParentAnswerId(long parentAnswerId) {
+		this.parentAnswerId = parentAnswerId;
+	}
+	
+	
 }

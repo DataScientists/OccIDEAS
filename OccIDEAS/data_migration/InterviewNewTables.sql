@@ -10,6 +10,7 @@ CREATE TABLE `Interview_Question` (
   `topNodeId` bigint(20) NOT NULL,
   `question_id` bigint(20) DEFAULT NULL,
   `parentId` bigint(20) NOT NULL,
+  `parentAnswerId` bigint(20) DEFAULT NULL,
   `link` bigint(20) DEFAULT NULL,
   `name` varchar(2048) DEFAULT NULL,
   `description` varchar(2048) DEFAULT NULL,
