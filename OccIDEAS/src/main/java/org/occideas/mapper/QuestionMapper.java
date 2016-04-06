@@ -21,4 +21,8 @@ public interface QuestionMapper {
 	
 	List<Question> convertToQuestionList(List<QuestionVO> questionVO);
 	
+	QuestionVO convertToQuestionVOReducedDetails(Question question);
+	
+	List<QuestionVO> convertToQuestionVOReducedDetailsList(List<Question> questionList);
+	
 }
