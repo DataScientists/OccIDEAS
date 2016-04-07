@@ -986,11 +986,11 @@
                		   	  return val.idNode == question.link ||  val.idNode == actualQuestionTemp.questionId;
                		   })
                		  );
-                      if(mdIndex == -1){
+//                      if(mdIndex == -1){
                     	  $scope.activeInterview.modules.push(modDetail);
-                      }else{
-                    	  $scope.activeInterview.modules.splice(mdIndex, 1, modDetail);
-                      } 
+//                      }else{
+//                    	  $scope.activeInterview.modules.splice(mdIndex, 1, modDetail);
+//                      } 
         	   
         	   var num = 0;
         	   _.find($scope.activeInterview.modules,function(val){
