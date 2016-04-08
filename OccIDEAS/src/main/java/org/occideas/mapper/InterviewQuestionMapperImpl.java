@@ -14,9 +14,6 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 	@Autowired
 	private InterviewAnswerMapper answerMapper;
 	
-	@Autowired
-	private InterviewLinkMapper linkMapper;
-	
 	@Override
 	public InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question) {
 		if (question == null) {
@@ -36,7 +33,6 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setParentAnswerId(question.getParentAnswerId());
 		vo.setLink(question.getLink());
 		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
-		vo.setLinkingQuestion(linkMapper.convertToInterviewLinkVO(question.getLinkingQuestion()));
 		return vo;
 	}
 
@@ -73,7 +69,6 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		question.setParentAnswerId(questionVO.getParentAnswerId());
 		question.setLink(questionVO.getLink());
 		question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
-		question.setLinkingQuestion(linkMapper.convertToInterviewLink(questionVO.getLinkingQuestion()));
 		return question;
 	}
 
