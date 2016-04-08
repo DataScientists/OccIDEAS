@@ -19,7 +19,7 @@ public class Note implements Serializable {
 	@Id @GeneratedValue
 	private long idNote;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
 	private Node node;
 	private String type;
 
