@@ -12,6 +12,7 @@ public class CommonUtilTest {
 		assertTrue("20".equals(CommonUtil.getNextQuestionByCurrentNumber("19")));
 		assertTrue("101".equals(CommonUtil.getNextQuestionByCurrentNumber("100")));
 		assertTrue("1A20".equals(CommonUtil.getNextQuestionByCurrentNumber("1A19")));
+		assertTrue("21A20".equals(CommonUtil.getNextQuestionByCurrentNumber("21A19")));
 		assertTrue("1A1".equals(CommonUtil.getNextQuestionByCurrentNumber("1A")));
 		assertTrue("1A2".equals(CommonUtil.getNextQuestionByCurrentNumber("1A1")));
 		assertTrue("1A1A1".equals(CommonUtil.getNextQuestionByCurrentNumber("1A1A")));

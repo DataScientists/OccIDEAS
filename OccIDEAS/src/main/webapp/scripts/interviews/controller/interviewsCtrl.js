@@ -131,18 +131,21 @@
         		for(var i=0;i < answerList.length;i++){
         			var answer = answerList[i];
         			for(var j=0;j < mod.questionsAsked.length;j++){
-        				var question = mod.questionsAsked[j];
-        				if(question.questionId == answer.parentQuestionId){
-        					answer.deleted = 1;
+        				if(mod.questionsAsked[j].questionId == answer.parentQuestionId
+        						|| mod.questionsAsked[j].parentAnswerId == answer.answerId){
+        					var question = mod.questionsAsked[j];
         					deleteModuleWithParentAnswer(answer);
         					question.deleted = 1;
-            				InterviewsService.saveQuestion(mod.questionsAsked[j]).then(function (response) {
+        					answer.deleted = 1;
+        					if(mod.questionsAsked[j].parentAnswerId == answer.answerId){
+        						deleteQuestionWithParentAnswer(question.answers);
+        					}
+            				InterviewsService.saveQuestion(question).then(function (response) {
                     			if (response.status === 200) {
                     				console.log("Delete question successful...");
                     				_.remove(mod.questionsAsked,function(val){
-                    	        		return val.questionId === question.questionId;
+                    	        		return val.deleted == 1;
                     	        	});
-                    				return deleteQuestionWithParentAnswer(question.answers);
                     			}
                     		});
         				}
@@ -421,6 +424,7 @@
             	  topNodeId:node.topNodeId,
             	  questionId:node.idNode,
             	  parentId:$scope.parentQId?$scope.parentQId:node.parentId,
+            	  parentAnswerId:node.parentId,
             	  name:node.name,
             	  description:node.description,
             	  nodeClass:node.nodeclass,
