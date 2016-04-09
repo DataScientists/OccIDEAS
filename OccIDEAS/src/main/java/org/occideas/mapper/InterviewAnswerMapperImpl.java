@@ -39,6 +39,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 			return null;
 		}
 		InterviewAnswerVO vo = new InterviewAnswerVO();
+		vo.setId(answer.getId());
 		vo.setAnswerId(answer.getAnswerId());
 		vo.setDeleted(answer.getDeleted());
 		vo.setDescription(answer.getDescription());
@@ -83,6 +84,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 			return null;
 		}
 		InterviewAnswer answer = new InterviewAnswer();
+		answer.setId(answerVO.getId());
 		answer.setAnswerId(answerVO.getAnswerId());
 		answer.setDeleted(answerVO.getDeleted());
 		answer.setDescription(answerVO.getDescription());

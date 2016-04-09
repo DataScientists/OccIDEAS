@@ -57,7 +57,7 @@ public class Interview implements java.io.Serializable {
 	 * name="id") )
 	 */
 	@OneToMany(mappedBy = "idInterview", targetEntity = InterviewQuestion.class)
-	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
+	@Cascade(value = { CascadeType.PERSIST })
 	private List<InterviewQuestion> actualQuestion;
 
 	@ManyToMany(fetch = FetchType.LAZY)

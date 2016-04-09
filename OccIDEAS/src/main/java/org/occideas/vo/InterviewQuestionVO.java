@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"isProcessed","lQid"})
 public class InterviewQuestionVO {
 
+	private long id;
 	private long idInterview;
 	private long questionId;
 	private long parentId;
@@ -132,6 +133,14 @@ public class InterviewQuestionVO {
 
 	public void setParentAnswerId(long parentAnswerId) {
 		this.parentAnswerId = parentAnswerId;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	

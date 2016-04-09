@@ -41,6 +41,8 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 	            return null;
 	    }
 		InterviewQuestionVO vo = new InterviewQuestionVO();
+		vo.setId(question.getId());
+		vo.setIdInterview(question.getIdInterview());
 		vo.setIdInterview(question.getIdInterview());
 		vo.setName(question.getName());
 		vo.setNodeClass(question.getNodeClass());
@@ -91,6 +93,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 			return null;
 		}
 		InterviewQuestion question = new InterviewQuestion();
+		question.setId(questionVO.getId());
 		question.setIdInterview(questionVO.getIdInterview());
 		question.setName(questionVO.getName());
 		question.setDeleted(questionVO.getDeleted());

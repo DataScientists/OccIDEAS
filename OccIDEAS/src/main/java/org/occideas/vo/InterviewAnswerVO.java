@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"isProcessed"})
 public class InterviewAnswerVO {
 
+	private long id;
 	private long idInterview;
 	private long topQuestionId;
 	private long parentQuestionId;
@@ -124,6 +125,14 @@ public class InterviewAnswerVO {
 
 	public void setRules(List<ModuleRuleVO> rules) {
 		this.rules = rules;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 	
 	
