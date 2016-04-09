@@ -57,6 +57,34 @@ public class InterviewMapperImpl implements InterviewMapper {
         
         return interviewVO;
     }
+    
+    @Override
+    public InterviewVO convertToInterviewWithRulesVO(Interview interview) {
+        if (interview == null) {
+            return null;
+        }
+        InterviewVO interviewVO = new InterviewVO();
+        interviewVO.setInterviewId(interview.getIdinterview());
+        interviewVO.setReferenceNumber(interview.getReferenceNumber());
+        interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
+        interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
+        List<InterviewQuestion> questionsAsked = interview.getActualQuestion();
+    	interviewVO.setActualQuestion(iqMapper.convertToInterviewQuestionWithRulesVOList(questionsAsked));
+    	
+        List<Rule> firedRules = interview.getFiredRules();
+        interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
+        List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
+        interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
+        List<Rule> manualAssessedRules = interview.getManualAssessedRules();
+        interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
+              
+        interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(),false));
+        interviewVO.setParentId(interview.getParentId());
+        List<Interview> childInterviews = interview.getInterviews();
+        interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
+        
+        return interviewVO;
+    }
 
     @Override
     public List<InterviewVO> convertToInterviewVOList(List<Interview> interviewEntity) {
@@ -66,6 +94,18 @@ public class InterviewMapperImpl implements InterviewMapper {
         List<InterviewVO> list = new ArrayList<InterviewVO>();
         for (Interview interview : interviewEntity) {
             list.add(convertToInterviewVO(interview));
+        }
+        return list;
+    }
+    
+    @Override
+    public List<InterviewVO> convertToInterviewWithRulesVOList(List<Interview> interviewEntity) {
+        if (interviewEntity == null) {
+            return null;
+        }
+        List<InterviewVO> list = new ArrayList<InterviewVO>();
+        for (Interview interview : interviewEntity) {
+            list.add(convertToInterviewWithRulesVO(interview));
         }
         return list;
     }

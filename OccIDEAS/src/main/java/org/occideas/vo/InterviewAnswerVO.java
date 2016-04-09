@@ -1,5 +1,7 @@
 package org.occideas.vo;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"isProcessed"})
@@ -17,6 +19,8 @@ public class InterviewAnswerVO {
 	private String number;
 	private String type;
 	private Integer deleted;
+	
+	private List<ModuleRuleVO> rules;
 
 	public long getIdInterview() {
 		return idInterview;
@@ -112,6 +116,14 @@ public class InterviewAnswerVO {
 
 	public void setLink(long link) {
 		this.link = link;
+	}
+
+	public List<ModuleRuleVO> getRules() {
+		return rules;
+	}
+
+	public void setRules(List<ModuleRuleVO> rules) {
+		this.rules = rules;
 	}
 	
 	

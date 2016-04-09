@@ -3,10 +3,10 @@
         .controller('InterviewsCtrl', InterviewsCtrl);
 
     InterviewsCtrl.$inject = ['data', '$scope', '$mdDialog', 'FragmentsService',
-        '$q', 'QuestionsService', 'ModulesService', 'InterviewsService', 'ParticipantsService',
+        '$q', 'QuestionsService', 'ModulesService', 'InterviewsService', 'ParticipantsService', 'AssessmentsService',
         '$anchorScroll', '$location', '$mdMedia', '$window', '$state', '$rootScope','$compile','$timeout','$log'];
     function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService,
-                            $q, QuestionsService, ModulesService, InterviewsService, ParticipantsService,
+                            $q, QuestionsService, ModulesService, InterviewsService, ParticipantsService, AssessmentsService,
                             $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile,$timeout,$log) {
         var self = this;
         $scope.data = data;
@@ -758,6 +758,11 @@
                     	   verifyQuestionInParentModule(mod);
                     	}
                     	else {
+                    		AssessmentsService.updateFiredRules($scope.interviewId).then(function (response) {
+                                if (response.status === 200) {
+                                	console.log('Updated Fired Rules');
+                                }
+                    		});
                     	   endInterview();
                     	}
                     } else {

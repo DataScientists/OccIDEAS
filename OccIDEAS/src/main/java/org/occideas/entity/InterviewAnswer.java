@@ -1,12 +1,20 @@
 package org.occideas.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "Interview_Answer")
@@ -45,6 +53,11 @@ public class InterviewAnswer implements java.io.Serializable {
 	private Integer deleted;
 	@Column(name = "lastUpdated")
 	private Date lastUpdated;
+	
+	@OneToMany(fetch = FetchType.LAZY)
+	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
+	@JoinColumns({ @JoinColumn(name = "idNode", referencedColumnName = "answerId") })
+	private List<ModuleRule> rules;
 
 	public long getId() {
 		return id;
@@ -156,6 +169,14 @@ public class InterviewAnswer implements java.io.Serializable {
 
 	public void setLink(long link) {
 		this.link = link;
+	}
+
+	public List<ModuleRule> getRules() {
+		return rules;
+	}
+
+	public void setRules(List<ModuleRule> rules) {
+		this.rules = rules;
 	}
 
 	

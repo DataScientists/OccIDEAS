@@ -44,6 +44,14 @@ public class InterviewServiceImpl implements InterviewService {
         list.add(InterviewVO);
         return list;
     }
+    @Override
+    public List<InterviewVO> findByIdWithRules(Long id) {
+        Interview interview = interviewDao.get( id);
+        InterviewVO InterviewVO = mapper.convertToInterviewWithRulesVO(interview);
+        List<InterviewVO> list = new ArrayList<InterviewVO>();
+        list.add(InterviewVO);
+        return list;
+    }
 
     @Override
     public InterviewVO create(InterviewVO o) {
