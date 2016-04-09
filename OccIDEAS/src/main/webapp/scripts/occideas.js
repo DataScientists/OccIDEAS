@@ -93,7 +93,7 @@ angular
 	   	$rootScope._ = window._; 
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
-        
+        $rootScope.isReadOnly = false; 
         $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
         	  event.preventDefault();
         	  $state.get('error').error = { code: 123, description: 'Exception stack trace' }

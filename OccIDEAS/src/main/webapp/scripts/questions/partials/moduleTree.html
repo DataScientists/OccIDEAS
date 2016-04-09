@@ -14,7 +14,7 @@
 	</div>
 </div>
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}">
+  <div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}" ng-attr-data-nodrag="{{isReadOnly}}">
      <div class="tree-node" id="{{node.anchorId}}">
         <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="" 
 			ng-mousedown="copy($event,$treeScope)">
