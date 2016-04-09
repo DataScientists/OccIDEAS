@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"hours","minutes","isOpen","selectedAnswer","editEnabled","info","warning","placeholder","isEditing","showAgentSlider","id","collapsed"})
+@JsonIgnoreProperties({"hours","minutes","isOpen","selectedAnswer","editEnabled","info","warning","placeholder","isEditing","showAgentSlider","id","collapsed","count"})
 public class QuestionVO extends NodeVO implements Cloneable, Comparable<QuestionVO>{
 
 	@JsonInclude(Include.NON_NULL)

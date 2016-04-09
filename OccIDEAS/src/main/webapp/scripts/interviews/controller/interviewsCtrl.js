@@ -54,7 +54,7 @@
         	actualQuestion.parentId = parentId,
         	actualQuestion.number = newNum?newNum:question.number.slice(0, -1) +number;		
 
-			var status = showNextQuestion(actualQuestion,false,true);
+			var status = showNextQuestion(actualQuestion,false,true,question.count);
         	if(status){
         		status.then(function(data){
         			if(data == 200){
@@ -110,7 +110,7 @@
         	        number:questionAsked.answers[0].number,
         	        link: questionAsked.link
             	}
-				return showNextQuestion(actualQuestion,true);
+				return showNextQuestion(actualQuestion,true,false,question.count);
         		}
         	}
         	$scope.updateFirst = false;
@@ -204,8 +204,14 @@
         			if (response.status === 200) {
         				console.log("Delete question successful...");
         				var mod = _.find($scope.activeInterview.modules,function(mod){
-        					return mod.idNode == $scope.data.showedQuestion.topNodeId;
+        					return mod.idNode == $scope.data.showedQuestion.topNodeId
+        						&& mod.count == $scope.data.showedQuestion.count;
         				});
+        				if(!mod){
+        					mod = _.find($scope.activeInterview.modules,function(mod){
+            					return mod.idNode == $scope.data.showedQuestion.topNodeId
+        					});
+        				}
         				_.remove(mod.questionsAsked,function(val){
         	        		return val.questionId === question.questionId;
         	        	});
@@ -265,8 +271,13 @@
         
         function processInterviewQuestionsWithMultipleAnswers(interview,node){
         	var mod = _.find(interview.modules,function(val,ind){
-              	return val.idNode === node.topNodeId;
+              	return val.idNode === node.topNodeId && node.count == val.count;
             });
+        	if(!mod){
+        		mod = _.find(interview.modules,function(val,ind){
+                  	return val.idNode === node.topNodeId;
+                });
+        	}
         	
         	var newQuestionAsked = populateNewQuestionAskedJsonByNode(interview,node);
         	
@@ -302,7 +313,7 @@
                 	        number:answer.number,
                 	        link: node.link
                   	}
-      				showNextQuestion(actualQuestion,true);
+      				showNextQuestion(actualQuestion,true,false,mod.count);
       			}
       		});
         }
@@ -367,8 +378,13 @@
               	  }]
               }
               var mod = _.find(interview.modules,function(val,ind){
-              	return val.idNode === node.topNodeId;
+              	return val.idNode === node.topNodeId && node.count == val.count;
               });
+              if(!mod){
+            	  mod = _.find(interview.modules,function(val,ind){
+                    	return val.idNode === node.topNodeId;
+                  });
+              }
               //check if question already exist, do not push, just update the
           	// question in database
               var qsIndex = _.indexOf(mod.questionsAsked, 
@@ -391,7 +407,7 @@
               	        number:answer.number,
               	        link: node.link
                   	}
-      				showNextQuestion(actualQuestion,true);
+      				showNextQuestion(actualQuestion,true,false,mod.count);
       			}
       		});
         }
@@ -447,13 +463,18 @@
             	  }]
             }
             var mod = _.find(interview.modules,function(val,ind){
-            	return val.idNode === node.topNodeId;
+            	return val.idNode === node.topNodeId && node.count == val.count;
             });
+            if(!mod){
+            	mod = _.find(interview.modules,function(val,ind){
+                	return val.idNode === node.topNodeId;
+                });
+            }
             //check if question already exist, do not push, just update the
         	// question in database
             var qsIndex = _.indexOf(mod.questionsAsked, 
           	_.find(mod.questionsAsked, function(qs){
-          	  return qs.questionId == node.idNode;
+          	  return qs.questionId == node.idNode && node.count == mod.count;
           	})
             );
             if(qsIndex == -1){
@@ -471,12 +492,43 @@
             	        number:answer.number,
             	        link: node.link
                 	}
-    				showNextQuestion(actualQuestion,true);
+    				showNextQuestion(actualQuestion,true,false,mod.count);
     			}
     		});
         }
         
+        function validateIfAnswerSelected(node){
+        	if(node.type == 'Q_multiple'){
+        		var results = _.find($scope.data.showedQuestion.nodes,function(val,ind){
+        			return val.isSelected;
+        		});
+        		return results < 1;
+        	}else if(node.type == 'Q_frequency'){
+        		_.each(node.childNodes,function(val,ind){
+        			if(val.type == 'P_frequencyweeks'){
+        				return !node.name;
+        			}
+        				
+        			if(val.type == 'P_frequencyshifthours'){
+        				return !$scope.data.showedQuestion.hours || !$scope.data.showedQuestion.minutes;
+        			}
+        			if(val.type == 'P_frequencyhoursminute'){
+        				return !$scope.data.showedQuestion.hours || !$scope.data.showedQuestion.minutes;
+        			}
+        		})
+        	}else if(node.type == 'Q_single' || node.type == 'Q_simple'){
+        		return !$scope.data.showedQuestion.selectedAnswer;
+        	}
+        	
+        	return false;
+        }
+        
         $scope.saveAnswerQuestion = function (node) {
+        	if(validateIfAnswerSelected(node)){
+        		alert("Please select an answer.");
+        		return;
+        	}
+        	
         	$scope.inProgress = true;
         	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
                 if (response.status === 200) {
@@ -537,6 +589,7 @@
                         	name:interview.module.name,
                         	idNode:interview.module.idNode,
                         	deleted:0,
+                        	count:1,
                         	questionsAsked:[]
                         });
                         var copyParticipant = angular.copy($scope.participant);
@@ -557,7 +610,7 @@
                                     	        parentId:interview.module.idNode,
                                     	        number:'0'
                                         	}
-                                        showNextQuestion(actualQuestion);
+                                        showNextQuestion(actualQuestion,false,false,1);
                                     } else {
                                         console.log('ERROR on Start Interview!');
                                     }
@@ -678,15 +731,17 @@
              });
         }
 
-        function showNextQuestion(actualQuestion,isAnswer,statusRequired){
+        function showNextQuestion(actualQuestion,isAnswer,statusRequired,count){
         	var defer;
         	if(statusRequired){
         		defer = $q.defer();
         	}
         	var actualQuestionTemp = actualQuestion;
+        	var tempCount = count;
             return InterviewsService.getNextQuestion(actualQuestion).then(function (response) {
                     if (response.status === 200) {
                        var question = response.data;
+                       question.count = tempCount;
                        resetSelectedIndex();
                        if(question.link == 0){
                     	   $scope.inProgress = false;
@@ -724,8 +779,13 @@
                           	   return defer.promise;
                   	   	 }
                     	 var mod = _.find($scope.activeInterview.modules,function(val,ind){
-                         	return val.idNode == actualQuestionTemp.topNodeId;
+                         	return val.idNode == actualQuestionTemp.topNodeId && val.count == tempCount;
                          });
+                    	 if(!mod){
+                    		 mod = _.find($scope.activeInterview.modules,function(val,ind){
+                              	return val.idNode == actualQuestionTemp.topNodeId;
+                              });
+                    	 }
                     	var results =_.find(mod.questionsAsked,function(val,index){
                   		   return val.questionId == actualQuestionTemp.questionId;
                   	    });
@@ -745,7 +805,7 @@
                         	        parentId:answer.answerId,
                         	        number:answer.number
                           	}
-              				showNextQuestion(actualQuestion,true);
+              				showNextQuestion(actualQuestion,true,false,mod.count);
                     	}
                     	else if(results){
                     		var actualQuestion =
@@ -756,7 +816,7 @@
                				   number:results.number,
                				   link: results.link
                       		}
-              			   showNextQuestion(actualQuestion);
+              			   showNextQuestion(actualQuestion,false,false,mod.count);
                     	}
                     	else if(mod.parentNode){
                     	   verifyQuestionInParentModule(mod);
@@ -778,8 +838,13 @@
         
         function hasQuestionBeenAsked(node){
         	var mod = _.find($scope.activeInterview.modules,function(val,ind){
-            	return val.idNode == node.topNodeId;
+            	return val.idNode == node.topNodeId && node.count == val.count;
             });
+        	if(!mod){
+        		mod = _.find($scope.activeInterview.modules,function(val,ind){
+                	return val.idNode == node.topNodeId;
+                });
+        	}
        		var results =_.find(mod.questionsAsked,function(val,index){
      		   return val.questionId == node.idNode;
      	    });
@@ -796,31 +861,33 @@
                     	parentAnswerId:question.parentId,
                     	link:actualQuestionTemp.link,
                     	number:question.number,
+                    	count:1,
                     	deleted:0,
                     	questionsAsked:[]
                     };
-//        	 	if($scope.updateEnable){
         	 		 var mdIndex = _.indexOf($scope.activeInterview.modules, 
         	     			  _.find($scope.activeInterview.modules,function(val){
         	            		   	  return (val.answerNode == question.parentId && val.idNode == question.link);
         	            		   })
         	            		  );
         	                   if(mdIndex == -1){
-//        	                 	  $scope.activeInterview.modules.splice(mdIndex, 1, modDetail);
+        	                	   var modules = _.filter($scope.activeInterview.modules,function(val){
+        	                		   return val.idNode == modDetail.idNode;
+        	                	   });
+        	                	   if(modules){
+        	                		   modDetail.count = modDetail.count + modules.length;
+        	                	   }
         	                	   $scope.activeInterview.modules.push(modDetail);
         	                   }
-//        	 	 }else{
-//        	 		 $scope.activeInterview.modules.push(modDetail);
-//        	 	 }
-     	   
      	   var num = 0;
      	   _.find($scope.activeInterview.modules,function(val){
-     		   if(val.idNode == question.link){
+     		   if(val.idNode == question.link && val.parentAnswerId == question.parentId){
      			   if(val.questionsAsked.length > 0){
      				   num = val.questionsAsked.slice(-1)[0].number;
      			   }
      		   }
      	   });
+     	   
      	   var actualQuestion =
      	   {
      		   topNodeId:question.topNodeId,
@@ -829,13 +896,14 @@
      		   link:actualQuestionTemp.link,
      		   number:num
     			}
-     	   showNextQuestion(actualQuestion);
+     	   showNextQuestion(actualQuestion,false,false,modDetail.count);
         }
         
         function verifyQuestionInParentModule(mod){
         	var tempMod = angular.copy(mod);
      	   var mod = _.find($scope.activeInterview.modules,function(val,ind){
-               return val.idNode === tempMod.topNode;
+               return (val.idNode === tempMod.topNode || val.topNode == tempMod.topNode) 
+               && val.count == tempMod.count;
             });
      	   var question =_.find(mod.questionsAsked,function(val,index){
      		   return val.questionId === tempMod.parentNode;
@@ -855,7 +923,7 @@
 				   parentId:mod.idNode,
 				   number:tempMod.number
        			}
-			   var status = showNextQuestion(actualQuestion,null,true);
+			   var status = showNextQuestion(actualQuestion,null,true,mod.count);
      		 if(status){
      		   status.then(function(data){
      		   if(data == 204){
@@ -874,7 +942,7 @@
   				   parentId:modQuestion.link > 0?modQuestion.link:modQuestion.parentId,
   				   number:modQuestion.number
          		   }
-     			  return showNextQuestion(actualQuestion,null,false);
+     			  return showNextQuestion(actualQuestion,null,false,mod.count);
      		   }
      		  });
      		 }
@@ -888,7 +956,7 @@
    				   parentId:results.answerId,
    				   number:tempMod.number
           		}
-  			   return showNextQuestion(actualQuestion,true);
+  			   return showNextQuestion(actualQuestion,true,false,mod.count);
      	   }else{
      		 var actualQuestion =
        		 {
@@ -897,7 +965,7 @@
      				   parentId:question.parentId,
      				   number:question.number
        		 }
-  		     return showNextQuestion(actualQuestion);
+  		     return showNextQuestion(actualQuestion,false,false,mod.count);
      	   }
         }
         
