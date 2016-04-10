@@ -24,4 +24,6 @@ public class Constant {
     public static final String DESC = "DESC";
     public static final String INTERVIEW_SESSION = "Interview";
     public static final String MODULE_JSON_SESSION = "moduleJson";
+    
+    public static final String IS_READ_ONLY = "readonly";
 }

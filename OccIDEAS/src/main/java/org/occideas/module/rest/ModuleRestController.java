@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.module.service.ModuleService;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -85,6 +86,9 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(ModuleVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.update(json);
 		}catch(Throwable e){
@@ -97,6 +101,9 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 	@Path(value="/delete")
 	@POST
 	public Response delete(ModuleVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.merge(json);
 		}catch(Throwable e){

@@ -1,12 +1,18 @@
 package org.occideas.utilities;
 
-import java.util.Arrays;
 import java.util.List;
+
+import org.occideas.entity.Constant;
 
 public class CommonUtil {
 
 	public static boolean isListEmpty(List<? extends Object> list) {
 		return list == null || list.isEmpty();
+	}
+	
+	public static boolean isReadOnlyEnabled(){
+		return "true".equalsIgnoreCase(PropUtil.getInstance()
+				.getProperty(Constant.IS_READ_ONLY));
 	}
 
 	public static boolean isNumeric(String str) {
