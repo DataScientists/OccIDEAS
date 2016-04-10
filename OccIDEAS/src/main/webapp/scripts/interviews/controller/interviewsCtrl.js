@@ -720,16 +720,6 @@
         	return minutes;
         };
         $scope.questionheader = {};
-        function validateActiveInterview(question){
-        	var interviewModuleId = question.topNodeId;
-        	 QuestionsService.findQuestions(question.topNodeId, 'M')
-             .then(function (response) {
-                 console.log("Data getting from questions AJAX ...");
-                 if(response.data[0]){
-                 $scope.questionheader.name = response.data[0].name;
-                 }
-             });
-        }
 
         function showNextQuestion(actualQuestion,isAnswer,statusRequired,count){
         	var defer;
@@ -753,6 +743,10 @@
                     	   }
                     	   else{
                     		   $scope.data.showedQuestion = question;
+                    		   var mod = _.find($scope.activeInterview.modules,function(val,ind){
+                                	return val.idNode == question.topNodeId;
+                                });
+                    		   $scope.questionheader.name = mod.name.substring(0, 4);;
                     	   }
                     	   safeDigest($scope.data.showedQuestion);
                        }
