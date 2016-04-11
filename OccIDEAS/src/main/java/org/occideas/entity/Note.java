@@ -22,6 +22,8 @@ public class Note implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Node node;
 	private String type;
+	
+	private long interviewId;
 
 	@Column(length=2048)
 	private String text;
@@ -86,6 +88,14 @@ public class Note implements Serializable {
 
 	public void setNode(Node node) {
 		this.node = node;
+	}
+
+	public long getInterviewId() {
+		return interviewId;
+	}
+
+	public void setInterviewId(long interviewId) {
+		this.interviewId = interviewId;
 	}
 
 }

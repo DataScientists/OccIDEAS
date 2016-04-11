@@ -21,6 +21,7 @@ import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
+import org.occideas.vo.NoteVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
@@ -221,6 +222,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		}
     	firedRules = removeDuplicates(firedRules);
     	interview.setFiredRules(firedRules);
+    	NoteVO note = new NoteVO();
+    	note.setInterviewId(interview.getInterviewId());
+    	note.setText("Ran determineFiredRules");
+    	interview.getNotes().add(note);
     	service.update(interview);
     	return interview;
     }

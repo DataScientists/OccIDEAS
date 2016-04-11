@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.Note;
 import org.occideas.entity.Rule;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
+import org.occideas.vo.NoteVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +25,9 @@ public class InterviewMapperImpl implements InterviewMapper {
     
     @Autowired
 	private RuleMapper ruleMapper;
+    
+    @Autowired
+	private NoteMapper noteMapper;
     
     @Autowired
 	private ParticipantMapper participantMapper;
@@ -80,8 +85,8 @@ public class InterviewMapperImpl implements InterviewMapper {
               
         interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(),false));
         interviewVO.setParentId(interview.getParentId());
-        List<Interview> childInterviews = interview.getInterviews();
-        interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
+        List<Note> notes = interview.getNotes();
+        interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
         
         return interviewVO;
     }
@@ -131,8 +136,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         interview.setManualAssessedRules(ruleMapper.convertToRuleExcPaList(manualAssessedRules));
         interview.setParticipant(participantMapper.convertToParticipant(interviewVO.getParticipant(),false));
         interview.setParentId(interviewVO.getParentId());
-        List<InterviewVO> interviews = interviewVO.getInterviews();
-        interview.setInterviews(this.convertToInterviewList(interviews));
+        List<NoteVO> notes = interviewVO.getNotes();
+        interview.setNotes(noteMapper.convertToNoteList(notes));
         return interview;
     }
 

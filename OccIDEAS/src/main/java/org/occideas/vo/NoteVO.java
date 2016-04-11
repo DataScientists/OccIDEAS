@@ -12,6 +12,7 @@ public class NoteVO {
 	@JsonInclude(Include.NON_EMPTY)
 	@JsonProperty(value = "nodes")
 	private NodeVO nodeVO;
+	private long interviewId;
 	private String type;
 	private String text;
 	private Date lastUpdated;
@@ -58,11 +59,22 @@ public class NoteVO {
 	}
 
 	public Integer getDeleted() {
+		if(this.deleted==null){
+			deleted = 0;
+		}
 		return deleted;
 	}
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
+	}
+
+	public long getInterviewId() {
+		return interviewId;
+	}
+
+	public void setInterviewId(long interviewId) {
+		this.interviewId = interviewId;
 	}
 
 }

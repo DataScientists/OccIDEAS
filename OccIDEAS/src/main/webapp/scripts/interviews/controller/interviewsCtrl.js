@@ -23,7 +23,28 @@
         	$scope.addClassWithTimeout('IntResult'+elId);
         	safeDigest($scope.interviews);
     	});
-        
+        $scope.isCollapsableNode = function(node){
+			if(node){				
+				if(node.nodes.length==0){
+					return false;
+				}else if(node.type=='I'){
+					return false;
+				}else{
+					return true;
+				}
+			}else{
+				return false;
+			}
+		}
+        $scope.isEditableNode = function(node){
+			if(node){				
+				if(node.type=='Q'){
+					return true;
+				}
+			}else{
+				return false;
+			}
+		}
         $scope.addClassWithTimeout = function(elId){
         	$timeout(function() {
         		if(!$('#'+elId).hasClass("highlight")){
@@ -499,32 +520,55 @@
         
         function validateIfAnswerSelected(node){
         	if(node.type == 'Q_multiple'){
-        		var results = _.find($scope.data.showedQuestion.nodes,function(val,ind){
-        			return val.isSelected;
+        		var retValue = false;
+        		_.find($scope.data.showedQuestion.nodes,function(val,ind){
+        			if(val.isSelected){
+        				retValue = true;
+        			};
         		});
-        		return results < 1;
+        		return retValue;
         	}else if(node.type == 'Q_frequency'){
-        		_.each(node.childNodes,function(val,ind){
-        			if(val.type == 'P_frequencyweeks'){
-        				return !node.name;
-        			}
-        				
-        			if(val.type == 'P_frequencyshifthours'){
-        				return !$scope.data.showedQuestion.hours || !$scope.data.showedQuestion.minutes;
-        			}
-        			if(val.type == 'P_frequencyhoursminute'){
-        				return !$scope.data.showedQuestion.hours || !$scope.data.showedQuestion.minutes;
-        			}
-        		})
+        		var retValue = false;
+        		for(var i=0;i<node.nodes.length;i++){
+        			var val = node.nodes[i];
+        			if(val.type == 'P_frequencyweeks'){       				
+        				if(isNaN(val.name)){
+        					retValue = false;
+        				}else{
+        					retValue = true;
+        				}    				
+        			} else if(val.type == 'P_frequencyhours'){       				
+        				if(isNaN(val.name)){
+        					retValue = false;
+        				}else{
+        					retValue = true;
+        				}    				
+        			} else if(val.type == 'P_frequencyshifthours'){
+        				var retValue = false;
+        				if($scope.data.showedQuestion.hours){
+        					retValue = true;
+        				}
+        				if($scope.data.showedQuestion.minutes){
+        					retValue = true;
+        				}
+        			} else if(val.type == 'P_frequencyhoursminute'){
+        				var retValue = false;
+        				if($scope.data.showedQuestion.hours){
+        					retValue = true;
+        				}
+        				if($scope.data.showedQuestion.minutes){
+        					retValue = true;
+        				}      				
+        			}	
+        		}
+        		return retValue;
         	}else if(node.type == 'Q_single' || node.type == 'Q_simple'){
-        		return !$scope.data.showedQuestion.selectedAnswer;
+        		return $scope.data.showedQuestion.selectedAnswer;
         	}
-        	
-        	return false;
         }
         
         $scope.saveAnswerQuestion = function (node) {
-        	if(validateIfAnswerSelected(node)){
+        	if(!(validateIfAnswerSelected(node))){
         		alert("Please select an answer.");
         		return;
         	}
@@ -714,6 +758,13 @@
         	}
         	return hours;
         };
+        $scope.getHoursPerWeekArray = function(){
+        	var hours = [];
+        	for(var i=0;i<169;i++){
+        		hours.push(i);
+        	}
+        	return hours;
+        };
         $scope.getShiftMinutesArray= function(){
         	var minutes = [0,1,2,5,10,15,20,25,30,35,40,45,50,55];
         	
@@ -759,8 +810,9 @@
                     	   return processLinkingQuestion(question,actualQuestionTemp);
                        }
                        if(question.type=='Q_frequency'){
-                          	$scope.hoursArray = $scope.getShiftHoursArray();
-                          	$scope.minutesArray = $scope.getShiftMinutesArray();
+                    	   $scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+                    	   $scope.hoursArray = $scope.getShiftHoursArray();
+                         	$scope.minutesArray = $scope.getShiftMinutesArray();
                            	$scope.weeks = $scope.getWeeksArray();
                        }
                        if(statusRequired){
@@ -816,9 +868,18 @@
                     	   verifyQuestionInParentModule(mod);
                     	}
                     	else {
+                    		$scope.interview.notes = [];
+                    		$scope.interview.notes.push(
+                    				{
+                    					interviewId:$scope.interview.idInterview,
+                    					text:'Interview Ended'
+                    				}
+                    				);
+                    		
                     		AssessmentsService.updateFiredRules($scope.interviewId).then(function (response) {
                                 if (response.status === 200) {
                                 	console.log('Updated Fired Rules');
+                                	
                                 }
                     		});
                     	   endInterview();
@@ -859,20 +920,20 @@
                     	deleted:0,
                     	questionsAsked:[]
                     };
-        	 		 var mdIndex = _.indexOf($scope.activeInterview.modules, 
-        	     			  _.find($scope.activeInterview.modules,function(val){
-        	            		   	  return (val.answerNode == question.parentId && val.idNode == question.link);
-        	            		   })
-        	            		  );
-        	                   if(mdIndex == -1){
-        	                	   var modules = _.filter($scope.activeInterview.modules,function(val){
-        	                		   return val.idNode == modDetail.idNode;
-        	                	   });
-        	                	   if(modules){
-        	                		   modDetail.count = modDetail.count + modules.length;
-        	                	   }
-        	                	   $scope.activeInterview.modules.push(modDetail);
-        	                   }
+	 		 var mdIndex = _.indexOf($scope.activeInterview.modules, 
+	     			  _.find($scope.activeInterview.modules,function(val){
+	            		   	  return (val.answerNode == question.parentId && val.idNode == question.link);
+	            		   })
+	            		  );
+	         if(mdIndex == -1){
+	             var modules = _.filter($scope.activeInterview.modules,function(val){
+	                return val.idNode == modDetail.idNode;
+	             });
+	             if(modules){
+	                modDetail.count = modDetail.count + modules.length;
+	             }
+	             $scope.activeInterview.modules.push(modDetail);    	             
+	         }
      	   var num = 0;
      	   _.find($scope.activeInterview.modules,function(val){
      		   if(val.idNode == question.link && val.parentAnswerId == question.parentId){
@@ -880,8 +941,7 @@
      				   num = val.questionsAsked.slice(-1)[0].number;
      			   }
      		   }
-     	   });
-     	   
+     	   });   	   
      	   var actualQuestion =
      	   {
      		   topNodeId:question.topNodeId,
@@ -970,5 +1030,90 @@
     		$scope.data.interviewEnded = true;
     		$scope.updateEnable = false;
         }
-         }
+        function convertToTree(){
+        	var root = {id:0,
+        			parent_id:null,
+        			type:'I',
+        			name:$scope.activeInterview.referenceNumber,
+        			number:'Interview',
+        			nodes:[]};
+        	var node_list = {0:root};
+        	var table = [];
+        	_.each($scope.activeInterview.modules,function(module){
+        		var parent_id = null;
+        		if(module.parentAnswerId){
+        			parent_id = module.parentAnswerId;
+        		}else if(module.parentNode){
+        			parent_id = module.parentNode;
+        		}else{
+        			parent_id = 0;
+        		}
+        		var number = null;
+        		if(module.name.length>4){
+        			number = module.name.substr(0,4);
+        		}else{
+        			number = module.name;
+        		}
+        		table.push({id:module.idNode,
+        			type:'M',
+        			parent_id:parent_id,
+        			name:module.name,
+        			number:number,
+        			nodes:[]});
+        		_.each(module.questionsAsked,function(qa){
+        			var multi = null;
+        			if(qa.type.indexOf('multi') > -1){
+        				multi = true;
+        			}
+        			table.push({id:qa.questionId,
+        				parent_id:qa.parentId,
+        				type:'Q',
+        				number:qa.number,
+        				name:qa.name,
+        				multi:multi,
+        				parentAnswerId:qa.parentAnswerId,//edit required field
+        				parentId:qa.parentId,//edit required field
+        				topeNodeId:qa.topeNodeId,//edit required field
+        				questionId:qa.questionId,//edit required field
+        				nodes:[]});
+        			_.each(qa.answers,function(answer){
+        				table.push({id:answer.answerId,
+        					parent_id:answer.parentQuestionId,
+        					type:'P',
+        					number:answer.number,
+        					name:answer.name,
+        					nodes:[]});        				
+        			});  				
+    			});			
+			});
+        	for(var i=0;i<table.length;i++){
+        		node_list[table[i].id] = table[i];
+        		if(!(table[i].parent_id)){
+        			table[i].parent_id=0;
+        		}
+        		if(node_list[table[i].parent_id]){
+        			node_list[table[i].parent_id].nodes.push(node_list[table[i].id]);
+        		}       		
+        	}
+        	$scope.treeView = {0:node_list[0]};
+        }
+        $scope.showTree = false;
+        $scope.showList = true;
+        $scope.viewStatus = "List View";
+        $scope.toggleTreeList = function(){
+        	if(!$scope.showTree){
+        		convertToTree();
+        		$scope.showTree = true;
+                $scope.showList = false;
+                $scope.viewStatus = "Tree View";
+        	}else{
+        		$scope.showTree = false;
+                $scope.showList = true;
+                $scope.viewStatus = "List View";
+        	}
+        }
+		$scope.toggleCollapse = function(scope){
+			scope.toggle();
+		}
+    }
 })();
