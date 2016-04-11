@@ -2,10 +2,17 @@ package org.occideas.utilities;
 
 import java.util.List;
 
+import org.occideas.entity.Constant;
+
 public class CommonUtil {
 
 	public static boolean isListEmpty(List<? extends Object> list) {
 		return list == null || list.isEmpty();
+	}
+	
+	public static boolean isReadOnlyEnabled(){
+		return "true".equalsIgnoreCase(PropUtil.getInstance()
+				.getProperty(Constant.IS_READ_ONLY));
 	}
 
 	public static boolean isNumeric(String str) {
@@ -19,16 +26,20 @@ public class CommonUtil {
 
 	public static String getNextQuestionByCurrentNumber(String number) {
 		StringBuilder sb = new StringBuilder(number);
-		if(isInteger(number)){
+		if(number.length() == 0){
 			Integer iNumber = Integer.parseInt(number);
 			iNumber = iNumber + 1;
 			sb = new StringBuilder(iNumber.toString());
 		}else{
-			String lastLetter = sb.substring(sb.length() - 1);
-			if(isInteger(lastLetter)){
-				sb.replace(sb.length() - 1, sb.length(), 
-						String.valueOf(Integer.parseInt(lastLetter) + 1));
-			}else{
+			String lastChar = sb.substring(sb.length() - 1);
+			if(isInteger(lastChar)){
+				String[] numArray = number.split("[a-zA-Z]+");
+				String lastLetter = numArray[numArray.length - 1];
+				numArray[numArray.length - 1] = String.valueOf(Integer.parseInt(lastLetter) + 1);
+				sb.delete(sb.lastIndexOf(lastLetter), sb.length());
+				sb.append(numArray[numArray.length - 1]);
+			}
+			else{
 				sb.append("1");
 			}
 		}

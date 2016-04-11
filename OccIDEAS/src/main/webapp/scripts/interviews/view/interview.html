@@ -12,7 +12,7 @@
             </md-button></md-toolbar>
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
 	            <div ng-repeat="node in data.showedQuestion.nodes">
-              		<md-checkbox ng-checked="multiExists(node, multiSelected)"
+              		<md-checkbox ng-model="node.isSelected"
                        ng-click="multiToggle(node, multiSelected)" class="green">
                 		<span ng-if="node.type!='P_freetext'">{{node.name}}</span>
 					    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
@@ -35,6 +35,16 @@
         					<md-select ng-model="node.name">
           					<md-option ng-repeat="week in weeks" value="{{week}}" >
             				{{week}}
+          					</md-option>
+        					</md-select>
+      					</md-input-container>
+	  					</div>
+	  					<div ng-switch-when="P_frequencyhours">
+	  					<md-input-container>
+        					<label>Hours</label>
+        					<md-select ng-model="node.name">
+          					<md-option ng-repeat="hour in hoursPerWeekArray" value="{{hour}}" >
+            				{{hour}}
           					</md-option>
         					</md-select>
       					</md-input-container>
@@ -80,11 +90,11 @@
 				</div>
             </div>
             <div ng-if="data.showedQuestion.type == 'Q_single' || data.showedQuestion.type == 'Q_simple'">
-                <md-radio-group ng-model="data.showedQuestion.selectedAnswer" >
+                <md-radio-group ng-model="data.showedQuestion.selectedAnswer">
 			      <div ng-repeat='node in data.showedQuestion.nodes' >
 			        <div flex layout-align="start center" >
 			          <md-radio-button flex ng-value="node"
-			              class="md-primary interview-radio-button" >
+			              class="md-primary interview-radio-button">
 			            <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
 					    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 					      	<label>Free Text</label>
@@ -125,99 +135,81 @@
     	
     	
     </div>
+    <div ng-repeat='note in interview.notes'>
+    {{note | json}}
+    </div>
+    
     
 </div>
+
 <div class="col-md-8 moduleInterview" id="interview-question-list" >
-	<div ui-tree="" id="tree-root1_$index" ng-repeat="modules in interview.modules">
-		<div class="angular-ui-tree">
-			<div class="tree-node">
-				<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}">
-					{{modules.name}}
-				</span>
-				<div>
-						<div ng-repeat="qa in modules.questionsAsked">
-    					<div class="tree-node-content Q_interviewresult">
-    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   			<span class="badge">{{qa.number}}</span>
-                		</div>  
-    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-	    							ng-click="vm.editQuestion(qa)"></span>
-	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-    					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
-    					</span>  					
-    					</div>
-    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers">
-    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   				<span class="badge">{{as.number}}</span>
-                			</div>
-    						<span id="{{'IntResult'+as.idNode}}" >{{as.name }}
-    						</span>
-    					</div>
-    				</div>
-  				</div>
-			</div>
+	
+
+	<span class="badge" ng-click="toggleTreeList()">{{viewStatus}}</span>
+	<div ng-if="showTree">
+		<div ui-tree="moduleTreeOptions" id="tree-root">
+			<ol ui-tree-nodes ng-model="treeView">
+				<li ng-repeat="node in treeView" ui-tree-node 
+					ng-include="'interviewnodes_renderer.html'" id="moduleTreeBody"></li>
+			</ol>
 		</div>
-		<div ui-tree="" id="tree-root2_$index" ng-repeat="interviewModule in interviewIntro.interviews ">
-		<div class="angular-ui-tree">
-			<div class="tree-node">
-				<span class="M_Interview {{interviewModule.active ? 'highlight':''}}">
-				{{interviewModule.module.name}}{{interviewModule.fragment.name}}</span>
-				<div>
-    				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interviewModule.questionsAsked | qaFilter:0 | orderBy:'question.number' ">
-    					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
-    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   			<span class="badge">{{qa.question.number}}</span>
-                		</div>  
-    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-	    							ng-click="vm.editQuestion(interviewModule,qa.question)"></span>
-	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
+	</div>
+	
+	<div ng-if="showList">
+		<div ui-tree="" id="tree-root1_$index" ng-repeat="modules in interview.modules">
+			<div class="angular-ui-tree">
+				<div class="tree-node">
+					<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}">
+						{{modules.name}}
+					</span>
+					<div>
+							<div ng-repeat="qa in modules.questionsAsked | orderBy:'number'">
+		    					<div class="tree-node-content Q_interviewresult">
+		    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+		                   			<span class="badge">{{qa.number}}</span>
+		                		</div>  
+		    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
+			    							ng-click="vm.editQuestion(qa)"></span>
+			    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+		    					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
+		    					</span>  					
+		    					</div>
+		    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers">
+		    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+		                   				<span class="badge">{{as.number}}</span>
+		                			</div>
+		    						<span id="{{'IntResult'+as.idNode}}" >{{as.name }}
+		    						</span>
+		    						
+		    						
+		    						<div ng-repeat="mqa in as.modules.questionsAsked | orderBy:'number'">
+			    					<div class="tree-node-content Q_interviewresult">
+			    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+			                   			<span class="badge">{{qa.number}}</span>
+			                		</div>  
+			    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
+				    							ng-click="vm.editQuestion(qa)"></span>
+				    				<span ng-if="mqa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+			    					<span id="{{'IntResult'+mqa.idNode}}" >{{ qa.name }}
+			    					</span>  					
+			    					</div>
+			    					<div class="tree-node-content P_interviewresult" ng-repeat="as in mqa.answers">
+			    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+			                   				<span class="badge">{{as.number}}</span>
+			                			</div>
+			    						<span id="{{'IntResult'+as.idNode}}" >{{as.name }}
+			    						</span>
+			    					</div>
 	    					
-    					</span>  					
-    					</div>
-    					<div class="tree-node-content P_interviewresult">
-    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
-                			</div>
-    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
-    						</span>
-    					</div>
-    				</div>
-  				</div>
+	    						</div>
+		    						
+		    						
+		    					</div>
+	    						
+	    					</div>
+	  				</div>
+				</div>
 			</div>
-		</div>
-		<div ui-tree="" id="tree-root3_$index" ng-repeat="interviewAJSM in interviewModule.interviews ">
-		<div class="angular-ui-tree">
-			<div class="tree-node">
-				<span class="M_Interview {{interviewAJSM.active ? 'highlight':''}}">
-				{{interviewAJSM.module.name}}{{interviewAJSM.fragment.name}}</span>
-				<div>
-    				<div ng-if="((qa.question.type!='Q_linkedmodule') && (qa.question.type!='Q_linkedajsm'))" 
-    				    ng-repeat="qa in interviewAJSM.questionsAsked | qaFilter:0 | orderBy:'question.number' ">
-    					<div class="tree-node-content Q_interviewresult" ng-if="!qa.multiAnswers">
-    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   			<span class="badge">{{qa.question.number}}</span>
-                		</div>  
-    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-	    							ng-click="vm.editQuestion(interviewAJSM,qa.question)"></span>
-	    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-    					<span id="{{'IntResult'+qa.question.idNode}}" >{{ qa.question.name }}
-	    					
-    					</span>  					
-    					</div>
-    					<div class="tree-node-content P_interviewresult">
-    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   				<span class="badge">{{qa.possibleAnswer.number}}</span>
-                			</div>
-    						<span id="{{'IntResult'+qa.possibleAnswer.idNode}}" >{{qa.interviewQuestionAnswerFreetext }}
-    						</span>
-    					</div>
-    				</div>
-  				</div>
-			</div>
-		</div>
-		</div>
 		</div>
 	</div>
 	<div>
@@ -225,4 +217,33 @@
 	</div>
 </div>
 </div> 
-<ng-include src="'scripts/interviews/partials/intTemplate.html'"></ng-include>
+<script type="text/ng-template" id="interviewnodes_renderer.html">
+  <div id="module-tree" class="angular-ui-tree">
+     <div class="tree-node" id="{{node.id}}">
+<!-- start content -->
+        <div class="tree-node-content {{node.type}}_interviewresult" id="node-{{node.id}}">
+		  <a class="btn btn-success btn-xs" data-nodrag="" ng-click="toggleCollapse(this)">
+            <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
+              'glyphicon-chevron-right': collapsed,
+              'glyphicon-chevron-down': !collapsed
+              }">
+            </span>
+          </a>
+	      <span ng-if="node.multi" class="badge-multi">Multi</span>
+          <span ng-if="isEditableNode(node)" class="glyphicon glyphicon-edit" 
+			style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
+			ng-click="vm.editQuestion(node)"></span>
+          <span data-nodrag>{{node.name}}</span>
+
+		  <div class="form-group pull-right" style="margin-top: 5px;">
+    		<span class="badge">{{node.number}}</span>
+		  </div>
+
+       </div> 
+<!-- end content -->
+     </div>
+  </div>
+  <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+    <li ng-repeat="node in node.nodes " ui-tree-node ng-include="'interviewnodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></li>
+  </ol>
+</script>

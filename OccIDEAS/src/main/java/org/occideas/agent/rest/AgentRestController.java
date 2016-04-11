@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.AgentVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -57,6 +58,9 @@ public class AgentRestController implements BaseRestController<AgentVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(AgentVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.create(json);
 		}catch(Throwable e){
@@ -71,6 +75,9 @@ public class AgentRestController implements BaseRestController<AgentVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(AgentVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.update(json);
 		}catch(Throwable e){
@@ -83,6 +90,9 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 	@Path(value="/delete")
 	@POST
 	public Response delete(AgentVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.delete(json);
 		}catch(Throwable e){

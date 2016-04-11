@@ -14,5 +14,9 @@ public interface InterviewAnswerMapper {
 	InterviewAnswer convertToInterviewAnswer(InterviewAnswerVO answerVO);
 	
 	List<InterviewAnswer> convertToInterviewAnswerList(List<InterviewAnswerVO> answerVOList);
+
+	InterviewAnswerVO convertToInterviewAnswerWithRulesVO(InterviewAnswer answer);
+
+	List<InterviewAnswerVO> convertToInterviewAnswerWithRulesVOList(List<InterviewAnswer> answerList);
 	
 }

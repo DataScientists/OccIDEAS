@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.rule.service.RuleService;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -57,6 +58,9 @@ public class RuleRestController implements BaseRestController<RuleVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(RuleVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		RuleVO rule = new RuleVO();
 		try{
 			rule = service.create(json);
@@ -72,6 +76,9 @@ public class RuleRestController implements BaseRestController<RuleVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response saveOrUpdate(RuleVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.saveOrUpdate(json);
 		}catch(Throwable e){
@@ -84,6 +91,9 @@ public class RuleRestController implements BaseRestController<RuleVO>{
 	@Path(value="/delete")
 	@POST
 	public Response delete(RuleVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.delete(json);
 		}catch(Throwable e){
@@ -99,6 +109,9 @@ public class RuleRestController implements BaseRestController<RuleVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	@Override
 	public Response update(RuleVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.update(json);
 		}catch(Throwable e){

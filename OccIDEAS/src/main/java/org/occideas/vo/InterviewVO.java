@@ -38,6 +38,8 @@ public class InterviewVO {
 	private List<RuleVO> manualAssessedRules;
 
 	private List<AgentVO> agents;
+	
+	private List<NoteVO> notes;
 
 	@JsonInclude(Include.NON_NULL)
 	private List<InterviewVO> interviews;
@@ -242,6 +244,14 @@ public class InterviewVO {
 
 	public void setParentId(long parentId) {
 		this.parentId = parentId;
+	}
+
+	public List<NoteVO> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<NoteVO> notes) {
+		this.notes = notes;
 	}
 
 }

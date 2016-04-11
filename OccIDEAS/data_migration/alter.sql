@@ -39,5 +39,7 @@ ADD COLUMN `idParticipant` BIGINT(20) NOT NULL;
 ALTER TABLE `occideas`.`Interview` 
 ADD COLUMN `parentId` BIGINT(20);
 
+ALTER TABLE `occideas`.`Note` 
+ADD COLUMN `interviewId` BIGINT(20) ;
 
 

@@ -13,7 +13,7 @@ public interface NoteMapper {
 	
 	List<NoteVO> convertToNoteVOList(List<Note> note);
 
-	Note convertToModule(NoteVO nodeVO);
+	Note convertToNote(NoteVO nodeVO);
 	
 	List<Note> convertToNoteList(List<NoteVO> nodeVO);
 	

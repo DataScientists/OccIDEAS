@@ -93,7 +93,7 @@ angular
 	   	$rootScope._ = window._; 
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
-        
+        $rootScope.isReadOnly = false; 
         $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
         	  event.preventDefault();
         	  $state.get('error').error = { code: 123, description: 'Exception stack trace' }
@@ -119,13 +119,16 @@ angular
    	      return $q.reject(rejection);
    	    },
    		'responseError': function(response) {
-   			if (response.status != 200) {
+   			if (response.status != 200 && response.status != 401) {
    	            var state = $injector.get('$state');       
    	            state.go('error',{
    	            	error:"Response Status returned:"
    	            		+response.status+" "
    	            		+response.statusText+" "
    	            		+response.data});
+   	        }else if(response.status == 401){
+   	        	var state = $injector.get('$state');       
+   	          	alert("Occideas is in READ-ONLY mode, update/delete action is not premitted.");
    	        }
    		    return response;
    		}

@@ -22,7 +22,6 @@ public class QuestionMapperImpl implements QuestionMapper {
 
 	@Override
 	public QuestionVO convertToQuestionVO(Question question) {
-		// TODO Auto-generated method stub
 		if (question == null) {
 			return null;
 		}
@@ -50,6 +49,36 @@ public class QuestionMapperImpl implements QuestionMapper {
 		questionVO.setNodeclass(question.getNodeclass());
 		questionVO.setModuleRule(moduleRuleMapper.convertToModuleRuleVOList(question.getModuleRule()));
 
+		return questionVO;
+	}
+	
+	@Override
+	public QuestionVO convertToQuestionVOReducedDetails(Question question) {
+		if (question == null) {
+			return null;
+		}
+
+		QuestionVO questionVO = new QuestionVO();
+
+		questionVO.setIdNode(question.getIdNode());
+		questionVO.setName(question.getName());
+		questionVO.setDescription(question.getDescription());
+		questionVO.setType(question.getType());
+		questionVO.setSequence(question.getSequence());
+		questionVO.setNumber(question.getNumber());
+		questionVO.setParentId(question.getParentId());
+		questionVO.setLink(question.getLink());
+		questionVO.setTopNodeId(question.getTopNodeId());
+		questionVO.setLastUpdated(question.getLastUpdated());
+		
+		List<PossibleAnswer> childNodes = question.getChildNodes();
+		if (!CommonUtil.isListEmpty(childNodes)) {
+			questionVO.setChildNodes(mapper.convertToPossibleAnswerVOList(childNodes,false));
+		}
+		
+		questionVO.setOriginalId(question.getOriginalId());
+		questionVO.setDeleted(question.getDeleted());
+		questionVO.setNodeclass(question.getNodeclass());
 		return questionVO;
 	}
 	
@@ -105,6 +134,20 @@ public class QuestionMapperImpl implements QuestionMapper {
         List<QuestionVO> list = new ArrayList<QuestionVO>();
         for ( Question question : questionEntity ) {
             list.add( convertToInterviewQuestionVO( question) );
+        }
+
+        return list;
+	}
+	
+	@Override
+	public List<QuestionVO> convertToQuestionVOReducedDetailsList(List<Question> questionEntity) {
+		if ( questionEntity == null ) {
+            return null;
+        }
+
+        List<QuestionVO> list = new ArrayList<QuestionVO>();
+        for ( Question question : questionEntity ) {
+            list.add( convertToQuestionVOReducedDetails(question) );
         }
 
         return list;

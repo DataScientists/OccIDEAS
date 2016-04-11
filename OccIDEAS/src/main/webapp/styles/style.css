@@ -125,6 +125,16 @@
     font-size: 24px;
     color: #676262 !important;
 }
+.I_interviewresult {
+    font-size: 24px;
+    color: #676262 !important;
+    height: 40px;
+}
+.M_interviewresult {
+    font-size: 24px;
+    color: #676262 !important;
+    height: 40px;
+}
 .M{
 	height: 110px;
     font-size: 22px;

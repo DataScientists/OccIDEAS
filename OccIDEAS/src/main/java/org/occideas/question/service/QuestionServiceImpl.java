@@ -72,7 +72,7 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public QuestionVO determineNextQuestionByCurrentNumber(String moduleId,String nodeNumber) {
 		String number = CommonUtil.getNextQuestionByCurrentNumber(nodeNumber);
-		return mapper.convertToQuestionVO(qdao.getQuestionByModuleIdAndNumber(moduleId, number));
+		return mapper.convertToQuestionVOReducedDetails(qdao.getQuestionByModuleIdAndNumber(moduleId, number));
 	}
 
 

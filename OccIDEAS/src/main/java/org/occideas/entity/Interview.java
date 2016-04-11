@@ -47,18 +47,13 @@ public class Interview implements java.io.Serializable {
 	@JoinColumn(name = "fragment_idNode", referencedColumnName = "idNode")
 	private Fragment fragment;
 
-	/*
-	 * @OneToMany(fetch = FetchType.EAGER)
-	 * 
-	 * @Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
-	 * 
-	 * @JoinTable( name="Interview_Question_Answer", joinColumns = @JoinColumn(
-	 * name="interview_idinterview"), inverseJoinColumns = @JoinColumn(
-	 * name="id") )
-	 */
 	@OneToMany(mappedBy = "idInterview", targetEntity = InterviewQuestion.class)
-	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
+	@Cascade(value = { CascadeType.PERSIST })
 	private List<InterviewQuestion> actualQuestion;
+	
+	@OneToMany(mappedBy = "interviewId", targetEntity = Note.class)
+	@Cascade(value = { CascadeType.SAVE_UPDATE,CascadeType.PERSIST })
+	private List<Note> notes;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Interview_FiredRules", joinColumns = {
@@ -179,6 +174,14 @@ public class Interview implements java.io.Serializable {
 
 	public void setParentId(long parentId) {
 		this.parentId = parentId;
+	}
+
+	public List<Note> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<Note> notes) {
+		this.notes = notes;
 	}
 
 }

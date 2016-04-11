@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
@@ -41,6 +40,9 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@Column(name = "topNodeId")
 	private long topNodeId;
+	
+	@Column(name = "parentAnswerId")
+	private long parentAnswerId;
 
 	@Column(name = "link")
 	private long link;
@@ -51,12 +53,6 @@ public class InterviewQuestion implements java.io.Serializable {
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
 	private List<InterviewAnswer> answers;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
-	@JoinColumns({
-			@JoinColumn(name = "question_id", referencedColumnName = "parentQuestionId", insertable = false, updatable = false),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false) })
-	private InterviewLinked linkingQuestion;
 
 	@Column(name = "name")
 	private String name;
@@ -109,14 +105,6 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	public void setAnswers(List<InterviewAnswer> answers) {
 		this.answers = answers;
-	}
-
-	public InterviewLinked getLinkingQuestion() {
-		return linkingQuestion;
-	}
-
-	public void setLinkingQuestion(InterviewLinked linkingQuestion) {
-		this.linkingQuestion = linkingQuestion;
 	}
 
 	public String getName() {
@@ -197,6 +185,14 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	public void setLink(long link) {
 		this.link = link;
+	}
+
+	public long getParentAnswerId() {
+		return parentAnswerId;
+	}
+
+	public void setParentAnswerId(long parentAnswerId) {
+		this.parentAnswerId = parentAnswerId;
 	}
 
 }

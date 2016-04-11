@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -75,6 +76,10 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(QuestionVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
+		
 		try{
 			service.create(json);
 		}catch(Throwable e){
@@ -89,6 +94,9 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(QuestionVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.update(json);
 		}catch(Throwable e){
@@ -101,6 +109,9 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 	@Path(value="/delete")
 	@POST
 	public Response delete(QuestionVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
 		try{
 			service.delete(json);
 		}catch(Throwable e){
