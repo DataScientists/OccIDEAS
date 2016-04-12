@@ -16,6 +16,9 @@
     </div>
 </div>
 <div class="col-md-8">
+<div ng-repeat='note in selectedInterview.notes'>
+    <div>Note{{$index+1}}:{{note.type}}:{{note.text}}:{{note.lastUpdated | date:'yyyy-MM-dd HH:mm:ss Z'}}</div>
+</div>
 <div ui-tree="" id="tree-root1" >
 		<div class="angular-ui-tree">
 			<div class="tree-node">

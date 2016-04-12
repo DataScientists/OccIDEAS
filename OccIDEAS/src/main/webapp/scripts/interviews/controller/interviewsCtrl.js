@@ -622,6 +622,41 @@
                 }
         	}); 
         }
+        $scope.abortInterview = function (node) {
+        	ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function (response) {
+                if (response.status === 200) {
+                	$scope.participant = response.data[0];
+                	
+                	var interview = $scope.participant.interviews[0];
+                	if(validateIfAnswerSelected(node)){
+                    	if(!interview){
+                    		return null;
+                    	}
+                        if (node.type == 'Q_multiple') {
+                        	processInterviewQuestionsWithMultipleAnswers(interview,node);
+                        } else if (node.type == 'Q_frequency') {
+                            processFrequency(interview,node);
+                        } else {
+                        	processQuestion(interview,node);
+                        }
+                	}
+                	if(confirm('Abort Interview')){
+            			if(!(interview.notes)){
+            				interview.notes = [];
+            			}
+            			interview.notes.push(
+                				{
+                					interviewId:interview.interviewId,
+                					text:'Interview Aborted',
+                					type:'Interviewer'
+                				}
+                				);
+            			saveInterview(interview);
+            			endInterview();
+            		}
+                }
+        	});
+        }
         
         function saveInterview(interview){
            	InterviewsService.save(interview).then(function (response) {
@@ -668,6 +703,7 @@
                         InterviewsService.startInterview(interview).then(function (response) {
                             if (response.status === 200) {
                             	$scope.interviewId = response.data.interviewId;
+                            	$scope.activeInterview.interviewId = response.data.interviewId;
                             	ParticipantsService.save($scope.participant).then(function (response) {
                                     if (response.status === 200) {
                                     	$scope.data.interviewStarted = true;
@@ -930,7 +966,6 @@
                     		AssessmentsService.updateFiredRules($scope.interviewId).then(function (response) {
                                 if (response.status === 200) {
                                 	console.log('Updated Fired Rules');
-                                	$scope.interview = response.data[0];
                                 }
                     		});
                     	   endInterview();
@@ -1166,5 +1201,34 @@
 		$scope.toggleCollapse = function(scope){
 			scope.toggle();
 		}
+		$scope.cancel = function() {
+		    $mdDialog.cancel();
+		};
+		$scope.saveNewNote = function (data){
+			saveNewNote(data);
+		}
+		function saveNewNote(result) {
+	    	var noteText =  result;
+	    	var interview = $scope.activeInterview;
+		    if(!(interview.notes)){
+  				interview.notes = [];
+  			}
+  			interview.notes.push(
+      				{
+      					interviewId:$scope.interviewId,
+      					text:noteText,
+      					type:'Interviewer'
+      				}
+      				);
+  			saveInterview(interview);
+  			$mdDialog.cancel();
+	    }
+		$scope.showNotePrompt = function(ev) {		    
+			$mdDialog.show({
+				  //scope: $scope,
+				  scope: $scope.$new(),
+			      templateUrl: 'scripts/interviews/view/noteDialog.html'
+			    });		    
+		  };
     }
 })();

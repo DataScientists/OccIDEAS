@@ -59,6 +59,8 @@ public class InterviewMapperImpl implements InterviewMapper {
         interviewVO.setParentId(interview.getParentId());
         List<Interview> childInterviews = interview.getInterviews();
         interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
+        List<Note> notes = interview.getNotes();
+        interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
         
         return interviewVO;
     }

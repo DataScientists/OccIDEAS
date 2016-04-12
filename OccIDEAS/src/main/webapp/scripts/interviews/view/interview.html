@@ -122,6 +122,16 @@
             <md-button ng-click="saveAnswerQuestion(data.showedQuestion)" class="md-fab md-raised">       
                 <span>NEXT</span>
             </md-button>
+            <div ng-repeat='note in interview.notes'>
+    			<div ng-if="note.type!='system'">Note{{$index+1}}:{{note.type}}:{{note.text}}:{{note.lastUpdated | date:'yyyy-MM-dd HH:mm:ss Z'}}</div>
+    		</div>
+    		<md-button class="md-primary md-raised" ng-click="showNotePrompt($event)"  >
+      			Note
+    		</md-button>
+            <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
+            <md-button ng-click="abortInterview(data.showedQuestion)" class="md-fab md-raised">       
+                <span>ABORT</span>
+            </md-button>
         </ul>
         <div ng-if="!data.interviewStarted">
             <md-input-container>
@@ -140,12 +150,9 @@
         
     </div>
     <div ng-if="data.interviewEnded">
-    	<p>The interview in now complete</p>
+    	<p>The interview has ended</p>
     	
     	
-    </div>
-    <div ng-repeat='note in interview.notes'>
-    {{note | json}}
     </div>
     
     
