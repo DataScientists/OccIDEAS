@@ -27,8 +27,8 @@
 			};
 		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
-//			$scope.loading = true;
-			safeDigest($scope.loading);
+			$rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
 			var state = null;
 			var data = null;
 			if($scope.tabOptions[current]){

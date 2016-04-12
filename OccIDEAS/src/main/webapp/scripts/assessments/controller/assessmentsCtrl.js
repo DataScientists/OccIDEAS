@@ -7,6 +7,7 @@
 			data,$log,$compile){
 		var self = this;
 		$scope.data = data;
+		$scope.$root.tabsLoading = false;
 		var getData = function(){
 			$log.info("Data getting from interviews ajax"); 
 			AssessmentsService.getInterviews().then(function(data) {

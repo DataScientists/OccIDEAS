@@ -10,7 +10,7 @@
                             $anchorScroll, $location, $mdMedia, $window, $state, $rootScope,$compile,$timeout,$log) {
         var self = this;
         $scope.data = data;
-        
+        $scope.$root.tabsLoading = false;
         $scope.showIntroModule = true;
         $scope.showModule = false;
         $scope.showAjsm = false;
@@ -86,7 +86,7 @@
         				var qs = _.find(mod.questionsAsked,function(qs){
         					return $scope.data.showedQuestion.idNode == qs.questionId;
         				});
-        				if(qs.answers.length > 1 ){
+        				if(qs.type == 'Q_multiple'){
         					_.each($scope.data.showedQuestion.nodes,function(node){
         						_.find(qs.answers,function(ans){
         							if(ans.answerId == node.idNode){
@@ -96,6 +96,7 @@
         							}
         						});
         					});
+        					$scope.previousAnswer = answerList;
         				}else{
         					var qs = _.find(mod.questionsAsked,function(qs){
             					return $scope.data.showedQuestion.idNode == qs.questionId;
@@ -291,6 +292,28 @@
         }
         
         function processInterviewQuestionsWithMultipleAnswers(interview,node){
+        	var deffered = undefined;
+        	if($scope.updateEnable && $scope.previousAnswer != $scope.multiSelected){
+        		var qs = hasQuestionBeenAsked(node);
+        		deffered = $q.defer();
+        		if(qs){
+        			qsTemp = angular.copy(qs);
+        			qsTemp.answers = _.difference(qs.answers,$scope.multiSelected);
+        			deleteQuestion([qsTemp],deffered);
+        		}else{
+        			deffered.resolve();
+        		}
+        	}
+        	if(deffered){
+        	deffered.promise.then(function(){
+        		buildAndSaveMultipleQuestion(interview,node);
+        	})
+        	}else{
+        		buildAndSaveMultipleQuestion(interview,node);
+        	}
+        }
+        
+        function buildAndSaveMultipleQuestion(interview,node){
         	var mod = _.find(interview.modules,function(val,ind){
               	return val.idNode === node.topNodeId && node.count == val.count;
             });

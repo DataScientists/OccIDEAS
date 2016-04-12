@@ -22,7 +22,6 @@
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	$scope.agentsData = null;
-    	
     	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
     		$scope.scrollWithTimeout(elId);
     	});
