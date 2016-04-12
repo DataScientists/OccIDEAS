@@ -29,6 +29,16 @@
             	<div ng-repeat="node in data.showedQuestion.nodes">
             	<!-- <div>{{node.type}}</div> -->
 		            <div ng-switch="node.type" >
+		            	<div ng-switch-when="P_frequencyseconds">
+	  					<md-input-container>
+        					<label>Seconds</label>
+        					<md-select ng-model="node.name">
+          					<md-option ng-repeat="second in seconds" value="{{second}}" >
+            				{{second}}
+          					</md-option>
+        					</md-select>
+      					</md-input-container>
+	  					</div>
 	  					<div ng-switch-when="P_frequencyweeks">
 	  					<md-input-container>
         					<label>Weeks</label>

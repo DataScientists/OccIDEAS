@@ -560,7 +560,13 @@
         				}else{
         					retValue = true;
         				}    				
-        			} else if(val.type == 'P_frequencyhours'){       				
+        			} else if(val.type == 'P_frequencyseconds'){       				
+        				if(isNaN(val.name)){
+        					retValue = false;
+        				}else{
+        					retValue = true;
+        				} 
+        			}else if(val.type == 'P_frequencyhours'){       				
         				if(isNaN(val.name)){
         					retValue = false;
         				}else{
@@ -781,6 +787,11 @@
         	}
         	return hours;
         };
+        $scope.getSecondsArray= function(){
+        	var seconds = [0,1,2,3,4,5,6,7,8,9,10,15,20,25,30,35,40,45,50,55,60];
+        	
+        	return seconds;
+        };
         $scope.getHoursPerWeekArray = function(){
         	var hours = [];
         	for(var i=0;i<169;i++){
@@ -837,6 +848,7 @@
                     	   $scope.hoursArray = $scope.getShiftHoursArray();
                          	$scope.minutesArray = $scope.getShiftMinutesArray();
                            	$scope.weeks = $scope.getWeeksArray();
+                           	$scope.seconds = $scope.getSecondsArray();
                        }
                        if(statusRequired){
                       	   defer.resolve(response.status);

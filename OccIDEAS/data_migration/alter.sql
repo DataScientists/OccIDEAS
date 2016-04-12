@@ -42,4 +42,5 @@ ADD COLUMN `parentId` BIGINT(20);
 ALTER TABLE `occideas`.`Note` 
 ADD COLUMN `interviewId` BIGINT(20) ;
 
-
+DELETE FROM occideas.Rule_AdditionalField where idAdditionalField=2;
+DELETE FROM occideas.Rule_AdditionalField where idAdditionalField=4;
