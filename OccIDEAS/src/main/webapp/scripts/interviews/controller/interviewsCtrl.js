@@ -783,15 +783,9 @@
         }
 
         $scope.scrollTo = function (target) {
-            var scrollPane = null;
-            if ($scope.showIntroModule) {
-                scrollPane = $('#interview-intromodule-tree');
-            } else if ($scope.showModule) {
-                scrollPane = $('#interview-module-tree');
-            } else if ($scope.showAjsm) {
-                scrollPane = $('#interview-ajsm-tree');
-            }
-            var scrollTarget = $('#' + target);
+            var scrollPane = $('#interview-question-list');
+            
+            var scrollTarget = $('#questionlist-' + target);
             if (scrollTarget) {
                 if (scrollTarget.offset()) {
                 	var currentScroll = 0;
@@ -805,8 +799,6 @@
                 	//alert(currentScroll);
                     var scrollY =  top - offset + currentScroll;
                     scrollPane.animate({scrollTop: scrollY}, 1000, 'swing');
-                    angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight-interview');
-                    angular.element(document.querySelector("#tree-root-interviewing #" + target)).addClass('highlight');
                 }
             }
         };
@@ -886,11 +878,14 @@
                     		   }
                     	   }
                     	   else{
+                    		   if($scope.data.showedQuestion){
+                    		   $scope.scrollTo($scope.data.showedQuestion.idNode);
+                    		   }
                     		   $scope.data.showedQuestion = question;
                     		   var mod = _.find($scope.activeInterview.modules,function(val,ind){
                                 	return val.idNode == question.topNodeId;
                                 });
-                    		   $scope.questionheader.name = mod.name.substring(0, 4);;
+                    		   $scope.questionheader.name = mod.name.substring(0, 4);
                     	   }
                     	   safeDigest($scope.data.showedQuestion);
                        }
@@ -982,6 +977,7 @@
                        console.log('ERROR on Get!');
                     }
                        angular.element('#numId').focus();
+                       
                     });
               }
         

@@ -1,8 +1,8 @@
-<div class="row ">
+<div class="row " prog_tree>
 	<div class="col-sm-12">
 	<div class="panel panel-default">
  	 <div class="panel-body">
-  	<div ui-tree="moduleTreeOptions" id="tree-root" prog_tree>
+  	<div ui-tree="moduleTreeOptions" id="tree-root" >
 		<ol ui-tree-nodes ng-model="data">
 			<li ng-repeat="node in data" ui-tree-node
 				ng-include="'nodes_renderer.html'" id="moduleTreeBody"></li>
