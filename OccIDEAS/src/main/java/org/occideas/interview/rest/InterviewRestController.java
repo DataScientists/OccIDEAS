@@ -93,6 +93,24 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		return Response.ok(list).build();
     }
     @GET
+    @Path(value = "/getbyref")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getByRef(@QueryParam("ref") String referenceNumber) {
+    	List<InterviewVO> list = new ArrayList<InterviewVO>();
+		try{
+			list = service.findByReferenceNumber(referenceNumber);
+			if(list.size()>0){
+				return Response.ok(list).build();
+			}else{
+             	return Response.status(Response.Status.NO_CONTENT).build();
+             }
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		
+    }
+    @GET
     @Path(value = "/updatefiredrules")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response updateFiredRules(@QueryParam("id") Long id) {
@@ -116,7 +134,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     public Response create(InterviewVO json) {
         InterviewVO interviewVO;
         try {
-            interviewVO = service.create(json);
+            interviewVO = service.create(json);            
         } catch (Throwable e) {
         	e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -139,7 +157,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         			}
         		}
     			json.setManualAssessedRules(manualAssessedRules);
-    		}  		
+    		}  
+    		NoteVO note = new NoteVO();
+        	note.setInterviewId(json.getInterviewId());
+        	note.setText("Interview Updated");
+        	note.setType("system");
+        	json.getNotes().add(note);
 			service.update(json);
 		}catch(Throwable e){
 			e.printStackTrace();
@@ -225,6 +248,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	NoteVO note = new NoteVO();
     	note.setInterviewId(interview.getInterviewId());
     	note.setText("Ran determineFiredRules");
+    	note.setType("system");
     	interview.getNotes().add(note);
     	service.update(interview);
     	return interview;

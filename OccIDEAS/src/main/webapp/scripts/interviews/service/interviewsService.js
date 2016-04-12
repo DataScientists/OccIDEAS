@@ -12,6 +12,14 @@
             })
             return request.then(handleSuccess, handleError);
         }
+        function checkReferenceNumberExists(referenceNumber) {
+            var restUrl = 'rest/interview/getbyref?ref=' + referenceNumber;
+            var request = $http({
+                method: 'GET',
+                url: restUrl
+            })
+            return request.then(handleSuccess, handleError);
+        }
         function findModule(idNode) {
 			var restUrl = 'rest/module/getinterviewmodule?id=' + idNode;
 			var request =  $http({
@@ -93,6 +101,7 @@
         }
 
         return {
+        	checkReferenceNumberExists:checkReferenceNumberExists,
         	findFragment: findFragment,
         	findModule: findModule,
         	save: save,

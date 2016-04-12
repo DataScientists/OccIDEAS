@@ -14,10 +14,11 @@
         $scope.showIntroModule = true;
         $scope.showModule = false;
         $scope.showAjsm = false;
-        $scope.refNoPattern = "H([a-zA-Z0-9]){3}(-)([a-zA-Z0-9]){3}";
+        $scope.refNoPattern = "H([0-9]){6}";
         $scope.multiSelected = [];
         $scope.questionHistory = [];
         $scope.updateAnswers = false;
+        $scope.referenceNumber = null;
         
         $rootScope.$on('InterviewCtrl:update', function (event, elId) {
         	$scope.addClassWithTimeout('IntResult'+elId);
@@ -637,18 +638,11 @@
         	});     	
         }
         
-        function createReferenceNumber(data){
-        	 $scope.referenceNumber = data.referenceNumber;
-             if (!$scope.referenceNumber) {
-                 $scope.referenceNumber = 'TEST' + Math.floor((Math.random() * 100) + 1);
-             }
-        }
-        
         function createParticipant(data){
         	var participant = {reference:$scope.referenceNumber,
             		interviews:[]}
             ParticipantsService.createParticipant(participant).then(function (response){
-            	if (response.status === 200) {
+            	if (response.status === 200) {       		
             		$scope.participant = response.data;
             		InterviewsService.findModule($scope.data[0].idNode)
                     .then(function (response) {
@@ -696,10 +690,39 @@
         }
         
         $scope.startInterview = function (data) {
-           createReferenceNumber(data);
-           createParticipant(data);
+        	if(validReferenceNumber(data.referenceNumber)){
+        		InterviewsService.checkReferenceNumberExists($scope.referenceNumber).then(function (response) {
+                    if (response.status === 200) {
+                    	alert('Reference number already in use');
+                    }else if (response.status === 204) {
+                    	createParticipant(data);
+                    }
+        		});
+        	}else{
+        		alert('Reference number must start with H and be 7 characters long');
+        	}     	         
         }
-        
+        function validReferenceNumber(referenceNumber){
+        	var retValue = false;
+        	if(referenceNumber){
+        		if(referenceNumber.substr(0,1)=='H'){
+        			if(referenceNumber.length==7){
+        				$scope.referenceNumber = referenceNumber; 
+            			retValue = true;
+            		}
+        		}
+        	}
+        	return retValue;
+        }
+        function checkReferenceNumberExists(referenceNumber){
+        	return InterviewsService.checkReferenceNumberExists(referenceNumber).then(function (response) {
+                if (response.status === 200) {
+                	return response.data
+                }else if (response.status === 401) {
+                	return;
+                }
+        	});
+        }
         $scope.scrollWithTimeout = function(elId){
         	$timeout(function() {
         		$scope.scrollTo(elId);
@@ -903,18 +926,11 @@
                     	   verifyQuestionInParentModule(mod);
                     	}
                     	else {
-                    		$scope.interview.notes = [];
-                    		$scope.interview.notes.push(
-                    				{
-                    					interviewId:$scope.interview.idInterview,
-                    					text:'Interview Ended'
-                    				}
-                    				);
-                    		
+
                     		AssessmentsService.updateFiredRules($scope.interviewId).then(function (response) {
                                 if (response.status === 200) {
                                 	console.log('Updated Fired Rules');
-                                	
+                                	$scope.interview = response.data[0];
                                 }
                     		});
                     	   endInterview();
