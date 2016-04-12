@@ -45,6 +45,12 @@ public class InterviewServiceImpl implements InterviewService {
         return list;
     }
     @Override
+    public List<InterviewVO> findByReferenceNumber(String referenceNumber) {
+    	List<Interview> list = interviewDao.findByReferenceNumber(referenceNumber);
+    	List<InterviewVO> listVO = mapper.convertToInterviewVOList(list);
+        return listVO;
+    }
+    @Override
     public List<InterviewVO> findByIdWithRules(Long id) {
         Interview interview = interviewDao.get( id);
         InterviewVO InterviewVO = mapper.convertToInterviewWithRulesVO(interview);

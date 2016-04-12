@@ -20,6 +20,7 @@ public class NoteMapperImpl implements NoteMapper {
         noteVO.setText(note.getText());
         noteVO.setType(note.getType());
         noteVO.setDeleted(note.getDeleted());
+        noteVO.setLastUpdated(note.getLastUpdated());
         noteVO.setInterviewId(note.getInterviewId());
 		
         return noteVO;
@@ -48,7 +49,8 @@ public class NoteMapperImpl implements NoteMapper {
         note.setType(noteVO.getType());
         note.setDeleted(noteVO.getDeleted());
         note.setInterviewId(noteVO.getInterviewId());
-		
+        note.setLastUpdated(noteVO.getLastUpdated());
+        
 		return note;
 	}
 

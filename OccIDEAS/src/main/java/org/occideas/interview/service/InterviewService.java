@@ -13,4 +13,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	List<InterviewVO> listAllWithAnswers();
 
 	List<InterviewVO> findByIdWithRules(Long id);
+	
+	List<InterviewVO> findByReferenceNumber(String referenceNumber);
 }
