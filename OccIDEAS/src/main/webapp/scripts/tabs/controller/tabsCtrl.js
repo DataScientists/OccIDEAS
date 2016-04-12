@@ -25,7 +25,6 @@
 				state: "tabs.assessments",
 				data: ""
 			};
-		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
 			var state = null;
 			var data = null;
@@ -205,7 +204,6 @@
 			if($scope.selectedIndex==5){
 				$scope.selectedIndex=0;
 			}
-			$scope.questionsCount--;
 			$scope.agentsData = null;
 		};
 		$scope.turnOffProgressBar = function turnOffProgressBar(){
