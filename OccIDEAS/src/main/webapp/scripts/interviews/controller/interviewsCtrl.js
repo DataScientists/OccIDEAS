@@ -948,11 +948,19 @@
               				showNextQuestion(actualQuestion,true,false,mod.count);
                     	}
                     	else if(results){
+                    		var parent_id = 0;
+                    		if(results.link !=0){
+                    			parent_id = results.link;
+                    		}else if(results.parentAnswerId){
+                    			parent_id = results.parentAnswerId;
+                    		}else if(results.parentAnswerId){
+                    			parent_id = results.parentId;
+                    		}
                     		var actualQuestion =
                       		{
                     		   topNodeId:results.topNodeId,
               				   questionId:results.parentId,	  
-               				   parentId:results.link !=0?results.link:results.parentId,
+               				   parentId:parent_id,
                				   number:results.number,
                				   link: results.link
                       		}
