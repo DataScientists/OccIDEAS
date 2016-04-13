@@ -43,7 +43,7 @@ ALTER TABLE `occideas`.`Note`
 ADD COLUMN `interviewId` BIGINT(20) ;
 
 ALTER TABLE `occideas`.`Note` 
-CHANGE COLUMN `lastUpdated` `lastUpdated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ;
+CHANGE COLUMN `lastUpdated` `lastUpdated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 DELETE FROM occideas.Rule_AdditionalField where idAdditionalField=2;
