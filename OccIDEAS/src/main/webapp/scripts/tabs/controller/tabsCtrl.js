@@ -177,6 +177,23 @@
                 });
             }
         };
+        $scope.addInterviewTabInterviewers = function() {
+            var tabTitle = "New Interview ";
+            var state = "tabs.interview";
+            $stickyState.reset(state);
+            if(!checkIfTabIsOpen(tabs,tabTitle)){
+                tabs.push({
+                    title : tabTitle,
+                    viewName: 'interview@tabs',
+                    canClose: true,
+                    disabled : false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {row:'15001'}
+                });
+            }
+        };
         $scope.addParticipantTab = function(participant) {
             //var participant = scope.$modelValue;
             var tabTitle = "Participant "+participant.reference;
