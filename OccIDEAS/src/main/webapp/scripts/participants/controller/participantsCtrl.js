@@ -45,26 +45,8 @@
 	    	}
 	    }
 	    function add(type) {
-	        self.isEditing = true;
-	        self.isAdding = true;
-	        
-	        self.tableParams.settings().dataset.unshift({
-	        	name: "New Participant",
-	        	placeholder: "New Participant",
-		        type: type,
-		        description: "New Description",
-		        isEditing: true
-	        });
-	        self.originalData = angular.copy(self.tableParams.settings().dataset);
-	        self.tableParams.sorting({});
-	        self.tableParams.page(1);
-	        self.tableParams.shouldGetData = false;
-	        self.tableParams.reload();
-	        self.isAdding = false;
-	      }
-	    
-	    
-	    
+	    	$scope.addInterviewTabInterviewers();
+	    }
 	    function cancel(row,rowForm) {
 	    	var originalRow = resetRow(row, rowForm);
 	    	if(row.idNode){
