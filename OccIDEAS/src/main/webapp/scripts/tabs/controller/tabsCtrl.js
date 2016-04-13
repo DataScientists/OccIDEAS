@@ -25,10 +25,7 @@
 				state: "tabs.assessments",
 				data: ""
 			};
-		$scope.questionsCount = 0;
 		$scope.$watch('selectedIndex', function(current, old) {
-//			$scope.loading = true;
-			safeDigest($scope.loading);
 			var state = null;
 			var data = null;
 			if($scope.tabOptions[current]){
@@ -85,7 +82,8 @@
 				state: "tabs.fragment",
 				data: {row:row.idNode}
 			});
-			
+			$rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
 		};
 		$scope.addAssessmentTab = function(row) {
 			tabs.push({
@@ -98,7 +96,8 @@
 				state: "tabs.assessment",
 				data: {row:row.interviewId}
 			});
-			
+			$rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
 		};
 		$scope.addModuleTab = function(row) {
 			var state = "tabs.questions";
@@ -114,6 +113,8 @@
 					data: {row:row.idNode}
 				});
 			}
+			$rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
 			$stickyState.reset(state);
 			$log.info("addModuleTab questionsLoading end");
 		};
@@ -133,6 +134,8 @@
 				data: {row:row.idNode}
 			});
 			}
+			$rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
 			$log.info("addIntroTab called");
 		};
 		
@@ -153,6 +156,8 @@
                     data: {row:nodeData.idNode}
                 });
             }
+            $rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
         };
         $scope.addInterviewTab = function(scope) {
             var nodeData = scope.$modelValue;
@@ -189,6 +194,8 @@
                     data: {row:participant.idParticipant}
                 });
             }
+            $rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
         };
 		$scope.removeTab = function(tab) {
 			var index = tabs.indexOf(tab);
@@ -197,7 +204,6 @@
 			if($scope.selectedIndex==5){
 				$scope.selectedIndex=0;
 			}
-			$scope.questionsCount--;
 			$scope.agentsData = null;
 		};
 		$scope.turnOffProgressBar = function turnOffProgressBar(){

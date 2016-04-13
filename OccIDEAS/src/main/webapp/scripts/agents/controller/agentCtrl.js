@@ -8,6 +8,7 @@
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
+	    $scope.$root.tabsLoading = false;
 		self.tableParams = new NgTableParams({group: "agentGroup.name",count: 100}, {	
 	        getData: function($defer,params) {
 	        	if(params.filter().name || params.filter().description){	

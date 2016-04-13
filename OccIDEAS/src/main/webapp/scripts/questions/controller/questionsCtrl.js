@@ -22,7 +22,6 @@
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	$scope.agentsData = null;
-    	
     	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
     		$scope.scrollWithTimeout(elId);
     	});
@@ -243,14 +242,7 @@
 											type: 'NOISE_Db',
 											value: ''}
 							});
-					rule.ruleAdditionalfields.push(
-							{
-								idRule:rule.idRule,
-								value:'',
-								additionalfield:{idadditionalfield: 2,
-											type: 'NOISE_Percentage',
-											value: ''}
-							});
+					
 				}
 			}else if((type=='VIBRATION')){
 				if(rule.ruleAdditionalfields==null){
@@ -263,14 +255,7 @@
 											type: 'VIBRATION_level',
 											value: ''}
 							});
-					rule.ruleAdditionalfields.push(
-							{
-								idRule:rule.idRule,
-								value:'',
-								additionalfield:{idadditionalfield: 4,
-											type: 'VIBRATION_Percentage',
-											value: ''}
-							});
+					
 				}
 			}
 		}

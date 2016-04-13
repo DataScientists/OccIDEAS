@@ -7,6 +7,7 @@
 			data,$log,$compile){
 		var self = this;
 		$scope.data = data;
+		$scope.$root.tabsLoading = false;
 		var getData = function(){
 			$log.info("Data getting from interviews ajax"); 
 			AssessmentsService.getInterviews().then(function(data) {
@@ -184,7 +185,7 @@
 						  useRatio = true;
 						  ratio = parseFloat(totalFrequency)/parseFloat(shiftHours);
 						  ratio = ratio.toFixed(4);
-					  }
+					  }				
 					  var level = 0;
 					  var peakNoise = 0;
 					  for(var k=0;k<noiseRules.length;k++){
@@ -240,10 +241,7 @@
 							level = noiseRule.ruleAdditionalfields[0].value;
 							var percentage = 100;
 							var partialExposure = 4*hours*(Math.pow(10,(level-100)/10));
-							var ajustedHours = hours*(percentage/100);
-							var partialExposurePercentageAdjusted = 4*ajustedHours*(Math.pow(10,(level-100)/10));
 							partialExposure = partialExposure.toFixed(4);				
-							partialExposurePercentageAdjusted = partialExposurePercentageAdjusted.toFixed(4);				
 							hours = hours.toFixed(4);
 							var modHours = "";
 							if(useRatio){
@@ -255,12 +253,10 @@
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
 									dB:level,
 									backgroundhours: modHours,
-									percentage: percentage,
 									partialExposure:partialExposurePercentageAdjusted}
 					
 							$scope.noiseRows.push(noiseRow);	
 							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
-							totalPartialExposurePerAdj = (parseFloat(totalPartialExposurePerAdj)+parseFloat(partialExposurePercentageAdjusted));
 							
 						  }
 						  if(peakNoise<Number(level)){
@@ -269,18 +265,12 @@
 					  }
 					  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
 					  	totalPartialExposure = totalPartialExposure.toFixed(4);
-						totalPartialExposurePerAdj = (parseFloat(totalPartialExposurePerAdj)+parseFloat(maxBackgroundPartialExposure));
-						totalPartialExposurePerAdj = totalPartialExposurePerAdj.toFixed(4);
 						totalFrequency += maxBackgroundHours;
 
 						var autoExposureLevel = 10*(Math.log10(totalPartialExposure/(3.2*(Math.pow(10,-9)))))
 						autoExposureLevel = autoExposureLevel.toFixed(4);
-						var autoExposureLevelPerAdj = 10*(Math.log10(totalPartialExposurePerAdj/(3.2*(Math.pow(10,-9)))))
-						autoExposureLevelPerAdj = autoExposureLevelPerAdj.toFixed(4);
 						$scope.totalPartialExposure = totalPartialExposure;
-						$scope.totalPartialExposurePerAdj = totalPartialExposurePerAdj;
 						$scope.autoExposureLevel = autoExposureLevel;
-						$scope.autoExposureLevelPerAdj = autoExposureLevelPerAdj;
 						$scope.peakNoise = peakNoise;
 				  }
 			  	}			  

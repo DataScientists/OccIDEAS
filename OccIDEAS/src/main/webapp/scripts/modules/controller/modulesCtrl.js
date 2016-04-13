@@ -9,6 +9,7 @@
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
+	    $scope.$root.tabsLoading = false;
 		self.tableParams = new NgTableParams(
 				{
 					group: "type",

@@ -6,6 +6,7 @@
 	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter,data){
 		var self = this;
 		$scope.data = data;
+		$scope.$root.tabsLoading = false;
 		$scope.setSelectedInterview = function(interview){
 			$scope.selectedInterview = interview;
 		}

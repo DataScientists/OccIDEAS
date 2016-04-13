@@ -40,9 +40,6 @@ public class ParticipantRestController implements BaseRestController<Participant
     private InterviewService interviewService;
 	
 	@Autowired
-    private FragmentService fragmentService;
-    
-    @Autowired
     private ModuleService moduleService;
 
     @GET

@@ -247,6 +247,9 @@ public class InterviewVO {
 	}
 
 	public List<NoteVO> getNotes() {
+		if(notes==null){
+			notes = new ArrayList<NoteVO>();
+		}
 		return notes;
 	}
 
