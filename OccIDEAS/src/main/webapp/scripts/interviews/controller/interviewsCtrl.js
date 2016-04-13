@@ -75,8 +75,10 @@
         	actualQuestion.questionId = question.questionId;
         	actualQuestion.parentId = parentId,
         	actualQuestion.number = newNum?newNum:question.number.slice(0, -1) +number;		
-
-			var status = showNextQuestion(actualQuestion,false,true,question.count);
+        	var topMod = _.find($scope.activeInterview.modules,function(mod){
+				return mod.idNode == question.topNodeId;
+			});
+			var status = showNextQuestion(actualQuestion,false,true,topMod.count);
         	if(status){
         		status.then(function(data){
         			if(data == 200){
