@@ -177,7 +177,7 @@
 						{{modules.name}}
 					</span>
 					<div>
-							<div ng-repeat="qa in modules.questionsAsked | orderBy:'number'">
+							<div ng-repeat="qa in modules.questionsAsked ">
 		    					<div id="questionlist-{{qa.questionId}}" class="tree-node-content Q_interviewresult">
 		    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
 		                   			<span class="badge">{{qa.number}}</span>
@@ -196,7 +196,7 @@
 		    						</span>
 		    						
 		    						
-		    						<div ng-repeat="mqa in as.modules.questionsAsked | orderBy:'number'">
+		    						<div ng-repeat="mqa in as.modules.questionsAsked ">
 			    					<div class="tree-node-content Q_interviewresult">
 			    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
 			                   			<span class="badge">{{qa.number}}</span>

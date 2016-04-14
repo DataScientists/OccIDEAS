@@ -1122,3 +1122,6 @@ md-list-item.interviewAnswers{
 .backgroundNoise{
     background: #F8FAFF;
 }
+ .form-control {
+	width:50% !important;	
+}

@@ -1382,7 +1382,7 @@
                 }
 
                 // node was dropped in the same place - do nothing
-                if (!this.isDirty()) {
+                if (!this.isDirty() && !(this.isClone())) {
                   return;
                 }
 
