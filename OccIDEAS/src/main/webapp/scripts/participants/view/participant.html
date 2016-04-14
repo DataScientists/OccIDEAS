@@ -14,6 +14,9 @@
             </div>
         </div>
     </div>
+    <md-button ng-if="data.interviews[0].assessedStatus == 'Incomplete'" ng-click="continueInterview(data)" class="md-raised md-primary">       
+        <span>Continue Interview</span>
+    </md-button>
 </div>
 <div class="col-md-8">
 <div ng-repeat='note in selectedInterview.notes'>

@@ -214,6 +214,26 @@
             $rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
         };
+        
+        $scope.continueInterview = function(data){
+        	var node = data.interviews[0].module;
+             var tabTitle = "Interview "+node.name;
+             var state = "tabs.interview";
+             $stickyState.reset(state);
+             if(!checkIfTabIsOpen(tabs,tabTitle)){
+                 tabs.push({
+                     title : tabTitle,
+                     viewName: 'interview@tabs',
+                     canClose: true,
+                     disabled : false
+                 });
+                 $scope.tabOptions.push({
+                     state: state,
+                     data: {row:node.idNode,referenceNumber: data.reference}
+                 });
+             }
+        }
+        
 		$scope.removeTab = function(tab) {
 			var index = tabs.indexOf(tab);
 			tabs.splice(index, 1);
