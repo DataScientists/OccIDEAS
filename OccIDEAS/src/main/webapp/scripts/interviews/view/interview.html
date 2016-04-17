@@ -2,7 +2,33 @@
 
 <div class="col-md-4">
     <div ng-model="data">
-	    <div>{{participant.reference}}</div>
+	    
+	    <div>
+							<div ng-repeat="displayq in displayQuestions ">
+		    					<div class="tree-node-content Q_interviewresult">
+		    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+		                   			<span class="badge">{{displayq.number}}</span>
+		                		</div>  
+		    					
+			    				<span  >{{ displayq.name }}
+		    					</span>  					
+		    					</div>
+		    					<div class="tree-node-content P_interviewresult" ng-repeat="as in displayq.answers">
+		    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+		                   				<span class="badge">{{as.number}}</span>
+		                			</div>
+		    						<span  >{{as.answerFreetext?as.answerFreetext:as.name}}
+		    						</span>
+		    						
+		    						
+		    						
+	    						</div>
+		    						
+		    						
+		    					</div>
+	    						
+	    					</div>
+	  				</div>
 	    <md-progress-circular ng-if="inProgress" md-mode="indeterminate"></md-progress-circular>
         <ul id="interviewing-{{data.showedQuestion.idNode}}" ng-if="data.interviewStarted && !inProgress">
             <md-toolbar >{{data.showedQuestion.name}}
@@ -197,26 +223,7 @@
 		    						</span>
 		    						
 		    						
-		    						<div ng-repeat="mqa in as.modules.questionsAsked ">
-			    					<div class="tree-node-content Q_interviewresult">
-			    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-			                   			<span class="badge">{{qa.number}}</span>
-			                		</div>  
-			    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-				    							ng-click="vm.editQuestion(qa)"></span>
-				    				<span ng-if="mqa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-			    					<span id="{{'IntResult'+mqa.idNode}}" >{{ qa.name }}
-			    					</span>  					
-			    					</div>
-			    					<div class="tree-node-content P_interviewresult" ng-repeat="as in mqa.answers">
-			    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-			                   				<span class="badge">{{as.number}}</span>
-			                			</div>
-			    						<span id="{{'IntResult'+as.idNode}}" >{{as.name}}
-			    						</span>
-			    					</div>
-	    					
-	    						</div>
+		    						
 		    						
 		    						
 		    					</div>

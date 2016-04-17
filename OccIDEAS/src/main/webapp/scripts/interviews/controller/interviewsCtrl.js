@@ -14,6 +14,7 @@
 			updateData) {
 		var self = this;
 		$scope.data = data;
+		$scope.displayQuestions=[];
 		$scope.$root.tabsLoading = false;
 		$scope.showIntroModule = true;
 		$scope.showModule = false;
@@ -676,6 +677,11 @@
 					deleted : 0
 				} ]
 			}
+			if(newQuestionAsked.description){
+				if(newQuestionAsked.description=='display'){
+					$scope.displayQuestions.push(newQuestionAsked);
+				}
+			}
 			var mod = _.find(interview.modules,
 					function(val, ind) {
 						return val.idNode === node.topNodeId
@@ -775,7 +781,7 @@
 				alert("Please select an answer.");
 				return;
 			}
-
+			
 			$scope.inProgress = true;
 			ParticipantsService.findInterviewParticipant(
 					$scope.participant.idParticipant).then(
@@ -790,10 +796,13 @@
 							if (node.type == 'Q_multiple') {
 								processInterviewQuestionsWithMultipleAnswers(
 										interview, node);
+								
 							} else if (node.type == 'Q_frequency') {
 								processFrequency(interview, node);
+								
 							} else {
 								processQuestion(interview, node);
+								
 							}
 						}
 					});
@@ -1107,6 +1116,7 @@
 														.scrollTo($scope.data.showedQuestion.idNode);
 											}
 											$scope.data.showedQuestion = question;
+											
 											var mod = _
 													.find(
 															$scope.activeInterview.modules,
