@@ -35,18 +35,23 @@
 			interview.module = updateData[0].module;
 			interview.referenceNumber = updateData[0].referenceNumber;
 			interview.modules = [];
-			var actualQuestionData = updateData[0].actualQuestion;
+			var actualQuestionData = updateData[updateData.length - 1].actualQuestion;
 			interview.participant = updateData[0].participant;
 			$scope.participant = updateData[0].participant;
 			$scope.interview = {};
 			$scope.interview = interview;
 			$scope.activeInterview = interview;
+			$scope.interviewId = updateData[0].interviewId;
 			interview.active = true;
 			$scope.data.interviewStarted = true;
-			$scope.data.interviewEnded = false;
+			$scope.data.interviewEnded = false;	
 			populateInterviewModules(interview,actualQuestionData);
-			var lastActualQuestion = actualQuestionData[actualQuestionData.length - 1];
+			var lastQsAsked = interview.modules[interview.modules.length - 1].questionsAsked;
+			var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
 			var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
+			var mod = _.find(interview.modules,function(mod,ind){
+				return mod.idNode == lastActualQuestion.topNodeId;
+			});
 			if (lastActualQuestion.type == 'Q_multiple') {
 				var actualQuestion = {
 						topNodeId : lastActualQuestion.topNodeId,
@@ -56,7 +61,7 @@
 						link : lastActualQuestion.link
 					}
 					showNextQuestion(actualQuestion, true, false,
-							1);
+							mod.count);
 			} else if (lastActualQuestion.type == 'Q_frequency') {
 				var actualQuestion = {
 						topNodeId : lastActualQuestion.topNodeId,
@@ -66,7 +71,7 @@
 						link : lastActualQuestion.link
 					}
 					showNextQuestion(actualQuestion, true, false,
-							1);
+							mod.count);
 			} else {
 				var actualQuestion = {
 						topNodeId : lastActualQuestion.topNodeId,
@@ -76,7 +81,7 @@
 						link : lastActualQuestion.link
 					}
 					showNextQuestion(actualQuestion, true, false,
-							1);
+							mod.count);
 			}
 		}
 		
@@ -104,8 +109,8 @@
 				   mod.questionsAsked.push(qs);
 				}else{
 					var count = 1;
-					if(prevMod != mod.idNode){
-						prevMod = mod.idNode; 
+					if(prevMod != qs.topNodeId){
+						prevMod = qs.topNodeId; 
 						var index = _.findLastIndex(interview.modules, function(mod,ind){
 							return mod.idNode == qs.topNodeId;
 						});
@@ -118,7 +123,7 @@
 					interview.modules
 					.push({
 						name : qs.name,
-						idNode : qs.link,
+						idNode : qs.link == 0 ?qs.parentId:qs.link,
 						topNode : qs.topNodeId,
 						parentNode : qs.parentAnswerId?qs.parentAnswerId:qs.link,
 						answerNode : qs.parentId,
@@ -967,7 +972,9 @@
 				alert('Reference number must start with H and be 7 characters long');
 			}
 		}
-		$scope.startInterview($scope.data);
+		if(!updateData){
+			$scope.startInterview($scope.data);
+		}
 		function validReferenceNumber(referenceNumber) {
 			var retValue = false;
 			if (referenceNumber) {
@@ -1230,7 +1237,6 @@
 									} else if (mod.parentNode) {
 										verifyQuestionInParentModule(mod);
 									} else {
-
 										AssessmentsService
 												.updateFiredRules(
 														$scope.interviewId)
