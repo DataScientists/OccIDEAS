@@ -87,17 +87,27 @@
 				count : 1,
 				questionsAsked : []
 			});
-			var count = 1;
+			var prevMod = interview.module.idNode;
 			_.each(actualQuestionData,function(qs,ind){
 				var mod = _.find(interview.modules,function(mod,ind){
 					if(ind != 0){
 						return mod.idNode == qs.topNodeId;
 					}
 					return mod.idNode == qs.topNodeId;
-				})
+				});
 				if(mod){
-				 mod.questionsAsked.push(qs);
+				   mod.questionsAsked.push(qs);
 				}else{
+					var count = 1;
+					if(prevMod != mod.idNode){
+						prevMod = mod.idNode; 
+						var index = _.findLastIndex(interview.modules, function(mod,ind){
+							return mod.idNode == qs.topNodeId;
+						});
+						if(index != -1){
+							count = interview.modules[index].count + 1;
+						}
+					}
 					var questionsAsked = [];
 					questionsAsked.push(qs);
 					interview.modules
@@ -110,7 +120,7 @@
 						parentAnswerId : qs.parentAnswerId,
 						link : qs.link,
 						number : qs.number,
-						count : 1,
+						count : count,
 						deleted : 0,
 						questionsAsked : questionsAsked
 					});
