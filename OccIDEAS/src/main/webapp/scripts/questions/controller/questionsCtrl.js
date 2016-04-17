@@ -1003,6 +1003,11 @@
 					$scope.toggleMultipleChoice($itemScope);
 					}
 			  ],
+			  [ 'Interview Display (Toggle)', function($itemScope) {
+					$itemScope.$modelValue.description = 'display';
+					saveModuleWithoutReload();
+					}
+			  ],
 			  
 			  [ 'Save as Fragment', function($itemScope) {
 				  

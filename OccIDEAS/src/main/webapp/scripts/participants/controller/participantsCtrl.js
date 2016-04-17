@@ -10,12 +10,21 @@
 		$scope.setSelectedInterview = function(interview){
 			$scope.selectedInterview = interview;
 		}
+		
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams({}, {	
 	        getData: function(params) {
-	          if(params.filter().reference ){	
+	        	
+	        	if(angular.element('#AWESID').val()){
+	        		if(angular.element('#AWESID').val().lenght>0){
+	        			return searchData();
+		        	}
+	        	}
+	          if(params.filter().reference ){
+	        	  $scope.searchAWESID = params.filter().reference;
+	        	  
 		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 		      }
 	          if(!self.tableParams.shouldGetData){
@@ -45,7 +54,7 @@
 	    	}
 	    }
 	    function add(type) {
-	    	$scope.addInterviewTabInterviewers();
+	    	$scope.addInterviewTabInterviewers($scope.searchAWESID);
 	    }
 	    function cancel(row,rowForm) {
 	    	var originalRow = resetRow(row, rowForm);

@@ -14,6 +14,7 @@
 			updateData) {
 		var self = this;
 		$scope.data = data;
+		$scope.displayQuestions=[];
 		$scope.$root.tabsLoading = false;
 		$scope.showIntroModule = true;
 		$scope.showModule = false;
@@ -24,6 +25,10 @@
 		$scope.updateAnswers = false;
 		$scope.referenceNumber = null;
 
+		function add(type) {
+	    	$scope.addInterviewTabInterviewers();
+	    }
+		
 		if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
 			var interview = {};
@@ -682,6 +687,11 @@
 					deleted : 0
 				} ]
 			}
+			if(newQuestionAsked.description){
+				if(newQuestionAsked.description=='display'){
+					$scope.displayQuestions.push(newQuestionAsked);
+				}
+			}
 			var mod = _.find(interview.modules,
 					function(val, ind) {
 						return val.idNode === node.topNodeId
@@ -781,7 +791,7 @@
 				alert("Please select an answer.");
 				return;
 			}
-
+			
 			$scope.inProgress = true;
 			ParticipantsService.findInterviewParticipant(
 					$scope.participant.idParticipant).then(
@@ -796,10 +806,13 @@
 							if (node.type == 'Q_multiple') {
 								processInterviewQuestionsWithMultipleAnswers(
 										interview, node);
+								
 							} else if (node.type == 'Q_frequency') {
 								processFrequency(interview, node);
+								
 							} else {
 								processQuestion(interview, node);
+								
 							}
 						}
 					});
@@ -940,19 +953,21 @@
 		}
 
 		$scope.startInterview = function(data) {
+			data.referenceNumber = $scope.awesId;
 			if (validReferenceNumber(data.referenceNumber)) {
-				InterviewsService.checkReferenceNumberExists(
-						$scope.referenceNumber).then(function(response) {
-					if (response.status === 200) {
-						alert('Reference number already in use');
-					} else if (response.status === 204) {
+				//InterviewsService.checkReferenceNumberExists(
+				//		$scope.referenceNumber).then(function(response) {
+				//	if (response.status === 200) {
+				//		alert('Reference number already in use');
+				//	} else if (response.status === 204) {
 						createParticipant(data);
-					}
-				});
+				//	}
+				//});
 			} else {
 				alert('Reference number must start with H and be 7 characters long');
 			}
 		}
+		$scope.startInterview($scope.data);
 		function validReferenceNumber(referenceNumber) {
 			var retValue = false;
 			if (referenceNumber) {
@@ -1111,6 +1126,7 @@
 														.scrollTo($scope.data.showedQuestion.idNode);
 											}
 											$scope.data.showedQuestion = question;
+											
 											var mod = _
 													.find(
 															$scope.activeInterview.modules,
