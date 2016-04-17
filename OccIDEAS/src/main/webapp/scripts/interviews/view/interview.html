@@ -125,7 +125,8 @@
             <div ng-repeat='note in interview.notes'>
     			<div ng-if="note.type!='system'">Note{{$index+1}}:{{note.type}}:{{note.text}}:{{note.lastUpdated | date:'yyyy-MM-dd HH:mm:ss Z'}}</div>
     		</div>
-    		<md-button class="md-primary md-raised" ng-click="showNotePrompt($event)"  >
+    		<p>&nbsp;</p><p>&nbsp;</p>
+    		<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"  >
       			Note
     		</md-button>
             <p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>

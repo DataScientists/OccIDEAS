@@ -1125,3 +1125,7 @@ md-list-item.interviewAnswers{
  .form-control {
 	width:50% !important;	
 }
+.interviewNotesButton{
+	color: rgba(0,0,0,0.87) !important;
+    background-color: rgb(250,250,250) !important;
+}
