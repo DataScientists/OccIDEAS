@@ -956,9 +956,9 @@
 								}
 							});
 		}
-
+		$scope.awesId = {};
 		$scope.startInterview = function(data) {
-			data.referenceNumber = $scope.awesId;
+			data.referenceNumber = $scope.awesId.id;
 			if (validReferenceNumber(data.referenceNumber)) {
 				//InterviewsService.checkReferenceNumberExists(
 				//		$scope.referenceNumber).then(function(response) {
