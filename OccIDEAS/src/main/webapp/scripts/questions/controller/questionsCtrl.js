@@ -982,8 +982,11 @@
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
-				  					alert('under development');
-								} 
+                  var pdf = new jsPDF('p','mm','a4');
+                  pdf.addHTML($("div#tree-root")[0], {pagesplit: true}, function() {
+                      pdf.save($itemScope.$modelValue.name + '.pdf');
+                  });
+              }
 			  ]
 			];
 		
