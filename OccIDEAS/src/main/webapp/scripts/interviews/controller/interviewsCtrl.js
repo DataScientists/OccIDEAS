@@ -1189,7 +1189,8 @@
 												.find(
 														$scope.activeInterview.modules,
 														function(val, ind) {
-															return val.idNode == actualQuestionTemp.topNodeId;
+															return val.idNode == actualQuestionTemp.topNodeId
+															 || val.parentNode == actualQuestionTemp.topNodeId;
 														});
 									}
 									var results = _
