@@ -47,13 +47,17 @@ public class Interview implements java.io.Serializable {
 	@JoinColumn(name = "fragment_idNode", referencedColumnName = "idNode")
 	private Fragment fragment;
 
-	@OneToMany(mappedBy = "idInterview", targetEntity = InterviewQuestion.class)
-	@Cascade(value = { CascadeType.PERSIST })
-	private List<InterviewQuestion> actualQuestion;
+	@OneToMany
+	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+	private List<InterviewModule> modules;
 	
 	@OneToMany(mappedBy = "interviewId", targetEntity = Note.class)
 	@Cascade(value = { CascadeType.SAVE_UPDATE,CascadeType.PERSIST })
 	private List<Note> notes;
+	
+	@OneToMany
+	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+	private List<InterviewQuestion> actualQuestion;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Interview_FiredRules", joinColumns = {
@@ -120,12 +124,12 @@ public class Interview implements java.io.Serializable {
 		this.fragment = fragment;
 	}
 
-	public List<InterviewQuestion> getActualQuestion() {
-		return actualQuestion;
+	public List<InterviewModule> getModules() {
+		return modules;
 	}
 
-	public void setActualQuestion(List<InterviewQuestion> actualQuestion) {
-		this.actualQuestion = actualQuestion;
+	public void setModules(List<InterviewModule> modules) {
+		this.modules = modules;
 	}
 
 	public List<Rule> getFiredRules() {
@@ -184,4 +188,14 @@ public class Interview implements java.io.Serializable {
 		this.notes = notes;
 	}
 
+	public List<InterviewQuestion> getActualQuestion() {
+		return actualQuestion;
+	}
+
+	public void setActualQuestion(List<InterviewQuestion> actualQuestion) {
+		this.actualQuestion = actualQuestion;
+	}
+
+	
+	
 }

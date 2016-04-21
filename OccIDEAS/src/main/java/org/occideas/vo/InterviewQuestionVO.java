@@ -13,6 +13,7 @@ public class InterviewQuestionVO {
 	private long parentId;
 	private long parentAnswerId;
 	private long topNodeId;
+	private Integer modCount;
 	private long link;
 	private String name;
 	private String description;
@@ -141,6 +142,14 @@ public class InterviewQuestionVO {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public Integer getModCount() {
+		return modCount;
+	}
+
+	public void setModCount(Integer modCount) {
+		this.modCount = modCount;
 	}
 	
 	

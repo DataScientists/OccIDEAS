@@ -40,7 +40,10 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@Column(name = "topNodeId")
 	private long topNodeId;
-	
+
+	@Column(name = "modCount")
+	private Integer modCount;
+
 	@Column(name = "parentAnswerId")
 	private long parentAnswerId;
 
@@ -52,7 +55,6 @@ public class InterviewQuestion implements java.io.Serializable {
 	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"),
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
 	private List<InterviewAnswer> answers;
-
 
 	@Column(name = "name")
 	private String name;
@@ -193,6 +195,14 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	public void setParentAnswerId(long parentAnswerId) {
 		this.parentAnswerId = parentAnswerId;
+	}
+
+	public Integer getModCount() {
+		return modCount;
+	}
+
+	public void setModCount(Integer modCount) {
+		this.modCount = modCount;
 	}
 
 }

@@ -36,19 +36,20 @@
 			interview.referenceNumber = updateData[0].referenceNumber;
 			interview.modules = [];
 			var actualQuestionData = updateData[updateData.length - 1].actualQuestion;
+			var defer = $q.defer();
+			populateInterviewModules(interview,actualQuestionData);
 			interview.participant = updateData[0].participant;
 			$scope.participant = updateData[0].participant;
 			$scope.interview = {};
 			$scope.interview = interview;
-			$scope.activeInterview = interview;
 			$scope.interviewId = updateData[0].interviewId;
 			interview.active = true;
 			$scope.data.interviewStarted = true;
 			$scope.data.interviewEnded = false;	
-			populateInterviewModules(interview,actualQuestionData);
 			var lastQsAsked = interview.modules[interview.modules.length - 1].questionsAsked;
 			var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
 			var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
+			var firstAnswer = lastActualQuestion.answers[0];
 			var mod = _.find(interview.modules,function(mod,ind){
 				return mod.idNode == lastActualQuestion.topNodeId;
 			});
@@ -56,8 +57,8 @@
 				var actualQuestion = {
 						topNodeId : lastActualQuestion.topNodeId,
 						questionId : lastActualQuestion.questionId,
-						parentId : lastAnswer.answerId,
-						number : lastAnswer.number,
+						parentId : firstAnswer.answerId,
+						number : firstAnswer.number,
 						link : lastActualQuestion.link
 					}
 					showNextQuestion(actualQuestion, true, false,
@@ -117,25 +118,30 @@
 						if(index != -1){
 							count = interview.modules[index].count + 1;
 						}
+						var prevQs = actualQuestionData[ind-1];
+						InterviewsService.getInterview(qs.topNodeId).then(function(data){
+							var questionsAsked = [];
+							questionsAsked.push(qs);
+							var modNode = data.data;
+							interview.modules
+							.push({
+								name : modNode.name,
+								idNode : modNode.idNode,
+								topNode : prevQs.topNodeId,
+								parentNode : qs.parentAnswerId?qs.parentAnswerId:qs.link,
+								answerNode : qs.parentId,
+								parentAnswerId : qs.parentAnswerId,
+								link : modNode.link,
+								number : prevQs.number,
+								count : count,
+								deleted : 0,
+								questionsAsked : questionsAsked
+							});
+						})
 					}
-					var questionsAsked = [];
-					questionsAsked.push(qs);
-					interview.modules
-					.push({
-						name : qs.name,
-						idNode : qs.link == 0 ?qs.parentId:qs.link,
-						topNode : qs.topNodeId,
-						parentNode : qs.parentAnswerId?qs.parentAnswerId:qs.link,
-						answerNode : qs.parentId,
-						parentAnswerId : qs.parentAnswerId,
-						link : qs.link,
-						number : qs.number,
-						count : count,
-						deleted : 0,
-						questionsAsked : questionsAsked
-					});
 				}
 			});
+			$scope.activeInterview = interview;
 		}
 
 		$rootScope.$on('InterviewCtrl:update', function(event, elId) {
@@ -311,6 +317,7 @@
 						if (mod.questionsAsked[j].parentAnswerId == answer.answerId) {
 							deleteQuestionWithParentAnswer(question.answers);
 						}
+						addModuleCount();
 						InterviewsService
 								.saveQuestion(question)
 								.then(
@@ -384,6 +391,7 @@
 													ans.deleted = 1;
 													deleteQuestionWithParentAnswer(question.answers);
 												});
+								addModuleCount();
 								InterviewsService
 										.saveQuestion(question)
 										.then(
@@ -525,7 +533,7 @@
 			} else {
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
 			}
-
+			addModuleCount();
 			InterviewsService.saveQuestion(newQuestionAsked).then(
 					function(response) {
 						if (response.status === 200) {
@@ -625,6 +633,7 @@
 			} else {
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
 			}
+			addModuleCount();
 			InterviewsService.saveQuestion(newQuestionAsked).then(
 					function(response) {
 						if (response.status === 200) {
@@ -719,6 +728,7 @@
 			} else {
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
 			}
+			addModuleCount();
 			InterviewsService.saveQuestion(newQuestionAsked).then(
 					function(response) {
 						if (response.status === 200) {
@@ -881,6 +891,14 @@
 					});
 		}
 
+		function addModuleCount(){
+			_.each($scope.activeInterview.modules,function(mod,ind){
+				_.each(mod.questionsAsked,function(qs,index){
+					qs.modCount = mod.count;
+				});
+			});
+		}
+		
 		function createParticipant(data) {
 			var participant = {
 				reference : $scope.referenceNumber,
@@ -907,8 +925,14 @@
 																.push({
 																	name : interview.module.name,
 																	idNode : interview.module.idNode,
-																	deleted : 0,
+																	topNodeId : 0,
+																	parentNode : 0,
+																	answerNode : 0,
+																	parentAnswerId : 0,
+																	number : 0,
 																	count : 1,
+																	sequence: ++sequence,
+																	deleted : 0,
 																	questionsAsked : []
 																});
 														var copyParticipant = angular
@@ -926,6 +950,15 @@
 																				response) {
 																			if (response.status === 200) {
 																				$scope.interviewId = response.data.interviewId;
+																				interview.modules[0].idInterview = $scope.interviewId;
+																				InterviewsService.saveInterviewMod(interview.modules[0]).then(
+																						function(response) {
+																							if (response.status === 200) {
+																								$log.info("Success in saveInterviewMod");
+																							}else{
+																								$log.error("Error in saveInterviewMod");
+																							}
+																				});
 																				$scope.activeInterview.interviewId = response.data.interviewId;
 																				ParticipantsService
 																						.save(
@@ -1275,18 +1308,20 @@
 			return results;
 		}
 
+		var sequence = 0;
 		function processLinkingQuestion(question, actualQuestionTemp) {
 			var modDetail = {
+				idInterview:question.idInterview,
 				name : question.name,
 				idNode : question.link,
-				topNode : question.topNodeId,
+				topNodeId : question.topNodeId,
 				parentNode : actualQuestionTemp.link ? actualQuestionTemp.link
 						: actualQuestionTemp.questionId,
 				answerNode : actualQuestionTemp.parentId,
 				parentAnswerId : question.parentId,
-				link : actualQuestionTemp.link,
 				number : question.number,
 				count : 1,
+				sequence: ++sequence,
 				deleted : 0,
 				questionsAsked : []
 			};
@@ -1308,6 +1343,14 @@
 					modDetail.count = modDetail.count + modules.length;
 				}
 				$scope.activeInterview.modules.push(modDetail);
+				InterviewsService.saveInterviewMod(modDetail).then(
+						function(response) {
+							if (response.status === 200) {
+								$log.info("Success in saveInterviewMod");
+							}else{
+								$log.error("Error in saveInterviewMod");
+							}
+						});
 			}
 			var num = 0;
 			_.find($scope.activeInterview.modules, function(val) {
@@ -1334,7 +1377,7 @@
 					.find(
 							$scope.activeInterview.modules,
 							function(val, ind) {
-								return (val.idNode === tempMod.topNode || val.topNode == tempMod.topNode)
+								return (val.idNode === tempMod.topNodeId || val.topNodeId == tempMod.topNodeId)
 										&& val.count == tempMod.count;
 							});
 			var question = _.find(mod.questionsAsked, function(val, index) {
@@ -1349,7 +1392,7 @@
 			}
 			if (!question) {
 				var actualQuestion = {
-					topNodeId : mod.topNode,
+					topNodeId : mod.topNodeId,
 					questionId : mod.answerNode,
 					parentId : mod.idNode,
 					number : tempMod.number
@@ -1368,7 +1411,7 @@
 											.find(
 													$scope.activeInterview.modules,
 													function(val, ind) {
-														return val.idNode === mod.topNode;
+														return val.idNode === mod.topNodeId;
 													});
 									var modQuestion = modParent.questionsAsked
 											.slice(-1)[0];

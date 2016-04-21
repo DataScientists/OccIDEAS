@@ -14,10 +14,12 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interview.service.InterviewService;
+import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.service.RuleService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
@@ -39,6 +41,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
     @Autowired
     private RuleService ruleService;
+    
+    @Autowired
+    private InterviewModuleService modService;
 
     @GET
     @Path(value = "/getlist")
@@ -195,6 +200,32 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         	 QuestionVO questionVO = getNearestQuestion(actualQuestionVO);
         	 if(questionVO!=null){
              	return Response.ok(questionVO).build();
+             }else{
+             	return Response.status(Response.Status.NO_CONTENT).build();
+             }   
+        } catch (Throwable e) {
+        	e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @POST
+	@Path(value="/saveMod")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response saveMod(InterviewModuleVO vo) {
+    	modService.update(vo);
+		return Response.ok(vo).build();
+	}
+    
+    @GET
+    @Path(value = "/getInterview")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getInterview(@QueryParam("interviewId") long idinterview) {
+        try {
+        	 List<InterviewVO> vo = service.getInterview(idinterview);
+        	 if(vo!=null){
+             	return Response.ok(vo).build();
              }else{
              	return Response.status(Response.Status.NO_CONTENT).build();
              }   

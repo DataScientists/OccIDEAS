@@ -30,6 +30,8 @@ public class InterviewVO {
 	private ParticipantVO participant;
 
 	private List<InterviewQuestionVO> actualQuestion = new ArrayList<>();
+	
+	private List<InterviewModuleVO> modules = new ArrayList<>();
 
 	private List<RuleVO> firedRules;
 
@@ -257,4 +259,14 @@ public class InterviewVO {
 		this.notes = notes;
 	}
 
+	public List<InterviewModuleVO> getModules() {
+		return modules;
+	}
+
+	public void setModules(List<InterviewModuleVO> modules) {
+		this.modules = modules;
+	}
+
+	
+	
 }

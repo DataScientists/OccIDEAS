@@ -66,6 +66,25 @@
             })
             return request.then(handleSuccess, handleError);
         }
+        
+        function getInterview(idNode) {
+            var url = 'rest/interview/getInterview?interviewId=' + interviewId;
+            var request = $http({
+                method: 'GET',
+                url: url
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        
+        function saveInterviewMod(data) {
+     		var restUrl = 'rest/interview/saveMod';
+     		var request =  $http({
+     			method: 'POST',
+     			url: restUrl,
+     			data:data
+     		})
+     		return request.then(handleSuccess,handleError);
+        }
 
         function startInterview(data) {
             var startInterview = 'rest/interview/create';
@@ -108,7 +127,9 @@
             get: get,
             startInterview:startInterview,
             getNextQuestion: getNextQuestion,
-            saveQuestion:saveQuestion
+            saveQuestion:saveQuestion,
+            getInterview:getInterview,
+            saveInterviewMod:saveInterviewMod
         };
     }
 })();

@@ -81,9 +81,13 @@ public class InterviewServiceImpl implements InterviewService {
     public void merge(InterviewVO o) {
         dao.merge(mapper.convertToInterview(o));
     }
-
+                                                                                                     
     @Override
     public void delete(InterviewVO o) {
         dao.delete(mapper.convertToInterview(o));
     }
+	@Override
+	public List<InterviewVO> getInterview(long interviewId) {
+		return mapper.convertToInterviewVOList(interviewDao.getInterview(interviewId));
+	}
 }

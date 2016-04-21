@@ -6,10 +6,12 @@ import java.util.List;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
+import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.question.dao.QuestionDao;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.ModuleVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +32,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     private PossibleAnswerMapper paMapper;
+    
+    @Autowired
+    private ModuleMapper modMapper;
 
     @Override
     public List<QuestionVO> listAll() {
@@ -73,6 +78,11 @@ public class QuestionServiceImpl implements QuestionService {
 	public QuestionVO determineNextQuestionByCurrentNumber(String moduleId,String nodeNumber) {
 		String number = CommonUtil.getNextQuestionByCurrentNumber(nodeNumber);
 		return mapper.convertToQuestionVOReducedDetails(qdao.getQuestionByModuleIdAndNumber(moduleId, number));
+	}
+
+	@Override
+	public ModuleVO getQuestionWithParentId(Long idNode) {
+		return modMapper.convertToModuleVO(qdao.getModuleByParentId(idNode), false);
 	}
 
 

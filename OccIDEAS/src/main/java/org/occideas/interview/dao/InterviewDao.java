@@ -102,4 +102,12 @@ public class InterviewDao {
       }
       return retValue;
     }
+
+	public List<Interview> getInterview(long interviewId) {
+		final Session session = sessionFactory.getCurrentSession();
+	    final Criteria crit = session.createCriteria(Interview.class)
+							    		.add(Restrictions.eq("idinterview", interviewId))
+	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
+	    return crit.list();
+	}
 }
