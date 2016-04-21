@@ -45,14 +45,23 @@
 					$scope.interview = interview;
 					$scope.data.interviewStarted = true;
 					$scope.data.interviewEnded = false;	
-					var lastQsAsked = interview.modules[interview.modules.length - 1].questionsAsked;
+					var mod = interview.modules[interview.modules.length - 1];
+					var lastQsAsked = mod.questionsAsked;
+					$scope.activeInterview = interview;
+					if(lastQsAsked.length == 0){
+						var actualQuestion = {
+								topNodeId : mod.parentAnswerId,
+								questionId : mod.idNode,
+								parentId : mod.idNode,
+								number : 0,
+								link : mod.idNode
+							}
+						showNextQuestion(actualQuestion, true, false,
+						mod.count);
+					}else{
 					var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
 					var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
 					var firstAnswer = lastActualQuestion.answers[0];
-					$scope.activeInterview = interview;
-					var mod = _.find(interview.modules,function(mod,ind){
-						return mod.idNode == lastActualQuestion.topNodeId;
-					});
 					if (lastActualQuestion.type == 'Q_multiple') {
 						var actualQuestion = {
 								topNodeId : lastActualQuestion.topNodeId,
@@ -83,6 +92,7 @@
 							}
 							showNextQuestion(actualQuestion, true, false,
 									mod.count);
+					}
 					}
 				}
 			})
@@ -1541,5 +1551,10 @@
 				templateUrl : 'scripts/interviews/view/noteDialog.html'
 			});
 		};
+//		"\n".charCodeAt(0)
+		$scope.orderByNumber = function(questionAsked) {
+			   return questionAsked.number.charCodeAt();
+		};
+		
 	}
 })();

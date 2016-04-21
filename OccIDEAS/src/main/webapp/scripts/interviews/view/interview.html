@@ -204,7 +204,7 @@
 						{{modules.name}}
 					</span>
 					<div>
-							<div ng-repeat="qa in modules.questionsAsked ">
+							<div ng-repeat="qa in modules.questionsAsked | orderBy:orderByNumber">
 		    					<div id="questionlist-{{qa.questionId}}" class="tree-node-content Q_interviewresult">
 		    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
 		                   			<span class="badge">{{qa.number}}</span>

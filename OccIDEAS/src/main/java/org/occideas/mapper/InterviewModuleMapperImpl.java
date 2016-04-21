@@ -25,7 +25,7 @@ public class InterviewModuleMapperImpl implements InterviewModuleMapper {
 		vo.setIdInterview(entity.getIdInterview());
 		vo.setIdNode(entity.getIdNode());
 		vo.setName(entity.getName());
-		vo.setNumber(entity.getName());
+		vo.setNumber(entity.getNumber());
 		vo.setParentAnswerId(entity.getParentAnswerId());
 		vo.setParentNode(entity.getParentNode());
 		vo.setAnswerNode(entity.getAnswerNode());
@@ -60,7 +60,7 @@ public class InterviewModuleMapperImpl implements InterviewModuleMapper {
 		entity.setIdInterview(vo.getIdInterview());
 		entity.setIdNode(vo.getIdNode());
 		entity.setName(vo.getName());
-		entity.setNumber(vo.getName());
+		entity.setNumber(vo.getNumber());
 		entity.setParentAnswerId(vo.getParentAnswerId());
 		entity.setParentNode(vo.getParentNode());
 		entity.setAnswerNode(vo.getAnswerNode());
