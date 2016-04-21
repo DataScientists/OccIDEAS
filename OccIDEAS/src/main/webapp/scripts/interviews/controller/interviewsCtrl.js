@@ -31,117 +31,61 @@
 		
 		if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
-			var interview = {};
-			interview.module = updateData[0].module;
-			interview.referenceNumber = updateData[0].referenceNumber;
-			interview.modules = [];
-			var actualQuestionData = updateData[updateData.length - 1].actualQuestion;
-			var defer = $q.defer();
-			populateInterviewModules(interview,actualQuestionData);
-			interview.participant = updateData[0].participant;
-			$scope.participant = updateData[0].participant;
-			$scope.interview = {};
-			$scope.interview = interview;
-			$scope.interviewId = updateData[0].interviewId;
-			interview.active = true;
-			$scope.data.interviewStarted = true;
-			$scope.data.interviewEnded = false;	
-			var lastQsAsked = interview.modules[interview.modules.length - 1].questionsAsked;
-			var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
-			var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
-			var firstAnswer = lastActualQuestion.answers[0];
-			var mod = _.find(interview.modules,function(mod,ind){
-				return mod.idNode == lastActualQuestion.topNodeId;
-			});
-			if (lastActualQuestion.type == 'Q_multiple') {
-				var actualQuestion = {
-						topNodeId : lastActualQuestion.topNodeId,
-						questionId : lastActualQuestion.questionId,
-						parentId : firstAnswer.answerId,
-						number : firstAnswer.number,
-						link : lastActualQuestion.link
-					}
-					showNextQuestion(actualQuestion, true, false,
-							mod.count);
-			} else if (lastActualQuestion.type == 'Q_frequency') {
-				var actualQuestion = {
-						topNodeId : lastActualQuestion.topNodeId,
-						questionId : lastActualQuestion.questionId,
-						parentId : lastAnswer.answerId,
-						number : lastAnswer.number,
-						link : lastActualQuestion.link
-					}
-					showNextQuestion(actualQuestion, true, false,
-							mod.count);
-			} else {
-				var actualQuestion = {
-						topNodeId : lastActualQuestion.topNodeId,
-						questionId : lastActualQuestion.questionId,
-						parentId : lastAnswer.answerId,
-						number : lastAnswer.number,
-						link : lastActualQuestion.link
-					}
-					showNextQuestion(actualQuestion, true, false,
-							mod.count);
-			}
+			populateInterviewModules(updateData[0].interviewId);
 		}
 		
-		function populateInterviewModules(interview,actualQuestionData){
-			if(interview.modules){
-				interview.modules = [];
-			}
-			interview.modules
-			.push({
-				name : interview.module.name,
-				idNode : interview.module.idNode,
-				deleted : 0,
-				count : 1,
-				questionsAsked : []
-			});
-			var prevMod = interview.module.idNode;
-			_.each(actualQuestionData,function(qs,ind){
-				var mod = _.find(interview.modules,function(mod,ind){
-					if(ind != 0){
-						return mod.idNode == qs.topNodeId;
-					}
-					return mod.idNode == qs.topNodeId;
-				});
-				if(mod){
-				   mod.questionsAsked.push(qs);
-				}else{
-					var count = 1;
-					if(prevMod != qs.topNodeId){
-						prevMod = qs.topNodeId; 
-						var index = _.findLastIndex(interview.modules, function(mod,ind){
-							return mod.idNode == qs.topNodeId;
-						});
-						if(index != -1){
-							count = interview.modules[index].count + 1;
-						}
-						var prevQs = actualQuestionData[ind-1];
-						InterviewsService.getInterview(qs.topNodeId).then(function(data){
-							var questionsAsked = [];
-							questionsAsked.push(qs);
-							var modNode = data.data;
-							interview.modules
-							.push({
-								name : modNode.name,
-								idNode : modNode.idNode,
-								topNode : prevQs.topNodeId,
-								parentNode : qs.parentAnswerId?qs.parentAnswerId:qs.link,
-								answerNode : qs.parentId,
-								parentAnswerId : qs.parentAnswerId,
-								link : modNode.link,
-								number : prevQs.number,
-								count : count,
-								deleted : 0,
-								questionsAsked : questionsAsked
-							});
-						})
+		function populateInterviewModules(interviewId){
+			$scope.interviewId = interviewId;
+			InterviewsService.getInterview(interviewId).then(function(data){
+				if(data){
+					var interview = data.data[0];
+					var modules = interview.modules;
+					interview.active = true;
+					$scope.participant = interview.participant;
+					$scope.interview = interview;
+					$scope.data.interviewStarted = true;
+					$scope.data.interviewEnded = false;	
+					var lastQsAsked = interview.modules[interview.modules.length - 1].questionsAsked;
+					var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
+					var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
+					var firstAnswer = lastActualQuestion.answers[0];
+					$scope.activeInterview = interview;
+					var mod = _.find(interview.modules,function(mod,ind){
+						return mod.idNode == lastActualQuestion.topNodeId;
+					});
+					if (lastActualQuestion.type == 'Q_multiple') {
+						var actualQuestion = {
+								topNodeId : lastActualQuestion.topNodeId,
+								questionId : lastActualQuestion.questionId,
+								parentId : firstAnswer.answerId,
+								number : firstAnswer.number,
+								link : lastActualQuestion.link
+							}
+							showNextQuestion(actualQuestion, true, false,
+									mod.count);
+					} else if (lastActualQuestion.type == 'Q_frequency') {
+						var actualQuestion = {
+								topNodeId : lastActualQuestion.topNodeId,
+								questionId : lastActualQuestion.questionId,
+								parentId : lastAnswer.answerId,
+								number : lastAnswer.number,
+								link : lastActualQuestion.link
+							}
+							showNextQuestion(actualQuestion, true, false,
+									mod.count);
+					} else {
+						var actualQuestion = {
+								topNodeId : lastActualQuestion.topNodeId,
+								questionId : lastActualQuestion.questionId,
+								parentId : lastAnswer.answerId,
+								number : lastAnswer.number,
+								link : lastActualQuestion.link
+							}
+							showNextQuestion(actualQuestion, true, false,
+									mod.count);
 					}
 				}
-			});
-			$scope.activeInterview = interview;
+			})
 		}
 
 		$rootScope.$on('InterviewCtrl:update', function(event, elId) {
@@ -359,6 +303,14 @@
 				_.remove($scope.activeInterview.modules, function(mod) {
 					if (mod.answerNode && mod.answerNode == answer.answerId) {
 						deleteModuleWithParentModule(mod);
+						InterviewsService.saveInterviewMod(mod).then(
+								function(response) {
+									if (response.status === 200) {
+										$log.info("Success in saveInterviewMod");
+									}else{
+										$log.error("Error in saveInterviewMod");
+									}
+						});
 						return true;
 					}
 					return false;
@@ -370,6 +322,14 @@
 			_.remove($scope.activeInterview.modules, function(mod) {
 				if (mod.parentAnswerId && mod.parentAnswerId == module.idNode) {
 					mod.deleted = 1;
+					InterviewsService.saveInterviewMod(mod).then(
+							function(response) {
+								if (response.status === 200) {
+									$log.info("Success in saveInterviewMod");
+								}else{
+									$log.error("Error in saveInterviewMod");
+								}
+					});
 					deleteModuleWithParentModule(mod);
 					deleteQuestion(mod.questionsAsked);
 					return true;
@@ -1255,7 +1215,7 @@
 											parent_id = results.link;
 										} else if (results.parentAnswerId) {
 											parent_id = results.parentAnswerId;
-										} else if (results.parentAnswerId) {
+										} else {
 											parent_id = results.parentId;
 										}
 										var actualQuestion = {
@@ -1311,7 +1271,7 @@
 		var sequence = 0;
 		function processLinkingQuestion(question, actualQuestionTemp) {
 			var modDetail = {
-				idInterview:question.idInterview,
+				idInterview:$scope.interviewId,
 				name : question.name,
 				idNode : question.link,
 				topNodeId : question.topNodeId,

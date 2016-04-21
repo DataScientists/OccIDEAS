@@ -88,6 +88,6 @@ public class InterviewServiceImpl implements InterviewService {
     }
 	@Override
 	public List<InterviewVO> getInterview(long interviewId) {
-		return mapper.convertToInterviewVOList(interviewDao.getInterview(interviewId));
+		return mapper.convertToInterviewWithModulesVOList(interviewDao.getInterview(interviewId));
 	}
 }

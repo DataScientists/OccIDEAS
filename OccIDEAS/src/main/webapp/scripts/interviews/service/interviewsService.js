@@ -67,7 +67,7 @@
             return request.then(handleSuccess, handleError);
         }
         
-        function getInterview(idNode) {
+        function getInterview(interviewId) {
             var url = 'rest/interview/getInterview?interviewId=' + interviewId;
             var request = $http({
                 method: 'GET',

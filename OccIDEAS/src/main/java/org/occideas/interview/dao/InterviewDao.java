@@ -11,6 +11,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Interview;
+import org.occideas.entity.InterviewQuestion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,11 +104,12 @@ public class InterviewDao {
       return retValue;
     }
 
-	public List<Interview> getInterview(long interviewId) {
+	public List<Interview> getInterview(Long interviewId) {
 		final Session session = sessionFactory.getCurrentSession();
-	    final Criteria crit = session.createCriteria(Interview.class)
-							    		.add(Restrictions.eq("idinterview", interviewId))
-	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
-	    return crit.list();
+        final Criteria crit = session.createCriteria(Interview.class);
+        if (interviewId != null) {
+            crit.add(Restrictions.eq("idinterview", interviewId));
+        }
+        return crit.list();
 	}
 }
