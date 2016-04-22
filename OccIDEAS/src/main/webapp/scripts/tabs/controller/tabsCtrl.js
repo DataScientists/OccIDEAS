@@ -179,7 +179,7 @@
         };
         $scope.addInterviewTabInterviewers = function(awesId) {
             var tabTitle = "New Interview "+awesId;
-            $scope.awesId = awesId;
+            $scope.addAWESId = awesId;
             var state = "tabs.interview";
             $stickyState.reset(state);
             if(!checkIfTabIsOpen(tabs,tabTitle)){
