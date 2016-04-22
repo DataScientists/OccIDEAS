@@ -46,54 +46,21 @@
 					$scope.data.interviewStarted = true;
 					$scope.data.interviewEnded = false;	
 					var mod = interview.modules[interview.modules.length - 1];
-					var lastQsAsked = mod.questionsAsked;
+					var prevMod = interview.modules[interview.modules.length - 2];
 					$scope.activeInterview = interview;
-					if(lastQsAsked.length == 0){
-						var actualQuestion = {
-								topNodeId : mod.parentAnswerId,
-								questionId : mod.idNode,
-								parentId : mod.idNode,
-								number : 0,
-								link : mod.idNode
-							}
-						showNextQuestion(actualQuestion, true, false,
-						mod.count);
-					}else{
+					// can cover normal scenario without link
+					var lastQsAsked = mod.questionsAsked;
 					var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
 					var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
 					var firstAnswer = lastActualQuestion.answers[0];
-					if (lastActualQuestion.type == 'Q_multiple') {
-						var actualQuestion = {
-								topNodeId : lastActualQuestion.topNodeId,
-								questionId : lastActualQuestion.questionId,
-								parentId : firstAnswer.answerId,
-								number : firstAnswer.number,
-								link : lastActualQuestion.link
-							}
-							showNextQuestion(actualQuestion, true, false,
-									mod.count);
-					} else if (lastActualQuestion.type == 'Q_frequency') {
-						var actualQuestion = {
-								topNodeId : lastActualQuestion.topNodeId,
-								questionId : lastActualQuestion.questionId,
-								parentId : lastAnswer.answerId,
-								number : lastAnswer.number,
-								link : lastActualQuestion.link
-							}
-							showNextQuestion(actualQuestion, true, false,
-									mod.count);
-					} else {
-						var actualQuestion = {
-								topNodeId : lastActualQuestion.topNodeId,
-								questionId : lastActualQuestion.questionId,
-								parentId : lastAnswer.answerId,
-								number : lastAnswer.number,
-								link : lastActualQuestion.link
-							}
-							showNextQuestion(actualQuestion, true, false,
-									mod.count);
+					var actualQuestion = {
+						topNodeId : lastActualQuestion.topNodeId,
+						questionId : lastActualQuestion.questionId,
+						parentId : firstAnswer.answerId,
+						number : firstAnswer.number,
+						link : lastActualQuestion.link
 					}
-					}
+					showNextQuestion(actualQuestion, true, false,mod.count);
 				}
 			})
 		}
