@@ -928,8 +928,8 @@
 		}
 		$scope.awesId = {};
 		$scope.startInterview = function(data) {
-			data.referenceNumber = $scope.awesId.id;
-			if (validReferenceNumber(data.referenceNumber)) {
+			$scope.referenceNumber = $scope.addAWESId;
+			//if (validReferenceNumber(data.referenceNumber)) {
 				//InterviewsService.checkReferenceNumberExists(
 				//		$scope.referenceNumber).then(function(response) {
 				//	if (response.status === 200) {
@@ -938,9 +938,9 @@
 						createParticipant(data);
 				//	}
 				//});
-			} else {
-				alert('Reference number must start with H and be 7 characters long');
-			}
+			//} else {
+			//	alert('Reference number must start with H and be 7 characters long');
+			//}
 		}
 		if(!updateData){
 			$scope.startInterview($scope.data);

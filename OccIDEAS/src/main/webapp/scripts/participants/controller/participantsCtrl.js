@@ -17,11 +17,7 @@
 		self.tableParams = new NgTableParams({}, {	
 	        getData: function(params) {
 	        	
-	        	if(angular.element('#AWESID').val()){
-	        		if(angular.element('#AWESID').val().lenght>0){
-	        			return searchData();
-		        	}
-	        	}
+	        	
 	          if(params.filter().reference ){
 	        	  $scope.searchAWESID = params.filter().reference;
 	        	  
