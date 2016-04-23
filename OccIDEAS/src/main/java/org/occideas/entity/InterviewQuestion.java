@@ -52,7 +52,7 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
-	@JoinColumns({ @JoinColumn(name = "topQuestionId", referencedColumnName = "question_id"),
+	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"),
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
 	private List<InterviewAnswer> answers;
 

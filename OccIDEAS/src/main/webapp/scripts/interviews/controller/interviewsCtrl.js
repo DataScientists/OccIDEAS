@@ -46,19 +46,36 @@
 					$scope.data.interviewStarted = true;
 					$scope.data.interviewEnded = false;	
 					var mod = interview.modules[interview.modules.length - 1];
-					var prevMod = interview.modules[interview.modules.length - 2];
 					$scope.activeInterview = interview;
-					// can cover normal scenario without link
+					// scenario: mod has no questions asked yet
+					if(mod.questionsAsked == 0){
+						var prevMod = interview.modules[interview.modules.length - 2];
+						var lastQsAsked = prevMod.questionsAsked;
+						var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
+						var firstAnswer = lastActualQuestion.answers[0];
+						var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
+						var parent_id = firstAnswer.answerId;
+						var actualQuestion = {
+							topNodeId : prevMod.idNode,
+							questionId : firstAnswer.parentQuestionId,
+							parentId : parent_id,
+							number : firstAnswer.number,
+							link : 0
+						}
+					}else{
+					// scenario: question has child answers -> simple scenario
 					var lastQsAsked = mod.questionsAsked;
 					var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
 					var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
 					var firstAnswer = lastActualQuestion.answers[0];
+					var parent_id = firstAnswer.answerId;
 					var actualQuestion = {
 						topNodeId : lastActualQuestion.topNodeId,
 						questionId : lastActualQuestion.questionId,
-						parentId : firstAnswer.answerId,
+						parentId : parent_id,
 						number : firstAnswer.number,
 						link : lastActualQuestion.link
+					}
 					}
 					showNextQuestion(actualQuestion, true, false,mod.count);
 				}
@@ -926,9 +943,9 @@
 								}
 							});
 		}
-		$scope.awesId = {};
+		$scope.awesId = {};	
 		$scope.startInterview = function(data) {
-			$scope.referenceNumber = $scope.addAWESId;
+			$scope.referenceNumber = $scope.awesId.id;
 			//if (validReferenceNumber(data.referenceNumber)) {
 				//InterviewsService.checkReferenceNumberExists(
 				//		$scope.referenceNumber).then(function(response) {
@@ -942,9 +959,9 @@
 			//	alert('Reference number must start with H and be 7 characters long');
 			//}
 		}
-		if(!updateData){
-			$scope.startInterview($scope.data);
-		}
+//		if(!updateData){
+//			$scope.startInterview($scope.data);
+//		}
 		function validReferenceNumber(referenceNumber) {
 			var retValue = false;
 			if (referenceNumber) {
@@ -1156,8 +1173,7 @@
 												.find(
 														$scope.activeInterview.modules,
 														function(val, ind) {
-															return val.idNode == actualQuestionTemp.topNodeId
-															 || val.parentNode == actualQuestionTemp.topNodeId;
+															return val.idNode == actualQuestionTemp.topNodeId;
 														});
 									}
 									var results = _
