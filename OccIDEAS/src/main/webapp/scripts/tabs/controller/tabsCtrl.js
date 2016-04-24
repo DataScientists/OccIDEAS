@@ -177,9 +177,8 @@
                 });
             }
         };
-        $scope.addInterviewTabInterviewers = function(awesId) {
+        $scope.addInterviewTabInterviewers = function(idNode,awesId) {
             var tabTitle = "New Interview "+awesId;
-            $scope.addAWESId = awesId;
             var state = "tabs.interview";
             $stickyState.reset(state);
             if(!checkIfTabIsOpen(tabs,tabTitle)){
@@ -191,7 +190,7 @@
                 });
                 $scope.tabOptions.push({
                     state: state,
-                    data: {row:'15001'}
+                    data: {row:idNode,referenceNumber: awesId}
                 });
             }
         };

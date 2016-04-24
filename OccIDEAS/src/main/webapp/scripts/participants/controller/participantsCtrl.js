@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Participants')
 		   .controller('ParticipantsCtrl',ParticipantsCtrl);
 	
-	ParticipantsCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter','data'];
-	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter,data){
+	ParticipantsCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter','data','InterviewsService'];
+	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter,data,InterviewsService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -49,8 +49,18 @@
 	    		self.isDeleting = true;
 	    	}
 	    }
-	    function add(type) {
-	    	$scope.addInterviewTabInterviewers($scope.searchAWESID);
+	    function add() {
+	    	if($scope.searchAWESID){
+	    		InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data){
+	    			if(data.status == 200){
+	    				$scope.addInterviewTabInterviewers(data.data[0].modules[0].idNode,$scope.searchAWESID);
+	    			}else{
+	    				alert("Error occured during awesId.");
+	    			}
+	    		})
+	    	}else{
+	    		alert("You need to add the awesId to the filter box before you can start.");
+	    	}
 	    }
 	    function cancel(row,rowForm) {
 	    	var originalRow = resetRow(row, rowForm);
