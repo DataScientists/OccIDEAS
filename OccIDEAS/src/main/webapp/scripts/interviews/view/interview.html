@@ -39,7 +39,7 @@
             <div ng-if="data.showedQuestion.type == 'Q_multiple'">
 	            <div ng-repeat="node in data.showedQuestion.nodes">
               		<md-checkbox ng-model="node.isSelected"
-                       ng-click="multiToggle(node, multiSelected)" class="green">
+                       ng-click="multiToggle(node, multiSelected)" class="green" select-free-text-on-click>
                 		<span ng-if="node.type!='P_freetext'">{{node.name}}</span>
 					    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 					      	<label>Free Text</label>
@@ -204,7 +204,7 @@
 						{{modules.name}}
 					</span>
 					<div>
-							<div ng-repeat="qa in modules.questionsAsked | orderBy:orderByNumber">
+							<div ng-repeat="qa in modules.questionsAsked | qaFilter:0 | orderBy:orderByNumber">
 		    					<div id="questionlist-{{qa.questionId}}" class="tree-node-content Q_interviewresult">
 		    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
 		                   			<span class="badge">{{qa.number}}</span>
@@ -215,7 +215,7 @@
 		    					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
 		    					</span>  					
 		    					</div>
-		    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers">
+		    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers | qaFilter:0 | orderBy:orderByNumber">
 		    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
 		                   				<span class="badge">{{as.number}}</span>
 		                			</div>

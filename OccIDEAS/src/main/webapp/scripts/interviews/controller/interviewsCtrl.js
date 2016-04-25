@@ -271,6 +271,7 @@
 			var mod = _.find($scope.activeInterview.modules, function(mod) {
 				return mod.idNode == $scope.data.showedQuestion.topNodeId;
 			});
+			
 			for (var i = 0; i < answerList.length; i++) {
 				var answer = answerList[i];
 				for (var j = 0; j < mod.questionsAsked.length; j++) {
