@@ -6,12 +6,12 @@
 			'FragmentsService', '$q', 'QuestionsService', 'ModulesService',
 			'InterviewsService', 'ParticipantsService', 'AssessmentsService',
 			'$anchorScroll', '$location', '$mdMedia', '$window', '$state',
-			'$rootScope', '$compile', '$timeout', '$log', 'updateData' ];
+			'$rootScope', '$compile', '$timeout', '$log', 'updateData','startWithReferenceNumber'];
 	function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
 			QuestionsService, ModulesService, InterviewsService,
 			ParticipantsService, AssessmentsService, $anchorScroll, $location,
 			$mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
-			updateData) {
+			updateData,startWithReferenceNumber) {
 		var self = this;
 		$scope.data = data;
 		$scope.displayQuestions=[];
@@ -962,6 +962,24 @@
 //		if(!updateData){
 //			$scope.startInterview($scope.data);
 //		}
+		
+		if(startWithReferenceNumber){
+			InterviewsService.checkReferenceNumberExists(startWithReferenceNumber)
+    		.then(function(response){
+    			if(response.status == 200){
+    				if(confirm('AWES ID already exist. Continue to start interview?')){
+        				$scope.awesId.id = startWithReferenceNumber;
+        				$scope.startInterview(data);
+        			}else{
+        				$scope.awesId.id = startWithReferenceNumber;
+        			}
+    			}else{
+    				$scope.awesId.id = startWithReferenceNumber;
+    				$scope.startInterview(data);
+    			}
+    		});
+		}
+		
 		function validReferenceNumber(referenceNumber) {
 			var retValue = false;
 			if (referenceNumber) {

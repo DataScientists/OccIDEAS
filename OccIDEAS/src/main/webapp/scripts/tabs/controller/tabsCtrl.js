@@ -190,7 +190,7 @@
                 });
                 $scope.tabOptions.push({
                     state: state,
-                    data: {row:idNode,referenceNumber: awesId}
+                    data: {row:idNode,startWithReferenceNumber: awesId}
                 });
             }
         };

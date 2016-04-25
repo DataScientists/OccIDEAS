@@ -1,6 +1,13 @@
 <div ng-cloak>
 <div>
-  
+	<div>
+	<md-input-container>
+	<label>AWES ID</label>
+   <input type="text" class="form-control" placeholder="H______" 
+   		  md-maxlength="7" minlength="7" required
+   		  ng-model="vm.tableParams.filter().reference"/>
+   	</md-input-container>
+	</div>
 <!-- <pre>debug{{vm.tableParams.data| json}}</pre>   -->
 <table ng-table="vm.tableParams" class="table table-bordered table-hover 
   table-condensed editable-table" show-filter="true">
@@ -17,7 +24,7 @@
         <td title="'Participant Id'">
 			{{participant.idParticipant}}
 		</td>
-        <td title="'AWES ID'" filter="{ reference: 'text'}" sortable="'reference'">
+        <td title="'AWES ID'" sortable="'reference'">
             {{participant.reference}}</td>
         <td title="'Status'">
 			{{participant.status}}
