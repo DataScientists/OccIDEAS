@@ -13,8 +13,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.PropUtil;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -44,6 +46,10 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response get(@QueryParam("id") Long id) {
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		if(id == -1){
+			id = Long.valueOf(PropUtil.getInstance().getProperty(Constant.STUDY_INTRO));
+		}
+		
 		try{
 			list = service.findById(id);
 		}catch(Throwable e){

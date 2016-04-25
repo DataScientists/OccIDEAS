@@ -56,8 +56,7 @@
 	    				$scope.addInterviewTabInterviewers(data.data[0].modules[0].idNode,$scope.searchAWESID);
 	    			}
 	    			else if(data.status == 204){
-	    				alert("Function to create fresh interviews for this page is not supported yet.");
-//	    				$scope.addInterviewTabInterviewers(data.data[0].modules[0].idNode,$scope.searchAWESID);
+	    				$scope.addInterviewTabInterviewers(-1,$scope.searchAWESID);
 	    			}
 	    			else{
 	    				alert("Error occured during awesId.");
