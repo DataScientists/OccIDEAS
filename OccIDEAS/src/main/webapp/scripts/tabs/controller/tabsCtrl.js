@@ -229,7 +229,7 @@
                  });
                  $scope.tabOptions.push({
                      state: state,
-                     data: {row:node.idNode,referenceNumber: data.reference}
+                     data: {row:node.idNode,interviewId: data.interviews[0].interviewId}
                  });
              }
         }

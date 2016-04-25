@@ -31,7 +31,17 @@
 
 							return filtered;
 					};
-			});
+			}).directive('selectFreeTextOnClick', ['$window', function ($window) {
+			    return {
+			        restrict: 'A',
+			        link: function (scope, element, attrs) {
+			            element.on('click', function () {
+			            	element.find("input").val("");
+			            	element.find("input").focus();
+			            });
+			        }
+			    };
+			}]);
 
 	Config.$inject = [ '$stateProvider' ];
 	function Config($stateProvider) {

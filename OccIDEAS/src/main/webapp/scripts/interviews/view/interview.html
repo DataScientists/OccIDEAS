@@ -130,7 +130,7 @@
 			      <div ng-repeat='node in data.showedQuestion.nodes' >
 			        <div flex layout-align="start center" >
 			          <md-radio-button flex ng-value="node"
-			              class="md-primary interview-radio-button">
+			              class="md-primary interview-radio-button" select-free-text-on-click>
 			            <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
 					    <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 					      	<label>Free Text</label>

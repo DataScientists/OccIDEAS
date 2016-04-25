@@ -50,17 +50,45 @@
 					// scenario: mod has no questions asked yet
 					if(mod.questionsAsked == 0){
 						var prevMod = interview.modules[interview.modules.length - 2];
-						var lastQsAsked = prevMod.questionsAsked;
-						var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
-						var firstAnswer = lastActualQuestion.answers[0];
-						var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
-						var parent_id = firstAnswer.answerId;
-						var actualQuestion = {
-							topNodeId : prevMod.idNode,
-							questionId : firstAnswer.parentQuestionId,
-							parentId : parent_id,
-							number : firstAnswer.number,
-							link : 0
+						if(prevMod){
+							var lastQsAsked = prevMod.questionsAsked;
+							var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
+							var firstAnswer = lastActualQuestion.answers[0];
+							var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
+							var parent_id = firstAnswer.answerId;
+							var actualQuestion = {
+								topNodeId : prevMod.idNode,
+								questionId : firstAnswer.parentQuestionId,
+								parentId : parent_id,
+								number : firstAnswer.number,
+								link : 0
+							}
+						}else if(!prevMod){
+							prevMod = interview.modules[interview.modules.length - 1];
+							if(prevMod.questionsAsked.length > 0){
+							var lastQsAsked = prevMod.questionsAsked;
+							var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
+							var firstAnswer = lastActualQuestion.answers[0];
+							var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
+							var parent_id = firstAnswer.answerId;
+							var actualQuestion = {
+								topNodeId : prevMod.idNode,
+								questionId : firstAnswer.parentQuestionId,
+								parentId : parent_id,
+								number : firstAnswer.number,
+								link : 0
+							}
+							}else{
+								var actualQuestion = {
+										parentId : prevMod.idNode,
+										number : '0'
+									}
+									return showNextQuestion(
+											actualQuestion,
+											false,
+											false,
+											1);
+							}
 						}
 					}else{
 					// scenario: question has child answers -> simple scenario
@@ -77,7 +105,7 @@
 						link : lastActualQuestion.link
 					}
 					}
-					showNextQuestion(actualQuestion, true, false,mod.count);
+					return showNextQuestion(actualQuestion, true, false,mod.count);
 				}
 			})
 		}

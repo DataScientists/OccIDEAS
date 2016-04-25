@@ -288,14 +288,14 @@
 			}
 		}).state( {
             name:'tabs.interview',
-			url: '/interview/:row/:referenceNumber/:startWithReferenceNumber',
+			url: '/interview/:row/:interviewId/:startWithReferenceNumber',
             sticky: true,
 		    deepStateRedirect: true,
             views:{
                 'interview@tabs':{
                     templateUrl: 'scripts/interviews/view/interview.html',
                     controller: 'InterviewsCtrl as vm',
-                    params:{row: null,module:null,referenceNumber:null,startWithReferenceNumber:null},
+                    params:{row: null,module:null,interviewId:null,startWithReferenceNumber:null},
                     resolve:{
                         data: function($stateParams,QuestionsService) {
                             return QuestionsService.findQuestions($stateParams.row,'M')
@@ -305,7 +305,10 @@
                                 });
                         },
                         updateData: function($stateParams,InterviewsService){
-                        	return InterviewsService.checkReferenceNumberExists($stateParams.referenceNumber)
+                        	if(!$stateParams.interviewId){
+                        		return null;
+                        	}
+                        	return InterviewsService.getInterview($stateParams.interviewId)
                         		.then(function(response){
                         			return response.data;
                         		});
