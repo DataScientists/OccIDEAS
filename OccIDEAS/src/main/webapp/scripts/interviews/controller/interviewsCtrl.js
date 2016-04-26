@@ -715,6 +715,7 @@
 			}
 			if(newQuestionAsked.description){
 				if(newQuestionAsked.description=='display'){
+					$scope.displayQuestions = [];
 					$scope.displayQuestions.push(newQuestionAsked);
 				}
 			}
