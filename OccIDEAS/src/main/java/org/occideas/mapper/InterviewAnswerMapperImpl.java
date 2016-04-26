@@ -20,6 +20,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 			return null;
 		}
 		InterviewAnswerVO vo = new InterviewAnswerVO();
+		vo.setId(answer.getId());
 		vo.setAnswerId(answer.getAnswerId());
 		vo.setDeleted(answer.getDeleted());
 		vo.setDescription(answer.getDescription());

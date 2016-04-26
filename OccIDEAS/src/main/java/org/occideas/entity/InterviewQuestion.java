@@ -13,11 +13,15 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 @Entity
 @Table(name = "Interview_Question")
+@DynamicUpdate(value = true)
+@DynamicInsert(value = true)
+@SelectBeforeUpdate(value = true)
 public class InterviewQuestion implements java.io.Serializable {
 
 	/**
@@ -51,9 +55,10 @@ public class InterviewQuestion implements java.io.Serializable {
 	private long link;
 
 	@OneToMany(fetch = FetchType.LAZY)
-	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
-	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview") })
+	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"
+				,insertable=false,updatable=false),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
+				,insertable=false,updatable=false) })
 	private List<InterviewAnswer> answers;
 
 	@Column(name = "name")

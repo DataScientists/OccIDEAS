@@ -290,6 +290,7 @@
 								.then(
 										function(response) {
 											if (response.status === 200) {
+												saveAnswer(question);
 												console
 														.log("Delete question successful...");
 												_
@@ -399,8 +400,8 @@
 																				return mod.idNode == $scope.data.showedQuestion.topNodeId
 																			});
 														}
-														_
-																.remove(
+														saveAnswer(question);
+														_.remove(
 																		mod.questionsAsked,
 																		function(
 																				val) {
@@ -520,6 +521,8 @@
 			InterviewsService.saveQuestion(newQuestionAsked).then(
 					function(response) {
 						if (response.status === 200) {
+							syncQs(mod,response.data);
+							saveAnswer(newQuestionAsked);
 							newQuestionAsked.answers[0].isProcessed = true;
 							var answer = newQuestionAsked.answers[0];
 							var actualQuestion = {
@@ -533,6 +536,21 @@
 									mod.count);
 						}
 					});
+		}
+		
+		function saveAnswer(newQuestionAsked){
+			if(newQuestionAsked.answers.length > 0){
+			InterviewsService.saveAnswers(newQuestionAsked.answers)
+				.then(function(response){
+					if (response.status === 200) {
+						syncAs(newQuestionAsked,response.data);
+					}
+			});
+			}
+		}
+		
+		function syncAs(newQuestionAsked,data){
+			newQuestionAsked.answers = data;
 		}
 
 		function processFrequency(interview, node) {
@@ -620,6 +638,8 @@
 			InterviewsService.saveQuestion(newQuestionAsked).then(
 					function(response) {
 						if (response.status === 200) {
+							syncQs(mod,response.data);
+							saveAnswer(newQuestionAsked);
 							var actualQuestion = {
 								topNodeId : node.topNodeId,
 								questionId : node.idNode,
@@ -631,6 +651,15 @@
 									mod.count);
 						}
 					});
+		}
+		
+		function syncQs(mod,respData){
+			_.find(mod.questionsAsked,function(qs,ind){
+				if(qs.questionId == respData.questionId
+						&& qs.modCount == respData.modCount){
+					mod.questionsAsked[ind] = respData;
+				}
+			});
 		}
 
 		function processQuestion(interview, node) {
@@ -715,6 +744,8 @@
 			InterviewsService.saveQuestion(newQuestionAsked).then(
 					function(response) {
 						if (response.status === 200) {
+							syncQs(mod,response.data);
+							saveAnswer(newQuestionAsked);
 							var actualQuestion = {
 								topNodeId : node.topNodeId,
 								questionId : node.idNode,

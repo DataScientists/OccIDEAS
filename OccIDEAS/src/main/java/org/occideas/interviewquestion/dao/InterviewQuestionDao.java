@@ -43,8 +43,9 @@ public class InterviewQuestionDao {
       return (InterviewQuestion) sessionFactory.getCurrentSession().merge(iq);
     }
 
-    public void saveOrUpdate(InterviewQuestion iq){
+    public InterviewQuestion saveOrUpdate(InterviewQuestion iq){
       sessionFactory.getCurrentSession().saveOrUpdate(iq);
+      return iq;
     }
 
     @SuppressWarnings("unchecked")

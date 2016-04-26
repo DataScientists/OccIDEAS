@@ -106,6 +106,16 @@
 			return request.then(handleSuccess,handleError);
 		}
         
+        function saveAnswers(data) {
+			var restUrl = 'rest/interviewquestionanswer/saveAnswers';
+			var request =  $http({
+				  method: 'POST',
+				  url: restUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+        
         function handleError(response) {
             if (
                 !angular.isObject(response.data) || !response.data.message
@@ -128,6 +138,7 @@
             startInterview:startInterview,
             getNextQuestion: getNextQuestion,
             saveQuestion:saveQuestion,
+            saveAnswers:saveAnswers,
             getInterview:getInterview,
             saveInterviewMod:saveInterviewMod
         };

@@ -13,7 +13,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
+import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,6 +25,8 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 
 	@Autowired
 	private InterviewQuestionService service;	
+	@Autowired
+	private InterviewAnswerService answerService;
 	
 	@GET
 	@Path(value="/getlist")
@@ -69,8 +73,14 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
 	@Override
 	public Response update(InterviewQuestionVO vo) {
-		service.update(vo);
-		return Response.ok(vo).build();
+		return Response.ok(service.updateIntQ(vo)).build();
+	}
+	
+	@POST
+	@Path(value="/saveAnswers")
+	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response updateAnswers(List<InterviewAnswerVO> vo) {
+		return Response.ok(answerService.updateIntA(vo)).build();
 	}
 
 	@Override

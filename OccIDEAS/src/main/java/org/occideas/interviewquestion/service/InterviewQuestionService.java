@@ -8,5 +8,5 @@ import org.occideas.vo.InterviewQuestionVO;
 public interface InterviewQuestionService extends BaseService<InterviewQuestionVO> {
 	List<InterviewQuestionVO> findByInterviewId(Long id);
 
-	
+	InterviewQuestionVO updateIntQ(InterviewQuestionVO o);
 }

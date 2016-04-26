@@ -51,8 +51,8 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
     }
 
     @Override
-    public void update(InterviewQuestionVO o) {
-        dao.saveOrUpdate(mapper.convertToInterviewQuestion(o));
+    public InterviewQuestionVO updateIntQ(InterviewQuestionVO o) {
+        return mapper.convertToInterviewQuestionVO(dao.saveOrUpdate(mapper.convertToInterviewQuestion(o)));
     }
 
     @Override
@@ -66,5 +66,11 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 		ArrayList<InterviewQuestionVO> modulesVO = new ArrayList<InterviewQuestionVO>();
 		modulesVO.addAll(mapper.convertToInterviewQuestionVOList(modules));
 		return modulesVO;
+	}
+
+	@Override
+	public void update(InterviewQuestionVO o) {
+		// TODO Auto-generated method stub
+		
 	}
 }
