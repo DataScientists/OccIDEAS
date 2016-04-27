@@ -29,6 +29,23 @@
 	    	$scope.addInterviewTabInterviewers();
 	    }
 		
+		if(startWithReferenceNumber){
+			InterviewsService.checkReferenceNumberExists(startWithReferenceNumber)
+    		.then(function(response){
+    			if(response.status == 200){
+    				if(confirm('AWES ID already exist. Continue to start interview?')){
+        				$scope.awesId.id = startWithReferenceNumber;
+        				$scope.startInterview(data);
+        			}else{
+        				$scope.awesId.id = startWithReferenceNumber;
+        			}
+    			}else{
+    				$scope.awesId.id = startWithReferenceNumber;
+    				$scope.startInterview(data);
+    			}
+    		});
+		}
+		
 		if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
 			populateInterviewModules(updateData[0].interviewId);
@@ -1034,23 +1051,6 @@
 //		if(!updateData){
 //			$scope.startInterview($scope.data);
 //		}
-		
-		if(startWithReferenceNumber){
-			InterviewsService.checkReferenceNumberExists(startWithReferenceNumber)
-    		.then(function(response){
-    			if(response.status == 200){
-    				if(confirm('AWES ID already exist. Continue to start interview?')){
-        				$scope.awesId.id = startWithReferenceNumber;
-        				$scope.startInterview(data);
-        			}else{
-        				$scope.awesId.id = startWithReferenceNumber;
-        			}
-    			}else{
-    				$scope.awesId.id = startWithReferenceNumber;
-    				$scope.startInterview(data);
-    			}
-    		});
-		}
 		
 		function validReferenceNumber(referenceNumber) {
 			var retValue = false;

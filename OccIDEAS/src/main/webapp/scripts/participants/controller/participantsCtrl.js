@@ -53,7 +53,7 @@
 	    	if($scope.searchAWESID){
 	    		InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data){
 	    			if(data.status == 200){
-	    				$scope.addInterviewTabInterviewers(data.data[0].modules[0].idNode,$scope.searchAWESID);
+	    				$scope.addInterviewTabInterviewers(data.data[0].module.idNode,$scope.searchAWESID);
 	    			}
 	    			else if(data.status == 204){
 	    				$scope.addInterviewTabInterviewers(-1,$scope.searchAWESID);
