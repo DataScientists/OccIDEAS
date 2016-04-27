@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "Interview_Question")
@@ -55,6 +56,7 @@ public class InterviewQuestion implements java.io.Serializable {
 	private long link;
 
 	@OneToMany(fetch = FetchType.LAZY)
+	@Where(clause = "deleted = 0")
 	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"
 				,insertable=false,updatable=false),
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"

@@ -543,14 +543,23 @@
 			InterviewsService.saveAnswers(newQuestionAsked.answers)
 				.then(function(response){
 					if (response.status === 200) {
-						syncAs(newQuestionAsked,response.data);
+//						syncAs(newQuestionAsked,response.data);
 					}
 			});
 			}
 		}
 		
 		function syncAs(newQuestionAsked,data){
-			newQuestionAsked.answers = data;
+			var mod = _.find($scope.activeInterview.modules,function(mods,ind){
+				return mods.idNode == newQuestionAsked.topNodeId 
+					&& newQuestionAsked.modCount == mods.count; 
+			});
+			_.find(mod.questionsAsked,function(qs,ind){
+				if(qs.questionId == newQuestionAsked.questionId
+						&& qs.modCount == newQuestionAsked.modCount){
+					mod.questionsAsked[ind].answers = data;
+				}
+			});
 		}
 
 		function processFrequency(interview, node) {
@@ -561,6 +570,7 @@
 				deffered = $q.defer();
 				if (qs) {
 					deleteQuestion([ qs ], deffered);
+					node.selectedAnswer = $scope.data.showedQuestion.selectedAnswer;
 				} else {
 					deffered.resolve();
 				}
@@ -584,7 +594,7 @@
 				minutes = node.minutes;
 			}
 			var answerValue = Number(hours) + (Number(minutes) / 60);
-			var answer = node.nodes[0];
+			var answer = node.selectedAnswer?node.selectedAnswer:node.nodes[0];
 
 			var newQuestionAsked = {
 				idInterview : $scope.interviewId,
@@ -670,6 +680,7 @@
 				deffered = $q.defer();
 				if (qs) {
 					deleteQuestion([ qs ], deffered);
+					node.selectedAnswer = $scope.data.showedQuestion.selectedAnswer;
 				} else {
 					deffered.resolve();
 				}
