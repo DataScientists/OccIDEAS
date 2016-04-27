@@ -1498,6 +1498,9 @@
 			$scope.data.interviewStarted = false;
 			$scope.data.interviewEnded = true;
 			$scope.updateEnable = false;
+			if(!updateData){
+			$scope.closeAndSwitchToParticipantsTab();
+			}
 		}
 		function convertToTree() {
 			var root = {

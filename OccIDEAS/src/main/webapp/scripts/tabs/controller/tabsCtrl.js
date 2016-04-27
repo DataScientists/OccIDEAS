@@ -71,6 +71,15 @@
 		$scope.tabs = tabs;
 		$scope.selectedIndex = 0;
 
+		$scope.closeAndSwitchToParticipantsTab = function(){
+			alert("Interview Ended.");
+			var index = angular.copy($scope.selectedIndex);
+			tabs.splice(index, 1);
+			$scope.tabOptions.splice(index, 1);
+			$scope.selectedIndex=3;
+		}
+		
+		
 		$scope.addFragmentTab = function(row) {
 			tabs.push({
 				title : row.name,
@@ -193,6 +202,8 @@
                     data: {row:idNode,startWithReferenceNumber: awesId}
                 });
             }
+            $rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
         };
         $scope.addParticipantTab = function(participant) {
             //var participant = scope.$modelValue;
@@ -232,6 +243,8 @@
                      data: {row:node.idNode,interviewId: data.interviews[0].interviewId}
                  });
              }
+             $rootScope.tabsLoading = true;
+ 			safeDigest($rootScope.tabsLoading);
         }
         
 		$scope.removeTab = function(tab) {
