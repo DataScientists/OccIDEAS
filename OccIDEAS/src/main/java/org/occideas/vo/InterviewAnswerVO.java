@@ -2,9 +2,6 @@ package org.occideas.vo;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties({"isProcessed"})
 public class InterviewAnswerVO {
 
 	private long id;
@@ -20,7 +17,9 @@ public class InterviewAnswerVO {
 	private String number;
 	private String type;
 	private Integer deleted;
-	
+	private Integer modCount;
+	private boolean isProcessed;
+
 	private List<ModuleRuleVO> rules;
 
 	public long getIdInterview() {
@@ -135,6 +134,20 @@ public class InterviewAnswerVO {
 		this.id = id;
 	}
 	
-	
+	public Integer getModCount() {
+		return modCount;
+	}
+
+	public void setModCount(Integer modCount) {
+		this.modCount = modCount;
+	}
+
+	public boolean getIsProcessed() {
+		return isProcessed;
+	}
+
+	public void setIsProcessed(boolean isProcessed) {
+		this.isProcessed = isProcessed;
+	}
 
 }

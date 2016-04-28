@@ -55,11 +55,15 @@ public class InterviewAnswer implements java.io.Serializable {
 	private String type;
 	@Column(name = "link")
 	private long link;
+	@Column(name = "isProcessed")
+	private boolean isProcessed;
+	@Column(name = "modCount")
+	private Integer modCount;
 	@Column(name = "deleted")
 	private Integer deleted;
 	@Column(name = "lastUpdated")
 	private Date lastUpdated;
-	
+
 	@OneToMany(fetch = FetchType.LAZY)
 	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
 	@JoinColumns({ @JoinColumn(name = "idNode", referencedColumnName = "answerId") })
@@ -185,5 +189,22 @@ public class InterviewAnswer implements java.io.Serializable {
 		this.rules = rules;
 	}
 
+	public boolean isProcessed() {
+		return isProcessed;
+	}
+
+	public void setProcessed(boolean isProcessed) {
+		this.isProcessed = isProcessed;
+	}
+
+	public Integer getModCount() {
+		return modCount;
+	}
+
+	public void setModCount(Integer modCount) {
+		this.modCount = modCount;
+	}
 	
+	
+
 }

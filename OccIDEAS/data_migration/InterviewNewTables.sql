@@ -58,6 +58,8 @@ CREATE TABLE `Interview_Answer` (
   `name` varchar(2048) DEFAULT NULL,
   `description` varchar(2048) DEFAULT NULL,
   `answerFreetext` varchar(2048) DEFAULT NULL,
+  `isProcessed` tinyint NOT NULL,
+  `modCount` int(11) NOT NULL,
   `nodeClass` varchar(235) DEFAULT NULL,
   `number` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,

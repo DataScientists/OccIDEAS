@@ -32,6 +32,8 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		vo.setTopQuestionId(answer.getTopQuestionId());
 		vo.setType(answer.getType());
 		vo.setAnswerFreetext(answer.getAnswerFreetext());
+		vo.setIsProcessed(answer.isProcessed());
+		vo.setModCount(answer.getModCount());
 		return vo;
 	}
 	@Override
@@ -53,6 +55,8 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		vo.setType(answer.getType());
 		vo.setAnswerFreetext(answer.getAnswerFreetext());
 		vo.setRules(moduleRuleMapper.convertToModuleRuleVOList(answer.getRules()));
+		vo.setModCount(answer.getModCount());
+		vo.setIsProcessed(answer.isProcessed());
 		return vo;
 	}
 
@@ -97,6 +101,8 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		answer.setTopQuestionId(answerVO.getTopQuestionId());
 		answer.setType(answerVO.getType());
 		answer.setAnswerFreetext(answerVO.getAnswerFreetext());
+		answer.setProcessed(answerVO.getIsProcessed());
+		answer.setModCount(answerVO.getModCount());
 		return answer;
 	}
 

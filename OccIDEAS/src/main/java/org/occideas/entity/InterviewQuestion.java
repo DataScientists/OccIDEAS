@@ -60,7 +60,9 @@ public class InterviewQuestion implements java.io.Serializable {
 	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"
 				,insertable=false,updatable=false),
 			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
-				,insertable=false,updatable=false) })
+				,insertable=false,updatable=false),
+			@JoinColumn(name = "modCount", referencedColumnName = "modCount"
+			,insertable=false,updatable=false)})
 	private List<InterviewAnswer> answers;
 
 	@Column(name = "name")
