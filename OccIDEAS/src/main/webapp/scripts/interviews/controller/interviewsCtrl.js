@@ -643,14 +643,17 @@
 
 		function buildAndSaveFrequency(interview, node) {
 			var hours = 0;
-			if (node.hours) {
-				hours = node.hours;
+			if ($scope.data.showedQuestion.hours) {
+				hours = $scope.data.showedQuestion.hours;
 			}
 			var minutes = 0;
-			if (node.minutes) {
-				minutes = node.minutes;
+			if ($scope.data.showedQuestion.minutes) {
+				minutes = $scope.data.showedQuestion.minutes;
 			}
-			var answerValue = Number(hours) + (Number(minutes) / 60);
+			var answerValue = node.nodes[0].name;
+			if(hours != 0 || minutes != 0){
+				answerValue = Number(hours) + (Number(minutes) / 60);
+			}
 			var answer = node.selectedAnswer?node.selectedAnswer:node.nodes[0];
 
 			var newQuestionAsked = {
