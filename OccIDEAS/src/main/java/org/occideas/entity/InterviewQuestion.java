@@ -79,6 +79,9 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@Column(name = "type")
 	private String type;
+	
+	@Column(name = "intQuestionSequence")
+	private Integer intQuestionSequence;
 
 	@Column(name = "deleted")
 	private Integer deleted;
@@ -213,5 +216,15 @@ public class InterviewQuestion implements java.io.Serializable {
 	public void setModCount(Integer modCount) {
 		this.modCount = modCount;
 	}
+
+	public Integer getIntQuestionSequence() {
+		return intQuestionSequence;
+	}
+
+	public void setIntQuestionSequence(Integer intQuestionSequence) {
+		this.intQuestionSequence = intQuestionSequence;
+	}
+	
+	
 
 }

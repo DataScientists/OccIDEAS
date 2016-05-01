@@ -39,6 +39,7 @@ CREATE TABLE `Interview_Question` (
   `nodeClass` varchar(255) DEFAULT NULL,
   `number` varchar(255) DEFAULT NULL,
   `type` varchar(255) DEFAULT NULL,
+  `intQuestionSequence` int(11) NOT NULL, 
   `deleted` int(11) NOT NULL,
   `lastUpdated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)

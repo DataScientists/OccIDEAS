@@ -35,6 +35,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setModCount(question.getModCount());
 		vo.setLink(question.getLink());
 		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
+		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		return vo;
 	}
 	@Override
@@ -58,7 +59,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setLink(question.getLink());
 		vo.setModCount(question.getModCount());
 		vo.setAnswers(answerMapper.convertToInterviewAnswerWithRulesVOList(question.getAnswers()));
-
+		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		return vo;
 	}
 
@@ -110,6 +111,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		question.setLink(questionVO.getLink());
 		question.setModCount(questionVO.getModCount());
 		question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
+		question.setIntQuestionSequence(questionVO.getIntQuestionSequence());
 		return question;
 	}
 

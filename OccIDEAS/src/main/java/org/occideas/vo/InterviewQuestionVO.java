@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"isProcessed","lQid"})
+@JsonIgnoreProperties({ "isProcessed", "lQid" })
 public class InterviewQuestionVO {
 
 	private long id;
@@ -20,6 +20,7 @@ public class InterviewQuestionVO {
 	private String nodeClass;
 	private String number;
 	private String type;
+	private Integer intQuestionSequence;
 	private Integer deleted;
 	private List<InterviewAnswerVO> answers;
 	private InterviewLinkedVO linkingQuestion;
@@ -151,6 +152,13 @@ public class InterviewQuestionVO {
 	public void setModCount(Integer modCount) {
 		this.modCount = modCount;
 	}
-	
-	
+
+	public Integer getIntQuestionSequence() {
+		return intQuestionSequence;
+	}
+
+	public void setIntQuestionSequence(Integer intQuestionSequence) {
+		this.intQuestionSequence = intQuestionSequence;
+	}
+
 }
