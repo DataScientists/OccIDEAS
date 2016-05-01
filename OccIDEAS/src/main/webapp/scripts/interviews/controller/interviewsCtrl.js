@@ -675,6 +675,7 @@
 					nodeClass : answer.nodeclass,
 					number : answer.number,
 					answerFreetext : answerValue,
+					isProcessed:true,
 					link : answer.link,
 					type : answer.type,
 					deleted : 0
@@ -780,6 +781,7 @@
 					description : answer.description,
 					nodeClass : answer.nodeclass,
 					number : answer.number,
+					isProcessed:true,
 					link : answer.link,
 					type : answer.type,
 					deleted : 0
@@ -1433,7 +1435,8 @@
 											$scope.activeInterview.modules,
 											function(val) {
 												return (val.answerNode == question.parentId 
-														&& val.idNode == question.link);
+														&& val.idNode == question.link
+														&& val.count == question.count);
 											}));
 			if (mdIndex == -1) {
 				var modules = _.filter($scope.activeInterview.modules,

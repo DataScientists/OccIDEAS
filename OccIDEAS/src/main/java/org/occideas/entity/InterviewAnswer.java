@@ -65,8 +65,7 @@ public class InterviewAnswer implements java.io.Serializable {
 	private Date lastUpdated;
 
 	@OneToMany(fetch = FetchType.LAZY)
-	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
-	@JoinColumns({ @JoinColumn(name = "idNode", referencedColumnName = "answerId") })
+	@JoinColumns({ @JoinColumn(name = "idNode", referencedColumnName = "answerId",insertable=false,updatable=false)})
 	private List<ModuleRule> rules;
 
 	public long getId() {
