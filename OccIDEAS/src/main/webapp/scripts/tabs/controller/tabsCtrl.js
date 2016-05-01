@@ -261,6 +261,19 @@
 			return 'Done';
 		}
 		
+		$scope.tabMenu = function(tab){
+			if(tabs.indexOf(tab) > 4){
+			return [ 
+			  [ 'Close Tab', function(tab) {
+				  $scope.removeTab(tab);
+				}
+			  ]
+			]
+			}else{
+				return [];
+			}
+		}
+		
 		function checkIfTabIsOpen(tabs,title){
 			var openedTab = false;
 			 _.find( tabs, function(el,ind) {
