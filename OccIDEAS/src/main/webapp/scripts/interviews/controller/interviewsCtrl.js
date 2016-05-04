@@ -1403,7 +1403,11 @@
 											number : results.number,
 											link : results.link
 										}
-										showNextQuestion(actualQuestion, false,
+										var isParentAnAnswer = false;
+										if(results.parentId!=results.topNodeId){
+											isParentAnAnswer = true;
+										}
+										showNextQuestion(actualQuestion, isParentAnAnswer,
 												false, results.modCount);
 									} else if (mod.parentNode) {
 										verifyQuestionInParentModule(mod);
