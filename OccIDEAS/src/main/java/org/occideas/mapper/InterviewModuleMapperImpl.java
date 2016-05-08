@@ -31,6 +31,7 @@ public class InterviewModuleMapperImpl implements InterviewModuleMapper {
 		vo.setAnswerNode(entity.getAnswerNode());
 		vo.setSequence(entity.getSequence());
 		vo.setTopNodeId(entity.getTopNodeId());
+		vo.setLinkNum(entity.getLinkNum());
 		vo.setQuestionsAsked(iqMapper.convertToInterviewQuestionVOList(entity.getQuestionsAsked()));
 		return vo;
 	}
@@ -66,6 +67,7 @@ public class InterviewModuleMapperImpl implements InterviewModuleMapper {
 		entity.setAnswerNode(vo.getAnswerNode());
 		entity.setSequence(vo.getSequence());
 		entity.setTopNodeId(vo.getTopNodeId());
+		entity.setLinkNum(vo.getLinkNum());
 		entity.setQuestionsAsked(iqMapper.convertToInterviewQuestionList(vo.getQuestionsAsked()));
 		return entity;
 	}

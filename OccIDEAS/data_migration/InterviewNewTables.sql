@@ -14,6 +14,7 @@ CREATE TABLE `Interview_Module` (
   `name` varchar(2048) DEFAULT NULL,
   `number` varchar(255) DEFAULT NULL,
   `deleted` int(11) NOT NULL,
+  `linkNum` varchar(255) DEFAULT NULL,
   `count` int(11) NOT NULL,
   `sequence` int(11) NOT NULL,
   `lastUpdated` datetime DEFAULT NULL,

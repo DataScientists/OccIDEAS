@@ -200,6 +200,10 @@
 		<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="modules in interview.modules">
 			<div class="angular-ui-tree">
 				<div class="tree-node">
+					<span class="badge" ng-if="modules.linkNum != 0">
+					     {{modules.linkNum != 0?modules.linkNum:''}} 
+						 {{modules.linkNum != modules.number?':':''}}
+						 {{modules.linkNum != modules.number?modules.number:''}}</span>
 					<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}" id="questionlist-{{modules.idNode}}">
 						{{modules.name}}
 					</span>
@@ -207,7 +211,12 @@
 							<div ng-repeat="qa in modules.questionsAsked | qaFilter:0 | orderBy:orderByNumber">
 		    					<div id="questionlist-{{qa.questionId}}" class="tree-node-content Q_interviewresult">
 		    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-		                   			<span class="badge">{{qa.number}}</span>
+		                   			<span class="badge">{{modules.linkNum != 0?modules.linkNum:''}}
+		                   								{{modules.linkNum != 0?':':''}}
+		                   								{{modules.linkNum != modules.number?modules.number:''}}
+		                   								{{modules.linkNum != modules.number?':':''}}
+		                   								{{qa.number}}
+		                   								</span>
 		                		</div>  
 		    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
 			    							ng-click="vm.editQuestion(qa)"></span>
@@ -217,7 +226,13 @@
 		    					</div>
 		    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers | qaFilter:0 | orderBy:orderByNumber">
 		    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-		                   				<span class="badge">{{as.number}}</span>
+		                   				<span class="badge">
+		                   				    {{modules.linkNum != 0?modules.linkNum:''}}
+		                   				    {{modules.linkNum != 0?':':''}}
+		                   				    {{modules.linkNum != modules.number?modules.number:''}}
+		                   					{{modules.linkNum != modules.number?':':''}}
+		                   					{{modules.linkNum != 0?qa.number:''}}
+		                   					{{modules.linkNum != 0?':':''}}{{as.number}}</span>
 		                			</div>
 		    						<span id="{{'IntResult'+as.idNode}}" >{{as.answerFreetext?as.answerFreetext:as.name}}
 		    						</span>

@@ -1067,6 +1067,7 @@
 																	parentAnswerId : 0,
 																	number : 0,
 																	count : 1,
+																	linkNum: 0,
 																	sequence: ++sequence,
 																	deleted : 0,
 																	questionsAsked : []
@@ -1452,6 +1453,11 @@
 
 		var sequence = 0;
 		function processLinkingQuestion(question, actualQuestionTemp) {
+			// check if link is a child
+			var parentMod = _.find($scope.activeInterview.modules,function(mod,ind){
+				return mod.idNode == actualQuestionTemp.parentId;
+			});
+			
 			var modDetail = {
 				idInterview:$scope.interviewId,
 				name : question.name,
@@ -1465,6 +1471,7 @@
 				count : 1,
 				sequence: ++sequence,
 				deleted : 0,
+				linkNum:parentMod?parentMod.number:question.number,
 				questionsAsked : []
 			};
 			var mdIndex = _

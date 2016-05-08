@@ -23,7 +23,7 @@ import org.hibernate.annotations.Where;
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
-public class InterviewModule implements java.io.Serializable{
+public class InterviewModule implements java.io.Serializable {
 
 	/**
 	 * 
@@ -55,14 +55,17 @@ public class InterviewModule implements java.io.Serializable{
 	@Column(name = "idinterview")
 	private long idinterview;
 
-	@OneToMany(fetch = FetchType.LAZY,targetEntity=InterviewQuestion.class)
+	@Column(name = "linkNum")
+	private String linkNum;
+
+	@OneToMany(fetch = FetchType.LAZY, targetEntity = InterviewQuestion.class)
 	@Where(clause = "deleted = 0")
 	@JoinColumns({
-		@JoinColumn(name = "topNodeId", referencedColumnName = "idNode",insertable=false,updatable=false),
-		@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false),
-		@JoinColumn(name = "modCount", referencedColumnName = "count",insertable=false,updatable=false)})
+			@JoinColumn(name = "topNodeId", referencedColumnName = "idNode", insertable = false, updatable = false),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false),
+			@JoinColumn(name = "modCount", referencedColumnName = "count", insertable = false, updatable = false) })
 	private List<InterviewQuestion> questionsAsked;
-	
+
 	public String getName() {
 		return name;
 	}
@@ -149,6 +152,14 @@ public class InterviewModule implements java.io.Serializable{
 
 	public void setIdInterview(long idinterview) {
 		this.idinterview = idinterview;
+	}
+
+	public String getLinkNum() {
+		return linkNum;
+	}
+
+	public void setLinkNum(String linkNum) {
+		this.linkNum = linkNum;
 	}
 
 	public List<InterviewQuestion> getQuestionsAsked() {

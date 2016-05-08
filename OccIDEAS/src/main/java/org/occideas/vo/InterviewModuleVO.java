@@ -15,6 +15,7 @@ public class InterviewModuleVO {
 	private String deleted;
 	private Integer sequence;
 	private long idInterview;
+	private String linkNum;
 	private List<InterviewQuestionVO> questionsAsked;
 
 	public String getName() {
@@ -56,7 +57,7 @@ public class InterviewModuleVO {
 	public void setParentAnswerId(long parentAnswerId) {
 		this.parentAnswerId = parentAnswerId;
 	}
-	
+
 	public long getAnswerNode() {
 		return answerNode;
 	}
@@ -103,6 +104,14 @@ public class InterviewModuleVO {
 
 	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
+	}
+
+	public String getLinkNum() {
+		return linkNum;
+	}
+
+	public void setLinkNum(String linkNum) {
+		this.linkNum = linkNum;
 	}
 
 	public List<InterviewQuestionVO> getQuestionsAsked() {
