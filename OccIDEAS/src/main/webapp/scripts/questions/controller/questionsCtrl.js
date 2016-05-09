@@ -22,6 +22,12 @@
     	$scope.rulesObj = [];
     	$scope.rulesInt = [];
     	$scope.agentsData = null;
+    	$rootScope.studyModules = [];
+    	$rootScope.studyModuleLinks = [];
+    	$rootScope.studyAjsmLinks = [];
+    	$rootScope.studyAjsmLinksCount=0;
+    	$rootScope.studyModuleLinksCount=0;
+    	
     	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
     		$scope.scrollWithTimeout(elId);
     	});
@@ -943,8 +949,384 @@
 				return $scope.defaultMenuOptions;
 			}
 		};
+		
+		function loadStudyNodes(nodes,agentId,module){
+			var agents = [];
+			agents[0]=9
+			agents[1]=51
+			agents[2]=77
+			agents[3]=116
+			agents[4]=126
+			agents[5]=133
+			agents[6]=134
+			agents[7]=135
+			agents[8]=136
+			agents[9]=137
+			agents[10]=139
+			agents[11]=140
+			agents[12]=157
+			var studyNodes = [];
+			if(nodes.length > 0){
+				var i=0;
+				_.each(nodes, function(node) {
+					var found = _.find(node.moduleRule,function(o) { 
+						var bFound = _.find(agents,function(agentId) { 
+							return o.idAgent == agentId; 
+							})
+						return bFound; 
+						})
+					if(!found){
+						if(node.type.indexOf('frequency')==-1){//not a frequency 
+							if(node.type.indexOf('linked')==-1){//not a link
+								node.deleted = 1;
+							}		
+						}			
+					}else{
+						studyNodes.push(node);				
+					} 
+					if(node.nodes){
+						if(node.nodes.length > 0){
+							var sNodes = loadStudyNodes(node.nodes,agentId,module);
+							for(var i=0;i<sNodes.length;i++){
+								studyNodes.push(sNodes[i]);
+							}
+						}
+					}
+					i++;
+				});			
+			}
+			return studyNodes;
+		}
+		function loadModulesToScope(nodes){
+			if(nodes.length > 0){
+				var i=0;
+				_.each(nodes, function(node) {
+					if(node.link){
+						if(node.type=='Q_linkedmodule'){							
+								var moduleLinks = $rootScope.studyModuleLinks;
+								if(moduleLinks.length==0){
+									moduleLinks.push(node);
+								}else{
+									var bFound = false;
+									for (var i = 0; i < moduleLinks.length; i++) {
+									    if (moduleLinks[i].link === node.link) { 
+									    	bFound = true;
+									    	break;
+									    }
+									  }
+									if(!bFound){
+										moduleLinks.push(node);
+									}
+								}
+						}						
+					}else{
+						if(node.nodes){
+							if(node.nodes.length > 0){
+								loadModulesToScope(node.nodes);
+							}
+						}
+					}
+					i++;
+				});			
+			}
+		}
+		function findAjsms(nodes){
+			if(nodes.length > 0){
+				var i=0;
+				_.each(nodes, function(node) {
+					if(node.link){
+						if(node.type=='Q_linkedajsm'){							
+								var moduleLinks = $rootScope.studyAjsmLinks;
+								if(moduleLinks.length==0){
+									moduleLinks.push(node);
+									var promise = processAjsm(node);
+									promise.then(function(module) {
+									  console.log('Success on process Ajsm: ' + module.name);
+									  var promise1 = saveStudyModule(module);
+										promise1.then(function(module) {
+										  console.log('Success on save Ajsm: ' + module.name);
+										  
+										}, function(reason) {
+											  alert('Failed: ' + reason);
+										}, function(update) {
+										  console.log('Got notification: ' + update);
+										});
+									}, function(reason) {
+										  alert('Failed: ' + reason);
+									}, function(update) {
+									  console.log('Got notification: ' + update);
+									});
+								}else{
+									var bFound = false;
+									for (var i = 0; i < moduleLinks.length; i++) {
+									    if (moduleLinks[i].link === node.link) { 
+									    	bFound = true;
+									    	break;
+									    }
+									  }
+									if(!bFound){
+										moduleLinks.push(node);
+										var promise = processAjsm(node);
+										promise.then(function(module) {
+										  console.log('Success on process Ajsm: ' + module.name);
+										  var promise1 = saveStudyModule(module);
+											promise1.then(function(module) {
+											  console.log('Success on save Ajsm: ' + module.name);
+											  
+											}, function(reason) {
+												  alert('Failed: ' + reason);
+											}, function(update) {
+											  console.log('Got notification: ' + update);
+											});
+										}, function(reason) {
+											  alert('Failed: ' + reason);
+										}, function(update) {
+										  console.log('Got notification: ' + update);
+										});
+									}
+								}
+						}						
+					}else{
+						if(node.nodes){
+							if(node.nodes.length > 0){
+								findAjsms(node.nodes);
+							}
+						}
+					}
+					i++;
+				});			
+			}
+		}
+		function removeDeletedMarkFromParent(parentNodeId,module){
+			var nodes = module.nodes;
+			if(nodes.length > 0){
+				var i=0;
+				_.each(nodes, function(cnode) {
+					if(cnode.idNode==parentNodeId){
+						cnode.deleted = 0;	
+						if(cnode.nodes){
+							if(cnode.nodes.length > 0){
+								_.each(cnode.nodes, function(ccnode) {
+									ccnode.deleted = 0;	
+								});
+							}
+						}
+						if(cnode.parentId){
+							removeDeletedMarkFromParent(cnode.parentId,module);
+						}
+					}else{
+						removeDeletedMarkFromParentCheckChildNode(parentNodeId,cnode,module);
+					}
+					i++;
+				});				
+			}
+		}
+		function removeDeletedMarkFromParentCheckChildNode(parentNodeId,node,module){
+			var nodes = node.nodes;
+			if(nodes.length > 0){
+				var i=0;
+				_.each(nodes, function(cnode) {
+					if(cnode.idNode==parentNodeId){
+						cnode.deleted = 0;	
+						if(cnode.nodes){
+							if(cnode.nodes.length > 0){
+								_.each(cnode.nodes, function(ccnode) {
+									ccnode.deleted = 0;	
+								});
+							}
+						}
+						if(cnode.parentId){
+							removeDeletedMarkFromParent(cnode.parentId,module);
+						}
+					}else{
+						removeDeletedMarkFromParentCheckChildNode(parentNodeId,cnode,module);
+					}
+					i++;
+				});				
+			}
+		}
+		function createStudySpecificModuleAndFindAjsms(module,def){
+			if(module){
+				findAjsms(module.nodes);
+				
+				var studyNodes = loadStudyNodes(module.nodes,116,module);				  
+			  	for(var i=0;i<studyNodes.length;i++){
+			  		var node = studyNodes[i];
+			  		//cascade up parents remove deleted mark
+			  		removeDeletedMarkFromParent(node.parentId,module);
+			  	}
+			}
+			return saveModuleDeffered(module,def);
+		}
+		function createStudySpecificAjsm(module,def){
+			if(module){
+				var studyNodes = loadStudyNodes(module.nodes,116,module);				  
+			  	for(var i=0;i<studyNodes.length;i++){
+			  		var node = studyNodes[i];
+			  		//cascade up parents remove deleted mark
+			  		removeDeletedMarkFromParent(node.parentId,module);
+			  	}
+			  	$scope.data[0] = module;
+			  	saveModuleWithoutReload('',def);
+			  	console.log("Finished Creating Study Specific Module:"+module.name);
+			}
+			
+		}
+		var processModulesAndFindAjsms = function(data) {
+		     var promises = [];
+		     $rootScope.studyModuleLinksCount=0;
+		     var debug = [];
+		     debug[0] = $rootScope.studyModuleLinks[0];
+		     debug[1] = $rootScope.studyModuleLinks[1];
+		     _.each(debug, function(node) {
+		         var def = new $.Deferred();
+		         if(node.type=="Q_linkedmodule"){
+		        	 QuestionsService.findQuestions(node.link,'M')
+						.then(function(response){
+							var module = response.data[0];
+							$rootScope.studyModuleLinksCount=($rootScope.studyModuleLinksCount+1);
+							
+							if(module){
+								findAjsms(module.nodes);
+								var studyNodes = loadStudyNodes(module.nodes,116,module);				  
+							  	for(var i=0;i<studyNodes.length;i++){
+							  		var node = studyNodes[i];
+							  		//cascade up parents remove deleted mark
+							  		removeDeletedMarkFromParent(node.parentId,module);
+							  	}
+							}
+							
+							var nodes = module.nodes;
+							var maxId = '';
+							var parentId = module.idNode;
+							var parentNodeNumber = module.number;
+							var topNodeId = module.idNode;
+							generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);	
+							$rootScope.studyModules.push(module);
+							saveStudyModule(module).then(function(){
+								console.log("Finished Saving Study Specific Module "+module.name);
+						 });
+						});
+		         }	         
+		         promises.push(def);
+		     });
+		     	
+		     return $.when.apply(undefined, promises).promise();
+		}
+		var processModuleAndLoadAjsmsToScope = function(node) {
+			var deferred = $q.defer();
+			return QuestionsService.findQuestions(node.link,'M').then(function(response){
+				var module = response.data[0];
+				$rootScope.studyModuleLinksCount=($rootScope.studyModuleLinksCount+1);
+				if(module){
+					findAjsms(module.nodes);
+					
+					var studyNodes = loadStudyNodes(module.nodes,116,module);				  
+				  	for(var i=0;i<studyNodes.length;i++){
+				  		var node = studyNodes[i];
+				  		//cascade up parents remove deleted mark
+				  		removeDeletedMarkFromParent(node.parentId,module);
+				  	}
+					deferred.resolve(module);
+				} else {
+					deferred.reject('Could not find module');
+				}
+				return deferred.promise;
+			});          
+		}
+		
+		var processAjsm = function(node) {
+			var deferred = $q.defer();
+			return QuestionsService.findQuestions(node.link,'F').then(function(response){
+				var module = response.data[0];
+				$rootScope.studyAjsmLinksCount=($rootScope.studyAjsmLinksCount+1);
+				if(module){
+					var studyNodes = loadStudyNodes(module.nodes,116,module);				  
+				  	for(var i=0;i<studyNodes.length;i++){
+				  		var node = studyNodes[i];
+				  		//cascade up parents remove deleted mark
+				  		removeDeletedMarkFromParent(node.parentId,module);
+				  	}
+					deferred.resolve(module);
+				} else {
+					deferred.reject('Could not find module');
+				}
+				return deferred.promise;
+			});          
+		}
+		function saveStudyModule(module){			
+			var deferred = $q.defer();
+			var nodes = module.nodes;
+			var maxId = '';
+			var parentId = module.idNode;
+			var parentNodeNumber = module.number;
+			var topNodeId = module.idNode;
+			generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);	
+			return QuestionsService.saveNode(module).then(function(response) {	
+				if(response.status === 200){
+					$log.info('Study Module '+module.name+' Saved');
+					deferred.resolve(module);
+				}else {
+					deferred.reject('Could not save module');
+				}
+				return deferred.promise;
+			}); 
+		}
+		function asyncGreet(name) {
+			  var deferred = $q.defer();
+
+			  setTimeout(function() {
+			    deferred.notify('About to greet ' + name + '.');
+			    var i=9;
+			    if (i=9) {
+			      deferred.resolve('Hello, ' + name + '!');
+			    } else {
+			      deferred.reject('Greeting ' + name + ' is not allowed.');
+			    }
+			  }, 5000);
+
+			  return deferred.promise;
+			}
 		$scope.moduleMenuOptions = 
 			[ 
+			  [ 'Make Study Specific', function($itemScope) {
+				  var introModule = $itemScope.$modelValue;
+				  loadModulesToScope(introModule.nodes);
+				  
+				  for(var i=0;i<$rootScope.studyModuleLinks.length;i++){	
+					var link = $rootScope.studyModuleLinks[i];
+					var promise = processModuleAndLoadAjsmsToScope(link);
+					promise.then(function(module) {
+					  console.log('Success on process Module: ' + module.name);
+					  var promise1 = saveStudyModule(module);
+						promise1.then(function(module) {
+						  console.log('Success on save Module: ' + module.name);
+						  
+						}, function(reason) {
+							  alert('Failed: ' + reason);
+						}, function(update) {
+						  console.log('Got notification: ' + update);
+						});
+					}, function(reason) {
+						  alert('Failed: ' + reason);
+					}, function(update) {
+					  console.log('Got notification: ' + update);
+					});  
+				  }
+					
+				  
+				  
+				  
+				  	//$rootScope.tabsLoading = true;
+				  	//var module = $itemScope.$modelValue;
+				  	//findModules(module.nodes);
+				  	//processModulesAndFindAjsms().then(function(){
+					//	console.log("Finished Creating Study Specific Modules");
+									
+					//});
+
+				}
+			  ],
 			  [ 'Show Rules', function($itemScope) {
 					$scope.addRulesTab($itemScope);
 					}
@@ -1115,6 +1497,7 @@
 			return deffered.promise;
 		}
 		
+		
 		$scope.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
@@ -1265,7 +1648,7 @@
 					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
 					QuestionsService.saveNode($scope.data[0]).then(function(response){
 						if(response.status === 200){
-							$log.info('Save was Successful! Not Reloading');
+							$log.info('Save was Successful! Not Reloading '+$scope.data[0].name);
 							if(deffered){
 								deffered.resolve();
 							}
@@ -1390,6 +1773,8 @@
 				
 			}
 		}
+		
+		
 		
 		var maxIdIncrement = 0;
 		function generateIdNodeCascade(arrayInp,maxId,parentId,parentNodeNumber,topNodeId){

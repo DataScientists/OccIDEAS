@@ -45,6 +45,8 @@ WHERE idNode>0 AND idNode IN
 UPDATE occideas.Node SET deleted=0
 WHERE idNode>0 AND topNodeId=15001;
 
+
+
 SET FOREIGN_KEY_CHECKS=0; 
 DELETE FROM Node WHERE deleted=1 AND idNode>0;
 SET FOREIGN_KEY_CHECKS=1; 
