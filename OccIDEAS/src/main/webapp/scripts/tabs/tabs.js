@@ -3,7 +3,7 @@
 	                                     'ct.ui.router.extras.dsr',
 	                                     'ct.ui.router.extras.sticky' ])
 	.config(Config)
-	//.factory('TabsCache',TabsCache)
+	.factory('TabsCache',TabsCache)
 	.run(function ($rootScope, $state, $window, $timeout) {
 		$rootScope.$state = $state;
 	})
@@ -18,10 +18,10 @@
 	}
 	});
 	
-	//TabsCache.$inject = ['$cacheFactory'];
-	//function TabsCache($cacheFactory){
-	//	return $cacheFactory('tabs-cache');
-	//}
+	TabsCache.$inject = ['$cacheFactory'];
+	function TabsCache($cacheFactory){
+		return $cacheFactory('tabs-cache');
+	}
 
 	Config.$inject = ['$stateProvider','$windowProvider','$rootScopeProvider','$stickyStateProvider'];
 	function Config($stateProvider,$windowProvider,$rootScopeProvider,$stickyStateProvider) {
@@ -77,8 +77,16 @@
 					templateUrl : "scripts/participants/view/participantsTable.html",
 					controller: 'ParticipantsCtrl as vm',
 					resolve:{
-				        data: function() {
-				        	return '';
+				        data: function(QuestionsService,TabsCache) {
+			        		$log.info("inside participants@tabs resolve");
+			        		$log.info("findQuestions :");
+			        		
+			        		return QuestionsService.findQuestions('-1','M')
+                            .then(function(response){
+                            	TabsCache.put("studyintromodule",response.data);
+                                $log.info("Data getting from questions AJAX ...");
+                                return response.data;
+                            });
 				        }
 				    }
 				}
@@ -98,6 +106,7 @@
 			        	data: function($stateParams,ParticipantsService) {
 			        		$log.info("inside participant@tabs resolve");
 			        		$log.info("findParticipant :"+$stateParams.row);
+			        		
 			        		return ParticipantsService.findParticipant($stateParams.row)
 			        				.then(function(response){
 			        					$log.info("Found Participant :"+response.data[0].idParticipant);
@@ -297,7 +306,11 @@
                     controller: 'InterviewsCtrl as vm',
                     params:{row: null,module:null,interviewId:null,startWithReferenceNumber:null},
                     resolve:{
-                        data: function($stateParams,QuestionsService) {
+                        data: function($stateParams,QuestionsService,TabsCache) {
+			        		if(TabsCache.get('studyintromodule')){
+			        			$log.info("Data getting from questions Cache ...");
+		        				return TabsCache.get('studyintromodule');
+			        		}
                             return QuestionsService.findQuestions($stateParams.row,'M')
                                 .then(function(response){
                                     $log.info("Data getting from questions AJAX ...");

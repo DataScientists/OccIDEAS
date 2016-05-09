@@ -1,6 +1,6 @@
 <div ng-cloak>
    <md-content class="md-padding">
-    <md-tabs md-selected="selectedIndex" md-stretch-tabs="always" md-border-bottom md-autoselect md-dynamic-height md-enable-disconnect='true'>
+    <md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-dynamic-height md-enable-disconnect='true'>
       <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" layout-fill>
       	<md-tab-label>
         <span context-menu="tabMenu(tab)">{{tab.title}}</span>

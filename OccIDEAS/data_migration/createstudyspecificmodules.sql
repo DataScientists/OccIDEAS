@@ -53,7 +53,8 @@ SET FOREIGN_KEY_CHECKS=1;
 
 DROP TABLE IF EXISTS brokenlinks;
 CREATE TABLE brokenlinks AS SELECT m.idNode FROM Node m LEFT JOIN Node n ON n.parent_idNode=m.idNode 
-WHERE (m.node_discriminator='M' OR m.node_discriminator='F')
+WHERE (m.node_discriminator='M' OR m.node_discriminator='F' OR (m.node_discriminator='Q' AND m.type='Q_linked%'))
 AND n.idNode IS NULL;
 
 UPDATE Node SET deleted=1 WHERE idNode>0 AND link IN (SELECT idNode FROM brokenlinks);
+UPDATE Node SET deleted=1 WHERE idNode>0 AND idNode IN (SELECT idNode FROM brokenlinks);
