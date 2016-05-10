@@ -5,7 +5,8 @@
 	<label>AWES ID</label>
    <input type="text" class="form-control" placeholder="H______" 
    		  md-maxlength="7" minlength="7" required
-   		  ng-model="vm.tableParams.filter().reference"/>
+   		  ng-model="vm.tableParams.filter().reference" 
+   		  ng-keypress="($event.which === 13 || $event.which === 32)?vm.add():0"/>
    	</md-input-container>
 	</div>
 <!-- <pre>debug{{vm.tableParams.data| json}}</pre>   -->
