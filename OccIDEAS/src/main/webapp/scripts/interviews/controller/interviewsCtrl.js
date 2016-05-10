@@ -60,6 +60,12 @@
 		
 		function populateInterviewModules(interviewId){
 			$scope.interviewId = interviewId;
+			InterviewsService.getIntDisplay(interviewId).then(function(data){
+				if(data){
+					$scope.intDisplay = data.data;
+					sequenceDisplay = data.data[data.data.length - 1].sequence;
+				}
+			});
 			InterviewsService.getInterview(interviewId).then(function(data){
 				if(data){
 					var interview = data.data[0];
@@ -548,6 +554,7 @@
 			if (qsIndex == -1) {
 				newQuestionAsked.intQuestionSequence = angular.copy($scope.intQuestionSequence);
 				mod.questionsAsked.push(newQuestionAsked);
+				updateInterviewDisplay(newQuestionAsked);
 				$scope.intQuestionSequence ++;
 			} else {
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
@@ -728,6 +735,7 @@
 			if (qsIndex == -1) {
 				newQuestionAsked.intQuestionSequence = angular.copy($scope.intQuestionSequence);
 				mod.questionsAsked.push(newQuestionAsked);
+				updateInterviewDisplay(newQuestionAsked);
 				$scope.intQuestionSequence ++;
 			} else {
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
@@ -847,6 +855,7 @@
 			if (qsIndex == -1) {
 				newQuestionAsked.intQuestionSequence = angular.copy($scope.intQuestionSequence);
 				mod.questionsAsked.push(newQuestionAsked);
+				updateInterviewDisplay(newQuestionAsked);;
 				$scope.intQuestionSequence ++;
 			} else {
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
@@ -1057,21 +1066,22 @@
 														interview.module = $scope.data[0];
 														interview.referenceNumber = $scope.referenceNumber;
 														interview.modules = [];
+														var jsonMod = {
+																name : interview.module.name,
+																idNode : interview.module.idNode,
+																topNodeId : 0,
+																parentNode : 0,
+																answerNode : 0,
+																parentAnswerId : 0,
+																number : 0,
+																count : 1,
+																linkNum: 0,
+																sequence: ++sequence,
+																deleted : 0,
+																questionsAsked : []
+															};
 														interview.modules
-																.push({
-																	name : interview.module.name,
-																	idNode : interview.module.idNode,
-																	topNodeId : 0,
-																	parentNode : 0,
-																	answerNode : 0,
-																	parentAnswerId : 0,
-																	number : 0,
-																	count : 1,
-																	linkNum: 0,
-																	sequence: ++sequence,
-																	deleted : 0,
-																	questionsAsked : []
-																});
+																.push(jsonMod);
 														var copyParticipant = angular
 																.copy($scope.participant);
 														interview.participant = copyParticipant;
@@ -1087,6 +1097,7 @@
 																				response) {
 																			if (response.status === 200) {
 																				$scope.interviewId = response.data.interviewId;
+																				updateInterviewDisplay(jsonMod);
 																				interview.modules[0].idInterview = $scope.interviewId;
 																				InterviewsService.saveInterviewMod(interview.modules[0]).then(
 																						function(response) {
@@ -1494,6 +1505,7 @@
 					modDetail.count = modDetail.count + modules.length;
 				}
 				$scope.activeInterview.modules.push(modDetail);
+				updateInterviewDisplay(modDetail);
 				InterviewsService.saveInterviewMod(modDetail).then(
 						function(response) {
 							if (response.status === 200) {
@@ -1739,6 +1751,29 @@
 		$scope.orderByNumber = function(questionAsked) {
 			   return questionAsked.number.charCodeAt();
 		};
+		$scope.intDisplay = [];
+		var sequenceDisplay = 0;
+		function updateInterviewDisplay(element){
+			//push element to interview display, can be a module/question
+			var copyEl = angular.copy(element);
+			copyEl.type=element.questionsAsked?"M":"Q";
+			if(!element.count){
+				addModuleCount();
+			}
+			copyEl.count = element.count?element.count:element.modCount;
+			copyEl.idInterview = $scope.interviewId;
+			copyEl.sequence = sequenceDisplay;
+			sequenceDisplay++;
+			InterviewsService.saveIntDisplay(copyEl).then(
+					function(response) {
+						if (response.status === 200) {
+							$scope.intDisplay.push(copyEl);
+							$log.info("Success in save interview display.");
+						}else{
+							$log.error("Error in save interview display");
+						}
+					});
+		}
 		
 	}
 })();

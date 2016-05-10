@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
+import org.occideas.interviewdisplay.service.InterviewDisplayService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
@@ -27,6 +28,8 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	private InterviewQuestionService service;	
 	@Autowired
 	private InterviewAnswerService answerService;
+	@Autowired
+	private InterviewDisplayService displayService;
 	
 	@GET
 	@Path(value="/getlist")
@@ -82,7 +85,7 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	public Response updateAnswers(List<InterviewAnswerVO> vo) {
 		return Response.ok(answerService.updateIntA(vo)).build();
 	}
-
+	
 	@Override
 	public Response delete(InterviewQuestionVO json) {
 		// TODO Auto-generated method stub

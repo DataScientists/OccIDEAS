@@ -70,4 +70,20 @@ CREATE TABLE `Interview_Answer` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
 
+DROP TABLE IF EXISTS `Interview_Display`;
+
+CREATE TABLE `Interview_Display` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `idinterview` bigint(20) NOT NULL,
+  `idNode` bigint(20) NOT NULL,
+  `name` varchar(2048) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `question_id` bigint(20) DEFAULT NULL,
+  `sequence` int(11) NOT NULL,
+  `count` int(11) NOT NULL,
+  `deleted` int(11) NOT NULL,
+  `lastUpdated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
+
 DROP TABLE IF EXISTS `Interview_Linked`;

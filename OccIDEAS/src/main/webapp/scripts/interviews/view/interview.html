@@ -185,68 +185,59 @@
     
 </div>
 
-<div class="col-md-8 moduleInterview" id="interview-question-list" >
+<!-- Interview Display list starts here -->
+<div class="col-md-8 moduleInterview" id="interview-question-list">
 	<span class="badge" ng-click="toggleTreeList()">{{viewStatus}}</span>
-	<div ng-if="showTree">
-		<div ui-tree="moduleTreeOptions" id="tree-root">
-			<ol ui-tree-nodes ng-model="treeView">
-				<li ng-repeat="node in treeView" ui-tree-node 
-					ng-include="'interviewnodes_renderer.html'" id="moduleTreeBody"></li>
-			</ol>
-		</div>
-	</div>
-	
 	<div ng-if="showList">
-		<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="modules in interview.modules">
+		<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in intDisplay | orderBy:'sequence'">
 			<div class="angular-ui-tree">
 				<div class="tree-node">
-					<span class="badge" ng-if="modules.linkNum != 0">
-					     {{modules.linkNum != 0?modules.linkNum:''}} 
-						 {{modules.linkNum != modules.number?':':''}}
-						 {{modules.linkNum != modules.number?modules.number:''}}</span>
-					<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}" id="questionlist-{{modules.idNode}}">
-						{{modules.name}}
+					<!-- 			if element is a module display below -->
+					<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}" 
+					      id="questionlist-{{element.idNode}}"
+					      ng-if="element.questionsAsked">
+						{{element.name}}
 					</span>
-					<div>
-							<div ng-repeat="qa in modules.questionsAsked | qaFilter:0 | orderBy:orderByNumber">
-		    					<div id="questionlist-{{qa.questionId}}" class="tree-node-content Q_interviewresult">
-		    					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-		                   			<span class="badge">{{modules.linkNum != 0?modules.linkNum:''}}
-		                   								{{modules.linkNum != 0?':':''}}
-		                   								{{modules.linkNum != modules.number?modules.number:''}}
-		                   								{{modules.linkNum != modules.number?':':''}}
-		                   								{{qa.number}}
-		                   								</span>
-		                		</div>  
-		    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-			    							ng-click="vm.editQuestion(qa)"></span>
-			    				<span ng-if="qa.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-		    					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
-		    					</span>  					
-		    					</div>
-		    					<div class="tree-node-content P_interviewresult" ng-repeat="as in qa.answers | qaFilter:0 | orderBy:orderByNumber">
-		    						<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-		                   				<span class="badge">
-		                   				    {{modules.linkNum != 0?modules.linkNum:''}}
-		                   				    {{modules.linkNum != 0?':':''}}
-		                   				    {{modules.linkNum != modules.number?modules.number:''}}
-		                   					{{modules.linkNum != 0?':':''}}{{as.number}}</span>
-		                			</div>
-		    						<span id="{{'IntResult'+as.idNode}}" >{{as.answerFreetext?as.answerFreetext:as.name}}
-		    						</span>
-		    						
-		    						
-		    						
-		    						
-		    						
-		    					</div>
-	    						
-	    					</div>
-	  				</div>
+					<!-- 			if element is a question display below -->
+					<div ng-if="element.questionId">
+						<div id="questionlist-{{element.questionId}}" 
+							class="tree-node-content Q_interviewresult">
+							<div class="form-group pull-left"
+								style="margin-top: 5px; margin-left: -15px;">
+								<span class="badge">
+									{{element.number}} 
+								</span>
+							</div>
+					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
+ 			    							ng-click="vm.editQuestion(element)"></span>
+ 			    	<span ng-if="element.question.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+		    		<span id="{{'IntResult'+element.idNode}}" >
+		    			{{ element.name }}
+		    		</span>  	
+		    			</div>
+		    		</div>		
+		    		<!-- 			if element is a answer display below -->
+					<div class="tree-node-content P_interviewresult"
+						ng-repeat="as in element.answers | orderBy:orderByNumber">
+						<div class="form-group pull-left"
+							style="margin-top: 5px; margin-left: -15px;">
+							<span class="badge"> 
+							{{as.number}}</span>
+						</div>
+						<span id="{{'IntResult'+as.idNode}}">{{as.answerFreetext?as.answerFreetext:as.name}}
+						</span>
+
+
+
+
+
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
+<!-- Interview Display list ends here -->	
 	<div>
 	<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>
 	<p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>

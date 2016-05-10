@@ -116,6 +116,25 @@
 			return request.then(handleSuccess,handleError);
 		}
         
+        function saveIntDisplay(data){
+        	var restUrl = 'rest/interviewdisplay/update';
+        	var request =  $http({
+				  method: 'POST',
+				  url: restUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+        }
+        
+        function getIntDisplay(interviewId){
+        	var restUrl = 'rest/interviewdisplay/getIntDisplay?id=' + interviewId;
+        	var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+        }
+        
         function handleError(response) {
             if (
                 !angular.isObject(response.data) || !response.data.message
@@ -140,7 +159,9 @@
             saveQuestion:saveQuestion,
             saveAnswers:saveAnswers,
             getInterview:getInterview,
-            saveInterviewMod:saveInterviewMod
+            saveInterviewMod:saveInterviewMod,
+            saveIntDisplay:saveIntDisplay,
+            getIntDisplay:getIntDisplay
         };
     }
 })();
