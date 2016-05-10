@@ -2,7 +2,6 @@ package org.occideas.interviewquestion.dao;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -84,5 +83,18 @@ public class InterviewQuestionDao {
         }
         return crit.list();
     }
+
+	public InterviewQuestion findIntQuestion(long idInterview, long questionId, Integer modCount) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class);
+		crit.add(Restrictions.eq("idInterview", idInterview));
+		crit.add(Restrictions.eq("questionId",questionId));
+		crit.add(Restrictions.eq("modCount", modCount));
+		List<InterviewQuestion> list = crit.list();
+		if(list.isEmpty()){
+			return null;
+		}
+		return list.get(0);
+	}
     
 }

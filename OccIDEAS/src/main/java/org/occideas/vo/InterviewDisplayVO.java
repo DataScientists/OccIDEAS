@@ -3,8 +3,6 @@ package org.occideas.vo;
 import java.util.Date;
 import java.util.List;
 
-import org.occideas.entity.InterviewAnswer;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

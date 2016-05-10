@@ -116,6 +116,16 @@
 			return request.then(handleSuccess,handleError);
 		}
         
+        function getIntQuestion(idInterview,questionId,modCount) {
+			var restUrl = 'rest/interviewquestionanswer/getIntQuestion?idInterview='
+							+idInterview+'&questionId='+questionId+'&modCount='+modCount;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+        
         function saveIntDisplay(data){
         	var restUrl = 'rest/interviewdisplay/update';
         	var request =  $http({
@@ -161,7 +171,8 @@
             getInterview:getInterview,
             saveInterviewMod:saveInterviewMod,
             saveIntDisplay:saveIntDisplay,
-            getIntDisplay:getIntDisplay
+            getIntDisplay:getIntDisplay,
+            getIntQuestion:getIntQuestion
         };
     }
 })();

@@ -185,6 +185,14 @@
 			if (!interview) {
 				return null;
 			}
+			InterviewsService
+			.getIntQuestion(question.idInterview,question.questionId,question.count)
+			.then(
+					function(response) {
+						if (response.status === 200) {
+							console.log("retrieve question successful...");
+							question = response.data;
+						
 			refreshInterview();
 			$scope.inProgress = true;
 			$scope.updateEnable = true;
@@ -275,7 +283,8 @@
 							}
 						});
 			}
-
+						}
+					});
 		};
 
 		function determineNextUnansweredQuestion(question) {

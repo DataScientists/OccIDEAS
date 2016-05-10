@@ -73,4 +73,9 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public InterviewQuestionVO findIntQuestion(long idInterview, long questionId, Integer modCount) {
+		return mapper.convertToInterviewQuestionVO(dao.findIntQuestion(idInterview,questionId,modCount));
+	}
 }

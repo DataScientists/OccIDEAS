@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
-import org.occideas.interviewdisplay.service.InterviewDisplayService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
@@ -28,8 +27,6 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	private InterviewQuestionService service;	
 	@Autowired
 	private InterviewAnswerService answerService;
-	@Autowired
-	private InterviewDisplayService displayService;
 	
 	@GET
 	@Path(value="/getlist")
@@ -57,6 +54,16 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
+	}
+	
+	@GET
+	@Path(value="/getIntQuestion")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getIntQuestion( @QueryParam("idInterview") Long idInterview,
+			 @QueryParam("questionId") Long questionId,
+			 @QueryParam("modCount") Integer modCount){
+		InterviewQuestionVO intQuestion = service.findIntQuestion(idInterview,questionId,modCount);
+		return Response.ok(intQuestion).build();
 	}
 	
 	@Override
