@@ -64,6 +64,9 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 	public Response getInterviewModule(@QueryParam("id") Long id) {
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
 		try{
+			if(id == -1){
+				id = Long.valueOf(PropUtil.getInstance().getProperty(Constant.STUDY_INTRO));
+			}
 			list = service.findByIdForInterview(id);
 		}catch(Throwable e){
 			e.printStackTrace();

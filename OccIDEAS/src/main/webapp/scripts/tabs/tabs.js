@@ -77,11 +77,12 @@
 					templateUrl : "scripts/participants/view/participantsTable.html",
 					controller: 'ParticipantsCtrl as vm',
 					resolve:{
-				        data: function(QuestionsService,TabsCache) {
-			        		$log.info("inside participants@tabs resolve");
-			        		$log.info("findQuestions :");
-			        		
-			        		return QuestionsService.findQuestions('-1','M')
+				        data: function(InterviewsService,TabsCache) {
+			        		if(TabsCache.get('studyintromodule')){
+			        			$log.info("Data getting from questions Cache ...");
+		        				return TabsCache.get('studyintromodule');
+			        		}
+			        		return InterviewsService.findModule('-1')
                             .then(function(response){
                             	TabsCache.put("studyintromodule",response.data);
                                 $log.info("Data getting from questions AJAX ...");
@@ -311,9 +312,9 @@
 			        			$log.info("Data getting from questions Cache ...");
 		        				return TabsCache.get('studyintromodule');
 			        		}
-                            return QuestionsService.findQuestions($stateParams.row,'M')
+                            return InterviewsService.findModule($stateParams.row)
                                 .then(function(response){
-                                    $log.info("Data getting from questions AJAX ...");
+                                    $log.info("Data getting from findModule AJAX ...");
                                     return response.data;
                                 });
                         },
