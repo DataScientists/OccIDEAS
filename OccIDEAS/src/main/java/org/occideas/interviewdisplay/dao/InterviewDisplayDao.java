@@ -56,6 +56,7 @@ public class InterviewDisplayDao {
         final Criteria crit = session.createCriteria(InterviewDisplay.class);
         if (interviewId != null) {
             crit.add(Restrictions.eq("idinterview", interviewId));
+            crit.add(Restrictions.eq("deleted", 0));
         }
         return crit.list();
     }
