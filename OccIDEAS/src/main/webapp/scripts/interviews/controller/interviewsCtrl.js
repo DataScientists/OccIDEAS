@@ -57,7 +57,7 @@
 					return o.intQuestionSequence; 
 				});
 		}
-		
+		 
 		function populateInterviewModules(interviewId){
 			$scope.interviewId = interviewId;
 			InterviewsService.getIntDisplay(interviewId).then(function(data){
@@ -812,6 +812,7 @@
 			});
 		}
 
+		var intDisplaySequenceUpdate = undefined;
 		function deleteIntDisplay(idNode,isModule){
 			var intDisplayQ = _.find(
 					$scope.intDisplay, function(idisp) {
@@ -822,6 +823,7 @@
 						}
 					});
 			intDisplayQ.deleted = 1;
+			intDisplaySequenceUpdate = intDisplayQ.sequence;
 			InterviewsService.saveIntDisplay(intDisplayQ).then(
 					function(response) {
 						if (response.status === 200) {
@@ -1832,8 +1834,13 @@
 			}
 			copyEl.count = element.count?element.count:element.modCount;
 			copyEl.idInterview = $scope.interviewId;
+			if(!intDisplaySequenceUpdate){
 			copyEl.sequence = sequenceDisplay;
 			sequenceDisplay++;
+			}else{
+				copyEl.sequence = angular.copy(intDisplaySequenceUpdate);
+				intDisplaySequenceUpdate = undefined;
+			}
 			InterviewsService.saveIntDisplay(copyEl).then(
 					function(response) {
 						if (response.status === 200) {

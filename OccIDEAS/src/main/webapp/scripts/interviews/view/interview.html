@@ -195,7 +195,7 @@
 					<!-- 			if element is a module display below -->
 					<span class="M_Interview {{interviewIntro.active ? 'highlight':''}}" 
 					      id="questionlist-{{element.idNode}}"
-					      ng-if="element.questionsAsked">
+					      ng-if="element.type == 'M'">
 						{{element.name}}
 					</span>
 					<!-- 			if element is a question display below -->
