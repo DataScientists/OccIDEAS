@@ -307,7 +307,7 @@
                     controller: 'InterviewsCtrl as vm',
                     params:{row: null,module:null,interviewId:null,startWithReferenceNumber:null},
                     resolve:{
-                        data: function($stateParams,QuestionsService,TabsCache) {
+                        data: function($stateParams,InterviewsService,TabsCache) {
 			        		if(TabsCache.get('studyintromodule')){
 			        			$log.info("Data getting from questions Cache ...");
 		        				return TabsCache.get('studyintromodule');
