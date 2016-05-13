@@ -275,8 +275,12 @@
 													answerList.push(ans);
 												}
 											});
+											//P_freetext
+											if(ansNode.type == 'P_freetext'){
+												ansNode.name = qs.answers[0].name;
+											}
 											$scope.data.showedQuestion.selectedAnswer = ansNode;
-											$scope.previousAnswer = ansNode;
+											$scope.previousAnswer = angular.copy(ansNode);
 										}
 										// deleteQuestion([question]);
 									}
@@ -571,6 +575,7 @@
 				updateInterviewDisplay(newQuestionAsked);
 				$scope.intQuestionSequence ++;
 			} else {
+				newQuestionAsked.intQuestionSequence = mod.questionsAsked[qsIndex].intQuestionSequence;
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
 				spliceIntDisplay(node.idNode,newQuestionAsked);
 			}
@@ -777,6 +782,7 @@
 				updateInterviewDisplay(newQuestionAsked);
 				$scope.intQuestionSequence ++;
 			} else {
+				newQuestionAsked.intQuestionSequence = mod.questionsAsked[qsIndex].intQuestionSequence;
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
 				spliceIntDisplay(node.idNode,newQuestionAsked);
 			}
@@ -843,7 +849,7 @@
 		function processQuestion(interview, node) {
 			var deffered = undefined;
 			if ($scope.updateEnable
-					&& $scope.previousAnswer != $scope.data.showedQuestion.selectedAnswer) {
+					&& $scope.previousAnswer.name != $scope.data.showedQuestion.selectedAnswer.name) {
 				var qs = hasQuestionBeenAsked(node);
 				deffered = $q.defer();
 				if (qs) {
@@ -929,6 +935,7 @@
 				updateInterviewDisplay(newQuestionAsked);
 				$scope.intQuestionSequence ++;
 			} else {
+				newQuestionAsked.intQuestionSequence = mod.questionsAsked[qsIndex].intQuestionSequence;
 				mod.questionsAsked.splice(qsIndex, 1, newQuestionAsked);
 				spliceIntDisplay(node.idNode,newQuestionAsked);
 			}
