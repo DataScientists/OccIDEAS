@@ -10,7 +10,42 @@
 		$scope.setSelectedInterview = function(interview){
 			$scope.selectedInterview = interview;
 		}
-		
+		$scope.awesIdMaxSize = 7;
+		$scope.awesIdSize = 0;
+		$scope.filterAndValidate = function(event){			
+			var elem = angular.element( document.querySelector('#awesid'));
+			var counter = angular.element( document.querySelector('#awesidcounter'));
+			var label = angular.element( document.querySelector('#awesidlabel'));
+			if(event.which === 13 || event.which === 32){
+				if(awesIdIsValid(elem.val())){
+					self.add();
+				}else{
+					counter.append("Please enter a valid AWES ID");
+				}
+			}else{
+				if(!awesIdIsValid(elem.val())){
+					elem.addClass("awesidwarning");
+					label.addClass("awesidwarning");
+					counter.addClass("awesidwarning");
+				}else{
+					elem.removeClass("awesidwarning");
+					label.removeClass("awesidwarning");
+					counter.removeClass("awesidwarning");						
+				}								
+			}
+		}
+		function awesIdIsValid(awesId){
+			$scope.searchAWESID = '';
+			var retValue = false;
+			$scope.awesIdSize = awesId.length;
+			if($scope.awesIdSize==$scope.awesIdMaxSize){
+				if(_.startsWith(awesId, 'H')){
+					retValue = true;
+					$scope.searchAWESID = awesId;
+				}
+			}			
+			return retValue;
+		}
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
@@ -18,10 +53,8 @@
 	        getData: function(params) {
 	        	
 	        	
-	          if(params.filter().reference ){
-	        	  $scope.searchAWESID = params.filter().reference;
-	        	  
-		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+	          if(params.filter().reference || params.filter().idParticipant){
+	        	  return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 		      }
 	          if(!self.tableParams.shouldGetData){
 	        	  return self.tableParams.settings().dataset;
@@ -50,20 +83,20 @@
 	    	}
 	    }
 	    function add() {
-	    	if($scope.searchAWESID){
+	    	if(awesIdIsValid($scope.searchAWESID)){
 	    		InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data){
 	    			if(data.status == 200){
-	    				$scope.addInterviewTabInterviewers(data.data[0].module.idNode,$scope.searchAWESID);
-	    			}
-	    			else if(data.status == 204){
+	    				if(confirm("This AWES ID has already been used. Would you like to add a duplicate?")){
+	    					$scope.addInterviewTabInterviewers(-1,$scope.searchAWESID);
+	    				}
+	    			}else if(data.status == 204){
 	    				$scope.addInterviewTabInterviewers(-1,$scope.searchAWESID);
-	    			}
-	    			else{
-	    				alert("Error occured during awesId.");
+	    			}else{
+	    				alert("Error occured during checkReferenceNumberExists.");
 	    			}
 	    		})
 	    	}else{
-	    		alert("You need to add the awesId to the filter box before you can start.");
+	    		alert("You need to add a valid AWES ID before you can start.");
 	    	}
 	    }
 	    function cancel(row,rowForm) {

@@ -29,22 +29,15 @@
 		function add(type) {
 	    	$scope.addInterviewTabInterviewers();
 	    }
-		
-		if(startWithReferenceNumber){
-			InterviewsService.checkReferenceNumberExists(startWithReferenceNumber)
-    		.then(function(response){
-    			if(response.status == 200){
-    				if(confirm('AWES ID already exist. Continue to start interview?')){
-        				$scope.awesId.id = startWithReferenceNumber;
-        				$scope.startInterview(data);
-        			}else{
-        				$scope.awesId.id = startWithReferenceNumber;
-        			}
-    			}else{
-    				$scope.awesId.id = startWithReferenceNumber;
-    				$scope.startInterview(data);
-    			}
-    		});
+		$scope.awesId = {};	
+		$scope.startInterview = function(data) {
+			$scope.referenceNumber = $scope.awesId.id;
+			createParticipant(data);
+				
+		}
+		if(startWithReferenceNumber){	
+			$scope.awesId.id = startWithReferenceNumber;
+    		$scope.startInterview(data);		
 		}
 		
 		if (updateData) {
@@ -1216,25 +1209,6 @@
 								}
 							});
 		}
-		$scope.awesId = {};	
-		$scope.startInterview = function(data) {
-			$scope.referenceNumber = $scope.awesId.id;
-			//if (validReferenceNumber(data.referenceNumber)) {
-				//InterviewsService.checkReferenceNumberExists(
-				//		$scope.referenceNumber).then(function(response) {
-				//	if (response.status === 200) {
-				//		alert('Reference number already in use');
-				//	} else if (response.status === 204) {
-						createParticipant(data);
-				//	}
-				//});
-			//} else {
-			//	alert('Reference number must start with H and be 7 characters long');
-			//}
-		}
-//		if(!updateData){
-//			$scope.startInterview($scope.data);
-//		}
 		
 		function validReferenceNumber(referenceNumber) {
 			var retValue = false;

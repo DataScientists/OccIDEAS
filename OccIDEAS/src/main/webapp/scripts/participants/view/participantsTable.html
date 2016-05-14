@@ -1,36 +1,34 @@
 <div ng-cloak>
 <div>
-	<div>
+	<div style="width:500px;">
 	<md-input-container>
-	<label>AWES ID</label>
-   <input type="text" class="form-control" placeholder="H______" 
-   		  md-maxlength="7" minlength="7" required
+		<label id="awesidlabel">AWES ID</label>
+    	<input id="awesid" type="text" class="form-control" placeholder="H______" 
+   		  required
    		  ng-model="vm.tableParams.filter().reference" 
-   		  ng-keypress="($event.which === 13 || $event.which === 32)?vm.add():0"/>
+   		  ng-keyup="filterAndValidate($event,this)"/>
+   		<div id="awesidcounter" class="md-errors-spacer">
+   			<div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div> 			
+   		</div>
    	</md-input-container>
+   	<div class="brn-group pull-right">
+ 			<button class="btn btn-default" ng-click="vm.add()">
+    			<span >Start</span>
+ 			</button>
+		 </div>
 	</div>
 <!-- <pre>debug{{vm.tableParams.data| json}}</pre>   -->
 <table ng-table="vm.tableParams" class="table table-bordered table-hover 
-  table-condensed editable-table" show-filter="true">
-  <tr class="ng-table-group">
-      <td colspan="{{$columns.length}}">
-           <div class="brn-group pull-right">
- 				 <button class="btn btn-default" ng-click="vm.add()">
-    					<span >Start</span>
- 				 </button>
-		 </div>
-      </td>
-    </tr>
+  table-condensed editable-table" show-filter="true">  
     <tr ng-repeat="participant in $data">
-        <td title="'Participant Id'">
+        <td title="'Participant Id'" sortable="'idParticipant'" filter="{ idParticipant: 'text'}">
 			{{participant.idParticipant}}
 		</td>
-        <td title="'AWES ID'" sortable="'reference'">
+        <td title="'AWES ID'" sortable="'reference'" filter="{ reference: 'text'}">
             {{participant.reference}}</td>
-        <td title="'Status'">
+        <td title="'Status'" sortable="'status'" filter="{ status: 'text'}">
 			{{participant.status}}
-		</td>
-		
+		</td>	
 		<td>
 			<button class="btn btn-default btn-sm"
 					ng-click="addParticipantTab(participant)" >
