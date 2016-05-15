@@ -10,6 +10,7 @@ private long idParticipant;
 	private List<InterviewVO> interviews;
 	private int status;
 	private String reference;
+	private String statusDescription;
 	private Date lastUpdated;
 	private Integer deleted;
 
@@ -61,4 +62,19 @@ private long idParticipant;
 		this.reference = reference;
 	}
 
+	public String getStatusDescription() {
+		
+		if(status==0){
+			statusDescription = "Running";
+		} else if(status==1){
+			statusDescription = "Paused";
+		} else if(status==2){
+			statusDescription = "Completed";
+		} 
+		return statusDescription;
+	}
+
+	public void setStatusDescription(String statusDescription) {
+		this.statusDescription = statusDescription;
+	}
 }

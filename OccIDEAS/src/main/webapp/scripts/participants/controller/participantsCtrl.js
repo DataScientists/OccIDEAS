@@ -49,9 +49,16 @@
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
-		self.tableParams = new NgTableParams({}, {	
-	        getData: function(params) {
-	        	
+
+	    self.tableParams = new NgTableParams(
+			{	page: 1,            
+                count: 10
+            }, {	
+            
+			getData: function(params) {
+	          if ((params.sorting().reference)||(params.sorting().idParticipant)||(params.sorting().statusDescription)){
+				return $filter('orderBy')(self.tableParams.settings().dataset, params.orderBy());
+		      }
 	        	
 	          if(params.filter().reference || params.filter().idParticipant){
 	        	  return $filter('filter')(self.tableParams.settings().dataset, params.filter());
@@ -64,11 +71,12 @@
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.settings().dataset = data;
 	        	  self.tableParams.shouldGetData = true;
+	        	  self.tableParams.total(self.originalData.length);
 	            return data;
 	          });
 	        },
 	      });
-		self.tableParams.shouldGetData = true;
+	    self.tableParams.shouldGetData = true;
 	    self.cancel = cancel;
 	    self.del = del;
 	    self.save = save;
