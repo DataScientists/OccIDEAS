@@ -72,7 +72,6 @@
 		$scope.selectedIndex = 0;
 
 		$scope.closeAndSwitchToParticipantsTab = function(){
-			alert("Interview Ended.");
 			var index = angular.copy($scope.selectedIndex);
 			tabs.splice(index, 1);
 			$scope.tabOptions.splice(index, 1);

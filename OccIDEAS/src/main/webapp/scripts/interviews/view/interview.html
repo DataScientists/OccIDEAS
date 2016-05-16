@@ -160,10 +160,10 @@
                 <span>ABORT</span>
             </md-button>
         </ul>
-        <div ng-if="!data.interviewStarted">
+        <div ng-if="!(data.interviewStarted || data.interviewEnded)">
             <md-input-container>
   				<label>AWES ID</label>
-  				<input md-maxlength="7" minlength="7" required 
+  				<input md-maxlength="7"&& minlength="7" required 
   				ng-model="awesId.id" 
   				placeholder="H______" type="text">
         		
@@ -172,6 +172,15 @@
 			
             <md-button ng-click="startInterview(data)" class="md-fab md-raised ">
                 <span>START</span>
+            </md-button> 
+        </div>
+        <div ng-if="data.interviewEnded">
+            <md-input-container class="md-block">
+          		<label>Interview Notes</label>
+          		<textarea ng-model="interview.endNotes" md-maxlength="150" rows="5" md-select-on-focus></textarea>
+        	</md-input-container>
+            <md-button ng-click="finishInterview()" class="md-fab md-raised ">
+                <span>FINISH</span>
             </md-button> 
         </div>
         

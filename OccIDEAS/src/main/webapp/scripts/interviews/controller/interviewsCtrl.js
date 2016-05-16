@@ -1670,9 +1670,25 @@
 			$scope.data.interviewStarted = false;
 			$scope.data.interviewEnded = true;
 			$scope.updateEnable = false;
-			if(!updateData){
-			$scope.closeAndSwitchToParticipantsTab();
+			
+		}
+		$scope.finishInterview = function(){
+			var interview = $scope.activeInterview;
+			if (!(interview.notes)) {
+				interview.notes = [];
 			}
+			interview.notes
+					.push({
+						interviewId : interview.interviewId,
+						text : interview.endNotes,
+						type : 'Interviewer'
+					});
+			saveInterview(interview);
+			var participant = $scope.participant;
+			participant.status = 2;//completed
+			saveParticipant(participant);
+			$scope.closeAndSwitchToParticipantsTab();
+			
 		}
 		function convertToTree() {
 			var root = {
