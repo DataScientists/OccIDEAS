@@ -368,6 +368,7 @@
 					_.each(mod.questionsAsked, function(qs) {
 						mod.deleted = 1;
 						qs.deleted = 1;
+						deleteIntDisplay(qs.questionId,false);
 						_.each(qs.answers, function(ans) {
 							ans.deleted = 1;
 							saveAnswer(angular.copy(qs));
@@ -454,14 +455,20 @@
 																			}
 																			return val.deleted == 1;
 																		});
+														if(defer){
 														defer.resolve();
+														}
 													} else {
+														if(defer){
 														defer.reject();
+														}
 													}
 												});
 								});
 							})
-			return defer.promise;
+							if(defer){
+								return defer.promise;
+							}
 		}
 
 		var safeDigest = function(obj) {
