@@ -701,6 +701,7 @@
 				deffered = $q.defer();
 				if (qs) {
 					$scope.intQuestionSequence = qs.intQuestionSequence;
+					$scope.parentQId = qs.parentId;
 					deleteQuestion([ angular.copy(qs) ], deffered);
 					_.remove($scope.interview.modules, function(mod) {
 						return mod.deleted == 1;
@@ -856,6 +857,7 @@
 				deffered = $q.defer();
 				if (qs) {
 					$scope.intQuestionSequence = qs.intQuestionSequence;
+					$scope.parentQId = qs.parentId;
 					deleteQuestion([ angular.copy(qs) ], deffered);
 					_.remove($scope.interview.modules, function(mod) {
 						if(mod.deleted == 1){
