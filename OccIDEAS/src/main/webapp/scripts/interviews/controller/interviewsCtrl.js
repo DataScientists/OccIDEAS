@@ -35,10 +35,12 @@
 			createParticipant(data);
 				
 		}
-		if(startWithReferenceNumber){	
-			$scope.awesId.id = startWithReferenceNumber;
-    		$scope.startInterview(data);		
-		}
+		if(!$scope.data.interviewStarted){
+			if(startWithReferenceNumber){	
+				$scope.awesId.id = startWithReferenceNumber;
+	    		$scope.startInterview(data);		
+			}
+		}	
 		
 		if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
@@ -1358,25 +1360,23 @@
 									if (question.link == 0) {
 										$scope.inProgress = false;
 										safeDigest($scope.inProgress);
+										var mod = _.find($scope.activeInterview.modules,
+												function(val, ind) {
+													return val.idNode == question.topNodeId;
+												});
+										$scope.questionheader.name = mod.name.substring(0, 4);
 										if ($scope.updateEnable) {
+											
 											if (determineNextUnansweredQuestion(question)) {
 												return;
 											}
 										} else {
 											if ($scope.data.showedQuestion) {
-												$scope
-														.scrollTo($scope.data.showedQuestion.idNode);
+												$scope.scrollTo($scope.data.showedQuestion.idNode);
 											}
 											$scope.data.showedQuestion = question;
 											
-											var mod = _
-													.find(
-															$scope.activeInterview.modules,
-															function(val, ind) {
-																return val.idNode == question.topNodeId;
-															});
-											$scope.questionheader.name = mod.name
-													.substring(0, 4);
+											
 										}
 										safeDigest($scope.data.showedQuestion);
 									}
