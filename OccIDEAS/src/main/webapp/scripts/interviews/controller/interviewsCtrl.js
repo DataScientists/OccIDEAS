@@ -231,23 +231,16 @@
 													return $scope.data.showedQuestion.idNode == qs.questionId;
 												});
 										if (qs.type == 'Q_multiple') {
-											_
-											.each(
-													$scope.data.showedQuestion.nodes,
+											_.each($scope.data.showedQuestion.nodes,
 													function(node) {
-														_
-														.find(
-																qs.answers,
-																function(
-																		ans) {
-																	if (ans.answerId == node.idNode) {
-																		$scope
-																		.multiToggle(
-																				node,
-																				$scope.multiSelected);
-																		node.isSelected = true;
-																		answerList
-																		.push(ans);
+														_.find(qs.answers,
+														function(ans) {
+														if (ans.answerId == node.idNode) {
+															$scope.multiToggle(
+																node,
+																$scope.multiSelected);
+																	node.isSelected = true;
+																	answerList.push(ans);
 																	}
 																});
 													});
@@ -517,14 +510,30 @@
 
 		function processInterviewQuestionsWithMultipleAnswers(interview, node) {
 			var deffered = undefined;
+			var persistedAnswer = undefined;
 			if ($scope.updateEnable
 					&& $scope.previousAnswer != $scope.multiSelected) {
 				var qs = hasQuestionBeenAsked(node);
 				deffered = $q.defer();
 				if (qs) {
 					qsTemp = angular.copy(qs);
-					qsTemp.answers = _.difference(qs.answers,
+					qsAnswerCopy = angular.copy(qs.answers);
+					qsTemp.answers = _.difference(qsAnswerCopy,
 							$scope.multiSelected);
+					var sameAnswer = _.difference($scope.multiSelected,qsAnswerCopy);
+					_.each(sameAnswer,function(ans){
+						var removedData = _.remove(qsAnswerCopy,function(val){
+							return val.answerId== ans.idNode});
+						if(removedData){
+							if(persistedAnswer){
+								persistedAnswer.push(removedData);
+							}else{
+								persistedAnswer = [];
+								persistedAnswer.push(removedData);
+							}
+						}
+					});
+					qsTemp.answers = qsAnswerCopy;
 					$scope.intQuestionSequence = qsTemp.intQuestionSequence;
 					deleteQuestion([ angular.copy(qsTemp) ], deffered);
 					_.remove($scope.interview.modules, function(mod) {
@@ -536,14 +545,14 @@
 			}
 			if (deffered) {
 				deffered.promise.then(function() {
-					buildAndSaveMultipleQuestion(interview, node);
+					buildAndSaveMultipleQuestion(interview, node,persistedAnswer);
 				})
 			} else {
-				buildAndSaveMultipleQuestion(interview, node);
+				buildAndSaveMultipleQuestion(interview, node,persistedAnswer);
 			}
 		}
 
-		function buildAndSaveMultipleQuestion(interview, node) {
+		function buildAndSaveMultipleQuestion(interview, node, persistedAnswer) {
 			var mod = _.find(interview.modules,
 					function(val, ind) {
 						return val.idNode === node.topNodeId
@@ -564,7 +573,6 @@
 				var actualAnswer = populateAnswerJsonByNode(value, node);
 				newQuestionAsked.answers.push(actualAnswer);
 			});
-
 			// check if question already exist, do not push, just update the
 			// question in database
 			var qsIndex = _.indexOf(mod.questionsAsked, _.find(
@@ -586,6 +594,7 @@
 			newQuestionAsked.answers[0].isProcessed = true;
 			saveAnswer(newQuestionAsked,defer);
 			defer.promise.then(function(){
+				//@TODO save on those answers not persisted
 			InterviewsService.saveQuestion(newQuestionAsked).then(
 					function(response) {
 						if (response.status === 200) {
