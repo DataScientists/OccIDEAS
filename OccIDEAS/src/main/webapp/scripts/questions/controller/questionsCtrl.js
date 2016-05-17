@@ -916,7 +916,23 @@
 			return $scope.rulesMenuOptions;
 		}
 		$scope.showMenu = function(scope) {
-			if(scope.node.nodeclass=='Q'){
+			if(scope.node.nodeclass=='M'){
+				var menu = $scope.moduleMenuOptions;
+				if(scope.node.type!='M_IntroModule'){
+					_.remove(menu, {
+					    0: 'Run Interview'
+					});
+				}
+				return menu;
+				
+				
+			}else if(scope.node.nodeclass=='F'){
+				var menu = $scope.moduleMenuOptions;			
+				_.remove(menu, {
+					0: 'Run Interview'
+				});			
+				return menu;
+			}else if(scope.node.nodeclass=='Q'){
 				$scope.selectedNode = scope.node;
 				var menuOptions;
 				if(scope.node.type=='Q_linkedmodule'){
@@ -1238,6 +1254,10 @@
 			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Divider
+			  [ 'Run Interview', function($itemScope) {		
+					 $scope.addInterviewTab($itemScope);			                   
+				} 
+			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
 					alert('under development');
 				} 
