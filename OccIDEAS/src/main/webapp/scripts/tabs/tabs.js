@@ -298,7 +298,7 @@
 			}
 		}).state( {
             name:'tabs.interview',
-			url: '/interview/:row/:interviewId/:startWithReferenceNumber',
+			url: '/interview/:row/:startWithReferenceNumber',
             sticky: true,
 		    deepStateRedirect: true,
             views:{
