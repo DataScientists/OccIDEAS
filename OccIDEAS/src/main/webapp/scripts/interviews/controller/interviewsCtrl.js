@@ -592,7 +592,30 @@
 			addModuleCount();
 			var defer = $q.defer();
 			newQuestionAsked.answers[0].isProcessed = true;
+			// check if answer was already provided before during edit, if yes
+			// do not save that answer to avoid duplicates
+			var removedAns = undefined;
+			if(persistedAnswer){
+				_.each(persistedAnswer,function(ans,ind){
+					var removedData = _.remove(newQuestionAsked.answers,function(val){
+						return val.answerId== ans[ind].answerId});
+					if(removedData){
+						if(removedAns){
+							removedAns.push(removedData);
+						}else{
+							removedAns = [];
+							removedAns.push(removedData);
+						}
+					}
+				});
+			}
 			saveAnswer(newQuestionAsked,defer);
+			// readd the removedAns after save
+			if(removedAns){
+				_.each(removedAns,function(ans,ind){
+					newQuestionAsked.answers.push(ans[ind]);
+				});
+			}
 			defer.promise.then(function(){
 				//@TODO save on those answers not persisted
 			InterviewsService.saveQuestion(newQuestionAsked).then(
