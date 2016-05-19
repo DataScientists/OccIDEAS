@@ -1,5 +1,6 @@
 package org.occideas.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,7 @@ public class ParticipantVO {
 private long idParticipant;
 	
 	private List<InterviewVO> interviews;
+	private List<NoteVO> notes;
 	private int status;
 	private String reference;
 	private String statusDescription;
@@ -67,7 +69,7 @@ private long idParticipant;
 		if(status==0){
 			statusDescription = "Running";
 		} else if(status==1){
-			statusDescription = "Paused";
+			statusDescription = "Partial";
 		} else if(status==2){
 			statusDescription = "Completed";
 		} 
@@ -76,5 +78,23 @@ private long idParticipant;
 
 	public void setStatusDescription(String statusDescription) {
 		this.statusDescription = statusDescription;
+	}
+
+	public List<NoteVO> getNotes() {
+		if(notes==null){
+			ArrayList<NoteVO> allnotes = new ArrayList<NoteVO>();
+			if(this.getInterviews()!=null){
+				for(InterviewVO interview: this.getInterviews()){
+					allnotes.addAll(interview.getNotes());
+				}
+			}		
+			this.notes = allnotes;
+		}
+		
+		return notes;
+	}
+
+	public void setNotes(List<NoteVO> notes) {
+		this.notes = notes;
 	}
 }

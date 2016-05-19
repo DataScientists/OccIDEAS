@@ -877,6 +877,7 @@
 				if(newQuestionAsked.description=='display'){
 					$scope.displayQuestions = [];
 					$scope.displayQuestions.push(newQuestionAsked);
+					
 				}
 			}
 			var mod = _.find(interview.modules,function(val, ind) {
@@ -1035,6 +1036,9 @@
 													type : 'System'
 												});
 										saveInterview(interview);
+										var participant = $scope.participant;
+										participant.status = 1;//partial
+										saveParticipant(participant);
 										endInterview();
 									}
 								}

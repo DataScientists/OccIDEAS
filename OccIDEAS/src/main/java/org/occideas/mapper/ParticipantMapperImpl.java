@@ -3,7 +3,9 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,9 +26,12 @@ public class ParticipantMapperImpl implements ParticipantMapper {
         participantVO.setReference(participant.getReference());
         participantVO.setStatus(participant.getStatus());
         participantVO.setDeleted(participant.getDeleted());
-        if(includeInterviews){
-        	participantVO.setInterviews(interviewMapper.convertToInterviewVOList(participant.getInterviews()));           
+        List<Interview> interviews = participant.getInterviews();
+        if(includeInterviews && !CommonUtil.isListEmpty(interviews)){
+        	participantVO.setInterviews(interviewMapper.convertToInterviewVOList(interviews));    
         }
+        
+        
         return participantVO;
     }
     

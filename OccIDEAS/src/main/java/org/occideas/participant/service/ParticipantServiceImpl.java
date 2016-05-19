@@ -21,7 +21,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public List<ParticipantVO> listAll() {
-        return mapper.convertToParticipantVOList(participantDao.getAll(),false);
+        return mapper.convertToParticipantVOList(participantDao.getAll(),true);
     }
     
     @Override
