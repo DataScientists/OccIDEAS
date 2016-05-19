@@ -9,7 +9,7 @@
 		var apiKey = '';
 		
 		var getAgents = function() {
-		  return $http.get(modulesUrl+'/getlist',{ cache: true}).then(function(response) {
+		  return $http.get(modulesUrl+'/getlist',{ cache: false}).then(function(response) {
 		    var data = response.data;
 		    return data;
 		  });

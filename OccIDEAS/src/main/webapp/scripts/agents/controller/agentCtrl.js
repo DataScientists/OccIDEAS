@@ -23,7 +23,7 @@
 	        	  self.tableParams.settings().dataset = data;
 	            return data;
 	          });
-	        },
+	        }
 	      });
 		self.tableParams.shouldGetData = true;
 	    self.cancel = cancel;
@@ -84,7 +84,7 @@
 	        AgentsService.save(row).then(function(response){
 				if(response.status === 200){
 					console.log('Agent Save was Successful!');
-					
+
 				}
 			});
 	    }
