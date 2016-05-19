@@ -78,13 +78,13 @@
 					controller: 'ParticipantsCtrl as vm',
 					resolve:{
 				        data: function(InterviewsService,TabsCache) {
-			        		if(TabsCache.get('studyintromodule')){
+			        		/*if(TabsCache.get('studyintromodule')){
 			        			$log.info("Data getting from questions Cache ...");
 		        				return TabsCache.get('studyintromodule');
-			        		}
+			        		}*/
 			        		return InterviewsService.findModule('-1')
                             .then(function(response){
-                            	TabsCache.put("studyintromodule",response.data);
+                            	//TabsCache.put("studyintromodule",response.data);
                                 $log.info("Data getting from questions AJAX ...");
                                 return response.data;
                             });
@@ -298,7 +298,7 @@
 			}
 		}).state( {
             name:'tabs.interview',
-			url: '/interview/:row/:interviewId/:startWithReferenceNumber',
+			url: '/interview/:row/:startWithReferenceNumber',
             sticky: true,
 		    deepStateRedirect: true,
             views:{
@@ -308,24 +308,86 @@
                     params:{row: null,module:null,interviewId:null,startWithReferenceNumber:null},
                     resolve:{
                         data: function($stateParams,InterviewsService,TabsCache) {
-			        		if(TabsCache.get('studyintromodule')){
+			        		/*if(TabsCache.get('studyintromodule')){
 			        			$log.info("Data getting from questions Cache ...");
 		        				return TabsCache.get('studyintromodule');
-			        		}
+			        		}*/
                             return InterviewsService.findModule($stateParams.row)
                                 .then(function(response){
                                     $log.info("Data getting from findModule AJAX ...");
                                     return response.data;
                                 });
                         },
-                        updateData: function($stateParams,InterviewsService){
-                        	if(!$stateParams.interviewId){
-                        		return null;
-                        	}
-                        	return InterviewsService.getInterview($stateParams.interviewId)
-                        		.then(function(response){
-                        			return response.data;
-                        		});
+                        updateData: function($stateParams,InterviewsService){                     	
+                        	return InterviewsService.checkReferenceNumberExists($stateParams.startWithReferenceNumber).then(
+        							function(response) {
+        								if (response.status === 200) {
+        									if(confirm("This AWES Id exists click okay to edit existing")){
+        										return response.data;
+        				    				}else{
+        				    					return;
+        				    				}
+        									
+        								} else if (response.status === 401) {
+        									$log.error("Inside updateData of tabs.interview tabs.js could not find interview with "+$stateParams.startWithReferenceNumber);
+        									return;
+        								}
+        							});
+                        },
+                        startWithReferenceNumber: function($stateParams,InterviewsService){
+                        	return $stateParams.startWithReferenceNumber;
+                        }
+                    }
+                }
+            }
+        }).state( {
+            name:'tabs.interviewresume',
+			url: '/interview/:row',
+            sticky: true,
+		    deepStateRedirect: true,
+            views:{
+                'interviewresume@tabs':{
+                    templateUrl: 'scripts/interviews/view/interview.html',
+                    controller: 'InterviewsCtrl as vm',
+                    params:{row: null,module:null,interviewId:null,startWithReferenceNumber:null},
+                    resolve:{
+                    	data: function($stateParams,ParticipantsService) {
+                    		ParticipantsService.findParticipant($stateParams.row).then(function(response){
+                    			if (response.status === 200) {
+                    				var participant = response.data[0];
+    	        					return participant;
+                    			}else if (response.status === 401) {
+									$log.error("Inside data of tabs.interviewresume tabs.js could not findParticipant with "+$stateParams.row);
+									return;
+								}
+	        					
+	        				});
+                        },
+                    	updateData: function($stateParams,ParticipantsService,InterviewsService){    
+                    		return ParticipantsService.findParticipant($stateParams.row).then(function(response){
+                    			if (response.status === 200) {
+                    				var participant = response.data[0];
+    	        					$log.info("Found Participant :"+participant.idParticipant);
+    	        					//show last interview
+    	        					var idInterview = 0;
+    	        					for(var i=0;i<participant.interviews.length;i++){
+    	        						idInterview = participant.interviews[i].interviewId;
+    	        					}
+    	        					return InterviewsService.get(idInterview).then(function(response) {
+        								if (response.status === 200) {
+        									return response.data;   				    				     									
+        								} else if (response.status === 401) {
+        									$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
+        									return;
+        								}
+        							});
+                    			}else if (response.status === 401) {
+									$log.error("Inside updateData of tabs.interviewresume tabs.js could not findParticipant with "+$stateParams.row);
+									return;
+								}
+	        					
+	        				});
+                        	
                         },
                         startWithReferenceNumber: function($stateParams,InterviewsService){
                         	return $stateParams.startWithReferenceNumber;

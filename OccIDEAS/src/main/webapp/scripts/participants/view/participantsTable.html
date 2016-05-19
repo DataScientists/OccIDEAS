@@ -30,10 +30,15 @@
 			{{participant.statusDescription}}
 		</td>	
 		<td>
+			<button gn-if="participant.statusDescription=='Running'" class="btn btn-default btn-sm"
+					ng-click="addInterviewTabInterviewersEdit(participant)" >
+			<span class="glyphicon glyphicon-play"></span>
+			</button>
 			<button class="btn btn-default btn-sm"
 					ng-click="addParticipantTab(participant)" >
 			<span class="glyphicon glyphicon-list-alt"></span>
 			</button>
+			
 		</td>
     </tr>
 </table>

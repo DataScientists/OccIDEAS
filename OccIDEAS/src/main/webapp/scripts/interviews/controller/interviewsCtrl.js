@@ -16,13 +16,8 @@
 		$scope.data = data;
 		$scope.displayQuestions=[];
 		$scope.$root.tabsLoading = false;
-		$scope.showIntroModule = true;
-		$scope.showModule = false;
-		$scope.showAjsm = false;
-		$scope.refNoPattern = "H([0-9]){6}";
 		$scope.multiSelected = [];
 		$scope.questionHistory = [];
-		$scope.updateAnswers = false;
 		$scope.referenceNumber = null;
 		$scope.intQuestionSequence = 0;
 
@@ -31,113 +26,50 @@
 	    }
 		$scope.awesId = {};	
 		$scope.startInterview = function(data) {
+			$scope.intDisplay = [];
 			$scope.referenceNumber = $scope.awesId.id;
 			createParticipant(data);
-				
+							
 		}
-		if(!$scope.data.interviewStarted){
+		if(!$scope.interview){
+			console.log($scope.interviewId);
 			if(startWithReferenceNumber){	
 				$scope.awesId.id = startWithReferenceNumber;
 	    		$scope.startInterview(data);		
 			}
-		}	
-		
+		}		
 		if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
 			populateInterviewModules(updateData[0].interviewId);
-		}
-		
+		}	
 		function getLastQuestionAsked(mod){
-				return _.maxBy(mod.questionsAsked, function(o) { 
-					return o.intQuestionSequence; 
-				});
-		}
-		 
+			return _.maxBy(mod.questionsAsked, function(o) { 
+				return o.intQuestionSequence; 
+			});
+		}	 
 		function populateInterviewModules(interviewId){
 			$scope.interviewId = interviewId;
-			InterviewsService.getIntDisplay(interviewId).then(function(data){
-				if(data){
-					$scope.intDisplay = data.data;
-					sequenceDisplay = data.data[data.data.length - 1].sequence;
-				}
-			});
+			
 			InterviewsService.getInterview(interviewId).then(function(data){
 				if(data){
 					var interview = data.data[0];
+					$scope.intDisplay = [];
+					if(interview.modules.length==0){
+						interview.module.questionsAsked = interview.actualQuestion;
+						interview.modules.push(interview.module);
+					}
 					var modules = interview.modules;
 					interview.active = true;
 					$scope.participant = interview.participant;
 					$scope.interview = interview;
-					$scope.data.interviewStarted = true;
-					$scope.data.interviewEnded = false;	
-					var mod = interview.modules[interview.modules.length - 1];
-					$scope.activeInterview = interview;
-					// scenario: mod has no questions asked yet
-					if(mod.questionsAsked.length == 0){
-						var prevMod = interview.modules[interview.modules.length - 2];
-						if(prevMod){
-							var lastQsAsked = prevMod.questionsAsked;
-							var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
-							var firstAnswer = lastActualQuestion.answers[0];
-							var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
-							var parent_id = firstAnswer.answerId;
-							var actualQuestion = {
-								topNodeId : prevMod.idNode,
-								questionId : firstAnswer.parentQuestionId,
-								parentId : parent_id,
-								number : firstAnswer.number,
-								link : 0
-							}
-						}else if(!prevMod){
-							prevMod = interview.modules[interview.modules.length - 1];
-							if(prevMod.questionsAsked.length > 0){
-							var lastQsAsked = prevMod.questionsAsked;
-							var lastActualQuestion = lastQsAsked[lastQsAsked.length - 1];
-							var firstAnswer = lastActualQuestion.answers[0];
-							var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
-							var parent_id = firstAnswer.answerId;
-							var actualQuestion = {
-								topNodeId : prevMod.idNode,
-								questionId : firstAnswer.parentQuestionId,
-								parentId : parent_id,
-								number : firstAnswer.number,
-								link : 0
-							}
-							}else{
-								var actualQuestion = {
-										parentId : prevMod.idNode,
-										number : '0'
-									}
-									return showNextQuestion(
-											actualQuestion,
-											false,
-											false,
-											1);
-							}
-						}
-					}else{
-					// scenario: question has child answers -> simple scenario
-						var lastQsAsked = null;
-						_.each($scope.activeInterview.modules,function(mod,ind){
-							var lastQs = getLastQuestionAsked(mod);
-							lastQsAsked = lastQsAsked?lastQsAsked.intQuestionSequence > 
-									lastQs.intQuestionSequence?lastQsAsked:lastQs:lastQs;
-						});
-					$scope.intQuestionSequence = lastQsAsked.intQuestionSequence + 1;
-					var lastActualQuestion = lastQsAsked;
-					var lastAnswer = lastActualQuestion.answers[lastActualQuestion.answers.length - 1];
-						var firstAnswer = lastActualQuestion.answers[0];
-						var parent_id = firstAnswer.answerId;
-						var actualQuestion = {
-							topNodeId : lastActualQuestion.topNodeId,
-							questionId : lastActualQuestion.questionId,
-							parentId : parent_id,
-							number : firstAnswer.number,
-							link : lastActualQuestion.link
-						}
-						return showNextQuestion(actualQuestion, true, false,lastActualQuestion.modCount);
-					}
+					$scope.interview.interviewStarted = true;
+					$scope.interview.interviewEnded = false;	
+					var lastQuestion = interview.actualQuestion[interview.actualQuestion.length - 1];						
+					determineNextUnansweredQuestion(lastQuestion);
+					
+					
 				}
+				
 			})
 		}
 
@@ -175,107 +107,104 @@
 			}, 1000);
 		};
 
-		self.editQuestion = function(question) {
-			var interview = $scope.activeInterview;
-			if (!interview) {
-				return null;
+		function getPreviousNumber(number){
+			var retValue = 0;
+			if(isNaN(number)){
+				var numArray = number.split(/[a-zA-Z]+/)
+				var lastNumber = numArray[numArray.length - 1];
+				var newNumber = lastNumber -1;
+				if(newNumber>0){
+					retValue = number.substr(0, number.lastIndexOf(lastNumber));
+					retValue = retValue + newNumber;
+				}else{
+					retValue = number.substr(0, number.lastIndexOf(lastNumber));
+				}				
+			}else{
+				if(number>0){
+					retValue = number - 1;
+				}
 			}
-			InterviewsService
-			.getIntQuestion(question.idInterview,question.questionId,question.count)
-			.then(
-					function(response) {
-						if (response.status === 200) {
-							console.log("retrieve question successful...");
-							question = response.data;
-							refreshInterview();
-							$scope.inProgress = true;
-							$scope.updateEnable = true;
-							$scope.updateFirst = true;
-							safeDigest($scope.inProgress);
-							var number = (question.number.substr(question.number.length - 1) - 1);
-							var newNum;
-							if (number == 0 && question.number.length > 1) {
-								newNum = question.number.substring(0,
-										question.number.length - 1);
-							}
-							var parentId = question.number.length > 1 ? question.parentAnswerId
-									: question.parentId;
-							var actualQuestion = {};
-							actualQuestion.topNodeId = question.topNodeId;
-							actualQuestion.questionId = question.questionId;
-							actualQuestion.parentId = parentId,
-							actualQuestion.number = newNum ? newNum : question.number
-									.slice(0, -1)
-									+ number;
-							var topMod = _.find($scope.activeInterview.modules, function(mod) {
-								return mod.idNode == question.topNodeId &&
-								mod.count == question.modCount;
-							});
-							var status = showNextQuestion(actualQuestion, false, true,
-									topMod.count);
-							if (status) {
-								status
-								.then(function(data) {
-									if (data == 200) {
-										var answerList = [];
-										var mod = _
-										.find(
-												$scope.activeInterview.modules,
-												function(mod) {
-													return mod.idNode == $scope.data.showedQuestion.topNodeId;
-												});
-										var qs = _
-										.find(
-												mod.questionsAsked,
-												function(qs) {
-													return $scope.data.showedQuestion.idNode == qs.questionId;
-												});
-										if (qs.type == 'Q_multiple') {
-											_.each($scope.data.showedQuestion.nodes,
-													function(node) {
-														_.find(qs.answers,
-														function(ans) {
-														if (ans.answerId == node.idNode) {
-															$scope.multiToggle(
-																node,
-																$scope.multiSelected);
-																	node.isSelected = true;
-																	answerList.push(ans);
-																	}
-																});
-													});
-											$scope.previousAnswer = answerList;
-										} else {
-											var qs = _
-											.find(
-													mod.questionsAsked,
-													function(qs) {
-														return $scope.data.showedQuestion.idNode == qs.questionId;
-													});
-											var ansNode = _
-											.find(
-													$scope.data.showedQuestion.nodes,
-													function(ans) {
-														return ans.idNode == qs.answers[0].answerId;
-													});
-											_.find(qs.answers, function(ans) {
-												if (ans.answerId == ansNode.idNode) {
-													answerList.push(ans);
-												}
-											});
-											//P_freetext
-											if(ansNode.type == 'P_freetext'){
-												ansNode.name = qs.answers[0].name;
-											}
-											$scope.data.showedQuestion.selectedAnswer = ansNode;
-											$scope.previousAnswer = angular.copy(ansNode);
-										}
-										// deleteQuestion([question]);
-									}
-								});
-							}
-						}
+			return retValue;
+		}
+		self.editQuestion = function(question) {
+			InterviewsService.getIntQuestion(question.idInterview,question.questionId,question.count).then(
+			  function(response) {
+				if (response.status === 200) {
+					console.log("retrieve question successful...");
+					question = response.data;
+					question.nodes = question.answers;
+					refreshInterview();
+					$scope.inProgress = true;
+					$scope.updateEnable = true;
+					$scope.updateFirst = true;
+					safeDigest($scope.inProgress);
+					
+					var newNum = getPreviousNumber(question.number);
+					var parentId = question.number.length > 1 ? question.parentAnswerId
+							: question.parentId;
+					var actualQuestion = {};
+					actualQuestion.topNodeId = question.topNodeId;
+					actualQuestion.questionId = question.questionId;
+					actualQuestion.parentId = parentId,
+					actualQuestion.number = newNum;
+					var topMod = _.find($scope.interview.modules, function(mod) {
+						return mod.idNode == question.topNodeId &&
+						mod.count == question.modCount;
 					});
+					var status = showNextQuestion(actualQuestion, false, true,topMod.count);
+					if (status) {
+						status.then(function(data) {
+							if (data == 200) {
+								var answerList = [];
+								var mod = _.find($scope.interview.modules,function(mod) {
+											return mod.idNode == $scope.interview.showedQuestion.topNodeId;
+										});
+								var qs = _.find(mod.questionsAsked,function(qs) {
+											return $scope.interview.showedQuestion.idNode == qs.questionId;
+										});
+								if (qs.type == 'Q_multiple') {
+									_.each($scope.interview.showedQuestion.nodes,
+											function(node) {
+												_.find(qs.answers,
+												function(ans) {
+												if (ans.answerId == node.idNode) {
+													$scope.multiToggle(
+														node,
+														$scope.multiSelected);
+															node.isSelected = true;
+															answerList.push(ans);
+															}
+														});
+											});
+									$scope.previousAnswer = answerList;
+								} else {
+									var qs = _.find(mod.questionsAsked,function(qs) {
+												return $scope.interview.showedQuestion.idNode == qs.questionId;
+											});
+									var ansNode = _.find($scope.interview.showedQuestion.nodes,function(ans) {
+												return ans.idNode == qs.answers[0].answerId;
+											});
+									_.find(qs.answers, function(ans) {
+										if (ans.answerId == ansNode.idNode) {
+											answerList.push(ans);
+										}
+									});
+									//P_freetext
+									if(ansNode.type == 'P_freetext'){
+										ansNode.name = qs.answers[0].name;
+									}
+									$scope.interview.showedQuestion.selectedAnswer = ansNode;
+									$scope.previousAnswer = angular.copy(ansNode);
+								}
+								// deleteQuestion([question]);
+							}
+						});
+					}
+					
+					
+					
+				}
+			});
 		};
 
 		function determineNextUnansweredQuestion(question) {
@@ -294,19 +223,19 @@
 				}
 			}
 			$scope.updateFirst = false;
-			$scope.data.showedQuestion = question;
+			$scope.interview.showedQuestion = question;
 			return false;
 		}
 
 		function refreshInterview() {
-			$scope.data.interviewStarted = true;
-			$scope.data.interviewEnded = false;
-			safeDigest($scope.data.interviewStarted);
+			$scope.interview.interviewStarted = true;
+			$scope.interview.interviewEnded = false;
+			safeDigest($scope.interview.interviewStarted);
 		}
 
 		function deleteQuestionWithParentAnswer(answerList) {
 			var mod = _.find($scope.interview.modules, function(mod) {
-				return mod.idNode == $scope.data.showedQuestion.topNodeId;
+				return mod.idNode == $scope.interview.showedQuestion.topNodeId;
 			});
 			
 			for (var i = 0; i < answerList.length; i++) {
@@ -316,6 +245,7 @@
 							|| mod.questionsAsked[j].parentAnswerId == answer.answerId) {
 						var question = mod.questionsAsked[j];
 						deleteModuleWithParentAnswer(answer);
+						removeLinksFromInterviewDisplay(answer.answerId);
 						question.deleted = 1;
 						answer.deleted = 1;
 						if (mod.questionsAsked[j].parentAnswerId == answer.answerId) {
@@ -350,7 +280,7 @@
 		}
 
 		function deleteModuleWithParentAnswer(answer) {
-			_.find($scope.activeInterview.modules, function(mod, index) {
+			_.find($scope.interview.modules, function(mod, index) {
 				if (index == 0) {
 					return false;
 				}
@@ -373,17 +303,18 @@
 					return;
 				}
 				_.remove($scope.interview.modules, function(mod) {
-					if (mod.answerNode && mod.answerNode == answer.answerId) {
-						deleteModuleWithParentModule(mod);
-						InterviewsService.saveInterviewMod(mod).then(
-								function(response) {
-									if (response.status === 200) {
-										$log.info("Success in saveInterviewMod");
-									}else{
-										$log.error("Error in saveInterviewMod");
-									}
-						});
-						return true;
+					if(mod){
+						if (mod.answerNode && mod.answerNode == answer.answerId) {
+							deleteModuleWithParentModule(mod);
+							InterviewsService.saveInterviewMod(mod).then(function(response) {
+								if (response.status === 200) {
+									$log.info("Removed module "+mod.name);
+								}else{
+									$log.error("Error in saveInterviewMod");
+								}
+							});
+							return true;
+						}
 					}
 					return false;
 				});
@@ -391,7 +322,7 @@
 		}
 
 		function deleteModuleWithParentModule(module) {
-			_.remove($scope.activeInterview.modules, function(mod) {
+			_.remove($scope.interview.modules, function(mod) {
 				if (mod.parentAnswerId && mod.parentAnswerId == module.idNode) {
 					mod.deleted = 1;
 					InterviewsService.saveInterviewMod(mod).then(
@@ -425,10 +356,10 @@
 							.then(function(response) {
 								if (response.status === 200) {
 									console.log("Delete question successful...");
-									var mod = _.find($scope.activeInterview.modules,
+									var mod = _.find($scope.interview.modules,
 											function(mod) {
-												return mod.idNode == $scope.data.showedQuestion.topNodeId
-														&& mod.count == $scope.data.showedQuestion.count;
+												return mod.idNode == $scope.interview.showedQuestion.topNodeId
+														&& mod.count == $scope.interview.showedQuestion.count;
 													    });
 														if (!mod) {
 															mod = _
@@ -436,7 +367,7 @@
 																			$scope.interview.modules,
 																			function(
 																					mod) {
-																				return mod.idNode == $scope.data.showedQuestion.topNodeId
+																				return mod.idNode == $scope.interview.showedQuestion.topNodeId
 																			});
 														}
 														_.remove(
@@ -592,30 +523,7 @@
 			addModuleCount();
 			var defer = $q.defer();
 			newQuestionAsked.answers[0].isProcessed = true;
-			// check if answer was already provided before during edit, if yes
-			// do not save that answer to avoid duplicates
-			var removedAns = undefined;
-			if(persistedAnswer){
-				_.each(persistedAnswer,function(ans,ind){
-					var removedData = _.remove(newQuestionAsked.answers,function(val){
-						return val.answerId== ans[ind].answerId});
-					if(removedData){
-						if(removedAns){
-							removedAns.push(removedData);
-						}else{
-							removedAns = [];
-							removedAns.push(removedData);
-						}
-					}
-				});
-			}
 			saveAnswer(newQuestionAsked,defer);
-			// readd the removedAns after save
-			if(removedAns){
-				_.each(removedAns,function(ans,ind){
-					newQuestionAsked.answers.push(ans[ind]);
-				});
-			}
 			defer.promise.then(function(){
 				//@TODO save on those answers not persisted
 			InterviewsService.saveQuestion(newQuestionAsked).then(
@@ -713,7 +621,7 @@
 		}
 		
 		function syncAs(newQuestionAsked,data){
-			var mod = _.find($scope.activeInterview.modules,function(mods,ind){
+			var mod = _.find($scope.interview.modules,function(mods,ind){
 				return mods.idNode == newQuestionAsked.topNodeId 
 					&& newQuestionAsked.modCount == mods.count; 
 			});
@@ -728,7 +636,7 @@
 		function processFrequency(interview, node) {
 			var deffered = undefined;
 			if ($scope.updateEnable
-					&& $scope.previousAnswer != $scope.data.showedQuestion.selectedAnswer) {
+					&& $scope.previousAnswer != $scope.interview.showedQuestion.selectedAnswer) {
 				var qs = hasQuestionBeenAsked(node);
 				deffered = $q.defer();
 				if (qs) {
@@ -738,7 +646,7 @@
 					_.remove($scope.interview.modules, function(mod) {
 						return mod.deleted == 1;
 					});
-					node.selectedAnswer = $scope.data.showedQuestion.selectedAnswer;
+					node.selectedAnswer = $scope.interview.showedQuestion.selectedAnswer;
 				} else {
 					deffered.resolve();
 				}
@@ -754,12 +662,12 @@
 
 		function buildAndSaveFrequency(interview, node) {
 			var hours = 0;
-			if ($scope.data.showedQuestion.hours) {
-				hours = $scope.data.showedQuestion.hours;
+			if ($scope.interview.showedQuestion.hours) {
+				hours = $scope.interview.showedQuestion.hours;
 			}
 			var minutes = 0;
-			if ($scope.data.showedQuestion.minutes) {
-				minutes = $scope.data.showedQuestion.minutes;
+			if ($scope.interview.showedQuestion.minutes) {
+				minutes = $scope.interview.showedQuestion.minutes;
 			}
 			var answerValue = node.nodes[0].name;
 			if(hours != 0 || minutes != 0){
@@ -880,11 +788,34 @@
 						}
 					});
 		}
-		
+		function removeLinksFromInterviewDisplay(nodeId){
+			for(var i=0;i<$scope.intDisplay.length;i++){
+				var displayNode = $scope.intDisplay[i];
+				if(displayNode.linkNum){
+					if(nodeId==displayNode.answerNode){
+						displayNode.deleted = 1;
+						intDisplaySequenceUpdate = displayNode.sequence;
+						InterviewsService.saveIntDisplay(displayNode).then(
+								function(response) {
+									if (response.status === 200) {
+										$log.info("Success in save interview display.");								
+									}else{
+										$log.error("Error in save interview display");
+									}
+								});
+					}
+				}
+			}
+			var size = $scope.intDisplay.length;
+			_.remove($scope.intDisplay,function(val) {
+				return val.deleted == 1;
+			});
+			size = $scope.intDisplay.length;
+		}
 		function processQuestion(interview, node) {
 			var deffered = undefined;
 			if ($scope.updateEnable
-					&& $scope.previousAnswer.name != $scope.data.showedQuestion.selectedAnswer.name) {
+					&& $scope.previousAnswer.name != $scope.interview.showedQuestion.selectedAnswer.name) {
 				var qs = hasQuestionBeenAsked(node);
 				deffered = $q.defer();
 				if (qs) {
@@ -894,10 +825,11 @@
 					_.remove($scope.interview.modules, function(mod) {
 						if(mod.deleted == 1){
 							deleteIntDisplay(mod.idNode,true);
+							
 						}
 						return mod.deleted == 1;
 					});
-					node.selectedAnswer = $scope.data.showedQuestion.selectedAnswer;
+					node.selectedAnswer = $scope.interview.showedQuestion.selectedAnswer;
 				} else {
 					deffered.resolve();
 				}
@@ -913,7 +845,6 @@
 
 		function buildAndSaveQuestion(interview, node) {
 			var answer = node.selectedAnswer;
-
 			var newQuestionAsked = {
 				idInterview : $scope.interviewId,
 				topNodeId : node.topNodeId,
@@ -948,8 +879,7 @@
 					$scope.displayQuestions.push(newQuestionAsked);
 				}
 			}
-			var mod = _.find(interview.modules,
-					function(val, ind) {
+			var mod = _.find(interview.modules,function(val, ind) {
 						return val.idNode === node.topNodeId
 								&& node.count == val.count;
 					});
@@ -960,10 +890,8 @@
 			}
 			// check if question already exist, do not push, just update the
 			// question in database
-			var qsIndex = _.indexOf(mod.questionsAsked, _.find(
-					mod.questionsAsked, function(qs) {
-						return qs.questionId == node.idNode
-								&& node.count == mod.count;
+			var qsIndex = _.indexOf(mod.questionsAsked, _.find(mod.questionsAsked, function(qs) {
+						return qs.questionId == node.idNode && node.count == mod.count;
 					}));
 			if (qsIndex == -1) {
 				newQuestionAsked.intQuestionSequence = angular.copy($scope.intQuestionSequence);
@@ -979,29 +907,26 @@
 			var defer = $q.defer();
 			saveAnswer(newQuestionAsked,defer);
 			defer.promise.then(function(){
-			InterviewsService.saveQuestion(newQuestionAsked).then(
-					function(response) {
-						if (response.status === 200) {
-							syncQs(mod,response.data);
-							var actualQuestion = {
-								topNodeId : node.topNodeId,
-								questionId : node.idNode,
-								parentId : answer.idNode,
-								number : answer.number,
-								link : node.link
-							}
-							showNextQuestion(actualQuestion, true, false,
-									mod.count);
-							
+				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
+					if (response.status === 200) {
+						syncQs(mod,response.data);
+						var currentNode = {
+							topNodeId : node.topNodeId,
+							questionId : node.idNode,
+							parentId : answer.idNode,
+							number : answer.number,
+							link : node.link
 						}
-					});
+						showNextQuestion(currentNode, true, false,mod.count);					
+					}
+				});
 			});
 		}
 
 		function validateIfAnswerSelected(node) {
 			if (node.type == 'Q_multiple') {
 				var retValue = false;
-				_.find($scope.data.showedQuestion.nodes, function(val, ind) {
+				_.find($scope.interview.showedQuestion.nodes, function(val, ind) {
 					if (val.isSelected) {
 						retValue = true;
 					}
@@ -1032,25 +957,25 @@
 						}
 					} else if (val.type == 'P_frequencyshifthours') {
 						var retValue = false;
-						if ($scope.data.showedQuestion.hours) {
+						if ($scope.interview.showedQuestion.hours) {
 							retValue = true;
 						}
-						if ($scope.data.showedQuestion.minutes) {
+						if ($scope.interview.showedQuestion.minutes) {
 							retValue = true;
 						}
 					} else if (val.type == 'P_frequencyhoursminute') {
 						var retValue = false;
-						if ($scope.data.showedQuestion.hours) {
+						if ($scope.interview.showedQuestion.hours) {
 							retValue = true;
 						}
-						if ($scope.data.showedQuestion.minutes) {
+						if ($scope.interview.showedQuestion.minutes) {
 							retValue = true;
 						}
 					}
 				}
 				return retValue;
 			} else if (node.type == 'Q_single' || node.type == 'Q_simple') {
-				return $scope.data.showedQuestion.selectedAnswer;
+				return $scope.interview.showedQuestion.selectedAnswer;
 			}
 		}
 
@@ -1059,33 +984,26 @@
 				alert("Please select an answer.");
 				return;
 			}
-			
 			$scope.inProgress = true;
-			ParticipantsService.findInterviewParticipant(
-					$scope.participant.idParticipant).then(
-					function(response) {
-						if (response.status === 200) {
-							$scope.participant = response.data[0];
-
-							var interview = $scope.activeInterview;
-							if (!interview) {
-								return null;
-							}
-							if (node.type == 'Q_multiple') {
-								processInterviewQuestionsWithMultipleAnswers(
-										interview, node);
-								
-							} else if (node.type == 'Q_frequency') {
-								processFrequency(interview, node);
-								
-							} else {
-								processQuestion(interview, node);
-								
-							}
+			ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(function(response) {
+				if (response.status === 200) {
+					$scope.participant = response.data[0];
+					var interview = $scope.interview;
+					if (interview) {
+						if (node.type == 'Q_multiple') {
+							processInterviewQuestionsWithMultipleAnswers(interview, node);						
+						} else if (node.type == 'Q_frequency') {
+							processFrequency(interview, node);					
+						} else {
+							processQuestion(interview, node);			
 						}
-					});
+					}else{
+						alert("OOPS! Lost the Scope Interview, Please take a screen shot and submit a issue ticket");					
+					}				
+				}
+			});
 		}
-		$scope.abortInterview = function(node) {
+		$scope.stopInterview = function(node) {
 			ParticipantsService
 					.findInterviewParticipant($scope.participant.idParticipant)
 					.then(
@@ -1107,15 +1025,14 @@
 											processQuestion(interview, node);
 										}
 									}
-									if (confirm('Abort Interview')) {
+									if (confirm('Stop Interview?')) {
 										if (!(interview.notes)) {
 											interview.notes = [];
 										}
-										interview.notes
-												.push({
+										interview.notes.push({
 													interviewId : interview.interviewId,
-													text : 'Interview Aborted',
-													type : 'Interviewer'
+													text : 'Interview Stopped',
+													type : 'System'
 												});
 										saveInterview(interview);
 										endInterview();
@@ -1145,7 +1062,7 @@
 		}
 
 		function addModuleCount(){
-			_.each($scope.activeInterview.modules,function(mod,ind){
+			_.each($scope.interview.modules,function(mod,ind){
 				_.each(mod.questionsAsked,function(qs,index){
 					qs.modCount = mod.count;
 					addModuleCountAnswers(qs.answers,mod.count);
@@ -1164,93 +1081,60 @@
 				reference : $scope.referenceNumber,
 				interviews : []
 			}
-			ParticipantsService
-					.createParticipant(participant)
-					.then(
-							function(response) {
-								if (response.status === 200) {
-									$scope.participant = response.data;
-									InterviewsService
-											.findModule($scope.data[0].idNode)
-											.then(
-													function(response) {
-														console
-																.log("Data getting from questions AJAX ...");
-														$scope.data = response.data;
-														var interview = {};
-														interview.module = $scope.data[0];
-														interview.referenceNumber = $scope.referenceNumber;
-														interview.modules = [];
-														var jsonMod = {
-																name : interview.module.name,
-																idNode : interview.module.idNode,
-																topNodeId : 0,
-																parentNode : 0,
-																answerNode : 0,
-																parentAnswerId : 0,
-																number : 0,
-																count : 1,
-																linkNum: 0,
-																sequence: ++sequence,
-																deleted : 0,
-																questionsAsked : []
-															};
-														interview.modules
-																.push(jsonMod);
-														var copyParticipant = angular
-																.copy($scope.participant);
-														interview.participant = copyParticipant;
-														$scope.interview = {};
-														$scope.interview = interview;
-														$scope.activeInterview = interview;
-														interview.active = true;
-														InterviewsService
-																.startInterview(
-																		interview)
-																.then(
-																		function(
-																				response) {
-																			if (response.status === 200) {
-																				$scope.interviewId = response.data.interviewId;
-																				updateInterviewDisplay(jsonMod);
-																				interview.modules[0].idInterview = $scope.interviewId;
-																				InterviewsService.saveInterviewMod(interview.modules[0]).then(
-																						function(response) {
-																							if (response.status === 200) {
-																								$log.info("Success in saveInterviewMod");
-																							}else{
-																								$log.error("Error in saveInterviewMod");
-																							}
-																				});
-																				$scope.activeInterview.interviewId = response.data.interviewId;
-																				ParticipantsService
-																						.save(
-																								$scope.participant)
-																						.then(
-																								function(
-																										response) {
-																									if (response.status === 200) {
-																										$scope.data.interviewStarted = true;
-																										$scope.data.interviewEnded = false;
-																										var actualQuestion = {
-																											parentId : interview.module.idNode,
-																											number : '0'
-																										}
-																										showNextQuestion(
-																												actualQuestion,
-																												false,
-																												false,
-																												1);
-																									} else {
-																										console
-																												.log('ERROR on Start Interview!');
-																									}
-																								});
-																			}
-																		});
-													});
-								}
+			ParticipantsService.createParticipant(participant).then(function(response) {
+				if (response.status === 200) {
+					participant = response.data;
+					$scope.participant = participant;
+					var interview = {};
+					interview.participant = participant;
+					interview.module = $scope.data[0];
+					interview.referenceNumber = $scope.referenceNumber;					
+					InterviewsService.startInterview(interview).then(function(response) {
+						if (response.status === 200) {
+							interview.modules = [];
+							var jsonMod = {
+									idInterview : $scope.interviewId,
+									name : interview.module.name,
+									idNode : interview.module.idNode,
+									topNodeId : 0,
+									parentNode : 0,
+									answerNode : 0,
+									parentAnswerId : 0,
+									number : 0,
+									count : 1,
+									linkNum: 0,
+									sequence: ++sequence,
+									deleted : 0,
+									questionsAsked : []
+								};
+							interview.modules.push(jsonMod);
+							var copyParticipant = angular.copy($scope.participant);
+							interview.participant = copyParticipant;
+							$scope.interview = {};
+							$scope.interview = interview;																	
+							$scope.interview.interviewStarted = true;
+							$scope.interviewId = response.data.interviewId;
+							updateInterviewDisplay(jsonMod);
+							InterviewsService.saveInterviewMod(interview.modules[0]).then(
+								function(response) {
+									if (response.status === 200) {
+										$log.info("Success in saveInterviewMod");
+									}else{
+										$log.error("Error in saveInterviewMod");
+									}
 							});
+							var startingNode = {
+									parentId : interview.module.idNode,
+									number : '0'
+								}
+							var isAnswer=false; //this flag is for when the passed in node is an answer
+							var statusRequired=false;//this flag is for when the call needs to wait for a status back
+							var count=1;
+							showNextQuestion(startingNode,isAnswer,statusRequired,1);
+						}
+					});
+				}
+			});
 		}
 		
 		function validReferenceNumber(referenceNumber) {
@@ -1382,184 +1266,164 @@
 		};
 		$scope.questionheader = {};
 
-		function showNextQuestion(actualQuestion, isAnswer, statusRequired,
-				count) {
+		function showNextQuestion(currentNode, isAnswer, statusRequired,count) {
 			var defer;
 			if (statusRequired) {
 				defer = $q.defer();
 			}
-			var actualQuestionTemp = actualQuestion;
+			var currentNodeTemp = currentNode;
 			var tempCount = count;
-			return InterviewsService
-					.getNextQuestion(actualQuestion)
-					.then(
-							function(response) {
-								if (response.status === 200) {
-									var question = response.data;
-									question.count = tempCount;
-									resetSelectedIndex();
-									if (question.link == 0) {
-										$scope.inProgress = false;
-										safeDigest($scope.inProgress);
-										var mod = _.find($scope.activeInterview.modules,
-												function(val, ind) {
-													return val.idNode == question.topNodeId;
-												});
-										$scope.questionheader.name = mod.name.substring(0, 4);
-										if ($scope.updateEnable) {
-											
-											if (determineNextUnansweredQuestion(question)) {
-												return;
-											}
-										} else {
-											if ($scope.data.showedQuestion) {
-												$scope.scrollTo($scope.data.showedQuestion.idNode);
-											}
-											$scope.data.showedQuestion = question;
-											
-											
-										}
-										safeDigest($scope.data.showedQuestion);
+			if (isAnswer) {//if currentNode is answer then set its parentid (which is a questionid) to use later if needed
+				$scope.parentQId = currentNodeTemp.questionId;
+			} else {
+				$scope.parentQId = undefined;
+			}
+			return InterviewsService.getNextQuestion(currentNode).then(function(response) {
+					if (response.status === 200) {
+						var question = response.data;
+						question.count = tempCount;
+						resetSelectedIndex();
+						if (question.link == 0) {//not a linking q
+							$scope.inProgress = false; //so stop the progress bar we should find this guy fast
+							safeDigest($scope.inProgress);  //lets make sure that signal gets through we don't want never ending progress bars
+							//find this questions module
+							var currentModules = $scope.interview.modules;
+							var mod = _.find(currentModules,function(val, ind) {
+										return val.idNode == question.topNodeId;
+									});
+							if(!mod){
+								$log.error("No parent module found for "+question.idNode);
+							}else{
+								if(hasQuestionBeenAsked(question)){
+									determineNextUnansweredQuestion(question);
+								}else{
+									$scope.questionheader.name = mod.name.substring(0, 4);
+									if ($scope.interview.showedQuestion) {
+										$scope.scrollTo($scope.interview.showedQuestion.idNode);
 									}
-									if (isAnswer) {
-										$scope.parentQId = actualQuestionTemp.questionId;
-									} else {
-										$scope.parentQId = undefined;
-									}
-									if (question.link !== 0) {
-										return processLinkingQuestion(question,
-												actualQuestionTemp);
-									}
-									if (question.type == 'Q_frequency') {
-										$scope.hoursPerWeekArray = $scope
-												.getHoursPerWeekArray();
-										$scope.hoursArray = $scope
-												.getShiftHoursArray();
-										$scope.minutesArray = $scope
-												.getShiftMinutesArray();
+									if (question.type == 'Q_frequency') { //if frequency set up frequency lists
+										$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+										$scope.hoursArray = $scope.getShiftHoursArray();
+										$scope.minutesArray = $scope.getShiftMinutesArray();
 										$scope.weeks = $scope.getWeeksArray();
-										$scope.seconds = $scope
-												.getSecondsArray();
+										$scope.seconds = $scope.getSecondsArray();
 									}
-									if (statusRequired) {
-										defer.resolve(response.status);
-										return defer.promise;
-									}
-								} else if (response.status == 204) {
-									if (statusRequired) {
-										defer.resolve(response.status);
-										return defer.promise;
-									}
-									var mod = _
-											.find(
-													$scope.activeInterview.modules,
-													function(val, ind) {
-														return val.idNode == actualQuestionTemp.topNodeId
-																&& val.count == tempCount;
-													});
-									if (!mod) {
-										mod = _
-												.find(
-														$scope.activeInterview.modules,
-														function(val, ind) {
-															return val.idNode == actualQuestionTemp.topNodeId;
-														});
-									}
-									var results = _
-											.find(
-													mod.questionsAsked,
-													function(val, index) {
-														return val.questionId == actualQuestionTemp.questionId;
-													});
-
-									var multiAnswer = results ? _
-											.find(
-													results.answers,
-													function(val, ind) {
-														return val.isProcessed == false;
-													})
-											: undefined;
-
-									if (multiAnswer) {
-										multiAnswer.isProcessed = true;
-										saveAnswer(results);
-										var answer = multiAnswer;
-
-										var actualQuestion = {
-											topNodeId : results.topNodeId,
-											questionId : results.questionId,
-											parentId : answer.answerId,
-											number : answer.number
-										}
-										showNextQuestion(actualQuestion, true,
-												false, results.modCount);
-									} else if (results) {
-										var parent_id = 0;
-										if (results.link != 0) {
-											parent_id = results.link;
-										} else if (results.parentAnswerId) {
-											parent_id = results.parentAnswerId;
-										} else {
-											parent_id = results.parentId;
-										}
-										var actualQuestion = {
-											topNodeId : results.topNodeId,
-											questionId : results.parentId,
-											parentId : parent_id,
-											number : results.number,
-											link : results.link
-										}
-										var isParentAnAnswer = false;
-										if(results.parentId!=results.topNodeId){
-											isParentAnAnswer = true;
-										}
-										showNextQuestion(actualQuestion, isParentAnAnswer,
-												false, results.modCount);
-									} else if (mod.parentNode) {
-										verifyQuestionInParentModule(mod);
-									} else {
-										AssessmentsService
-												.updateFiredRules(
-														$scope.interviewId)
-												.then(
-														function(response) {
-															if (response.status === 200) {
-																console
-																		.log('Updated Fired Rules');
-															}
-														});
-										endInterview();
-									}
-								} else {
-									console.log('ERROR on Get!');
-								}
-								angular.element('#numId').focus();
-
-							});
+									$scope.interview.showedQuestion = question;								
+									safeDigest($scope.interview.showedQuestion);
+								}							
+							}	
+						}else if (question.link !== 0) {
+							return processLinkingQuestion(question,currentNodeTemp);
+						}
+						if (statusRequired) {
+							defer.resolve(response.status);
+							return defer.promise;
+						}
+					} else if (response.status == 204) { //could not find that question
+						if (statusRequired) {
+							defer.resolve(response.status);
+							return defer.promise;
+						}
+						var mod = _.find($scope.interview.modules,function(val, ind) {
+											return val.idNode == currentNodeTemp.topNodeId && val.count == tempCount;
+										});
+						if (!mod) {
+							mod = _.find($scope.interview.modules,function(val, ind) {
+												return val.idNode == currentNodeTemp.topNodeId;
+											});
+						}
+						var results = _.find(mod.questionsAsked,function(val, index) {
+											return val.questionId == currentNodeTemp.questionId;
+										});
+	
+						var multiAnswer = results ? _.find(results.answers,function(val, ind) {
+											return val.isProcessed == false;
+										})
+								: undefined;
+	
+						if (multiAnswer) {
+							multiAnswer.isProcessed = true;
+							saveAnswer(results);
+							var answer = multiAnswer;
+	
+							var actualQuestion = {
+								topNodeId : results.topNodeId,
+								questionId : results.questionId,
+								parentId : answer.answerId,
+								number : answer.number
+							}
+							showNextQuestion(actualQuestion, true,
+									false, results.modCount);
+						} else if (results) {
+							var parent_id = 0;
+							if (results.link != 0) {
+								parent_id = results.link;
+							} else if (results.parentAnswerId) {
+								parent_id = results.parentAnswerId;
+							} else {
+								parent_id = results.parentId;
+							}
+							var actualQuestion = {
+								topNodeId : results.topNodeId,
+								questionId : results.parentId,
+								parentId : parent_id,
+								number : results.number,
+								link : results.link
+							}
+							var isParentAnAnswer = false;
+							if(results.parentId!=results.topNodeId){
+								isParentAnAnswer = true;
+							}
+							showNextQuestion(actualQuestion, isParentAnAnswer,
+									false, results.modCount);
+						} else if (mod.parentNode) {
+							verifyQuestionInParentModule(mod);
+						} else {
+							AssessmentsService
+									.updateFiredRules(
+											$scope.interviewId)
+									.then(
+											function(response) {
+												if (response.status === 200) {
+													console
+															.log('Updated Fired Rules');
+												}
+											});
+							endInterview();
+						}
+					} else {
+						console.log('ERROR on Get!');
+					}
+					angular.element('#numId').focus();
+	
+				});
 		}
 
 		function hasQuestionBeenAsked(node) {
-			var mod = _.find($scope.activeInterview.modules,
-					function(val, ind) {
-						return val.idNode == node.topNodeId
-								&& node.count == val.count;
+			if(!node.idNode){
+				node.idNode = node.questionId;
+			}
+			var mod = _.find($scope.interview.modules,function(val, ind) {
+						return ((val.idNode == node.topNodeId) && (node.count == val.count));//if we can find it with a count use that first
 					});
 			if (!mod) {
-				mod = _.find($scope.activeInterview.modules,
-						function(val, ind) {
-							return val.idNode == node.topNodeId;
+				mod = _.find($scope.interview.modules,function(val, ind) {
+							return val.idNode == node.topNodeId;//find the module but don't worry about the count
 						});
 			}
-			var results = _.find(mod.questionsAsked, function(val, index) {
-				return val.questionId == node.idNode;
-			});
+			var results;
+			if(mod){//dont set results if we cant even find the module must be an unasked question
+				results = _.find(mod.questionsAsked, function(val, index) {//now that we found the module see if its in the list
+					return val.questionId == node.idNode;
+				});
+			}
 			return results;
 		}
 
 		var sequence = 0;
 		function processLinkingQuestion(question, actualQuestionTemp) {
 			// check if link is a child
-			var parentMod = _.find($scope.activeInterview.modules,function(mod,ind){
+			var parentMod = _.find($scope.interview.modules,function(mod,ind){
 				return mod.idNode == actualQuestionTemp.parentId;
 			});
 			
@@ -1581,24 +1445,24 @@
 			};
 			var mdIndex = _
 					.indexOf(
-							$scope.activeInterview.modules,
+							$scope.interview.modules,
 							_
 									.find(
-											$scope.activeInterview.modules,
+											$scope.interview.modules,
 											function(val) {
 												return (val.answerNode == question.parentId 
 														&& val.idNode == question.link
 														&& val.count == question.count);
 											}));
 			if (mdIndex == -1) {
-				var modules = _.filter($scope.activeInterview.modules,
+				var modules = _.filter($scope.interview.modules,
 						function(val) {
 							return val.idNode == modDetail.idNode;
 						});
 				if (modules) {
 					modDetail.count = modDetail.count + modules.length;
 				}
-				$scope.activeInterview.modules.push(modDetail);
+				$scope.interview.modules.push(modDetail);
 				updateInterviewDisplay(modDetail);
 				InterviewsService.saveInterviewMod(modDetail).then(
 						function(response) {
@@ -1610,7 +1474,7 @@
 						});
 			}
 			var num = 0;
-			_.find($scope.activeInterview.modules, function(val) {
+			_.find($scope.interview.modules, function(val) {
 				if (val.idNode == question.link
 						&& val.parentAnswerId == question.parentId) {
 					if (val.questionsAsked.length > 0) {
@@ -1632,7 +1496,7 @@
 			var tempMod = angular.copy(mod);
 			var mod = _
 					.find(
-							$scope.activeInterview.modules,
+							$scope.interview.modules,
 							function(val, ind) {
 								return (val.idNode === tempMod.topNodeId || val.topNodeId == tempMod.topNodeId)
 										&& val.count == tempMod.count;
@@ -1660,13 +1524,13 @@
 					status
 							.then(function(data) {
 								if (data == 204) {
-									if (mod.idNode == $scope.activeInterview.modules[0].idNode) {
+									if (mod.idNode == $scope.interview.modules[0].idNode) {
 										return endInterview();
 									}
 
 									var modParent = _
 											.find(
-													$scope.activeInterview.modules,
+													$scope.interview.modules,
 													function(val, ind) {
 														return val.idNode === mod.topNodeId;
 													});
@@ -1708,13 +1572,13 @@
 		function endInterview() {
 			$scope.inProgress = false;
 			safeDigest($scope.inProgress);
-			$scope.data.interviewStarted = false;
-			$scope.data.interviewEnded = true;
+			$scope.interview.interviewStarted = false;
+			$scope.interview.interviewEnded = true;
 			$scope.updateEnable = false;
 			
 		}
 		$scope.finishInterview = function(){
-			var interview = $scope.activeInterview;
+			var interview = $scope.interview;
 			if (!(interview.notes)) {
 				interview.notes = [];
 			}
@@ -1736,7 +1600,7 @@
 				id : 0,
 				parent_id : null,
 				type : 'I',
-				name : $scope.activeInterview.referenceNumber,
+				name : $scope.interview.referenceNumber,
 				number : 'Interview',
 				nodes : []
 			};
@@ -1744,7 +1608,7 @@
 				0 : root
 			};
 			var table = [];
-			_.each($scope.activeInterview.modules, function(module) {
+			_.each($scope.interview.modules, function(module) {
 				var parent_id = null;
 				if (module.parentAnswerId) {
 					parent_id = module.parentAnswerId;
@@ -1838,7 +1702,7 @@
 		}
 		function saveNewNote(result) {
 			var noteText = result;
-			var interview = $scope.activeInterview;
+			var interview = $scope.interview;
 			if (!(interview.notes)) {
 				interview.notes = [];
 			}

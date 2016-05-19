@@ -186,6 +186,14 @@
             }
         };
         $scope.addInterviewTabInterviewers = function(idNode,awesId) {
+        	//close other interview tabs
+        	for(var i = tabs.length -1; i >= 0 ; i--){
+        		var tab = tabs[i];
+        		if(tab.viewName=='interview@tabs'){
+        			tabs.splice(i, 1);
+        			$scope.tabOptions.splice(i, 1);
+        		}
+        	}
             var tabTitle = "New Interview "+awesId;
             var state = "tabs.interview";
             $stickyState.reset(state);
@@ -199,6 +207,33 @@
                 $scope.tabOptions.push({
                     state: state,
                     data: {row:idNode,startWithReferenceNumber: awesId}
+                });
+            }
+            $rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
+        };
+        $scope.addInterviewTabInterviewersEdit = function(participant) {
+        	//close other interview tabs
+        	for(var i = tabs.length -1; i >= 0 ; i--){
+        		var tab = tabs[i];
+        		if(tab.viewName=='interviewresume@tabs'){
+        			tabs.splice(i, 1);
+        			$scope.tabOptions.splice(i, 1);
+        		}
+        	}
+            var tabTitle = "Resume Interview "+participant.reference;
+            var state = "tabs.interviewresume";
+            $stickyState.reset(state);
+            if(!checkIfTabIsOpen(tabs,tabTitle)){
+                tabs.push({
+                    title : tabTitle,
+                    viewName: 'interviewresume@tabs',
+                    canClose: true,
+                    disabled : false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {row:participant.idParticipant}
                 });
             }
             $rootScope.tabsLoading = true;
