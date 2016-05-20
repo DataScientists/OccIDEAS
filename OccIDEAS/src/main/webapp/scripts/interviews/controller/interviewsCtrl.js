@@ -1,7 +1,7 @@
 (function() {
 	angular.module('occIDEASApp.Interviews').controller('InterviewsCtrl',
 			InterviewsCtrl);
-
+	
 	InterviewsCtrl.$inject = [ 'data', '$scope', '$mdDialog',
 			'FragmentsService', '$q', 'QuestionsService', 'ModulesService',
 			'InterviewsService', 'ParticipantsService', 'AssessmentsService',
@@ -1022,37 +1022,32 @@
 			});
 		}
 		$scope.stopInterview = function(node) {
-			ParticipantsService
-					.findInterviewParticipant($scope.participant.idParticipant)
-					.then(
-							function(response) {
-								if (response.status === 200) {
-									$scope.participant = response.data[0];
-
-									var interview = $scope.participant.interviews[0];
-									if (validateIfAnswerSelected(node)) {
-										if (!interview) {
-											return null;
-										}
-										if (node.type == 'Q_multiple') {
-											processInterviewQuestionsWithMultipleAnswers(
-													interview, node);
-										} else if (node.type == 'Q_frequency') {
-											processFrequency(interview, node);
-										} else {
-											processQuestion(interview, node);
-										}
-									}
-									if (confirm('Stop Interview?')) {
-										addInterviewNote('Interview Stopped','System');
-										
-										var participant = $scope.participant;
-										participant.status = 1;//partial
-										saveParticipant(participant);
-										endInterview();
-									}
-								}
-							});
+			ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(
+			  function(response) {
+				if (response.status === 200) {
+					$scope.participant = response.data[0];
+					var interview = $scope.participant.interviews[0];
+					if (validateIfAnswerSelected(node)) {
+						if (!interview) {
+							return null;
+						}
+						if (node.type == 'Q_multiple') {
+							processInterviewQuestionsWithMultipleAnswers(interview, node);
+						} else if (node.type == 'Q_frequency') {
+							processFrequency(interview, node);
+						} else {
+							processQuestion(interview, node);
+						}
+					}
+					if (confirm('Stop Interview?')) {
+						addInterviewNote('Interview Stopped','System');					
+						var participant = $scope.participant;
+						participant.status = 1;//partial
+						saveParticipant(participant);
+						endInterview();
+					}
+				}
+			});
 		}
 		function addInterviewNote(note,type){
 			var interview = $scope.interview;
@@ -1782,6 +1777,13 @@
 						}
 					});
 		}
-		
+    	$rootScope.removeTab = function(tab) {
+    		addInterviewNote('Interview Closed','System');
+    		var participant = $scope.participant;
+    		participant.status = 1;//partial
+    		saveParticipant(participant);
+    		
+    		$rootScope.removeTabFromOverride();
+    	};
 	}
 })();
