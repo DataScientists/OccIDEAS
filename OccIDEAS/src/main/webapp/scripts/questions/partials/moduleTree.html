@@ -85,7 +85,10 @@
                          ng-class="selectedMode">
         	<md-fab-trigger>
           	<md-button aria-label="menu" >
-            <span class="badge">Type:{{node.type}}</span>
+                <span class="badge" ng-if="node.type == 'M_IntroModule'">Type:Intro</span>
+                <span class="badge" ng-if="node.type == 'M_Module_'">Type:Development</span>
+                <span class="badge" ng-if="node.type == 'M_Module'">Type:Production</span>
+                <span class="badge" ng-if="node.type == 'M_Module__'">Type:Tests</span>
           	</md-button>
         	</md-fab-trigger>
         	<md-fab-actions>
