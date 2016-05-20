@@ -29,7 +29,7 @@
         <td title="'Status'" sortable="'statusDescription'" filter="{ statusDescription: 'text'}">
 			{{participant.statusDescription}}
 		</td><td title="'Notes'" >		
-			<div ng-repeat="note in participant.notes" ng-if="note.type!='System'">{{note.text}}}}</div>		
+			<div ng-repeat="note in participant.notes" ng-if="note.type!='System'">{{note.text}}</div>		
 		</td>	
 		<td>
 			<button ng-if="participant.statusDescription=='Running'" class="btn btn-default btn-sm"
