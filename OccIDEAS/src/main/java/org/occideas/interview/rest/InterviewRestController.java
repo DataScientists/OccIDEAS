@@ -166,7 +166,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     		NoteVO note = new NoteVO();
         	note.setInterviewId(json.getInterviewId());
         	note.setText("Interview Updated");
-        	note.setType("system");
+        	note.setType("System");
         	json.getNotes().add(note);
 			service.update(json);
 		}catch(Throwable e){
@@ -279,7 +279,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	NoteVO note = new NoteVO();
     	note.setInterviewId(interview.getInterviewId());
     	note.setText("Ran determineFiredRules");
-    	note.setType("system");
+    	note.setType("System");
     	interview.getNotes().add(note);
     	service.update(interview);
     	return interview;

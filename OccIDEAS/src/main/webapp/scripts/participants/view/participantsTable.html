@@ -28,8 +28,8 @@
             {{participant.reference}}</td>
         <td title="'Status'" sortable="'statusDescription'" filter="{ statusDescription: 'text'}">
 			{{participant.statusDescription}}
-		</td><td title="'Notes'" >
-			<div ng-repeat="notes in participant.notes">{{note.text}}:{{note.lastUpdated | date:'yyyy-MM-dd HH:mm:ss Z'}}</div>
+		</td><td title="'Notes'" >		
+			<div ng-repeat="note in participant.notes" ng-if="note.type!='System'">{{note.text}}}}</div>		
 		</td>	
 		<td>
 			<button ng-if="participant.statusDescription=='Running'" class="btn btn-default btn-sm"
