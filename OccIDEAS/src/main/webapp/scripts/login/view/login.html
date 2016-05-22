@@ -1,0 +1,52 @@
+<style>
+td, th {
+    padding: 1px;
+}
+</style>
+<div class="container-fluid">
+	<section>
+		<div style="position:absolute; left:412px; top:250px; margin-left: 5px; margin-top: 5px; font-weight: bold; font-size: 9pt;">
+			<div id="errorMsgs" ng-show="vm.hasErrMsg">
+				<table class="no-cell-spacing">
+					<tr align="left">
+						<td align="left"><font color="red">{{vm.errMsg}}</font></td>
+					</tr>
+				</table>
+			</div>
+			<div id="loginForm">
+				<table class="no-cell-spacing" border="0">
+					<tr>
+						<td style="padding-left: 50px">
+							<table class="no-cell-spacing" border="0">
+								<tr>
+									<td class="col_title">User Id</td> 
+									<td><input id="txtLoginId" type="text" style="width: 149px;" ng-model="vm.userId"/></td>
+								</tr>
+								<tr>
+									<td class="col_title">Password</td>
+									<td><input id="txtPassword" type="password" style="width: 149px;" ng-model="vm.password"/></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: right; padding-top: 10px; padding-left: 95px;">
+							<table class="align-right">
+								<tr>
+									<td align="left">
+										<input id="resetBtn" value="Reset" type="button" class="camsButtonGrey" ng-click="vm.reset()" />
+									</td>
+									<td align="right">
+										<div id="notLoggedInBtn" ng-show="!vm.isAuthenticated">
+											<input id="loginBtn" value="Login"  type="button" class="camsButtonRed" ng-click="vm.login()" />
+										</div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</section>
+</div>
