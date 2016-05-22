@@ -9,8 +9,10 @@ import org.occideas.participant.dao.ParticipantDao;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class ParticipantServiceImpl implements ParticipantService {
 
 	@Autowired
