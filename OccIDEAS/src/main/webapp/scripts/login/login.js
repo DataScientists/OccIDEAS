@@ -1,6 +1,6 @@
 (function() {
 
-    angular.module('cams.login',['ui.router']).config(Config);
+    angular.module('occIDEASApp.Login',['ui.router']).config(Config);
 
     Config.$inject = ['$stateProvider'];
 
@@ -8,7 +8,7 @@
            $stateProvider
         .state('login', {
             url: '/',
-            templateUrl: 'resources/views/login/view/login.html',
+            templateUrl: 'scripts/login/view/login.html',
             controller: 'LoginCtrl',
             controllerAs: 'vm',
             authenticate: false

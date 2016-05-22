@@ -3,6 +3,7 @@
 angular
   .module("occIDEASApp", [
     "ui.router",
+    "toaster",
     "ngMaterial",
     "ui.tree",
     "ngTable",
@@ -24,7 +25,8 @@ angular
     "occIDEASApp.Assessments",
     "occIDEASApp.Participants",
     "occIDEASApp.InterviewResults",
-    "occIDEASApp.ModuleRule"
+    "occIDEASApp.ModuleRule",
+    "occIDEASApp.Login"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
@@ -133,6 +135,10 @@ angular
    		    return response;
    		}
    	}
+   }
+   
+   angular.isUndefinedOrNull = function(val) {
+       return angular.isUndefined(val) || val == null || val === "null";
    }
    
 })();

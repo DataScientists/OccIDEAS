@@ -1,10 +1,10 @@
 (function() {
 
-    angular.module('cams.login').controller('LoginCtrl',
+    angular.module('occIDEASApp.Login').controller('LoginCtrl',
             LoginCtrl);
 
-    LoginCtrl.$inject = [ '$state', 'toaster', '$timeout', '$scope', '$http'  ,'$rootScope', 'dataBeanService', '$locale', '$window', '$translate','loginService'];
-    function LoginCtrl($state, toaster, $timeout, $scope, $http, $rootScope, dataBeanService, $locale, $window, $translate, loginService) {
+    LoginCtrl.$inject = [ '$state', 'toaster', '$timeout', '$scope', '$http'  ,'$rootScope', 'dataBeanService', '$window','loginService'];
+    function LoginCtrl($state, toaster, $timeout, $scope, $http, $rootScope, dataBeanService,$window, loginService) {
         var vm = this;
         $scope.user = {};
         vm.userId = '';
@@ -13,9 +13,9 @@
         vm.errMsg = '';
         vm.isAuthenticated = false;
 
-        if(dataBeanService.getCamsStatetransitionHasErr() === '1') {
+        if(dataBeanService.getStatetransitionHasErr() === '1') {
             vm.hasErrMsg = true;
-            vm.errMsg = $translate.instant('NOT_AUTH');
+            vm.errMsg = 'NOT_AUTH'
         }
 
         vm.login = function() {
@@ -30,15 +30,15 @@
 
                     if(status === 200) {
 
-                        $window.sessionStorage.camsUserId = vm.userId;
-                        $window.sessionStorage.camsUserIdToken = data.token;
+                        $window.sessionStorage.UserId = vm.userId;
+                        $window.sessionStorage.UserIdToken = data.token;
                         dataBeanService.setFacRoleDDValues(data.facRoleDDValues);
                         vm.isAuthenticated = true;
 
-                        $window.sessionStorage.camsShowLogout = true;
+                        $window.sessionStorage.ShowLogout = true;
                         $rootScope.showLogout = true;
                         $rootScope.sessionStorage = $window.sessionStorage;
-                        $state.go('leftNav.main');
+                        $state.go('tabs.modules');
                     }
                     else if (status === 401) {
                         $state.go('login');
@@ -62,11 +62,11 @@
         vm.reset = function() {
             vm.userId = '';
             vm.password = '';
-            $window.sessionStorage.camsUserId = null;
-            $window.sessionStorage.camsUserIdToken = null;
-            $window.sessionStorage.camsCurrFac = null;
+            $window.sessionStorage.UserId = null;
+            $window.sessionStorage.UserIdToken = null;
+            $window.sessionStorage.CurrFac = null;
             vm.isAuthenticated = false;
-            vm.camsLoginHasErr = false;
+            vm.LoginHasErr = false;
             vm.hasErrMsg = false;
             $scope.FacilityDdValues = [];
             $scope.RoleDdValues = [];

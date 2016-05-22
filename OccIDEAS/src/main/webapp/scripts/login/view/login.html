@@ -1,52 +1,41 @@
-<style>
-td, th {
-    padding: 1px;
-}
-</style>
-<div class="container-fluid">
-	<section>
-		<div style="position:absolute; left:412px; top:250px; margin-left: 5px; margin-top: 5px; font-weight: bold; font-size: 9pt;">
-			<div id="errorMsgs" ng-show="vm.hasErrMsg">
-				<table class="no-cell-spacing">
-					<tr align="left">
-						<td align="left"><font color="red">{{vm.errMsg}}</font></td>
-					</tr>
-				</table>
+<div >
+      <p>
+      <!-- Where all the magic happens -->
+<!-- LOGIN FORM -->
+<div class="text-center" style="padding:50px 0">
+	<div class="logo">Welcome to OccIDEAS, please login</div>
+	<!-- Main Form -->
+	<div id="errorMsgs" ng-show="vm.hasErrMsg">
+			<font color="red">{{vm.errMsg}}</font></td>
+	</div>
+	<div class="login-form-1">
+		<div id="login-form" class="text-left">
+			<div class="login-form-main-message"></div>
+			<div class="main-login-form">
+				<div class="login-group">
+					<div class="form-group">
+						<label for="lg_username" class="sr-only">Username</label>
+						<input type="text" class="form-control" id="lg_username" ng-model="vm.userId" name="lg_username" placeholder="username">
+					</div>
+					<div class="form-group">
+						<label for="lg_password" class="sr-only">Password</label>
+						<input type="password" class="form-control" id="lg_password" ng-model="vm.password" name="lg_password" placeholder="password">
+					</div>
+					<div class="form-group login-group-checkbox">
+						<input type="checkbox" id="lg_remember" name="lg_remember">
+						<label for="lg_remember">remember</label>
+					</div>
+				</div>
+				<button type="submit" class="login-button" ng-click="vm.login()"><i class="fa fa-chevron-right"></i></button>
 			</div>
-			<div id="loginForm">
-				<table class="no-cell-spacing" border="0">
-					<tr>
-						<td style="padding-left: 50px">
-							<table class="no-cell-spacing" border="0">
-								<tr>
-									<td class="col_title">User Id</td> 
-									<td><input id="txtLoginId" type="text" style="width: 149px;" ng-model="vm.userId"/></td>
-								</tr>
-								<tr>
-									<td class="col_title">Password</td>
-									<td><input id="txtPassword" type="password" style="width: 149px;" ng-model="vm.password"/></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td style="text-align: right; padding-top: 10px; padding-left: 95px;">
-							<table class="align-right">
-								<tr>
-									<td align="left">
-										<input id="resetBtn" value="Reset" type="button" class="camsButtonGrey" ng-click="vm.reset()" />
-									</td>
-									<td align="right">
-										<div id="notLoggedInBtn" ng-show="!vm.isAuthenticated">
-											<input id="loginBtn" value="Login"  type="button" class="camsButtonRed" ng-click="vm.login()" />
-										</div>
-									</td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
+			<div class="etc-login-form">
+				<p>forgot your password? <a href="#">click here</a></p>
+				<p>new user? <a href="#">create new account</a></p>
 			</div>
-		</div>
-	</section>
+	</div>
+	</div>
+	<!-- end:Main Form -->
 </div>
+
+      </p>
+      </div>
