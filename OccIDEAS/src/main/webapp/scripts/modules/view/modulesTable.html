@@ -12,7 +12,10 @@
             <td colspan="{{$columns.length}}">
                 <a href="" ng-click="group.$hideRows = !group.$hideRows">
                     <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-                    <strong> {{ group.value }}</strong>
+                    <strong ng-if="group.value == 'M_IntroModule'">Intro</strong>
+                    <strong ng-if="group.value == 'M_Module_'">Development</strong>
+                    <strong ng-if="group.value == 'M_Module'">Production</strong>
+                    <strong ng-if="group.value == 'M_Module__'">Tests</strong>
                 </a>
                 <div class="brn-group pull-right">
        				 <button class="btn btn-default" ng-click="vm.add(group.value)">

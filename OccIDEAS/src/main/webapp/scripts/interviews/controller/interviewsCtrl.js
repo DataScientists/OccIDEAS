@@ -1,7 +1,7 @@
 (function() {
 	angular.module('occIDEASApp.Interviews').controller('InterviewsCtrl',
 			InterviewsCtrl);
-
+	
 	InterviewsCtrl.$inject = [ 'data', '$scope', '$mdDialog',
 			'FragmentsService', '$q', 'QuestionsService', 'ModulesService',
 			'InterviewsService', 'ParticipantsService', 'AssessmentsService',
@@ -40,6 +40,7 @@
 		}		
 		if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
+			
 			populateInterviewModules(updateData[0].interviewId);
 		}	
 		function getLastQuestionAsked(mod){
@@ -48,19 +49,24 @@
 			});
 		}	 
 		function populateInterviewModules(interviewId){
-			$scope.interviewId = interviewId;
-			
+			$scope.interviewId = interviewId;			
 			InterviewsService.getInterview(interviewId).then(function(data){
 				if(data){
 					var interview = data.data[0];
 					$scope.intDisplay = [];
 					if(interview.modules.length==0){
 						interview.module.questionsAsked = interview.actualQuestion;
-						interview.modules.push(interview.module);
+						var module = interview.module;//start at first module again
+						module.count = 1;
+						interview.modules.push(module);
 					}
 					var modules = interview.modules;
 					interview.active = true;
 					$scope.participant = interview.participant;
+					var participant = $scope.participant;
+					participant.status = 0;//running
+					saveParticipant(participant);
+					
 					$scope.interview = interview;
 					$scope.interview.interviewStarted = true;
 					$scope.interview.interviewEnded = false;	
@@ -127,6 +133,9 @@
 			return retValue;
 		}
 		self.editQuestion = function(question) {
+			if(!question.count){
+				question.count=1;
+			}
 			InterviewsService.getIntQuestion(question.idInterview,question.questionId,question.count).then(
 			  function(response) {
 				if (response.status === 200) {
@@ -151,7 +160,11 @@
 						return mod.idNode == question.topNodeId &&
 						mod.count == question.modCount;
 					});
-					var status = showNextQuestion(actualQuestion, false, true,topMod.count);
+					var modCount = 1;
+					if(topMod){
+						modCount = topMod.count;
+					}
+					var status = showNextQuestion(actualQuestion, false, true,modCount);
 					if (status) {
 						status.then(function(data) {
 							if (data == 200) {
@@ -877,7 +890,11 @@
 				if(newQuestionAsked.description=='display'){
 					$scope.displayQuestions = [];
 					$scope.displayQuestions.push(newQuestionAsked);
-					
+					var noteText = '';
+					_.each(newQuestionAsked.answers,function(answer){
+						noteText = answer.name;
+					});
+					addInterviewNote(noteText,'Display'); 
 				}
 			}
 			var mod = _.find(interview.modules,function(val, ind) {
@@ -1005,46 +1022,45 @@
 			});
 		}
 		$scope.stopInterview = function(node) {
-			ParticipantsService
-					.findInterviewParticipant($scope.participant.idParticipant)
-					.then(
-							function(response) {
-								if (response.status === 200) {
-									$scope.participant = response.data[0];
-
-									var interview = $scope.participant.interviews[0];
-									if (validateIfAnswerSelected(node)) {
-										if (!interview) {
-											return null;
-										}
-										if (node.type == 'Q_multiple') {
-											processInterviewQuestionsWithMultipleAnswers(
-													interview, node);
-										} else if (node.type == 'Q_frequency') {
-											processFrequency(interview, node);
-										} else {
-											processQuestion(interview, node);
-										}
-									}
-									if (confirm('Stop Interview?')) {
-										if (!(interview.notes)) {
-											interview.notes = [];
-										}
-										interview.notes.push({
-													interviewId : interview.interviewId,
-													text : 'Interview Stopped',
-													type : 'System'
-												});
-										saveInterview(interview);
-										var participant = $scope.participant;
-										participant.status = 1;//partial
-										saveParticipant(participant);
-										endInterview();
-									}
-								}
-							});
+			ParticipantsService.findInterviewParticipant($scope.participant.idParticipant).then(
+			  function(response) {
+				if (response.status === 200) {
+					$scope.participant = response.data[0];
+					var interview = $scope.participant.interviews[0];
+					if (validateIfAnswerSelected(node)) {
+						if (!interview) {
+							return null;
+						}
+						if (node.type == 'Q_multiple') {
+							processInterviewQuestionsWithMultipleAnswers(interview, node);
+						} else if (node.type == 'Q_frequency') {
+							processFrequency(interview, node);
+						} else {
+							processQuestion(interview, node);
+						}
+					}
+					if (confirm('Stop Interview?')) {
+						addInterviewNote('Interview Stopped','System');					
+						var participant = $scope.participant;
+						participant.status = 1;//partial
+						saveParticipant(participant);
+						endInterview();
+					}
+				}
+			});
 		}
-
+		function addInterviewNote(note,type){
+			var interview = $scope.interview;
+			if (!(interview.notes)) {
+				interview.notes = [];
+			}
+			interview.notes.push({
+						interviewId : interview.interviewId,
+						text : note,
+						type : type
+					});
+			saveInterview(interview);
+		}
 		function saveInterview(interview) {
 			InterviewsService.save(interview).then(
 					function(response) {
@@ -1055,6 +1071,8 @@
 					});
 		}
 		function saveParticipant(participant) {
+			participant.interviews = [];
+			participant.interviews.push($scope.interview);
 			ParticipantsService.save(participant).then(
 					function(response) {
 						if (response.status === 200) {
@@ -1095,6 +1113,7 @@
 					interview.referenceNumber = $scope.referenceNumber;					
 					InterviewsService.startInterview(interview).then(function(response) {
 						if (response.status === 200) {
+							interview.interviewId = response.data.interviewId;
 							interview.modules = [];
 							var jsonMod = {
 									idInterview : $scope.interviewId,
@@ -1758,6 +1777,13 @@
 						}
 					});
 		}
-		
+    	$rootScope.removeTab = function(tab) {
+    		addInterviewNote('Interview Closed','System');
+    		var participant = $scope.participant;
+    		participant.status = 1;//partial
+    		saveParticipant(participant);
+    		
+    		$rootScope.removeTabFromOverride();
+    	};
 	}
 })();

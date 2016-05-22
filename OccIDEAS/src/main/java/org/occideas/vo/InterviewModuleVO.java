@@ -2,6 +2,9 @@ package org.occideas.vo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({ "anchorId","description","type","parentId","link","lastUpdated","originalId","nodeclass","moduleRule","nodes" })
 public class InterviewModuleVO {
 
 	private String name;

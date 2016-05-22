@@ -281,15 +281,24 @@
  			safeDigest($rootScope.tabsLoading);
         }
         
-		$scope.removeTab = function(tab) {
-			var index = tabs.indexOf(tab);
-			tabs.splice(index, 1);
-			$scope.tabOptions.splice(index, 1);
-			if($scope.selectedIndex==5){
-				$scope.selectedIndex=0;
-			}
-			$scope.agentsData = null;
-		};
+        $rootScope.removeTab = function(tab) {
+    		var index = tabs.indexOf(tab);
+    		tabs.splice(index, 1);
+    		$scope.tabOptions.splice(index, 1);
+    		if($scope.selectedIndex==5){
+    			$scope.selectedIndex=0;
+    		}
+    		$scope.agentsData = null;
+    	};
+    	$rootScope.removeTabFromOverride = function(tab) {
+    		var index = tabs.indexOf(tab);
+    		tabs.splice(index, 1);
+    		$scope.tabOptions.splice(index, 1);
+    		if($scope.selectedIndex==5){
+    			$scope.selectedIndex=0;
+    		}
+    		$scope.agentsData = null;
+    	};
 		$scope.turnOffProgressBar = function turnOffProgressBar(){
 			$scope.loading = false;
 			return 'Done';

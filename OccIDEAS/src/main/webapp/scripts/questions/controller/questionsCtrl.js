@@ -1288,7 +1288,7 @@
 					}
 			  ],
 			  [ 'Interview Display (Toggle)', function($itemScope) {
-					$itemScope.$modelValue.description = 'display';
+					$itemScope.$modelValue.description = $itemScope.$modelValue.description == 'display' ? '':'display';
 					saveModuleWithoutReload();
 					}
 			  ],

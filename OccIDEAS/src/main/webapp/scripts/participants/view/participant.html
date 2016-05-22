@@ -14,9 +14,6 @@
             </div>
         </div>
     </div>
-    <md-button ng-if="data.interviews[0].assessedStatus == 'Incomplete'" ng-click="continueInterview(data)" class="md-raised md-primary">       
-        <span>Continue Interview</span>
-    </md-button>
 </div>
 <div class="col-md-8">
 <div ng-repeat='note in selectedInterview.notes'>
@@ -34,9 +31,7 @@
     					<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
                    			<span class="badge">{{qa.number}}</span>
                 		</div>  
-    					<span class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" 
-	    							ng-click="vm.editQuestion(interviewIntro,qa)"></span>
-	    				<span ng-if="qa.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+    					<span ng-if="qa.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
     					<span id="{{'IntResult'+qa.idNode}}" >{{ qa.name }}
 	    					
     					</span>  					

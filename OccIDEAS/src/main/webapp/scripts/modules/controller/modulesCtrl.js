@@ -12,7 +12,7 @@
 	    $scope.$root.tabsLoading = false;
 		self.tableParams = new NgTableParams(
 				{
-					group: "type",
+					group: "type"
 				}, 
 				{	
 	        getData: function(params) {
@@ -30,7 +30,7 @@
 	        	  self.tableParams.shouldGetData = true;
 	            return data;
 	          });
-	          },
+	          }
 	      });
 		self.tableParams.shouldGetData = true;
 	    self.treeView = treeView;

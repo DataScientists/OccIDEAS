@@ -45,13 +45,7 @@ public class ParticipantDao {
     @SuppressWarnings("unchecked")
 	public List<Participant> getAll() {
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(Participant.class)		  						
-    		  						.setProjection(Projections.projectionList()
-    		  								.add(Projections.property("idParticipant"),"idParticipant")
-    		  								.add(Projections.property("status"),"status")
-    	    		  						.add(Projections.property("reference"),"reference"))
-    		  						.addOrder(Order.asc("reference"))
-    		  						.setResultTransformer(Transformers.aliasToBean(Participant.class));
+      final Criteria crit = session.createCriteria(Participant.class);
       
       return crit.list();
     }
