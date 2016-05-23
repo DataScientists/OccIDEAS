@@ -43,6 +43,9 @@ public class InterviewDisplay implements java.io.Serializable {
 	@Column(name = "name")
 	private String name;
 
+	@Column(name = "number")
+	private String number;
+
 	@Column(name = "type")
 	private String type;
 
@@ -157,6 +160,14 @@ public class InterviewDisplay implements java.io.Serializable {
 
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 }

@@ -27,6 +27,7 @@ public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 		vo.setIdNode(entity.getIdNode());
 		vo.setLastUpdated(entity.getLastUpdated());
 		vo.setName(entity.getName());
+		vo.setNumber(entity.getNumber());
 		vo.setQuestionId(entity.getQuestionId());
 		vo.setType(entity.getType());
 		vo.setSequence(entity.getSequence());
@@ -64,11 +65,12 @@ public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 		entity.setIdNode(vo.getIdNode());
 		entity.setLastUpdated(vo.getLastUpdated());
 		entity.setName(vo.getName());
+		entity.setNumber(vo.getNumber());
 		entity.setQuestionId(vo.getQuestionId());
 		entity.setType(vo.getType());
 		entity.setSequence(vo.getSequence());
 		if(vo.getQuestionId() != 0L){
-		entity.setAnswers(mapper.convertToInterviewAnswerList(vo.getAnswers()));
+			entity.setAnswers(mapper.convertToInterviewAnswerList(vo.getAnswers()));
 		}
 		return entity;
 	}

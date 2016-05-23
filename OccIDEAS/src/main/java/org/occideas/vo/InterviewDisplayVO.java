@@ -11,6 +11,7 @@ public class InterviewDisplayVO {
 	private long id;
 	private long idInterview;
 	private long idNode;
+	private String number;
 	private String name;
 	private String type;
 	private long questionId;
@@ -106,6 +107,14 @@ public class InterviewDisplayVO {
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
 }

@@ -54,6 +54,11 @@
 				if(data){
 					var interview = data.data[0];
 					$scope.intDisplay = [];
+					InterviewsService.getIntDisplay(interviewId).then(function(response){
+						if(response){
+							$scope.intDisplay = response.data;
+						}
+					});
 					if(interview.modules.length==0){
 						interview.module.questionsAsked = interview.actualQuestion;
 						var module = interview.module;//start at first module again

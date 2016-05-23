@@ -48,3 +48,6 @@ CHANGE COLUMN `lastUpdated` `lastUpdated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIM
 
 DELETE FROM occideas.Rule_AdditionalField where idAdditionalField=2;
 DELETE FROM occideas.Rule_AdditionalField where idAdditionalField=4;
+
+ALTER TABLE `occideas`.`Interview_Display` 
+ADD COLUMN `number` VARCHAR(2048);
