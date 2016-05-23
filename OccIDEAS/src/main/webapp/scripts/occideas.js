@@ -33,6 +33,7 @@ angular
   .constant('_', window._)
   .config(['$urlRouterProvider', '$stateProvider','$httpProvider',function($urlRouterProvider, $stateProvider,$httpProvider) {
 	$httpProvider.interceptors.push('ErrorHandler');
+	$httpProvider.interceptors.push('TokenRefreshInterceptor');
     $urlRouterProvider.otherwise('/');
     $stateProvider
     .state('allmodules', {
@@ -88,10 +89,12 @@ angular
 //	        };
 //	    }
   })
+  .service(service)
+  .factory('TokenRefreshInterceptor',TokenRefreshInterceptor)
   .factory('ErrorHandler',ErrorHandler);	
 
-   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope'];
-   function configureDefaults(ngTableDefaults,$state,$rootScope) {
+   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService', 'dataBeanService','$window'];
+   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService, dataBeanService,$window) {
 	   	$rootScope._ = window._; 
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
@@ -109,6 +112,26 @@ angular
         document.addEventListener("click", function(e) {
             $rootScope.$broadcast("documentClicked", e.target);
         });
+        
+        var windowElement = angular.element($window);
+        windowElement.on('beforeunload', function (event) {
+            // do whatever you want in here before the page unloads.
+            // the following line of code will prevent reload or navigating away.
+            event.preventDefault();
+        });
+        
+        $rootScope.$on("$stateChangeStart", function(event, toState){
+            if (toState.authenticate){
+                var resp = AuthenticationService.checkUserCredentials($window.sessionStorage.UserId);
+                if(resp === '1'){
+                    $window.sessionStorage.ShowLogout = false;                    
+                    $rootScope.sessionStorage = $window.sessionStorage;
+                    dataBeanService.setStatetransitionHasErr('1');
+                    $state.go('login', {}, {reload: true});
+                    event.preventDefault();
+                }
+            }
+          });
    }
    
    ErrorHandler.$inject = ['$injector','$window','$location'];
@@ -135,6 +158,56 @@ angular
    		    return response;
    		}
    	}
+   }
+   
+   TokenRefreshInterceptor.$inject = ['$injector','$window'];
+   function TokenRefreshInterceptor($injector,$window){
+       return {
+           'request': function(config) {
+               if ($window.sessionStorage.UserIdToken) {
+                   config.headers['X-Auth-Token'] = $window.sessionStorage.UserIdToken;
+                   var http = $injector.get('$http');
+                   http.defaults.headers.common['X-Auth-Token'] = $window.sessionStorage.UserIdToken;
+               }
+               return config;
+           },
+       'response': function(response) {
+                       var data = response.headers('X-Auth-Token');
+                   if(data){
+                       var json = angular.fromJson(data);
+                       $window.sessionStorage.UserIdToken = json.token;
+                       var http = $injector.get('$http');
+                       http.defaults.headers.common['X-Auth-Token'] = json.token;
+                   }
+                 return response;
+            },
+           'responseError': function(response) {
+           	
+               if (response.status === 401) {
+                   $window.sessionStorage.UserIdToken = "";
+                   var http = $injector.get('$http');
+                   http.defaults.headers.common['X-Auth-Token'] = "";
+                   var state1 = $injector.get('$state');
+                   state1.go('login', {}, {reload: true});
+               }else{
+                    http.defaults.headers.common['X-Auth-Token'] = "";
+                    var state2 = $injector.get('$state');
+                    state2.go('login', {}, {reload: true});
+               }
+               return response;
+           }
+       }
+   }
+   
+   service.$inject = ['$state', '$rootScope', 'AuthenticationService', 'dataBeanService', 'toaster','$window'];
+   function service ($state, $rootScope, AuthenticationService, dataBeanService, toaster,$window){
+       var app = this;
+       app.logout = function() {
+           toaster.pop('success', "Logout Successfull", "Goodbye");
+           $window.sessionStorage.UserId = null;
+           $window.sessionStorage.UserIdToken = null;
+           $state.go('login', {}, {reload: true});
+       };
    }
    
    angular.isUndefinedOrNull = function(val) {

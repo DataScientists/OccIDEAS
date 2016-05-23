@@ -38,6 +38,7 @@
 			url: '/modules/',
 			sticky: false,
 		    deepStateRedirect: false,
+		    authenticate:true,
 			views:{
 				'modules@tabs':{
 					templateUrl : "scripts/modules/view/modulesTable.html",
