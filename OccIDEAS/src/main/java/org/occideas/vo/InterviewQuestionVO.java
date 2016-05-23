@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({ "isProcessed", "lQid","idNode" })
+@JsonIgnoreProperties({ "isProcessed", "lQid","idNode","count" })
 public class InterviewQuestionVO {
 
 	private long id;
