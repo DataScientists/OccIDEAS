@@ -7,8 +7,11 @@ import org.occideas.mapper.InterviewModuleMapper;
 import org.occideas.vo.InterviewModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
+@Transactional
 public class InterviewModuleServiceImpl implements InterviewModuleService{
 
 	@Autowired
