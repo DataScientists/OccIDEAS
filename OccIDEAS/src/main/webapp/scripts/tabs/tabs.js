@@ -50,6 +50,7 @@
 			url: '/fragments/',
 			sticky: false,
 		    deepStateRedirect: false,
+		    authenticate:true,
 			views:{
 				'fragments@tabs':{
 					templateUrl : "scripts/fragments/view/fragmentsTable.html",
@@ -61,6 +62,7 @@
 			url: '/agents/',
 			sticky: false,
 		    deepStateRedirect: false,
+		    authenticate:true,
 			views:{
 				'agents@tabs':{
 					templateUrl : "scripts/agents/view/agentsTable.html",
@@ -73,6 +75,7 @@
 			url: '/participants/',
 			sticky: false,
 		    deepStateRedirect: false,
+		    authenticate:true,
 			views:{
 				'participants@tabs':{
 					templateUrl : "scripts/participants/view/participantsTable.html",
@@ -99,6 +102,7 @@
 			url: '/participant/:row',
 			sticky: false,
 		    deepStateRedirect: false,
+		    authenticate:true,
 		    views:{
 				'participant@tabs':{
 					templateUrl: 'scripts/participants/view/participant.html',
@@ -135,6 +139,7 @@
 			url: '/assessments/',
 			sticky: false,
 		    deepStateRedirect: false,
+		    authenticate:true,
 			views:{
 				'assessments@tabs':{
 					templateUrl : "scripts/assessments/view/assessmentsTable.html",
@@ -151,6 +156,7 @@
 			url: '/assessment/:row',
 			sticky: true,
 		    deepStateRedirect: true,
+		    authenticate:true,
 			views:{
 				'assessment@tabs':{
 					templateUrl: 'scripts/assessments/view/assessment.html',
@@ -178,6 +184,7 @@
 			url: '/questions/:row',
 			sticky: true,
 		    deepStateRedirect: true,
+		    authenticate:true,
 			views:{
 				'questions@tabs':{
 					template: '<div scope-question></div>',
@@ -220,6 +227,7 @@
 			name:'tabs.intro',
 			url: '/intro/:row',
 			sticky: true,
+			authenticate:true,
 			views:{
 				'intro@tabs':{
 					template: '<div scope-question></div>',
@@ -259,6 +267,7 @@
 			url: '/fragment/:row',
 			sticky: true,
 		    deepStateRedirect: true,
+		    authenticate:true,
 			views:{
 				'fragment@tabs':{
 					template: '<div scope-question></div>',
@@ -302,6 +311,7 @@
 			url: '/interview/:row/:startWithReferenceNumber',
             sticky: true,
 		    deepStateRedirect: true,
+		    authenticate:true,
             views:{
                 'interview@tabs':{
                     templateUrl: 'scripts/interviews/view/interview.html',
@@ -346,6 +356,7 @@
 			url: '/interview/:row',
             sticky: true,
 		    deepStateRedirect: true,
+		    authenticate:true,
             views:{
                 'interviewresume@tabs':{
                     templateUrl: 'scripts/interviews/view/interview.html',
@@ -401,6 +412,7 @@
         	url: '/rules/:row',
             sticky: false,
 		    deepStateRedirect: false,
+		    authenticate:true,
             views:{
                 'rules@tabs':{
                     templateUrl: 'scripts/rules/view/rulesTable.html',
