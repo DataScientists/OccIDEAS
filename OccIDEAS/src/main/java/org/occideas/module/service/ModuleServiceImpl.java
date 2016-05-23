@@ -9,10 +9,12 @@ import org.occideas.module.dao.ModuleDao;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 
 @Service
+@Transactional
 public class ModuleServiceImpl implements ModuleService {
 
 	@Autowired

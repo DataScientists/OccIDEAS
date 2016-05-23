@@ -10,9 +10,11 @@ import org.occideas.mapper.FragmentMapper;
 import org.occideas.vo.FragmentVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional
 public class FragmentServiceImpl implements FragmentService {
 
 	private Logger log = Logger.getLogger(this.getClass());
