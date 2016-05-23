@@ -1,5 +1,5 @@
 (function() {
-    angular.module('cams.logout',['ui.router']).config(Config);
+    angular.module('occIDEASApp.Logout',['ui.router']).config(Config);
 
     Config.$inject = ['$stateProvider'];
 

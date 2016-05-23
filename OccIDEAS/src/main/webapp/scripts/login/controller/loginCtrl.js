@@ -35,7 +35,7 @@
                         dataBeanService.setFacRoleDDValues(data.facRoleDDValues);
                         vm.isAuthenticated = true;
 
-                        $window.sessionStorage.ShowLogout = true;
+                        $window.sessionStorage.showLogout = true;
                         $rootScope.showLogout = true;
                         $rootScope.sessionStorage = $window.sessionStorage;
                         $state.go('tabs.modules');

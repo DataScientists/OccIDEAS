@@ -1,16 +1,16 @@
 (function() {
 
-    angular.module('cams.logout.ctrl', [ 'ui.router' ]).controller('LogoutCtrl',
+    angular.module('occIDEASApp.Logout').controller('LogoutCtrl',
             LogoutCtrl);
 
     LogoutCtrl.$inject = ['$state', '$rootScope', 'dataBeanService','$window'];
     function LogoutCtrl($state, $rootScope, dataBeanService,$window) {
-        $window.sessionStorage.camsUserId = null;
-        $window.sessionStorage.camsUserIdToken = null;
-        $window.sessionStorage.camsCurrFac = null;
-        $rootScope.camsShowLogout = false;
+        $window.sessionStorage.UserId = null;
+        $window.sessionStorage.UserIdToken = null;
+        $window.sessionStorage.CurrFac = null;
+        $rootScope.showLogout = false;
         $rootScope.sessionStorage = null;
-        dataBeanService.setCamsStatetransitionHasErr('0');
+        dataBeanService.setStatetransitionHasErr('0');
         $state.go('login', {}, {reload: true});
     }
 })();
