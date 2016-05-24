@@ -23,7 +23,7 @@ public class UmexServiceAuthenticator implements ExternalServiceAuthenticator {
     public AuthenticatedExternalWebService authenticate(String username, String password) {
     	 AuthenticatedExternalWebService authenticatedExternalWebService = null;
         try {
-        	if("test".equals(username) && "test".equals(password)){
+        	if("occideas".equals(username) && "occideas".equals(password)){
         		TokenResponse tokenResponse = new TokenResponse();
         		tokenResponse.getUserInfo().put("roles", "Admin,Interviewer,Assessor");
             	tokenResponse.getUserInfo().put("userId", username);
