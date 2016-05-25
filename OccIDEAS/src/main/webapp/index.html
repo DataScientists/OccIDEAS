@@ -76,7 +76,7 @@
 </head>
 <body ng-app="occIDEASApp">
     <div class="container">
-      <header ng-include="'nav.html'"></header>
+      <header ng-if="sessionStorage.showLogout" ng-include="'nav.html'"></header>
       <div ui-view>
       
       </div>
@@ -126,4 +126,6 @@
 	<script src="scripts/login/service/dataBeanService.js"></script>
 	<script src="scripts/login/service/loginService.js"></script>
 	<script src="scripts/authenticationService.js"></script>
+	<script src="scripts/logout/logout.js"></script>
+	<script src="scripts/logout/controller/logoutCtrl.js"></script>
 </html>

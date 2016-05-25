@@ -20,12 +20,12 @@
             if ( !angular.isUndefinedOrNull(userId)
               && !angular.isUndefinedOrNull($window.sessionStorage.UserIdToken)) {
                     $rootScope.showLogout = true;
-                    $window.sessionStorage.ShowLogout = false;
+                    $window.sessionStorage.showLogout = false;
                     $rootScope.sessionStorage = $window.sessionStorage;
                     return '0';
             }
             $rootScope.showLogout = false;
-            $window.sessionStorage.ShowLogout = false;
+            $window.sessionStorage.showLogout = false;
             $rootScope.sessionStorage = $window.sessionStorage;
             return '1';
         }

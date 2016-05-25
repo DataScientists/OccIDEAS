@@ -26,7 +26,8 @@ angular
     "occIDEASApp.Participants",
     "occIDEASApp.InterviewResults",
     "occIDEASApp.ModuleRule",
-    "occIDEASApp.Login"
+    "occIDEASApp.Login",
+    "occIDEASApp.Logout"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
@@ -124,7 +125,7 @@ angular
             if (toState.authenticate){
                 var resp = AuthenticationService.checkUserCredentials($window.sessionStorage.UserId);
                 if(resp === '1'){
-                    $window.sessionStorage.ShowLogout = false;                    
+                    $window.sessionStorage.showLogout = false;                    
                     $rootScope.sessionStorage = $window.sessionStorage;
                     dataBeanService.setStatetransitionHasErr('1');
                     $state.go('login', {}, {reload: true});
