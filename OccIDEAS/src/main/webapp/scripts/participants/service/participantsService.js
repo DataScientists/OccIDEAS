@@ -9,10 +9,11 @@
 		var apiKey = '';
 		
 		var getParticipants = function() {
-		  return $http.get(modulesUrl+'/getlist').then(function(response) {
-		    var data = response.data;
-		    return data;
-		  });
+			 var request =  $http({
+                 method: 'GET',
+                 url: modulesUrl+'/getlist'
+               });
+           return request.then(handleSuccess1,handleError);	
 		};
 		function save(data){
 			var restSaveUrl = 'rest/participant/update';

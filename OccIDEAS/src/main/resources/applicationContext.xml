@@ -26,6 +26,7 @@
 		<property name="packagesToScan">
 			<array>
 				<value>org.occideas.entity</value>
+				<value>org.occideas.security.model</value>
 			</array>
 		</property>
 	</bean>

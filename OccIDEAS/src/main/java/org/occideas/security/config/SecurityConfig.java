@@ -13,7 +13,7 @@ import org.occideas.security.provider.BackendAdminUsernamePasswordAuthentication
 import org.occideas.security.provider.DomainUsernamePasswordAuthenticationProvider;
 import org.occideas.security.provider.TokenAuthenticationProvider;
 import org.occideas.security.service.ExternalServiceAuthenticator;
-import org.occideas.security.service.UmexServiceAuthenticator;
+import org.occideas.security.service.DaoServiceAuthenticator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +27,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -37,7 +39,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
     "classpath:applicationContext.xml" 
 })
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
-
 
 	@Value("${backend.admin.role}")
 	private String backendAdminRole;
@@ -102,10 +103,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	private String[] actuatorEndpoints() {
 		return new String[] { "/web", "/mobile", "/desktop" };
 	}
-
+	
+	@Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+     
 	@Bean
 	public ExternalServiceAuthenticator getExternalServiceAuthenticator() {
-		return new UmexServiceAuthenticator();
+		return new DaoServiceAuthenticator();
 	}
 
 	@Bean

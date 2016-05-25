@@ -4,16 +4,22 @@ package org.occideas.security.provider;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.AuthenticatedExternalWebService;
-import org.occideas.security.model.DomainUser;
 import org.occideas.security.model.TokenResponse;
+import org.occideas.security.model.User;
+import org.occideas.security.model.UserProfile;
+import org.occideas.security.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import com.google.common.base.Optional;
@@ -21,6 +27,9 @@ import com.google.common.base.Optional;
 public class TokenAuthenticationProvider implements AuthenticationProvider {
 
 	private TokenManager tokenManager;
+	
+	@Autowired
+	private UserService userService;
 
 	public TokenAuthenticationProvider(TokenManager tokenManager) {
 		this.tokenManager = tokenManager;
@@ -36,9 +45,13 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
 		}
 		validateToken(token.get());
 		String user = tokenManager.parseUsernameFromToken(token.get());
+		User userObj = userService.findBySso(user);
+		if(userObj == null){
+			return null;
+		}
 		AuthenticatedExternalWebService authenticatedExternalWebService = new 
-				AuthenticatedExternalWebService(new DomainUser(user), null,
-                AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_DOMAIN_USER"));
+				AuthenticatedExternalWebService(new User(), null,
+						getGrantedAuthorities(userObj));
 		TokenResponse tokenResponse = new TokenResponse();
 		tokenResponse.setToken(tokenManager.createTokenForUser(user,
 				authenticatedExternalWebService.getAuthorities()));
@@ -63,4 +76,14 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
 	public boolean supports(Class<?> authentication) {
 		 return authentication.equals(PreAuthenticatedAuthenticationToken.class);
 	}
+	
+	private List<GrantedAuthority> getGrantedAuthorities(User user){
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+         
+        for(UserProfile userProfile : user.getUserProfiles()){
+            System.out.println("UserProfile : "+userProfile);
+            authorities.add(new SimpleGrantedAuthority("ROLE_"+userProfile.getType()));
+        }
+        return authorities;
+    }
 }
