@@ -1,6 +1,6 @@
 (function() {
 
-    angular.module('occIDEASApp.Login',['ui.router']).config(Config);
+    angular.module('occIDEASApp.Login',['ui.router','ngStorage']).config(Config);
 
     Config.$inject = ['$stateProvider'];
 

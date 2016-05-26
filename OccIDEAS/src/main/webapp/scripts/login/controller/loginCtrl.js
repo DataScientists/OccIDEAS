@@ -3,8 +3,8 @@
     angular.module('occIDEASApp.Login').controller('LoginCtrl',
             LoginCtrl);
 
-    LoginCtrl.$inject = [ '$state', 'toaster', '$timeout', '$scope', '$http'  ,'$rootScope', 'dataBeanService', '$window','loginService'];
-    function LoginCtrl($state, toaster, $timeout, $scope, $http, $rootScope, dataBeanService,$window, loginService) {
+    LoginCtrl.$inject = [ '$state', 'toaster', '$timeout', '$scope', '$http'  ,'$rootScope', 'dataBeanService', '$window','loginService','$sessionStorage'];
+    function LoginCtrl($state, toaster, $timeout, $scope, $http, $rootScope, dataBeanService,$window, loginService,$sessionStorage) {
         var vm = this;
         $scope.user = {};
         vm.userId = '';
@@ -30,14 +30,14 @@
 
                     if(status === 200) {
 
-                        $window.sessionStorage.UserId = vm.userId;
-                        $window.sessionStorage.UserIdToken = data.token;
-                        dataBeanService.setFacRoleDDValues(data.facRoleDDValues);
+                    	$sessionStorage.userId = vm.userId;
+                    	$sessionStorage.token = data.token;
+                    	$sessionStorage.roles = data.userInfo.roles;
                         vm.isAuthenticated = true;
 
-                        $window.sessionStorage.showLogout = true;
-                        $rootScope.showLogout = true;
-                        $rootScope.sessionStorage = $window.sessionStorage;
+                        $sessionStorage.showLogout = true;
+                        $rootScope.showLogout = $sessionStorage.showLogout;
+                        $rootScope.$storage = $sessionStorage;
                         $state.go('tabs.modules');
                     }
                     else if (status === 401) {
@@ -62,14 +62,11 @@
         vm.reset = function() {
             vm.userId = '';
             vm.password = '';
-            $window.sessionStorage.UserId = null;
-            $window.sessionStorage.UserIdToken = null;
-            $window.sessionStorage.CurrFac = null;
+            $sessionStorage.userId = null;
+            $sessionStorage.token = null;
             vm.isAuthenticated = false;
             vm.LoginHasErr = false;
             vm.hasErrMsg = false;
-            $scope.FacilityDdValues = [];
-            $scope.RoleDdValues = [];
         };
     }
 })();

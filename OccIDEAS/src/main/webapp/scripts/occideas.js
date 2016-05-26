@@ -5,6 +5,7 @@ angular
     "ui.router",
     "toaster",
     "ngMaterial",
+    "ngStorage",
     "ui.tree",
     "ngTable",
     "ngSanitize",
@@ -94,8 +95,8 @@ angular
   .factory('TokenRefreshInterceptor',TokenRefreshInterceptor)
   .factory('ErrorHandler',ErrorHandler);	
 
-   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService', 'dataBeanService','$window'];
-   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService, dataBeanService,$window) {
+   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService', 'dataBeanService','$window','$sessionStorage'];
+   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService, dataBeanService,$window,$sessionStorage) {
 	   	$rootScope._ = window._; 
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
@@ -123,10 +124,9 @@ angular
         
         $rootScope.$on("$stateChangeStart", function(event, toState){
             if (toState.authenticate){
-                var resp = AuthenticationService.checkUserCredentials($window.sessionStorage.UserId);
+                var resp = AuthenticationService.checkUserCredentials($sessionStorage.userId);
                 if(resp === '1'){
-                    $window.sessionStorage.showLogout = false;                    
-                    $rootScope.sessionStorage = $window.sessionStorage;
+                	$sessionStorage.showLogout = false;
                     dataBeanService.setStatetransitionHasErr('1');
                     $state.go('login', {}, {reload: true});
                     event.preventDefault();
@@ -163,12 +163,13 @@ angular
    
    TokenRefreshInterceptor.$inject = ['$injector','$window'];
    function TokenRefreshInterceptor($injector,$window){
+	   var $sessionStorage = $injector.get('$sessionStorage');
        return {
            'request': function(config) {
-               if ($window.sessionStorage.UserIdToken) {
-                   config.headers['X-Auth-Token'] = $window.sessionStorage.UserIdToken;
+               if ($sessionStorage.token) {
+                   config.headers['X-Auth-Token'] = $sessionStorage.token;
                    var http = $injector.get('$http');
-                   http.defaults.headers.common['X-Auth-Token'] = $window.sessionStorage.UserIdToken;
+                   http.defaults.headers.common['X-Auth-Token'] = $sessionStorage.token;
                }
                return config;
            },
@@ -176,7 +177,7 @@ angular
                        var data = response.headers('X-Auth-Token');
                    if(data){
                        var json = angular.fromJson(data);
-                       $window.sessionStorage.UserIdToken = json.token;
+                       $sessionStorage.token = json.token;
                        var http = $injector.get('$http');
                        http.defaults.headers.common['X-Auth-Token'] = json.token;
                    }
@@ -185,7 +186,7 @@ angular
            'responseError': function(response) {
            	
                if (response.status === 401) {
-                   $window.sessionStorage.UserIdToken = "";
+            	   delete $sessionStorage.token;
                    var http = $injector.get('$http');
                    http.defaults.headers.common['X-Auth-Token'] = "";
                    var state1 = $injector.get('$state');
@@ -200,13 +201,13 @@ angular
        }
    }
    
-   service.$inject = ['$state', '$rootScope', 'AuthenticationService', 'dataBeanService', 'toaster','$window'];
-   function service ($state, $rootScope, AuthenticationService, dataBeanService, toaster,$window){
+   service.$inject = ['$state', '$rootScope', 'AuthenticationService', 'dataBeanService', 'toaster','$window','$sessionStorage'];
+   function service ($state, $rootScope, AuthenticationService, dataBeanService, toaster,$window,$sessionStorage){
        var app = this;
        app.logout = function() {
            toaster.pop('success', "Logout Successfull", "Goodbye");
-           $window.sessionStorage.UserId = null;
-           $window.sessionStorage.UserIdToken = null;
+           $sessionStorage.userId = null;
+           $sessionStorage.token = null;
            $state.go('login', {}, {reload: true});
        };
    }
