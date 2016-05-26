@@ -27,13 +27,8 @@
 		<level value="INFO" />
 		<appender-ref ref="console" />
 	</logger>
-
 	<logger name="org.hibernate" additivity="false">
 		<level value="INFO" />
-		<appender-ref ref="console" />
-	</logger>
-	<logger name="org.hibernate.type" additivity="false">
-		<level value="ERROR" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate.type" additivity="false">
