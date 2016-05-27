@@ -143,58 +143,54 @@ angular
    	        return responseOrNewPromise
    	      }
    	      return $q.reject(rejection);
-   	    },
-   		'responseError': function(response) {
-   			if (response.status != 200 && response.status != 401) {
-   	            var state = $injector.get('$state');       
-   	            state.go('error',{
-   	            	error:"Response Status returned:"
-   	            		+response.status+" "
-   	            		+response.statusText+" "
-   	            		+response.data});
-   	        }else if(response.status == 401){
-   	        	var state = $injector.get('$state');       
-   	          	alert("Occideas is in READ-ONLY mode, update/delete action is not premitted.");
-   	        }
-   		    return response;
-   		}
+   	    }
    	}
    }
    
    TokenRefreshInterceptor.$inject = ['$injector','$window'];
    function TokenRefreshInterceptor($injector,$window){
-	   var $sessionStorage = $injector.get('$sessionStorage');
        return {
            'request': function(config) {
+        	   var $sessionStorage = $injector.get('$sessionStorage');
+        	   var http = $injector.get('$http');
                if ($sessionStorage.token) {
                    config.headers['X-Auth-Token'] = $sessionStorage.token;
-                   var http = $injector.get('$http');
                    http.defaults.headers.common['X-Auth-Token'] = $sessionStorage.token;
                }
                return config;
            },
-       'response': function(response) {
+           'response': function(response) {
+        	   var $sessionStorage = $injector.get('$sessionStorage');
+        	   var http = $injector.get('$http');
                        var data = response.headers('X-Auth-Token');
                    if(data){
                        var json = angular.fromJson(data);
                        $sessionStorage.token = json.token;
-                       var http = $injector.get('$http');
                        http.defaults.headers.common['X-Auth-Token'] = json.token;
                    }
                  return response;
             },
            'responseError': function(response) {
-           	
+        	   var $sessionStorage = $injector.get('$sessionStorage');
+        	   var state = $injector.get('$state');
+        	   var http = $injector.get('$http');
                if (response.status === 401) {
             	   delete $sessionStorage.token;
-                   var http = $injector.get('$http');
                    http.defaults.headers.common['X-Auth-Token'] = "";
-                   var state1 = $injector.get('$state');
-                   state1.go('login', {}, {reload: true});
-               }else{
+                   state.go('login', {}, {reload: true});
+               }
+               else if(response.status == 403){
+      	        	var state = $injector.get('$state');       
+      	          	alert("Occideas is in READ-ONLY mode, update/delete action is not premitted.");
+      	        }
+               else{
+            	    delete $sessionStorage.token;
                     http.defaults.headers.common['X-Auth-Token'] = "";
-                    var state2 = $injector.get('$state');
-                    state2.go('login', {}, {reload: true});
+                    state.go('error',{
+       	            	error:"Response Status returned:"
+       	            		+response.status+" "
+       	            		+response.statusText+" "
+       	            		+response.data});
                }
                return response;
            }

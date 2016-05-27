@@ -180,7 +180,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @POST
     public Response delete(InterviewVO json) {
     	if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
         try {
             service.delete(json);

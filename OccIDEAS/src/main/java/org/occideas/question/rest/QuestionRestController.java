@@ -77,7 +77,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(QuestionVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		
 		try{
@@ -95,7 +95,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(QuestionVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.update(json);
@@ -110,7 +110,7 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 	@POST
 	public Response delete(QuestionVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.delete(json);

@@ -96,7 +96,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(ModuleVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.update(json);
@@ -111,7 +111,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 	@POST
 	public Response delete(ModuleVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.merge(json);

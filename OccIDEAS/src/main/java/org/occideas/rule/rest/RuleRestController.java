@@ -59,7 +59,7 @@ public class RuleRestController implements BaseRestController<RuleVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(RuleVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		RuleVO rule = new RuleVO();
 		try{
@@ -77,7 +77,7 @@ public class RuleRestController implements BaseRestController<RuleVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response saveOrUpdate(RuleVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.saveOrUpdate(json);
@@ -92,7 +92,7 @@ public class RuleRestController implements BaseRestController<RuleVO>{
 	@POST
 	public Response delete(RuleVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.delete(json);
@@ -110,7 +110,7 @@ public class RuleRestController implements BaseRestController<RuleVO>{
 	@Override
 	public Response update(RuleVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.update(json);

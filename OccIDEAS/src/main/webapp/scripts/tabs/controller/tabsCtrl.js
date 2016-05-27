@@ -1,30 +1,40 @@
 (function() {
 	angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
-	TabsCtrl.$inject = ['$scope','$state','$rootScope','$log','$stickyState'];
-	function TabsCtrl($scope,$state,$rootScope,$log,$stickyState) {
+	TabsCtrl.$inject = ['$scope','$state','$rootScope','$log','$stickyState','AuthenticationService'];
+	function TabsCtrl($scope,$state,$rootScope,$log,$stickyState,auth) {
 		$scope.loading = false;
 		$scope.tabOptions = [];
-		$scope.tabOptions[0] = {
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_READONLY'])){
+		$scope.tabOptions.push({
 			state: "tabs.modules",
 			data: ""
-		};
-		$scope.tabOptions[1] = {
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_READONLY'])){
+		$scope.tabOptions.push({
 			state: "tabs.fragments",
 			data: ""
-		};
-		$scope.tabOptions[2] = {
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_READONLY'])){
+		$scope.tabOptions.push({
 			state: "tabs.agents",
 			data: ""
-		};
-		$scope.tabOptions[3] = {
-				state: "tabs.participants",
-				data: ""
-			};
-		$scope.tabOptions[4] = {
-				state: "tabs.assessments",
-				data: ""
-			};
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER','ROLE_READONLY'])){
+		$scope.tabOptions.push({
+			state: "tabs.participants",
+			data: ""
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR','ROLE_READONLY'])){
+		$scope.tabOptions.push({
+			state: "tabs.assessments",
+			data: ""
+		});
+		}
 		$scope.$watch('selectedIndex', function(current, old) {
 			var state = null;
 			var data = null;
@@ -49,25 +59,39 @@
 
 		});
 
-		var tabs = [ {
+		var tabs = [];
+		tabs.selected = null;
+		tabs.previous = null;
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_READONLY'])){
+		tabs.push({
 			title : 'Module List',
 			viewName: 'modules@tabs',
-		}, {
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_READONLY'])){
+		tabs.push({
 			title : 'Fragment List',
 			viewName: 'fragments@tabs'
-		},
-		{
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_READONLY'])){
+		tabs.push({
 			title : 'Agent List',
 			viewName: 'agents@tabs'
-		},
-		{
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER','ROLE_READONLY'])){
+		tabs.push({
 			title : 'Participants',
 			viewName: 'participants@tabs'
-		},
-		{
+		});
+		}
+		if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR','ROLE_READONLY'])){
+		tabs.push({
 			title : 'Assessments',
 			viewName: 'assessments@tabs'
-		}], selected = null, previous = null;
+		});
+		}
 		$scope.tabs = tabs;
 		$scope.selectedIndex = 0;
 

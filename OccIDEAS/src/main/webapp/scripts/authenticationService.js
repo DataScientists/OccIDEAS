@@ -28,11 +28,54 @@
             return '1';
         }
         
+        function checkPermissionForView(view) {
+            if (!view.authenticate) {
+                return true;
+            }
+             
+            return userHasPermissionForView(view);
+        };
+         
+         
+        var userHasPermissionForView = function(view){
+            if(!$sessionStorage.token){
+                return false;
+            }
+             
+            if(!view.permissions || !view.permissions.length){
+                return true;
+            }
+             
+            return userHasPermission(view.permissions);
+        };
+         
+         
+        function userHasPermission(permissions){
+            var found = false;
+            angular.forEach(permissions, function(permission, index){
+            	 var hasRole = _.find($sessionStorage.roles,function(auth){
+                 	return auth.authority == permission
+                 });
+            	 if(hasRole){
+                  	found = true;
+                    return;
+                 }                      
+            });
+             
+            return found;
+        };
+        
+        function isLoggedIn(){
+            return $sessionStorage.token != null;
+        };
         
 
         return {
                 getLoginDetails:getLoginDetails,
-                checkUserCredentials:checkUserCredentials
+                checkUserCredentials:checkUserCredentials,
+                checkPermissionForView:checkPermissionForView,
+                isLoggedIn:isLoggedIn,
+                userHasPermission:userHasPermission
         };
     }
 })();

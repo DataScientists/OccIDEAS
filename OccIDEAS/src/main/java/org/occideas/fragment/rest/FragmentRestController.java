@@ -71,7 +71,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(FragmentVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.createFragment(json);
@@ -88,7 +88,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(FragmentVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.update(json);
@@ -103,7 +103,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 	@POST
 	public Response delete(FragmentVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.merge(json);

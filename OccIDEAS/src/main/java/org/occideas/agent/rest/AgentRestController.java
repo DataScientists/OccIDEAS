@@ -59,7 +59,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(AgentVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.create(json);
@@ -76,7 +76,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(AgentVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.update(json);
@@ -91,7 +91,7 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 	@POST
 	public Response delete(AgentVO json) {
 		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.UNAUTHORIZED).build();
+			return Response.status(Status.FORBIDDEN).build();
 		}
 		try{
 			service.delete(json);
