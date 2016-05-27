@@ -7,8 +7,7 @@
     function Config($stateProvider){
            $stateProvider
         .state('login', {
-            url: '/',
-            templateUrl: 'scripts/login/view/login.html',
+            url: '/login',
             controller: 'LoginCtrl',
             controllerAs: 'vm',
             authenticate: false

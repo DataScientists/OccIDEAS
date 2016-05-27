@@ -7,9 +7,9 @@
     function LogoutCtrl($state, $rootScope, dataBeanService,$window,$sessionStorage) {
     	delete $sessionStorage.userId;
     	delete $sessionStorage.token;
-    	$sessionStorage.showLogout = false;
-    	$rootScope.showLogout = $sessionStorage.showLogout;
-        dataBeanService.setStatetransitionHasErr('0');
-        $state.go('login', {}, {reload: true});
+    	$sessionStorage.isAuthenticated = false;
+    	dataBeanService.setStatetransitionHasErr('0');
+        $window.location.href = '/occideas/index.html';
+    	//$state.go('login', {}, {reload: true});
     }
 })();

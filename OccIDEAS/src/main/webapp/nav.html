@@ -1,5 +1,14 @@
+<div ng-controller="LoginCtrl as vm">
+<div ng-if="vm.isAuthenticated" ng-cloak>
 <ul class="nav nav-pills pull-right">
-  <li><a ui-sref="logout" >Logout</a></li>
-  <li><span id="welcome"  style="font-weight: bold">Welcome, {{$root.$storage.userId}}</span></li>
+  <li><a ui-sref="logout" >Sign out {{vm.userId}}</a></li>
 </ul>
 <h3 class="text-muted">OccIDEAS Version 3.9.0</h3>
+</div>
+<div ng-if="!vm.isAuthenticated" ng-cloak>
+	<div  ng-include="'scripts/login/view/login.html'"></div>
+</div>
+
+
+
+</div>

@@ -1728,6 +1728,9 @@
 		$scope.saveNewNote = function(data) {
 			saveNewNote(data);
 		}
+		$scope.saveEditQuestion = function(data) {
+			saveEditQuestion(data);
+		}
 		function saveNewNote(result) {
 			var noteText = result;
 			var interview = $scope.interview;
@@ -1742,12 +1745,42 @@
 			saveInterview(interview);
 			$mdDialog.cancel();
 		}
+		function saveEditQuestion(result){
+			
+		}
 		$scope.showNotePrompt = function(ev) {
 			$mdDialog.show({
 				// scope: $scope,
 				scope : $scope.$new(),
-				templateUrl : 'scripts/interviews/view/noteDialog.html'
+				templateUrl : 'scripts/interviews/view/noteDialog.html',
+				clickOutsideToClose:true
 			});
+		};
+		$scope.showEditQuestionPrompt = function(ev,node) {
+			QuestionsService.findQuestions(node.questionId).then(function(response){
+				if(response.status === 200){
+					$log.info('Question Found');
+					var fullQuestion = response.data[0];
+					_.each(node.answers,function(actualAnswer) {
+						_.find(fullQuestion.nodes,function(possibleAnswer) {
+							if (actualAnswer.answerId == possibleAnswer.idNode) {
+								possibleAnswer.isSelected = true;
+								fullQuestion.selectedAnswer = possibleAnswer;
+							}
+						});
+					});
+					$scope.questionBeingEdited = fullQuestion;
+					$mdDialog.show({
+						scope : $scope.$new(),
+						templateUrl : 'scripts/interviews/view/editQuestionDialog.html',
+						clickOutsideToClose:true
+					});
+				}else{
+					$log.error('ERROR on findQuestions in showEditQuestionPrompt!');
+					throw response;
+				}
+			});     
+			
 		};
 //		"\n".charCodeAt(0)
 		$scope.orderByNumber = function(questionAsked) {

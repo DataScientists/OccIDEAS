@@ -15,7 +15,7 @@ create table APP_USER (
    `state` VARCHAR(30) NOT NULL,  
    PRIMARY KEY (`id`),
    UNIQUE (`sso_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 /* USER_PROFILE table contains all possible roles */ 
 create table USER_PROFILE(
@@ -23,7 +23,7 @@ create table USER_PROFILE(
    `type` VARCHAR(30) NOT NULL,
    PRIMARY KEY (`id`),
    UNIQUE (`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 /* JOIN TABLE for MANY-TO-MANY relationship*/  
 CREATE TABLE APP_USER_USER_PROFILE (
@@ -32,12 +32,12 @@ CREATE TABLE APP_USER_USER_PROFILE (
     PRIMARY KEY (`user_id`, `user_profile_id`),
     CONSTRAINT FK_APP_USER FOREIGN KEY (`user_id`) REFERENCES APP_USER (`id`),
     CONSTRAINT FK_USER_PROFILE FOREIGN KEY (`user_profile_id`) REFERENCES USER_PROFILE (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /* Populate USER_PROFILE Table */
 INSERT INTO USER_PROFILE(type)
-VALUES ('READONLY');
- 
+VALUES ('INTERVIEWER');
+
 INSERT INTO USER_PROFILE(type)
 VALUES ('ASSESSOR');
  
@@ -45,8 +45,8 @@ INSERT INTO USER_PROFILE(type)
 VALUES ('CONTDEV');
 
 INSERT INTO USER_PROFILE(type)
-VALUES ('INTERVIEWER');
-
+VALUES ('READONLY');
+ 
 /* Interviewer */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
 VALUES ('interviewer','$2a$10$62LNfdU4F3HZgD7/dWX7r.i6XqledTrv/Rc9bi3gmNIL3JZxFpHRi', 'interviewer','interviewer','int@yahoo.com', 'Active');

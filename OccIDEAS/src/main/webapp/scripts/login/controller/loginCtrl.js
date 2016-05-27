@@ -3,16 +3,28 @@
     angular.module('occIDEASApp.Login').controller('LoginCtrl',
             LoginCtrl);
 
-    LoginCtrl.$inject = [ '$state', 'toaster', '$timeout', '$scope', '$http'  ,'$rootScope', 'dataBeanService', '$window','loginService','$sessionStorage'];
-    function LoginCtrl($state, toaster, $timeout, $scope, $http, $rootScope, dataBeanService,$window, loginService,$sessionStorage) {
+    LoginCtrl.$inject = ['$state','toaster','$timeout',
+                         '$scope','$http','$rootScope', 
+                         'dataBeanService', '$window','loginService',
+                         '$sessionStorage','AuthenticationService'];
+    function LoginCtrl($state, toaster, $timeout, 
+    		$scope, $http, $rootScope, 
+    		dataBeanService,$window, loginService,
+    		$sessionStorage,auth) {
         var vm = this;
         $scope.user = {};
-        vm.userId = '';
+        vm.userId = $sessionStorage.userId;
         vm.password = '';
         vm.hasErrMsg = false;
         vm.errMsg = '';
-        vm.isAuthenticated = false;
-
+        vm.isAuthenticated = $sessionStorage.isAuthenticated;
+        
+        if(!(angular.isUndefinedOrNull(vm.isAuthenticated))){
+        	if(!vm.isAuthenticated){
+        		vm.userId = '';
+        	}        	
+        }
+        
         if(dataBeanService.getStatetransitionHasErr() === '1') {
             vm.hasErrMsg = true;
             vm.errMsg = 'NOT_AUTH'
@@ -35,18 +47,20 @@
                     	$sessionStorage.roles = data.userInfo.roles;
                         vm.isAuthenticated = true;
 
-                        $sessionStorage.showLogout = true;
-                        $rootScope.showLogout = $sessionStorage.showLogout;
-                        $rootScope.$storage = $sessionStorage;
-                        $state.go('tabs.modules');
-                    }
-                    else if (status === 401) {
-                        $state.go('login');
+                        $sessionStorage.isAuthenticated = true;
+                        if(auth.userHasPermission(['ROLE_INTERVIEWER'])){
+                        	$state.go('tabs.participants');
+                        }else if(auth.userHasPermission(['ROLE_CONTDEV'])){
+                        	$state.go('tabs.assessments');
+                        }else if(auth.userHasPermission(['ROLE_ASSESSOR'])){
+                        	$state.go('tabs.modules');
+                        }else{                       	
+                        	$state.go('error',{error:"No role defined for user "+vm.userId});
+                        }  
+                    }else if (status === 401) {
                         vm.hasErrMsg = true;
                         vm.errMsg = 'Invalid UserId/Password.';
-                    }
-                    else {
-                        $state.go('login');
+                    }else {
                         vm.hasErrMsg = true;
                         vm.errMsg = 'failure message: ' + JSON.stringify({data: data}) +' status: '+status;
                     }

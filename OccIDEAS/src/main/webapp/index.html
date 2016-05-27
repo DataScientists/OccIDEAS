@@ -76,9 +76,8 @@
 </head>
 <body ng-app="occIDEASApp">
     <div class="container">
-      <header ng-if="$root.$storage.showLogout" ng-include="'nav.html'"></header>
-      <div ui-view>
-      
+      <header ng-include="'nav.html'" ng-cloak></header>
+      <div ui-view>      
       </div>
       <footer ng-include="'footer.html'"></footer>
     </div>
