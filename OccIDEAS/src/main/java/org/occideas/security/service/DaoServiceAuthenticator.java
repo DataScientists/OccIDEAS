@@ -65,6 +65,9 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
             checkIfUserHasReadOnlyRole(userProfile.getType());
             authorities.add(new SimpleGrantedAuthority("ROLE_"+userProfile.getType()));
         }
+        if(authorities.isEmpty()){
+        	authorities.add(new SimpleGrantedAuthority("ROLE_"+UserProfileType.READONLY.name()));
+        }
         log.info("authorities :"+authorities);
         return authorities;
     }
