@@ -6,6 +6,8 @@ import java.util.List;
 import org.occideas.entity.Participant;
 import org.occideas.mapper.ParticipantMapper;
 import org.occideas.participant.dao.ParticipantDao;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     	participantDao.saveOrUpdate(mapper.convertToParticipant(o,false));
     }
 
+    @Auditable(actionType = AuditingActionType.ADD_PARTICIPANT)
 	@Override
 	public ParticipantVO create(ParticipantVO o) {
 		Participant entity = new Participant();
