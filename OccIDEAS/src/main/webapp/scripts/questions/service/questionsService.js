@@ -7,15 +7,15 @@
 		function findQuestions(idNode,type) {
 			var restUrl = "";
 			if(type=='M'){
-				restUrl = 'rest/module/get?id=' + idNode;
+				restUrl = 'web/rest/module/get?id=' + idNode;
 				
 			}else if(type=='F'){
-				restUrl = 'rest/fragment/get?id=' + idNode;
+				restUrl = 'web/rest/fragment/get?id=' + idNode;
 				
 			}else if(type=='P'){
-				restUrl = 'rest/answer/getById?id='+idNode;
+				restUrl = 'web/rest/answer/getById?id='+idNode;
 			}else{
-				restUrl = 'rest/question/get?id=' + idNode;
+				restUrl = 'web/rest/question/get?id=' + idNode;
 			}
 			var request =  $http({
 				  method: 'GET',
@@ -24,7 +24,7 @@
 			return request.then(handleSuccess,handleError);
 		}
 		function findQuestion(idNode) {
-			var restUrl = 'rest/question/get?id=' + idNode;
+			var restUrl = 'web/rest/question/get?id=' + idNode;
 			
 			var request =  $http({
 				  method: 'GET',
@@ -33,7 +33,7 @@
 			return request.then(handleSuccess,handleError);
 		}
 		function findPossibleAnswer(idNode) {
-			var restUrl = 'rest/answer/getById?id='+idNode;
+			var restUrl = 'web/rest/answer/getById?id='+idNode;
 			
 			var request =  $http({
 				  method: 'GET',
@@ -43,7 +43,7 @@
 		}
 		
 		function save(data){
-			var restSaveUrl = 'rest/question/update';
+			var restSaveUrl = 'web/rest/question/update';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,
@@ -53,21 +53,21 @@
 		}
 		function saveNode(data){
 			if(data.nodeclass=='M'){
-				var restSaveUrl = 'rest/module/update';
+				var restSaveUrl = 'web/rest/module/update';
 				var request =  $http({
 					  method: 'POST',
 					  url: restSaveUrl,
 					  data:data
 					})
 			}else if(data.nodeclass=='F'){
-				var restSaveUrl = 'rest/fragment/update';
+				var restSaveUrl = 'web/rest/fragment/update';
 				var request =  $http({
 					  method: 'POST',
 					  url: restSaveUrl,
 					  data:data
 					})
 			}else{
-				var restSaveUrl = 'rest/question/update';
+				var restSaveUrl = 'web/rest/question/update';
 				var request =  $http({
 					  method: 'POST',
 					  url: restSaveUrl,
@@ -79,7 +79,7 @@
 		}
 		
 		function getMaxId(){
-			var restGetMaxIdUrl = 'rest/question/getMaxId';
+			var restGetMaxIdUrl = 'web/rest/question/getMaxId';
 			var request =  $http({
 				  method: 'GET',
 				  url: restGetMaxIdUrl
@@ -88,7 +88,7 @@
 		}
 
         function getNextQuestion(idnode){
-            var restNextQuestionUrl = 'rest/question/getNextQuestion?idNode=' + idnode;
+            var restNextQuestionUrl = 'web/rest/question/getNextQuestion?idNode=' + idnode;
             var request =  $http({
                 method: 'GET',
                 url: restNextQuestionUrl

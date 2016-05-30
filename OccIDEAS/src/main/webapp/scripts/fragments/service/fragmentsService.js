@@ -4,7 +4,7 @@
 
 	FragmentsService.$inject = ['$http'];
 	function FragmentsService($http){
-		var apiUrl = '/occideas/rest/';
+		var apiUrl = '/occideas/web/rest/';
 		var modulesUrl = apiUrl + 'fragment';
 		var apiKey = '';
 		
@@ -16,7 +16,7 @@
 		  });
 		};
 		function save(data){
-			var restSaveUrl = 'rest/fragment/update';
+			var restSaveUrl = 'web/rest/fragment/update';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,
@@ -25,7 +25,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
 		var findFragmentChildNodes = function(idNode) {
-			  return $http.get('rest/fragment/get?id=' + idNode).then(function(response) {
+			  return $http.get('web/rest/fragment/get?id=' + idNode).then(function(response) {
 			    var data = response.data;
 			    var filteredData = [];
 			    for(var i=0;i < data.length;i++){
@@ -52,7 +52,7 @@
 			  });
 			};
 		function findFragment(idNode) {
-			var restUrl = 'rest/fragment/get?id=' + idNode;
+			var restUrl = 'web/rest/fragment/get?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -60,7 +60,7 @@
 			return request.then(handleSuccess,handleError);
 		}
 		function checkExists(idNode) {
-			var restUrl = 'rest/fragment/checkexists?id=' + idNode;
+			var restUrl = 'web/rest/fragment/checkexists?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl

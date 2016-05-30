@@ -5,7 +5,7 @@
     InterviewsService.$inject = ['$http', '$q'];
     function InterviewsService($http, $q) {
         function get(idNode) {
-            var restUrl = 'rest/interview/get?id=' + idNode;
+            var restUrl = 'web/rest/interview/get?id=' + idNode;
             var request = $http({
                 method: 'GET',
                 url: restUrl
@@ -13,7 +13,7 @@
             return request.then(handleSuccess, handleError);
         }
         function checkReferenceNumberExists(referenceNumber) {
-            var restUrl = 'rest/interview/getbyref?ref=' + referenceNumber;
+            var restUrl = 'web/rest/interview/getbyref?ref=' + referenceNumber;
             var request = $http({
                 method: 'GET',
                 url: restUrl
@@ -21,7 +21,7 @@
             return request.then(handleSuccess, handleError);
         }
         function findModule(idNode) {
-			var restUrl = 'rest/module/getinterviewmodule?id=' + idNode;
+			var restUrl = 'web/rest/module/getinterviewmodule?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -29,7 +29,7 @@
 			return request.then(handleSuccess,handleError);
 		}
         function findFragment(idNode) {
-			var restUrl = 'rest/fragment/getinterviewfragment?id=' + idNode;
+			var restUrl = 'web/rest/fragment/getinterviewfragment?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -39,7 +39,7 @@
         function save(data) {
         	console.log("Saving interview");
         	console.dir(data);
-            var restSaveUrl = 'rest/interview/update';
+            var restSaveUrl = 'web/rest/interview/update';
             var request = $http({
                 method: 'POST',
                 url: restSaveUrl,
@@ -49,7 +49,7 @@
         }
 
         function getNextQuestionOld(data) {
-            var saveAndNextQ = 'rest/interview/saveAndNextQ';
+            var saveAndNextQ = 'web/rest/interview/saveAndNextQ';
             var request = $http({
                 method: 'POST',
                 url: saveAndNextQ,
@@ -58,7 +58,7 @@
             return request.then(handleSuccess, handleError);
         }
         function getNextQuestion(data) {
-            var nextQ = 'rest/interview/nextquestion';
+            var nextQ = 'web/rest/interview/nextquestion';
             var request = $http({
                 method: 'POST',
                 url: nextQ,
@@ -68,7 +68,7 @@
         }
         
         function getInterview(interviewId) {
-            var url = 'rest/interview/getInterview?interviewId=' + interviewId;
+            var url = 'web/rest/interview/getInterview?interviewId=' + interviewId;
             var request = $http({
                 method: 'GET',
                 url: url
@@ -77,7 +77,7 @@
         }
         
         function saveInterviewMod(data) {
-     		var restUrl = 'rest/interview/saveMod';
+     		var restUrl = 'web/rest/interview/saveMod';
      		var request =  $http({
      			method: 'POST',
      			url: restUrl,
@@ -87,7 +87,7 @@
         }
 
         function startInterview(data) {
-            var startInterview = 'rest/interview/create';
+            var startInterview = 'web/rest/interview/create';
             var request = $http({
                 method: 'POST',
                 url: startInterview,
@@ -97,7 +97,7 @@
         }
 
         function saveQuestion(data) {
-			var restUrl = 'rest/interviewquestionanswer/save';
+			var restUrl = 'web/rest/interviewquestionanswer/save';
 			var request =  $http({
 				  method: 'POST',
 				  url: restUrl,
@@ -107,7 +107,7 @@
 		}
         
         function saveAnswers(data) {
-			var restUrl = 'rest/interviewquestionanswer/saveAnswers';
+			var restUrl = 'web/rest/interviewquestionanswer/saveAnswers';
 			var request =  $http({
 				  method: 'POST',
 				  url: restUrl,
@@ -117,7 +117,7 @@
 		}
         
         function getIntQuestion(idInterview,questionId,modCount) {
-			var restUrl = 'rest/interviewquestionanswer/getIntQuestion?idInterview='
+			var restUrl = 'web/rest/interviewquestionanswer/getIntQuestion?idInterview='
 							+idInterview+'&questionId='+questionId+'&modCount='+modCount;
 			var request =  $http({
 				  method: 'GET',
@@ -127,7 +127,7 @@
 		}
         
         function saveIntDisplay(data){
-        	var restUrl = 'rest/interviewdisplay/update';
+        	var restUrl = 'web/rest/interviewdisplay/update';
         	var request =  $http({
 				  method: 'POST',
 				  url: restUrl,
@@ -137,7 +137,7 @@
         }
         
         function getIntDisplay(interviewId){
-        	var restUrl = 'rest/interviewdisplay/getIntDisplay?id=' + interviewId;
+        	var restUrl = 'web/rest/interviewdisplay/getIntDisplay?id=' + interviewId;
         	var request =  $http({
 				  method: 'GET',
 				  url: restUrl

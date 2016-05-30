@@ -4,7 +4,7 @@
 
 	AgentsService.$inject = ['$http'];
 	function AgentsService($http){
-		var apiUrl = '/occideas/rest/';
+		var apiUrl = '/occideas/web/rest/';
 		var modulesUrl = apiUrl + 'agent';
 		var apiKey = '';
 		
@@ -21,7 +21,7 @@
 		  });
 		};
 		function save(data){
-			var restSaveUrl = 'rest/agent/update';
+			var restSaveUrl = 'web/rest/agent/update';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,

@@ -4,7 +4,7 @@
 
 	ModulesService.$inject = ['$http','ModulesCache'];
 	function ModulesService($http,ModulesCache){
-		var apiUrl = '/occideas/rest/';
+		var apiUrl = '/occideas/web/rest/';
 		var modulesUrl = apiUrl + 'module';
 		var apiKey = '';
 		
@@ -35,7 +35,7 @@
 		  });
 		};
 		function save(data){
-			var restSaveUrl = 'rest/module/update';
+			var restSaveUrl = 'web/rest/module/update';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,

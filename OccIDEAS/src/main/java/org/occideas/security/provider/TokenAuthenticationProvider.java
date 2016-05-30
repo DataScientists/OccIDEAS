@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 import com.google.common.base.Optional;
@@ -57,6 +58,7 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
 				authenticatedExternalWebService.getAuthorities()));
 		authenticatedExternalWebService.setToken(tokenResponse);
 		authenticatedExternalWebService.setAuthenticated(true);
+		SecurityContextHolder.getContext().setAuthentication(authenticatedExternalWebService);
 		return authenticatedExternalWebService;
 	}
 	

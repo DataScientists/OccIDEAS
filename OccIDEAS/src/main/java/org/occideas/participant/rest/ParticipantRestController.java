@@ -13,7 +13,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
-import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;

@@ -8,6 +8,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.common.base.Optional;
 
@@ -37,6 +38,7 @@ public class DomainUsernamePasswordAuthenticationProvider implements Authenticat
         	throw new BadCredentialsException("Invalid Domain User Credentials");
         }
         resultOfAuthentication.getToken().setToken(tokenManager.createTokenForUser(username.get(),resultOfAuthentication.getAuthorities()));
+        SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication);
         return resultOfAuthentication;
     }
     

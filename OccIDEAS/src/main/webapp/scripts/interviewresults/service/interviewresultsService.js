@@ -5,7 +5,7 @@
     InterviewResultsService.$inject = ['$http', '$q'];
     function InterviewResultsService($http, $q) {
     	function listByInterview(idInterview) {
-			var restUrl = 'rest/interviewquestionanswer/getbyinterview?id=' + idInterview;
+			var restUrl = 'web/rest/interviewquestionanswer/getbyinterview?id=' + idInterview;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -13,7 +13,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
     	function listAllInterviews() {
-			var restUrl = 'rest/interview/getlistwithanswers';
+			var restUrl = 'web/rest/interview/getlistwithanswers';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -21,7 +21,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
     	function getInterviews() {
-			var restUrl = 'rest/interviewquestionanswer/getlist';
+			var restUrl = 'web/rest/interviewquestionanswer/getlist';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl

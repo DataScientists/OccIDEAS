@@ -4,7 +4,7 @@
 	
 	ModuleRuleService.$inject = ['$http','$q'];
 	function ModuleRuleService($http,$q){
-		var apiUrl = '/occideas/rest/';
+		var apiUrl = '/occideas/web/rest/';
 		var moduleRuleUrl = apiUrl + 'modulerule';
 		
 		var getModuleRule = function(idNode) {

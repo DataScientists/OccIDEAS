@@ -5,7 +5,7 @@
     AssessmentsService.$inject = ['$http', '$q'];
     function AssessmentsService($http, $q) {
     	function listByInterview(idInterview) {
-			var restUrl = 'rest/interviewquestionanswer/getbyinterview?id=' + idInterview;
+			var restUrl = 'web/rest/interviewquestionanswer/getbyinterview?id=' + idInterview;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -13,7 +13,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
     	function getInterviews() {
-			var restUrl = 'rest/interview/getlist';
+			var restUrl = 'web/interview/getlist';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -21,7 +21,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
     	function getInterview(idInterview) {
-			var restUrl = 'rest/interview/get?id=' + idInterview;
+			var restUrl = 'web/rest/interview/get?id=' + idInterview;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -29,7 +29,7 @@
 			return request.then(handleSuccess,handleError);
 		}
     	function updateFiredRules(idInterview) {
-			var restUrl = 'rest/interview/updatefiredrules?id=' + idInterview;
+			var restUrl = 'web/rest/interview/updatefiredrules?id=' + idInterview;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -37,7 +37,7 @@
 			return request.then(handleSuccess,handleError);
 		}
     	function getAssessments() {
-			var restUrl = 'rest/interview/getassessments';
+			var restUrl = 'web/rest/interview/getassessments';
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl

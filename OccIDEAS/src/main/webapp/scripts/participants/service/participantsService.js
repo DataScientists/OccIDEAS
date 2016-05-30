@@ -4,7 +4,7 @@
 
 	ParticipantsService.$inject = ['$http'];
 	function ParticipantsService($http){
-		var apiUrl = '/occideas/rest/';
+		var apiUrl = '/occideas/web/rest/';
 		var modulesUrl = apiUrl + 'participant';
 		var apiKey = '';
 		
@@ -16,7 +16,7 @@
            return request.then(handleSuccess1,handleError);	
 		};
 		function save(data){
-			var restSaveUrl = 'rest/participant/update';
+			var restSaveUrl = 'web/rest/participant/update';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,
@@ -26,7 +26,7 @@
 		}
 		
 		function findParticipant(idParticipant) {
-			var restUrl = 'rest/participant/get?id=' + idParticipant;
+			var restUrl = 'web/rest/participant/get?id=' + idParticipant;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -34,7 +34,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
 		function findInterviewParticipant(idParticipant) {
-			var restUrl = 'rest/participant/getinterviewparticipant?id=' + idParticipant;
+			var restUrl = 'web/rest/participant/getinterviewparticipant?id=' + idParticipant;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -42,7 +42,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
 		function checkExists(reference) {
-			var restUrl = 'rest/participant/checkexists?reference=' + reference;
+			var restUrl = 'web/rest/participant/checkexists?reference=' + reference;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -68,7 +68,7 @@
 		    return request.then(handleSuccess1,handleError);
 		};
 		function getNextQuestion(data) {
-            var nextQ = 'rest/participant/nextquestion';
+            var nextQ = 'web/rest/participant/nextquestion';
             var request = $http({
                 method: 'POST',
                 url: nextQ,

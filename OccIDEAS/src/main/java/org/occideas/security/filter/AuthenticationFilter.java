@@ -178,6 +178,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 			throw new InternalAuthenticationServiceException(
 					"Unable to authenticate Domain User for provided credentials");
 		}
+		SecurityContextHolder.getContext().setAuthentication(responseAuthentication);
 		log.debug("User successfully authenticated");
 		return responseAuthentication;
 	}
