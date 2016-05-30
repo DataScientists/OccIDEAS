@@ -7,6 +7,8 @@ import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Interview;
 import org.occideas.interview.dao.InterviewDao;
 import org.occideas.mapper.InterviewMapper;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.InterviewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +63,7 @@ public class InterviewServiceImpl implements InterviewService {
         return list;
     }
 
+    @Auditable(actionType = AuditingActionType.CREATE_INTERVIEW)
     @Override
     public InterviewVO create(InterviewVO o) {
         // TODO: Hotfix - Just don't understand why it returns interviewId instead of object

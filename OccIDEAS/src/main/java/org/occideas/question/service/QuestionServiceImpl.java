@@ -10,6 +10,8 @@ import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.question.dao.QuestionDao;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.QuestionVO;
@@ -59,6 +61,7 @@ public class QuestionServiceImpl implements QuestionService {
         return list;
     }
 
+    @Auditable(actionType = AuditingActionType.CREATE_QUESTION)
     @Override
     public QuestionVO create(QuestionVO o) {
         Question question = new Question();
@@ -66,11 +69,13 @@ public class QuestionServiceImpl implements QuestionService {
         return mapper.convertToQuestionVO(question);
     }
 
+    @Auditable(actionType = AuditingActionType.UPDATE_QUESTION)
     @Override
     public void update(QuestionVO o) {
         dao.saveOrUpdate(mapper.convertToQuestion(o));
     }
 
+    @Auditable(actionType = AuditingActionType.DEL_QUESTION)
     @Override
     public void delete(QuestionVO o) {
         dao.delete(mapper.convertToQuestion(o));

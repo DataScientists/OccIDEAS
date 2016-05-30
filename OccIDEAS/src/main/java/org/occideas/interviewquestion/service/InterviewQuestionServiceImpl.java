@@ -6,6 +6,8 @@ import java.util.List;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.mapper.InterviewQuestionMapper;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,7 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
         return list;
     }
 
+    @Auditable(actionType = AuditingActionType.ADD_INTERVIEW_QUESTION)
     @Override
     public InterviewQuestionVO create(InterviewQuestionVO o) {
         // TODO: Hotfix - Just don't understand why it returns interviewId instead of object
@@ -52,11 +55,13 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
         return mapper.convertToInterviewQuestionVO(intervew);
     }
 
+    @Auditable(actionType = AuditingActionType.UPD_INTERVIEW_QUESTION)
     @Override
     public InterviewQuestionVO updateIntQ(InterviewQuestionVO o) {
         return mapper.convertToInterviewQuestionVO(dao.saveOrUpdate(mapper.convertToInterviewQuestion(o)));
     }
 
+    @Auditable(actionType = AuditingActionType.DEL_INTERVIEW_QUESTION)
     @Override
     public void delete(InterviewQuestionVO o) {
         dao.delete(mapper.convertToInterviewQuestion(o));

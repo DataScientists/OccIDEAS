@@ -23,7 +23,6 @@ public class ParticipantServiceImpl implements ParticipantService {
 	@Autowired
     private ParticipantMapper mapper;
 
-	@Auditable(actionType = AuditingActionType.ADD_PARTICIPANT)
     @Override
     public List<ParticipantVO> listAll() {
         return mapper.convertToParticipantVOList(participantDao.getAll(),true);
@@ -50,12 +49,14 @@ public class ParticipantServiceImpl implements ParticipantService {
     	participantDao.saveOrUpdate(mapper.convertToParticipant(o,true));
     }
     
+    @Auditable(actionType = AuditingActionType.DELETE_PARTICIPANT)
     @Override
     public void delete(ParticipantVO o) {
     	o.setDeleted(1);
     	participantDao.saveOrUpdate(mapper.convertToParticipant(o,false));
     }
 
+    @Auditable(actionType = AuditingActionType.ADD_PARTICIPANT)
 	@Override
 	public ParticipantVO create(ParticipantVO o) {
 		Participant entity = new Participant();

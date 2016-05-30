@@ -1,6 +1,7 @@
 package org.occideas.security.model;
 
 import java.io.Serializable;
+import java.sql.Blob;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -22,12 +23,16 @@ public class AuditLog implements Serializable {
 	private long id;
 	@Column(name = "username")
 	private String username;
+	@Column(name = "user_type")
+	private String userType;
 	@Column(name = "action")
 	private String action;
+	@Column(name = "method")
+	private String method;
+	@Column(name = "arguments")
+	private byte[] arguments;
 	@Column(name = "date")
 	private Timestamp date;
-	@Column(name = "userIp")
-	private String userIp;
 
 	public long getId() {
 		return id;
@@ -61,12 +66,28 @@ public class AuditLog implements Serializable {
 		this.date = date;
 	}
 
-	public String getUserIp() {
-		return userIp;
+	public String getMethod() {
+		return method;
 	}
 
-	public void setUserIp(String userIp) {
-		this.userIp = userIp;
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public byte[] getArguments() {
+		return arguments;
+	}
+
+	public void setArguments(byte[] arguments) {
+		this.arguments = arguments;
+	}
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.occideas.security.provider;
 
+import java.util.List;
+
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.AuthenticationWithToken;
 import org.occideas.security.service.ExternalServiceAuthenticator;
@@ -8,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.google.common.base.Optional;
@@ -37,7 +40,8 @@ public class DomainUsernamePasswordAuthenticationProvider implements Authenticat
         if(resultOfAuthentication == null){
         	throw new BadCredentialsException("Invalid Domain User Credentials");
         }
-        resultOfAuthentication.getToken().setToken(tokenManager.createTokenForUser(username.get(),resultOfAuthentication.getAuthorities()));
+        resultOfAuthentication.getToken().setToken(tokenManager.createTokenForUser(username.get(),
+        			(List<GrantedAuthority>)resultOfAuthentication.getToken().getUserInfo().get("roles")));
         SecurityContextHolder.getContext().setAuthentication(resultOfAuthentication);
         return resultOfAuthentication;
     }

@@ -161,4 +161,17 @@ public class InterviewQuestionVO {
 		this.intQuestionSequence = intQuestionSequence;
 	}
 
+	@Override
+	public String toString() {
+		return "InterviewQuestionVO [id=" + id + ", idInterview=" + idInterview + ", questionId=" + questionId
+				+ ", parentId=" + parentId + ", parentAnswerId=" + parentAnswerId + ", topNodeId=" + topNodeId
+				+ ", modCount=" + modCount + ", link=" + link + ", name=" + name + ", description=" + description
+				+ ", nodeClass=" + nodeClass + ", number=" + number + ", type=" + type + ", intQuestionSequence="
+				+ intQuestionSequence + ", deleted=" + deleted + ", answers=" + answers + ", linkingQuestion="
+				+ linkingQuestion + "]";
+	}
+	
+	
+	
+	
 }

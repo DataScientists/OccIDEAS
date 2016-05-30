@@ -6,6 +6,8 @@ import java.util.List;
 import org.occideas.entity.Rule;
 import org.occideas.mapper.RuleMapper;
 import org.occideas.rule.dao.RuleDao;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class RuleServiceImpl implements RuleService {
         return list;
     }
 
+    @Auditable(actionType = AuditingActionType.CREATE_RULE)
     @Override
     public RuleVO create(RuleVO o) {
         Rule rule = new Rule();
@@ -43,11 +46,13 @@ public class RuleServiceImpl implements RuleService {
         return mapper.convertToRuleVO(rule);
     }
 
+    @Auditable(actionType = AuditingActionType.SAVE_UPD_RULE)
     @Override
     public void saveOrUpdate(RuleVO o) {
         dao.saveOrUpdate(mapper.convertToRule(o));
     }
 
+    @Auditable(actionType = AuditingActionType.DELETE_RULE)
     @Override
     public void delete(RuleVO o) {
         dao.delete(mapper.convertToRule(o));
