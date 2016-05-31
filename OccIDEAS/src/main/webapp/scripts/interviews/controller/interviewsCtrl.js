@@ -1574,13 +1574,16 @@
 			saveInterview(interview);
 		}
 		function saveInterview(interview) {
-			InterviewsService.save(interview).then(
-					function(response) {
-						if (response.status === 200) {
-							$log.info("Saving interview with id:"
-									+ interview.interviewId + " successful");
+			InterviewsService.save(interview).then(function(response) {
+				if (response.status === 200) {
+					$log.info("Saving interview with id:"+ interview.interviewId + " successful");
+					InterviewsService.get($scope.interview.interviewId).then(function(response) {
+						if(response.status==200){
+							$scope.interview = response.data[0];
 						}
 					});
+				}
+			});
 		}
 		
 
@@ -2375,7 +2378,7 @@
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
-		$scope.saveNewNote = function(data) {
+		$scope.saveNewNoteButton = function(data) {
 			saveNewNote(data);
 		}
 		$scope.saveEditQuestionButton = function(data) {
@@ -2388,7 +2391,7 @@
 				interview.notes = [];
 			}
 			interview.notes.push({
-				interviewId : $scope.interviewId,
+				interviewId : interview.interviewId,
 				text : noteText,
 				type : 'Interviewer'
 			});
