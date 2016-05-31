@@ -367,16 +367,21 @@
                 tabs.splice(index, 1);
                 $scope.tabOptions.splice(index, 1);
         	} else if (auth.userHasPermission(['ROLE_INTERVIEWER'])) {
-            	if (confirm('Are you sure you want to stop the interview?')) {
-            		if($rootScope.participant){
-                		var participant = $scope.participant;
-                		participant.status = 1;//partial
-                		$rootScope.saveParticipant(participant);
-                	}
-            		var index = tabs.indexOf(tab);
-                    tabs.splice(index, 1);
-                    $scope.tabOptions.splice(index, 1);
-            	}
+        		if($rootScope.participant){
+        			if($rootScope.participant.status != 2){//complete
+        				if (confirm('Are you sure you want to stop the interview?')) {
+                    		if($rootScope.participant){
+                        		var participant = $scope.participant;
+                        		participant.status = 1;//partial
+                        		$rootScope.saveParticipant(participant);
+                        	}
+                    		var index = tabs.indexOf(tab);
+                            tabs.splice(index, 1);
+                            $scope.tabOptions.splice(index, 1);
+                    	}
+        			}    			
+        		}
+            	
             	
             }else if (auth.userHasPermission(['ROLE_CONTDEV'])) {
             	var index = tabs.indexOf(tab);

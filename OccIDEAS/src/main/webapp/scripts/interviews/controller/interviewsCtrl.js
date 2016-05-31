@@ -72,30 +72,45 @@
 
 			return minutes;
 		};
+		$rootScope.saveParticipant = function (participant) {
+			ParticipantsService.save(participant).then(function(response) {
+				if (response.status === 200) {
+					$log.info("Saving Participant "
+							+ participant.idParticipant
+							+ " was successful");
+				}
+			});
+		}
 		if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
 			$scope.interview = updateData;
 			$rootScope.participant = updateData.participant;
+			var participant = $rootScope.participant;
+			participant.status = 0;//running
+			$rootScope.saveParticipant(participant);
 			refreshDisplay();
 			var question = findNextQuestionQueued($scope.interview);
-			if(question){			
-				if (question.type == 'Q_frequency') { //if frequency set up frequency lists
-					$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
-					$scope.hoursArray = $scope.getShiftHoursArray();
-					$scope.minutesArray = $scope.getShiftMinutesArray();
-					$scope.weeks = $scope.getWeeksArray();
-					$scope.seconds = $scope.getSecondsArray();
-				}				
+			if(question){										
 				QuestionsService.findQuestion(question.questionId).then(function(response){
 					if(response.status === 200){
 						$scope.interviewStarted = true;
 						var ques = response.data[0];
 						$scope.interview.showedQuestion = ques;
 						safeDigest($scope.interview.showedQuestion);
+						if (ques.type == 'Q_frequency') { //if frequency set up frequency lists
+							$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+							$scope.hoursArray = $scope.getShiftHoursArray();
+							$scope.minutesArray = $scope.getShiftMinutesArray();
+							$scope.weeks = $scope.getWeeksArray();
+							$scope.seconds = $scope.getSecondsArray();
+						}
 						var nodeLink = _.find($scope.interview.questionHistory,function(node){
 							return node.link==ques.topNodeId;
 						});
 						$scope.questionheader.name = nodeLink.name.substring(0, 4);
+						$scope.inProgress = false;
+						safeDigest($scope.inProgress);
+						$scope.scrollTo($scope.interview.showedQuestion.idNode);
 					}else{
 						var errorMsg = "Error getting question "+question.questionId;
 						console.error(errorMsg);
@@ -1519,15 +1534,7 @@
 						}
 					});
 		}
-		$rootScope.saveParticipant = function (participant) {
-			ParticipantsService.save(participant).then(function(response) {
-				if (response.status === 200) {
-					$log.info("Saving Participant "
-							+ participant.idParticipant
-							+ " was successful");
-				}
-			});
-		}
+		
 
 		function addModuleCount(){
 			_.each($scope.interview.modules,function(mod,ind){
@@ -1593,22 +1600,26 @@
 											$scope.interview = response.data[0];
 											refreshDisplay();
 											var question = findNextQuestionQueued($scope.interview);
-											if(question){
-												if (question.type == 'Q_frequency') { //if frequency set up frequency lists
-													$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
-													$scope.hoursArray = $scope.getShiftHoursArray();
-													$scope.minutesArray = $scope.getShiftMinutesArray();
-													$scope.weeks = $scope.getWeeksArray();
-													$scope.seconds = $scope.getSecondsArray();
-												}	
+											if(question){												
 												QuestionsService.findQuestion(question.questionId).then(function(response){
 													if(response.status === 200){
-														var nodeLink = _.find($scope.interview.questionHistory,function(node){
-															return node.link==question.topNodeId;
-														})
-														$scope.questionheader.name = nodeLink.name.substring(0, 4);
-														$scope.interview.showedQuestion = response.data[0];
+														var ques = response.data[0];
+														$scope.interview.showedQuestion = ques;
 														safeDigest($scope.interview.showedQuestion);
+														if (ques.type == 'Q_frequency') { //if frequency set up frequency lists
+															$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+															$scope.hoursArray = $scope.getShiftHoursArray();
+															$scope.minutesArray = $scope.getShiftMinutesArray();
+															$scope.weeks = $scope.getWeeksArray();
+															$scope.seconds = $scope.getSecondsArray();
+														}
+														var nodeLink = _.find($scope.interview.questionHistory,function(node){
+															return node.link==ques.topNodeId;
+														});
+														$scope.questionheader.name = nodeLink.name.substring(0, 4);
+														$scope.inProgress = false;
+														safeDigest($scope.inProgress);
+														$scope.scrollTo($scope.interview.showedQuestion.idNode);
 													}else{
 														var errorMsg = "Error getting question "+question.questionId;
 														console.error(errorMsg);
@@ -1768,24 +1779,26 @@
 					refreshDisplay();
 					var question = findNextQuestionQueued($scope.interview);
 					if(question){
-						if(question.link==0){
-							if (question.type == 'Q_frequency') { //if frequency set up frequency lists
-								$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
-								$scope.hoursArray = $scope.getShiftHoursArray();
-								$scope.minutesArray = $scope.getShiftMinutesArray();
-								$scope.weeks = $scope.getWeeksArray();
-								$scope.seconds = $scope.getSecondsArray();
-							}	
+						if(question.link==0){	
 							QuestionsService.findQuestion(question.questionId).then(function(response){
 								if(response.status === 200){
-									var nodeLink = _.find($scope.interview.questionHistory,function(node){
-										return node.link==question.topNodeId;
-									})
-									$scope.questionheader.name = nodeLink.name.substring(0, 4);
-									$scope.interview.showedQuestion = response.data[0];
+									var ques = response.data[0];
+									$scope.interview.showedQuestion = ques;
 									safeDigest($scope.interview.showedQuestion);
-									$scope.inProgress = false; 
-									safeDigest($scope.inProgress); 
+									if (ques.type == 'Q_frequency') { //if frequency set up frequency lists
+										$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+										$scope.hoursArray = $scope.getShiftHoursArray();
+										$scope.minutesArray = $scope.getShiftMinutesArray();
+										$scope.weeks = $scope.getWeeksArray();
+										$scope.seconds = $scope.getSecondsArray();
+									}
+									var nodeLink = _.find($scope.interview.questionHistory,function(node){
+										return node.link==ques.topNodeId;
+									});
+									$scope.questionheader.name = nodeLink.name.substring(0, 4);
+									$scope.inProgress = false;
+									safeDigest($scope.inProgress);
+									$scope.scrollTo($scope.interview.showedQuestion.idNode);
 								}else{
 									var errorMsg = "Error getting question "+question.questionId;
 									console.error(errorMsg);
@@ -2015,6 +2028,7 @@
 											$scope.questionheader.name = nodeLink.name.substring(0, 4);
 											$scope.inProgress = false;
 											safeDigest($scope.inProgress);
+											$scope.scrollTo($scope.interview.showedQuestion.idNode);
 										}else{
 											var errorMsg = "Error getting question "+question.questionId;
 											console.error(errorMsg);

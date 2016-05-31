@@ -387,7 +387,9 @@
     	        					}
     	        					return InterviewsService.get(idInterview).then(function(response) {
         								if (response.status === 200) {
-        									return response.data[0];   				    				     									
+        									var interview = response.data[0];  
+        									interview.participant = participant;
+        									return interview;   				    				     									
         								} else if (response.status === 401) {
         									$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
         									return;
