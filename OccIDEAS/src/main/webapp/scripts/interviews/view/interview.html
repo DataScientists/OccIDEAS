@@ -178,11 +178,11 @@
 				<div class="tree-node">
 					<div id="questionlist-{{element.questionId}}" class="tree-node-content Q_interviewresult {{element.processed ? 'Q_processed':''}}">
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
-							<span ng-if="!element.processed" class="badge-unprocessed ">
-								scheduled
+							<span ng-if="!element.processed" class="badge-unprocessed " title="scheduled">
+								&nbsp;
 							</span>
-							<span ng-if="element.deleted" class="badge-deleted">
-								deleted
+							<span ng-if="element.deleted" class="badge-deleted" title="deleted">
+								&nbsp;
 							</span>
 							<span class="badge">
 								{{element.header}}

@@ -93,7 +93,7 @@
 						$scope.interview.showedQuestion = ques;
 						safeDigest($scope.interview.showedQuestion);
 						var nodeLink = _.find($scope.interview.questionHistory,function(node){
-							return node.idNode==ques.topIdNode;
+							return node.link==ques.topNodeId;
 						});
 						$scope.questionheader.name = nodeLink.name.substring(0, 4);
 					}else{
@@ -1604,7 +1604,7 @@
 												QuestionsService.findQuestion(question.questionId).then(function(response){
 													if(response.status === 200){
 														var nodeLink = _.find($scope.interview.questionHistory,function(node){
-															return node.idNode==question.topIdNode;
+															return node.link==question.topNodeId;
 														})
 														$scope.questionheader.name = nodeLink.name.substring(0, 4);
 														$scope.interview.showedQuestion = response.data[0];
@@ -1779,7 +1779,7 @@
 							QuestionsService.findQuestion(question.questionId).then(function(response){
 								if(response.status === 200){
 									var nodeLink = _.find($scope.interview.questionHistory,function(node){
-										return node.idNode==question.topIdNode;
+										return node.link==question.topNodeId;
 									})
 									$scope.questionheader.name = nodeLink.name.substring(0, 4);
 									$scope.interview.showedQuestion = response.data[0];
@@ -2010,7 +2010,7 @@
 											$scope.interview.showedQuestion = ques;
 											safeDigest($scope.interview.showedQuestion);
 											var nodeLink = _.find($scope.interview.questionHistory,function(node){
-												return node.idNode==ques.topIdNode;
+												return node.link==ques.topNodeId;
 											});
 											$scope.questionheader.name = nodeLink.name.substring(0, 4);
 											$scope.inProgress = false;
