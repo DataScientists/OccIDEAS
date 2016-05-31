@@ -26,6 +26,14 @@
 		function add(type) {
 	    	$scope.addInterviewTabInterviewers();
 	    }
+		var safeDigest = function(obj) {
+			if (!obj.$$phase) {
+				try {
+					obj.$digest();
+				} catch (e) {
+				}
+			}
+		}
 		$scope.awesId = {};
 		$scope.startInterview = function(data) {
 			$scope.intDisplay = [];
@@ -86,8 +94,11 @@
 			$scope.interview = updateData;
 			$rootScope.participant = updateData.participant;
 			var participant = $rootScope.participant;
-			participant.status = 0;//running
-			$rootScope.saveParticipant(participant);
+			if(participant.status == 1){//partial interview
+				participant.status = 0;//running
+				$rootScope.saveParticipant(participant);
+			}
+			
 			refreshDisplay();
 			var question = findNextQuestionQueued($scope.interview);
 			if(question){										
@@ -118,8 +129,14 @@
 					}
 				});	
 			}else{
-				console.error("Could not queue first question");
-				alert("Could not queue first question");
+				if(participant.status == 2){//completed interview
+					endInterview();
+				}else{
+					var msg = "Could not queue first question";
+					console.error(msg);
+					alert(msg);
+				}
+				
 			}
 			
 		}
@@ -496,14 +513,7 @@
 							}
 		}
 
-		var safeDigest = function(obj) {
-			if (!obj.$$phase) {
-				try {
-					obj.$digest();
-				} catch (e) {
-				}
-			}
-		}
+		
 		function populateInteviewQuestionJsonByQuestion(interview, question) {
 			var intQuestionSeq = 1;
 			if(interview.questionHistory){
@@ -600,12 +610,12 @@
 				parentQuestionId : answer.parentId,
 				answerId : answer.idNode,
 				name : answer.name,
+				modCount : 1,
 				answerFreetext : answer.name,
 				nodeClass : answer.nodeclass,
 				number : answer.number,
-				modCount : 1,
 				type : answer.type,
-				deleted : 0,
+				deleted : answer.deleted,
 				isProcessed : false
 			};
 		}
@@ -617,6 +627,8 @@
 		}
 		function processEditInterviewQuestionNew(interview, node) {
 			buildAndEditQuestionNew(interview, node);
+			$mdDialog.cancel();
+			refreshDisplay();
 		}
 		function processFrequencyNew(interview, node) {
 			buildAndSaveFrequencyNew(interview, node);
@@ -746,41 +758,51 @@
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
 				return queuedQuestion.questionId == question.idNode;
 			});
-			$scope.displayQuestions = [];
-			for(var i=0;i<interview.questionHistory.length;i++){
-				var queuedQuestion = interview.questionHistory[i];
-				if(queuedQuestion.deleted==0){
-					if(queuedQuestion.description == 'display'){
-						$scope.displayQuestions.push(queuedQuestion);
+			var bDeleteAnswersRequired = false;
+			var deletedAnswers = [];
+			var selectedAnswer = question.selectedAnswer;
+			_.each(newQuestionAsked.answers,function(ans){
+				if(selectedAnswer.idNode!=ans.answerId){
+					ans.deleted=1;
+					deletedAnswers.push(ans);
+					bDeleteAnswersRequired = true;
+				}
+			});
+			if(bDeleteAnswersRequired){
+				$scope.displayQuestions = [];
+				for(var i=0;i<interview.questionHistory.length;i++){
+					var queuedQuestion = interview.questionHistory[i];
+					if(queuedQuestion.deleted==0){
+						if(queuedQuestion.description == 'display'){
+							$scope.displayQuestions.push(queuedQuestion);
+						}
 					}
 				}
-			}
-			var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, question.selectedAnswer);
-			newQuestionAsked.answers.push(actualAnswer);	
-			var defer = $q.defer();
-			newQuestionAsked.answers[0].isProcessed = true;
-			saveAnswerNew(newQuestionAsked,defer);
-			defer.promise.then(function(){
-				newQuestionAsked.processed = true;
-				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
-					if (response.status === 200) {
-						var answer = newQuestionAsked.answers[0];
-						var oldAnswers = [];
-						for(var i=0;i<question.nodes.length;i++){
-							var otherPossibleAnswer = question.nodes[i];
-							if(otherPossibleAnswer.getIdNode!=answer.answerId){
-								for(var j=0;j<$scope.interview.answerHistory.length;j++){
-									var currentAnswer = $scope.interview.answerHistory[j];
-									if(currentAnswer.answerId==otherPossibleAnswer.getIdNode){
-										oldAnswers.push(currentAnswer);
-									}
-								}
-							}	
+				var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, selectedAnswer);
+				
+				newQuestionAsked.answers.push(actualAnswer);	
+				var defer = $q.defer();
+				newQuestionAsked.answers[0].isProcessed = true;
+				saveAnswerNew(newQuestionAsked,defer);
+				defer.promise.then(function(){
+					newQuestionAsked.processed = true;
+					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
+						if (response.status === 200) {
+							console.log("Saved Interview q:"+newQuestionAsked.questionId);							
 						}
-						removeAnswerOld(oldAnswers);
-					}
+					});
 				});
-			});
+				var defer = $q.defer();
+				deleteChildQuestions(deletedAnswers,defer);
+				defer.promise.then(function(){
+					console.log("All done deleting child questions");
+				});
+				
+			}else{
+				alert("Nothing was changed");
+			}
+			
+			
 		}
 		function buildAndSaveQuestionNew(interview, question) {
 
@@ -957,18 +979,44 @@
 				return defer.promise;
 			}
 		}
-		function removeAnswerOld(oldAnswers,defer){
+		function deleteChildQuestions(oldAnswers,defer){
 			if(oldAnswers.length > 0){
-				InterviewsService.saveAnswers(oldAnswers).then(function(response){
-					if (response.status === 200) {		
-						
-					}else{
-						
+				for(var i=0;i<oldAnswers.length;i++){
+					var oldAnswer = oldAnswers[i];
+					for(var j=0;j<$scope.interview.questionHistory.length;j++){
+						var currentQuestion = $scope.interview.questionHistory[j];
+						if(currentQuestion.parentAnswerId==oldAnswer.answerId){
+							currentQuestion.deleted = 1;
+							InterviewsService.saveQuestion(currentQuestion).then(function(response) {
+								if (response.status === 200) {
+									console.log("Deleted child interview question: "+currentQuestion.questionId);
+									var defer = $q.defer();
+									deleteChildQuestions(currentQuestion.answers,defer);
+									defer.promise.then(function(){
+										console.log("Done deleting child questions");
+									});
+									if(defer){
+										defer.resolve();
+									}
+								}else{
+									if(defer){
+										defer.reject();
+									}
+								}
+							});
+						}
 					}
-				});
+				}
 			}else{
-				console.error("Trying to remove empty interview answers");				
+				console.error("Trying to remove empty interview answers");
+				if(defer){
+					defer.resolve();
+				}
 			}
+			if(defer){
+				return defer.promise;	
+			}
+		
 		}
 		function saveSingleAnswer(answer){	
 			var container = [];

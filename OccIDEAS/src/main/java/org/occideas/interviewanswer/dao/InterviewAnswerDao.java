@@ -35,26 +35,28 @@ public class InterviewAnswerDao {
 		for(InterviewAnswer a:ia){
 			sessionFactory.getCurrentSession().saveOrUpdate(a);
 			for(PossibleAnswerVO pa :possibleAnswerService.findByIdWithChildren(a.getAnswerId())){
-				int intQuestionSequence = 1;
-				List<QuestionVO> queueQuestions = pa.getChildNodes();
-		        Collections.sort(queueQuestions); 
-				for(QuestionVO question: queueQuestions){
-					InterviewQuestion iq = new InterviewQuestion();
-					iq.setIdInterview(a.getIdInterview());
-					iq.setName(question.getName());
-					iq.setNodeClass(question.getNodeclass());
-					iq.setNumber(question.getNumber());
-					iq.setModCount(iq.getModCount());
-					iq.setLink(question.getLink());
-					iq.setParentAnswerId(a.getAnswerId());
-					iq.setQuestionId(question.getIdNode());
-					iq.setDescription(question.getDescription());
-					iq.setTopNodeId(a.getTopNodeId());
-					iq.setIntQuestionSequence(intQuestionSequence);
-					iq.setDeleted(0);
-					intQuestionSequence++;
-					sessionFactory.getCurrentSession().saveOrUpdate(iq);
-				}			
+				if(a.getDeleted()==0){
+					int intQuestionSequence = 1;
+					List<QuestionVO> queueQuestions = pa.getChildNodes();
+			        Collections.sort(queueQuestions); 
+					for(QuestionVO question: queueQuestions){
+						InterviewQuestion iq = new InterviewQuestion();
+						iq.setIdInterview(a.getIdInterview());
+						iq.setName(question.getName());
+						iq.setNodeClass(question.getNodeclass());
+						iq.setNumber(question.getNumber());
+						iq.setModCount(iq.getModCount());
+						iq.setLink(question.getLink());
+						iq.setParentAnswerId(a.getAnswerId());
+						iq.setQuestionId(question.getIdNode());
+						iq.setDescription(question.getDescription());
+						iq.setTopNodeId(a.getTopNodeId());
+						iq.setIntQuestionSequence(intQuestionSequence);
+						iq.setDeleted(0);
+						intQuestionSequence++;
+						sessionFactory.getCurrentSession().saveOrUpdate(iq);
+					}	
+				}		
 			}
 			list.add(a);
 		}

@@ -131,10 +131,10 @@
 
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
-			<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note </md-button>
 			<div ng-repeat='note in interview.notes'>
-				<div>{{$index+1}}:{{note.type}}:{{note.text}}:{{note.lastUpdated | date:'yyyy-MM-dd HH:mm:ss Z'}}</div>
+				<div ng-if="note.type=='interviewer'">{{$index+1}}:{{note.type}}:{{note.text}}:{{note.lastUpdated | date:'yyyy-MM-dd HH:mm:ss Z'}}</div>
 			</div>
+			<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note </md-button>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
@@ -154,6 +154,11 @@
 				<md-button ng-click="finishInterview()" class="md-fab md-raised ">
 					<span>FINISH</span>
 				</md-button>
+				<div ng-repeat='note in interview.notes'>
+					<div>{{$index+1}}:{{note.type}}:{{note.text}}:{{note.lastUpdated | date:'yyyy-MM-dd HH:mm:ss Z'}}</div>
+				</div>
+				<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note </md-button>
+				
 			</div>
 		</div>
 		<div ng-if="participant.status == 1">
@@ -190,21 +195,24 @@
 							<span class="badge" title="qid:{{element.questionId}}">
 								{{element.number}}
 							</span>
-							<!-- <span class="badge">
+							<span class="badge">
 								q:{{element.questionId}}
 							</span>
-							<span class="badge">
+							<!-- <span class="badge">
 								link:{{element.link}}
 							</span> -->
 						</div>
-						<span ng-if="element.processed" class="glyphicon glyphicon-edit" ng-click="showEditQuestionPrompt($event,element)" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" ></span>
+						<span ng-if="element.processed && !element.deleted" class="glyphicon glyphicon-edit" ng-click="showEditQuestionPrompt($event,element)" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" ></span>
 						<span id="{{'IntResult'+element.idNode}}">{{ element.name }}</span>
 					</div>
 					<!-- 			show answers -->
 					<div class="tree-node-content P_interviewresult" ng-repeat="as in element.answers | orderBy:orderByNumber">
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
+							<span ng-if="as.deleted" class="badge-deleted" title="deleted">
+								&nbsp;
+							</span>
 							<span class="badge">{{as.number}}</span>
-							<!-- <span class="badge">a:{{as.answerId}}</span> -->
+							<span class="badge">a:{{as.answerId}}</span> 
 						</div>
 						<span id="{{'IntResult'+as.idNode}}">{{as.answerFreetext?as.answerFreetext:as.name}}
 						</span>
