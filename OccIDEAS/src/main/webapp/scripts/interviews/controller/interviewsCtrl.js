@@ -2270,6 +2270,9 @@
 			$scope.closeAndSwitchToParticipantsTab();
 
 		}
+		$scope.closeOnStopButton = function(){
+			$scope.closeAndSwitchToParticipantsTab();
+		}
 		function convertToTree() {
 			var root = {
 				id : 0,

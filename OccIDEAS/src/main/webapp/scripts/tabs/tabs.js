@@ -330,20 +330,7 @@
                                 });
                         },
                         updateData: function($stateParams,InterviewsService){                     	
-                        	return InterviewsService.checkReferenceNumberExists($stateParams.startWithReferenceNumber).then(
-        							function(response) {
-        								if (response.status === 200) {
-        									if(confirm("This AWES Id exists click okay to edit existing")){
-        										return response.data;
-        				    				}else{
-        				    					return;
-        				    				}
-        									
-        								} else if (response.status === 401) {
-        									$log.error("Inside updateData of tabs.interview tabs.js could not find interview with "+$stateParams.startWithReferenceNumber);
-        									return;
-        								}
-        							});
+                        	return undefined;
                         },
                         startWithReferenceNumber: function($stateParams,InterviewsService){
                         	return $stateParams.startWithReferenceNumber;
