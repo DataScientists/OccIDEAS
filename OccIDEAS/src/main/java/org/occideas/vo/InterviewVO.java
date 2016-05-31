@@ -31,6 +31,10 @@ public class InterviewVO {
 
 	private List<InterviewQuestionVO> actualQuestion = new ArrayList<>();
 	
+	private List<InterviewQuestionVO> questionHistory = new ArrayList<>();
+	
+	private List<InterviewAnswerVO> answerHistory = new ArrayList<>();
+	
 	private List<InterviewModuleVO> modules = new ArrayList<>();
 
 	private List<RuleVO> firedRules;
@@ -267,6 +271,20 @@ public class InterviewVO {
 		this.modules = modules;
 	}
 
-	
+	public List<InterviewQuestionVO> getQuestionHistory() {
+		return questionHistory;
+	}
+
+	public void setQuestionHistory(List<InterviewQuestionVO> questionHistory) {
+		this.questionHistory = questionHistory;
+	}
+
+	public List<InterviewAnswerVO> getAnswerHistory() {
+		return answerHistory;
+	}
+
+	public void setAnswerHistory(List<InterviewAnswerVO> answerHistory) {
+		this.answerHistory = answerHistory;
+	}
 	
 }

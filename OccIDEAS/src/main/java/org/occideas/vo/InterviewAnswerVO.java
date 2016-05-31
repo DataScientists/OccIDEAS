@@ -6,7 +6,7 @@ public class InterviewAnswerVO {
 
 	private long id;
 	private long idInterview;
-	private long topQuestionId;
+	private long topNodeId;
 	private long parentQuestionId;
 	private long answerId;
 	private long link;
@@ -28,15 +28,7 @@ public class InterviewAnswerVO {
 
 	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
-	}
-
-	public long getTopQuestionId() {
-		return topQuestionId;
-	}
-
-	public void setTopQuestionId(long topQuestionId) {
-		this.topQuestionId = topQuestionId;
-	}
+	}	
 
 	public long getParentQuestionId() {
 		return parentQuestionId;
@@ -148,6 +140,14 @@ public class InterviewAnswerVO {
 
 	public void setIsProcessed(boolean isProcessed) {
 		this.isProcessed = isProcessed;
+	}
+
+	public long getTopNodeId() {
+		return topNodeId;
+	}
+
+	public void setTopNodeId(long topNodeId) {
+		this.topNodeId = topNodeId;
 	}
 
 }

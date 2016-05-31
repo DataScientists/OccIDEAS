@@ -1,5 +1,6 @@
 package org.occideas.interviewquestion.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -8,9 +9,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.question.service.QuestionService;
+import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class InterviewQuestionDao {
@@ -18,6 +20,9 @@ public class InterviewQuestionDao {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	@Autowired
+    private QuestionService questionService;
+	
 	public InterviewQuestion save(InterviewQuestion iq){
       return (InterviewQuestion) sessionFactory.getCurrentSession().save(iq);
     }
@@ -45,6 +50,35 @@ public class InterviewQuestionDao {
       sessionFactory.getCurrentSession().saveOrUpdate(iq);
       return iq;
     }
+    
+    public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq){
+    	iq.setProcessed(true);
+    	sessionFactory.getCurrentSession().saveOrUpdate(iq);
+    	int intQuestionSequence = 1;
+        List<QuestionVO> queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(iq.getParentModuleId()));
+        Collections.sort(queueQuestions); 
+        for(QuestionVO question :queueQuestions){
+        	InterviewQuestion iqQueue = new InterviewQuestion();
+        	
+        	iqQueue.setIdInterview(iq.getIdInterview());
+        	iqQueue.setName(question.getName());
+        	iqQueue.setDescription(question.getDescription());
+			iqQueue.setNodeClass(question.getNodeclass());
+			iqQueue.setNumber(question.getNumber());
+			iqQueue.setModCount(iq.getModCount());
+			iqQueue.setLink(question.getLink());
+			iqQueue.setType(question.getType());
+        	iqQueue.setParentModuleId(question.getTopNodeId());
+        	iqQueue.setQuestionId(question.getIdNode());
+        	iqQueue.setTopNodeId(question.getTopNodeId());
+        	iqQueue.setIntQuestionSequence(intQuestionSequence);
+        	iqQueue.setDeleted(0);
+			intQuestionSequence++;
+			sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
+			
+        }
+        return iq;
+      }
 
     @SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getAll() {
@@ -75,20 +109,18 @@ public class InterviewQuestionDao {
     @SuppressWarnings("unchecked")
     public List<InterviewQuestion> findByInterviewId(Long interviewId) {
         final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(InterviewQuestion.class)
-					.setResultTransformer(Transformers.aliasToBean(InterviewQuestion.class));
+        final Criteria crit = session.createCriteria(InterviewQuestion.class);
         if (interviewId != null) {
-            crit.add(Restrictions.eq("idinterview", interviewId));
+            crit.add(Restrictions.eq("idInterview", interviewId));
         }
         return crit.list();
     }
 
-	public InterviewQuestion findIntQuestion(long idInterview, long questionId, Integer modCount) {
+	public InterviewQuestion findIntQuestion(long idInterview, long questionId) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(InterviewQuestion.class);
 		crit.add(Restrictions.eq("idInterview", idInterview));
 		crit.add(Restrictions.eq("questionId",questionId));
-		crit.add(Restrictions.eq("modCount", modCount));
 		List<InterviewQuestion> list = crit.list();
 		if(list.isEmpty()){
 			return null;

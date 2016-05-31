@@ -56,6 +56,19 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		}
 		return Response.ok(list).build();
 	}
+	@GET
+	@Path(value="/getquestion")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getQuestion(@QueryParam("id") Long id) {
+		List<QuestionVO> list = new ArrayList<QuestionVO>();
+		try{
+			list = service.getQuestionsWithSingleChildLevel(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
 	
 	@GET
 	@Path(value="/getMaxId")

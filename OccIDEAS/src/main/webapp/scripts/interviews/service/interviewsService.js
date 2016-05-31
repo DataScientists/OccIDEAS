@@ -5,44 +5,44 @@
     InterviewsService.$inject = ['$http', '$q'];
     function InterviewsService($http, $q) {
         function get(idNode) {
-            var restUrl = 'web/rest/interview/get?id=' + idNode;
+            var restURL = 'web/rest/interview/get?id=' + idNode;
             var request = $http({
                 method: 'GET',
-                url: restUrl
+                url: restURL
             })
             return request.then(handleSuccess, handleError);
         }
         function checkReferenceNumberExists(referenceNumber) {
-            var restUrl = 'web/rest/interview/getbyref?ref=' + referenceNumber;
+            var restURL = 'web/rest/interview/getbyref?ref=' + referenceNumber;
             var request = $http({
                 method: 'GET',
-                url: restUrl
+                url: restURL
             })
             return request.then(handleSuccess, handleError);
         }
         function findModule(idNode) {
-			var restUrl = 'web/rest/module/getinterviewmodule?id=' + idNode;
+			var restURL = 'web/rest/module/getinterviewmodule?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restURL
 				})
 			return request.then(handleSuccess,handleError);
 		}
         function findFragment(idNode) {
-			var restUrl = 'web/rest/fragment/getinterviewfragment?id=' + idNode;
+			var restURL = 'web/rest/fragment/getinterviewfragment?id=' + idNode;
 			var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restURL
 				})
 			return request.then(handleSuccess,handleError);
 		}
         function save(data) {
         	console.log("Saving interview");
         	console.dir(data);
-            var restSaveUrl = 'web/rest/interview/update';
+            var restURL = 'web/rest/interview/update';
             var request = $http({
                 method: 'POST',
-                url: restSaveUrl,
+                url: restURL,
                 data: data
             })
             return request.then(handleSuccess, handleError);
@@ -57,12 +57,16 @@
             })
             return request.then(handleSuccess, handleError);
         }
-        function getNextQuestion(data) {
+        function getNextQuestion(lookupNode) {
             var nextQ = 'web/rest/interview/nextquestion';
             var request = $http({
                 method: 'POST',
                 url: nextQ,
-                data: data
+                params:{
+                	parentId: lookupNode.parentId,
+                	number:lookupNode.number
+                	}
+                
             })
             return request.then(handleSuccess, handleError);
         }
@@ -76,11 +80,20 @@
             return request.then(handleSuccess, handleError);
         }
         
+        function getInterviewQuestionList(interviewId) {
+            var url = 'web/rest/interviewquestionanswer/getbyinterviewid?id=' + interviewId;
+            var request = $http({
+                method: 'GET',
+                url: url
+            })
+            return request.then(handleSuccess, handleError);
+        }
+
         function saveInterviewMod(data) {
-     		var restUrl = 'web/rest/interview/saveMod';
+     		var restURL = 'web/rest/interview/saveMod';
      		var request =  $http({
      			method: 'POST',
-     			url: restUrl,
+     			url: restURL,
      			data:data
      		})
      		return request.then(handleSuccess,handleError);
@@ -97,50 +110,68 @@
         }
 
         function saveQuestion(data) {
-			var restUrl = 'web/rest/interviewquestionanswer/save';
+			var restURL = 'web/rest/interviewquestionanswer/save';
 			var request =  $http({
 				  method: 'POST',
-				  url: restUrl,
+				  url: restURL,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+        function saveLinkQuestionAndQueueQuestions(data) {
+			var restURL = 'web/rest/interviewquestionanswer/saveLinkAndQueueQuestions';
+			var request =  $http({
+				  method: 'POST',
+				  url: restURL,
 				  data:data
 				})
 			return request.then(handleSuccess,handleError);
 		}
         
         function saveAnswers(data) {
-			var restUrl = 'web/rest/interviewquestionanswer/saveAnswers';
+			var restURL = 'web/rest/interviewquestionanswer/saveAnswers';
 			var request =  $http({
 				  method: 'POST',
-				  url: restUrl,
+				  url: restURL,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+        function saveAnswersAndQueueQuestions(data) {
+			var restURL = 'web/rest/interviewquestionanswer/saveAnswersandQueueQuestions';
+			var request =  $http({
+				  method: 'POST',
+				  url: restURL,
 				  data:data
 				})
 			return request.then(handleSuccess,handleError);
 		}
         
         function getIntQuestion(idInterview,questionId,modCount) {
-			var restUrl = 'web/rest/interviewquestionanswer/getIntQuestion?idInterview='
+			var restURL = 'web/rest/interviewquestionanswer/getIntQuestion?idInterview='
 							+idInterview+'&questionId='+questionId+'&modCount='+modCount;
 			var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restURL
 				})
 			return request.then(handleSuccess,handleError);
 		}
         
         function saveIntDisplay(data){
-        	var restUrl = 'web/rest/interviewdisplay/update';
+        	var restURL = 'web/rest/interviewdisplay/update';
         	var request =  $http({
 				  method: 'POST',
-				  url: restUrl,
+				  url: restURL,
 				  data:data
 				})
 			return request.then(handleSuccess,handleError);
         }
         
         function getIntDisplay(interviewId){
-        	var restUrl = 'web/rest/interviewdisplay/getIntDisplay?id=' + interviewId;
+        	var restURL = 'web/rest/interviewdisplay/getIntDisplay?id=' + interviewId;
         	var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restURL
 				})
 			return request.then(handleSuccess,handleError);
         }
@@ -168,11 +199,14 @@
             getNextQuestion: getNextQuestion,
             saveQuestion:saveQuestion,
             saveAnswers:saveAnswers,
+            saveAnswersAndQueueQuestions:saveAnswersAndQueueQuestions,
+            saveLinkQuestionAndQueueQuestions:saveLinkQuestionAndQueueQuestions,
             getInterview:getInterview,
             saveInterviewMod:saveInterviewMod,
             saveIntDisplay:saveIntDisplay,
             getIntDisplay:getIntDisplay,
-            getIntQuestion:getIntQuestion
+            getIntQuestion:getIntQuestion,
+            getInterviewQuestionList:getInterviewQuestionList
         };
     }
 })();

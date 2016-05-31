@@ -8,5 +8,8 @@ import org.occideas.vo.InterviewAnswerVO;
 public interface InterviewAnswerService extends BaseService<InterviewAnswerVO>{
 	
 	List<InterviewAnswerVO> updateIntA(List<InterviewAnswerVO> o);
+
+	List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions(List<InterviewAnswerVO> o);
+
 	
 }

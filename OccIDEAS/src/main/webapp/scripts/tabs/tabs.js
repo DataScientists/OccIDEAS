@@ -387,7 +387,7 @@
     	        					}
     	        					return InterviewsService.get(idInterview).then(function(response) {
         								if (response.status === 200) {
-        									return response.data;   				    				     									
+        									return response.data[0];   				    				     									
         								} else if (response.status === 401) {
         									$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
         									return;
@@ -434,6 +434,27 @@
 			    			return object;
 			    		}
                         
+                    }
+                }
+            }
+        }).state( {
+            name:'tabs.error',
+        	url: '/displayerror/',
+        	params: {
+        		error: null
+            },
+        	sticky: true,
+		    deepStateRedirect: true,
+		    authenticate:false,
+            views:{
+                'error@tabs':{
+                    templateUrl: 'scripts/error/view/debug.html',
+                    controller: 'DisplayErrorCtrl as vm',
+                    params:{error: null},
+                    resolve:{
+                        error: function($stateParams) {
+                            return $stateParams.error;
+                        }                   
                     }
                 }
             }

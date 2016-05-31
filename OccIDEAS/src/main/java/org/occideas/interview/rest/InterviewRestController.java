@@ -195,9 +195,34 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Path(value = "/nextquestion")
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response getNextQuestion(InterviewQuestionVO actualQuestionVO) {
+    public Response getNextQuestion(@QueryParam("parentId") String parentId,@QueryParam("number") String number) {
         try {
-        	 QuestionVO questionVO = getNearestQuestion(actualQuestionVO);
+        	 QuestionVO questionVO = getNearestQuestion(parentId,number);
+        	 if(questionVO!=null){
+             	return Response.ok(questionVO).build();
+             }else{
+             	return Response.status(Response.Status.NO_CONTENT).build();
+             }   
+        } catch (Throwable e) {
+        	e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    @POST
+    @Path(value = "/nextquestionfromqueue")
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getNextQuestion(InterviewVO interview) {
+        try {
+        	QuestionVO questionVO = null;
+        	for(InterviewQuestionVO historyQuestion: interview.getQuestionHistory()){
+        		if(!historyQuestion.isProcessed()){
+        			for(QuestionVO question: questionService.findById(historyQuestion.getId())){
+        				questionVO = question;
+        			}
+        			break;
+        		}
+        	}
         	 if(questionVO!=null){
              	return Response.ok(questionVO).build();
              }else{
@@ -235,8 +260,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         }
     }
 
-	private QuestionVO getNearestQuestion(InterviewQuestionVO actualQuestionVO){
-    	return questionService.determineNextQuestionByCurrentNumber(String.valueOf(actualQuestionVO.getParentId()),actualQuestionVO.getNumber());
+	private QuestionVO getNearestQuestion(String parentId,String number){
+    	return questionService.determineNextQuestionByCurrentNumber(parentId,number);
     }
 
     private InterviewVO determineFiredRules(InterviewVO interview){

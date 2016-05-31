@@ -15,7 +15,7 @@
       	<div layout="column" ng-cloak class="md-inline-form">
   		<md-content layout-gt-sm="row" layout-padding>
     		<ul >
-			<!-- 
+			
 			<div ng-if="questionBeingEdited.type == 'Q_multiple'">
 				<div ng-repeat="node in questionBeingEdited.nodes">
 					<md-checkbox ng-model="node.isSelected" ng-click="multiToggle(node, multiSelected)" 
@@ -28,8 +28,8 @@
 					 </md-checkbox>
 				</div>
 			</div>
-			 -->
-			<!-- 
+			
+			
 			<div ng-if="questionBeingEdited.type == 'Q_frequency'">
 				<div ng-repeat="node in questionBeingEdited.nodes">
 					<div ng-switch="node.type">
@@ -89,7 +89,7 @@
 					</div>
 				</div>
 			</div>
-			 -->
+			 
 			 
 			<div ng-if="questionBeingEdited.type == 'Q_single' || questionBeingEdited.type == 'Q_simple'">
 			 
@@ -114,7 +114,7 @@
     </md-dialog-content>
     <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button ng-click="saveEditQuestion(node)">
+      <md-button ng-click="saveEditQuestionButton(questionBeingEdited)">
        Save
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">

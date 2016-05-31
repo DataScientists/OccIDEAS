@@ -35,8 +35,8 @@ public class InterviewAnswer implements java.io.Serializable {
 	private long id;
 	@Column(name = "idinterview")
 	private long idInterview;
-	@Column(name = "topQuestionId")
-	private long topQuestionId;
+	@Column(name = "topNodeId")
+	private long topNodeId;
 	@Column(name = "parentQuestionId")
 	private long parentQuestionId;
 	@Column(name = "answerId")
@@ -82,14 +82,6 @@ public class InterviewAnswer implements java.io.Serializable {
 
 	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
-	}
-
-	public long getTopQuestionId() {
-		return topQuestionId;
-	}
-
-	public void setTopQuestionId(long topQuestionId) {
-		this.topQuestionId = topQuestionId;
 	}
 
 	public long getParentQuestionId() {
@@ -202,6 +194,14 @@ public class InterviewAnswer implements java.io.Serializable {
 
 	public void setModCount(Integer modCount) {
 		this.modCount = modCount;
+	}
+
+	public long getTopNodeId() {
+		return topNodeId;
+	}
+
+	public void setTopNodeId(long topNodeId) {
+		this.topNodeId = topNodeId;
 	}
 	
 	

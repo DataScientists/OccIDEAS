@@ -51,3 +51,23 @@ DELETE FROM occideas.Rule_AdditionalField where idAdditionalField=4;
 
 ALTER TABLE `occideas`.`Interview_Display` 
 ADD COLUMN `number` VARCHAR(2048);
+
+ALTER TABLE `occideas`.`Interview_Question` 
+CHANGE COLUMN `parentId` `parentModuleId` BIGINT(20) NOT NULL ;
+
+ALTER TABLE `occideas`.`Interview_Answer` 
+CHANGE COLUMN `topQuestionId` `topNodeId` BIGINT(20) NOT NULL ;
+
+ALTER TABLE `occideas`.`Interview_Question` 
+ADD COLUMN `isProcessed` TINYINT(4) NOT NULL DEFAULT 0 AFTER `deleted`;
+
+ALTER TABLE `occideas`.`Interview_Answer` 
+CHANGE COLUMN `modCount` `modCount` INT(11) NOT NULL DEFAULT 0 ;
+
+ALTER TABLE `occideas`.`Interview_Question` 
+CHANGE COLUMN `modCount` `modCount` INT(11) NOT NULL DEFAULT 0 ;
+
+ALTER TABLE `occideas`.`Interview_Answer` 
+CHANGE COLUMN `modCount` `modCount` INT(11) NULL DEFAULT 1 ;
+
+ 

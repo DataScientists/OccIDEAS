@@ -52,10 +52,10 @@
 
 	    self.tableParams = new NgTableParams(
 			{	page: 1,            
-                count: 1
+                count: 10
             }, {	
             
-			getData: function($defer,params) {
+			getData: function(params) {
 	          if ((params.sorting().reference)||(params.sorting().idParticipant)||(params.sorting().statusDescription)){
 				return $filter('orderBy')(self.tableParams.settings().dataset, params.orderBy());
 		      }
@@ -69,15 +69,13 @@
 	          return  ParticipantsService.getParticipants().then(function(response) {
 	        	  if(response.status == '200'){
 	        		  var data = response.data;
-	        		  console.log("Data get list from fragments ajax ...");        	 
-		        	  self.originalData = angular.copy(data);
-		        	  params.data = data;
-		        	  self.tableParams.shouldGetData = true;
-		        	  params.total(data.length);
-	        		  $defer.resolve();
+	        		  console.log("Data get list from getParticipants ajax ...");        	 
+	        		  self.originalData = angular.copy(data);
+		        	  self.tableParams.settings().dataset = data;
+		        	  self.tableParams.shouldGetData = false;
+		        	  self.tableParams.total(self.originalData.length);
+		            
 	        		  return data;
-	        	  }else{
-	        		  $defer.reject();
 	        	  }
 	          });
 	        },

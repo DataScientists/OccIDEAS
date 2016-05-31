@@ -52,5 +52,10 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService{
 	public List<InterviewAnswerVO> updateIntA(List<InterviewAnswerVO> o) {
 		return mapper.convertToInterviewAnswerVOList(dao.saveOrUpdate(mapper.convertToInterviewAnswerList(o)));
 	}
+	
+	@Override
+	public List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions(List<InterviewAnswerVO> o) {
+		return mapper.convertToInterviewAnswerVOList(dao.saveAnswerAndQueueQuestions(mapper.convertToInterviewAnswerList(o)));
+	}
 
 }

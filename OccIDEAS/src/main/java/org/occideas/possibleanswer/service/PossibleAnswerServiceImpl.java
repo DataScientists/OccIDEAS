@@ -41,6 +41,15 @@ public class PossibleAnswerServiceImpl implements PossibleAnswerService {
         list.add(paVO);
         return list;
 	}
+	@Override
+	public List<PossibleAnswerVO> findByIdWithChildren(Long id) {
+		PossibleAnswer answer = dao.get(PossibleAnswer.class, id);
+		PossibleAnswerVO paVO = mapper.convertToPossibleAnswerVO(answer,true);
+
+        List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
+        list.add(paVO);
+        return list;
+	}
 
 	@Override
 	public PossibleAnswerVO create(PossibleAnswerVO o) {

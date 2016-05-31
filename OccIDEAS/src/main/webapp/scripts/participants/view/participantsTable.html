@@ -40,10 +40,11 @@
 					ng-click="addInterviewTabInterviewersEdit(participant)" >
 			<span class="glyphicon glyphicon-pause"></span>
 			</button>
-			<button class="btn btn-default btn-sm"
-					ng-click="addParticipantTab(participant)" >
-			<span class="glyphicon glyphicon-list-alt"></span>
+			<button ng-if="participant.statusDescription=='Completed'" class="btn btn-default btn-sm"
+					ng-click="addInterviewTabInterviewersEdit(participant)" >
+			<span class="glyphicon glyphicon-stop"></span>
 			</button>
+			
 			
 		</td>
     </tr>

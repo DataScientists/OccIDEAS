@@ -6,9 +6,11 @@ import java.util.List;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.mapper.InterviewQuestionMapper;
+import org.occideas.question.dao.QuestionDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.InterviewQuestionVO;
+import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 
-    @Autowired
+	@Autowired
+    private QuestionDao qdao;
+	
+	@Autowired
     private InterviewQuestionDao dao;
 
     @Autowired
@@ -82,7 +87,12 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 	}
 
 	@Override
-	public InterviewQuestionVO findIntQuestion(long idInterview, long questionId, Integer modCount) {
-		return mapper.convertToInterviewQuestionVO(dao.findIntQuestion(idInterview,questionId,modCount));
+	public InterviewQuestionVO findIntQuestion(long idInterview, long questionId) {
+		return mapper.convertToInterviewQuestionVO(dao.findIntQuestion(idInterview,questionId));
 	}
+	@Override
+    public InterviewQuestionVO updateInterviewLinkAndQueueQuestions(InterviewQuestionVO o) {
+        return mapper.convertToInterviewQuestionVO(dao.saveInterviewLinkAndQueueQuestions(mapper.convertToInterviewQuestion(o)));
+    }
+	
 }

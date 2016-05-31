@@ -22,6 +22,7 @@ angular
     "occIDEASApp.Modules",
     "occIDEASApp.Agents",
     "occIDEASApp.Rules",
+    "occIDEASApp.DisplayError",
     "occIDEASApp.Fragments",
     "occIDEASApp.Assessments",
     "occIDEASApp.Participants",
@@ -38,31 +39,7 @@ angular
 	$httpProvider.interceptors.push('TokenRefreshInterceptor');
     $urlRouterProvider.otherwise('/');
     $stateProvider
-    .state('allmodules', {
-        url: '/allmodules',
-        controller: 'TabsCtrl as vm',
-        templateUrl: 'scripts/modules/view/modules.html'
-      })
-      .state('module', {
-        url: '/module',
-        templateUrl: 'scripts/modules/view/modules.html'
-      })
-      .state('allfragments', {
-    	  url: '/allfragments',
-    	  controller: 'TabsCtrl as vm',
-    	  templateUrl: 'scripts/modules/view/modules.html'
-      })
-      .state('fragment', {
-        url: '/fragment',
-        templateUrl: 'fragment.html',
-        controller: 'fragmentCtrl'
-      })
-      .state('agent', {
-        url: '/agent',
-        templateUrl: 'agent.html',
-        controller: 'agentCtrl'
-      })
-      .state('error', {
+    .state('error', {
         url: '/error',
         templateUrl: 'scripts/error/view/error.html',
         controller: 'ErrorCtrl as vm',
@@ -101,10 +78,12 @@ angular
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
         $rootScope.isReadOnly = false; 
+        
         $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
         	  event.preventDefault();
-        	  $state.get('error').error = { code: 123, description: 'Exception stack trace' }
-        	  return $state.go('error');
+        	  $state.get('error').error = { code: 123, description: 'Exception stack trace' };
+        	  $state.get('displayError').error = { code: 123, description: 'Exception stack trace' };
+        	  return $state.go('displayError');
         });
         document.addEventListener("keyup", function(e) {
             if (e.keyCode === 27)
@@ -147,8 +126,8 @@ angular
    	}
    }
    
-   TokenRefreshInterceptor.$inject = ['$injector','$window'];
-   function TokenRefreshInterceptor($injector,$window){
+   TokenRefreshInterceptor.$inject = ['$injector','$window','$rootScope'];
+   function TokenRefreshInterceptor($injector,$window,$rootScope){
        return {
            'request': function(config) {
         	   var $sessionStorage = $injector.get('$sessionStorage');
@@ -184,13 +163,26 @@ angular
       	          	alert("Occideas is in READ-ONLY mode, update/delete action is not premitted.");
       	        }
                else{
-            	    delete $sessionStorage.token;
-                    http.defaults.headers.common['X-Auth-Token'] = "";
-                    state.go('error',{
+            	    /*state.go('error',{
        	            	error:"Response Status returned:"
        	            		+response.status+" "
        	            		+response.statusText+" "
-       	            		+response.data});
+       	            		+response.data});*/
+            	   var errorMessages = [];
+            	   if(response.message){
+            		   errorMessages.push(response.message);
+            	   }
+            	   if(response.status){
+            		   errorMessages.push(response.status);
+            	   }
+            	   if(response.statusText){
+            		   errorMessages.push(response.statusText);
+            	   }
+            	   if(response.data){
+            		   errorMessages.push(response.data);
+            	   }
+            	   $rootScope.addErrorTab(errorMessages);
+                    
                }
                return response;
            }

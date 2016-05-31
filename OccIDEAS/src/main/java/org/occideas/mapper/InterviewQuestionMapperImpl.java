@@ -29,13 +29,15 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setType(question.getType());
 		vo.setDescription(question.getDescription());
 		vo.setDeleted(question.getDeleted());
-		vo.setParentId(question.getParentId());
+		vo.setParentModuleId(question.getParentModuleId());
 		vo.setTopNodeId(question.getTopNodeId());
 		vo.setParentAnswerId(question.getParentAnswerId());
 		vo.setModCount(question.getModCount());
 		vo.setLink(question.getLink());
 		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
+		vo.setProcessed(question.isProcessed());
+		
 		return vo;
 	}
 	@Override
@@ -53,13 +55,15 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setType(question.getType());
 		vo.setDescription(question.getDescription());
 		vo.setDeleted(question.getDeleted());
-		vo.setParentId(question.getParentId());
+		vo.setParentModuleId(question.getParentModuleId());
 		vo.setTopNodeId(question.getTopNodeId());
 		vo.setParentAnswerId(question.getParentAnswerId());
 		vo.setLink(question.getLink());
 		vo.setModCount(question.getModCount());
 		vo.setAnswers(answerMapper.convertToInterviewAnswerWithRulesVOList(question.getAnswers()));
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
+		vo.setProcessed(question.isProcessed());
+		
 		return vo;
 	}
 
@@ -105,13 +109,14 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		question.setNumber(questionVO.getNumber());
 		question.setQuestionId(questionVO.getQuestionId());
 		question.setType(questionVO.getType());
-		question.setParentId(questionVO.getParentId());
+		question.setParentModuleId(questionVO.getParentModuleId());
 		question.setTopNodeId(questionVO.getTopNodeId());
 		question.setParentAnswerId(questionVO.getParentAnswerId());
 		question.setLink(questionVO.getLink());
 		question.setModCount(questionVO.getModCount());
 		question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
 		question.setIntQuestionSequence(questionVO.getIntQuestionSequence());
+		question.setProcessed(questionVO.isProcessed());
 		return question;
 	}
 

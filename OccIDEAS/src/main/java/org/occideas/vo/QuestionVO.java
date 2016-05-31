@@ -74,7 +74,7 @@ public class QuestionVO extends NodeVO implements Cloneable, Comparable<Question
 		if(o==null){
 			return -1; 
 		}else{
-			String nodeNumberA=o.getNumber();
+			/*String nodeNumberA=o.getNumber();
 			String nodeNumberB=this.getNumber();
 			if( (CommonUtil.isNumeric(nodeNumberA)) && (CommonUtil.isNumeric(nodeNumberB)) ){
 				Integer iNodeNumberA = Integer.valueOf(nodeNumberA);
@@ -82,7 +82,9 @@ public class QuestionVO extends NodeVO implements Cloneable, Comparable<Question
 				return iNodeNumberB.compareTo(iNodeNumberA);			
 			}else{
 				return nodeNumberB.compareTo(nodeNumberA);
-			} 
+			} */
+			
+			return  o.getSequence() - this.getSequence(); //descending
 		}	
 	}
 }

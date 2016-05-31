@@ -86,11 +86,19 @@ public class QuestionServiceImpl implements QuestionService {
 		String number = CommonUtil.getNextQuestionByCurrentNumber(nodeNumber);
 		return mapper.convertToQuestionVOReducedDetails(qdao.getQuestionByModuleIdAndNumber(moduleId, number));
 	}
-
+	@Override
+	public List<QuestionVO> getQuestionsWithSingleChildLevel(Long Id) {
+		List<QuestionVO> list = new ArrayList<QuestionVO>();
+        list.add(mapper.convertToInterviewQuestionVO(dao.get(Question.class, Id)));
+		return list;
+	}
 	@Override
 	public ModuleVO getQuestionWithParentId(Long idNode) {
 		return modMapper.convertToModuleVO(qdao.getModuleByParentId(idNode), false);
 	}
-
+	@Override
+	public List<QuestionVO> getQuestionsWithParentId(String parentId) {
+		return mapper.convertToInterviewQuestionVOList(qdao.getQuestionsByParentId(parentId));
+	}
 
 }

@@ -40,8 +40,8 @@ public class InterviewQuestion implements java.io.Serializable {
 	@Column(name = "question_id")
 	private long questionId;
 
-	@Column(name = "parentId")
-	private long parentId;
+	@Column(name = "parentModuleId")
+	private long parentModuleId;
 
 	@Column(name = "topNodeId")
 	private long topNodeId;
@@ -54,6 +54,10 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@Column(name = "link")
 	private long link;
+	
+	@Column(name = "isProcessed")
+	private boolean isProcessed;
+	
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@Where(clause = "deleted = 0")
@@ -177,14 +181,6 @@ public class InterviewQuestion implements java.io.Serializable {
 		this.lastUpdated = lastUpdated;
 	}
 
-	public long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(long parentId) {
-		this.parentId = parentId;
-	}
-
 	public long getTopNodeId() {
 		return topNodeId;
 	}
@@ -223,6 +219,22 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	public void setIntQuestionSequence(Integer intQuestionSequence) {
 		this.intQuestionSequence = intQuestionSequence;
+	}
+
+	public long getParentModuleId() {
+		return parentModuleId;
+	}
+
+	public void setParentModuleId(long parentModuleId) {
+		this.parentModuleId = parentModuleId;
+	}
+
+	public boolean isProcessed() {
+		return isProcessed;
+	}
+
+	public void setProcessed(boolean isProcessed) {
+		this.isProcessed = isProcessed;
 	}
 	
 	

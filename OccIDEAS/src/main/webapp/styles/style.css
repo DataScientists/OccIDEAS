@@ -26,6 +26,24 @@
 	background: #92DAEA !important;
 	border-radius: 30px;
 }
+.Q_processed{
+	background: #CDCEB5 !important;
+}
+.badge-unprocessed {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: top;
+    background-color: #A7B3E2;
+    border-radius: 10px;
+}
+    
 .editBox input{
 	margin-left: 20px;
     margin-top: -18px;

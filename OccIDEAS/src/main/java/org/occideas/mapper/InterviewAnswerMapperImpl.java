@@ -29,11 +29,11 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		vo.setNodeClass(answer.getNodeClass());
 		vo.setNumber(answer.getNumber());
 		vo.setParentQuestionId(answer.getParentQuestionId());
-		vo.setTopQuestionId(answer.getTopQuestionId());
+		vo.setTopNodeId(answer.getTopNodeId());
 		vo.setType(answer.getType());
 		vo.setAnswerFreetext(answer.getAnswerFreetext());
 		vo.setIsProcessed(answer.isProcessed());
-		vo.setModCount(answer.getModCount());
+		
 		return vo;
 	}
 	@Override
@@ -51,11 +51,10 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		vo.setNodeClass(answer.getNodeClass());
 		vo.setNumber(answer.getNumber());
 		vo.setParentQuestionId(answer.getParentQuestionId());
-		vo.setTopQuestionId(answer.getTopQuestionId());
+		vo.setTopNodeId(answer.getTopNodeId());
 		vo.setType(answer.getType());
 		vo.setAnswerFreetext(answer.getAnswerFreetext());
 		vo.setRules(moduleRuleMapper.convertToModuleRuleVOList(answer.getRules()));
-		vo.setModCount(answer.getModCount());
 		vo.setIsProcessed(answer.isProcessed());
 		return vo;
 	}
@@ -98,11 +97,10 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		answer.setNodeClass(answerVO.getNodeClass());
 		answer.setNumber(answerVO.getNumber());
 		answer.setParentQuestionId(answerVO.getParentQuestionId());
-		answer.setTopQuestionId(answerVO.getTopQuestionId());
+		answer.setTopNodeId(answerVO.getTopNodeId());
 		answer.setType(answerVO.getType());
 		answer.setAnswerFreetext(answerVO.getAnswerFreetext());
 		answer.setProcessed(answerVO.getIsProcessed());
-		answer.setModCount(answerVO.getModCount());
 		return answer;
 	}
 

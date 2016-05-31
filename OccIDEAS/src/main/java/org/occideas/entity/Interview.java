@@ -57,10 +57,18 @@ public class Interview implements java.io.Serializable {
 	@Cascade(value = { CascadeType.SAVE_UPDATE,CascadeType.PERSIST })
 	private List<Note> notes;
 	
+//	@OneToMany
+//	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+	private transient List<InterviewQuestion> actualQuestion;
+	
 	@OneToMany
 	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
-	private List<InterviewQuestion> actualQuestion;
-
+	private List<InterviewQuestion> questionHistory;
+	
+	@OneToMany
+	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+	private List<InterviewAnswer> answerHistory;
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Interview_FiredRules", joinColumns = {
 			@JoinColumn(name = "idinterview") }, inverseJoinColumns = { @JoinColumn(name = "idRule") })
@@ -198,6 +206,20 @@ public class Interview implements java.io.Serializable {
 		this.actualQuestion = actualQuestion;
 	}
 
-	
-	
+	public List<InterviewQuestion> getQuestionHistory() {
+		return questionHistory;
+	}
+
+	public void setQuestionHistory(List<InterviewQuestion> questionHistory) {
+		this.questionHistory = questionHistory;
+	}
+
+	public List<InterviewAnswer> getAnswerHistory() {
+		return answerHistory;
+	}
+
+	public void setAnswerHistory(List<InterviewAnswer> answerHistory) {
+		this.answerHistory = answerHistory;
+	}
+
 }

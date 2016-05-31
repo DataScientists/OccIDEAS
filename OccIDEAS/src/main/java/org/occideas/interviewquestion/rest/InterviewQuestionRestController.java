@@ -45,7 +45,7 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	@GET
 	@Path(value="/getbyinterviewid")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
-	public Response getByModuleId(@QueryParam("id") Long id) {
+	public Response getByInterviewId(@QueryParam("id") Long id) {
 		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
 		try{
 			list = service.findByInterviewId(id);
@@ -56,13 +56,13 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 		return Response.ok(list).build();
 	}
 	
+	
 	@GET
 	@Path(value="/getIntQuestion")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getIntQuestion( @QueryParam("idInterview") Long idInterview,
-			 @QueryParam("questionId") Long questionId,
-			 @QueryParam("modCount") Integer modCount){
-		InterviewQuestionVO intQuestion = service.findIntQuestion(idInterview,questionId,modCount);
+			 @QueryParam("questionId") Long questionId){
+		InterviewQuestionVO intQuestion = service.findIntQuestion(idInterview,questionId);
 		return Response.ok(intQuestion).build();
 	}
 	
@@ -87,10 +87,24 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	}
 	
 	@POST
+	@Path(value="/saveLinkAndQueueQuestions")
+	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response saveLinkAndQueueQuestions(InterviewQuestionVO vo) {
+		return Response.ok(service.updateInterviewLinkAndQueueQuestions(vo)).build();
+	}
+	
+	@POST
 	@Path(value="/saveAnswers")
 	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response updateAnswers(List<InterviewAnswerVO> vo) {
 		return Response.ok(answerService.updateIntA(vo)).build();
+	}
+	
+	@POST
+	@Path(value="/saveAnswersandQueueQuestions")
+	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response saveAnswersandQueueQuestions(List<InterviewAnswerVO> vo) {
+		return Response.ok(answerService.saveIntervewAnswersAndQueueQuestions(vo)).build();
 	}
 	
 	@Override

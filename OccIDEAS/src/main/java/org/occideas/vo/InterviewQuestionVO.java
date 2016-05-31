@@ -10,7 +10,7 @@ public class InterviewQuestionVO {
 	private long id;
 	private long idInterview;
 	private long questionId;
-	private long parentId;
+	private long parentModuleId;
 	private long parentAnswerId;
 	private long topNodeId;
 	private Integer modCount;
@@ -24,6 +24,7 @@ public class InterviewQuestionVO {
 	private Integer deleted;
 	private List<InterviewAnswerVO> answers;
 	private InterviewLinkedVO linkingQuestion;
+	private boolean isProcessed;
 
 	public long getIdInterview() {
 		return idInterview;
@@ -105,14 +106,7 @@ public class InterviewQuestionVO {
 		this.linkingQuestion = linkingQuestion;
 	}
 
-	public long getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(long parentId) {
-		this.parentId = parentId;
-	}
-
+	
 	public long getTopNodeId() {
 		return topNodeId;
 	}
@@ -161,17 +155,28 @@ public class InterviewQuestionVO {
 		this.intQuestionSequence = intQuestionSequence;
 	}
 
+	public long getParentModuleId() {
+		return parentModuleId;
+	}
+
+	public void setParentModuleId(long parentModuleId) {
+		this.parentModuleId = parentModuleId;
+	}
+
+	public boolean isProcessed() {
+		return isProcessed;
+	}
+
+	public void setProcessed(boolean isProcessed) {
+		this.isProcessed = isProcessed;
+	}
 	@Override
 	public String toString() {
 		return "InterviewQuestionVO [id=" + id + ", idInterview=" + idInterview + ", questionId=" + questionId
-				+ ", parentId=" + parentId + ", parentAnswerId=" + parentAnswerId + ", topNodeId=" + topNodeId
+				+ ", parentAnswerId=" + parentAnswerId + ", topNodeId=" + topNodeId
 				+ ", modCount=" + modCount + ", link=" + link + ", name=" + name + ", description=" + description
 				+ ", nodeClass=" + nodeClass + ", number=" + number + ", type=" + type + ", intQuestionSequence="
 				+ intQuestionSequence + ", deleted=" + deleted + ", answers=" + answers + ", linkingQuestion="
 				+ linkingQuestion + "]";
 	}
-	
-	
-	
-	
 }
