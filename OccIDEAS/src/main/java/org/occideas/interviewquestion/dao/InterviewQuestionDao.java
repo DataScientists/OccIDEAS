@@ -1,5 +1,6 @@
 package org.occideas.interviewquestion.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,11 +52,21 @@ public class InterviewQuestionDao {
       return iq;
     }
     
+    public List<InterviewQuestion> saveOrUpdate(List<InterviewQuestion> iqs) {
+		List<InterviewQuestion> list = new ArrayList<>();
+		for(InterviewQuestion iq:iqs){
+			sessionFactory.getCurrentSession().saveOrUpdate(iq);
+			list.add(iq);
+		}
+		return list;
+	}
+    
     public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq){
     	iq.setProcessed(true);
     	sessionFactory.getCurrentSession().saveOrUpdate(iq);
     	int intQuestionSequence = 1;
-        List<QuestionVO> queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(iq.getParentModuleId()));
+    	long parentModuleId = iq.getLink();
+        List<QuestionVO> queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
         Collections.sort(queueQuestions); 
         for(QuestionVO question :queueQuestions){
         	InterviewQuestion iqQueue = new InterviewQuestion();

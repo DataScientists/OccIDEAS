@@ -99,6 +99,12 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	public Response updateAnswers(List<InterviewAnswerVO> vo) {
 		return Response.ok(answerService.updateIntA(vo)).build();
 	}
+	@POST
+	@Path(value="/saveQuestions")
+	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response updateQuestions(List<InterviewQuestionVO> vo) {
+		return Response.ok(service.updateIntQs(vo)).build();
+	}
 	
 	@POST
 	@Path(value="/saveAnswersandQueueQuestions")

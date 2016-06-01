@@ -10,7 +10,6 @@ import org.occideas.question.dao.QuestionDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.InterviewQuestionVO;
-import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +64,13 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
     public InterviewQuestionVO updateIntQ(InterviewQuestionVO o) {
         return mapper.convertToInterviewQuestionVO(dao.saveOrUpdate(mapper.convertToInterviewQuestion(o)));
     }
+    
+    @Auditable(actionType = AuditingActionType.UPD_INTERVIEW_QUESTION)
+    @Override
+    public List<InterviewQuestionVO> updateIntQs(List<InterviewQuestionVO> o) {
+        return mapper.convertToInterviewQuestionVOList(dao.saveOrUpdate(mapper.convertToInterviewQuestionList(o)));
+    }
+    
 
     @Auditable(actionType = AuditingActionType.DEL_INTERVIEW_QUESTION)
     @Override

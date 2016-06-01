@@ -74,9 +74,9 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
         }
         List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
         for (InterviewQuestion iq : question) {
-        	if(iq.getDeleted() == 0){
+        	//if(iq.getDeleted() == 0){
         		list.add(convertToInterviewQuestionVO(iq));
-        	}
+        	//}
         }
         return list;
 	}
@@ -87,9 +87,9 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
         }
         List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
         for (InterviewQuestion iq : question) {
-        	if(iq.getDeleted() == 0){
+        	//if(iq.getDeleted() == 0){
         		list.add(convertToInterviewQuestionWithRulesVO(iq));
-        	}
+        	//}
         }
         return list;
 	}
@@ -127,9 +127,9 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
         }
         List<InterviewQuestion> list = new ArrayList<InterviewQuestion>();
         for (InterviewQuestionVO iqu : iq) {
-        	if(iqu.getDeleted() == 0){
+        	//if(iqu.getDeleted() == 0){
         		list.add(convertToInterviewQuestion(iqu));
-        	}
+        	//}
         }
         return list;
 	}

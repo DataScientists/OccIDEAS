@@ -588,8 +588,8 @@
 				idInterview : interview.interviewId,
 				topNodeId : linkedQuestion.link,
 				questionId : undefined,
-				parentModuleId : linkedQuestion.link,
-				parentAnswerId : undefined,
+				parentModuleId : linkedQuestion.parentModuleId,
+				parentAnswerId : linkedQuestion.parentAnswerId,
 				name : linkedQuestion.name,
 				description : linkedQuestion.description,
 				nodeClass : linkedQuestion.nodeclass,
@@ -649,7 +649,9 @@
 			var answer = node.selectedAnswer?node.selectedAnswer:node.nodes[0];
 			var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, answer);
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
-				return queuedQuestion.questionId == node.idNode;
+				return queuedQuestion.questionId == node.idNode 
+				&& !queuedQuestion.processed 
+				&& !queuedQuestion.deleted;
 			});
 			actualAnswer.answerFreetext = answerValue;
 			newQuestionAsked.answers.push(actualAnswer);	
@@ -753,18 +755,103 @@
 				});
 			});
 		}
+		var questionsToDelete = [];
+		var answersToDelete = [];
+		function populateQuestionsAndAnswersToDelete(question){
+			question.deleted = 1;
+			questionsToDelete.push(question);
+			var answers = question.answers;
+			if(answers.length > 0){
+				for(var i=0;i<answers.length;i++){
+					var answer = answers[i];
+					answer.deleted = 1;
+					answersToDelete.push(answer);
+					for(var j=0;j<$scope.interview.questionHistory.length;j++){
+						var iQuestion = $scope.interview.questionHistory[j];
+						if(iQuestion.parentAnswerId==answer.answerId){
+							populateQuestionsAndAnswersToDelete(iQuestion);
+						}
+						
+					}
+				}
+			}else if(question.link){
+				for(var j=0;j<$scope.interview.questionHistory.length;j++){
+					var iQuestion = $scope.interview.questionHistory[j];
+					if(iQuestion.parentModuleId==question.link){
+						populateQuestionsAndAnswersToDelete(iQuestion);
+					}
+					
+				}
+			}	
+		}
+		function deleteAnswers(answers,defer){
+			if(answers.length > 0){
+				InterviewsService.saveAnswers(answers).then(function(response){
+					if (response.status === 200) {
+						if(defer){
+							defer.resolve();
+						}
+					}else{
+						if(defer){
+							defer.reject();
+						}
+					}
+				});
+			}else{
+				if(defer){
+					defer.resolve();
+				}
+			}
+			if(defer){
+				return defer.promise;
+			}
+		}
+		function deleteQuestions(questions,defer){
+			if(questions.length > 0){
+				InterviewsService.saveQuestions(questions).then(function(response){
+					if (response.status === 200) {
+						if(defer){
+							defer.resolve();
+						}
+					}else{
+						if(defer){
+							defer.reject();
+						}
+					}
+				});
+			}else{
+				if(defer){
+					defer.resolve();
+				}
+			}
+			if(defer){
+				return defer.promise;
+			}
+		}
+		function findChildQuestionsToDelete(answer){		
+			answer.deleted = 1;
+			for(var j=0;j<$scope.interview.questionHistory.length;j++){
+				var iQuestion = $scope.interview.questionHistory[j];
+				if(iQuestion.parentAnswerId==answer.answerId){
+					populateQuestionsAndAnswersToDelete(iQuestion);
+				}			
+			}			
+		}
 		function buildAndEditQuestionNew(interview, question) {
 
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
 				return queuedQuestion.questionId == question.idNode;
 			});
+			if(!newQuestionAsked){
+				var msg = "OOPS! lost the newQuestion in buildAndEditQuestionNew";
+				console.error(msg);
+				alert(msg);				
+			}
 			var bDeleteAnswersRequired = false;
-			var deletedAnswers = [];
 			var selectedAnswer = question.selectedAnswer;
 			_.each(newQuestionAsked.answers,function(ans){
 				if(selectedAnswer.idNode!=ans.answerId){
-					ans.deleted=1;
-					deletedAnswers.push(ans);
+					findChildQuestionsToDelete(ans);
 					bDeleteAnswersRequired = true;
 				}
 			});
@@ -778,37 +865,47 @@
 						}
 					}
 				}
-				var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, selectedAnswer);
-				
+				var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, selectedAnswer);	
+				actualAnswer.isProcessed = true;
 				newQuestionAsked.answers.push(actualAnswer);	
 				var defer = $q.defer();
-				newQuestionAsked.answers[0].isProcessed = true;
 				saveAnswerNew(newQuestionAsked,defer);
 				defer.promise.then(function(){
 					newQuestionAsked.processed = true;
 					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 						if (response.status === 200) {
-							console.log("Saved Interview q:"+newQuestionAsked.questionId);							
+							console.log("Saved Interview q:"+newQuestionAsked.questionId);
+							var defer1 = $q.defer();
+							deleteAnswers(answersToDelete,defer1);
+							defer1.promise.then(function(){
+								console.log("All done deleting child questions answers");
+								var defer = $q.defer();
+								deleteQuestions(questionsToDelete,defer);
+								defer.promise.then(function(){
+									console.log("All done deleting child questions");						
+									showNextQuestionNew();							
+								});
+							});	
 						}
 					});
-				});
-				var defer = $q.defer();
-				deleteChildQuestions(deletedAnswers,defer);
-				defer.promise.then(function(){
-					console.log("All done deleting child questions");
-				});
-				
+				});						
+											
 			}else{
 				alert("Nothing was changed");
-			}
-			
-			
+			}		
 		}
 		function buildAndSaveQuestionNew(interview, question) {
 
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
-				return queuedQuestion.questionId == question.idNode;
+				return queuedQuestion.questionId == question.idNode 
+				&& !queuedQuestion.processed 
+				&& !queuedQuestion.deleted;
 			});
+			if(!newQuestionAsked){
+				var msg = "OOPS! lost the newQuestion in buildAndSaveQuestionNew";
+				console.error(msg);
+				alert(msg);				
+			}
 			$scope.displayQuestions = [];
 			for(var i=0;i<interview.questionHistory.length;i++){
 				var queuedQuestion = interview.questionHistory[i];
@@ -979,45 +1076,6 @@
 				return defer.promise;
 			}
 		}
-		function deleteChildQuestions(oldAnswers,defer){
-			if(oldAnswers.length > 0){
-				for(var i=0;i<oldAnswers.length;i++){
-					var oldAnswer = oldAnswers[i];
-					for(var j=0;j<$scope.interview.questionHistory.length;j++){
-						var currentQuestion = $scope.interview.questionHistory[j];
-						if(currentQuestion.parentAnswerId==oldAnswer.answerId){
-							currentQuestion.deleted = 1;
-							InterviewsService.saveQuestion(currentQuestion).then(function(response) {
-								if (response.status === 200) {
-									console.log("Deleted child interview question: "+currentQuestion.questionId);
-									var defer = $q.defer();
-									deleteChildQuestions(currentQuestion.answers,defer);
-									defer.promise.then(function(){
-										console.log("Done deleting child questions");
-									});
-									if(defer){
-										defer.resolve();
-									}
-								}else{
-									if(defer){
-										defer.reject();
-									}
-								}
-							});
-						}
-					}
-				}
-			}else{
-				console.error("Trying to remove empty interview answers");
-				if(defer){
-					defer.resolve();
-				}
-			}
-			if(defer){
-				return defer.promise;	
-			}
-		
-		}
 		function saveSingleAnswer(answer){	
 			var container = [];
 			container.push(answer);
@@ -1030,6 +1088,8 @@
 			});
 			
 		}
+		
+		
 		function saveAnswer(newQuestionAsked,defer){
 			if(newQuestionAsked.answers.length > 0){
 			InterviewsService.saveAnswers(newQuestionAsked.answers)
@@ -1045,7 +1105,6 @@
 						if(defer){
 							defer.resolve();
 						}
-//						syncAs(newQuestionAsked,response.data);
 					}else{
 						if(defer){
 						defer.reject();
@@ -1058,7 +1117,7 @@
 				}
 			}
 			if(defer){
-			return defer.promise;
+				return defer.promise;
 			}
 		}
 

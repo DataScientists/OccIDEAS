@@ -137,6 +137,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+        function saveQuestions(data) {
+			var restURL = 'web/rest/interviewquestionanswer/saveQuestions';
+			var request =  $http({
+				  method: 'POST',
+				  url: restURL,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
         function saveAnswersAndQueueQuestions(data) {
 			var restURL = 'web/rest/interviewquestionanswer/saveAnswersandQueueQuestions';
 			var request =  $http({
@@ -198,6 +207,7 @@
             startInterview:startInterview,
             getNextQuestion: getNextQuestion,
             saveQuestion:saveQuestion,
+            saveQuestions:saveQuestions,
             saveAnswers:saveAnswers,
             saveAnswersAndQueueQuestions:saveAnswersAndQueueQuestions,
             saveLinkQuestionAndQueueQuestions:saveLinkQuestionAndQueueQuestions,
