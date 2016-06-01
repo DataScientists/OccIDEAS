@@ -619,6 +619,11 @@
 				isProcessed : false
 			};
 		}
+		function processInterviewQuestionWithMultipleAnswersEdit(interview, node) {
+			buildAndSaveMultipleQuestionNewEdit(interview, node);
+			$mdDialog.cancel();
+			refreshDisplay();
+		}
 		function processInterviewQuestionWithMultipleAnswersNew(interview, node) {
 			buildAndSaveMultipleQuestionNew(interview, node);
 		}
@@ -738,7 +743,7 @@
 				}			
 			});	
 			var defer = $q.defer();
-			newQuestionAsked.answers[0].isProcessed = true;
+			//newQuestionAsked.answers[0].isProcessed = true;
 			saveAnswerNew(newQuestionAsked,defer);
 			defer.promise.then(function(){
 				newQuestionAsked.processed = true;
@@ -830,12 +835,115 @@
 		}
 		function findChildQuestionsToDelete(answer){		
 			answer.deleted = 1;
+			answersToDelete.push(answer);
 			for(var j=0;j<$scope.interview.questionHistory.length;j++){
 				var iQuestion = $scope.interview.questionHistory[j];
 				if(iQuestion.parentAnswerId==answer.answerId){
 					populateQuestionsAndAnswersToDelete(iQuestion);
 				}			
 			}			
+		}
+		function buildAndSaveMultipleQuestionNewEdit(interview, question) {
+
+			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
+				return queuedQuestion.questionId == question.idNode;
+			});
+			if(!newQuestionAsked){
+				var msg = "OOPS! lost the newQuestion in buildAndEditQuestionNew";
+				console.error(msg);
+				alert(msg);				
+			}
+			var bDeleteAnswersRequired = false;
+			var bSaveAnswersRequired = false;
+			var newSetOfAnswers = [];
+			for(var i=0;i<question.nodes.length;i++){
+				var possibleAnswer = question.nodes[i];
+				if(possibleAnswer.isSelected){
+					var bExists = false;
+					newSetOfAnswers.push(possibleAnswer);
+					for(var j=0;j<newQuestionAsked.answers.length;j++){
+						var newAnswer = newQuestionAsked.answers[j];
+						if(possibleAnswer.idNode==newAnswer.answerId){
+							bExists = true;
+							break;
+						}
+					}
+					if(!bExists){
+						var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, possibleAnswer);
+						newQuestionAsked.answers.push(actualAnswer);
+						bSaveAnswersRequired = true;
+					}
+				}	
+			}
+			var oldAnswers = [];
+			for(var m=0;m<$scope.questionBeingEditedCopy.nodes.length;m++){
+				var oldAnswer = $scope.questionBeingEditedCopy.nodes[m];
+				if(oldAnswer.isSelected){
+					oldAnswers.push(oldAnswer);
+				}
+			}			
+			for(var k=0;k<oldAnswers.length;k++){
+				var oldAnswer = oldAnswers[k];
+				var bFound = false;
+				for(var l=0;l<newSetOfAnswers.length;l++){
+					var newAnswer = newSetOfAnswers[l];
+					if(oldAnswer.idNode==newAnswer.idNode){
+						bFound = true;
+						break;
+					}	
+				}
+				if(!bFound){//test
+					var oldAnswerlisted = _.find($scope.interview.answerHistory,function(ans){
+						return ans.answerId == oldAnswer.idNode;
+					});
+					if(!oldAnswerlisted){
+						var msg = "Could not find answer to remove";
+						console.error(msg);
+						alert(msg);
+					}
+					findChildQuestionsToDelete(oldAnswerlisted);
+					bDeleteAnswersRequired = true;
+				}
+			}
+			if(bDeleteAnswersRequired || bSaveAnswersRequired){
+				$scope.displayQuestions = [];
+				for(var i=0;i<interview.questionHistory.length;i++){
+					var queuedQuestion = interview.questionHistory[i];
+					if(queuedQuestion.deleted==0){
+						if(queuedQuestion.description == 'display'){
+							$scope.displayQuestions.push(queuedQuestion);
+						}
+					}
+				}
+				//var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, selectedAnswer);	
+				//actualAnswer.isProcessed = true;
+				//newQuestionAsked.answers.push(actualAnswer);	
+				var defer = $q.defer();
+				//newQuestionAsked.answers[0].isProcessed = true;
+				saveAnswerNew(newQuestionAsked,defer);
+				defer.promise.then(function(){
+					newQuestionAsked.processed = true;
+					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
+						if (response.status === 200) {
+							console.log("Saved Interview q:"+newQuestionAsked.questionId);
+							var defer1 = $q.defer();
+							deleteAnswers(answersToDelete,defer1);
+							defer1.promise.then(function(){
+								console.log("All done deleting child questions answers");
+								var defer = $q.defer();
+								deleteQuestions(questionsToDelete,defer);
+								defer.promise.then(function(){
+									console.log("All done deleting child questions");						
+									showNextQuestionNew();							
+								});
+							});	
+						}
+					});
+				});						
+											
+			}else{
+				alert("Nothing was changed");
+			}		
 		}
 		function buildAndEditQuestionNew(interview, question) {
 
@@ -1861,8 +1969,9 @@
 		function refreshDisplay(){
 			$scope.displayHistory = angular.copy($scope.interview.questionHistory);
 			_.remove($scope.displayHistory, function(node) {
-				  return node.link;
+				  return node.link || node.deleted || !node.processed;
 				});
+			
 			_.each($scope.displayHistory, function(node) {
 				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
 					  var retValue = false;
@@ -2469,7 +2578,7 @@
 			var interview = $scope.interview;
 			if (interview) {
 				if (node.type == 'Q_multiple') {
-					processInterviewQuestionWithMultipleAnswersNew(interview, node);
+					processInterviewQuestionWithMultipleAnswersEdit(interview, node);
 				} else if (node.type == 'Q_frequency') {
 					processFrequencyNew(interview, node);
 				} else {
@@ -2502,6 +2611,7 @@
 						});
 					});
 					$scope.questionBeingEdited = fullQuestion;
+					$scope.questionBeingEditedCopy = angular.copy(fullQuestion);
 					$mdDialog.show({
 						scope : $scope.$new(),
 						templateUrl : 'scripts/interviews/view/editQuestionDialog.html',

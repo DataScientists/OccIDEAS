@@ -209,7 +209,7 @@
 								link:{{element.link}}
 							</span> -->
 						</div>
-						<span ng-if="element.processed && !element.deleted" class="glyphicon glyphicon-edit" ng-click="showEditQuestionPrompt($event,element)" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" ></span>
+						<span ng-if="element.processed && !element.deleted" ng-click="showEditQuestionPrompt($event,element)"  class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" ></span>
 						<span id="{{'IntResult'+element.idNode}}">{{ element.name }}</span>
 					</div>
 					<!-- 			show answers -->

@@ -45,7 +45,7 @@ public class InterviewAnswerDao {
 						iq.setName(question.getName());
 						iq.setNodeClass(question.getNodeclass());
 						iq.setNumber(question.getNumber());
-						iq.setModCount(iq.getModCount());
+						iq.setModCount(a.getModCount());
 						iq.setLink(question.getLink());
 						iq.setParentAnswerId(a.getAnswerId());
 						iq.setQuestionId(question.getIdNode());
