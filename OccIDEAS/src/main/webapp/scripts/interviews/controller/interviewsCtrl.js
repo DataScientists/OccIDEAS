@@ -1633,12 +1633,14 @@
 			saveInterview(interview);
 		}
 		function saveInterview(interview) {
+			var currentQuestion = interview.showedQuestion;
 			InterviewsService.save(interview).then(function(response) {
 				if (response.status === 200) {
 					$log.info("Saving interview with id:"+ interview.interviewId + " successful");
 					InterviewsService.get($scope.interview.interviewId).then(function(response) {
 						if(response.status==200){
 							$scope.interview = response.data[0];
+							$scope.interview.showedQuestion = currentQuestion;
 						}
 					});
 				}
