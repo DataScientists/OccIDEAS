@@ -578,7 +578,7 @@
 			if(interview.questionHistory){
 				_.each(interview.questionHistory,function(question){
 					if(question.link){
-						modCount = modCount +1;
+						modCount = modCount ;
 					}
 				})
 				intQuestionSeq = interview.questionHistory.length+1;
