@@ -1,29 +1,28 @@
 package org.occideas.agent.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.rule.service.RuleService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.AgentVO;
+import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/agent")
 public class AgentRestController implements BaseRestController<AgentVO>{
 
 	@Autowired
 	private AgentService service;
+
+    @Autowired
+    private RuleService ruleService;
 
 	@GET
 	@Path(value="/getlist")
@@ -101,6 +100,21 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 		}
 		return Response.ok().build();
 	}
-	
+
+    @GET
+    @Path(value="/hasrules")
+    public Response hasRules(@QueryParam("agentId") Long agentId) {
+        boolean hasRule = false;
+        try{
+            List<RuleVO> list = ruleService.findByAgentId(agentId);
+            if(list != null && !list.isEmpty()){
+                hasRule = true;
+            }
+        }catch(Throwable e){
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(hasRule).build();
+    }
 
 }

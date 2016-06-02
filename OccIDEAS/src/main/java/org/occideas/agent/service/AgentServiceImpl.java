@@ -51,6 +51,6 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public void delete(AgentVO o) {
 		dao.delete(mapper.convertToAgent(o,false));
-		
+
 	}
 }

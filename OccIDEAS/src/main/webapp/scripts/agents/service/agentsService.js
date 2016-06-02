@@ -5,18 +5,18 @@
 	AgentsService.$inject = ['$http'];
 	function AgentsService($http){
 		var apiUrl = '/occideas/web/rest/';
-		var modulesUrl = apiUrl + 'agent';
+		var agentEndpoint = apiUrl + 'agent';
 		var apiKey = '';
 		
 		var getAgents = function() {
-		  return $http.get(modulesUrl+'/getlist',{ cache: false}).then(function(response) {
+		  return $http.get(agentEndpoint+'/getlist',{ cache: false}).then(function(response) {
 		    var data = response.data;
 		    return data;
 		  });
 		};
 		
 		var postNewAgent = function(moduleObj) {
-		  return $http.post(modulesUrl + '?apiKey='+apiKey).then(function(response) {
+		  return $http.post(agentEndpoint + '?apiKey='+apiKey).then(function(response) {
 			console.log(response.data.id);
 		  });
 		};
@@ -29,11 +29,21 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
-		var deleteAgent = function(moduleObj) {
-			  return $http.post(modulesUrl+'/delete' + '?id='+moduleObj.id).then(function(response) {
-				console.log(response.data.id);
-			  });
-			}; 
+		var deleteAgent = function(agentObj) {
+            var request = $http({
+                method:'POST',
+                url: agentEndpoint+'/delete',
+                data:agentObj
+            });
+            return request.then(handleSuccess,handleError);
+        };
+        var hasRules = function(agentId) {
+            var request = $http({
+                method:'GET',
+                url: agentEndpoint+'/hasrules?agentId='+ agentId
+            });
+            return request.then(handleSuccess,handleError);
+        };
 		function handleError( response ) {
 	            if (
 	                ! angular.isObject( response.data ) ||
@@ -52,7 +62,8 @@
 		      get: getAgents,
 		      save: save, 
 		      post: postNewAgent, 
-		      deleteAgent: deleteAgent
+		      deleteAgent: deleteAgent,
+              hasRules: hasRules
 		};
 	}
 	

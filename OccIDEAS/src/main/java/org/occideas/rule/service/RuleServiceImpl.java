@@ -62,5 +62,10 @@ public class RuleServiceImpl implements RuleService {
 	public void update(RuleVO o) {
 		dao.saveOrUpdate(mapper.convertToRule(o));	
 	}
-    
+
+    @Override
+    public List<RuleVO> findByAgentId(long agentId){
+        List<Rule> rules = dao.findByAgentId(agentId);
+        return mapper.convertToRuleVOList(rules);
+    }
 }

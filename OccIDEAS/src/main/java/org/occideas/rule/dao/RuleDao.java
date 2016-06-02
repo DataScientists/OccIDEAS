@@ -52,4 +52,16 @@ public class RuleDao {
          return crit.list();
        }
 
+    public List<Rule> findByAgentId(long agentId) {
+        final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(Rule.class)
+                .add(Restrictions.eq("deleted", 0))
+                .add(Restrictions.eq("agentId", agentId))
+                .setProjection(Projections.projectionList()
+                        .add(Projections.property("agentId"), "agentId")
+                        .add(Projections.property("agent"), "agent"))
+                .setResultTransformer(Transformers.aliasToBean(Rule.class));
+        return crit.list();
+    }
+
 }

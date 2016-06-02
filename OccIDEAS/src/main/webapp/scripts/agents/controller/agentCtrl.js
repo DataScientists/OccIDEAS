@@ -62,16 +62,36 @@
 	        angular.extend(row, originalRow);
 	    }
 	    function del(row) {
-	    	//  Modules.deleteModule().then(function(data) {});////Delete module here via ajax//
-	        _.remove(self.tableParams.settings().dataset, function (item) {
-	            return row === item;
-	        });
-	        self.tableParams.reload().then(function (data) {
-	            if (data.length === 0 && self.tableParams.total() > 0) {
-	                self.tableParams.page(self.tableParams.page() - 1);
-	                self.tableParams.reload();
-	            }
-	        });
+            AgentsService.hasRules(row.idAgent).then(function(checked){
+                if(!checked){
+                    AgentsService.deleteAgent({idAgent:row.idAgent}).then(function(resp) { // Delete agent here via ajax
+                        console.log("Deleted agent:", resp);
+                        if(200 == resp.status){
+                            //_.remove(self.tableParams.settings().dataset, function (item) {
+                            //    return row === item;
+                            //});
+                            //self.tableParams.reload().then(function (data) {
+                            //    if (data.length === 0 && self.tableParams.total() > 0) {
+                            //        self.tableParams.page(self.tableParams.page() - 1);
+                            //        self.tableParams.reload();
+                            //    }
+                            //});
+
+                            self.tableParams.shouldGetData = true;
+                            self.tableParams.reload().then(function (data) {
+                                if (data.length === 0 && self.tableParams.total() > 0) {
+                                    self.tableParams.page(self.tableParams.page() - 1);
+                                    self.tableParams.reload();
+                                }
+                            });
+                        } else {
+                            console.log("Error when deleting agent:",resp);
+                        }
+                    });
+                }else{
+                    alert("This agent already had rules belong to");
+                }
+            });
 	    }
 	    function resetRow(row, rowForm) {
 	        row.isEditing = false;
