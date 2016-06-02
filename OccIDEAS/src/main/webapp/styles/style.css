@@ -29,6 +29,9 @@
 .Q_processed{
 	background: #CDCEB5 !important;
 }
+.Q_link{
+	background: #DCCBEC !important
+}
 .badge-unprocessed {
     display: inline-block;
     min-width: 10px;
