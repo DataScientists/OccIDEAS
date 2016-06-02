@@ -725,7 +725,9 @@
 		}
 		function buildAndSaveMultipleQuestionNew(interview, question, persistedAnswer) {
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
-				return queuedQuestion.questionId == question.idNode;
+				return queuedQuestion.questionId == question.idNode 
+				&& !queuedQuestion.processed 
+				&& !queuedQuestion.deleted;
 			});
 			$scope.displayQuestions = [];
 			for(var i=0;i<interview.questionHistory.length;i++){
@@ -847,9 +849,14 @@
 				return defer.promise;
 			}
 		}
-		function findChildQuestionsToDelete(answer){		
-			answer.deleted = 1;
-			answersToDelete.push(answer);
+		function findChildQuestionsToDelete(answer){				
+			for(var i=0;i<$scope.interview.answerHistory.length;i++){
+				var ans = $scope.interview.answerHistory[i];
+				if(ans.answerId==answer.answerId){
+					ans.deleted = 1;
+					answersToDelete.push(ans);
+				}
+			}
 			for(var j=0;j<$scope.interview.questionHistory.length;j++){
 				var iQuestion = $scope.interview.questionHistory[j];
 				if(iQuestion.parentAnswerId==answer.answerId){
@@ -860,7 +867,9 @@
 		function buildAndSaveMultipleQuestionNewEdit(interview, question) {
 
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
-				return queuedQuestion.questionId == question.idNode;
+				return queuedQuestion.questionId == question.idNode 
+				&& queuedQuestion.processed 
+				&& !queuedQuestion.deleted;
 			});
 			if(!newQuestionAsked){
 				var msg = "OOPS! lost the newQuestion in buildAndEditQuestionNew";
@@ -965,7 +974,9 @@
 		function buildAndEditQuestionNew(interview, question) {
 
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
-				return queuedQuestion.questionId == question.idNode;
+				return queuedQuestion.questionId == question.idNode 
+				&& queuedQuestion.processed 
+				&& !queuedQuestion.deleted;
 			});
 			if(!newQuestionAsked){
 				var msg = "OOPS! lost the newQuestion in buildAndEditQuestionNew";
