@@ -789,6 +789,20 @@
 				}
 			}	
 		}
+		function updateFreeTextAnswer(answer){
+			var answers = [];
+			answers.push(answer);
+			InterviewsService.saveAnswers(answers).then(function(response){
+				if (response.status === 200) {
+					console.log("Updated free text answer");
+					
+				}else{
+					var msg = "Failed to updateFreeTextAnswer";
+					console.error(msg);
+					alert(msg)
+				}
+			});
+		}
 		function deleteAnswers(answers,defer){
 			if(answers.length > 0){
 				InterviewsService.saveAnswers(answers).then(function(response){
@@ -865,6 +879,9 @@
 						var newAnswer = newQuestionAsked.answers[j];
 						if(possibleAnswer.idNode==newAnswer.answerId){
 							bExists = true;
+							if(possibleAnswer.type=='P_freetext'){
+								updateFreeTextAnswer(newAnswer);
+							}							
 							break;
 						}
 					}
@@ -955,12 +972,33 @@
 				console.error(msg);
 				alert(msg);				
 			}
+			var bIsFreeText = false;
 			var bDeleteAnswersRequired = false;
 			var selectedAnswer = question.selectedAnswer;
 			_.each(newQuestionAsked.answers,function(ans){
 				if(selectedAnswer.idNode!=ans.answerId){
 					findChildQuestionsToDelete(ans);
 					bDeleteAnswersRequired = true;
+				}else{
+					if(selectedAnswer.type=='P_freetext'){
+						var historyQuestion = _.find($scope.interview.questionHistory,function(ques){
+							return ques.questionId == question.idNode;
+						});
+						var newAnswer = _.find(historyQuestion.answers,function(answ){
+							return answ.answerId == selectedAnswer.idNode;
+						});	
+						if(newAnswer){
+							newAnswer.answerFreetext = selectedAnswer.name;
+							newAnswer.name = selectedAnswer.name;
+							updateFreeTextAnswer(newAnswer);
+							bIsFreeText = true;
+						}else{
+							var msg = "Could not find free text answer to update";
+							console.error(msg);
+							alert(msg);
+						}
+						
+					}
 				}
 			});
 			if(bDeleteAnswersRequired){
@@ -999,7 +1037,9 @@
 				});						
 											
 			}else{
-				alert("Nothing was changed");
+				if(!bIsFreeText){
+					alert("Nothing was changed");
+				}				
 			}		
 		}
 		function buildAndSaveQuestionNew(interview, question) {
@@ -1968,9 +2008,9 @@
 		}
 		function refreshDisplay(){
 			$scope.displayHistory = angular.copy($scope.interview.questionHistory);
-			_.remove($scope.displayHistory, function(node) {
+			/*_.remove($scope.displayHistory, function(node) {
 				  return node.link || node.deleted || !node.processed;
-				});
+				});*/
 			
 			_.each($scope.displayHistory, function(node) {
 				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
@@ -2607,6 +2647,10 @@
 							if (actualAnswer.answerId == possibleAnswer.idNode) {
 								possibleAnswer.isSelected = true;
 								fullQuestion.selectedAnswer = possibleAnswer;
+								if(actualAnswer.type == 'P_freetext'){
+									fullQuestion.selectedAnswer.name = actualAnswer.name;
+									fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
+								}
 							}
 						});
 					});
