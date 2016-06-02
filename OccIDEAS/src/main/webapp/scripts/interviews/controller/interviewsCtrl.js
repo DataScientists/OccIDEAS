@@ -1024,7 +1024,7 @@
 				}
 				var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, selectedAnswer);	
 				actualAnswer.isProcessed = true;
-				newQuestionAsked.answers.push(actualAnswer);	
+				newQuestionAsked.answers[0] = actualAnswer;	
 				var defer = $q.defer();
 				saveAnswerNew(newQuestionAsked,defer);
 				defer.promise.then(function(){
