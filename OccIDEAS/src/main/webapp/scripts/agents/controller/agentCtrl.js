@@ -62,8 +62,8 @@
 	        angular.extend(row, originalRow);
 	    }
 	    function del(row) {
-            AgentsService.hasRules(row.idAgent).then(function(checked){
-                if(!checked){
+            AgentsService.hasRules(row.idAgent).then(function(response){
+                if("false" == response.data){
                     AgentsService.deleteAgent({idAgent:row.idAgent}).then(function(resp) { // Delete agent here via ajax
                         console.log("Deleted agent:", resp);
                         if(200 == resp.status){
