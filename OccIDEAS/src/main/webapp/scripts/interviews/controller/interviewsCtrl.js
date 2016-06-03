@@ -1277,7 +1277,7 @@
 		function saveSingleAnswer(answer){	
 			var container = [];
 			container.push(answer);
-			InterviewsService.saveAnswersAndQueueQuestions(container).then(function(response){
+			InterviewsService.saveAnswers(container).then(function(response){
 				if (response.status === 200) {		
 					console.log("Success on saveSingleAnswer");
 				}else{
