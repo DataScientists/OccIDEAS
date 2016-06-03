@@ -18,7 +18,7 @@
 			
 			<div ng-if="questionBeingEdited.type == 'Q_multiple'">
 				<div ng-repeat="node in questionBeingEdited.nodes">
-					<md-checkbox ng-model="node.isSelected" ng-click="multiToggle(node, multiSelected)" 
+					<md-checkbox aria-label="{{node.name}}" ng-model="node.isSelected" ng-click="multiToggle(node, multiSelected)" 
 					 class="green" select-free-text-on-click> 
 					 <span ng-if="node.type!='P_freetext'">{{node.name}}</span> 
 					 <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
@@ -34,56 +34,56 @@
 				<div ng-repeat="node in questionBeingEdited.nodes">
 					<div ng-switch="node.type">
 						<div ng-switch-when="P_frequencyseconds">
-							<md-input-container> 
+							<div>Frequency Value:{{currentFrequencyValue}}</div>
 								<label>Seconds</label>
-								<md-select ng-model="node.name"> 
-									<md-option ng-repeat="second in seconds" value="{{second}}">{{second}}</md-option> 
-								</md-select> 
-							</md-input-container>
+								<select ng-model="node.name"> 
+									<option ng-repeat="second in seconds" value="{{second}}">{{second}}</option> 
+								</select> 
+							
 						</div>
 						<div ng-switch-when="P_frequencyweeks">
-							<md-input-container> 
+							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
 								<label>Weeks</label> 
-								<md-select ng-model="node.name"> 
-									<md-option ng-repeat="week in weeks" value="{{week}}">{{week}} </md-option> 
-								</md-select> 
-							</md-input-container>
+								<select ng-model="node.name"> 
+									<option ng-repeat="week in weeks" value="{{week}}">{{week}} </option> 
+								</select> 
+							
 						</div>
 						<div ng-switch-when="P_frequencyhours">
-							<md-input-container> 
+							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
 								<label>Hours</label> 
-								<md-select ng-model="node.name"> 
-									<md-option ng-repeat="hour in hoursPerWeekArray" value="{{hour}}">{{hour}} </md-option> 
-								</md-select> 
-							</md-input-container>
+								<select ng-model="node.name"> 
+									<option ng-repeat="hour in hoursPerWeekArray" value="{{hour}}">{{hour}} </option> 
+								</select> 
+							
 						</div>
 						<div ng-switch-when="P_frequencyshifthours">
-							<md-input-container> 
+							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
 								<label>Hours</label> 
-								<md-select ng-model="interview.showedQuestion.hours"> 
-									<md-option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}} </md-option> 
-								</md-select> 
-							</md-input-container>
-							<md-input-container> 
+								<select ng-model="questionBeingEdited.hours"> 
+									<option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}} </option> 
+								</select> 
+							
+							
 								<label>Minutes</label>
-								<md-select ng-model="interview.showedQuestion.minutes"> 
-									<md-option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}} </md-option> 
-								</md-select> 
-							</md-input-container>
+								<select ng-model="questionBeingEdited.minutes"> 
+									<option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}} </option> 
+								</select> 
+							
 						</div>
 						<div ng-switch-when="P_frequencyhoursminute">
-							<md-input-container>
+							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
 								<label>Hours</label> 
-								<md-select ng-model="interview.showedQuestion.hours"> 
-								<md-option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}} </md-option> 
-								</md-select> 
-							</md-input-container>
-							<md-input-container> 
+								<select ng-model="questionBeingEdited.hours"> 
+								<option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}} </option> 
+								</select> 
+							
+							
 								<label>Minutes</label>
-								<md-select ng-model="interview.showedQuestion.minutes"> 
-									<md-option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}} </md-option> 
-								</md-select>
-							</md-input-container>
+								<select ng-model="questionBeingEdited.minutes"> 
+									<option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}} </option> 
+								</select>
+							
 						</div>
 						<div ng-switch-default>Unknown Frequency Type:{{node.type}}</div>
 					</div>

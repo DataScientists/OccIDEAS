@@ -620,14 +620,14 @@
 			};
 		}
 		function processInterviewQuestionWithMultipleAnswersEdit(interview, node) {
-			buildAndSaveMultipleQuestionNewEdit(interview, node);
+			buildAndEditMultipleQuestion(interview, node);
 			$mdDialog.cancel();
 			refreshDisplay();
 		}
 		function processInterviewQuestionWithMultipleAnswersNew(interview, node) {
 			buildAndSaveMultipleQuestionNew(interview, node);
 		}
-		function processInterviewQuestionNew(interview, node) {
+		function processInterviewQuestionNew(interview, node) {			
 			buildAndSaveQuestionNew(interview, node);
 		}
 		function processEditInterviewQuestionNew(interview, node) {
@@ -635,8 +635,42 @@
 			$mdDialog.cancel();
 			refreshDisplay();
 		}
+		function processFrequencyNewEdit(interview, node) {
+			buildAndEditFrequency(interview, node);
+			$mdDialog.cancel();
+			refreshDisplay();
+		}
 		function processFrequencyNew(interview, node) {
 			buildAndSaveFrequencyNew(interview, node);
+		}
+		function buildAndEditFrequency(interview, node) {
+			var hours = 0;
+			if ($scope.questionBeingEdited.hours) {
+				hours = $scope.questionBeingEdited.hours;
+			}
+			var minutes = 0;
+			if ($scope.questionBeingEdited.minutes) {
+				minutes = $scope.questionBeingEdited.minutes;
+			}
+			var answerValue = node.nodes[0].name;
+			if(hours != 0 || minutes != 0){
+				answerValue = Number(hours) + (Number(minutes) / 60);
+			}
+			var answer = node.selectedAnswer?node.selectedAnswer:node.nodes[0];
+			var actualAnswer = _.find(interview.answerHistory,function(queuedAnswer){
+				return queuedAnswer.answerId == answer.idNode 
+				&& !queuedAnswer.deleted;
+			});		
+			actualAnswer.answerFreetext = answerValue;			
+			actualAnswer.name = answerValue;						
+			saveSingleAnswer(actualAnswer);
+			var questionBeingEdited = _.find(interview.questionHistory,function(queuedQuestion){
+				return queuedQuestion.questionId == node.idNode 
+				&& queuedQuestion.processed 
+				&& !queuedQuestion.deleted;
+			});
+			questionBeingEdited.answers = [];
+			questionBeingEdited.answers.push(actualAnswer);			
 		}
 		function buildAndSaveFrequencyNew(interview, node) {
 			var hours = 0;
@@ -864,7 +898,7 @@
 				}			
 			}			
 		}
-		function buildAndSaveMultipleQuestionNewEdit(interview, question) {
+		function buildAndEditMultipleQuestion(interview, question) {
 
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
 				return queuedQuestion.questionId == question.idNode 
@@ -918,7 +952,7 @@
 						break;
 					}	
 				}
-				if(!bFound){//test
+				if(!bFound){//this old answer is missing
 					var oldAnswerlisted = _.find($scope.interview.answerHistory,function(ans){
 						return ans.answerId == oldAnswer.idNode;
 					});
@@ -929,6 +963,12 @@
 					}
 					findChildQuestionsToDelete(oldAnswerlisted);
 					bDeleteAnswersRequired = true;
+				}else{//this old answer is still remaining
+					if(oldAnswer.type!='P_freetext'){ //if its not free text then lets remove it, no need to save again
+						_.remove(newQuestionAsked.answers,function(ans){
+							return ans.answerId == oldAnswer.idNode;
+						});
+					}
 				}
 			}
 			if(bDeleteAnswersRequired || bSaveAnswersRequired){
@@ -1007,8 +1047,7 @@
 							var msg = "Could not find free text answer to update";
 							console.error(msg);
 							alert(msg);
-						}
-						
+						}						
 					}
 				}
 			});
@@ -2631,7 +2670,7 @@
 				if (node.type == 'Q_multiple') {
 					processInterviewQuestionWithMultipleAnswersEdit(interview, node);
 				} else if (node.type == 'Q_frequency') {
-					processFrequencyNew(interview, node);
+					processFrequencyNewEdit(interview, node);
 				} else {
 					processEditInterviewQuestionNew(interview, node);
 				}
@@ -2661,12 +2700,22 @@
 								if(actualAnswer.type == 'P_freetext'){
 									fullQuestion.selectedAnswer.name = actualAnswer.name;
 									fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
+								}else if(actualAnswer.type.startsWith('P_frequency')){
+									$scope.currentFrequencyValue = actualAnswer.answerFreetext;
 								}
 							}
 						});
 					});
 					$scope.questionBeingEdited = fullQuestion;
 					$scope.questionBeingEditedCopy = angular.copy(fullQuestion);
+					if(fullQuestion.type == 'Q_frequency'){
+						$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+						$scope.hoursArray = $scope.getShiftHoursArray();
+						$scope.minutesArray = $scope.getShiftMinutesArray();
+						$scope.weeks = $scope.getWeeksArray();
+						$scope.seconds = $scope.getSecondsArray();
+						
+					}					
 					$mdDialog.show({
 						scope : $scope.$new(),
 						templateUrl : 'scripts/interviews/view/editQuestionDialog.html',

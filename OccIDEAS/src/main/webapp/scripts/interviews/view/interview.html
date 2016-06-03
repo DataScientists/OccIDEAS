@@ -36,7 +36,7 @@
 			<div ng-if="interview.showedQuestion.nodes.length != 0">
 			<div ng-if="interview.showedQuestion.type == 'Q_multiple'">
 				<div ng-repeat="node in interview.showedQuestion.nodes">
-					<md-checkbox ng-model="node.isSelected" ng-click="multiToggle(node, multiSelected)" class="green" select-free-text-on-click>
+					<md-checkbox aria-label="{{node.name}}" ng-model="node.isSelected" ng-click="multiToggle(node, multiSelected)" class="green" select-free-text-on-click>
 						<span ng-if="node.type!='P_freetext'">{{node.name}}</span>
 						<md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 							<label>Free Text</label>
