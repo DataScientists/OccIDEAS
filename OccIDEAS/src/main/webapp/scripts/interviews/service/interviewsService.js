@@ -184,6 +184,25 @@
 				})
 			return request.then(handleSuccess,handleError);
         }
+
+        function saveNote(data){
+            var restURL = 'web/rest/note/update';
+            var request =  $http({
+                method: 'POST',
+                url: restURL,
+                data:data
+            })
+            return request.then(handleSuccess,handleError);
+        }
+
+        function getListNote(interviewId){
+            var restURL = 'web/rest/note/getlistbyinterview?interviewId=' + interviewId;
+            var request =  $http({
+                method: 'GET',
+                url: restURL
+            })
+            return request.then(handleSuccess,handleError);
+        }
         
         function handleError(response) {
             if (
@@ -216,7 +235,9 @@
             saveIntDisplay:saveIntDisplay,
             getIntDisplay:getIntDisplay,
             getIntQuestion:getIntQuestion,
-            getInterviewQuestionList:getInterviewQuestionList
+            getInterviewQuestionList:getInterviewQuestionList,
+            saveNote:saveNote,
+            getListNote:getListNote
         };
     }
 })();

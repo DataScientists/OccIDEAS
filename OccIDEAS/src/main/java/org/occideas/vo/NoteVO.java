@@ -2,10 +2,11 @@ package org.occideas.vo;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-
+@JsonIgnoreProperties({"isEditing"})
 public class NoteVO {
 
 	private long idNote;

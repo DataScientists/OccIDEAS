@@ -2712,5 +2712,36 @@
 						}
 					});
 		}
+
+        $scope.handleSaveNote = function(note){
+            note.isEditing = false;
+            InterviewsService.saveNote(note).then(function(response){
+                if (response.status === 200) {
+                    $log.info("Success in save note.");
+                }else{
+                    $log.error("Error in save note");
+                }
+            });
+        };
+        $scope.handleDeleteNote = function(note){
+            note.deleted = 1;
+            InterviewsService.saveNote(note).then(function(response){
+                if (response.status === 200) {
+                    $log.info("Success in delete note.");
+                    loadNotes();
+                }else{
+                    $log.error("Error in delete note");
+                }
+            });
+        };
+
+        function loadNotes(){
+            console.log("Interview scope",$scope.interview);
+            InterviewsService.getListNote($scope.interview.interviewId).then(function(response){
+                if(response){
+                    $scope.interview.notes = response.data;
+                }
+            });
+        }
 	}
 })();

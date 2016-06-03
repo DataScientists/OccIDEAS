@@ -134,9 +134,17 @@
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
 			<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note </md-button>
-			<div ng-repeat='note in interview.notes'>
-				<div ng-if="note.type=='Interviewer'">{{$index+1}}:{{note.text}}</div>
-			</div>
+			<ul>
+                <div ng-repeat='note in interview.notes'>
+                    <li ng-if="note.type=='Interviewer'">
+                        <div ng-hide="note.isEditing" ng-click="note.isEditing = true">{{note.text}}</div>
+                        <div ng-show="note.isEditing">
+                            <input type="text" ng-model="note.text" ng-required/><button ng-click="handleSaveNote(note)">Save</button>
+                        </div>
+                        <button ng-click="handleDeleteNote(note)">Delete</button>
+                    </li>
+			    </div>
+            </ul>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>

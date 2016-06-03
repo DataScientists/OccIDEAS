@@ -55,6 +55,7 @@ public class Interview implements java.io.Serializable {
 	
 	@OneToMany(mappedBy = "interviewId", targetEntity = Note.class)
 	@Cascade(value = { CascadeType.SAVE_UPDATE,CascadeType.PERSIST })
+    @Where(clause = "deleted = 0")
 	private List<Note> notes;
 	
 //	@OneToMany

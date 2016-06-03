@@ -1,5 +1,7 @@
 package org.occideas.entity;
 
+import org.hibernate.annotations.Where;
+
 import java.io.Serializable;
 import java.util.Date;
 
