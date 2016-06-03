@@ -963,6 +963,9 @@
 					}
 					findChildQuestionsToDelete(oldAnswerlisted);
 					bDeleteAnswersRequired = true;
+					_.remove(newQuestionAsked.answers,function(ans){
+						return ans.answerId == oldAnswer.idNode;
+					});
 				}else{//this old answer is still remaining
 					if(oldAnswer.type!='P_freetext'){ //if its not free text then lets remove it, no need to save again
 						_.remove(newQuestionAsked.answers,function(ans){
