@@ -5,12 +5,7 @@
 				<md-progress-linear ng-if="inProgress" md-mode="indeterminate"></md-progress-linear>	
 			
 				<div ng-repeat="displayq in displayQuestions ">
-					<div class="tree-node-content Q_interviewresult">
-						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
-							<span class="badge">{{displayq.number}}</span>
-						</div>
-						<span>{{ displayq.name }} </span>
-					</div>
+					
 					<div class="tree-node-content P_interviewresult" ng-repeat="as in displayq.answers">
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
 							<span class="badge">{{as.number}}</span>
