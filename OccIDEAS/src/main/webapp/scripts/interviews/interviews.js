@@ -36,7 +36,12 @@
 			        restrict: 'A',
 			        link: function (scope, element, attrs) {
 			            element.on('click', function () {
-			            	element.find("input").val("");
+			            	var freetext = element.find("input").val();
+			            	if(freetext){
+			            		if(freetext.lastIndexOf("[Freetext]")>=0){
+				            		element.find("input").val("");
+				            	}
+			            	}
 			            	element.find("input").focus();
 			            });
 			        }

@@ -55,6 +55,9 @@ public class InterviewQuestionDao {
     public List<InterviewQuestion> saveOrUpdate(List<InterviewQuestion> iqs) {
 		List<InterviewQuestion> list = new ArrayList<>();
 		for(InterviewQuestion iq:iqs){
+			System.out.println(iq.getId());
+			System.out.println(iq.getName());
+			System.out.println(iq.getNumber());
 			sessionFactory.getCurrentSession().saveOrUpdate(iq);
 			list.add(iq);
 		}

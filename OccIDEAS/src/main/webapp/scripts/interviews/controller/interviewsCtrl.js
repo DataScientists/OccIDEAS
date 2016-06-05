@@ -863,7 +863,8 @@
 		}
 		function deleteQuestions(questions,defer){
 			if(questions.length > 0){
-				InterviewsService.saveQuestions(questions).then(function(response){
+				var uniqueQuestions = _.uniqBy(questions, 'id');
+				InterviewsService.saveQuestions(uniqueQuestions).then(function(response){
 					if (response.status === 200) {
 						if(defer){
 							defer.resolve();
@@ -912,6 +913,7 @@
 			}
 			var bDeleteAnswersRequired = false;
 			var bSaveAnswersRequired = false;
+			var bIsFreeText = false;
 			var newSetOfAnswers = [];
 			for(var i=0;i<question.nodes.length;i++){
 				var possibleAnswer = question.nodes[i];
@@ -923,7 +925,10 @@
 						if(possibleAnswer.idNode==newAnswer.answerId){
 							bExists = true;
 							if(possibleAnswer.type=='P_freetext'){
+								newAnswer.answerFreetext = possibleAnswer.name;
+								newAnswer.name = possibleAnswer.name;
 								updateFreeTextAnswer(newAnswer);
+								bIsFreeText = true;
 							}							
 							break;
 						}
@@ -1011,7 +1016,9 @@
 				});						
 											
 			}else{
-				alert("Nothing was changed");
+				if(!bIsFreeText){
+					alert("Nothing was changed");
+				}	
 			}		
 		}
 		function buildAndEditQuestionNew(interview, question) {
@@ -2691,6 +2698,8 @@
 			});
 		};
 		$scope.showEditQuestionPrompt = function(ev,node) {
+			$scope.participant.status = 0;//running
+			$scope.interviewStarted = true;
 			QuestionsService.findQuestion(node.questionId).then(function(response){
 				if(response.status === 200){
 					$log.info('Question Found');
@@ -2795,5 +2804,11 @@
                 }
             });
         }
+        $scope.allowSpaceOnFreeText = function(event,node){
+            if(event.keyCode == 32){
+        		node.name = node.name + ' ';
+        		node.isSelected = true;
+        	}
+        };
 	}
 })();

@@ -40,7 +40,7 @@
 						<span ng-if="node.type!='P_freetext'">{{node.name}}</span>
 						<md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 							<label>Free Text</label>
-							<input style="width: 270px;" ng-model="node.name">
+							<input style="width: 270px;" ng-model="node.name" ng-keyup="allowSpaceOnFreeText($event,node)">
 						</md-input-container>
 					</md-checkbox>
 				</div>
@@ -137,11 +137,13 @@
 			<ul>
                 <div ng-repeat='note in interview.notes'>
                     <li ng-if="note.type=='Interviewer'">
-                        <div ng-hide="note.isEditing" ng-click="note.isEditing = true">{{note.text}}</div>
+                        <div ng-hide="note.isEditing" ng-click="note.isEditing = true">{{$index}}:{{note.text}}</div>
                         <div ng-show="note.isEditing">
                             <input type="text" ng-model="note.text" ng-required/><button ng-click="handleSaveNote(note)">Save</button>
                         </div>
-                        <button ng-click="handleDeleteNote(note)">Delete</button>
+                        <button ng-click="handleDeleteNote(note)" confirm="Delete note {{$index}}?" class="btn btn-default btn-sm" >
+                        <span class="glyphicon glyphicon-trash"></span>
+                        </button>
                     </li>
 			    </div>
             </ul>

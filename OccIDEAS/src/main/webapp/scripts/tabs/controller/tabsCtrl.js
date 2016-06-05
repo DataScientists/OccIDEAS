@@ -362,7 +362,7 @@
         }
 
         $scope.removeTab = function(tab) {       
-        	if (tab.title == 'ERROR!') {
+        	if (tab.title == 'Error!') {
         		var index = tabs.indexOf(tab);
                 tabs.splice(index, 1);
                 $scope.tabOptions.splice(index, 1);
@@ -379,7 +379,11 @@
                             tabs.splice(index, 1);
                             $scope.tabOptions.splice(index, 1);
                     	}
-        			}    			
+        			} else{
+        				var index = tabs.indexOf(tab);
+                        tabs.splice(index, 1);
+                        $scope.tabOptions.splice(index, 1);
+        			}  			
         		}
             	
             	
