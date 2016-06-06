@@ -132,13 +132,14 @@
 			<ul>
                 <div ng-repeat='note in interview.notes'>
                     <li ng-if="note.type=='Interviewer'">
-                        <div ng-hide="note.isEditing" ng-click="note.isEditing = true">{{$index}}:{{note.text}}</div>
+                        <div ng-hide="note.isEditing" ng-click="note.isEditing = true">{{note.text}}
+                        <button ng-click="handleDeleteNote(note)" confirm="Delete note {{$index}}?" class="btn btn-default btn-sm" >
+                        <span class="glyphicon glyphicon-trash"></span>
+                        </button></div>
                         <div ng-show="note.isEditing">
                             <input type="text" ng-model="note.text" ng-required/><button ng-click="handleSaveNote(note)">Save</button>
                         </div>
-                        <button ng-click="handleDeleteNote(note)" confirm="Delete note {{$index}}?" class="btn btn-default btn-sm" >
-                        <span class="glyphicon glyphicon-trash"></span>
-                        </button>
+                        
                     </li>
 			    </div>
             </ul>
