@@ -24,11 +24,11 @@
 	</appender>
 
 	<logger name="org.occideas" additivity="false">
-		<level value="INFO" />
+		<level value="TRACE" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate" additivity="false">
-		<level value="INFO" />
+		<level value="TRACE" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate.type" additivity="false">

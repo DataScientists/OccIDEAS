@@ -47,7 +47,7 @@ public class ParticipantRestController implements BaseRestController<Participant
     public Response listAll() {
     	List<ParticipantVO> list = new ArrayList<ParticipantVO>();
 		try{
-			list = service.listAll();
+			list = service.listAllParticipantWithInt();
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
