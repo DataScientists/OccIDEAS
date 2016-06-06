@@ -4,7 +4,7 @@
 
 	ModulesService.$inject = ['$http','ModulesCache'];
 	function ModulesService($http,ModulesCache){
-		var apiUrl = '/occideas/web/rest/';
+		var apiUrl = 'web/rest/';
 		var modulesUrl = apiUrl + 'module';
 		var apiKey = '';
 		

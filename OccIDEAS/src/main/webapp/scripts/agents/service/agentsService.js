@@ -4,7 +4,7 @@
 
 	AgentsService.$inject = ['$http'];
 	function AgentsService($http){
-		var apiUrl = '/occideas/web/rest/';
+		var apiUrl = 'web/rest/';
 		var agentEndpoint = apiUrl + 'agent';
 		var apiKey = '';
 		

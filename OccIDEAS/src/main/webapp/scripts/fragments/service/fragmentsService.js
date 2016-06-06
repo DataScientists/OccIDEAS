@@ -4,7 +4,7 @@
 
 	FragmentsService.$inject = ['$http'];
 	function FragmentsService($http){
-		var apiUrl = '/occideas/web/rest/';
+		var apiUrl = 'web/rest/';
 		var modulesUrl = apiUrl + 'fragment';
 		var apiKey = '';
 		

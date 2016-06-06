@@ -4,7 +4,7 @@
 
 	ParticipantsService.$inject = ['$http'];
 	function ParticipantsService($http){
-		var apiUrl = '/occideas/web/rest/';
+		var apiUrl = 'web/rest/';
 		var modulesUrl = apiUrl + 'participant';
 		var apiKey = '';
 		
