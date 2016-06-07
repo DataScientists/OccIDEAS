@@ -15,6 +15,10 @@ public interface InterviewMapper {
 	Interview convertToInterview(InterviewVO InterviewVO);
 	
 	List<Interview> convertToInterviewList(List<InterviewVO> InterviewVO);
+	
+	List<InterviewVO> convertToInterviewVOnoQsList(List<Interview> InterviewList);
+	
+	InterviewVO convertToInterviewVOnoQs(Interview interview);
 
 	InterviewVO convertToInterviewVO(Interview interview);
 

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
-import org.occideas.entity.InterviewModule;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Note;
 import org.occideas.entity.Rule;
@@ -203,5 +202,36 @@ public class InterviewMapperImpl implements InterviewMapper {
 		}
 
 		return list;
+	}
+
+	@Override
+	public List<InterviewVO> convertToInterviewVOnoQsList(List<Interview> voList) {
+		if (voList == null) {
+			return null;
+		}
+
+		List<InterviewVO> list = new ArrayList<>();
+		for (Interview interview : voList) {
+			list.add(convertToInterviewVOnoQs(interview));
+		}
+
+		return list;
+	}
+
+	@Override
+	public InterviewVO convertToInterviewVOnoQs(Interview interview) {
+		if (interview == null) {
+			return null;
+		}
+		InterviewVO interviewVO = new InterviewVO();
+		interviewVO.setInterviewId(interview.getIdinterview());
+		interviewVO.setReferenceNumber(interview.getReferenceNumber());
+//		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
+//		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
+//		interviewVO.setModules(modMapper.convertToInterviewModuleVOList(interview.getModules()));
+		interviewVO.setParentId(interview.getParentId());
+		List<Note> notes = interview.getNotes();
+		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
+		return interviewVO;
 	}
 }

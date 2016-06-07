@@ -64,4 +64,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 		entity.setReference(o.getReference());
 		return mapper.convertToParticipantVO(entity,true);
 	}
+
+	@Override
+	public List<ParticipantVO> listAllParticipantWithInt() {
+		return mapper.convertToParticipantVOListOnly(participantDao.getAll());
+	}
 }

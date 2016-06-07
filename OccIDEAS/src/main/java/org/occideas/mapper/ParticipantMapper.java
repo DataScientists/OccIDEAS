@@ -14,6 +14,10 @@ public interface ParticipantMapper {
 
 	Participant convertToParticipant(ParticipantVO ParticipantVO,boolean includeInterviews);
 	
+	List<ParticipantVO> convertToParticipantVOListOnly(List<Participant> ParticipantList);
+
+	ParticipantVO convertToParticipantVOonly(Participant interview);
+	
 	List<Participant> convertToParticipantList(List<ParticipantVO> ParticipantVO,boolean includeInterviews);
 
 	ParticipantVO convertToParticipantVO(Participant interview,boolean includeInterviews);

@@ -9,6 +9,6 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
 
 	List<ParticipantVO> findByIdForInterview(Long id);
 
-	
+	 public List<ParticipantVO> listAllParticipantWithInt();
 	
 }
