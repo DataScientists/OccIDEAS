@@ -6,9 +6,10 @@
         <col width="20%"/>
         <col width="20%"/>
       </colgroup>
-      <tr class="ng-table-group" ng-repeat-start="group in $groups">
+        <tbody ng-repeat="group in $groups">
+        <tr class="ng-table-group">
         <td colspan="7">
-          <a href="">
+          <a href="" ng-click="group.$hideRows = !group.$hideRows">
             <span class="glyphicon"
                   ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
             <strong>{{ group.value }} </strong>
@@ -27,6 +28,7 @@
 		    </span>
         </td>
       </tr>
+        </tbody>
     </table>
 
 
