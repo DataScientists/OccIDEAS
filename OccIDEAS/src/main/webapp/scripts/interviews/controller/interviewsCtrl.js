@@ -841,7 +841,8 @@
 		}
 		function deleteAnswers(answers,defer){
 			if(answers.length > 0){
-				InterviewsService.saveAnswers(answers).then(function(response){
+				var uniqueAnswers = _.uniqBy(answers, 'id');
+				InterviewsService.saveAnswers(uniqueAnswers).then(function(response){
 					if (response.status === 200) {
 						if(defer){
 							defer.resolve();
