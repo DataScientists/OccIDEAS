@@ -337,6 +337,28 @@
             safeDigest($rootScope.tabsLoading);
         };
 
+        $scope.addAgentRulesTab = function(row) {
+            var state = "tabs.agentrules";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, row.name)) {
+                tabs.push({
+                    title: row.name,
+                    viewName: 'agentrules@tabs',
+                    canClose: true,
+                    disabled: false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                        row: row.idAgent
+                    }
+                });
+            }
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
+            $log.info("addAgentRulesTab called");
+        };
+
         $scope.continueInterview = function(data) {
             var node = data.interviews[0].module;
             var tabTitle = "Interview " + node.name;
@@ -414,6 +436,10 @@
                 return [];
             }
         }
+
+        $rootScope.$on("addAgentRulesTab", function(event, row){
+            $scope.addAgentRulesTab(row);
+        });
 
         function checkIfTabIsOpen(tabs, title) {
             var openedTab = false;

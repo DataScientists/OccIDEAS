@@ -427,6 +427,37 @@
                 }
             }
         }).state( {
+                name:'tabs.agentrules',
+                url: '/agentrules/:row',
+                sticky: true,
+                authenticate:true,
+                views:{
+                    'agentrules@tabs':{
+                        templateUrl : "scripts/rules/view/rulesTable2.html",
+                        controller: 'RulesCtrl as vm',
+                        params:{row: null,module:null},
+                        resolve:{
+                            data: function($stateParams,AgentsService) {
+                                $log.info("inside agentinfo@tabs resolve",$stateParams);
+                                $log.info("Data getting from questions AJAX ...");
+                                return AgentsService.getRules($stateParams.row).then(function(response){
+                                        $log.info("Data received from questions AJAX ...", response);
+                                        if(angular.isUndefined($window.sliderVal)){
+                                            $window.sliderVal = [];
+                                        }
+                                        return response.data;
+                                    });
+                            },
+                            templateData: function($stateParams) {
+                                var object = {};
+                                object.moduleId = null;
+                                object.agentId = $stateParams.row;
+                                return object;
+                            }
+                        }
+                    }
+                }
+            }).state( {
             name:'tabs.error',
         	url: '/displayerror/',
         	params: {

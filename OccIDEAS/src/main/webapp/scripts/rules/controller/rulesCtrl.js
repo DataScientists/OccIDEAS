@@ -2,7 +2,7 @@
 	angular.module('occIDEASApp.Rules')
 		   .controller('RulesCtrl',RulesCtrl);
 	RulesCtrl.$inject = ['RulesService','ngTableParams','$state','$scope','RulesCache','$filter',
-                          '$anchorScroll','$location','templateData','QuestionsService'];
+                          '$anchorScroll','$location','templateData','QuestionsService','AgentsService'];
 	function RulesCtrl(RulesService,NgTableParams,$state,$scope,RulesCache,$filter,
 			$anchorScroll,$location,templateData,QuestionsService){
 		var self = this;
@@ -11,27 +11,38 @@
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(
 				{
-					group: "agentName",
-					count: 200,
+					group: "agentId",
+					count: 200
 				}, 
 				{	
 					getData: function($defer,params) {					
-				          if(params.filter().name || params.filter().description){	
-				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+                              if(params.filter().name || params.filter().description){
+                                return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+                              }
+                              if(!self.tableParams.shouldGetData){
+                                  return self.tableParams.settings().dataset;
+                              }
+                              console.log("templateData", templateData);
+                              if(templateData.moduleId){
+                                  return  RulesService.listByModule(templateData.moduleId).then(function(data) {
+                                      console.log("Data getting from moduleruless ajax ... id:"+templateData.moduleId);
+                                      self.originalData = angular.copy(data);
+                                      self.tableParams.settings().dataset = data;
+                                      self.tableParams.shouldGetData = true;
+                                      $defer.resolve();
+                                      return data;
+                                  });
+                              }else if(templateData.agentId){
+                                  return RulesService.listByAgent(templateData.agentId).then(function(response) {
+                                      console.log("Data getting from agentrules ajax ... id:"+templateData.agentId);
+                                      self.originalData = angular.copy(response);
+                                      self.tableParams.settings().dataset = response;
+                                      self.tableParams.shouldGetData = true;
+                                      $defer.resolve();
+                                      return response;
+                                  });
+                              }
 				          }
-				          if(!self.tableParams.shouldGetData){
-				        	  return self.tableParams.settings().dataset;
-				          }
-				          console.log("ModuleId:"+templateData.moduleId); 
-				          return  RulesService.listByModule(templateData.moduleId).then(function(data) {
-				        	  console.log("Data getting from moduleruless ajax ... id:"+templateData.moduleId);        	 
-				        	  self.originalData = angular.copy(data);
-				        	  self.tableParams.settings().dataset = data;
-				        	  self.tableParams.shouldGetData = true;
-				        	  $defer.resolve();
-				            return data;
-				          });
-				          }     
 				});
 		
 		self.tableParams.shouldGetData = true;

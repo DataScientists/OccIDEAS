@@ -117,4 +117,33 @@ public class AgentRestController implements BaseRestController<AgentVO>{
         return Response.ok(hasRule).build();
     }
 
+    @GET
+    @Path(value="/find")
+    public Response findAgent(@QueryParam("agentId") Long agentId) {
+        AgentVO agent = null;
+        try{
+            List<AgentVO> list = service.findById(agentId);
+            if(list != null && !list.isEmpty()){
+                agent = list.get(0);
+            }
+        }catch(Throwable e){
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(agent).build();
+    }
+
+    @GET
+    @Path(value="/getrules")
+    public Response getrules(@QueryParam("agentId") Long agentId) {
+        List<RuleVO> list  = new ArrayList<RuleVO>();
+        try{
+            list = ruleService.findByAgentId(agentId);
+        }catch(Throwable e){
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(list).build();
+    }
+
 }

@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Agents')
 		   .controller('AgentCtrl',AgentCtrl);
 	
-	AgentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter'];
-	function AgentCtrl(AgentsService,NgTableParams,$state,$scope,$filter){
+	AgentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter','$rootScope'];
+	function AgentCtrl(AgentsService,NgTableParams,$state,$scope,$filter,$rootScope){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -30,7 +30,7 @@
 	    self.del = del;
 	    self.save = save;
 	    self.add = add;
-	
+	    self.checkAndAddAgentRulesTab = checkAndAddAgentRulesTab;
 	    self.toggleIsDeleting = toggleIsDeleting;
 	    
 	    function toggleIsDeleting(){
@@ -93,6 +93,15 @@
                 }
             });
 	    }
+        function checkAndAddAgentRulesTab(row){
+            AgentsService.hasRules(row.idAgent).then(function(response){
+                if("false" == response.data){
+                    alert("This agent has no rules!");
+                }else{
+                    $rootScope.$emit("addAgentRulesTab", row);
+                }
+            });
+        }
 	    function resetRow(row, rowForm) {
 	        row.isEditing = false;
 	        rowForm.$setPristine();

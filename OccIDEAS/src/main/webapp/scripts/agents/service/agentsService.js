@@ -14,12 +14,19 @@
 		    return data;
 		  });
 		};
-		
+        var findAgent = function(agentId) {
+            var request = $http({
+                method:'GET',
+                url: agentEndpoint+'/find?agentId='+agentId
+            });
+            return request.then(handleSuccess,handleError);
+        };
 		var postNewAgent = function(moduleObj) {
 		  return $http.post(agentEndpoint + '?apiKey='+apiKey).then(function(response) {
 			console.log(response.data.id);
 		  });
 		};
+
 		function save(data){
 			var restSaveUrl = 'web/rest/agent/update';
 			var request =  $http({
@@ -44,6 +51,13 @@
             });
             return request.then(handleSuccess,handleError);
         };
+        var getRules = function(agentId) {
+            var request = $http({
+                method:'GET',
+                url: agentEndpoint+'/getrules?agentId='+ agentId
+            });
+            return request.then(handleSuccess,handleError);
+        };
 		function handleError( response ) {
 	            if (
 	                ! angular.isObject( response.data ) ||
@@ -63,7 +77,9 @@
 		      save: save, 
 		      post: postNewAgent, 
 		      deleteAgent: deleteAgent,
-              hasRules: hasRules
+              hasRules: hasRules,
+              findAgent:findAgent,
+              getRules:getRules
 		};
 	}
 	
