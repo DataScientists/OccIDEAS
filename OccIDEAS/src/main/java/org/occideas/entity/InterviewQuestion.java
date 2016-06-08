@@ -61,12 +61,8 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@Where(clause = "deleted = 0")
-	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"
-				,insertable=false,updatable=false),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
-				,insertable=false,updatable=false),
-			@JoinColumn(name = "modCount", referencedColumnName = "modCount"
-			,insertable=false,updatable=false)})
+	@JoinColumns({ @JoinColumn(name = "topIntQuestionId", referencedColumnName = "id"
+				,insertable=false,updatable=false)})
 	private List<InterviewAnswer> answers;
 
 	@Column(name = "name")

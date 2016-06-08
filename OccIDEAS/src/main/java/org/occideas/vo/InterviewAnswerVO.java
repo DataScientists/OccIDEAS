@@ -6,6 +6,7 @@ public class InterviewAnswerVO {
 
 	private long id;
 	private long idInterview;
+	private long topIntQuestionId;
 	private long topNodeId;
 	private long parentQuestionId;
 	private long answerId;
@@ -28,7 +29,7 @@ public class InterviewAnswerVO {
 
 	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
-	}	
+	}
 
 	public long getParentQuestionId() {
 		return parentQuestionId;
@@ -125,7 +126,7 @@ public class InterviewAnswerVO {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public Integer getModCount() {
 		return modCount;
 	}
@@ -148,6 +149,14 @@ public class InterviewAnswerVO {
 
 	public void setTopNodeId(long topNodeId) {
 		this.topNodeId = topNodeId;
+	}
+
+	public long getTopIntQuestionId() {
+		return topIntQuestionId;
+	}
+
+	public void setTopIntQuestionId(long topIntQuestionId) {
+		this.topIntQuestionId = topIntQuestionId;
 	}
 
 }

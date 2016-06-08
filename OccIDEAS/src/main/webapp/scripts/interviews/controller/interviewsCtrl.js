@@ -694,14 +694,14 @@
 			});
 			actualAnswer.answerFreetext = answerValue;
 			newQuestionAsked.answers.push(actualAnswer);	
-			var defer = $q.defer();
 			newQuestionAsked.answers[0].isProcessed = true;
-			saveAnswerNew(newQuestionAsked,defer);
-			defer.promise.then(function(){
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
 						var answer = newQuestionAsked.answers[0];
+						newQuestionAsked.answers[0].topIntQuestionId = response.data.id;
+						var defer = $q.defer();
+						saveAnswerNew(newQuestionAsked,defer);
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
 							number : answer.number
@@ -710,7 +710,6 @@
 						showNextQuestionNew(lookupQuestion, parentQuestion);
 					}
 				});
-			});
 			
 		}
 
@@ -778,14 +777,13 @@
 					newQuestionAsked.answers.push(actualAnswer);
 				}			
 			});	
-			var defer = $q.defer();
-			//newQuestionAsked.answers[0].isProcessed = true;
-			saveAnswerNew(newQuestionAsked,defer);
-			defer.promise.then(function(){
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
 						var answer = newQuestionAsked.answers[0];
+						newQuestionAsked.answers[0].topIntQuestionId = response.data.id;
+						var defer = $q.defer();
+						saveAnswerNew(newQuestionAsked,defer);
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
 							number : answer.number
@@ -794,7 +792,6 @@
 						showNextQuestionNew(lookupQuestion, parentQuestion);
 					}
 				});
-			});
 		}
 		var questionsToDelete = [];
 		var answersToDelete = [];
@@ -1126,14 +1123,14 @@
 			}
 			var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, question.selectedAnswer);
 			newQuestionAsked.answers.push(actualAnswer);	
-			var defer = $q.defer();
 			newQuestionAsked.answers[0].isProcessed = true;
-			saveAnswerNew(newQuestionAsked,defer);
-			defer.promise.then(function(){
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
 						var answer = newQuestionAsked.answers[0];
+						newQuestionAsked.answers[0].topIntQuestionId = response.data.id;
+						var defer = $q.defer();
+						saveAnswerNew(newQuestionAsked,defer);
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
 							number : answer.number
@@ -1142,7 +1139,6 @@
 						showNextQuestionNew(lookupQuestion, parentQuestion);
 					}
 				});
-			});
 		}
 
 		function buildAndSaveMultipleQuestion(interview, node, persistedAnswer) {

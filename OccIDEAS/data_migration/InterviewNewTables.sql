@@ -53,6 +53,7 @@ DROP TABLE IF EXISTS `Interview_Answer`;
 CREATE TABLE `Interview_Answer` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `idinterview` bigint(20) NOT NULL,
+  `topIntQuestionId` bigint(20) NOT NULL,
   `topQuestionId` bigint(20) NOT NULL,
   `parentQuestionId` bigint(20) DEFAULT NULL,
   `answerId` bigint(20) DEFAULT NULL,
