@@ -116,7 +116,7 @@ public class TokenManager {
 		sb.append(OBJECT_SPLITTER);
 		sb.append(convertToHashBytes(authorities));
 		sb.append(OBJECT_SPLITTER);
-		String duration = "60";
+		String duration = "480";
 		LocalDateTime localDateTime = ZonedDateTime.now(ZoneId.of("Z")).toLocalDateTime()
 				.plusMinutes(Long.valueOf(duration));
 		sb.append(convertToHashBytes(localDateTime.toString()));
