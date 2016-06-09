@@ -500,13 +500,15 @@
 					for(var j=0;j<newQuestionAsked.answers.length;j++){
 						var newAnswer = newQuestionAsked.answers[j];
 						if(possibleAnswer.idNode==newAnswer.answerId){
-							bExists = true;
-							if(possibleAnswer.type=='P_freetext'){
-								newAnswer.answerFreetext = possibleAnswer.name;
-								newAnswer.name = possibleAnswer.name;
-								updateFreeTextAnswer(newAnswer);
-								bIsFreeText = true;
-							}							
+							if(newAnswer.deleted==0){
+								bExists = true;
+								if(possibleAnswer.type=='P_freetext'){
+									newAnswer.answerFreetext = possibleAnswer.name;
+									newAnswer.name = possibleAnswer.name;
+									updateFreeTextAnswer(newAnswer);
+									bIsFreeText = true;
+								}
+							}													
 							break;
 						}
 					}
@@ -619,7 +621,7 @@
 								return ques.questionId == question.idNode;
 							});
 							var newAnswer = _.find(historyQuestion.answers,function(answ){
-								return answ.answerId == selectedAnswer.idNode;
+								return answ.answerId == selectedAnswer.idNode && answ.deleted==0;
 							});	
 							if(newAnswer){
 								newAnswer.answerFreetext = selectedAnswer.name;
