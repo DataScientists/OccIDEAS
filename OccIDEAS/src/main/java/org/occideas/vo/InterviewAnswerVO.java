@@ -6,7 +6,7 @@ public class InterviewAnswerVO {
 
 	private long id;
 	private long idInterview;
-	private long topIntQuestionId;
+	private long interviewQuestionId;
 	private long topNodeId;
 	private long parentQuestionId;
 	private long answerId;
@@ -151,12 +151,22 @@ public class InterviewAnswerVO {
 		this.topNodeId = topNodeId;
 	}
 
-	public long getTopIntQuestionId() {
-		return topIntQuestionId;
+	public long getInterviewQuestionId() {
+		return interviewQuestionId;
 	}
 
-	public void setTopIntQuestionId(long topIntQuestionId) {
-		this.topIntQuestionId = topIntQuestionId;
+	public void setInterviewQuestionId(long interviewQuestionId) {
+		this.interviewQuestionId = interviewQuestionId;
 	}
+
+	@Override
+	public String toString() {
+		return "InterviewAnswerVO [id=" + id + ", idInterview=" + idInterview + ", interviewQuestionId="
+				+ interviewQuestionId + ", topNodeId=" + topNodeId + ", parentQuestionId=" + parentQuestionId
+				+ ", answerId=" + answerId + ", link=" + link + ", name=" + name + ", description=" + description
+				+ ", answerFreetext=" + answerFreetext + ", nodeClass=" + nodeClass + ", number=" + number + ", type="
+				+ type + ", deleted=" + deleted + ", isProcessed=" + isProcessed + "]";
+	}
+
 
 }

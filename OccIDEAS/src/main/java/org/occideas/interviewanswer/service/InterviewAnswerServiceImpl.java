@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.occideas.interviewanswer.dao.InterviewAnswerDao;
 import org.occideas.mapper.InterviewAnswerMapper;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.InterviewAnswerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +55,8 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService{
 		return mapper.convertToInterviewAnswerVOList(dao.saveOrUpdate(mapper.convertToInterviewAnswerList(o)));
 	}
 	
-	@Override
+	@Auditable(actionType = AuditingActionType.ADD_INTERVIEW_ANSWER)
+    @Override
 	public List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions(List<InterviewAnswerVO> o) {
 		return mapper.convertToInterviewAnswerVOList(dao.saveAnswerAndQueueQuestions(mapper.convertToInterviewAnswerList(o)));
 	}

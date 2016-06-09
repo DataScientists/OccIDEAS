@@ -70,4 +70,10 @@ CHANGE COLUMN `modCount` `modCount` INT(11) NOT NULL DEFAULT 0 ;
 ALTER TABLE `occideas`.`Interview_Answer` 
 CHANGE COLUMN `modCount` `modCount` INT(11) NULL DEFAULT 1 ;
 
- 
+ALTER TABLE `occideas`.`Interview_Answer` 
+ADD COLUMN `interviewQuestionId` BIGINT(11) NULL ;
+
+UPDATE Interview_Answer ia SET interviewQuestionId =(SELECT max(id) FROM Interview_Question iq WHERE iq.idinterview = ia.idinterview AND iq.question_Id=ia.parentQuestionId)
+
+DELETE FROM occideas.Participant WHERE reference like 'HT%';
+DELETE FROM occideas.Interview WHERE referenceNumber like 'HT%';

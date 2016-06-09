@@ -61,7 +61,7 @@ public class InterviewQuestion implements java.io.Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@Where(clause = "deleted = 0")
-	@JoinColumns({ @JoinColumn(name = "topIntQuestionId", referencedColumnName = "id"
+	@JoinColumns({ @JoinColumn(name = "interviewQuestionId", referencedColumnName = "id"
 				,insertable=false,updatable=false)})
 	private List<InterviewAnswer> answers;
 

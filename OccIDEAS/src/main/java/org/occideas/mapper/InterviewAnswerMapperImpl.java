@@ -22,7 +22,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		InterviewAnswerVO vo = new InterviewAnswerVO();
 		vo.setId(answer.getId());
 		vo.setAnswerId(answer.getAnswerId());
-		vo.setTopIntQuestionId(answer.getTopIntQuestionId());
+		vo.setInterviewQuestionId(answer.getInterviewQuestionId());
 		vo.setDeleted(answer.getDeleted());
 		vo.setDescription(answer.getDescription());
 		vo.setIdInterview(answer.getIdInterview());
@@ -49,7 +49,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		vo.setDeleted(answer.getDeleted());
 		vo.setDescription(answer.getDescription());
 		vo.setIdInterview(answer.getIdInterview());
-		vo.setTopIntQuestionId(answer.getTopIntQuestionId());
+		vo.setInterviewQuestionId(answer.getInterviewQuestionId());
 		vo.setName(answer.getName());
 		vo.setNodeClass(answer.getNodeClass());
 		vo.setNumber(answer.getNumber());
@@ -97,7 +97,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		answer.setDeleted(answerVO.getDeleted());
 		answer.setDescription(answerVO.getDescription());
 		answer.setIdInterview(answerVO.getIdInterview());
-		answer.setTopIntQuestionId(answerVO.getTopIntQuestionId());
+		answer.setInterviewQuestionId(answerVO.getInterviewQuestionId());
 		answer.setName(answerVO.getName());
 		answer.setNodeClass(answerVO.getNodeClass());
 		answer.setNumber(answerVO.getNumber());

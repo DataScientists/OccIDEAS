@@ -8,6 +8,7 @@ public enum AuditingActionType {
 	DELETE_PARTICIPANT("Delete Participant"), 
 	CREATE_INTERVIEW("Create Interview"), 
 	ADD_INTERVIEW_QUESTION("Add Interview Question"), 
+	ADD_INTERVIEW_ANSWER("Add Interview Answer"), 
 	UPD_INTERVIEW_QUESTION("Update Interview Question"),
 	DEL_INTERVIEW_QUESTION("Delete Interview Question"), 
 	CREATE_QUESTION("Create Question"),
