@@ -512,6 +512,7 @@
 					}
 					if(!bExists){
 						var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, possibleAnswer);
+						actualAnswer.interviewQuestionId = newQuestionAsked.id;
 						newQuestionAsked.answers.push(actualAnswer);
 						bSaveAnswersRequired = true;
 					}
