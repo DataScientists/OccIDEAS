@@ -34,8 +34,8 @@ public class InterviewAnswerDao {
 		List<InterviewAnswer> list = new ArrayList<>();
 		for(InterviewAnswer a:ia){
 			sessionFactory.getCurrentSession().saveOrUpdate(a);
-			for(PossibleAnswerVO pa :possibleAnswerService.findByIdWithChildren(a.getAnswerId())){
-				if(a.getDeleted()==0){
+			if(a.getDeleted()==0){
+				for(PossibleAnswerVO pa :possibleAnswerService.findByIdWithChildren(a.getAnswerId())){			
 					int intQuestionSequence = 1;
 					List<QuestionVO> queueQuestions = pa.getChildNodes();
 			        Collections.sort(queueQuestions); 
