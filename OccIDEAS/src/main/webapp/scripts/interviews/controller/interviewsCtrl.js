@@ -1260,18 +1260,20 @@
 					$log.info('Question Found');
 					var fullQuestion = response.data[0];
 					_.each(node.answers,function(actualAnswer) {
-						_.find(fullQuestion.nodes,function(possibleAnswer) {
-							if (actualAnswer.answerId == possibleAnswer.idNode) {
-								possibleAnswer.isSelected = true;
-								fullQuestion.selectedAnswer = possibleAnswer;
-								if(actualAnswer.type == 'P_freetext'){
-									fullQuestion.selectedAnswer.name = actualAnswer.name;
-									fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
-								}else if(actualAnswer.type.startsWith('P_frequency')){
-									$scope.currentFrequencyValue = actualAnswer.answerFreetext;
+						if(actualAnswer.deleted==0){
+							_.find(fullQuestion.nodes,function(possibleAnswer) {
+								if (actualAnswer.answerId == possibleAnswer.idNode) {
+									possibleAnswer.isSelected = true;
+									fullQuestion.selectedAnswer = possibleAnswer;
+									if(actualAnswer.type == 'P_freetext'){
+										fullQuestion.selectedAnswer.name = actualAnswer.name;
+										fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
+									}else if(actualAnswer.type.startsWith('P_frequency')){
+										$scope.currentFrequencyValue = actualAnswer.answerFreetext;
+									}
 								}
-							}
-						});
+							});
+						}	
 					});
 					$scope.questionBeingEdited = fullQuestion;
 					$scope.questionBeingEditedCopy = angular.copy(fullQuestion);
