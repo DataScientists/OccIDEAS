@@ -608,29 +608,31 @@
 			var bDeleteAnswersRequired = false;
 			var selectedAnswer = question.selectedAnswer;
 			_.each(newQuestionAsked.answers,function(ans){
-				if(selectedAnswer.idNode!=ans.answerId){
-					findChildQuestionsToDelete(ans);
-					bDeleteAnswersRequired = true;
-				}else{
-					if(selectedAnswer.type=='P_freetext'){
-						var historyQuestion = _.find($scope.interview.questionHistory,function(ques){
-							return ques.questionId == question.idNode;
-						});
-						var newAnswer = _.find(historyQuestion.answers,function(answ){
-							return answ.answerId == selectedAnswer.idNode;
-						});	
-						if(newAnswer){
-							newAnswer.answerFreetext = selectedAnswer.name;
-							newAnswer.name = selectedAnswer.name;
-							updateFreeTextAnswer(newAnswer);
-							bIsFreeText = true;
-						}else{
-							var msg = "Could not find free text answer to update";
-							console.error(msg);
-							alert(msg);
-						}						
+				if(ans.deleted==0){
+					if(selectedAnswer.idNode!=ans.answerId){
+						findChildQuestionsToDelete(ans);
+						bDeleteAnswersRequired = true;
+					}else{
+						if(selectedAnswer.type=='P_freetext'){
+							var historyQuestion = _.find($scope.interview.questionHistory,function(ques){
+								return ques.questionId == question.idNode;
+							});
+							var newAnswer = _.find(historyQuestion.answers,function(answ){
+								return answ.answerId == selectedAnswer.idNode;
+							});	
+							if(newAnswer){
+								newAnswer.answerFreetext = selectedAnswer.name;
+								newAnswer.name = selectedAnswer.name;
+								updateFreeTextAnswer(newAnswer);
+								bIsFreeText = true;
+							}else{
+								var msg = "Could not find free text answer to update";
+								console.error(msg);
+								alert(msg);
+							}						
+						}
 					}
-				}
+				}	
 			});
 			if(bDeleteAnswersRequired){
 				$scope.displayQuestions = [];
