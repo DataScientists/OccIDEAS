@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Participants')
 		   .controller('ParticipantsCtrl',ParticipantsCtrl);
 	
-	ParticipantsCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter','data','InterviewsService'];
-	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter,data,InterviewsService){
+	ParticipantsCtrl.$inject = ['ParticipantsService','NgTableParams','$state','$scope','$filter','data','InterviewsService','$resource'];
+	function ParticipantsCtrl(ParticipantsService,NgTableParams,$state,$scope,$filter,data,InterviewsService,$resource){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -49,9 +49,9 @@
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
-
 	    self.tableParams = new NgTableParams(
-			{	page: 1,            
+			{	
+				page: 1,            
                 count: 10
             }, {	
             
@@ -64,7 +64,8 @@
 	        	  return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 		      }
 	          if(!self.tableParams.shouldGetData){
-	        	  return self.tableParams.settings().dataset;
+	        	  var last = params.page() * params.count();
+		          return _.slice(self.tableParams.settings().dataset,last - params.count(),last);
 	          }
 	          return  ParticipantsService.getParticipants().then(function(response) {
 	        	  if(response.status == '200'){
@@ -74,8 +75,8 @@
 		        	  self.tableParams.settings().dataset = data;
 		        	  self.tableParams.shouldGetData = false;
 		        	  self.tableParams.total(self.originalData.length);
-		            
-	        		  return data;
+		        	  var last = params.page() * params.count();
+			          return _.slice(data,last - params.count(),last);
 	        	  }
 	          });
 	        },

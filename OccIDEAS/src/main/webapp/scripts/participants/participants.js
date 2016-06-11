@@ -1,6 +1,6 @@
 (function(){
 	angular
-	  .module('occIDEASApp.Participants',['ui.router'])
+	  .module('occIDEASApp.Participants',['ui.router','ngResource'])
 	  .config(Config)
 	  .factory('ParticipantsCache');
 	
