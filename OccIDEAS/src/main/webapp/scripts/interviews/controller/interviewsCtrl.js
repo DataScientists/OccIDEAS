@@ -500,18 +500,21 @@
 					for(var j=0;j<newQuestionAsked.answers.length;j++){
 						var newAnswer = newQuestionAsked.answers[j];
 						if(possibleAnswer.idNode==newAnswer.answerId){
-							bExists = true;
-							if(possibleAnswer.type=='P_freetext'){
-								newAnswer.answerFreetext = possibleAnswer.name;
-								newAnswer.name = possibleAnswer.name;
-								updateFreeTextAnswer(newAnswer);
-								bIsFreeText = true;
-							}							
+							if(newAnswer.deleted==0){
+								bExists = true;
+								if(possibleAnswer.type=='P_freetext'){
+									newAnswer.answerFreetext = possibleAnswer.name;
+									newAnswer.name = possibleAnswer.name;
+									updateFreeTextAnswer(newAnswer);
+									bIsFreeText = true;
+								}
+							}													
 							break;
 						}
 					}
 					if(!bExists){
 						var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, possibleAnswer);
+						actualAnswer.interviewQuestionId = newQuestionAsked.id;
 						newQuestionAsked.answers.push(actualAnswer);
 						bSaveAnswersRequired = true;
 					}
@@ -618,7 +621,7 @@
 								return ques.questionId == question.idNode;
 							});
 							var newAnswer = _.find(historyQuestion.answers,function(answ){
-								return answ.answerId == selectedAnswer.idNode;
+								return answ.answerId == selectedAnswer.idNode && answ.deleted==0;
 							});	
 							if(newAnswer){
 								newAnswer.answerFreetext = selectedAnswer.name;
@@ -1259,18 +1262,20 @@
 					$log.info('Question Found');
 					var fullQuestion = response.data[0];
 					_.each(node.answers,function(actualAnswer) {
-						_.find(fullQuestion.nodes,function(possibleAnswer) {
-							if (actualAnswer.answerId == possibleAnswer.idNode) {
-								possibleAnswer.isSelected = true;
-								fullQuestion.selectedAnswer = possibleAnswer;
-								if(actualAnswer.type == 'P_freetext'){
-									fullQuestion.selectedAnswer.name = actualAnswer.name;
-									fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
-								}else if(actualAnswer.type.startsWith('P_frequency')){
-									$scope.currentFrequencyValue = actualAnswer.answerFreetext;
+						if(actualAnswer.deleted==0){
+							_.find(fullQuestion.nodes,function(possibleAnswer) {
+								if (actualAnswer.answerId == possibleAnswer.idNode) {
+									possibleAnswer.isSelected = true;
+									fullQuestion.selectedAnswer = possibleAnswer;
+									if(actualAnswer.type == 'P_freetext'){
+										fullQuestion.selectedAnswer.name = actualAnswer.name;
+										fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
+									}else if(actualAnswer.type.startsWith('P_frequency')){
+										$scope.currentFrequencyValue = actualAnswer.answerFreetext;
+									}
 								}
-							}
-						});
+							});
+						}	
 					});
 					$scope.questionBeingEdited = fullQuestion;
 					$scope.questionBeingEditedCopy = angular.copy(fullQuestion);

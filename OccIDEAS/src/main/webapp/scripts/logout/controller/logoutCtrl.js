@@ -9,7 +9,7 @@
     	delete $sessionStorage.token;
     	$sessionStorage.isAuthenticated = false;
     	dataBeanService.setStatetransitionHasErr('0');
-        $window.location.href = '/occideas/index.html';
+        $window.location.href = 'index.html';
     	//$state.go('login', {}, {reload: true});
     }
 })();
