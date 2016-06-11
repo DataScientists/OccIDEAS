@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.log4j.Logger;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
@@ -23,6 +24,8 @@ import org.springframework.http.MediaType;
 @Path("/interviewquestionanswer")
 public class InterviewQuestionRestController implements BaseRestController<InterviewQuestionVO>{
 
+	private Logger log = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private InterviewQuestionService service;	
 	@Autowired
@@ -110,7 +113,15 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	@Path(value="/saveAnswersandQueueQuestions")
 	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response saveAnswersandQueueQuestions(List<InterviewAnswerVO> vo) {
-		return Response.ok(answerService.saveIntervewAnswersAndQueueQuestions(vo)).build();
+		List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions = null;
+		try{
+			saveIntervewAnswersAndQueueQuestions = answerService.saveIntervewAnswersAndQueueQuestions(vo);
+		}catch(Throwable ex){
+			log.error("Error on saveAnswersandQueueQuestions:", ex);
+			return Response.serverError().build();
+		}
+		
+		return Response.ok(saveIntervewAnswersAndQueueQuestions).build();
 	}
 	
 	@Override
