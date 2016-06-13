@@ -4,7 +4,8 @@ public enum UserProfileType {
 	READONLY("READONLY"),
     ASSESSOR("ASSESSOR"),
     CONTDEV("CONTDEV"),
-    INTERVIEWER("INTERVIEWER");
+    INTERVIEWER("INTERVIEWER"),
+    ADMIN("ADMIN");
      
     String userProfileType;
      

@@ -458,6 +458,26 @@
                     }
                 }
             }).state( {
+                name:'tabs.admin',
+                url: '/admin',
+                authenticate:true,
+                views:{
+                    'admin@tabs':{
+                        templateUrl : "scripts/admin/view/admin.html",
+                        controller: 'AdminCtrl as vm',
+                        resolve:{
+                            data: function($stateParams,AdminService) {
+                                $log.info("inside admin@tabs resolve",$stateParams);
+                                $log.info("Data getting from admin AJAX ...");
+                                return AdminService.getUsers().then(function(response){
+                                        $log.info("Data received from admin AJAX ...", response);
+                                        return response.data;
+                                    });
+                            }
+                        }
+                    }
+                }
+            }).state( {
             name:'tabs.error',
         	url: '/displayerror/',
         	params: {

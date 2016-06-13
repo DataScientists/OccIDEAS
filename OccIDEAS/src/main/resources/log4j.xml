@@ -28,15 +28,27 @@
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate" additivity="false">
-		<level value="TRACE" />
+		<level value="INFO" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate.type" additivity="false">
-		<level value="ERROR" />
+		<level value="INFO" />
+		<appender-ref ref="console" />
+	</logger>
+	<logger name="jersey.config.server" additivity="false">
+		<level value="TRACE" />
+		<appender-ref ref="console" />
+	</logger>
+	<logger name="com.sun.jersey" additivity="false">
+		<level value="TRACE" />
+		<appender-ref ref="console" />
+	</logger>
+	<logger name="org.glassfish.jersey" additivity="false">
+		<level value="TRACE" />
 		<appender-ref ref="console" />
 	</logger>
 	<root>
-		<priority value="TRACE"></priority>
+		<priority value="INFO"></priority>
 		<appender-ref ref="FILE" />
 		<appender-ref ref="console" />
 	</root>

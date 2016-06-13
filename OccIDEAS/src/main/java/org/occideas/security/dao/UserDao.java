@@ -1,5 +1,7 @@
 package org.occideas.security.dao;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -29,6 +31,12 @@ public class UserDao{
 		final Criteria crit = session.createCriteria(User.class);
 		crit.add(Restrictions.eq("ssoId", sso));
 		return (User) crit.uniqueResult();
+	}
+	
+	public List<User> findAll(){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(User.class);
+		return crit.list();
 	}
 
 }

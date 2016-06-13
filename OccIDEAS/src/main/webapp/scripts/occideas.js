@@ -1,3 +1,4 @@
+
 (function(){
 
 angular
@@ -29,7 +30,8 @@ angular
     "occIDEASApp.InterviewResults",
     "occIDEASApp.ModuleRule",
     "occIDEASApp.Login",
-    "occIDEASApp.Logout"
+    "occIDEASApp.Logout",
+    "occIDEASApp.Admin",
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
