@@ -1,5 +1,6 @@
 package org.occideas.mapper;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,14 @@ public class UserMapperImpl implements UserMapper{
 
 	@Override
 	public List<UserVO> convertToUserVOList(List<User> entityList) {
-		return null;
+		if(entityList ==null){
+			return null;
+		}
+		List<UserVO> list = new ArrayList<>();
+		for(User entity:entityList){
+			list.add(convertToUserVO(entity));
+		}
+		return list;
 	}
 
 	@Override

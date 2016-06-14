@@ -46,7 +46,11 @@ VALUES ('CONTDEV');
 
 INSERT INTO USER_PROFILE(type)
 VALUES ('READONLY');
- 
+
+INSERT INTO USER_PROFILE(type)
+VALUES ('ADMIN');
+
+
 /* Interviewer */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
 VALUES ('interviewer','$2a$10$62LNfdU4F3HZgD7/dWX7r.i6XqledTrv/Rc9bi3gmNIL3JZxFpHRi', 'interviewer','interviewer','int@yahoo.com', 'Active');
@@ -58,3 +62,8 @@ VALUES ('assessor','$2a$10$NUhG9fZhLSsxaY6YJrAQcucM3XOJuh4vaw/uCSJ3lxC4meUwQCoMq
 /* Content Developer */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
 VALUES ('contdev','$2a$10$r2yh1rcLaF9DQnY2OTtqsOMqfijen6XvnBB8yvz/nEm/fyy1Vc.E.', 'contdev','contdev','int@yahoo.com', 'Active');
+
+/* Admin */
+INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
+VALUES ('admin','$2a$10$JMUQupAVyPlAbi2xVkecuuOOrDcCLxNV07YbrUUKYiXg8SoZdTzVy', 'admin','admin','int@yahoo.com', 'Active');
+

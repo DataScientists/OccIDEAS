@@ -464,17 +464,17 @@
                 views:{
                     'admin@tabs':{
                         templateUrl : "scripts/admin/view/admin.html",
-                        controller: 'AdminCtrl as vm',
-                        resolve:{
-                            data: function($stateParams,AdminService) {
-                                $log.info("inside admin@tabs resolve",$stateParams);
-                                $log.info("Data getting from admin AJAX ...");
-                                return AdminService.getUsers().then(function(response){
-                                        $log.info("Data received from admin AJAX ...", response);
-                                        return response.data;
-                                    });
-                            }
-                        }
+                        controller: 'AdminCtrl as vm'
+//                        resolve:{
+//                            data: function($stateParams,AdminService) {
+//                                $log.info("inside admin@tabs resolve",$stateParams);
+//                                $log.info("Data getting from admin AJAX ...");
+//                                return AdminService.getUserRoles().then(function(response){
+//                                        $log.info("Data received from admin AJAX ...", response);
+//                                        return response.data;
+//                                    });
+//                            }
+//                        }
                     }
                 }
             }).state( {

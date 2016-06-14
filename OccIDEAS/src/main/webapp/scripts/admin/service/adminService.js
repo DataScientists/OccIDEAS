@@ -1,6 +1,6 @@
 (function() {
 	angular.module('occIDEASApp.Admin')
-			.controller('AdminService', AdminService);
+			.service('AdminService', AdminService);
 
 	AdminService.$inject = [ '$http', '$q' ];
 	function AdminService($http, $q) {

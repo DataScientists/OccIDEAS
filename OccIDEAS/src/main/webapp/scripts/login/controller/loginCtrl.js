@@ -54,7 +54,12 @@
                         	$state.go('tabs.assessments');
                         }else if(auth.userHasPermission(['ROLE_ASSESSOR'])){
                         	$state.go('tabs.modules');
-                        }else{                       	
+                        }else if(auth.userHasPermission(['ROLE_ADMIN'])){
+                        	$state.go('tabs.admin');
+                        }else if(auth.userHasPermission(['ROLE_READONLY'])){
+                        	$state.go('tabs.modules');
+                        }
+                        else{                       	
                         	$state.go('error',{error:"No role defined for user "+vm.userId});
                         }  
                     }else if (status === 401) {

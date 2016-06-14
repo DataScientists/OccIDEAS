@@ -31,7 +31,7 @@ angular
     "occIDEASApp.ModuleRule",
     "occIDEASApp.Login",
     "occIDEASApp.Logout",
-    "occIDEASApp.Admin",
+    "occIDEASApp.Admin"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
