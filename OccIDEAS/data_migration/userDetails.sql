@@ -63,7 +63,17 @@ VALUES ('assessor','$2a$10$NUhG9fZhLSsxaY6YJrAQcucM3XOJuh4vaw/uCSJ3lxC4meUwQCoMq
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
 VALUES ('contdev','$2a$10$r2yh1rcLaF9DQnY2OTtqsOMqfijen6XvnBB8yvz/nEm/fyy1Vc.E.', 'contdev','contdev','int@yahoo.com', 'Active');
 
+/* Read Only Account */
+INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
+VALUES ('readonly','$2a$10$0.2nTVeqCm0WAzy3g.cw0.W9qT/GiCJOKYaWciW3kBVd6WZ/2JHWC', 'readonly','readonly','int@yahoo.com', 'Active');
+
 /* Admin */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
-VALUES ('admin','$2a$10$JMUQupAVyPlAbi2xVkecuuOOrDcCLxNV07YbrUUKYiXg8SoZdTzVy', 'admin','admin','int@yahoo.com', 'Active');
+VALUES ('admin','$2a$10$lT0RYDaULC.WR3cJNT5JVOs0VQHr/Jdb.gFBydPfuCozGaxL1bL2a', 'admin','admin','int@yahoo.com', 'Active');
+
+INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('1', '1');
+INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('2', '2');
+INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('3', '3');
+INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('4', '4');
+INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('5', '5');
 

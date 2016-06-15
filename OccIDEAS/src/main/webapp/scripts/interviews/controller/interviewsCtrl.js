@@ -898,11 +898,11 @@
 							return null;
 						}
 						if (node.type == 'Q_multiple') {
-							processInterviewQuestionsWithMultipleAnswers(interview, node);
+							processInterviewQuestionWithMultipleAnswersNew(interview, node);
 						} else if (node.type == 'Q_frequency') {
-							processFrequency(interview, node);
+							processFrequencyNew(interview, node);
 						} else {
-							processQuestion(interview, node);
+							processInterviewQuestionNew(interview, node);
 						}
 					}
 					if (confirm('Stop Interview?')) {

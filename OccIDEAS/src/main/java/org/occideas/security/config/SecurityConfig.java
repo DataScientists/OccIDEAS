@@ -1,7 +1,6 @@
 package org.occideas.security.config;
 
 import java.io.IOException;
-import java.util.logging.LogManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,9 +12,8 @@ import org.occideas.security.handler.TokenManager;
 import org.occideas.security.provider.BackendAdminUsernamePasswordAuthenticationProvider;
 import org.occideas.security.provider.DomainUsernamePasswordAuthenticationProvider;
 import org.occideas.security.provider.TokenAuthenticationProvider;
-import org.occideas.security.service.ExternalServiceAuthenticator;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.occideas.security.service.DaoServiceAuthenticator;
+import org.occideas.security.service.ExternalServiceAuthenticator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,10 +40,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 })
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
-	static{
-		LogManager.getLogManager().reset();
-		SLF4JBridgeHandler.install();
-	}
+	
 	
 	@Value("${backend.admin.role}")
 	private String backendAdminRole;

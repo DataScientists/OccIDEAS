@@ -1154,3 +1154,6 @@ md-list-item.interviewAnswers{
 	border-color: rgb(221,44,0) !important;
 	color: rgb(221,44,0) !important;
 }
+.md-dialog-container{
+	z-index: 80 !important;
+}
