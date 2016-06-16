@@ -52,6 +52,15 @@
 			  });
 			  return request.then(handleSuccess,handleError);
 		}; 
+		
+		var copyModule = function(vo){
+			var request = $http({
+				method:'POST',
+				url: modulesUrl+'/saveAs',
+				data:vo
+			  });
+			  return request.then(handleSuccess,handleError);
+		}
 
 		function handleError( response ) {
             if (
@@ -72,7 +81,8 @@
 			get: getModules,
 			save:save,
 		    post: postNewModule, 
-		    deleteModule: deleteModule
+		    deleteModule: deleteModule,
+		    copyModule:copyModule
 		};
 	}
 	

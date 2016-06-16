@@ -1284,6 +1284,23 @@
 					 $scope.addInterviewTab($itemScope);			                   
 				} 
 			  ], null, // Divider
+			  [ 'Save Module As', function($itemScope) {	
+				  var newScope = $itemScope.$new();
+				  newScope.name = '(Copy)'+$itemScope.$modelValue.name;
+				  newScope.vo = $itemScope.$modelValue;
+				  $mdDialog.show({
+					  scope: newScope,
+				      templateUrl: 'scripts/questions/view/saveAsDialog.html',
+				      parent: angular.element(document.body),
+				      clickOutsideToClose:true
+				    })
+				    .then(function(answer) {
+				      $scope.status = 'You said the information was "' + answer + '".';
+				    }, function() {
+				      $scope.status = 'You cancelled the dialog.';
+				    });			                   
+				} 
+			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
 					alert('under development');
 				} 
@@ -1992,6 +2009,23 @@
 				}
 			});
         }
+        $scope.newModName = null;
+        $scope.includeRuleInMod = null;
+        $scope.saveAsModule = function(vo,name){
+        	var copyVO = {
+        		vo:angular.copy(vo),
+        		name:name,
+        		includeRules:false	
+        	};
+        	ModulesService.copyModule(copyVO).then(function(data){
+        		var row = {};
+        		row.name = name;
+        		row.idNode = data.data;
+        		$mdDialog.hide();
+        		$scope.addModuleTab(row);
+        	});
+        }
+        
         $scope.deleteRule = function(rule,model,$event){
         	$scope.closeRuleDialog(model,$event);
         	RulesService.remove(rule).then(function(response){

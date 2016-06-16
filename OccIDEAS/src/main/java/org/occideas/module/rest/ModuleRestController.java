@@ -17,6 +17,7 @@ import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.PropUtil;
+import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -120,6 +121,22 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
+	}
+	
+	@Path(value="/saveAs")
+	@POST
+	public Response saveCopy(ModuleCopyVO json) {
+		if(CommonUtil.isReadOnlyEnabled()){
+			return Response.status(Status.FORBIDDEN).build();
+		}
+		Long idNode = null; 
+		try{
+			idNode = service.copyModule(json);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(idNode).build();
 	}
 	
 

@@ -13,7 +13,6 @@ import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ModuleDao {
@@ -24,6 +23,11 @@ public class ModuleDao {
 	public Module save(Module module){
       return (Module) sessionFactory.getCurrentSession().save(module);
     }
+	
+	public void saveCopy(Module module){
+	  sessionFactory.getCurrentSession().save(module);
+	}
+
 
 
     public void delete(Module module){
