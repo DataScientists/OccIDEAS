@@ -5,13 +5,13 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class RuleDao {
@@ -62,6 +62,17 @@ public class RuleDao {
                         .add(Projections.property("agent"), "agent"))
                 .setResultTransformer(Transformers.aliasToBean(Rule.class));
         return crit.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Long getMaxRuleId(){
+    	final Session session = sessionFactory.getCurrentSession();
+    	final Criteria crit = session.createCriteria(Rule.class)
+    			.addOrder(Order.desc("idRule"))
+				.setMaxResults(1)
+    			.setProjection(Projections.projectionList()
+    						.add(Projections.property("idRule"),"idRule"));
+    	return (Long)crit.uniqueResult();
     }
 
 }

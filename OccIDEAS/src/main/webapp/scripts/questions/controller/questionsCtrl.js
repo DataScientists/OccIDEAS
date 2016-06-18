@@ -2011,18 +2011,18 @@
         }
         $scope.newModName = null;
         $scope.includeRuleInMod = null;
-        $scope.saveAsModule = function(vo,name){
+        $scope.saveAsModule = function(vo,name,includeRules){
         	var copyVO = {
         		vo:angular.copy(vo),
         		name:name,
-        		includeRules:false	
+        		includeRules:includeRules	
         	};
         	ModulesService.copyModule(copyVO).then(function(data){
         		var row = {};
         		row.name = name;
         		row.idNode = data.data;
         		$mdDialog.hide();
-        		$scope.addModuleTab(row);
+            	$scope.addModuleTab(row);
         	});
         }
         

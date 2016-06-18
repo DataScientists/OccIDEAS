@@ -18,6 +18,7 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.PropUtil;
 import org.occideas.vo.ModuleCopyVO;
+import org.occideas.vo.ModuleIdNodeRuleHolder;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -129,14 +130,18 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 		if(CommonUtil.isReadOnlyEnabled()){
 			return Response.status(Status.FORBIDDEN).build();
 		}
-		Long idNode = null; 
+		ModuleIdNodeRuleHolder idNodeHolder = null; 
 		try{
-			idNode = service.copyModule(json);
+			idNodeHolder = service.copyModule(json);
+			if(json.isIncludeRules()){
+			service.copyRules(idNodeHolder);
+			service.addNodeRules(idNodeHolder);
+			}
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
-		return Response.ok(idNode).build();
+		return Response.ok(idNodeHolder.getIdNode()).build();
 	}
 	
 

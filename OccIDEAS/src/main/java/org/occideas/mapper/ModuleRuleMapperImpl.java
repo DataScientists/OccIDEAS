@@ -45,7 +45,6 @@ public class ModuleRuleMapperImpl implements ModuleRuleMapper {
 
     @Override
     public ModuleRule convertToModuleRule(ModuleRuleVO moduleVO) {
-
         return null;
     }
 
