@@ -1,7 +1,9 @@
 package org.occideas.vo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.occideas.entity.NodeRule;
 
@@ -12,8 +14,9 @@ public class ModuleIdNodeRuleHolder {
 	private long lastIdRule = 0L;
 	private long firstIdRuleGenerated = 0L;
 	private long topNodeId = 0L;
-	List<RuleVO> ruleList = new ArrayList<>();
-	List<NodeRule> nodeRuleList = new ArrayList<>();
+	private List<RuleVO> ruleList = new ArrayList<>();
+	private List<NodeRule> nodeRuleList = new ArrayList<>();
+	private Map<Long, Long> ruleIdStorage = new HashMap<>();
 
 	public long getLastIdNode() {
 		return lastIdNode;
@@ -69,6 +72,14 @@ public class ModuleIdNodeRuleHolder {
 
 	public void setTopNodeId(long topNodeId) {
 		this.topNodeId = topNodeId;
+	}
+
+	public Map<Long, Long> getRuleIdStorage() {
+		return ruleIdStorage;
+	}
+
+	public void setRuleIdStorage(Map<Long, Long> ruleIdStorage) {
+		this.ruleIdStorage = ruleIdStorage;
 	}
 
 }

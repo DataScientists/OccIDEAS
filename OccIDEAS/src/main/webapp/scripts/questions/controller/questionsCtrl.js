@@ -1287,6 +1287,7 @@
 			  [ 'Save Module As', function($itemScope) {	
 				  var newScope = $itemScope.$new();
 				  newScope.name = '(Copy)'+$itemScope.$modelValue.name;
+				  newScope.includeRules = true;
 				  newScope.vo = $itemScope.$modelValue;
 				  $mdDialog.show({
 					  scope: newScope,

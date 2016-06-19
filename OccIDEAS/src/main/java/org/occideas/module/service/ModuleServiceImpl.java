@@ -149,17 +149,26 @@ public class ModuleServiceImpl implements ModuleService {
 
 	private void populateRulesWithIdRule(PossibleAnswerVO vo, List<ModuleRuleVO> moduleRule,
 			ModuleIdNodeRuleHolder idNodeRuleHolder) {
+		boolean ruleExist = false;
 		for (ModuleRuleVO ruleVo : moduleRule) {
-			if (ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
+			if(idNodeRuleHolder.getRuleIdStorage().
+					containsKey(ruleVo.getRule().getIdRule())){
+				ruleVo.getRule().setIdRule(idNodeRuleHolder.
+						getRuleIdStorage().get(ruleVo.getRule().getIdRule()));
+				ruleExist = true;
+			}else if (ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
 				idNodeRuleHolder.setLastIdRule(idNodeRuleHolder.getLastIdRule() + 1);
+				idNodeRuleHolder.getRuleIdStorage().put(ruleVo.getRule().getIdRule(), 
+						idNodeRuleHolder.getLastIdRule());
 				ruleVo.getRule().setIdRule(idNodeRuleHolder.getLastIdRule());
 			}
-			populateRuleCondition(vo, ruleVo.getRule().getConditions(), ruleVo.getRule(), idNodeRuleHolder);
+			populateRuleCondition(vo, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
+					idNodeRuleHolder,ruleExist);
 		}
 	}
 
 	private void populateRuleCondition(PossibleAnswerVO vo, List<PossibleAnswerVO> conditions, RuleVO ruleVO,
-			ModuleIdNodeRuleHolder idNodeRuleHolder) {
+			ModuleIdNodeRuleHolder idNodeRuleHolder,boolean ruleExist) {
 		boolean readyToSaveRule = true;
 		boolean hasIdNodeBeenSet = false;
 		for (PossibleAnswerVO condition : conditions) {
@@ -177,7 +186,7 @@ public class ModuleServiceImpl implements ModuleService {
 				}
 			}
 		}
-		if (readyToSaveRule) {
+		if (readyToSaveRule && !ruleExist) {
 			ruleVO.getConditions().clear();
 			idNodeRuleHolder.getRuleList().add(ruleVO);
 		}
