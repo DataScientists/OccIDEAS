@@ -15,7 +15,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
-@Table(name = "NODE_RULE")
+@Table(name = "Node_Rule")
 @IdClass(NodeRulePK.class)
 public class NodeRule implements Serializable {
 
