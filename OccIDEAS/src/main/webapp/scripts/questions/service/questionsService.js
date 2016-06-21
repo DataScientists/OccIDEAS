@@ -32,6 +32,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		function findQuestionSingleChildLevel(idNode) {
+			var restUrl = 'web/rest/question/getquestion?id=' + idNode;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		function findPossibleAnswer(idNode) {
 			var restUrl = 'web/rest/answer/getById?id='+idNode;
 			
@@ -112,6 +121,7 @@
 		
 		return {
 			findQuestions: findQuestions,
+			findQuestionSingleChildLevel: findQuestionSingleChildLevel,
 			findQuestion: findQuestion,
 			findPossibleAnswer: findPossibleAnswer,
 			save:save,
