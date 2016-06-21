@@ -19,6 +19,21 @@
 		$scope.multiSelected = [];
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
+		$scope.getIntForCSV = function(){
+			var csv = [{
+				Q:[]
+			},{A:[]}];
+			_.each($scope.displayHistory,function(qs){
+				if(qs.answers.length > 0){
+					csv[0].Q.push(qs.name);
+					_.each(qs.answers,function(ans){
+						csv[1].A.push(ans.name);
+					});
+				}
+			});
+			return csv;
+		};
+		
 		
 		function add(type) {
 	    	$scope.addInterviewTabInterviewers();
@@ -1088,9 +1103,10 @@
 					var question = findNextQuestionQueued($scope.interview);
 					if(question){
 						if(question.link==0){	
-							QuestionsService.findQuestion(question.questionId).then(function(response){
+							QuestionsService.findQuestionSingleChildLevel(question.questionId).then(function(response){
 								if(response.status === 200){
 									var ques = response.data[0];
+									
 									$scope.interview.showedQuestion = ques;
 									safeDigest($scope.interview.showedQuestion);
 									if (ques.type == 'Q_frequency') { //if frequency set up frequency lists
