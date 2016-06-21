@@ -19,20 +19,7 @@
 		$scope.multiSelected = [];
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
-		$scope.getIntForCSV = function(){
-			var csv = [{
-				Q:[]
-			},{A:[]}];
-			_.each($scope.displayHistory,function(qs){
-				if(qs.answers.length > 0){
-					csv[0].Q.push(qs.name);
-					_.each(qs.answers,function(ans){
-						csv[1].A.push(ans.name);
-					});
-				}
-			});
-			return csv;
-		};
+		
 		
 		
 		function add(type) {

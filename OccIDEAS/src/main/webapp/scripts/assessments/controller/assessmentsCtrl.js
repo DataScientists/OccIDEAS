@@ -8,6 +8,27 @@
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
+		$scope.getInterviewForCSVButton = function(){
+			var csv = [{
+				Q:[]
+			},{A:[]}];
+			AssessmentsService.getInterviews().then(function(data) {
+				$log.info("Data received from interviews ajax");     	 
+		    	  //cycle through interviews get all questions
+				//cycle through interviews look up each question and print answer if exists
+		      });
+			}
+			/*
+			_.each($scope.displayHistory,function(qs){
+				if(qs.answers.length > 0){
+					csv[0].Q.push(qs.header+"_"+qs.number);
+					_.each(qs.answers,function(ans){
+						csv[1].A.push(ans.name);//todo strip comma
+					});
+				}
+			});*/
+			return csv;
+		};
 		var getData = function(){
 			$log.info("Data getting from interviews ajax"); 
 			AssessmentsService.getInterviews().then(function(data) {
