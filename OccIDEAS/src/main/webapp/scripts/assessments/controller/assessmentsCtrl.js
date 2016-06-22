@@ -2,9 +2,9 @@
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
-                          'data','$log','$compile'];
+                          'data','$log','$compile','$http','$q'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
-			data,$log,$compile){
+			data,$log,$compile,$http,$q){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -12,12 +12,28 @@
 			var csv = [{
 				Q:[]
 			},{A:[]}];
-			AssessmentsService.getInterviews().then(function(data) {
-				$log.info("Data received from interviews ajax");     	 
-		    	  //cycle through interviews get all questions
+			var deferred = $q.defer();
+			var listOfQuestion = [];
+			AssessmentsService.getInterviews().then(function(response) {
+				$log.info("Data received from interviews ajax"); 
+				_.each(response,function(data){
+					listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, 'id');
+				});
+				var header = "";
+				_.each(listOfQuestion,function(data){
+					if(data.nodeClass == 'M'){
+						header = data.name.substring(0, 4);
+					}else{
+						csv[0].Q.push(header+"_"+data.number);
+					}
+				});
+				deferred.resolve(csv);
+				//cycle through interviews get all questions
 				//cycle through interviews look up each question and print answer if exists
-		      });
-			}
+		    }, function (errorData) {
+	            deferred.reject(errorData);
+		    });
+			return deferred.promise;
 			/*
 			_.each($scope.displayHistory,function(qs){
 				if(qs.answers.length > 0){
@@ -27,7 +43,6 @@
 					});
 				}
 			});*/
-			return csv;
 		};
 		var getData = function(){
 			$log.info("Data getting from interviews ajax"); 

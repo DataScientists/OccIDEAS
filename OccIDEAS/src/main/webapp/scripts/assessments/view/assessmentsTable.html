@@ -1,7 +1,7 @@
 <div ng-cloak>
 <div>
 <button  class="btn btn-default"
-              ng-csv="getInterviewForCSVButton" filename="test.csv" field-separator=",">
+              ng-csv="getInterviewForCSVButton()" lazy-load="true" filename="test.csv" field-separator=",">
               Export to CSV</button>
 <!-- <pre>debug{{vm.tableParams.data| json}}</pre>   -->
 <table ng-table="vm.tableParams" class="table table-bordered table-hover 
