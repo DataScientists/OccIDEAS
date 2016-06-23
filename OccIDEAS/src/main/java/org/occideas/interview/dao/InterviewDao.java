@@ -11,10 +11,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Interview;
-import org.occideas.entity.InterviewQuestion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class InterviewDao {
@@ -65,19 +63,21 @@ public class InterviewDao {
 	public List<Interview> getAssessments() {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(Interview.class)
-						    		.setProjection(Projections.projectionList()
-								  		.add(Projections.property("fragment"),"fragment")
-								  		.add(Projections.property("module"),"module")
-								  		.add(Projections.property("idinterview"),"idinterview")
-								  		.add(Projections.property("referenceNumber"),"referenceNumber")
-								  		)
-    		  						.createAlias("firedRules", "firedRules")
+//						    		.setProjection(Projections.projectionList()
+//								  		.add(Projections.property("fragment"),"fragment")
+//								  		.add(Projections.property("module"),"module")
+//								  		.add(Projections.property("idinterview"),"idinterview")
+//								  		.add(Projections.property("referenceNumber"),"referenceNumber")
+//								  		)
+//    		  						.createAlias("firedRules", "firedRules")
     		  						.addOrder(Order.asc("referenceNumber"))
-    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
+//    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class))
+    		  						;
       List<Interview> retValue = new ArrayList<Interview>();
       List<Interview> temp = crit.list();
       for(Interview interview: temp){
     	  interview = this.get(interview.getIdinterview()); //Todo fix this workaround and ask discuss with Jed about why hibernate is not populating firedRules
+    	  interview.setFiredRules(interview.getFiredRules());
     	  retValue.add(interview);
       }
       return retValue;

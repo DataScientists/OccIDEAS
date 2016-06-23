@@ -70,9 +70,10 @@ public class Interview implements java.io.Serializable {
 	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
 	private List<InterviewAnswer> answerHistory;
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "Interview_FiredRules", joinColumns = {
-			@JoinColumn(name = "idinterview") }, inverseJoinColumns = { @JoinColumn(name = "idRule") })
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="Interview_FiredRules", 
+            joinColumns={@JoinColumn(name="idinterview")}, 
+            inverseJoinColumns={@JoinColumn(name="idRule")})
 	private List<Rule> firedRules;
 
 	@ManyToMany(fetch = FetchType.LAZY)
