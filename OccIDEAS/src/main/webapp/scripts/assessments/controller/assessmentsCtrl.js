@@ -11,22 +11,13 @@
 		$scope.getInterviewForCSVButton = function(){
 			var csv = [{
 				Q:[]
-			},{A:[]}];
+			}];
 			var deferred = $q.defer();
 			var listOfQuestion = [];
 			AssessmentsService.getInterviews().then(function(response) {
 				$log.info("Data received from interviews ajax"); 
-				_.each(response,function(data){
-					listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, 'id');
-				});
-				var header = "";
-				_.each(listOfQuestion,function(data){
-					if(data.nodeClass == 'M'){
-						header = data.name.substring(0, 4);
-					}else{
-						csv[0].Q.push(header+"_"+data.number);
-					}
-				});
+				var questionIdList = listAllInterviewQuestions(response,csv,listOfQuestion);
+				listAllInterviewAnswers(response,csv,questionIdList);
 				deferred.resolve(csv);
 				//cycle through interviews get all questions
 				//cycle through interviews look up each question and print answer if exists
@@ -44,6 +35,56 @@
 				}
 			});*/
 		};
+		
+		function listAllInterviewAnswers(response,csv,questionIdList){
+			_.each(response,function(data){
+				var obj = {A:[]};
+				obj.A.push(data.referenceNumber);
+				obj.A.push(data.module.idNode);
+				_.each(questionIdList,function(qId){
+					var question = _.find(data.questionHistory, _.matchesProperty('questionId', qId));
+					if(question){
+						if(question.answers.length > 0){
+							_.each(question.answers,function(ans){
+								if(ans.answerFreetext){
+									obj.A.push(ans.answerFreetext);	
+								}else{
+									obj.A.push(ans.name);
+								}
+							})
+						}else{
+							obj.A.push("-- No Answer --");
+						}
+					}else{
+						obj.A.push(" ");
+					}
+				});
+				csv.push(obj);
+			});
+		}
+		
+		function listAllInterviewQuestions(response,csv,listOfQuestion){
+			var questionIdList = [];
+			_.each(response,function(data){
+				data.questionHistory = _.orderBy(data.questionHistory, ['number'], ['asc']);
+				listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
+					return item.number && item.name;
+				});
+			});
+			var header = "";
+			_.each(listOfQuestion,function(data){
+				if(data.nodeClass == 'M'){
+					header = data.name.substring(0, 4);
+				}else{
+					csv[0].Q.push(header+"_"+data.number);
+					questionIdList.push(data.questionId);
+				}
+			});
+			csv[0].Q.unshift('studyintromoduleid');
+			csv[0].Q.unshift('Reference Number');
+			return questionIdList;
+		}
+		
 		var getData = function(){
 			$log.info("Data getting from interviews ajax"); 
 			AssessmentsService.getInterviews().then(function(data) {
