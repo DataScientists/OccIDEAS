@@ -95,7 +95,7 @@
 			refreshDisplay();
 			var question = findNextQuestionQueued($scope.interview);
 			if(question){										
-				QuestionsService.findQuestion(question.questionId).then(function(response){
+				QuestionsService.findQuestionSingleChildLevel(question.questionId).then(function(response){
 					if(response.status === 200){
 						$scope.interviewStarted = true;
 						var ques = response.data[0];
@@ -978,7 +978,7 @@
 											refreshDisplay();
 											var question = findNextQuestionQueued($scope.interview);
 											if(question){												
-												QuestionsService.findQuestion(question.questionId).then(function(response){
+												QuestionsService.findQuestionSingleChildLevel(question.questionId).then(function(response){
 													if(response.status === 200){
 														var ques = response.data[0];
 														$scope.interview.showedQuestion = ques;
@@ -1149,7 +1149,7 @@
 							var question = findNextQuestionQueued($scope.interview);
 							if(question){
 								if(question.link==0){
-									QuestionsService.findQuestion(question.questionId).then(function(response){
+									QuestionsService.findQuestionSingleChildLevel(question.questionId).then(function(response){
 										if(response.status === 200){
 											var ques = response.data[0];
 											$scope.interview.showedQuestion = ques;
@@ -1260,7 +1260,7 @@
 		$scope.showEditQuestionPrompt = function(ev,node) {
 			$scope.participant.status = 0;//running
 			$scope.interviewStarted = true;
-			QuestionsService.findQuestion(node.questionId).then(function(response){
+			QuestionsService.findQuestionSingleChildLevel(node.questionId).then(function(response){
 				if(response.status === 200){
 					$log.info('Question Found');
 					var fullQuestion = response.data[0];
