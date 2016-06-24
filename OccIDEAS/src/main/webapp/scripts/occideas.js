@@ -184,8 +184,14 @@ angular
             	   if(response.data){
             		   errorMessages.push(response.data);
             	   }
-            	   $rootScope.addErrorTab(errorMessages);
-                    
+            	   if($rootScope['addErrorTab']){
+            		   $rootScope.addErrorTab(errorMessages);
+            	   }else{
+            		   alert("Response Status returned:"
+          	            		+response.status+" "
+           	            		+response.statusText+" "
+           	            		+response.data);
+            	   }
                }
                return response;
            }

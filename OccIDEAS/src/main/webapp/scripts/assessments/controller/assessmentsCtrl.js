@@ -40,7 +40,7 @@
 			_.each(response,function(data){
 				var obj = {A:[]};
 				obj.A.push(data.referenceNumber);
-				obj.A.push(data.module.idNode);
+//				obj.A.push(data.module.idNode);
 				_.each(questionIdList,function(qId){
 					var question = _.find(data.questionHistory, _.matchesProperty('questionId', qId));
 					if(question){
@@ -80,7 +80,7 @@
 					questionIdList.push(data.questionId);
 				}
 			});
-			csv[0].Q.unshift('studyintromoduleid');
+//			csv[0].Q.unshift('studyintromoduleid');
 			csv[0].Q.unshift('Reference Number');
 			return questionIdList;
 		}

@@ -65,11 +65,16 @@ public class ModuleRestController implements BaseRestController<ModuleVO>{
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getInterviewModule(@QueryParam("id") Long id) {
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		boolean isIntroModule = false;
 		try{
 			if(id == -1){
+				isIntroModule = true;
 				id = Long.valueOf(PropUtil.getInstance().getProperty(Constant.STUDY_INTRO));
 			}
 			list = service.findByIdForInterview(id);
+			if(isIntroModule && list.get(0) == null){
+				return Response.status(Status.BAD_REQUEST).type("text/plain").entity("Study intro module does not exist:"+id).build();
+			}
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
