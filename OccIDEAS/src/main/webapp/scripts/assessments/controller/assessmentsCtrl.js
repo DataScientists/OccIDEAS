@@ -2,9 +2,9 @@
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
-                          'data','$log','$compile','$http','$q','$mdDialog'];
+                          'data','$log','$compile','$http','$q','$mdDialog','$timeout'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
-			data,$log,$compile,$http,$q,$mdDialog){
+			data,$log,$compile,$http,$q,$mdDialog,$timeout){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -12,27 +12,60 @@
 			$scope.showExportCSV();
 		};
 		
-		$scope.showExportCSV = function() {
+		$scope.getCSVButton = function(){
+			return $scope.csv;
+		}
+		
+		$scope.showExportCSVButton = function() {
 		//get list of interview id
 		InterviewsService.getInterviewIdList().then(function(response){
 			if(response.status == '200'){
 				//display modal with list of id + progress bar
 				$scope.interviewIdList = response.data;
 				$scope.interviewIdCount = $scope.interviewIdList.length;
+				$scope.counter = 0;
+				$scope.interviewCount = $scope.counter;
 				$mdDialog.show({
 					scope: $scope,  
 					preserveScope: true,
 					templateUrl : 'scripts/assessments/partials/exportCSVDialog.html',
 					clickOutsideToClose:false
 				});
-				var count = 0;
-				_.each($scope.interviewIdList,function(interviewId){
-					count++;
-					$scope.interviewCount = count;
-					$scope.interviewIdInProgress = interviewId;
-				})
+				$scope.csv = [{
+					Q:[]
+				}];
+				var listOfQuestion = [];
+				InterviewsService.getInterviewsWithoutAnswers().then(function(response){
+					if(response.status == '200'){
+						var questionIdList = listAllInterviewQuestions(response.data,$scope.csv,listOfQuestion);
+						$scope.interviewIdList.reduce(function(p, interviewId) {
+						    return p.then(function() {
+						    	$scope.interviewIdInProgress = interviewId;
+						    	$scope.counter++;
+								$scope.interviewCount = $scope.counter;
+						        return populateInterviewAnswerList(interviewId,questionIdList);
+						    });
+						}, $q.when(true)).then(function(finalResult) {
+							console.log('finish extracting data for CSV');
+							$timeout(function() {
+								angular.element(document.querySelector('#exportCSV')).triggerHandler('click');
+								$scope.cancel();
+				            }, 1000);	
+						}, function(err) {
+							console.log('error');
+						});
+					}
+				});
 			}
 		});
+		
+		function populateInterviewAnswerList(interviewId,questionIdList){
+			return InterviewsService.getInterviewQuestionAnswer(interviewId).then(function(response){
+				if(response.status == '200'){
+					listAllInterviewAnswers(response.data,$scope.csv,questionIdList);
+				}
+			});
+		}
 		
 			//loop through and trigger InterviewService.getInterview(interviewId) 
 			//with deffered
@@ -45,6 +78,7 @@
 		function listAllInterviewAnswers(response,csv,questionIdList){
 			_.each(response,function(data){
 				var obj = {A:[]};
+				obj.A.push(data.interviewId);
 				obj.A.push(data.referenceNumber);
 //				obj.A.push(data.module.idNode);
 				_.each(questionIdList,function(qId){
@@ -62,7 +96,7 @@
 							obj.A.push("-- No Answer --");
 						}
 					}else{
-						obj.A.push(" ");
+						obj.A.push("-- Question Not Asked --");
 					}
 				});
 				csv.push(obj);
@@ -72,22 +106,37 @@
 		function listAllInterviewQuestions(response,csv,listOfQuestion){
 			var questionIdList = [];
 			_.each(response,function(data){
-				data.questionHistory = _.orderBy(data.questionHistory, ['number'], ['asc']);
 				listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
 					return item.number && item.name;
 				});
 			});
+			var sortQuestionList = {};
 			var header = "";
 			_.each(listOfQuestion,function(data){
-				if(data.nodeClass == 'M'){
+				if(data.nodeClass == 'M' || data.type == 'M_IntroModule' || data.type == 'Q_linkedajsm'){
+					if(header != ""){
+						sortQuestionList[header] = _.sortBy(sortQuestionList[header], 'header');
+					}
 					header = data.name.substring(0, 4);
-				}else{
-					csv[0].Q.push(header+"_"+data.number);
-					questionIdList.push(data.questionId);
+					sortQuestionList[header] = [];
+				}else if(data.questionId){
+					sortQuestionList[header].push({
+						header:header+"_"+data.number,
+						questionId:data.questionId
+					});
 				}
 			});
-//			csv[0].Q.unshift('studyintromoduleid');
-			csv[0].Q.unshift('Reference Number');
+			
+			
+			_.each(sortQuestionList,function(headers){
+				var uniqueHeaders = _.unionBy(headers,headers,function(o){return o.header;});
+				_.each(uniqueHeaders,function(data){
+					csv[0].Q.push(data.header);
+					questionIdList.push(data.questionId);
+				})
+			});
+			csv[0].Q.unshift('AWES ID');
+			csv[0].Q.unshift('Interview Id');
 			return questionIdList;
 		}
 		

@@ -81,8 +81,28 @@
             return request.then(handleSuccess, handleError);
         }
         
+        function getInterviewQuestionAnswer(interviewId) {
+            var url = 'web/rest/interview/getInterviewQuestionAnswer?interviewId=' + interviewId;
+            var request = $http({
+                method: 'GET',
+                url: url,
+                ignoreLoadingBar: true
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        
         function getInterviewIdList(){
         	var url = 'web/rest/interview/getAllInterviewId';
+        	var request = $http({
+                method: 'GET',
+                url: url,
+                ignoreLoadingBar: true
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        
+        function getInterviewsWithoutAnswers(){
+        	var url = 'web/rest/interview/getInterviewsWithoutAnswers';
         	var request = $http({
                 method: 'GET',
                 url: url,
@@ -249,7 +269,9 @@
             getInterviewQuestionList:getInterviewQuestionList,
             saveNote:saveNote,
             getListNote:getListNote,
-            getInterviewIdList:getInterviewIdList
+            getInterviewIdList:getInterviewIdList,
+            getInterviewsWithoutAnswers:getInterviewsWithoutAnswers,
+            getInterviewQuestionAnswer:getInterviewQuestionAnswer
         };
     }
 })();

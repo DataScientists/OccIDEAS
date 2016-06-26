@@ -20,4 +20,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<Long> getInterviewIdlist();
 
+	List<InterviewVO> listAllInterviewsWithoutAnswers();
+
+	List<InterviewVO> getInterviewQuestionAnswer(long idinterview);
+
 }

@@ -242,4 +242,58 @@ public class InterviewMapperImpl implements InterviewMapper {
 		}
 		return list;
 	}
+
+	@Override
+	public InterviewVO convertToInterviewWithoutAnswers(Interview interview) {
+		if (interview == null) {
+			return null;
+		}
+		InterviewVO interviewVO = new InterviewVO();
+		interviewVO.setInterviewId(interview.getIdinterview());
+		interviewVO.setReferenceNumber(interview.getReferenceNumber());
+		interviewVO.setParentId(interview.getParentId());
+		interviewVO.setQuestionHistory(qsMapper.
+				convertToInterviewQuestionWithoutAnswersList(interview.getQuestionHistory()));
+
+		return interviewVO;
+	}
+
+	@Override
+	public List<InterviewVO> convertToInterviewWithoutAnswersList(List<Interview> interviewEntity) {
+		if (interviewEntity == null) {
+			return null;
+		}
+
+		List<InterviewVO> list = new ArrayList<>();
+		for (Interview interview : interviewEntity) {
+			list.add(convertToInterviewWithoutAnswers(interview));
+		}
+
+		return list;
+	}
+
+	@Override
+	public InterviewVO convertToInterviewWithQuestionAnswer(Interview interview) {
+		InterviewVO interviewVO = new InterviewVO();
+		interviewVO.setInterviewId(interview.getIdinterview());
+		interviewVO.setReferenceNumber(interview.getReferenceNumber());
+		List<InterviewQuestion> questionsAsked = interview.getQuestionHistory();
+		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(questionsAsked));
+		interviewVO.setParentId(interview.getParentId());
+		return interviewVO;
+	}
+
+	@Override
+	public List<InterviewVO> convertToInterviewWithQuestionAnswerList(List<Interview> interviewEntity) {
+		if (interviewEntity == null) {
+			return null;
+		}
+
+		List<InterviewVO> list = new ArrayList<>();
+		for (Interview interview : interviewEntity) {
+			list.add(convertToInterviewWithQuestionAnswer(interview));
+		}
+
+		return list;
+	}
 }

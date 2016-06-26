@@ -100,4 +100,12 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Long> getInterviewIdlist() {
 		return mapper.convertToInterviewIdList(interviewDao.getInterviewIdList());
 	}
+	@Override
+	public List<InterviewVO> listAllInterviewsWithoutAnswers() {
+		return mapper.convertToInterviewWithoutAnswersList(interviewDao.getAll());
+	}
+	@Override
+	public List<InterviewVO> getInterviewQuestionAnswer(long idinterview) {
+		return mapper.convertToInterviewWithQuestionAnswerList(interviewDao.getInterview(idinterview));
+	}
 }

@@ -9,16 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
+public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 
 	@Autowired
 	private InterviewAnswerMapper answerMapper;
-	
+
 	@Override
 	public InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question) {
 		if (question == null) {
-	            return null;
-	    }
+			return null;
+		}
 		InterviewQuestionVO vo = new InterviewQuestionVO();
 		vo.setId(question.getId());
 		vo.setIdInterview(question.getIdInterview());
@@ -37,14 +37,15 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		vo.setProcessed(question.isProcessed());
-		
+
 		return vo;
 	}
+
 	@Override
 	public InterviewQuestionVO convertToInterviewQuestionWithRulesVO(InterviewQuestion question) {
 		if (question == null) {
-	            return null;
-	    }
+			return null;
+		}
 		InterviewQuestionVO vo = new InterviewQuestionVO();
 		vo.setId(question.getId());
 		vo.setIdInterview(question.getIdInterview());
@@ -63,40 +64,41 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 		vo.setAnswers(answerMapper.convertToInterviewAnswerWithRulesVOList(question.getAnswers()));
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		vo.setProcessed(question.isProcessed());
-		
+
 		return vo;
 	}
 
 	@Override
 	public List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question) {
 		if (question == null) {
-            return null;
-        }
-        List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
-        for (InterviewQuestion iq : question) {
-        	//if(iq.getDeleted() == 0){
-        		list.add(convertToInterviewQuestionVO(iq));
-        	//}
-        }
-        return list;
+			return null;
+		}
+		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
+		for (InterviewQuestion iq : question) {
+			// if(iq.getDeleted() == 0){
+			list.add(convertToInterviewQuestionVO(iq));
+			// }
+		}
+		return list;
 	}
+
 	@Override
 	public List<InterviewQuestionVO> convertToInterviewQuestionWithRulesVOList(List<InterviewQuestion> question) {
 		if (question == null) {
-            return null;
-        }
-        List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
-        for (InterviewQuestion iq : question) {
-        	//if(iq.getDeleted() == 0){
-        		list.add(convertToInterviewQuestionWithRulesVO(iq));
-        	//}
-        }
-        return list;
+			return null;
+		}
+		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
+		for (InterviewQuestion iq : question) {
+			// if(iq.getDeleted() == 0){
+			list.add(convertToInterviewQuestionWithRulesVO(iq));
+			// }
+		}
+		return list;
 	}
 
 	@Override
 	public InterviewQuestion convertToInterviewQuestion(InterviewQuestionVO questionVO) {
-		if(questionVO == null){
+		if (questionVO == null) {
 			return null;
 		}
 		InterviewQuestion question = new InterviewQuestion();
@@ -123,15 +125,52 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper{
 	@Override
 	public List<InterviewQuestion> convertToInterviewQuestionList(List<InterviewQuestionVO> iq) {
 		if (iq == null) {
-            return null;
-        }
-        List<InterviewQuestion> list = new ArrayList<InterviewQuestion>();
-        for (InterviewQuestionVO iqu : iq) {
-        	//if(iqu.getDeleted() == 0){
-        		list.add(convertToInterviewQuestion(iqu));
-        	//}
-        }
-        return list;
+			return null;
+		}
+		List<InterviewQuestion> list = new ArrayList<InterviewQuestion>();
+		for (InterviewQuestionVO iqu : iq) {
+			// if(iqu.getDeleted() == 0){
+			list.add(convertToInterviewQuestion(iqu));
+			// }
+		}
+		return list;
+	}
+
+	@Override
+	public InterviewQuestionVO convertToInterviewQuestionWithoutAnswers(InterviewQuestion question) {
+		if (question == null) {
+			return null;
+		}
+		InterviewQuestionVO vo = new InterviewQuestionVO();
+		vo.setId(question.getId());
+		vo.setIdInterview(question.getIdInterview());
+		vo.setName(question.getName());
+		vo.setNodeClass(question.getNodeClass());
+		vo.setNumber(question.getNumber());
+		vo.setQuestionId(question.getQuestionId());
+		vo.setType(question.getType());
+		vo.setDescription(question.getDescription());
+		vo.setParentModuleId(question.getParentModuleId());
+		vo.setTopNodeId(question.getTopNodeId());
+		vo.setParentAnswerId(question.getParentAnswerId());
+		vo.setLink(question.getLink());
+		vo.setModCount(question.getModCount());
+		vo.setIntQuestionSequence(question.getIntQuestionSequence());
+		return vo;
+	}
+
+	@Override
+	public List<InterviewQuestionVO> convertToInterviewQuestionWithoutAnswersList(List<InterviewQuestion> question) {
+		if (question == null) {
+			return null;
+		}
+		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
+		for (InterviewQuestion iq : question) {
+			 if(iq.getDeleted() == 0 && iq.isProcessed()){
+				 list.add(convertToInterviewQuestionWithoutAnswers(iq));
+			 }
+		}
+		return list;
 	}
 
 }

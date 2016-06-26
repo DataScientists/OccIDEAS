@@ -60,6 +60,20 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     }
     
     @GET
+    @Path(value = "/getInterviewsWithoutAnswers")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response listAllInterviewsWithoutAnswers() {
+    	List<InterviewVO> list = new ArrayList<InterviewVO>();
+		try{
+			list = service.listAllInterviewsWithoutAnswers();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+    }
+    
+    @GET
     @Path(value = "/getAllInterviewId")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getAllInterviewId() {
@@ -264,6 +278,23 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     public Response getInterview(@QueryParam("interviewId") long idinterview) {
         try {
         	 List<InterviewVO> vo = service.getInterview(idinterview);
+        	 if(vo!=null){
+             	return Response.ok(vo).build();
+             }else{
+             	return Response.status(Response.Status.NO_CONTENT).build();
+             }   
+        } catch (Throwable e) {
+        	e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path(value = "/getInterviewQuestionAnswer")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getInterviewQuestionAnswer(@QueryParam("interviewId") long idinterview) {
+        try {
+        	 List<InterviewVO> vo = service.getInterviewQuestionAnswer(idinterview);
         	 if(vo!=null){
              	return Response.ok(vo).build();
              }else{
