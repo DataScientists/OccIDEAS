@@ -49,31 +49,36 @@ public class Interview implements java.io.Serializable {
 	private Fragment fragment;
 
 	@OneToMany
-	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
 	@Where(clause = "deleted = 0")
 	private List<InterviewModule> modules;
-	
+
 	@OneToMany(mappedBy = "interviewId", targetEntity = Note.class)
-	@Cascade(value = { CascadeType.SAVE_UPDATE,CascadeType.PERSIST })
-    @Where(clause = "deleted = 0")
+	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
+	@Where(clause = "deleted = 0")
 	private List<Note> notes;
-	
-//	@OneToMany
-//	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+
+	// @OneToMany
+	// @JoinColumn(name = "idinterview", referencedColumnName =
+	// "idinterview",insertable=false,updatable=false)
 	private transient List<InterviewQuestion> actualQuestion;
-	
+
 	@OneToMany
-	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
 	private List<InterviewQuestion> questionHistory;
-	
+
 	@OneToMany
-	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview",insertable=false,updatable=false)
+	@Where(clause = "isProcessed = 0")
+	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
+	private List<InterviewQuestion> questionHistoryUnprocessed;
+
+	@OneToMany
+	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
 	private List<InterviewAnswer> answerHistory;
-	
-	@ManyToMany(fetch=FetchType.LAZY)
-	@JoinTable(name="Interview_FiredRules", 
-            joinColumns={@JoinColumn(name="idinterview")}, 
-            inverseJoinColumns={@JoinColumn(name="idRule")})
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "Interview_FiredRules", joinColumns = {
+			@JoinColumn(name = "idinterview") }, inverseJoinColumns = { @JoinColumn(name = "idRule") })
 	private List<Rule> firedRules;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -214,6 +219,14 @@ public class Interview implements java.io.Serializable {
 
 	public void setQuestionHistory(List<InterviewQuestion> questionHistory) {
 		this.questionHistory = questionHistory;
+	}
+
+	public List<InterviewQuestion> getQuestionHistoryUnprocessed() {
+		return questionHistoryUnprocessed;
+	}
+
+	public void setQuestionHistoryUnprocessed(List<InterviewQuestion> questionHistoryUnprocessed) {
+		this.questionHistoryUnprocessed = questionHistoryUnprocessed;
 	}
 
 	public List<InterviewAnswer> getAnswerHistory() {

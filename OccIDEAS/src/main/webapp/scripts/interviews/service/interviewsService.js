@@ -12,6 +12,17 @@
             })
             return request.then(handleSuccess, handleError);
         }
+        
+        function getUnprocessedQuestions(idNode) {
+            var restURL = 'web/rest/interview/getUnprocessedQuestions?id=' + idNode;
+            var request = $http({
+                method: 'GET',
+                url: restURL
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        
+        
         function checkReferenceNumberExists(referenceNumber) {
             var restURL = 'web/rest/interview/getbyref?ref=' + referenceNumber;
             var request = $http({
@@ -271,7 +282,8 @@
             getListNote:getListNote,
             getInterviewIdList:getInterviewIdList,
             getInterviewsWithoutAnswers:getInterviewsWithoutAnswers,
-            getInterviewQuestionAnswer:getInterviewQuestionAnswer
+            getInterviewQuestionAnswer:getInterviewQuestionAnswer,
+            getUnprocessedQuestions:getUnprocessedQuestions
         };
     }
 })();

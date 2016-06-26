@@ -21,6 +21,8 @@ public interface InterviewMapper {
 	InterviewVO convertToInterviewVOnoQs(Interview interview);
 
 	InterviewVO convertToInterviewVO(Interview interview);
+	
+	InterviewVO convertToInterviewUnprocessQuestion(Interview interview);
 
 	InterviewVO convertToInterviewWithRulesVO(Interview interview);
 

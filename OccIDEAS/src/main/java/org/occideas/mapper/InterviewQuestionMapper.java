@@ -11,6 +11,10 @@ public interface InterviewQuestionMapper {
 
 	List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question);
 
+	InterviewQuestionVO convertToInterviewQuestionUnprocessedVO(InterviewQuestion question);
+
+	List<InterviewQuestionVO> convertToInterviewQuestionUnprocessedVOList(List<InterviewQuestion> question);
+	
 	InterviewQuestion convertToInterviewQuestion(InterviewQuestionVO questionVO);
 	
 	List<InterviewQuestion> convertToInterviewQuestionList(List<InterviewQuestionVO> questionVO);

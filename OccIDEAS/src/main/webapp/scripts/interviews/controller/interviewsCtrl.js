@@ -972,7 +972,7 @@
 							//inserting the first link intro module
 							InterviewsService.saveLinkQuestionAndQueueQuestions(firstLinkIntervewQuestion).then(function(response) {
 								if (response.status === 200) {
-									InterviewsService.get($scope.interview.interviewId).then(function(response) {
+									InterviewsService.getUnprocessedQuestions($scope.interview.interviewId).then(function(response) {
 										if(response.status==200){
 											$scope.interview = response.data[0];
 											refreshDisplay();

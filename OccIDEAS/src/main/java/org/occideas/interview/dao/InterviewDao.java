@@ -121,4 +121,5 @@ public class InterviewDao {
 	    List<Interview> list = crit.list();
 		return list;
 	}
+
 }

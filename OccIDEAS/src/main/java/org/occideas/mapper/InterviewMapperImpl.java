@@ -296,4 +296,41 @@ public class InterviewMapperImpl implements InterviewMapper {
 
 		return list;
 	}
+
+	@Override
+	public InterviewVO convertToInterviewUnprocessQuestion(Interview interview) {
+		if (interview == null) {
+			return null;
+		}
+		InterviewVO interviewVO = new InterviewVO();
+		interviewVO.setInterviewId(interview.getIdinterview());
+		interviewVO.setReferenceNumber(interview.getReferenceNumber());
+		//interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
+		//interviewVO.setModules(modMapper.convertToInterviewModuleVOList(interview.getModules()));
+		//interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
+		//List<InterviewQuestion> questionsAsked = interview.getActualQuestion();
+		//interviewVO.setActualQuestion(qsMapper.convertToInterviewQuestionVOList(questionsAsked));
+		
+		List<InterviewQuestion> questionHistory = interview.getQuestionHistoryUnprocessed();
+		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionUnprocessedVOList(questionHistory));
+
+		List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
+		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerVOList(answerHistory));
+
+		//List<Rule> firedRules = interview.getFiredRules();
+		//interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
+		//List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
+		//interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
+		//List<Rule> manualAssessedRules = interview.getManualAssessedRules();
+		//interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
+
+		//interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
+		interviewVO.setParentId(interview.getParentId());
+//		List<Interview> childInterviews = interview.getInterviews();
+//		interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
+//		List<Note> notes = interview.getNotes();
+//		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
+
+		return interviewVO;
+	}
 }
