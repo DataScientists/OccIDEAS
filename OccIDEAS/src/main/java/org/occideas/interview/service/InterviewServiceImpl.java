@@ -96,4 +96,8 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<InterviewVO> getInterview(long interviewId) {
 		return mapper.convertToInterviewWithModulesVOList(interviewDao.getInterview(interviewId));
 	}
+	@Override
+	public List<Long> getInterviewIdlist() {
+		return mapper.convertToInterviewIdList(interviewDao.getInterviewIdList());
+	}
 }

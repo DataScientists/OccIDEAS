@@ -2,38 +2,44 @@
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
-                          'data','$log','$compile','$http','$q'];
+                          'data','$log','$compile','$http','$q','$mdDialog'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
-			data,$log,$compile,$http,$q){
+			data,$log,$compile,$http,$q,$mdDialog){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.getInterviewForCSVButton = function(){
-			var csv = [{
-				Q:[]
-			}];
-			var deferred = $q.defer();
-			var listOfQuestion = [];
-			AssessmentsService.getInterviews().then(function(response) {
-				$log.info("Data received from interviews ajax"); 
-				var questionIdList = listAllInterviewQuestions(response,csv,listOfQuestion);
-				listAllInterviewAnswers(response,csv,questionIdList);
-				deferred.resolve(csv);
-				//cycle through interviews get all questions
-				//cycle through interviews look up each question and print answer if exists
-		    }, function (errorData) {
-	            deferred.reject(errorData);
-		    });
-			return deferred.promise;
-			/*
-			_.each($scope.displayHistory,function(qs){
-				if(qs.answers.length > 0){
-					csv[0].Q.push(qs.header+"_"+qs.number);
-					_.each(qs.answers,function(ans){
-						csv[1].A.push(ans.name);//todo strip comma
-					});
-				}
-			});*/
+			$scope.showExportCSV();
+		};
+		
+		$scope.showExportCSV = function() {
+		//get list of interview id
+		InterviewsService.getInterviewIdList().then(function(response){
+			if(response.status == '200'){
+				//display modal with list of id + progress bar
+				$scope.interviewIdList = response.data;
+				$scope.interviewIdCount = $scope.interviewIdList.length;
+				$mdDialog.show({
+					scope: $scope,  
+					preserveScope: true,
+					templateUrl : 'scripts/assessments/partials/exportCSVDialog.html',
+					clickOutsideToClose:false
+				});
+				var count = 0;
+				_.each($scope.interviewIdList,function(interviewId){
+					count++;
+					$scope.interviewCount = count;
+					$scope.interviewIdInProgress = interviewId;
+				})
+			}
+		});
+		
+			//loop through and trigger InterviewService.getInterview(interviewId) 
+			//with deffered
+		};
+		
+		$scope.cancel = function() {
+			$mdDialog.cancel();
 		};
 		
 		function listAllInterviewAnswers(response,csv,questionIdList){
@@ -123,13 +129,7 @@
 					    	return self.tableParams.settings().dataset;
 					    }
 					    $log.info("Data getting from interviews ajax ..."); 
-					    return AssessmentsService.getAssessments().then(function(data) {
-					        	  $log.info("Data received from interviews ajax ...");  
-					        	  data = _.uniqBy(data, 'interviewId');
-					        	  self.originalData = angular.copy(data);
-					        	  self.tableParams.settings().dataset = data;
-					            return data;
-					          });
+					    return null;
 					    },
 				});
 		self.tableParams.shouldGetData = true;

@@ -111,4 +111,14 @@ public class InterviewDao {
         }
         return crit.list();
 	}
+
+	public List<Interview> getInterviewIdList() {
+		 final Session session = sessionFactory.getCurrentSession();
+	     final Criteria crit = session.createCriteria(Interview.class)
+	    		 .setProjection(Projections.projectionList()
+	    			      .add(Projections.property("idinterview"), "idinterview"))
+	    			    .setResultTransformer(Transformers.aliasToBean(Interview.class));
+	    List<Interview> list = crit.list();
+		return list;
+	}
 }

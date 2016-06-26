@@ -29,5 +29,7 @@ public interface InterviewMapper {
 	InterviewVO convertToInterviewWithModulesVO(Interview interview);
 
 	List<InterviewVO> convertToInterviewWithModulesVOList(List<Interview> interviewEntity);
+
+	List<Long> convertToInterviewIdList(List<Interview> interviewIdList);
 	
 }

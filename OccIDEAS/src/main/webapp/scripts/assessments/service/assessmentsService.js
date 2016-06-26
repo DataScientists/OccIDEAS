@@ -16,7 +16,8 @@
 			var restUrl = 'web/rest/interview/getlist';
 			var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restUrl,
+				  ignoreLoadingBar: true
 				})
 			return request.then(handleSuccess1,handleError);
 		}
@@ -40,7 +41,8 @@
 			var restUrl = 'web/rest/interview/getassessments';
 			var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restUrl,
+				  ignoreLoadingBar: true
 				})
 			return request.then(handleSuccess1,handleError);
 		}

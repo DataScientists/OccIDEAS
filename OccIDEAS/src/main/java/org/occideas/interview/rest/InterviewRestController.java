@@ -58,6 +58,21 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		}
 		return Response.ok(list).build();
     }
+    
+    @GET
+    @Path(value = "/getAllInterviewId")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getAllInterviewId() {
+    	List<Long> interviewIdlist = new ArrayList<Long>();
+		try{
+			interviewIdlist = service.getInterviewIdlist();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(interviewIdlist).build();
+    }
+    
     @GET
     @Path(value = "/getlistwithanswers")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)

@@ -1,8 +1,11 @@
 <div ng-cloak>
 <div>
 <button  class="btn btn-default"
-              ng-csv="getInterviewForCSVButton()" lazy-load="true" filename="test.csv" field-separator=",">
+              ng-click="getInterviewForCSVButton()">
               Export to CSV</button>
+<button style="display:none" id="exportCSV"  class="btn btn-default"
+              ng-csv="getInterviewForCSVButton()" lazy-load="true" filename="test.csv" field-separator=",">
+              </button>
 <!-- <pre>debug{{vm.tableParams.data| json}}</pre>   -->
 <table ng-table="vm.tableParams" class="table table-bordered table-hover 
   table-condensed editable-table" show-filter="true">

@@ -75,7 +75,18 @@
             var url = 'web/rest/interview/getInterview?interviewId=' + interviewId;
             var request = $http({
                 method: 'GET',
-                url: url
+                url: url,
+                ignoreLoadingBar: true
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        
+        function getInterviewIdList(){
+        	var url = 'web/rest/interview/getAllInterviewId';
+        	var request = $http({
+                method: 'GET',
+                url: url,
+                ignoreLoadingBar: true
             })
             return request.then(handleSuccess, handleError);
         }
@@ -237,7 +248,8 @@
             getIntQuestion:getIntQuestion,
             getInterviewQuestionList:getInterviewQuestionList,
             saveNote:saveNote,
-            getListNote:getListNote
+            getListNote:getListNote,
+            getInterviewIdList:getInterviewIdList
         };
     }
 })();

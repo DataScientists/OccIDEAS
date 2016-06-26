@@ -233,4 +233,13 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
 		return interviewVO;
 	}
+
+	@Override
+	public List<Long> convertToInterviewIdList(List<Interview> interviewIdList) {
+		List<Long> list = new ArrayList<>();
+		for(Interview entity:interviewIdList){
+			list.add(entity.getIdinterview());
+		}
+		return list;
+	}
 }
