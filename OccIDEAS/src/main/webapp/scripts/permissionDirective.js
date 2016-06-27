@@ -1,3 +1,5 @@
+(function(){
+	
 angular.module('occIDEASApp')   
 .directive('permission', ['AuthenticationService', function(Auth) {
    return {
@@ -17,3 +19,5 @@ angular.module('occIDEASApp')
        }
    }
 }]);
+
+})();
