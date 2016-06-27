@@ -311,11 +311,11 @@ public class InterviewMapperImpl implements InterviewMapper {
 		//List<InterviewQuestion> questionsAsked = interview.getActualQuestion();
 		//interviewVO.setActualQuestion(qsMapper.convertToInterviewQuestionVOList(questionsAsked));
 		
-		List<InterviewQuestion> questionHistory = interview.getQuestionHistoryUnprocessed();
-		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionUnprocessedVOList(questionHistory));
+		List<InterviewQuestion> questionQueueUnprocessed = interview.getQuestionQueueUnprocessed();
+		interviewVO.setQuestionQueueUnprocessed(qsMapper.convertToInterviewQuestionUnprocessedVOList(questionQueueUnprocessed));
 
-		List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
-		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerVOList(answerHistory));
+		//List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
+		//interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerVOList(answerHistory));
 
 		//List<Rule> firedRules = interview.getFiredRules();
 		//interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
@@ -325,7 +325,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		//interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
 
 		//interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
-		interviewVO.setParentId(interview.getParentId());
+		//interviewVO.setParentId(interview.getParentId());
 //		List<Interview> childInterviews = interview.getInterviews();
 //		interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
 //		List<Note> notes = interview.getNotes();

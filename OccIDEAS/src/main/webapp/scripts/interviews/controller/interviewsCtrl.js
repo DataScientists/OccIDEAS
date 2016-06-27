@@ -967,13 +967,29 @@
 							$scope.interview = interview;
 							$scope.interviewStarted = true;
 							$scope.interviewId = response.data.interviewId;
+							
 							var firstLinkIntervewQuestion = populateInteviewQuestionJsonByModule(interview,interview.module);
 							firstLinkIntervewQuestion.number = "0";
 							//inserting the first link intro module
 							InterviewsService.saveLinkQuestionAndQueueQuestions(firstLinkIntervewQuestion).then(function(response) {
 								if (response.status === 200) {
-									InterviewsService.getUnprocessedQuestions($scope.interview.interviewId).then(function(response) {
+									InterviewsService.get($scope.interview.interviewId).then(function(response) {
 										if(response.status==200){
+											/*var unprocessedQuestions = response.data[0].questionQueueUnprocessed;
+											for(var i=0;i<unprocessedQuestions.length;i++){
+												var unprocessedQuestion = unprocessedQuestions[i];
+												//if unprocessed not in interview.questionHistory add
+												var bFound = false;
+												for(var j=0;j<$scope.interview.questionHistory.length;j++){
+													var question = $scope.interview.questionHistory[j];
+													if(question.questionId==unprocessedQuestion.questionId){
+														bFound = true;
+													}		
+												}
+												if(!bFound){
+													$scope.interview.questionHistory.push(unprocessedQuestion);
+												}
+											}*/
 											$scope.interview = response.data[0];
 											refreshDisplay();
 											var question = findNextQuestionQueued($scope.interview);
@@ -1082,9 +1098,24 @@
 			var parentNodeTemp = parentNode;
 			$scope.inProgress = true; 
 			safeDigest($scope.inProgress); 
-			return InterviewsService.get($scope.interview.interviewId).then(function(response) {
+			return InterviewsService.getUnprocessedQuestions($scope.interview.interviewId).then(function(response) {
 				if(response.status==200){
-					$scope.interview = response.data[0];
+					//$scope.interview = response.data[0];
+					var unprocessedQuestions = response.data[0].questionQueueUnprocessed;
+					for(var i=0;i<unprocessedQuestions.length;i++){
+						var unprocessedQuestion = unprocessedQuestions[i];
+						//if unprocessed not in interview.questionHistory add
+						var bFound = false;
+						for(var j=0;j<$scope.interview.questionHistory.length;j++){
+							var question = $scope.interview.questionHistory[j];
+							if(question.questionId==unprocessedQuestion.questionId){
+								bFound = true;
+							}		
+						}
+						if(!bFound){
+							$scope.interview.questionHistory.push(unprocessedQuestion);
+						}
+					}
 					safeDigest($scope.interview);
 					refreshDisplay();
 					var question = findNextQuestionQueued($scope.interview);
@@ -1141,9 +1172,31 @@
 			//update to processed and get child questions in the queue
 			InterviewsService.saveLinkQuestionAndQueueQuestions(firstLinkIntervewQuestion).then(function(response) {
 				if (response.status === 200) {
-					InterviewsService.get($scope.interview.interviewId).then(function(response) {
+					for(var i=0;i<$scope.interview.questionHistory.length;i++){
+						var question = $scope.interview.questionHistory[i];
+						if(question.questionId==linkeQuestion.questionId){
+							question.processed = true;
+						}		
+					}
+					InterviewsService.getUnprocessedQuestions($scope.interview.interviewId).then(function(response) {
 						if(response.status==200){
-							$scope.interview = response.data[0];
+							//$scope.interview = response.data[0];
+							var unprocessedQuestions = response.data[0].questionQueueUnprocessed;
+							for(var i=0;i<unprocessedQuestions.length;i++){
+								var unprocessedQuestion = unprocessedQuestions[i];
+								//if unprocessed not in interview.questionHistory add
+								var bFound = false;
+								
+								for(var j=0;j<$scope.interview.questionHistory.length;j++){
+									var question = $scope.interview.questionHistory[j];
+									if(question.questionId==unprocessedQuestion.questionId){
+										bFound = true;
+									}		
+								}
+								if(!bFound){
+									$scope.interview.questionHistory.push(unprocessedQuestion);
+								}
+							}
 							safeDigest($scope.interview);
 							refreshDisplay();
 							var question = findNextQuestionQueued($scope.interview);

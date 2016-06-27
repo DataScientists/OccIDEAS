@@ -70,7 +70,7 @@ public class Interview implements java.io.Serializable {
 	@OneToMany
 	@Where(clause = "isProcessed = 0")
 	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
-	private List<InterviewQuestion> questionHistoryUnprocessed;
+	private List<InterviewQuestion> questionQueueUnprocessed;
 
 	@OneToMany
 	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
@@ -221,13 +221,7 @@ public class Interview implements java.io.Serializable {
 		this.questionHistory = questionHistory;
 	}
 
-	public List<InterviewQuestion> getQuestionHistoryUnprocessed() {
-		return questionHistoryUnprocessed;
-	}
-
-	public void setQuestionHistoryUnprocessed(List<InterviewQuestion> questionHistoryUnprocessed) {
-		this.questionHistoryUnprocessed = questionHistoryUnprocessed;
-	}
+	
 
 	public List<InterviewAnswer> getAnswerHistory() {
 		return answerHistory;
@@ -235,6 +229,14 @@ public class Interview implements java.io.Serializable {
 
 	public void setAnswerHistory(List<InterviewAnswer> answerHistory) {
 		this.answerHistory = answerHistory;
+	}
+
+	public List<InterviewQuestion> getQuestionQueueUnprocessed() {
+		return questionQueueUnprocessed;
+	}
+
+	public void setQuestionQueueUnprocessed(List<InterviewQuestion> questionQueueUnprocessed) {
+		this.questionQueueUnprocessed = questionQueueUnprocessed;
 	}
 
 }

@@ -33,6 +33,8 @@ public class InterviewVO {
 	
 	private List<InterviewQuestionVO> questionHistory = new ArrayList<>();
 	
+	private List<InterviewQuestionVO> questionQueueUnprocessed = new ArrayList<>();
+	
 	private List<InterviewAnswerVO> answerHistory = new ArrayList<>();
 	
 	private List<InterviewModuleVO> modules = new ArrayList<>();
@@ -285,6 +287,14 @@ public class InterviewVO {
 
 	public void setAnswerHistory(List<InterviewAnswerVO> answerHistory) {
 		this.answerHistory = answerHistory;
+	}
+
+	public List<InterviewQuestionVO> getQuestionQueueUnprocessed() {
+		return questionQueueUnprocessed;
+	}
+
+	public void setQuestionQueueUnprocessed(List<InterviewQuestionVO> questionQueueUnprocessed) {
+		this.questionQueueUnprocessed = questionQueueUnprocessed;
 	}
 	
 }
