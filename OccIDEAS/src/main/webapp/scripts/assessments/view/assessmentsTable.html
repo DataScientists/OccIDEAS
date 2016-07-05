@@ -8,37 +8,40 @@
 		<table ng-table="vm.tableParams"
 			class="table table-condensed table-bordered table-striped" 
 			ng-table-columns-binding="vm.cols">
-			<tbody ng-repeat="group in $groups">
-				<tr class="ng-table-group">
-					<td colspan="4"><a href=""
-						ng-click="group.$hideRows = !group.$hideRows"> 
-						<span
-							class="glyphicon"
-							ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-							<strong>{{ group.value }} </strong>
-					</a></td>
-				</tr>
-				<tr ng-hide="group.$hideRows" ng-repeat="participant in group.data">
-					<td header-title="'User name'" sortable="'idParticipant'" title="'Participant Id'"
-									filter="{ idParticipant: 'text'}"
-									groupable="'idParticipant'" ng-if="false">
-									{{participant.idParticipant}}</td>
-					<td colspan="4">
-						<table class="table">
-							<tr ng-repeat="interview in participant.interviews">
-								<td>{{interview.referenceNumber}}</td>
-								<td>{{interview.interviewId}}</td>
-								<td>
-									<button class="btn btn-default btn-sm"
-										ng-click="vm.openFiredRules(interview.interviewId)">
-										<span class="glyphicon glyphicon-folder-open"></span>
-									</button>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</tbody>
+			<tr>
+				<td>THIS FUNCTION IS IN PROGRESS AND WILL BE AVAILABLE SOON.</td>
+			</tr>
+<!-- 			<tbody ng-repeat="group in $groups"> -->
+<!-- 				<tr class="ng-table-group"> -->
+<!-- 					<td colspan="4"><a href="" -->
+<!-- 						ng-click="group.$hideRows = !group.$hideRows">  -->
+<!-- 						<span -->
+<!-- 							class="glyphicon" -->
+<!-- 							ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span> -->
+<!-- 							<strong>{{ group.value }} </strong> -->
+<!-- 					</a></td> -->
+<!-- 				</tr> -->
+<!-- 				<tr ng-hide="group.$hideRows" ng-repeat="participant in group.data"> -->
+<!-- 					<td header-title="'User name'" sortable="'idParticipant'" title="'Participant Id'" -->
+<!-- 									filter="{ idParticipant: 'text'}" -->
+<!-- 									groupable="'idParticipant'" ng-if="false"> -->
+<!-- 									{{participant.idParticipant}}</td> -->
+<!-- 					<td colspan="4"> -->
+<!-- 						<table class="table"> -->
+<!-- 							<tr ng-repeat="interview in participant.interviews"> -->
+<!-- 								<td>{{interview.referenceNumber}}</td> -->
+<!-- 								<td>{{interview.interviewId}}</td> -->
+<!-- 								<td> -->
+<!-- 									<button class="btn btn-default btn-sm" -->
+<!-- 										ng-click="vm.openFiredRules(interview.interviewId)"> -->
+<!-- 										<span class="glyphicon glyphicon-folder-open"></span> -->
+<!-- 									</button> -->
+<!-- 								</td> -->
+<!-- 							</tr> -->
+<!-- 						</table> -->
+<!-- 					</td> -->
+<!-- 				</tr> -->
+<!-- 			</tbody> -->
 		</table>
 	</div>
 </div>
