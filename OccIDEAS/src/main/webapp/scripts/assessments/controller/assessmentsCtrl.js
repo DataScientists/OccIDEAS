@@ -2,12 +2,26 @@
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
-                          'data','$log','$compile','$http','$q','$mdDialog','$timeout'];
+                          'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
-			data,$log,$compile,$http,$q,$mdDialog,$timeout){
+			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
+		
+		$scope.openInterviewBtn = function(){
+			
+		}
+		
+		self.cols = [
+		    { field: "idParticipant", title: "idParticipant"}
+		];
+		
+		self.openFiredRules = function(interviewId) {
+	    	$scope.addFiredRulesTab(interviewId);
+	    }
+		
+		
 		$scope.getInterviewForCSVButton = function(){
 			$scope.showExportCSV();
 		};
@@ -165,21 +179,34 @@
 			return self.editAssessmentsMenuOptions;
 		}
 		self.tableParams = new NgTableParams(
-				{}, 
+				{
+					group: "idParticipant"
+				}, 
 				{	
 					getData: function(params) {
-						if((params.filter().referenceNumber)||(params.filter().moduleName)){	
-				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-				        }						
-						if ((params.sorting().referenceNumber)||(params.sorting().moduleName)){
-							return $filter('orderBy')(self.tableParams.settings().dataset, params.orderBy());
-				        }
+//						if((params.filter().referenceNumber)||(params.filter().moduleName)){	
+//				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+//				        }						
+//						if ((params.sorting().referenceNumber)||(params.sorting().moduleName)){
+//							return $filter('orderBy')(self.tableParams.settings().dataset, params.orderBy());
+//				        }
 					    if(!self.tableParams.shouldGetData){
 					    	return self.tableParams.settings().dataset;
 					    }
 					    $log.info("Data getting from interviews ajax ..."); 
-					    return null;
-					    },
+					    return ParticipantsService.getParticipants().then(function(response) {
+				        	  if(response.status == '200'){
+				        		  var data = response.data;
+				        		  console.log("Data get list from getParticipants ajax ...");        	 
+				        		  self.originalData = angular.copy(data);
+					        	  self.tableParams.settings().dataset = data;
+					        	  self.tableParams.shouldGetData = false;
+					        	  self.tableParams.total(self.originalData.length);
+					        	  var last = params.page() * params.count();
+						          return _.slice(data,last - params.count(),last);
+				        	  }
+				          });
+					},
 				});
 		self.tableParams.shouldGetData = true;
 		

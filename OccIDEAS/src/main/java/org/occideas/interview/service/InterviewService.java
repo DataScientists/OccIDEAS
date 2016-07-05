@@ -26,4 +26,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<InterviewVO> getUnprocessedQuestions(Long id);
 
+	InterviewVO findInterviewWithFiredRulesById(Long id);
+
 }

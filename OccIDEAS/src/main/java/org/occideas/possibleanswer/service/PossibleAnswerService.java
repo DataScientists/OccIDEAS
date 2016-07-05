@@ -8,5 +8,7 @@ import org.occideas.vo.PossibleAnswerVO;
 public interface PossibleAnswerService extends BaseService<PossibleAnswerVO>{
 
 	List<PossibleAnswerVO> findByIdWithChildren(Long id);
+	
+	PossibleAnswerVO findAnswerWithRulesById(long id);
 
 }

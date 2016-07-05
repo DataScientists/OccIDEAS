@@ -229,5 +229,27 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 
         return list;
 	}
+	
+	@Override
+	public PossibleAnswerVO convertToPossibleAnswerWithModuleRuleVO(PossibleAnswer answerEntity) {
+		if(answerEntity == null){
+			return null;
+		}
+		
+		PossibleAnswerVO vo = new PossibleAnswerVO();
+		vo.setDeleted(answerEntity.getDeleted());
+		vo.setDescription(answerEntity.getDescription());
+		vo.setIdNode(answerEntity.getIdNode());
+		vo.setLink(answerEntity.getLink());
+		vo.setModuleRule(ruleMapper.convertToModuleRuleVOList(answerEntity.getModuleRule()));
+		vo.setName(answerEntity.getName());
+		vo.setNodeclass(answerEntity.getNodeclass());
+		vo.setNumber(answerEntity.getNumber());
+		vo.setParentId(answerEntity.getParentId());
+		vo.setSequence(answerEntity.getSequence());
+		vo.setTopNodeId(answerEntity.getTopNodeId());
+		vo.setType(answerEntity.getType());
+		return vo;
+	}
 
 }

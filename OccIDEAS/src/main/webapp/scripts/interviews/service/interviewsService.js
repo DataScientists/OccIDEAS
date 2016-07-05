@@ -13,6 +13,15 @@
             return request.then(handleSuccess, handleError);
         }
         
+        function getInterviewWithFiredRules(idNode){
+        	var restURL = 'web/rest/interview/getInterviewWithFiredRules>id='+idNode;
+        	var request = $http({
+                method: 'GET',
+                url: restURL
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        
         function getUnprocessedQuestions(idNode) {
             var restURL = 'web/rest/interview/getUnprocessedQuestions?id=' + idNode;
             var request = $http({
@@ -283,7 +292,8 @@
             getInterviewIdList:getInterviewIdList,
             getInterviewsWithoutAnswers:getInterviewsWithoutAnswers,
             getInterviewQuestionAnswer:getInterviewQuestionAnswer,
-            getUnprocessedQuestions:getUnprocessedQuestions
+            getUnprocessedQuestions:getUnprocessedQuestions,
+            getInterviewWithFiredRules:getInterviewWithFiredRules
         };
     }
 })();

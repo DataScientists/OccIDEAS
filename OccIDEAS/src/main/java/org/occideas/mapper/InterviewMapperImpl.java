@@ -71,8 +71,8 @@ public class InterviewMapperImpl implements InterviewMapper {
 
 		//interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
 		interviewVO.setParentId(interview.getParentId());
-		List<Interview> childInterviews = interview.getInterviews();
-		interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
+//		List<Interview> childInterviews = interview.getInterviews();
+//		interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
 		List<Note> notes = interview.getNotes();
 		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
 
@@ -331,6 +331,19 @@ public class InterviewMapperImpl implements InterviewMapper {
 //		List<Note> notes = interview.getNotes();
 //		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
 
+		return interviewVO;
+	}
+	
+	@Override
+	public InterviewVO convertToInterviewVOWithFiredRules(Interview interview) {
+		if (interview == null) {
+			return null;
+		}
+		InterviewVO interviewVO = new InterviewVO();
+		interviewVO.setInterviewId(interview.getIdinterview());
+		interviewVO.setReferenceNumber(interview.getReferenceNumber());
+		List<Rule> firedRules = interview.getFiredRules();
+		interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
 		return interviewVO;
 	}
 }

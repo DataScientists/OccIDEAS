@@ -66,4 +66,10 @@ public class PossibleAnswerServiceImpl implements PossibleAnswerService {
 	public void delete(PossibleAnswerVO o) {
 	}
 
+	@Override
+	public PossibleAnswerVO findAnswerWithRulesById(long id) {
+		PossibleAnswer answer = dao.get(PossibleAnswer.class, id);
+		return mapper.convertToPossibleAnswerWithModuleRuleVO(answer);
+	}
+
 }

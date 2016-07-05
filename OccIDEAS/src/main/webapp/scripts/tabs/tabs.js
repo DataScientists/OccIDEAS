@@ -498,6 +498,28 @@
                     }
                 }
             }
+        }).state( {
+            name:'tabs.firedrules',
+			url: '/firedrules/:interviewId',
+            sticky: false,
+		    deepStateRedirect: true,
+		    authenticate:true,
+            views:{
+                'firedrules@tabs':{
+                    templateUrl: 'scripts/firedRules/view/fireRules.html',
+                    controller: 'FiredRulesCtrl as vm',
+                    params:{interviewId:null},
+                    resolve:{
+                        data: function($stateParams,InterviewsService) {
+                            return InterviewsService.get($stateParams.interviewId)
+                                .then(function(response){
+                                    $log.info("Data getting from findModule AJAX ...");
+                                    return response.data;
+                                });
+                        }
+                    }
+                }
+            }
         });
 	}
 })();

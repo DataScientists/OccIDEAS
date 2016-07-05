@@ -175,7 +175,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 
 	@Override
 	public InterviewQuestionVO convertToInterviewQuestionUnprocessedVO(InterviewQuestion question) {
-		if (question == null || question.isProcessed()) {
+		if (question == null || question.isProcessed() || question.getDeleted() == 1) {
 			return null;
 		}
 		InterviewQuestionVO vo = new InterviewQuestionVO();

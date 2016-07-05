@@ -41,6 +41,20 @@ public class PossibleAnswerRestController implements BaseRestController<Possible
 		}
 		return Response.ok(list).build();
 	}
+	
+	@GET
+	@Path(value="/getAnswerWithModuleRule")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getAnswerWithModuleRule(@QueryParam("id") Long id) {
+		PossibleAnswerVO vo = new PossibleAnswerVO();
+		try{
+			vo = service.findAnswerWithRulesById(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(vo).build();
+	}
 
 	@Override
 	public Response create(PossibleAnswerVO json) {

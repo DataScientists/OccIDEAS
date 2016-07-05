@@ -41,5 +41,7 @@ public interface InterviewMapper {
 	InterviewVO convertToInterviewWithoutAnswers(Interview interview);
 
 	List<InterviewVO> convertToInterviewWithoutAnswersList(List<Interview> interviewEntity);
+
+	InterviewVO convertToInterviewVOWithFiredRules(Interview interview);
 	
 }

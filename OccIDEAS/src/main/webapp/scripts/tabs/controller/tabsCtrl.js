@@ -328,6 +328,24 @@
             $rootScope.tabsLoading = true;
             safeDigest($rootScope.tabsLoading);
         };
+        $scope.addFiredRulesTab = function(interviewId) {
+            var tabTitle = "Fired Rules " + interviewId;
+            var state = "tabs.firedrules";
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'firedrules@tabs',
+                    canClose: true,
+                    disabled: false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                    	interviewId: interviewId
+                    }
+                });
+            }
+        };
         $rootScope.addErrorTab = function(error) {
         	var tabTitle = "Error!";
             var state = "tabs.error";
@@ -428,6 +446,10 @@
             	if ($scope.selectedIndex == 5) {
                     $scope.selectedIndex = 0;
                 }
+            }else{
+            	var index = tabs.indexOf(tab);
+                tabs.splice(index, 1);
+                $scope.tabOptions.splice(index, 1);
             }
             $scope.agentsData = null;
         };

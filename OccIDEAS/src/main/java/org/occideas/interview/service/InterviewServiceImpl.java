@@ -9,7 +9,6 @@ import org.occideas.interview.dao.InterviewDao;
 import org.occideas.mapper.InterviewMapper;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
-import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -116,5 +115,10 @@ public class InterviewServiceImpl implements InterviewService {
 	        List<InterviewVO> list = new ArrayList<InterviewVO>();
 	        list.add(InterviewVO);
 	        return list;
+	}
+	@Override
+	public InterviewVO findInterviewWithFiredRulesById(Long id) {
+		Interview interview = interviewDao.get( id);
+		return mapper.convertToInterviewVOWithFiredRules(interview);
 	}
 }
