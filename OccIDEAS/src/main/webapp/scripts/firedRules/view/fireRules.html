@@ -1,0 +1,83 @@
+<div ng-cloak>
+<div class="row" style="margin-top:2px;margin-bottom:2px;">
+	<div class="col-md-4">
+	<button class="form-control" ng-click="vm.runFiredRulesBtn()">Run Fired Rules</button>
+	</div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+  	<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Question/Answer</div>
+  <div class="panel-body">
+    <div >
+      <ul class="list-group">
+        <li ng-repeat="question in data" class="list-group-item borderless" 
+        	ng-class="{borderless:question.type == 'M_IntroModule' || question.type == 'Q_linkedajsm'
+        				|| (question.type == null && question.nodeClass != 'Q'),
+        				moduleGap: question.type == 'M_IntroModule' || question.type == 'Q_linkedajsm'
+        				|| question.type == null, 
+        			  questionGap: question.type == 'Q_simple' || question.type=='Q_multiple' 
+				|| question.type=='Q_single' || question.type=='Q_frequency' 
+				|| (question.type == null && question.nodeClass == 'Q')}"
+			>
+			<div>
+				<span class="badge" ng-if="question.type == 'M_IntroModule' || (question.type == null && question.nodeClass != 'Q')">Module</span>
+				<span class="badge label-primary" ng-if="question.type == 'Q_simple' || question.type=='Q_multiple' 
+				|| question.type=='Q_single' || question.type=='Q_frequency' || (question.type == null && question.nodeClass == 'Q')">Question</span>
+				<span class="badge" ng-if="question.type == 'Q_linkedajsm'">AJSM</span>
+				{{question.name}}
+			</div>
+				<ul class="list-group" style="margin-bottom: 2px;">
+    				<li class="list-group-item borderless answerGap" ng-repeat="answer in question.answers">
+    					<div>
+    						<span class="badge">Answer</span>
+            				{{answer.name}}
+         				 </div>				
+    				</li>
+  				</ul>
+		</li>
+      </ul>
+    </div>
+    </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+  	<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Fired Rules</div>
+  <div class="panel-body">
+    <div >
+    	 <ul class="list-group">
+        <li class="list-group-item">
+			<div>
+				<span class="badge">Module</span> Intro Module
+			</div>
+				<ul class="list-group">
+    				<li class="list-group-item">
+    					<div>
+            				<span class="badge">Agent</span> Solvents
+            				<table class="table">
+    							<tr>
+								<th>Name</th>
+								<th>Level</th>
+								</tr>
+								<tr>
+								<td>Benzene</td>
+								<td>High</td>
+								</tr>  						
+    						</table>
+         				 </div>		
+         				 <ul>
+  				</ul>		
+    				</li>
+  				</ul>
+		</li>
+      </ul>
+    	
+    </div>
+    </div>
+    </div>
+  </div>
+</div>
+</div>

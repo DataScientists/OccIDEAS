@@ -32,7 +32,8 @@ angular
     "occIDEASApp.ModuleRule",
     "occIDEASApp.Login",
     "occIDEASApp.Logout",
-    "occIDEASApp.Admin"
+    "occIDEASApp.Admin",
+    "occIDEASApp.FiredRules"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
@@ -121,6 +122,7 @@ angular
                 }
             }
           });
+        
    }
    
    ErrorHandler.$inject = ['$injector','$window','$location'];
