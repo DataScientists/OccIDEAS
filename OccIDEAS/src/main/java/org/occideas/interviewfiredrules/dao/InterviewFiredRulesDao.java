@@ -24,7 +24,7 @@ public class InterviewFiredRulesDao {
 	
 	public List<InterviewFiredRules> findByInterviewId(Long interviewId) {
         final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(InterviewQuestion.class);
+        final Criteria crit = session.createCriteria(InterviewFiredRules.class);
         if (interviewId != null) {
             crit.add(Restrictions.eq("idinterview", interviewId));
         }

@@ -180,7 +180,6 @@
 		}
 		self.tableParams = new NgTableParams(
 				{
-					group: "idParticipant"
 				}, 
 				{	
 					getData: function(params) {

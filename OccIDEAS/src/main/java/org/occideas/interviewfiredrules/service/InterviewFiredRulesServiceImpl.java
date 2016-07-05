@@ -50,7 +50,7 @@ public class InterviewFiredRulesServiceImpl implements InterviewFiredRulesServic
 	@Override
 	public List<InterviewFiredRulesVO> findByInterviewId(Long interviewId) {
 		List<InterviewFiredRules> entity = dao.findByInterviewId(interviewId);
-		return mapper.convertToInterviewFiredRulesVOList(entity);
+		return mapper.convertToInterviewFiredRulesVOWithRulesList(entity);
 	}
 
 

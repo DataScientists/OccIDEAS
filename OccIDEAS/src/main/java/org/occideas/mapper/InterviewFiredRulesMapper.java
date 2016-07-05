@@ -13,4 +13,10 @@ public interface InterviewFiredRulesMapper {
 	
 	InterviewFiredRules convertToInterviewFiredRules(InterviewFiredRulesVO vo);
 	
+	InterviewFiredRulesVO convertToInterviewFiredRulesVOWithRules(InterviewFiredRules entity);
+	
+	List<InterviewFiredRulesVO> convertToInterviewFiredRulesVOWithRulesList(List<InterviewFiredRules> entity);
+	
+	
+	
 }
