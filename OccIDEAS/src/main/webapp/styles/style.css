@@ -1201,3 +1201,22 @@ li.borderless {
 .answerGap .badge{
 	background-color:#32CD32 !important;
 }
+
+.firedrules_probLow{
+	background: #ffff00;
+}
+.firedrules_probMedium{
+	background: #ffa500;
+}
+.firedrules_noExposure{
+	background: #e5e5e5;
+}
+.firedrules_possUnknown{
+	background: #add8e6;
+}
+.firedrules_probHigh{
+	background: #ff0000;
+}
+.firedrules_probUnknown{
+	background: #ffc0cb;
+}

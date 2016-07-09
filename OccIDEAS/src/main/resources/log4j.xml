@@ -27,7 +27,7 @@
 		<level value="ERROR" />
 		<appender-ref ref="console" />
 	</logger>
-	<logger name="org.hibernate" additivity="false">
+	<logger name="org.hibernate.SQL" additivity="false">
 		<level value="ERROR" />
 		<appender-ref ref="console" />
 	</logger>

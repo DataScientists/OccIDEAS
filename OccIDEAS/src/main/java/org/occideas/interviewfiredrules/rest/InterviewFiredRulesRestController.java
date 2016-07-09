@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.interviewfiredrules.service.InterviewFiredRulesService;
+import org.occideas.vo.GenericNodeVO;
 import org.occideas.vo.InterviewFiredRulesVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -43,5 +44,19 @@ public class InterviewFiredRulesRestController {
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
+	}
+	
+	@GET
+	@Path(value="/findNodeById")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response findNodeById(@QueryParam("id") Long id) {
+		GenericNodeVO vo = null;
+		try{
+			vo = service.findNodeById(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(vo).build();
 	}
 }

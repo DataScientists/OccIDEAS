@@ -7,21 +7,21 @@
 			field-separator=","></button>
 		<table ng-table="vm.tableParams"
 			class="table table-condensed table-bordered table-striped">
-			<tr>
-				<td>THIS FUNCTION IS IN PROGRESS AND WILL BE AVAILABLE SOON.</td>
-			</tr>
-			<!-- 				<tr ng-repeat="participant in $data"> -->
-			<!-- 					<td title="'idParticipant'"> -->
-			<!-- 						{{participant.idParticipant}}</td> -->
-			<!-- 					<td title="'referenceNumber'">{{participant.interviews[0].referenceNumber}}</td> -->
-			<!-- 					<td title="'interviewId'">{{participant.interviews[0].interviewId}}</td> -->
-			<!-- 					<td> -->
-			<!-- 						<button class="btn btn-default btn-sm" -->
-			<!-- 							ng-click="vm.openFiredRules(participant.interviews[0].interviewId)"> -->
-			<!-- 							<span class="glyphicon glyphicon-folder-open"></span> -->
-			<!-- 						</button> -->
-			<!-- 					</td> -->
-			<!-- 				</tr> -->
+<!-- 			<tr> -->
+<!-- 				<td>THIS FUNCTION IS IN PROGRESS AND WILL BE AVAILABLE SOON.</td> -->
+<!-- 			</tr> -->
+							<tr ng-repeat="participant in $data">
+								<td title="'idParticipant'">
+									{{participant.idParticipant}}</td>
+								<td title="'referenceNumber'">{{participant.interviews[0].referenceNumber}}</td>
+								<td title="'interviewId'">{{participant.interviews[0].interviewId}}</td>
+								<td>
+									<button class="btn btn-default btn-sm"
+										ng-click="vm.openFiredRules(participant.interviews[0].interviewId)">
+										<span class="glyphicon glyphicon-folder-open"></span>
+									</button>
+								</td>
+							</tr>
 		</table>
 	</div>
 </div>

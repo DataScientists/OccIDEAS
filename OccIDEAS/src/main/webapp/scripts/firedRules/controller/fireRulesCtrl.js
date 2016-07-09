@@ -2,10 +2,10 @@
 	angular.module('occIDEASApp.FiredRules').controller('FiredRulesCtrl',
 			FiredRulesCtrl);
 
-	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService'];
-	function FiredRulesCtrl($scope, data,FiredRulesService) {
+	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout'];
+	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout) {
 		var vm = this;
-		vm.firedRulesByModule = [{}];
+		vm.firedRulesByModule = [];
 		vm.getFiredRulesByInterviewId = function(interviewId){
 			FiredRulesService.getByInterviewId(interviewId).then(function(response){
 				if(response.status == '200'){
@@ -17,34 +17,54 @@
 						_.each(data.rules,function(rules){
 							var condition = rules.conditions[0];
 							if(condition){
-								//find module details by idNode
-								var module = _.find($scope.data,function(questions){
-									return questions.idNode = condition.topNodeId;
-								});
-								if(!vm.firedRulesByModule[module.idNode]){
-									vm.firedRulesByModule[module.idNode] = {
-											name:module.name,
-											firedRules:[{}]
-									}
-								}
+								FiredRulesService.findNodeById(condition.topNodeId)
+									.then(function(response){
+										if(response.status == 200){
+											//find module details by idNode
+											var module = response.data;
+											var existingModule = _.find(vm.firedRulesByModule,function(mod){
+												return mod.idNode == module.idNode;
+											});
+											if(!existingModule){
+												existingModule = {
+														idNode:module.idNode,
+														name:module.name,
+														firedRules:[]
+												}; 
+												vm.firedRulesByModule.push(existingModule);
+											}
+										
+										// check if agent has already been registered
+										// otherwise register agentId
+										// this is to group it by agent
+										var existingAgent = _.find(existingModule.firedRules,function(agent){
+											return agent.idAgent == rules.agent.agentGroup.idAgent;
+										});
+										if(!existingAgent){
+											existingAgent = {
+													idAgent:rules.agent.agentGroup.idAgent,
+													child:[],
+													agentGroupName:rules.agent.agentGroup.name
+											};
+											existingModule.firedRules.push(existingAgent);
+										}
+										//make sure we dont get duplicate
+										var existingRule = _.find(existingAgent.child,function(exRule){
+											return rules.idRule == exRule.idRule;
+										});
+										if(!existingRule){
+										existingAgent.child.push({
+											agentName:rules.agent.name,
+											idRule:rules.idRule,
+											level:rules.level,
+											levelValue:rules.levelValue,
+											conditions:rules.conditions
+										});
+										}
+										}
+									});
+								
 							}
-							// check if agent has already been registered
-							// otherwise register agentId
-							// this is to group it by agent
-							if(!vm.firedRulesByModule[module.idNode].firedRules[rules.agent.idAgent]){
-								vm.firedRulesByModule[module.idNode].firedRules[rules.agent.idAgent] = {
-										child:[],
-										agentGroupName:rules.agent.agentGroup.name
-								};
-							}
-							vm.firedRulesByModule[module.idNode].firedRules[rules.agent.idAgent].child.push({
-								agentName:rules.agent.name,
-								idRule:rules.idRule,
-								level:rules.level,
-								levelValue:rules.levelValue,
-								conditions:rules.conditions
-							});
-							
 						});
 					});
 				}
@@ -73,7 +93,6 @@
 											};
 											FiredRulesService.save(firedRule).then(function(response){
 												if(response.status == '200'){
-													alert("Fired Rules was successful");
 												}
 											});
 											}
@@ -84,6 +103,9 @@
 						});
 				})
 			});
+			$timeout(function() {
+				vm.getFiredRulesByInterviewId(data[0].interviewId);
+            }, 2000);
 		}
 		
 

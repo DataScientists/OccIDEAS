@@ -1,7 +1,10 @@
 <div ng-cloak>
 <div class="row" style="margin-top:2px;margin-bottom:2px;">
 	<div class="col-md-4">
-	<button class="form-control" ng-click="vm.runFiredRulesBtn()">Run Fired Rules</button>
+	<button class="form-control btn btn-default" ng-click="vm.runFiredRulesBtn()">
+		<span ng-if="vm.firedRulesByModule.length == 0">Run Fired Rules</span>
+		<span ng-if="vm.firedRulesByModule.length > 0">Rerun Fired Rules</span>
+	</button>
 	</div>
 </div>
 <div class="row">
@@ -49,22 +52,24 @@
   <div class="panel-body">
     <div >
     	 <ul class="list-group">
-        <li class="list-group-item">
+        <li class="list-group-item" ng-repeat="mod in vm.firedRulesByModule">
 			<div>
-				<span class="badge">Module</span> Intro Module
+				<span class="badge">Module</span> {{mod.name}}
 			</div>
 				<ul class="list-group">
-    				<li class="list-group-item">
+    				<li class="list-group-item" ng-repeat="agent in mod.firedRules | orderBy:'agentName'">
     					<div>
-            				<span class="badge">Agent</span> Solvents
-            				<table class="table">
+            				<span class="badge">Agent</span> {{agent.agentGroupName}}
+            				<table class="table table-bordered table-hover">
     							<tr>
+								<th>Id Rule</th>
 								<th>Name</th>
 								<th>Level</th>
 								</tr>
-								<tr>
-								<td>Benzene</td>
-								<td>High</td>
+								<tr ng-repeat="rules in agent.child | orderBy:'agentName'" class="firedrules_{{rules.level}}">
+								<td>{{rules.idRule}}</td>
+								<td>{{rules.agentName}}</td>
+								<td>{{rules.level}}</td>
 								</tr>  						
     						</table>
          				 </div>		

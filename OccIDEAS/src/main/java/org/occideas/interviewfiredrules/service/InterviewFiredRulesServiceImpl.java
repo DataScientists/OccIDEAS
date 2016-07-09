@@ -3,8 +3,11 @@ package org.occideas.interviewfiredrules.service;
 import java.util.List;
 
 import org.occideas.entity.InterviewFiredRules;
+import org.occideas.genericnode.dao.GenericNodeDao;
 import org.occideas.interviewfiredrules.dao.InterviewFiredRulesDao;
+import org.occideas.mapper.GenericNodeMapper;
 import org.occideas.mapper.InterviewFiredRulesMapper;
+import org.occideas.vo.GenericNodeVO;
 import org.occideas.vo.InterviewFiredRulesVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,10 @@ public class InterviewFiredRulesServiceImpl implements InterviewFiredRulesServic
 	private InterviewFiredRulesDao dao;
 	@Autowired
 	private InterviewFiredRulesMapper mapper;
+	@Autowired
+	private GenericNodeMapper genNodeMapper;
+	@Autowired
+	private GenericNodeDao genNodeDao;
 	
 	@Override
 	public List<InterviewFiredRulesVO> listAll() {
@@ -51,6 +58,11 @@ public class InterviewFiredRulesServiceImpl implements InterviewFiredRulesServic
 	public List<InterviewFiredRulesVO> findByInterviewId(Long interviewId) {
 		List<InterviewFiredRules> entity = dao.findByInterviewId(interviewId);
 		return mapper.convertToInterviewFiredRulesVOWithRulesList(entity);
+	}
+
+	@Override
+	public GenericNodeVO findNodeById(long idNode) {
+		return genNodeMapper.convertToGenNodeVO(genNodeDao.get(idNode));
 	}
 
 

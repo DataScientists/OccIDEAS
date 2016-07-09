@@ -32,7 +32,14 @@
 			return request.then(handleSuccess, handleError);
 		}
 		
-		
+		function findNodeById(id){
+			var restURL = 'web/rest/interviewfiredrules/findNodeById?id=' + id;
+			var request = $http({
+				method : 'GET',
+				url : restURL
+			})
+			return request.then(handleSuccess, handleError);
+		}
 		
 		function handleError(response) {
 			if (!angular.isObject(response.data) || !response.data.message) {
@@ -48,7 +55,8 @@
 		return {
 			save : save,
 			getAnswerWithModuleRule:getAnswerWithModuleRule,
-			getByInterviewId:getByInterviewId
+			getByInterviewId:getByInterviewId,
+			findNodeById:findNodeById
 		};
 	}
 })();
