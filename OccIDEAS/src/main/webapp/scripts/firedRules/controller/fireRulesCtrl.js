@@ -6,10 +6,12 @@
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout) {
 		var vm = this;
 		vm.firedRulesByModule = [];
+		vm.interviewFiredRules = null;
 		vm.getFiredRulesByInterviewId = function(interviewId){
 			FiredRulesService.getByInterviewId(interviewId).then(function(response){
 				if(response.status == '200'){
 					var interviewFiredRules = response.data;
+					vm.interviewFiredRules = interviewFiredRules;
 					//loop to each fired rules and construct object to be used by the
 					//view
 					_.each(interviewFiredRules,function(data){
@@ -91,6 +93,14 @@
 												idinterview:answer.idInterview,
 												idRule:moduleRule.rule.idRule
 											};
+											if(vm.interviewFiredRules){
+												var firedRuleExist = _.find(vm.interviewFiredRules,function(firedrule){
+													return firedrule.idRule == moduleRule.rule.idRule;
+												});
+												if(firedRuleExist){
+													firedRule.id = firedRuleExist.id;
+												}
+											}
 											FiredRulesService.save(firedRule).then(function(response){
 												if(response.status == '200'){
 												}
