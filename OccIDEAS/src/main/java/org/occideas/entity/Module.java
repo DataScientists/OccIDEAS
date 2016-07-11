@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -19,7 +19,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Where;
 
 @Entity
-@Table(name="Node")
+@DiscriminatorValue("M")
 @DynamicUpdate(value=true)
 @DynamicInsert(value=true)
 @SelectBeforeUpdate(value=true)

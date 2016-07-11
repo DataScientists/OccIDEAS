@@ -18,7 +18,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
 @Entity
-@Table(name = "interview_firedrules")
+@Table(name = "Interview_FiredRules")
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
