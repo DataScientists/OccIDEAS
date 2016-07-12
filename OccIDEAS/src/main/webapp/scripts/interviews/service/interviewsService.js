@@ -14,7 +14,7 @@
         }
         
         function getInterviewWithFiredRules(idNode){
-        	var restURL = 'web/rest/interview/getInterviewWithFiredRules>id='+idNode;
+        	var restURL = 'web/rest/interview/getInterviewWithFiredRules?id='+idNode;
         	var request = $http({
                 method: 'GET',
                 url: restURL

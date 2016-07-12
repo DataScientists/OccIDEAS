@@ -100,5 +100,10 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
     public InterviewQuestionVO updateInterviewLinkAndQueueQuestions(InterviewQuestionVO o) {
         return mapper.convertToInterviewQuestionVO(dao.saveInterviewLinkAndQueueQuestions(mapper.convertToInterviewQuestion(o)));
     }
+
+	@Override
+	public Long getMaxIntQuestionSequence(long idInterview) {
+		return dao.getMaxIntQuestionSequence(idInterview);
+	}
 	
 }

@@ -7,6 +7,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.InterviewQuestion;
@@ -64,7 +66,7 @@ public class InterviewQuestionDao {
     public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq){
     	iq.setProcessed(true);
     	sessionFactory.getCurrentSession().saveOrUpdate(iq);
-    	int intQuestionSequence = 1;
+    	int intQuestionSequence = iq.getIntQuestionSequence();
     	long parentModuleId = iq.getLink();
         List<QuestionVO> queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
         Collections.sort(queueQuestions); 
@@ -82,9 +84,9 @@ public class InterviewQuestionDao {
         	iqQueue.setParentModuleId(question.getTopNodeId());
         	iqQueue.setQuestionId(question.getIdNode());
         	iqQueue.setTopNodeId(question.getTopNodeId());
-        	iqQueue.setIntQuestionSequence(intQuestionSequence);
+        	iqQueue.setIntQuestionSequence(++intQuestionSequence);
         	iqQueue.setDeleted(0);
-			intQuestionSequence++;
+//			intQuestionSequence++;
 			sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
 			
         }
@@ -139,4 +141,14 @@ public class InterviewQuestionDao {
 		return list.get(0);
 	}
     
+	public Long getMaxIntQuestionSequence(long idInterview) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class)
+				.add(Restrictions.eq("idInterview", idInterview))
+				.addOrder(Order.desc("intQuestionSequence"))
+				.setMaxResults(1)
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("intQuestionSequence"),"intQuestionSequence"));
+		return (Long)crit.uniqueResult();
+	}
 }

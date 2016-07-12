@@ -134,10 +134,6 @@
 		}
 				
 		function populateInteviewQuestionJsonByQuestion(interview, question) {
-			var intQuestionSeq = 1;
-			if(interview.questionHistory){
-				intQuestionSeq = interview.questionHistory.length+1;
-			}
 			var parentModuleId = undefined;
 			var parentAnswerId = undefined;
 			
@@ -160,16 +156,13 @@
 				modCount : question.modCount,
 				type : question.type,
 				link : question.link,
-				intQuestionSequence : intQuestionSeq,
+				intQuestionSequence : intQuestionSeq++,
 				deleted : 0,
 				answers : []
 			};
 		}
+		var intQuestionSeq = 1;
 		function populateInteviewQuestionJsonByModule(interview, module) {
-			var intQuestionSeq = 1;
-			if(interview.questionHistory){
-				intQuestionSeq = interview.questionHistory.length+1;
-			}
 			return {
 				idInterview : interview.interviewId,
 				topNodeId : module.idNode,
@@ -183,16 +176,12 @@
 				type : module.type,
 				link : module.idNode,
 				modCount : 1,
-				intQuestionSequence : intQuestionSeq,
+				intQuestionSequence : intQuestionSeq++,
 				deleted : 0,
 				answers : []
 			};
 		}
 		function populateInteviewQuestionJsonByLinkedQuestion(interview, linkedQuestion) {
-			var intQuestionSeq = 1;
-			if(interview.questionHistory){
-				intQuestionSeq = interview.questionHistory.length+1;
-			}
 			var modCount = 1;
 			if(interview.questionHistory){
 				_.each(interview.questionHistory,function(question){
@@ -200,7 +189,6 @@
 						modCount = modCount ;
 					}
 				})
-				intQuestionSeq = interview.questionHistory.length+1;
 			}
 			return {
 				id:linkedQuestion.id,
@@ -215,7 +203,7 @@
 				number : '1',
 				type : linkedQuestion.type,
 				link : linkedQuestion.link,
-				intQuestionSequence : intQuestionSeq,
+				intQuestionSequence : intQuestionSeq++,
 				modCount : modCount,
 				deleted : 0,
 				answers : []

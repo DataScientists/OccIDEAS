@@ -15,5 +15,6 @@ public interface InterviewQuestionService extends BaseService<InterviewQuestionV
 	InterviewQuestionVO updateInterviewLinkAndQueueQuestions(InterviewQuestionVO o);
 
 	List<InterviewQuestionVO> updateIntQs(List<InterviewQuestionVO> o);
-
+	
+	Long getMaxIntQuestionSequence(long idInterview);
 }
