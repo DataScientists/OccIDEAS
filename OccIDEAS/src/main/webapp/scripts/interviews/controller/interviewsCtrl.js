@@ -341,7 +341,7 @@
 					var actualAnswer = populateInterviewAnswerJsonByAnswer(interview, answer);
 					actualAnswer.interviewQuestionId = newQuestionAsked.id;
 					
-					newQuestionAsked.answers.push(actualAnswer);
+					newQuestionAsked.answers.unshift(actualAnswer);
 				}			
 			});	
 			var defer = $q.defer();
