@@ -91,7 +91,7 @@
 				participant.status = 0;//running
 				$rootScope.saveParticipant(participant);
 			}
-			
+			refreshInterviewDisplay($scope.interview.interviewId);
 			refreshDisplay();
 			var question = findNextQuestionQueued($scope.interview);
 			if(question){										
@@ -229,6 +229,7 @@
 		function processInterviewQuestionWithMultipleAnswersEdit(interview, node) {
 			buildAndEditMultipleQuestion(interview, node);
 			$mdDialog.cancel();
+			refreshInterviewDisplay($scope.interview.interviewId);
 			refreshDisplay();
 		}
 		function processInterviewQuestionWithMultipleAnswersNew(interview, node) {
@@ -240,11 +241,13 @@
 		function processEditInterviewQuestionNew(interview, node) {
 			buildAndEditQuestionNew(interview, node);
 			$mdDialog.cancel();
+			refreshInterviewDisplay($scope.interview.interviewId);
 			refreshDisplay();
 		}
 		function processFrequencyNewEdit(interview, node) {
 			buildAndEditFrequency(interview, node);
 			$mdDialog.cancel();
+			refreshInterviewDisplay($scope.interview.interviewId);
 			refreshDisplay();
 		}
 		function processFrequencyNew(interview, node) {
@@ -310,6 +313,7 @@
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
+						saveInterviewDisplay(newQuestionAsked);
 						var answer = newQuestionAsked.answers[0];
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
@@ -351,6 +355,7 @@
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
+						saveInterviewDisplay(newQuestionAsked);
 						var answer = newQuestionAsked.answers[0];
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
@@ -566,6 +571,7 @@
 					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 						if (response.status === 200) {
 							console.log("Saved Interview q:"+newQuestionAsked.questionId);
+							saveInterviewDisplay(newQuestionAsked);
 							var defer1 = $q.defer();
 							deleteAnswers(answersToDelete,defer1);
 							defer1.promise.then(function(){
@@ -648,6 +654,7 @@
 					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 						if (response.status === 200) {
 							console.log("Saved Interview q:"+newQuestionAsked.questionId);
+							saveInterviewDisplay(newQuestionAsked);
 							var defer1 = $q.defer();
 							deleteAnswers(answersToDelete,defer1);
 							defer1.promise.then(function(){
@@ -700,6 +707,7 @@
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
+						saveInterviewDisplay(newQuestionAsked);
 						var answer = newQuestionAsked.answers[0];
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
@@ -948,7 +956,7 @@
 					InterviewsService.startInterview(interview).then(function(response) {
 						if (response.status === 200) {
 							interview.interviewId = response.data.interviewId;
-							
+							refreshInterviewDisplay(interview.interviewId);
 							var copyParticipant = angular.copy($scope.participant);
 							interview.participant = copyParticipant;
 							$scope.interview = {};
@@ -1059,6 +1067,63 @@
 			})
 			return question;
 		}
+		
+		function refreshInterviewDisplay(interviewId){
+			InterviewsService.getIntDisplay(interviewId).then(function(response){
+				if(response.status == 200){
+					$scope.answeredQuestion = response.data;
+				}
+			});
+		}
+		
+		var displaySequence = 0;
+		function saveInterviewDisplay(question){
+			// get highest sequence for this interview and increment
+			var maxSequence = 
+				_.maxBy($scope.answeredQuestion, function(o) { return o.sequence; });
+			if(maxSequence){
+				displaySequence = maxSequence.sequence;
+			}
+			// get the header by matching topNodeId to link
+			var header = "";
+			var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+				  var retValue = false;
+				  if(qnode.link){
+					  if(qnode.link == question.topNodeId){
+						  retValue = true;
+				  }
+				  }
+				  return retValue;
+			  });
+			  if(linkNode){
+				  header = linkNode.name.substr(0,4);
+			  } 
+			
+			var answeredQuestion = {
+//					id:,
+					idInterview:question.idInterview,
+					number:question.number,
+					name:question.name,
+					type:question.type,
+					questionId:question.questionId,
+					sequence:++displaySequence,
+					header:header,
+					parentModuleId:question.parentModuleId,
+					topNodeId:question.topNodeId,
+					parentAnswerId:question.parentAnswerId,
+					link:question.link,
+					description:question.description,
+					nodeClass:question.nodeClass,
+					deleted:0
+			};
+			InterviewsService.saveIntDisplay(answeredQuestion).then(function(response){
+				if(response.status == 200){
+					refreshInterviewDisplay(question.idInterview);
+				}
+			});
+		}
+		
+		// might need to deprecate below
 		function refreshDisplay(){
 			$scope.displayHistory = angular.copy($scope.interview.questionHistory);
 			/*_.remove($scope.displayHistory, function(node) {
@@ -1071,7 +1136,7 @@
 					  if(qnode.link){
 						  if(qnode.link == node.topNodeId){
 							  retValue = true;
-						  }
+					  }
 					  }
 					  return retValue;
 				  });

@@ -10,14 +10,19 @@ public class InterviewDisplayVO {
 
 	private long id;
 	private long idInterview;
-	private long idNode;
 	private String number;
 	private String name;
 	private String type;
 	private long questionId;
 	private Integer sequence;
-	private Integer count;
 	private Integer deleted;
+	private String header;
+	private long parentModuleId;
+	private long topNodeId;
+	private long parentAnswerId;
+	private long link;
+	private String description;
+	private String nodeClass;
 	private List<InterviewAnswerVO> answers;
 	private Date lastUpdated;
 
@@ -35,14 +40,6 @@ public class InterviewDisplayVO {
 
 	public void setIdInterview(long idInterview) {
 		this.idInterview = idInterview;
-	}
-
-	public long getIdNode() {
-		return idNode;
-	}
-
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
 	}
 
 	public String getName() {
@@ -67,14 +64,6 @@ public class InterviewDisplayVO {
 
 	public void setQuestionId(long questionId) {
 		this.questionId = questionId;
-	}
-
-	public Integer getCount() {
-		return count;
-	}
-
-	public void setCount(Integer count) {
-		this.count = count;
 	}
 
 	public Integer getDeleted() {
@@ -115,6 +104,62 @@ public class InterviewDisplayVO {
 
 	public void setNumber(String number) {
 		this.number = number;
+	}
+
+	public String getHeader() {
+		return header;
+	}
+
+	public void setHeader(String header) {
+		this.header = header;
+	}
+
+	public long getParentModuleId() {
+		return parentModuleId;
+	}
+
+	public void setParentModuleId(long parentModuleId) {
+		this.parentModuleId = parentModuleId;
+	}
+
+	public long getTopNodeId() {
+		return topNodeId;
+	}
+
+	public void setTopNodeId(long topNodeId) {
+		this.topNodeId = topNodeId;
+	}
+
+	public long getParentAnswerId() {
+		return parentAnswerId;
+	}
+
+	public void setParentAnswerId(long parentAnswerId) {
+		this.parentAnswerId = parentAnswerId;
+	}
+
+	public long getLink() {
+		return link;
+	}
+
+	public void setLink(long link) {
+		this.link = link;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getNodeClass() {
+		return nodeClass;
+	}
+
+	public void setNodeClass(String nodeClass) {
+		this.nodeClass = nodeClass;
 	}
 
 }

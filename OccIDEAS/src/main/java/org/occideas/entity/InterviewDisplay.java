@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
-import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "Interview_Display")
@@ -37,9 +36,6 @@ public class InterviewDisplay implements java.io.Serializable {
 	@Column(name = "idinterview")
 	private long idinterview;
 
-	@Column(name = "idNode")
-	private long idNode;
-
 	@Column(name = "name")
 	private String name;
 
@@ -52,23 +48,37 @@ public class InterviewDisplay implements java.io.Serializable {
 	@Column(name = "question_id")
 	private long questionId;
 
-	@Column(name = "count")
-	private Integer count;
-
 	@Column(name = "deleted")
 	private Integer deleted;
 
 	@Column(name = "sequence")
 	private Integer sequence;
 
+	@Column(name = "header")
+	private String header;
+
+	@Column(name = "parentModuleId")
+	private long parentModuleId;
+
+	@Column(name = "topNodeId")
+	private long topNodeId;
+
+	@Column(name = "parentAnswerId")
+	private long parentAnswerId;
+
+	@Column(name = "link")
+	private long link;
+
+	@Column(name = "description")
+	private String description;
+
+	@Column(name = "nodeClass")
+	private String nodeClass;
+
 	@OneToMany(fetch = FetchType.LAZY)
-	@Where(clause = "deleted = 0")
-	@JoinColumns({ @JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id"
-				,insertable=false,updatable=false),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview"
-				,insertable=false,updatable=false),
-			@JoinColumn(name = "modCount", referencedColumnName = "count"
-			,insertable=false,updatable=false)})
+	@JoinColumns({
+			@JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id", insertable = false, updatable = false),
+			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false) })
 	private List<InterviewAnswer> answers;
 
 	@Column(name = "lastUpdated")
@@ -88,14 +98,6 @@ public class InterviewDisplay implements java.io.Serializable {
 
 	public void setIdInterview(long idinterview) {
 		this.idinterview = idinterview;
-	}
-
-	public long getIdNode() {
-		return idNode;
-	}
-
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
 	}
 
 	public String getName() {
@@ -134,14 +136,6 @@ public class InterviewDisplay implements java.io.Serializable {
 		return lastUpdated;
 	}
 
-	public Integer getCount() {
-		return count;
-	}
-
-	public void setCount(Integer count) {
-		this.count = count;
-	}
-
 	public List<InterviewAnswer> getAnswers() {
 		return answers;
 	}
@@ -168,6 +162,70 @@ public class InterviewDisplay implements java.io.Serializable {
 
 	public void setNumber(String number) {
 		this.number = number;
+	}
+
+	public String getHeader() {
+		return header;
+	}
+
+	public void setHeader(String header) {
+		this.header = header;
+	}
+
+	public long getIdinterview() {
+		return idinterview;
+	}
+
+	public void setIdinterview(long idinterview) {
+		this.idinterview = idinterview;
+	}
+
+	public long getParentModuleId() {
+		return parentModuleId;
+	}
+
+	public void setParentModuleId(long parentModuleId) {
+		this.parentModuleId = parentModuleId;
+	}
+
+	public long getTopNodeId() {
+		return topNodeId;
+	}
+
+	public void setTopNodeId(long topNodeId) {
+		this.topNodeId = topNodeId;
+	}
+
+	public long getParentAnswerId() {
+		return parentAnswerId;
+	}
+
+	public void setParentAnswerId(long parentAnswerId) {
+		this.parentAnswerId = parentAnswerId;
+	}
+
+	public long getLink() {
+		return link;
+	}
+
+	public void setLink(long link) {
+		this.link = link;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getNodeClass() {
+		return nodeClass;
+	}
+
+	public void setNodeClass(String nodeClass) {
+		this.nodeClass = nodeClass;
 	}
 
 }

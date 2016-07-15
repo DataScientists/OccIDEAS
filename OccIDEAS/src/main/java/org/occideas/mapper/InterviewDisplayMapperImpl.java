@@ -21,16 +21,21 @@ public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 		}
 		InterviewDisplayVO vo = new InterviewDisplayVO();
 		vo.setId(entity.getId());
-		vo.setCount(entity.getCount());
 		vo.setDeleted(entity.getDeleted());
 		vo.setIdInterview(entity.getIdInterview());
-		vo.setIdNode(entity.getIdNode());
 		vo.setLastUpdated(entity.getLastUpdated());
 		vo.setName(entity.getName());
 		vo.setNumber(entity.getNumber());
 		vo.setQuestionId(entity.getQuestionId());
 		vo.setType(entity.getType());
 		vo.setSequence(entity.getSequence());
+		vo.setHeader(entity.getHeader());
+		vo.setTopNodeId(entity.getTopNodeId());
+		vo.setParentModuleId(entity.getParentModuleId());
+		vo.setParentAnswerId(entity.getParentAnswerId());
+		vo.setLink(entity.getLink());
+		vo.setDescription(entity.getDescription());
+		vo.setNodeClass(entity.getNodeClass());
 		if(entity.getQuestionId() != 0L){
 			vo.setAnswers(mapper.convertToInterviewAnswerVOList(entity.getAnswers()));
 		}
@@ -58,17 +63,22 @@ public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 		}
 				
 		InterviewDisplay entity = new InterviewDisplay();
-		entity.setCount(vo.getCount());
 		entity.setDeleted(vo.getDeleted());
 		entity.setId(vo.getId());
 		entity.setIdInterview(vo.getIdInterview());
-		entity.setIdNode(vo.getIdNode());
 		entity.setLastUpdated(vo.getLastUpdated());
 		entity.setName(vo.getName());
 		entity.setNumber(vo.getNumber());
 		entity.setQuestionId(vo.getQuestionId());
 		entity.setType(vo.getType());
 		entity.setSequence(vo.getSequence());
+		entity.setHeader(vo.getHeader());
+		entity.setLink(vo.getLink());
+		entity.setParentModuleId(vo.getParentModuleId());
+		entity.setParentAnswerId(vo.getParentAnswerId());
+		entity.setTopNodeId(vo.getTopNodeId());
+		entity.setDescription(vo.getDescription());
+		entity.setNodeClass(vo.getNodeClass());
 		if(vo.getQuestionId() != 0L){
 			entity.setAnswers(mapper.convertToInterviewAnswerList(vo.getAnswers()));
 		}
