@@ -8,42 +8,40 @@
 	</div>
 </div>
 <div class="row">
-  <div class="col-md-6">
-  	<div class="panel panel-default">
-  <!-- Default panel contents -->
-  <div class="panel-heading">Question/Answer</div>
-  <div class="panel-body">
-    <div >
-      <ul class="list-group">
-        <li ng-repeat="question in data" class="list-group-item borderless" 
-        	ng-class="{borderless:question.type == 'M_IntroModule' || question.type == 'Q_linkedajsm'
-        				|| (question.type == null && question.nodeClass != 'Q'),
-        				moduleGap: question.type == 'M_IntroModule' || question.type == 'Q_linkedajsm'
-        				|| question.type == null, 
-        			  questionGap: question.type == 'Q_simple' || question.type=='Q_multiple' 
-				|| question.type=='Q_single' || question.type=='Q_frequency' 
-				|| (question.type == null && question.nodeClass == 'Q')}"
-			>
-			<div>
-				<span class="badge" ng-if="question.type == 'M_IntroModule' || (question.type == null && question.nodeClass != 'Q')">Module</span>
-				<span class="badge label-primary" ng-if="question.type == 'Q_simple' || question.type=='Q_multiple' 
-				|| question.type=='Q_single' || question.type=='Q_frequency' || (question.type == null && question.nodeClass == 'Q')">Question</span>
-				<span class="badge" ng-if="question.type == 'Q_linkedajsm'">AJSM</span>
-				{{question.name}}
+  <div class="col-md-6" id="interview-question-list">
+  	<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in answeredQuestion">
+			<div class="angular-ui-tree">
+				<div class="tree-node">
+					<div id="questionlist-{{element.questionId}}" class="tree-node-content Q_interviewresult {{element.link ? 'Q_link':''}} {{element.processed ? 'Q_processed':''}}">
+						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
+							<span ng-if="element.deleted" class="badge-deleted" title="deleted">
+								&nbsp;
+							</span>
+							<span class="badge">
+								{{element.header}}
+							</span>
+							<span class="badge" title="qid:{{element.questionId}}">
+								{{element.number}}
+							</span>
+							
+						</div>
+						<span id="{{'IntResult'+element.idNode}}">{{ element.name }}</span>
+					</div>
+					<!-- 			show answers -->
+					<div class="tree-node-content P_interviewresult" ng-class="{'on': selected==as.answerId}" ng-repeat="as in element.answers | orderBy:orderByNumber">
+						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
+							<span ng-if="as.deleted" class="badge-deleted" title="deleted">
+								&nbsp;
+							</span>
+							<span class="badge">{{as.number}}</span>
+							
+						</div>
+						<span id="{{'IntResult'+as.idNode}}">{{as.answerFreetext?as.answerFreetext:as.name}}
+						</span>
+					</div>
+				</div>
 			</div>
-				<ul class="list-group" style="margin-bottom: 2px;">
-    				<li class="list-group-item borderless answerGap" ng-repeat="answer in question.answers">
-    					<div>
-    						<span class="badge">Answer</span>
-            				{{answer.name}}
-         				 </div>				
-    				</li>
-  				</ul>
-		</li>
-      </ul>
-    </div>
-    </div>
-    </div>
+		</div>
   </div>
   <div class="col-md-6">
   	<div class="panel panel-default">
@@ -66,7 +64,9 @@
 								<th>Name</th>
 								<th>Level</th>
 								</tr>
-								<tr ng-repeat="rules in agent.child | orderBy:'agentName'" class="firedrules_{{rules.level}}">
+								<tr ng-repeat="rules in agent.child | orderBy:'agentName'" 
+									class="firedrules_{{rules.level}}"
+									ng-click="scrollTo(rules.conditions[0].idNode)">
 								<td>{{rules.idRule}}</td>
 								<td>{{rules.agentName}}</td>
 								<td>{{rules.level}}</td>

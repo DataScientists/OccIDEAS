@@ -2,10 +2,20 @@
 	angular.module('occIDEASApp.FiredRules').controller('FiredRulesCtrl',
 			FiredRulesCtrl);
 
-	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout'];
-	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout) {
+	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout','InterviewsService'];
+	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,InterviewsService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
+		
+		refreshInterviewDisplay();
+		function refreshInterviewDisplay(){
+			InterviewsService.getIntDisplay(data[0].interviewId).then(function(response){
+				if(response.status == 200){
+					$scope.answeredQuestion = response.data;
+				}
+			});
+		}
+		
 		vm.interviewFiredRules = null;
 		vm.getFiredRulesByInterviewId = function(interviewId){
 			FiredRulesService.getByInterviewId(interviewId).then(function(response){
@@ -117,6 +127,31 @@
 				vm.getFiredRulesByInterviewId(data[0].interviewId);
             }, 2000);
 		}
+		
+		$scope.scrollTo = function(target) {
+			$scope.selected = "";
+			var scrollPane = $('#interview-question-list');
+
+			var scrollTarget = $('#questionlist-' + target);
+			if (scrollTarget) {
+				$scope.selected = target;
+				if (scrollTarget.offset()) {
+					var currentScroll = 0;
+					if (scrollPane.scrollTop()) {
+						currentScroll = scrollPane.scrollTop();
+					}
+					var offset = 150;
+					var top = scrollTarget.offset().top;
+					// alert(top);
+					var currentScroll = scrollPane.scrollTop();
+					// alert(currentScroll);
+					var scrollY = top - offset + currentScroll;
+					scrollPane.animate({
+						scrollTop : scrollY
+					}, 1000, 'swing');
+				}
+			}
+		};
 		
 
 		if(data[0]){

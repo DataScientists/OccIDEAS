@@ -17,6 +17,7 @@
 		    { field: "idParticipant", title: "idParticipant"}
 		];
 		
+		
 		self.openFiredRules = function(interviewId) {
 	    	$scope.addFiredRulesTab(interviewId);
 	    }
