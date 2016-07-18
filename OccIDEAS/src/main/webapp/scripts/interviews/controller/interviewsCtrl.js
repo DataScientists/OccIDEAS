@@ -457,16 +457,22 @@
 			}
 		}
 		function findChildQuestionsToDelete(answer){				
-			for(var i=0;i<$scope.interview.answerHistory.length;i++){
-				var ans = $scope.interview.answerHistory[i];
-				if(ans.answerId==answer.answerId){
-					ans.deleted = 1;
-					answersToDelete.push(ans);
+			for(var i=0;i<$scope.interview.questionHistory.length;i++){
+				var iQuestion = $scope.interview.questionHistory[i];
+				for(var k=0;k<iQuestion.answers.length;k++){
+					var ans = iQuestion.answers[k];
+					if(ans.answerId==answer.answerId){
+						//get question from db
+						//for loop to match answerId 
+						//add the answer that this time has id						
+						ans.deleted = 1;
+						answersToDelete.push(ans);
+					}
 				}
 			}
 			for(var j=0;j<$scope.interview.questionHistory.length;j++){
 				var iQuestion = $scope.interview.questionHistory[j];
-				if(iQuestion.parentAnswerId==answer.answerId){
+				if(iQuestion.parentAnswerId==answer.answerId){					
 					populateQuestionsAndAnswersToDelete(iQuestion);
 				}			
 			}			
