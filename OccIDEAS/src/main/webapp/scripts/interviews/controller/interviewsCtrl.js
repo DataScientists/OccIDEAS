@@ -456,14 +456,17 @@
 				return defer.promise;
 			}
 		}
-		function findChildQuestionsToDelete(answer){				
-			for(var i=0;i<$scope.interview.answerHistory.length;i++){
-				var ans = $scope.interview.answerHistory[i];
-				if(ans.answerId==answer.answerId){
-					ans.deleted = 1;
-					answersToDelete.push(ans);
-				}
+		function findChildQuestionsToDelete(answer){	
+			// get the id of the answer to be deleted
+			var ansFound = _.find(listOfAnswersGiven,function(ans){
+				return answer.answerId == ans.answerId;
+			});
+			if(ansFound){
+				answer.id = ansFound.id;
 			}
+			// set answer as deleted and push to array for batch delete
+			answer.deleted = 1;
+			answersToDelete.push(answer);
 			for(var j=0;j<$scope.interview.questionHistory.length;j++){
 				var iQuestion = $scope.interview.questionHistory[j];
 				if(iQuestion.parentAnswerId==answer.answerId){
@@ -676,6 +679,7 @@
 				}				
 			}		
 		}
+		var listQuestionsAsked = [];
 		function buildAndSaveQuestionNew(interview, question) {
 
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
@@ -708,6 +712,7 @@
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
 						saveInterviewDisplay(newQuestionAsked);
+						listQuestionsAsked.push(response.data);
 						var answer = newQuestionAsked.answers[0];
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
@@ -719,10 +724,20 @@
 				});
 			});
 		}
+		var listOfAnswersGiven = [];
 		function saveAnswerNew(newQuestionAsked,defer){
 			if(newQuestionAsked.answers.length > 0){
 				InterviewsService.saveAnswersAndQueueQuestions(newQuestionAsked.answers).then(function(response){
-					if (response.status === 200) {		
+					if (response.status === 200) {
+						_.each(response.data,function(data){
+							var index = _.indexOf(listOfAnswersGiven,
+									_.find(listOfAnswersGiven, {id: data.id}));
+							if(index != -1){
+								listOfAnswersGiven.splice(index, 1, data);
+							}else{
+								listOfAnswersGiven.push(data);
+							}
+						});
 						if(defer){
 							defer.resolve();
 						}
@@ -1077,6 +1092,7 @@
 		}
 		
 		var displaySequence = 0;
+		var listOfInterviewDisplay = [];
 		function saveInterviewDisplay(question){
 			// get highest sequence for this interview and increment
 			var maxSequence = 
@@ -1098,9 +1114,13 @@
 			  if(linkNode){
 				  header = linkNode.name.substr(0,4);
 			  } 
-			
+			// is the question already in the display list
+			var display = _.find(listOfInterviewDisplay,function(display){
+				return display.questionId == question.questionId;
+			});
+			var id = display?display.id:null;
 			var answeredQuestion = {
-//					id:,
+					id:id,
 					idInterview:question.idInterview,
 					number:question.number,
 					name:question.name,
@@ -1118,6 +1138,13 @@
 			};
 			InterviewsService.saveIntDisplay(answeredQuestion).then(function(response){
 				if(response.status == 200){
+					var index = _.indexOf(listOfInterviewDisplay,
+							_.find(listOfInterviewDisplay, {id: response.data.id}));
+					if(index != -1){
+						listOfInterviewDisplay.splice(index, 1, response.data);
+					}else{
+						listOfInterviewDisplay.push(response.data);
+					}
 					refreshInterviewDisplay(question.idInterview);
 				}
 			});
@@ -1155,6 +1182,8 @@
 				if(response.status==200){
 					//$scope.interview = response.data[0];
 					var unprocessedQuestions = response.data[0].questionQueueUnprocessed;
+					//remove null values in array if any
+					unprocessedQuestions = _.compact(unprocessedQuestions);
 					for(var i=0;i<unprocessedQuestions.length;i++){
 						var unprocessedQuestion = unprocessedQuestions[i];
 						//if unprocessed not in interview.questionHistory add
