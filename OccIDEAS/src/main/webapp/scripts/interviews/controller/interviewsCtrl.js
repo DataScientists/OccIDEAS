@@ -456,6 +456,7 @@
 				return defer.promise;
 			}
 		}
+		
 		function findChildQuestionsToDelete(answer){	
 			// get the id of the answer to be deleted
 			var ansFound = _.find(listOfAnswersGiven,function(ans){
@@ -469,7 +470,7 @@
 			answersToDelete.push(answer);
 			for(var j=0;j<$scope.interview.questionHistory.length;j++){
 				var iQuestion = $scope.interview.questionHistory[j];
-				if(iQuestion.parentAnswerId==answer.answerId){
+				if(iQuestion.parentAnswerId==answer.answerId){					
 					populateQuestionsAndAnswersToDelete(iQuestion);
 				}			
 			}			
