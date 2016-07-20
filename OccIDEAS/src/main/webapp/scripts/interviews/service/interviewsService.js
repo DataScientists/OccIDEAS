@@ -227,6 +227,16 @@
 			return request.then(handleSuccess,handleError);
         }
         
+        function saveIntDisplayList(data){
+        	var restURL = 'web/rest/interviewdisplay/updateList';
+        	var request =  $http({
+				  method: 'POST',
+				  url: restURL,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+        }
+        
         function getIntDisplay(interviewId){
         	var restURL = 'web/rest/interviewdisplay/getIntDisplay?id=' + interviewId;
         	var request =  $http({
@@ -284,6 +294,7 @@
             getInterview:getInterview,
             saveInterviewMod:saveInterviewMod,
             saveIntDisplay:saveIntDisplay,
+            saveIntDisplayList:saveIntDisplayList,
             getIntDisplay:getIntDisplay,
             getIntQuestion:getIntQuestion,
             getInterviewQuestionList:getInterviewQuestionList,

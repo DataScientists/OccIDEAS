@@ -1,5 +1,6 @@
 package org.occideas.interviewdisplay.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -59,6 +60,15 @@ public class InterviewDisplayDao {
         }
         return crit.list();
     }
+
+	public List<InterviewDisplay> updateList(List<InterviewDisplay> list) {
+		List<InterviewDisplay> result = new ArrayList<>();
+		for(InterviewDisplay intDisplay:list){
+			sessionFactory.getCurrentSession().saveOrUpdate(intDisplay);
+			result.add(intDisplay);
+		}
+		return result;
+	}
     
 	
 }

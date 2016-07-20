@@ -63,6 +63,14 @@ public class InterviewDisplayRestController implements BaseRestController<Interv
 	public Response update(InterviewDisplayVO json) {
     	return Response.ok(service.create(json)).build();
     }
+    
+    @Path(value = "/updateList")
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response updateList(List<InterviewDisplayVO> list) {
+    	return Response.ok(service.updateList(list)).build();
+    }
 
 	@Override
 	public Response delete(InterviewDisplayVO json) {

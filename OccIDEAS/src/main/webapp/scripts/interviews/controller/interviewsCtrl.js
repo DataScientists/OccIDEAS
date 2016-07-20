@@ -21,7 +21,6 @@
 		$scope.referenceNumber = null;
 		
 		
-		
 		function add(type) {
 	    	$scope.addInterviewTabInterviewers();
 	    }
@@ -1085,11 +1084,34 @@
 		}
 		
 		function refreshInterviewDisplay(interviewId){
-			InterviewsService.getIntDisplay(interviewId).then(function(response){
-				if(response.status == 200){
-					$scope.answeredQuestion = response.data;
-				}
+			var shouldUpdateInterviewDisplay = false;
+			_.each($scope.answeredQuestion, function(node) {
+				  var questionExist = _.find($scope.interview.questionHistory,function(qnode){
+					  return node.questionId == qnode.questionId;
+				  });
+				  //check if question no longer exist in $scope.interview.questionHistory
+				  if(!questionExist || (questionExist.deleted == 1 && node.deleted == 0)){
+					  node.deleted = 1;
+					  shouldUpdateInterviewDisplay = true;
+				  } 
 			});
+			if(shouldUpdateInterviewDisplay){
+				InterviewsService.saveIntDisplayList($scope.answeredQuestion).then(function(response){
+					if(response.status == 200){
+						$scope.answeredQuestion = response.data;
+						$scope.displayHistory = angular.copy($scope.answeredQuestion);
+						_.reverse($scope.displayHistory);
+					}
+				});
+			}else{
+				InterviewsService.getIntDisplay(interviewId).then(function(response){
+					if(response.status == 200){
+						$scope.answeredQuestion = response.data;
+						$scope.displayHistory = angular.copy($scope.answeredQuestion);
+						_.reverse($scope.displayHistory);
+					}
+				});
+			}
 		}
 		
 		var displaySequence = 0;
@@ -1153,26 +1175,26 @@
 		
 		// might need to deprecate below
 		function refreshDisplay(){
-			$scope.displayHistory = angular.copy($scope.interview.questionHistory);
+//			$scope.displayHistory = angular.copy($scope.interview.questionHistory);
 			/*_.remove($scope.displayHistory, function(node) {
 				  return node.link || node.deleted || !node.processed;
 				});*/
 			
-			_.each($scope.displayHistory, function(node) {
-				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
-					  var retValue = false;
-					  if(qnode.link){
-						  if(qnode.link == node.topNodeId){
-							  retValue = true;
-					  }
-					  }
-					  return retValue;
-				  });
-				  if(linkNode){
-					  node.header = linkNode.name.substr(0,4);
-				  } 
-			});
-			_.reverse($scope.displayHistory);
+//			_.each($scope.displayHistory, function(node) {
+//				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+//					  var retValue = false;
+//					  if(qnode.link){
+//						  if(qnode.link == node.topNodeId){
+//							  retValue = true;
+//					  }
+//					  }
+//					  return retValue;
+//				  });
+//				  if(linkNode){
+//					  node.header = linkNode.name.substr(0,4);
+//				  } 
+//			});
+//			_.reverse($scope.displayHistory);
 		}
 		function showNextQuestionNew(lookupNode, parentNode) {			
 			var lookupNodeTemp = lookupNode;

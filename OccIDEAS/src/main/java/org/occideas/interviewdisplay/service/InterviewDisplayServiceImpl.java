@@ -42,8 +42,13 @@ public class InterviewDisplayServiceImpl implements InterviewDisplayService{
 
 	@Override
 	public void delete(InterviewDisplayVO o) {
-		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<InterviewDisplayVO> updateList(List<InterviewDisplayVO> list) {
+		return mapper.convertToInterviewDisplayVOList(
+				dao.updateList(mapper.convertToInterviewDisplayList(list)));
 	}
 	
 
