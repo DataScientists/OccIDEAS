@@ -77,3 +77,5 @@ UPDATE Interview_Answer ia SET interviewQuestionId =(SELECT max(id) FROM Intervi
 ;
 DELETE FROM occideas.Participant WHERE reference like 'HT%';
 DELETE FROM occideas.Interview WHERE referenceNumber like 'HT%';
+
+ALTER TABLE `occideas`.`Interview_Answer` DROP COLUMN `topIntQuestionId`;
