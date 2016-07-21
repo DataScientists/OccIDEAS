@@ -6,11 +6,11 @@
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile',
-	                          '$rootScope','ModuleRuleService','$log','$timeout'];
+	                          '$rootScope','ModuleRuleService','$log','$timeout', 'AuthenticationService'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout) {
+			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout, auth) {
 		var self = this;
 		$scope.data = data;	
 		saveModuleWithoutReload();
@@ -1248,8 +1248,13 @@
 		$scope.moduleMenuOptions = 
 			[ 
 			  [ 'Make Study Specific', function($itemScope) {
-				  var introModule = $itemScope.$modelValue;
-				  findModules(introModule.nodes);
+				  if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+					  var introModule = $itemScope.$modelValue;
+					  findModules(introModule.nodes);
+				  }else{
+					  alert("Admin Role Required");
+				  }
+				  
 				}
 			  ],
 			  [ 'Show Rules', function($itemScope) {
