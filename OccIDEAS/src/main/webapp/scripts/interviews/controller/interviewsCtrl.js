@@ -1100,7 +1100,7 @@
 					if(response.status == 200){
 						$scope.answeredQuestion = response.data;
 						$scope.displayHistory = angular.copy($scope.answeredQuestion);
-						_.reverse($scope.displayHistory);
+//						_.reverse($scope.displayHistory);
 					}
 				});
 			}else{
@@ -1108,7 +1108,7 @@
 					if(response.status == 200){
 						$scope.answeredQuestion = response.data;
 						$scope.displayHistory = angular.copy($scope.answeredQuestion);
-						_.reverse($scope.displayHistory);
+//						_.reverse($scope.displayHistory);
 					}
 				});
 			}
