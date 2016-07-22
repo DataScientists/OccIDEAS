@@ -128,30 +128,30 @@
             }, 2000);
 		}
 		
-		$scope.scrollTo = function(target) {
-			$scope.selected = "";
-			var scrollPane = $('#interview-question-list');
-
-			var scrollTarget = $('#questionlist-' + target);
-			if (scrollTarget) {
-				$scope.selected = target;
-				if (scrollTarget.offset()) {
-					var currentScroll = 0;
-					if (scrollPane.scrollTop()) {
-						currentScroll = scrollPane.scrollTop();
-					}
-					var offset = 150;
-					var top = scrollTarget.offset().top;
-					// alert(top);
-					var currentScroll = scrollPane.scrollTop();
-					// alert(currentScroll);
-					var scrollY = top - offset + currentScroll;
-					scrollPane.animate({
-						scrollTop : scrollY
-					}, 1000, 'swing');
-				}
-			}
-		};
+//		$scope.scrollTo = function(target) {
+//			$scope.selected = "";
+//			var scrollPane = $('#interview-question-list');
+//
+//			var scrollTarget = $('#questionlist-' + target);
+//			if (scrollTarget) {
+//				$scope.selected = target;
+//				if (scrollTarget.offset()) {
+//					var currentScroll = 0;
+//					if (scrollPane.scrollTop()) {
+//						currentScroll = scrollPane.scrollTop();
+//					}
+//					var offset = 150;
+//					var top = scrollTarget.offset().top;
+//					// alert(top);
+//					var currentScroll = scrollPane.scrollTop();
+//					// alert(currentScroll);
+//					var scrollY = top - offset + currentScroll;
+//					scrollPane.animate({
+//						scrollTop : scrollY
+//					}, 1000, 'swing');
+//				}
+//			}
+//		};
 		
 
 		if(data[0]){

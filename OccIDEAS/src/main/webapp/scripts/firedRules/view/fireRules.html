@@ -65,8 +65,7 @@
 								<th>Level</th>
 								</tr>
 								<tr ng-repeat="rules in agent.child | orderBy:'agentName'" 
-									class="firedrules_{{rules.level}}"
-									ng-click="scrollTo(rules.conditions[0].idNode)">
+									class="firedrules_{{rules.level}}" >
 								<td>{{rules.idRule}}</td>
 								<td>{{rules.agentName}}</td>
 								<td>{{rules.level}}</td>

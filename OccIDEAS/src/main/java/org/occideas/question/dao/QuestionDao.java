@@ -41,6 +41,17 @@ public class QuestionDao{
 		}
 		return null;	
 	}
+	
+	public List<Question> getAllMultipleQuestions(){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Question.class)
+				.add(Restrictions.eq("type","Q_multiple"))
+				.add(Restrictions.eq("deleted",0));
+		if(!crit.list().isEmpty()){
+			return crit.list();
+		}
+		return null;
+	}
 
 	public Module getModuleByParentId(Long idNode) {
 		final Session session = sessionFactory.getCurrentSession();

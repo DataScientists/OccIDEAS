@@ -41,6 +41,17 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+
+		function getAllMultipleQuestion() {
+			var restUrl = 'web/rest/question/getAllMultipleQuestion';
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function findPossibleAnswer(idNode) {
 			var restUrl = 'web/rest/answer/getById?id='+idNode;
 			
@@ -127,7 +138,8 @@
 			save:save,
 			saveNode:saveNode,
 			getMaxId:getMaxId,
-            getNextQuestion:getNextQuestion
+            getNextQuestion:getNextQuestion,
+            getAllMultipleQuestion:getAllMultipleQuestion
 		};
 	}
 })();

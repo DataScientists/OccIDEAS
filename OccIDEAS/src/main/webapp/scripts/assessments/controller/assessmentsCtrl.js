@@ -2,12 +2,19 @@
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
-                          'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService'];
+                          'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService','QuestionsService'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
-			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService){
+			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
+		
+		QuestionsService.getAllMultipleQuestion().then(function(response){
+			if(response.status == '200'){
+				$scope.multipleQuestions = response.data;
+			}
+		});
+		
 		
 		$scope.openInterviewBtn = function(){
 			
@@ -46,13 +53,14 @@
 					templateUrl : 'scripts/assessments/partials/exportCSVDialog.html',
 					clickOutsideToClose:false
 				});
-				$scope.csv = [{
+				$scope.csv = [];
+				$scope.csvTemp = [{
 					Q:[]
 				}];
 				var listOfQuestion = [];
 				InterviewsService.getInterviewsWithoutAnswers().then(function(response){
 					if(response.status == '200'){
-						var questionIdList = listAllInterviewQuestions(response.data,$scope.csv,listOfQuestion);
+						var questionIdList = listAllInterviewQuestions(response.data,$scope.csvTemp,listOfQuestion);
 						$scope.interviewIdList.reduce(function(p, interviewId) {
 						    return p.then(function() {
 						    	$scope.interviewIdInProgress = interviewId;
@@ -77,7 +85,7 @@
 		function populateInterviewAnswerList(interviewId,questionIdList){
 			return InterviewsService.getInterviewQuestionAnswer(interviewId).then(function(response){
 				if(response.status == '200'){
-					listAllInterviewAnswers(response.data,$scope.csv,questionIdList);
+					listAllInterviewAnswers(response.data,$scope.csvTemp,questionIdList);
 				}
 			});
 		}
@@ -90,37 +98,70 @@
 			$mdDialog.cancel();
 		};
 		
-		function listAllInterviewAnswers(response,csv,questionIdList){
+		function listAllInterviewAnswers(response,csvTemp,questionIdList){
 			_.each(response,function(data){
 				var obj = {A:[]};
 				obj.A.push(data.interviewId);
 				obj.A.push(data.referenceNumber);
 //				obj.A.push(data.module.idNode);
 				_.each(questionIdList,function(qId){
-					var question = _.find(data.questionHistory, _.matchesProperty('questionId', qId));
-					if(question){
-						if(question.answers.length > 0){
-							_.each(question.answers,function(ans){
-								if(ans.answerFreetext){
-									obj.A.push(ans.answerFreetext);	
-								}else{
-									obj.A.push(ans.name);
+					//check if qId has delimeter "_" which means is multiple
+					if(typeof qId == 'string' && qId.indexOf('_') > -1){
+						var temp = qId.split('_');
+						var questionId = temp[0];
+						var number = temp[1];
+						var question = _.find(data.questionHistory,function(qHistory){
+							return qHistory.questionId == questionId
+							&& qHistory.deleted == 0;
+						});
+						if(question){
+							if(question.answers.length > 0){
+								var numberExist = false;
+								_.each(question.answers,function(ans){
+									if(ans.number == number && !numberExist){
+										if(ans.answerFreetext){
+											obj.A.push(ans.answerFreetext);
+											numberExist = true;
+										}else{
+											obj.A.push(ans.name);
+											numberExist = true;
+										}
+									}
+								})
+								if(!numberExist){
+									obj.A.push("-- No Answer --");
 								}
-							})
+							}
 						}else{
-							obj.A.push("-- No Answer --");
-						}
+							obj.A.push("-- Question Not Asked --");
+						}		
 					}else{
-						obj.A.push("-- Question Not Asked --");
+						var question = _.find(data.questionHistory,function(qHistory){
+							return qHistory.questionId == qId
+							&& qHistory.deleted == 0;
+						});
+						if(question){
+							if(question.answers.length > 0){
+								    var ans = question.answers[0];
+									if(ans.answerFreetext){
+										obj.A.push(ans.answerFreetext);	
+									}else{
+										obj.A.push(ans.name);
+									}
+							}
+						}else{
+							obj.A.push("-- Question Not Asked --");
+						}
 					}
 				});
-				csv.push(obj);
+				$scope.csv.push(obj.A);
 			});
 		}
 		
-		function listAllInterviewQuestions(response,csv,listOfQuestion){
+		function listAllInterviewQuestions(response,csvTemp,listOfQuestion){
 			var questionIdList = [];
 			_.each(response,function(data){
+				// get unique questions by number and name , place it to listOfQuestion
 				listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
 					return item.number && item.name;
 				});
@@ -128,17 +169,39 @@
 			var sortQuestionList = {};
 			var header = "";
 			_.each(listOfQuestion,function(data){
+				//check if the unique question is a module/ajsm or fragment, if yes add it to the header
+				// to be display along with the question number in the CSV
 				if(data.nodeClass == 'M' || data.type == 'M_IntroModule' || data.type == 'Q_linkedajsm'){
 					if(header != ""){
 						sortQuestionList[header] = _.sortBy(sortQuestionList[header], 'header');
 					}
 					header = data.name.substring(0, 4);
 					sortQuestionList[header] = [];
+				// if the unique question is an actual question get the number and append to its
+				// respective header which can be a module/ajsm or fragment
 				}else if(data.questionId){
+					//check if the question is of type Multiple, if yes will need to 
+					//add header for each possible answer
+					if(data.type == 'Q_multiple'){
+						// check if question is in the multiple question bucket
+						var nodeQuestion = _.find($scope.multipleQuestions,function(question){
+							return question.idNode == data.questionId;
+						});
+						_.each(nodeQuestion.nodes,function(posAns){
+							//loop through all possible answer
+							sortQuestionList[header].push({
+								header:header+"_"+data.number +"_"+posAns.number,
+								questionId:data.questionId +"_"+posAns.number
+							});
+						});
+					}
+					//for standard questions add the header + question number
+					else{
 					sortQuestionList[header].push({
 						header:header+"_"+data.number,
 						questionId:data.questionId
 					});
+					}
 				}
 			});
 			
@@ -146,12 +209,13 @@
 			_.each(sortQuestionList,function(headers){
 				var uniqueHeaders = _.unionBy(headers,headers,function(o){return o.header;});
 				_.each(uniqueHeaders,function(data){
-					csv[0].Q.push(data.header);
+					csvTemp[0].Q.push(data.header);
 					questionIdList.push(data.questionId);
 				})
 			});
-			csv[0].Q.unshift('AWES ID');
-			csv[0].Q.unshift('Interview Id');
+			csvTemp[0].Q.unshift('AWES ID');
+			csvTemp[0].Q.unshift('Interview Id');
+			$scope.csv.push(csvTemp[0].Q);
 			return questionIdList;
 		}
 		

@@ -101,4 +101,9 @@ public class QuestionServiceImpl implements QuestionService {
 		return mapper.convertToInterviewQuestionVOList(qdao.getQuestionsByParentId(parentId));
 	}
 
+	@Override
+	public List<QuestionVO> getAllMultipleQuestions() {
+		return mapper.convertToInterviewQuestionVOList(qdao.getAllMultipleQuestions());
+	}
+
 }
