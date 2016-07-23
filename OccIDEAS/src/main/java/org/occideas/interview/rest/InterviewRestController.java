@@ -344,20 +344,19 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
     	
     	List<ModuleRuleVO> moduleRules = new ArrayList<ModuleRuleVO>();
-		for(InterviewQuestionVO iq: interview.getActualQuestion()){
-			for(InterviewAnswerVO ia:iq.getAnswers()){
+		for(InterviewAnswerVO ia: interview.getAnswerHistory()){
+			//for(InterviewAnswerVO ia:iq.getAnswers()){
 				moduleRules.addAll(ia.getRules());
-			}		
+				
+			//}		
 		}
     	for(ModuleRuleVO moduleRule : moduleRules){
 			rules.add(moduleRule.getRule());
 		}
 		rules = removeDuplicates(rules);  
     	//get list of answer nodes
-		List<InterviewAnswerVO> allActualAnswers = new ArrayList<InterviewAnswerVO>();
-		for(InterviewQuestionVO iq:interview.getActualQuestion()){	
-			allActualAnswers.addAll(iq.getAnswers());		
-		}
+		List<InterviewAnswerVO> allActualAnswers = interview.getAnswerHistory();
+		
     	for(RuleVO rule: rules){
 			boolean bFired = false;
 			for(PossibleAnswerVO  pa: rule.getConditions()){

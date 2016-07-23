@@ -3,7 +3,7 @@
 		<button permission="['ROLE_ADMIN']" class="btn btn-default"
 			ng-click="showExportCSVButton()">Export to CSV</button>
 		<button style="display: none;" id="exportCSV" class="btn btn-default"
-			ng-csv="getCSVButton()" lazy-load="true" filename="test.csv"
+			ng-csv="getCSVButton()" lazy-load="true" filename="export.csv"
 			field-separator=","></button>
 		<table ng-table="vm.tableParams"
 			class="table table-condensed table-bordered table-striped">
@@ -21,7 +21,13 @@
 										<span class="glyphicon glyphicon-folder-open"></span>
 									</button>
 								</td>
-							</tr>
+				<td>
+					<button class="btn btn-default btn-sm"
+						ng-click="addAssessmentTab(participant.interviews[0])">
+						<span class="glyphicon glyphicon-list-alt"></span>
+					</button>
+				</td>
+			</tr>
 		</table>
 	</div>
 </div>

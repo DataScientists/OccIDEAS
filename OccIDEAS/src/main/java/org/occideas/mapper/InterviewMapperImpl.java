@@ -89,8 +89,9 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
 		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
 		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
-		List<InterviewQuestion> questionsAsked = interview.getActualQuestion();
-		interviewVO.setActualQuestion(qsMapper.convertToInterviewQuestionWithRulesVOList(questionsAsked));
+		
+		List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
+		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerWithRulesVOList(answerHistory));
 
 		List<Rule> firedRules = interview.getFiredRules();
 		interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
