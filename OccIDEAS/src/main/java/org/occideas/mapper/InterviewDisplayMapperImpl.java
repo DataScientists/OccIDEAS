@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 
 	@Autowired
-	private InterviewAnswerMapper mapper;
+	private InterviewDisplayAnswerMapper mapper;
 	
 	@Override
 	public InterviewDisplayVO convertToInterviewDisplayVO(InterviewDisplay entity) {
@@ -36,8 +36,8 @@ public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 		vo.setLink(entity.getLink());
 		vo.setDescription(entity.getDescription());
 		vo.setNodeClass(entity.getNodeClass());
-		if(entity.getQuestionId() != 0L){
-			vo.setAnswers(mapper.convertToInterviewAnswerVOList(entity.getAnswers()));
+		if(entity.getAnswers() != null && !entity.getAnswers().isEmpty()){
+			vo.setAnswers(mapper.convertToInterviewDisplayAnswerVOList(entity.getAnswers()));
 		}
 		return vo;
 	}
@@ -79,9 +79,6 @@ public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 		entity.setTopNodeId(vo.getTopNodeId());
 		entity.setDescription(vo.getDescription());
 		entity.setNodeClass(vo.getNodeClass());
-		if(vo.getQuestionId() != 0L){
-			entity.setAnswers(mapper.convertToInterviewAnswerList(vo.getAnswers()));
-		}
 		return entity;
 	}
 

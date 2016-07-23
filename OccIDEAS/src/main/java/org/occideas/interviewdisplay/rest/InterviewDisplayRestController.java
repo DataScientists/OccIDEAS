@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interviewdisplay.service.InterviewDisplayService;
+import org.occideas.vo.InterviewDisplayAnswerVO;
 import org.occideas.vo.InterviewDisplayVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -70,6 +71,14 @@ public class InterviewDisplayRestController implements BaseRestController<Interv
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response updateList(List<InterviewDisplayVO> list) {
     	return Response.ok(service.updateList(list)).build();
+    }
+    
+    @Path(value = "/updateDisplayAnswerList")
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response updateDisplayAnswerList(List<InterviewDisplayAnswerVO> list) {
+    	return Response.ok(service.updateDisplayAnswerList(list)).build();
     }
 
 	@Override

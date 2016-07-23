@@ -237,6 +237,16 @@
 			return request.then(handleSuccess,handleError);
         }
         
+        function updateDisplayAnswerList(data){
+        	var restURL = 'web/rest/interviewdisplay/updateDisplayAnswerList';
+        	var request =  $http({
+				  method: 'POST',
+				  url: restURL,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+        }
+        
         function getIntDisplay(interviewId){
         	var restURL = 'web/rest/interviewdisplay/getIntDisplay?id=' + interviewId;
         	var request =  $http({
@@ -304,7 +314,8 @@
             getInterviewsWithoutAnswers:getInterviewsWithoutAnswers,
             getInterviewQuestionAnswer:getInterviewQuestionAnswer,
             getUnprocessedQuestions:getUnprocessedQuestions,
-            getInterviewWithFiredRules:getInterviewWithFiredRules
+            getInterviewWithFiredRules:getInterviewWithFiredRules,
+            updateDisplayAnswerList:updateDisplayAnswerList
         };
     }
 })();

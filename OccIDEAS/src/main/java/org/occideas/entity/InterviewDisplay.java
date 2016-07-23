@@ -1,8 +1,10 @@
 package org.occideas.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,15 +15,8 @@ import javax.persistence.JoinColumns;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
-
 @Entity
 @Table(name = "Interview_Display")
-@DynamicUpdate(value = true)
-@DynamicInsert(value = true)
-@SelectBeforeUpdate(value = true)
 public class InterviewDisplay implements java.io.Serializable {
 
 	/**
@@ -77,9 +72,8 @@ public class InterviewDisplay implements java.io.Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumns({
-			@JoinColumn(name = "parentQuestionId", referencedColumnName = "question_id", insertable = false, updatable = false),
-			@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false) })
-	private List<InterviewAnswer> answers;
+			@JoinColumn(name = "interviewDisplayId", referencedColumnName = "id",insertable=false,updatable=false)})
+	private List<InterviewDisplayAnswer> answers;
 
 	@Column(name = "lastUpdated")
 	private Date lastUpdated;
@@ -136,11 +130,11 @@ public class InterviewDisplay implements java.io.Serializable {
 		return lastUpdated;
 	}
 
-	public List<InterviewAnswer> getAnswers() {
+	public List<InterviewDisplayAnswer> getAnswers() {
 		return answers;
 	}
 
-	public void setAnswers(List<InterviewAnswer> answers) {
+	public void setAnswers(List<InterviewDisplayAnswer> answers) {
 		this.answers = answers;
 	}
 

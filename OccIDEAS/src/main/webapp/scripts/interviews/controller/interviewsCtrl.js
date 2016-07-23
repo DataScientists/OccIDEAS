@@ -293,6 +293,7 @@
 			});
 			questionBeingEdited.answers = [];
 			questionBeingEdited.answers.push(actualAnswer);	
+			saveInterviewDisplay(questionBeingEdited);
 		}
 		function buildAndSaveFrequencyNew(interview, node) {
 			var hours = 0;
@@ -1176,8 +1177,62 @@
 				return display.questionId == question.questionId;
 			});
 			var id = display?display.id:null;
+			if(id){
+				display.deleted = 1;
+				_.each(display.answers,function(ans){
+					ans.deleted = 1;
+				});
+				InterviewsService.saveIntDisplay(display).then(function(response){
+					if(response.status == 200){
+						var index = _.indexOf(listOfInterviewDisplay,
+								_.find(listOfInterviewDisplay, {id: response.data.id}));
+						if(index != -1){
+							listOfInterviewDisplay.splice(index, 1, response.data);
+						}
+						var interviewDisplayAnswers = 
+							buildInterviewDisplayAnswers(response.data,display);
+						InterviewsService.updateDisplayAnswerList(interviewDisplayAnswers).then(function(response){
+							if(response.status == 200){
+								var answeredQuestion = {
+										idInterview:question.idInterview,
+										number:question.number,
+										name:question.name,
+										type:question.type,
+										questionId:question.questionId,
+										sequence:++displaySequence,
+										header:header,
+										parentModuleId:question.parentModuleId,
+										topNodeId:question.topNodeId,
+										parentAnswerId:question.parentAnswerId,
+										link:question.link,
+										description:question.description,
+										nodeClass:question.nodeClass,
+										deleted:0
+								};
+								InterviewsService.saveIntDisplay(answeredQuestion).then(function(response){
+									if(response.status == 200){
+										var index = _.indexOf(listOfInterviewDisplay,
+												_.find(listOfInterviewDisplay, {id: response.data.id}));
+										if(index != -1){
+											listOfInterviewDisplay.splice(index, 1, response.data);
+										}else{
+											listOfInterviewDisplay.push(response.data);
+										}
+										var interviewDisplayAnswers = 
+											buildInterviewDisplayAnswers(response.data,question);
+										InterviewsService.updateDisplayAnswerList(interviewDisplayAnswers).then(function(response){
+											if(response.status == 200){
+												refreshInterviewDisplay(question.idInterview);
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			}else{
 			var answeredQuestion = {
-					id:id,
 					idInterview:question.idInterview,
 					number:question.number,
 					name:question.name,
@@ -1202,9 +1257,35 @@
 					}else{
 						listOfInterviewDisplay.push(response.data);
 					}
-					refreshInterviewDisplay(question.idInterview);
+					var interviewDisplayAnswers = 
+						buildInterviewDisplayAnswers(response.data,question);
+					InterviewsService.updateDisplayAnswerList(interviewDisplayAnswers).then(function(response){
+						if(response.status == 200){
+							refreshInterviewDisplay(question.idInterview);
+						}
+					});
 				}
 			});
+			}
+		}
+		
+		function buildInterviewDisplayAnswers(intDisplay,question){
+			var answers = [];
+			_.each(question.answers,function(ans){
+				answers.push({
+					id:ans.id,
+					interviewDisplayId:intDisplay.id,
+					answerId:ans.answerId,
+					name:ans.name,
+					answerFreetext:ans.answerFreetext,
+					nodeClass:ans.nodeClass,
+					number:ans.number,
+					type:ans.type,
+					deleted:ans.deleted,
+					lastUpdated:intDisplay.lastUpdated
+				});
+			});
+			return answers;
 		}
 		
 		// might need to deprecate below

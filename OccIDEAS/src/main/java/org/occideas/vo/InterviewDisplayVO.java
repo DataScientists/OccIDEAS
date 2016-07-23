@@ -3,6 +3,7 @@ package org.occideas.vo;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -23,7 +24,8 @@ public class InterviewDisplayVO {
 	private long link;
 	private String description;
 	private String nodeClass;
-	private List<InterviewAnswerVO> answers;
+	private List<InterviewDisplayAnswerVO> answers;
+	@JsonFormat(pattern="MM/dd/yyyy HH:mm:ss")
 	private Date lastUpdated;
 
 	public long getId() {
@@ -74,11 +76,11 @@ public class InterviewDisplayVO {
 		this.deleted = deleted;
 	}
 
-	public List<InterviewAnswerVO> getAnswers() {
+	public List<InterviewDisplayAnswerVO> getAnswers() {
 		return answers;
 	}
 
-	public void setAnswers(List<InterviewAnswerVO> answers) {
+	public void setAnswers(List<InterviewDisplayAnswerVO> answers) {
 		this.answers = answers;
 	}
 

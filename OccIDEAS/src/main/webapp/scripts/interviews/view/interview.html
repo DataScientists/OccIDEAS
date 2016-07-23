@@ -212,11 +212,19 @@
 						<span id="{{'IntResult'+element.idNode}}">{{ element.name }}</span>
 					</div>
 					<!-- 			show answers -->
-					<div class="tree-node-content P_interviewresult" ng-repeat="as in element.answers | orderBy:orderByNumber">
+					<div ng-if="element.deleted && as.deleted" class="tree-node-content P_interviewresult" ng-repeat="as in element.answers | orderBy:orderByNumber">
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
 							<span ng-if="as.deleted" class="badge-deleted" title="deleted">
 								&nbsp;
 							</span>
+							<span ng-if="as.deleted" class="badge">{{as.number}}</span>
+							
+						</div>
+						<span ng-if="as.deleted" id="{{'IntResult'+as.idNode}}">{{as.answerFreetext?as.answerFreetext:as.name}}
+						</span>
+					</div>
+					<div ng-if="!element.deleted && !as.deleted" class="tree-node-content P_interviewresult" ng-repeat="as in element.answers | orderBy:orderByNumber">
+						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
 							<span class="badge">{{as.number}}</span>
 							
 						</div>

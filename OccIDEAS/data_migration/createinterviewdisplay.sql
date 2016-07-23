@@ -20,3 +20,21 @@ CREATE TABLE `Interview_Display` (
   `lastUpdated` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;
+
+
+DROP TABLE IF EXISTS `Interview_DisplayAnswer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Interview_DisplayAnswer` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `interviewDisplayId` bigint(20) NOT NULL,
+  `answerId` bigint(20) NOT NULL,
+  `name` varchar(2048) DEFAULT NULL,
+  `answerFreetext` varchar(2048) DEFAULT NULL,
+  `nodeClass` varchar(235) DEFAULT NULL,
+  `number` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `deleted` int(11) NOT NULL,
+  `lastUpdated` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=292 DEFAULT CHARSET=latin1;

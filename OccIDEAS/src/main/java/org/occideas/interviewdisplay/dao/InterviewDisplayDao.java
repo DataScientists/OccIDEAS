@@ -7,11 +7,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
 import org.occideas.entity.InterviewDisplay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class InterviewDisplayDao {
@@ -56,7 +54,7 @@ public class InterviewDisplayDao {
         final Criteria crit = session.createCriteria(InterviewDisplay.class);
         if (interviewId != null) {
             crit.add(Restrictions.eq("idinterview", interviewId));
-            crit.add(Restrictions.eq("deleted", 0));
+//            crit.add(Restrictions.eq("deleted", 0));
         }
         return crit.list();
     }
