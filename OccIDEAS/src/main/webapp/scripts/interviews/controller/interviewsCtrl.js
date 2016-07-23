@@ -266,10 +266,23 @@
 				answerValue = Number(hours) + (Number(minutes) / 60);
 			}
 			var answer = node.selectedAnswer?node.selectedAnswer:node.nodes[0];
-			var actualAnswer = _.find(interview.answerHistory,function(queuedAnswer){
-				return queuedAnswer.answerId == answer.idNode 
-				&& !queuedAnswer.deleted;
-			});		
+			var historyQuestion = _.find($scope.interview.questionHistory,function(ques){
+				return ques.questionId == node.idNode;
+			});
+			var newAnswer = _.find(historyQuestion.answers,function(answ){
+				return answ.answerId == answer.idNode && answ.deleted==0;
+			});	
+			var actualAnswer = undefined;
+			if(listOfAnswersGiven.length > 0){
+				actualAnswer = _.find(listOfAnswersGiven,function(ans){
+					return newAnswer.answerId == ans.answerId
+				});
+			}else{
+				actualAnswer = _.find(interview.answerHistory,function(ans){
+					return newAnswer.id == ans.id && !ans.deleted;
+				});
+			}
+				
 			actualAnswer.answerFreetext = answerValue;			
 			actualAnswer.name = answerValue;						
 			saveSingleAnswer(actualAnswer);
@@ -1308,6 +1321,7 @@
 						if(response.status==200){
 							//$scope.interview = response.data[0];
 							var unprocessedQuestions = response.data[0].questionQueueUnprocessed;
+							unprocessedQuestions = _.compact(unprocessedQuestions);
 							for(var i=0;i<unprocessedQuestions.length;i++){
 								var unprocessedQuestion = unprocessedQuestions[i];
 								//if unprocessed not in interview.questionHistory add
