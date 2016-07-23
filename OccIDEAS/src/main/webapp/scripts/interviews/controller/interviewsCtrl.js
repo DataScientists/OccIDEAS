@@ -637,9 +637,11 @@
 									});
 								}else{
 									oldAnswer = _.find(interview.answerHistory,function(ans){
-										return newAnswer.answerId == ans.answerId && ans.deleted == 0;
+										return newAnswer.id == ans.id;
 									});
 								}
+								//refresh new id for new answer
+								delete newAnswer.id;
 								updateFreeTextAnswer(newAnswer,oldAnswer);
 								// need to refresh once freetext is udpated
 								saveInterviewDisplay(newQuestionAsked);
@@ -1116,6 +1118,7 @@
 				InterviewsService.saveIntDisplayList($scope.answeredQuestion).then(function(response){
 					if(response.status == 200){
 						$scope.answeredQuestion = response.data;
+						listOfInterviewDisplay = $scope.answeredQuestion;
 						$scope.displayHistory = angular.copy($scope.answeredQuestion);
 //						_.reverse($scope.displayHistory);
 					}
@@ -1124,6 +1127,7 @@
 				InterviewsService.getIntDisplay(interviewId).then(function(response){
 					if(response.status == 200){
 						$scope.answeredQuestion = response.data;
+						listOfInterviewDisplay = $scope.answeredQuestion;
 						$scope.displayHistory = angular.copy($scope.answeredQuestion);
 //						_.reverse($scope.displayHistory);
 					}
