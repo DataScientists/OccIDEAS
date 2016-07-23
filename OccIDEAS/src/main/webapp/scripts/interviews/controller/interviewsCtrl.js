@@ -279,7 +279,7 @@
 				&& !queuedQuestion.deleted;
 			});
 			questionBeingEdited.answers = [];
-			questionBeingEdited.answers.push(actualAnswer);			
+			questionBeingEdited.answers.push(actualAnswer);	
 		}
 		function buildAndSaveFrequencyNew(interview, node) {
 			var hours = 0;
@@ -395,9 +395,13 @@
 				}
 			}	
 		}
-		function updateFreeTextAnswer(answer){
+		function updateFreeTextAnswer(answer,oldanswer){
 			var answers = [];
 			answers.push(answer);
+			if(oldanswer){
+			oldanswer.deleted = 1;
+			answers.push(oldanswer);
+			}
 			InterviewsService.saveAnswers(answers).then(function(response){
 				if (response.status === 200) {
 					console.log("Updated free text answer");
@@ -625,7 +629,20 @@
 							if(newAnswer){
 								newAnswer.answerFreetext = selectedAnswer.name;
 								newAnswer.name = selectedAnswer.name;
-								updateFreeTextAnswer(newAnswer);
+								//check if newAnswer is different from old
+								var oldAnswer = undefined;
+								if(listOfAnswersGiven.length > 0){
+									oldAnswer = _.find(listOfAnswersGiven,function(ans){
+										return newAnswer.answerId == ans.answerId
+									});
+								}else{
+									oldAnswer = _.find(interview.answerHistory,function(ans){
+										return newAnswer.answerId == ans.answerId && ans.deleted == 0;
+									});
+								}
+								updateFreeTextAnswer(newAnswer,oldAnswer);
+								// need to refresh once freetext is udpated
+								saveInterviewDisplay(newQuestionAsked);
 								bIsFreeText = true;
 							}else{
 								var msg = "Could not find free text answer to update";
