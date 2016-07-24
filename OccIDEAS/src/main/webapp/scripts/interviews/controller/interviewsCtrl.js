@@ -479,6 +479,11 @@
 			var ansFound = _.find(listOfAnswersGiven,function(ans){
 				return answer.answerId == ans.answerId;
 			});
+			if(!ansFound){
+				ansFound = _.find($scope.interview.answerHistory,function(ans){
+					return ans.answerId == answer.answerId;
+				});
+			}
 			if(ansFound){
 				answer.id = ansFound.id;
 			}
@@ -557,6 +562,11 @@
 					var oldAnswerlisted = _.find($scope.interview.answerHistory,function(ans){
 						return ans.answerId == oldAnswer.idNode;
 					});
+					if(!oldAnswerlisted){
+						oldAnswerlisted = _.find(listOfAnswersGiven,function(ans){
+							return ans.answerId == oldAnswer.idNode;
+						});
+					}
 					if(!oldAnswerlisted){
 						var msg = "Could not find answer to remove";
 						console.error(msg);
@@ -1118,6 +1128,7 @@
 		
 		function refreshInterviewDisplay(interviewId){
 			var shouldUpdateInterviewDisplay = false;
+			var displayAnswersExist = undefined;
 			_.each($scope.answeredQuestion, function(node) {
 				  var questionExist = _.find($scope.interview.questionHistory,function(qnode){
 					  return node.questionId == qnode.questionId;
@@ -1125,16 +1136,48 @@
 				  //check if question no longer exist in $scope.interview.questionHistory
 				  if(!questionExist || (questionExist.deleted == 1 && node.deleted == 0)){
 					  node.deleted = 1;
-					  shouldUpdateInterviewDisplay = true;
+					  var display = _.find(listOfInterviewDisplay,function(display){
+							return display.questionId == questionExist.questionId
+							&& display.deleted == 0;
+					  });
+					  var id = display?display.id:null;
+					 if(id){
+							display.deleted = 1;
+							_.each(display.answers,function(ans){
+								ans.deleted = 1;
+							});
+							displayAnswersExist = display;
+					 }
+					 
+					 shouldUpdateInterviewDisplay = true;
 				  } 
 			});
 			if(shouldUpdateInterviewDisplay){
 				InterviewsService.saveIntDisplayList($scope.answeredQuestion).then(function(response){
 					if(response.status == 200){
-						$scope.answeredQuestion = response.data;
-						listOfInterviewDisplay = $scope.answeredQuestion;
-						$scope.displayHistory = angular.copy($scope.answeredQuestion);
-//						_.reverse($scope.displayHistory);
+						if(displayAnswersExist){
+						var interviewDisplayAnswers = 
+							buildInterviewDisplayAnswers(response.data,displayAnswersExist);
+						InterviewsService.updateDisplayAnswerList(interviewDisplayAnswers).then(function(response){
+							if(response.status == 200){
+								InterviewsService.getIntDisplay(interviewId).then(function(response){
+									if(response.status == 200){
+										$scope.answeredQuestion = response.data;
+										listOfInterviewDisplay = $scope.answeredQuestion;
+										$scope.displayHistory = angular.copy($scope.answeredQuestion);
+									}
+								});
+							}
+						});
+						}else{
+						InterviewsService.getIntDisplay(interviewId).then(function(response){
+							if(response.status == 200){
+								$scope.answeredQuestion = response.data;
+								listOfInterviewDisplay = $scope.answeredQuestion;
+								$scope.displayHistory = angular.copy($scope.answeredQuestion);
+							}
+						});
+						}
 					}
 				});
 			}else{
@@ -1152,6 +1195,7 @@
 		var displaySequence = 0;
 		var listOfInterviewDisplay = [];
 		function saveInterviewDisplay(question){
+			var question = angular.copy(question);
 			// get highest sequence for this interview and increment
 			var maxSequence = 
 				_.maxBy($scope.answeredQuestion, function(o) { return o.sequence; });
@@ -1174,7 +1218,8 @@
 			  } 
 			// is the question already in the display list
 			var display = _.find(listOfInterviewDisplay,function(display){
-				return display.questionId == question.questionId;
+				return display.questionId == question.questionId
+				&& display.deleted == 0;
 			});
 			var id = display?display.id:null;
 			if(id){
@@ -1182,6 +1227,31 @@
 				_.each(display.answers,function(ans){
 					ans.deleted = 1;
 				});
+				//check if is a multiple question
+				if(display.answers && display.type == 'Q_multiple'){
+					//check if answer is in list of answers given
+					// possible to be empty for resumed interviews
+					_.each(display.answers,function(ans){
+						var answerExist = _.find(listOfAnswersGiven,function(ansGiven){
+							return ansGiven.answerId == ans.answerId;
+						});
+						if(answerExist && answerExist.deleted == 0){
+							question.answers.push(answerExist);
+						}
+					});
+					//check if there are answers pushed, if not its a possible resume
+					//need to check answerHistory instead
+					if(!(question.answers.length > 0)){
+						_.each(display.answers,function(ans){
+							var answerExist = _.find($scope.interview.answerHistory,function(ansGiven){
+								return ansGiven.answerId == ans.answerId;
+							});
+							if(answerExist && answerExist.deleted == 0){
+								question.answers.push(answerExist);
+							}
+						});
+					}
+				}
 				InterviewsService.saveIntDisplay(display).then(function(response){
 					if(response.status == 200){
 						var index = _.indexOf(listOfInterviewDisplay,

@@ -36,9 +36,7 @@ public class InterviewDisplayMapperImpl implements InterviewDisplayMapper{
 		vo.setLink(entity.getLink());
 		vo.setDescription(entity.getDescription());
 		vo.setNodeClass(entity.getNodeClass());
-		if(entity.getAnswers() != null && !entity.getAnswers().isEmpty()){
-			vo.setAnswers(mapper.convertToInterviewDisplayAnswerVOList(entity.getAnswers()));
-		}
+		vo.setAnswers(mapper.convertToInterviewDisplayAnswerVOList(entity.getAnswers()));
 		return vo;
 	}
 
