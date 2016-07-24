@@ -161,6 +161,9 @@
 		function listAllInterviewQuestions(response,csvTemp,listOfQuestion){
 			var questionIdList = [];
 			_.each(response,function(data){
+				data.questionHistory = _.filter(data.questionHistory,function(qh){
+					return qh.deleted == 0;
+				});
 				// get unique questions by number and name , place it to listOfQuestion
 				listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
 					return item.number && item.name;
@@ -171,7 +174,7 @@
 			_.each(listOfQuestion,function(data){
 				//check if the unique question is a module/ajsm or fragment, if yes add it to the header
 				// to be display along with the question number in the CSV
-				if(data.nodeClass == 'M' || data.type == 'M_IntroModule' || data.type == 'Q_linkedajsm'){
+				if(data.nodeClass == 'M' || data.type == 'M_IntroModule' || data.type == 'Q_linkedajsm' || data.type == 'F_ajsm'){
 					if(header != ""){
 						sortQuestionList[header] = _.sortBy(sortQuestionList[header], 'header');
 					}
@@ -187,18 +190,37 @@
 						var nodeQuestion = _.find($scope.multipleQuestions,function(question){
 							return question.idNode == data.questionId;
 						});
+						// look for the top node id in listquestion
+						// build the header and check it in sortQuestionList
+						var topModule = _.find(listOfQuestion,function(lq){
+							return lq.link == data.topNodeId;
+						});
+						var topHeader = topModule.name.substring(0, 4);
+						if(!sortQuestionList[topHeader]){
+						sortQuestionList[topHeader] = [];
+						}
 						_.each(nodeQuestion.nodes,function(posAns){
 							//loop through all possible answer
-							sortQuestionList[header].push({
-								header:header+"_"+data.number +"_"+posAns.number,
+							sortQuestionList[topHeader].push({
+								header:topHeader+"_"+data.number +"_"+posAns.number,
 								questionId:data.questionId +"_"+posAns.number
 							});
+							
 						});
 					}
 					//for standard questions add the header + question number
 					else{
-					sortQuestionList[header].push({
-						header:header+"_"+data.number,
+					// look for the top node id in listquestion
+					// build the header and check it in sortQuestionList
+					var topModule = _.find(listOfQuestion,function(lq){
+						return lq.link == data.topNodeId;
+					});
+					var topHeader = topModule.name.substring(0, 4);
+					if(!sortQuestionList[topHeader]){
+						sortQuestionList[topHeader] = [];
+					}
+					sortQuestionList[topHeader].push({
+						header:topHeader+"_"+data.number,
 						questionId:data.questionId
 					});
 					}

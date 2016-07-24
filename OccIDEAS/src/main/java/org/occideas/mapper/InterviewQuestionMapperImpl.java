@@ -146,6 +146,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		vo.setIdInterview(question.getIdInterview());
 		vo.setName(question.getName());
 		vo.setNodeClass(question.getNodeClass());
+		vo.setDeleted(question.getDeleted());
 		vo.setNumber(question.getNumber());
 		vo.setQuestionId(question.getQuestionId());
 		vo.setType(question.getType());
