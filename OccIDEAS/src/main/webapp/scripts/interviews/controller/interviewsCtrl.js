@@ -1236,17 +1236,20 @@
 				if(display.answers && display.type == 'Q_multiple'){
 					//check if answer is in list of answers given
 					// possible to be empty for resumed interviews
+					var answersPushed = false;
+					question.answers = [];
 					_.each(display.answers,function(ans){
 						var answerExist = _.find(listOfAnswersGiven,function(ansGiven){
 							return ansGiven.answerId == ans.answerId;
 						});
 						if(answerExist && answerExist.deleted == 0){
+							answersPushed = true;
 							question.answers.push(answerExist);
 						}
 					});
 					//check if there are answers pushed, if not its a possible resume
 					//need to check answerHistory instead
-					if(!(question.answers.length > 0)){
+					if(!(answersPushed)){
 						_.each(display.answers,function(ans){
 							var answerExist = _.find($scope.interview.answerHistory,function(ansGiven){
 								return ansGiven.answerId == ans.answerId;
