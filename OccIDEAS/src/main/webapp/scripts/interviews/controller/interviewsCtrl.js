@@ -1140,6 +1140,11 @@
 							return display.questionId == questionExist.questionId
 							&& display.deleted == 0;
 					  });
+					  if(!display){
+						  display = _.find(listOfInterviewDisplay,function(display){
+								return display.questionId == questionExist.questionId;
+						  });
+					  }
 					  var id = display?display.id:null;
 					 if(id){
 							display.deleted = 1;
@@ -1157,7 +1162,7 @@
 					if(response.status == 200){
 						if(displayAnswersExist){
 						var interviewDisplayAnswers = 
-							buildInterviewDisplayAnswers(response.data,displayAnswersExist);
+							buildInterviewDisplayAnswers(displayAnswersExist,displayAnswersExist);
 						InterviewsService.updateDisplayAnswerList(interviewDisplayAnswers).then(function(response){
 							if(response.status == 200){
 								InterviewsService.getIntDisplay(interviewId).then(function(response){
