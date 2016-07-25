@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,8 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		vo.setProcessed(question.isProcessed());
-
+		vo.setLastUpdated(question.getLastUpdated());
+		
 		return vo;
 	}
 
@@ -116,9 +118,10 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		question.setParentAnswerId(questionVO.getParentAnswerId());
 		question.setLink(questionVO.getLink());
 		question.setModCount(questionVO.getModCount());
-		question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
+		//question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
 		question.setIntQuestionSequence(questionVO.getIntQuestionSequence());
 		question.setProcessed(questionVO.isProcessed());
+		
 		return question;
 	}
 
@@ -197,7 +200,8 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		vo.setProcessed(question.isProcessed());
-
+		vo.setLastUpdated(question.getLastUpdated());
+		
 		return vo;
 	}
 

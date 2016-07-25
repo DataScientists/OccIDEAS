@@ -49,6 +49,7 @@ public class InterviewAnswerDao {
 						iq.setLink(question.getLink());
 						iq.setParentAnswerId(a.getAnswerId());
 						iq.setQuestionId(question.getIdNode());
+						iq.setType(question.getType());
 						iq.setDescription(question.getDescription());
 						iq.setTopNodeId(a.getTopNodeId());
 						iq.setIntQuestionSequence(intQuestionSequence);

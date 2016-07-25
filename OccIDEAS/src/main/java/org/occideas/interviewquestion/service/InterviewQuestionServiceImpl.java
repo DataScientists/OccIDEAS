@@ -106,4 +106,5 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 		return dao.getMaxIntQuestionSequence(idInterview);
 	}
 	
+	
 }

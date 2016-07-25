@@ -11,6 +11,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Agent;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.question.service.QuestionService;
 import org.occideas.vo.QuestionVO;
@@ -35,14 +36,7 @@ public class InterviewQuestionDao {
     }
 
 	public InterviewQuestion get(Long id){
-		final Criteria crit = sessionFactory.getCurrentSession().createCriteria(InterviewQuestion.class)
-					.add(Restrictions.eq("deleted", 0))
-					.add(Restrictions.eq("interview_idinterview", id));
-		List list = crit.list();
-		if(list.isEmpty()){
-			return new InterviewQuestion();
-		}
-      return (InterviewQuestion) list.get(0);
+		return (InterviewQuestion) sessionFactory.getCurrentSession().get(InterviewQuestion.class, id);
     }
 	
 	public InterviewQuestion merge(InterviewQuestion iq)   {
@@ -106,19 +100,7 @@ public class InterviewQuestionDao {
 				.add(Restrictions.eq("deleted", 0));
 		return crit.list();
 	}
-    @SuppressWarnings("unchecked")
-    public List<InterviewQuestion> findById(Long interviewId, Long questionId) {
-        final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(InterviewQuestion.class)
-					.setResultTransformer(Transformers.aliasToBean(InterviewQuestion.class));
-        if (interviewId != null) {
-            crit.add(Restrictions.eq("idinterview", interviewId));
-        }
-        if (questionId != null) {
-            crit.add(Restrictions.eq("question_id", questionId));
-        }
-        return crit.list();
-    }
+    
     @SuppressWarnings("unchecked")
     public List<InterviewQuestion> findByInterviewId(Long interviewId) {
         final Session session = sessionFactory.getCurrentSession();

@@ -1,7 +1,10 @@
 package org.occideas.vo;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({ "isProcessed", "lQid","idNode","count" })
@@ -25,6 +28,8 @@ public class InterviewQuestionVO {
 	private List<InterviewAnswerVO> answers;
 	private InterviewLinkedVO linkingQuestion;
 	private boolean isProcessed;
+	@JsonFormat(pattern="dd/MM/yyyy HH:mm:ss")
+	private Date lastUpdated;
 
 	public long getIdInterview() {
 		return idInterview;
@@ -91,6 +96,9 @@ public class InterviewQuestionVO {
 	}
 
 	public List<InterviewAnswerVO> getAnswers() {
+		if(answers==null){
+			answers = new ArrayList<InterviewAnswerVO>();
+		}
 		return answers;
 	}
 
@@ -178,5 +186,13 @@ public class InterviewQuestionVO {
 				+ ", nodeClass=" + nodeClass + ", number=" + number + ", type=" + type + ", intQuestionSequence="
 				+ intQuestionSequence + ", deleted=" + deleted + ", answers=" + answers + ", linkingQuestion="
 				+ linkingQuestion + "]";
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 }

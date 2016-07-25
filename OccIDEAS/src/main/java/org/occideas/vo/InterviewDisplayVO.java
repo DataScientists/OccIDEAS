@@ -25,7 +25,7 @@ public class InterviewDisplayVO {
 	private String description;
 	private String nodeClass;
 	private List<InterviewDisplayAnswerVO> answers;
-	@JsonFormat(pattern="MM/dd/yyyy HH:mm:ss")
+	@JsonFormat(pattern="dd/MM/yyyy HH:mm:ss")
 	private Date lastUpdated;
 
 	public long getId() {

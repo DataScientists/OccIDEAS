@@ -69,6 +69,18 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 		return Response.ok(intQuestion).build();
 	}
 	
+	@GET
+	@Path(value="/getInterviewQuestion")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getInterviewQuestion( @QueryParam("interviewQuestionId") Long interviewQuestionId){
+		List<InterviewQuestionVO> list = service.findById(interviewQuestionId);
+		InterviewQuestionVO interviewQuestion = null;
+		for(InterviewQuestionVO iq:list){
+			interviewQuestion = iq;
+		}
+		return Response.ok(interviewQuestion).build();
+	}
+	
 	@Override
 	public Response get(Long id) {
 		// TODO Auto-generated method stub

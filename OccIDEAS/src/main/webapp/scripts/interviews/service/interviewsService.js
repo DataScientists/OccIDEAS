@@ -255,6 +255,14 @@
 				})
 			return request.then(handleSuccess,handleError);
         }
+        function getInterviewQuestion(interviewQuestionId){
+        	var restURL = 'web/rest/interviewquestionanswer/getInterviewQuestion?interviewQuestionId=' + interviewQuestionId;
+        	var request =  $http({
+				  method: 'GET',
+				  url: restURL
+				})
+			return request.then(handleSuccess,handleError);
+        }
 
         function saveNote(data){
             var restURL = 'web/rest/note/update';
@@ -307,6 +315,7 @@
             saveIntDisplayList:saveIntDisplayList,
             getIntDisplay:getIntDisplay,
             getIntQuestion:getIntQuestion,
+            getInterviewQuestion:getInterviewQuestion,
             getInterviewQuestionList:getInterviewQuestionList,
             saveNote:saveNote,
             getListNote:getListNote,

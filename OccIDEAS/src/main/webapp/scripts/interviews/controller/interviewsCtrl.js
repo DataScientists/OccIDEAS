@@ -36,7 +36,22 @@
 		$scope.startInterview = function(data) {
 			createParticipant(data);
 		}
-		
+		$scope.resetInterview = function() {
+			var idInterview = $scope.interview.interviewId;
+			InterviewsService.get(idInterview).then(function(response) {
+				if (response.status === 200) {
+					var interview = response.data[0];  
+					$scope.interview = interview;
+					$scope.displayHistoryNew = undefined;
+					resumeInterview();
+					refreshDisplayNew();
+				} else if (response.status === 401) {
+					$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
+					alert("Could not reset please close tab and resume from the participants list");
+					return;
+				}
+			});
+		}
 		$scope.getWeeksArray = function() {
 			var weeks = [];
 			for (var i = 0; i < 53; i++) {
@@ -85,13 +100,16 @@
 			$log.info("updateData is not null... interview continuation initializing...");
 			$scope.interview = updateData;
 			$rootScope.participant = updateData.participant;
+			resumeInterview();	
+		}
+			
+		function resumeInterview(){
 			var participant = $rootScope.participant;
 			if(participant.status == 1){//partial interview
 				participant.status = 0;//running
 				$rootScope.saveParticipant(participant);
 			}
-			refreshInterviewDisplay($scope.interview.interviewId);
-			refreshDisplay();
+			refreshDisplayNew();
 			var question = findNextQuestionQueued($scope.interview);
 			if(question){										
 				QuestionsService.findQuestionSingleChildLevel(question.questionId).then(function(response){
@@ -129,9 +147,8 @@
 					alert(msg);
 				}
 				
-			}			
+			}	
 		}
-				
 		function populateInteviewQuestionJsonByQuestion(interview, question) {
 			var parentModuleId = undefined;
 			var parentAnswerId = undefined;
@@ -225,33 +242,44 @@
 				isProcessed : false
 			};
 		}
-		function processInterviewQuestionWithMultipleAnswersEdit(interview, node) {
-			buildAndEditMultipleQuestion(interview, node);
-			$mdDialog.cancel();
-			refreshInterviewDisplay($scope.interview.interviewId);
-			refreshDisplay();
+		
+		//Simple Question
+		function processInterviewQuestionNew(interview, node) {			
+			buildAndSaveQuestionNew(interview, node);	
+			
 		}
+		//Multi Question
 		function processInterviewQuestionWithMultipleAnswersNew(interview, node) {
 			buildAndSaveMultipleQuestionNew(interview, node);
+			
 		}
-		function processInterviewQuestionNew(interview, node) {			
-			buildAndSaveQuestionNew(interview, node);
+		//Frequency Question
+		function processFrequencyNew(interview, node) {
+			buildAndSaveFrequencyNew(interview, node);
+			
 		}
+		
+		//Edit Simple Question
 		function processEditInterviewQuestionNew(interview, node) {
 			buildAndEditQuestionNew(interview, node);
 			$mdDialog.cancel();
-			refreshInterviewDisplay($scope.interview.interviewId);
-			refreshDisplay();
+						
 		}
+		//Edit Multi Question
+		function processInterviewQuestionWithMultipleAnswersEdit(interview, node) {
+			buildAndEditMultipleQuestion(interview, node);
+			$mdDialog.cancel();
+			
+		}
+		//Edit Frequency Question
 		function processFrequencyNewEdit(interview, node) {
 			buildAndEditFrequency(interview, node);
 			$mdDialog.cancel();
-			refreshInterviewDisplay($scope.interview.interviewId);
-			refreshDisplay();
+			
 		}
-		function processFrequencyNew(interview, node) {
-			buildAndSaveFrequencyNew(interview, node);
-		}
+		
+		
+		
 		function buildAndEditFrequency(interview, node) {
 			var hours = 0;
 			if ($scope.questionBeingEdited.hours) {
@@ -267,33 +295,37 @@
 			}
 			var answer = node.selectedAnswer?node.selectedAnswer:node.nodes[0];
 			var historyQuestion = _.find($scope.interview.questionHistory,function(ques){
-				return ques.questionId == node.idNode;
+				return ques.questionId == node.idNode && !ques.deleted;
 			});
 			var newAnswer = _.find(historyQuestion.answers,function(answ){
-				return answ.answerId == answer.idNode && answ.deleted==0;
+				return answ.answerId == answer.idNode;
 			});	
-			var actualAnswer = undefined;
-			if(listOfAnswersGiven.length > 0){
-				actualAnswer = _.find(listOfAnswersGiven,function(ans){
-					return newAnswer.answerId == ans.answerId
-				});
-			}else{
-				actualAnswer = _.find(interview.answerHistory,function(ans){
-					return newAnswer.id == ans.id && !ans.deleted;
+			
+			if(!newAnswer){
+				newAnswer = _.find(interview.answerHistory,function(ans){
+					return newAnswer.id == ans.id;
 				});
 			}
 				
-			actualAnswer.answerFreetext = answerValue;			
-			actualAnswer.name = answerValue;						
-			saveSingleAnswer(actualAnswer);
+			if(!newAnswer){
+				var msg = "OOPS! lost the actual question in buildAndEditFrequency, please take a screenshot showing AWES ID and log this issue.";
+				console.error(msg);
+				alert(msg);	
+			}
+				
+			newAnswer.answerFreetext = answerValue;			
+			newAnswer.name = answerValue;						
+			
 			var questionBeingEdited = _.find(interview.questionHistory,function(queuedQuestion){
 				return queuedQuestion.questionId == node.idNode 
 				&& queuedQuestion.processed 
 				&& !queuedQuestion.deleted;
 			});
 			questionBeingEdited.answers = [];
-			questionBeingEdited.answers.push(actualAnswer);	
-			saveInterviewDisplay(questionBeingEdited);
+			questionBeingEdited.answers.push(newAnswer);	
+			saveSingleAnswer(newAnswer,questionBeingEdited);
+			//saveInterviewDisplay(questionBeingEdited);
+			
 		}
 		function buildAndSaveFrequencyNew(interview, node) {
 			var hours = 0;
@@ -326,7 +358,8 @@
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
-						saveInterviewDisplay(newQuestionAsked);
+						//saveInterviewDisplay(newQuestionAsked);
+						refreshDisplayNew(newQuestionAsked);
 						var answer = newQuestionAsked.answers[0];
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
@@ -368,7 +401,8 @@
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
-						saveInterviewDisplay(newQuestionAsked);
+						//saveInterviewDisplay(newQuestionAsked);
+						refreshDisplayNew(newQuestionAsked);
 						var answer = newQuestionAsked.answers[0];
 						var lookupQuestion = {
 							parentId : newQuestionAsked.questionId,
@@ -602,7 +636,8 @@
 					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 						if (response.status === 200) {
 							console.log("Saved Interview q:"+newQuestionAsked.questionId);
-							saveInterviewDisplay(newQuestionAsked);
+							//saveInterviewDisplay(newQuestionAsked);
+							refreshDisplayNew(newQuestionAsked);
 							var defer1 = $q.defer();
 							deleteAnswers(answersToDelete,defer1);
 							defer1.promise.then(function(){
@@ -610,7 +645,13 @@
 								var defer = $q.defer();
 								deleteQuestions(questionsToDelete,defer);
 								defer.promise.then(function(){
-									console.log("All done deleting child questions");						
+									console.log("All done deleting child questions");	
+									newQuestionAsked.answers = [];
+									for(var i=0;i<newSetOfAnswers.length;i++){
+										var pa = newSetOfAnswers[i];
+										var newAnsw = populateInterviewAnswerJsonByAnswer(interview, pa);
+										newQuestionAsked.answers.push(newAnsw);
+									}
 									showNextQuestionNew();							
 								});
 							});	
@@ -668,7 +709,7 @@
 								delete newAnswer.id;
 								updateFreeTextAnswer(newAnswer,oldAnswer);
 								// need to refresh once freetext is udpated
-								saveInterviewDisplay(newQuestionAsked);
+								//saveInterviewDisplay(newQuestionAsked);
 								bIsFreeText = true;
 							}else{
 								var msg = "Could not find free text answer to update";
@@ -700,7 +741,8 @@
 					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 						if (response.status === 200) {
 							console.log("Saved Interview q:"+newQuestionAsked.questionId);
-							saveInterviewDisplay(newQuestionAsked);
+							//saveInterviewDisplay(newQuestionAsked);
+							refreshDisplayNew(newQuestionAsked);
 							var defer1 = $q.defer();
 							deleteAnswers(answersToDelete,defer1);
 							defer1.promise.then(function(){
@@ -754,7 +796,7 @@
 				newQuestionAsked.processed = true;
 				InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 					if (response.status === 200) {
-						saveInterviewDisplay(newQuestionAsked);
+						refreshDisplayNew(newQuestionAsked);
 						listQuestionsAsked.push(response.data);
 						var answer = newQuestionAsked.answers[0];
 						var lookupQuestion = {
@@ -800,7 +842,7 @@
 				return defer.promise;
 			}
 		}
-		function saveSingleAnswer(answer){	
+		function saveSingleAnswer(answer,questionBeingEdited){	
 			var container = [];
 			container.push(answer);
 			InterviewsService.saveAnswers(container).then(function(response){
@@ -809,6 +851,7 @@
 				}else{
 					console.error("Could not save "+answer.idNode);
 				}
+				refreshDisplayNew(questionBeingEdited);
 			});
 			
 		}
@@ -1014,7 +1057,7 @@
 					InterviewsService.startInterview(interview).then(function(response) {
 						if (response.status === 200) {
 							interview.interviewId = response.data.interviewId;
-							refreshInterviewDisplay(interview.interviewId);
+							//refreshInterviewDisplay(interview.interviewId);
 							var copyParticipant = angular.copy($scope.participant);
 							interview.participant = copyParticipant;
 							$scope.interview = {};
@@ -1125,7 +1168,9 @@
 			})
 			return question;
 		}
-		
+		function refreshInterviewDisplayNew(question){
+				
+		} 
 		function refreshInterviewDisplay(interviewId){
 			var shouldUpdateInterviewDisplay = false;
 			var displayAnswersExist = undefined;
@@ -1300,7 +1345,7 @@
 											buildInterviewDisplayAnswers(response.data,question);
 										InterviewsService.updateDisplayAnswerList(interviewDisplayAnswers).then(function(response){
 											if(response.status == 200){
-												refreshInterviewDisplay(question.idInterview);
+												//refreshInterviewDisplayNew(question);
 											}
 										});
 									}
@@ -1309,6 +1354,8 @@
 						});
 					}
 				});
+				
+				
 			}else{
 			var answeredQuestion = {
 					idInterview:question.idInterview,
@@ -1339,7 +1386,7 @@
 						buildInterviewDisplayAnswers(response.data,question);
 					InterviewsService.updateDisplayAnswerList(interviewDisplayAnswers).then(function(response){
 						if(response.status == 200){
-							refreshInterviewDisplay(question.idInterview);
+							//refreshInterviewDisplayNew(question.idInterview);
 						}
 					});
 				}
@@ -1367,28 +1414,84 @@
 		}
 		
 		// might need to deprecate below
-		function refreshDisplay(){
-//			$scope.displayHistory = angular.copy($scope.interview.questionHistory);
-			/*_.remove($scope.displayHistory, function(node) {
+		function refreshDisplay(node){
+			$scope.displayHistory = angular.copy($scope.interview.questionHistory);
+			_.remove($scope.displayHistory, function(node) {
 				  return node.link || node.deleted || !node.processed;
-				});*/
+				});
 			
-//			_.each($scope.displayHistory, function(node) {
-//				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
-//					  var retValue = false;
-//					  if(qnode.link){
-//						  if(qnode.link == node.topNodeId){
-//							  retValue = true;
-//					  }
-//					  }
-//					  return retValue;
-//				  });
-//				  if(linkNode){
-//					  node.header = linkNode.name.substr(0,4);
-//				  } 
-//			});
-//			_.reverse($scope.displayHistory);
+			_.each($scope.displayHistory, function(node) {
+				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+					  var retValue = false;
+					  if(qnode.link){
+						  if(qnode.link == node.topNodeId){
+							  retValue = true;
+						  }
+					  }
+					  return retValue;
+				  });
+				  if(linkNode){
+					  node.header = linkNode.name.substr(0,4);
+				  } 
+			});						
 		}
+		function refreshDisplayNew(question){
+			if(!$scope.displayHistoryNew){
+				$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
+				_.remove($scope.displayHistoryNew, function(node) {
+					  return node.link || node.deleted || !node.processed;
+					});
+			}
+			_.each($scope.displayHistoryNew, function(node) {
+				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+					  var retValue = false;
+					  if(qnode.link){
+						  if(qnode.link == node.topNodeId){
+							  retValue = true;
+						  }
+					  }
+					  return retValue;
+				  });
+				  if(linkNode){
+					  node.header = linkNode.name.substr(0,4);
+				  } 
+			});	
+			if(question){				
+				InterviewsService.getInterviewQuestion(question.id).then(function(response){
+					if(response.status === 200){
+						var latestQ = response.data;
+						var bFound = false;
+						for(var i=0;i<$scope.displayHistoryNew.length;i++){
+							var q = $scope.displayHistoryNew[i];
+							if(q.id==latestQ.id){
+								q = latestQ;
+								$scope.displayHistoryNew[i] = q;
+								bFound = true;
+							}
+						}
+						if(!bFound){
+							$scope.displayHistoryNew.push(latestQ);
+						}
+						_.each($scope.displayHistoryNew, function(node) {
+							  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+								  var retValue = false;
+								  if(qnode.link){
+									  if(qnode.link == node.topNodeId){
+										  retValue = true;
+									  }
+								  }
+								  return retValue;
+							  });
+							  if(linkNode){
+								  node.header = linkNode.name.substr(0,4);
+							  } 
+						});	
+					}
+				});
+			}	
+								
+		}
+		
 		function showNextQuestionNew(lookupNode, parentNode) {			
 			var lookupNodeTemp = lookupNode;
 			var parentNodeTemp = parentNode;
@@ -1415,7 +1518,7 @@
 						}
 					}
 					safeDigest($scope.interview);
-					refreshDisplay();
+					//refreshDisplay();
 					var question = findNextQuestionQueued($scope.interview);
 					if(question){
 						if(question.link==0){	
@@ -1497,7 +1600,7 @@
 								}
 							}
 							safeDigest($scope.interview);
-							refreshDisplay();
+							//refreshDisplay();
 							var question = findNextQuestionQueued($scope.interview);
 							if(question){
 								if(question.link==0){
@@ -1612,46 +1715,52 @@
 		$scope.showEditQuestionPrompt = function(ev,node) {
 			$scope.participant.status = 0;//running
 			$scope.interviewStarted = true;
-			QuestionsService.findQuestionSingleChildLevel(node.questionId).then(function(response){
+			InterviewsService.getInterviewQuestion(node.id).then(function(response){
 				if(response.status === 200){
-					$log.info('Question Found');
-					var fullQuestion = response.data[0];
-					_.each(node.answers,function(actualAnswer) {
-						if(actualAnswer.deleted==0){
-							_.find(fullQuestion.nodes,function(possibleAnswer) {
-								if (actualAnswer.answerId == possibleAnswer.idNode) {
-									possibleAnswer.isSelected = true;
-									fullQuestion.selectedAnswer = possibleAnswer;
-									if(actualAnswer.type == 'P_freetext'){
-										fullQuestion.selectedAnswer.name = actualAnswer.name;
-										fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
-									}else if(actualAnswer.type.startsWith('P_frequency')){
-										$scope.currentFrequencyValue = actualAnswer.answerFreetext;
-									}
-								}
+					var iq = response.data;
+					QuestionsService.findQuestionSingleChildLevel(iq.questionId).then(function(response){
+						if(response.status === 200){
+							$log.info('Question Found');
+							var fullQuestion = response.data[0];
+							_.each(iq.answers,function(actualAnswer) {
+								if(actualAnswer.deleted==0){
+									_.find(fullQuestion.nodes,function(possibleAnswer) {
+										if (actualAnswer.answerId == possibleAnswer.idNode) {
+											possibleAnswer.isSelected = true;
+											fullQuestion.selectedAnswer = possibleAnswer;
+											if(actualAnswer.type == 'P_freetext'){
+												fullQuestion.selectedAnswer.name = actualAnswer.name;
+												fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
+											}else if(actualAnswer.type.startsWith('P_frequency')){
+												$scope.currentFrequencyValue = actualAnswer.answerFreetext;
+											}
+										}
+									});
+								}	
 							});
-						}	
+							$scope.questionBeingEdited = fullQuestion;
+							$scope.questionBeingEditedCopy = angular.copy(fullQuestion);
+							if(fullQuestion.type == 'Q_frequency'){
+								$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+								$scope.hoursArray = $scope.getShiftHoursArray();
+								$scope.minutesArray = $scope.getShiftMinutesArray();
+								$scope.weeks = $scope.getWeeksArray();
+								$scope.seconds = $scope.getSecondsArray();
+								
+							}					
+							$mdDialog.show({
+								scope : $scope.$new(),
+								templateUrl : 'scripts/interviews/view/editQuestionDialog.html',
+								clickOutsideToClose:true
+							});
+						}else{
+							$log.error('ERROR on findQuestions in showEditQuestionPrompt!');
+							throw response;
+						}
 					});
-					$scope.questionBeingEdited = fullQuestion;
-					$scope.questionBeingEditedCopy = angular.copy(fullQuestion);
-					if(fullQuestion.type == 'Q_frequency'){
-						$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
-						$scope.hoursArray = $scope.getShiftHoursArray();
-						$scope.minutesArray = $scope.getShiftMinutesArray();
-						$scope.weeks = $scope.getWeeksArray();
-						$scope.seconds = $scope.getSecondsArray();
-						
-					}					
-					$mdDialog.show({
-						scope : $scope.$new(),
-						templateUrl : 'scripts/interviews/view/editQuestionDialog.html',
-						clickOutsideToClose:true
-					});
-				}else{
-					$log.error('ERROR on findQuestions in showEditQuestionPrompt!');
-					throw response;
 				}
 			});
+			
 		};
         $scope.handleSaveNote = function(note){
             note.isEditing = false;
