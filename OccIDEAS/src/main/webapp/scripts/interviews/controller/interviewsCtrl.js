@@ -297,33 +297,32 @@
 			var historyQuestion = _.find($scope.interview.questionHistory,function(ques){
 				return ques.questionId == node.idNode && !ques.deleted;
 			});
-			var newAnswer = _.find(historyQuestion.answers,function(answ){
-				return answ.answerId == answer.idNode;
-			});	
-			
-			if(!newAnswer){
-				newAnswer = _.find(interview.answerHistory,function(ans){
-					return newAnswer.id == ans.id;
-				});
-			}
-				
-			if(!newAnswer){
-				var msg = "OOPS! lost the actual question in buildAndEditFrequency, please take a screenshot showing AWES ID and log this issue.";
-				console.error(msg);
-				alert(msg);	
-			}
-				
-			newAnswer.answerFreetext = answerValue;			
-			newAnswer.name = answerValue;						
-			
-			var questionBeingEdited = _.find(interview.questionHistory,function(queuedQuestion){
-				return queuedQuestion.questionId == node.idNode 
-				&& queuedQuestion.processed 
-				&& !queuedQuestion.deleted;
+			InterviewsService.getInterviewQuestion(historyQuestion.id).then(function(response){
+				if(response.status === 200){
+					var latestQ = response.data;
+					var newAnswer = _.find(latestQ.answers,function(answ){
+						return answ.answerId == answer.idNode;
+					});		
+					if(!newAnswer){
+						var msg = "OOPS! lost the actual question in buildAndEditFrequency, please take a screenshot showing AWES ID and log this issue.";
+						console.error(msg);
+						alert(msg);	
+					}						
+					newAnswer.answerFreetext = answerValue;			
+					newAnswer.name = answerValue;						
+					
+					var questionBeingEdited = _.find(interview.questionHistory,function(queuedQuestion){
+						return queuedQuestion.questionId == node.idNode 
+						&& queuedQuestion.processed 
+						&& !queuedQuestion.deleted;
+					});
+					questionBeingEdited.answers = [];
+					questionBeingEdited.answers.push(newAnswer);	
+					saveSingleAnswer(newAnswer,questionBeingEdited);
+				}
 			});
-			questionBeingEdited.answers = [];
-			questionBeingEdited.answers.push(newAnswer);	
-			saveSingleAnswer(newAnswer,questionBeingEdited);
+			
+			
 			//saveInterviewDisplay(questionBeingEdited);
 			
 		}
