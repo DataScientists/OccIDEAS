@@ -28,7 +28,7 @@
             {{participant.reference}}</td>
         <td title="'Status'" sortable="'statusDescription'" filter="{ statusDescription: 'text'}">
 			{{participant.statusDescription}}
-		</td><td title="'Notes'" >		
+		</td><td title="'Notes'" style="max-width:200px;">		
 			<div ng-repeat="note in participant.notes" ng-if="note.type!='System'">{{note.text}}</div>		
 		</td>	
 		<td>

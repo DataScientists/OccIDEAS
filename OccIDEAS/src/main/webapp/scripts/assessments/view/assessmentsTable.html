@@ -1,10 +1,12 @@
 <div ng-cloak>
 	<div>
-		<button permission="['ROLE_ADMIN']" class="btn btn-default"
-			ng-click="showExportCSVButton()">Export to CSV</button>
+		
+		<button class="btn btn-default"
+			ng-click="showExportCSVButton()">Export</button>
 		<button style="display: none;" id="exportCSV" class="btn btn-default"
 			ng-csv="getCSVButton()" lazy-load="true" filename="export.csv"
 			field-separator=","></button>
+		Size : {{vm.tableParams.total()}}
 		<table ng-table="vm.tableParams"
 			class="table table-condensed table-bordered table-striped">
 <!-- 			<tr> -->
