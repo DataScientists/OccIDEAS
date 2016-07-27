@@ -6,14 +6,31 @@
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,InterviewsService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
-		
+		$scope.interview = data[0];
+		$scope.displayHistoryNew = undefined;
 		refreshInterviewDisplay();
 		function refreshInterviewDisplay(){
-			InterviewsService.getIntDisplay(data[0].interviewId).then(function(response){
-				if(response.status == 200){
-					$scope.answeredQuestion = response.data;
-				}
-			});
+			
+			if(!$scope.displayHistoryNew){
+				$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
+				_.remove($scope.displayHistoryNew, function(node) {
+					  return node.link || node.deleted || !node.processed;
+					});
+			}
+			_.each($scope.displayHistoryNew, function(node) {
+				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+					  var retValue = false;
+					  if(qnode.link){
+						  if(qnode.link == node.topNodeId){
+							  retValue = true;
+						  }
+					  }
+					  return retValue;
+				  });
+				  if(linkNode){
+					  node.header = linkNode.name.substr(0,4);
+				  } 
+			});	
 		}
 		
 		vm.interviewFiredRules = null;

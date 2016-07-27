@@ -9,11 +9,14 @@
 </div>
 <div class="row">
   <div class="col-md-6" id="interview-question-list">
-  	<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in answeredQuestion">
+  	<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in displayHistoryNew | orderBy:'lastUpdated':false">
 			<div class="angular-ui-tree">
 				<div class="tree-node">
 					<div id="questionlist-{{element.questionId}}" class="tree-node-content Q_interviewresult {{element.link ? 'Q_link':''}} {{element.processed ? 'Q_processed':''}}">
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
+<!-- 							<span ng-if="!element.processed" class="badge-unprocessed " title="scheduled"> -->
+<!-- 								&nbsp; -->
+<!-- 							</span> -->
 							<span ng-if="element.deleted" class="badge-deleted" title="deleted">
 								&nbsp;
 							</span>
@@ -23,20 +26,21 @@
 							<span class="badge" title="qid:{{element.questionId}}">
 								{{element.number}}
 							</span>
-							
+							<span class="badge">
+								{{element.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}}
+							</span>
 						</div>
-						<span id="{{'IntResult'+element.idNode}}">{{ element.name }}</span>
+						<span id="{{'IntResult'+element.idNode}}" data-toggle="tooltip" data-placement="bottom" title="{{ element.name }}">{{ element.name }}</span>
 					</div>
-					<!-- 			show answers -->
-					<div class="tree-node-content P_interviewresult" ng-class="{'on': selected==as.answerId}" ng-repeat="as in element.answers | orderBy:orderByNumber">
-						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
-							<span ng-if="as.deleted" class="badge-deleted" title="deleted">
+					<!-- 			show answers -->				
+					<div class="tree-node-content P_interviewresult" ng-repeat="as in element.answers | orderBy:orderByNumber">
+						<span ng-if="as.deleted" class="badge-deleted" title="deleted">
 								&nbsp;
 							</span>
-							<span class="badge">{{as.number}}</span>
-							
+						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
+							<span class="badge">{{as.number}}</span>					
 						</div>
-						<span id="{{'IntResult'+as.idNode}}">{{as.answerFreetext?as.answerFreetext:as.name}}
+						<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip" data-placement="bottom" title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext}}
 						</span>
 					</div>
 				</div>
