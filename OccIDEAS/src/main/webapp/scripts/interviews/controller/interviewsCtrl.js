@@ -452,7 +452,8 @@
 			InterviewsService.saveAnswers(answers).then(function(response){
 				if (response.status === 200) {
 					console.log("Updated free text answer");
-					
+					$scope.displayHistoryNew = undefined;
+					refreshDisplayNew();
 				}else{
 					var msg = "Failed to updateFreeTextAnswer";
 					console.error(msg);
@@ -705,10 +706,11 @@
 									});
 								}
 								//refresh new id for new answer
-								delete newAnswer.id;
+								//delete newAnswer.id;
 								updateFreeTextAnswer(newAnswer,oldAnswer);
 								// need to refresh once freetext is udpated
 								//saveInterviewDisplay(newQuestionAsked);
+								
 								bIsFreeText = true;
 							}else{
 								var msg = "Could not find free text answer to update";
@@ -741,7 +743,7 @@
 						if (response.status === 200) {
 							console.log("Saved Interview q:"+newQuestionAsked.questionId);
 							//saveInterviewDisplay(newQuestionAsked);
-							refreshDisplayNew(newQuestionAsked);
+							
 							var defer1 = $q.defer();
 							deleteAnswers(answersToDelete,defer1);
 							defer1.promise.then(function(){
@@ -750,7 +752,8 @@
 								deleteQuestions(questionsToDelete,defer);
 								defer.promise.then(function(){
 									console.log("All done deleting child questions");						
-									showNextQuestionNew();							
+									showNextQuestionNew();	
+									refreshDisplayNew(newQuestionAsked);
 								});
 							});	
 						}
