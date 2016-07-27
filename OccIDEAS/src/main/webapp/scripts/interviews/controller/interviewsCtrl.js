@@ -45,6 +45,7 @@
 					$scope.displayHistoryNew = undefined;
 					resumeInterview();
 					refreshDisplayNew();
+					showNextQuestionNew();	
 				} else if (response.status === 401) {
 					$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
 					alert("Could not reset please close tab and resume from the participants list");
@@ -145,6 +146,7 @@
 					var msg = "Could not queue first question";
 					console.error(msg);
 					alert(msg);
+					endInterview();
 				}
 				
 			}	
@@ -637,7 +639,7 @@
 						if (response.status === 200) {
 							console.log("Saved Interview q:"+newQuestionAsked.questionId);
 							//saveInterviewDisplay(newQuestionAsked);
-							refreshDisplayNew(newQuestionAsked);
+							
 							var defer1 = $q.defer();
 							deleteAnswers(answersToDelete,defer1);
 							defer1.promise.then(function(){
@@ -646,13 +648,14 @@
 								deleteQuestions(questionsToDelete,defer);
 								defer.promise.then(function(){
 									console.log("All done deleting child questions");	
-									newQuestionAsked.answers = [];
+									/*newQuestionAsked.answers = [];
 									for(var i=0;i<newSetOfAnswers.length;i++){
 										var pa = newSetOfAnswers[i];
 										var newAnsw = populateInterviewAnswerJsonByAnswer(interview, pa);
 										newQuestionAsked.answers.push(newAnsw);
-									}
-									showNextQuestionNew();							
+										refreshDisplayNew(newQuestionAsked);
+									}*/
+									$scope.resetInterview();							
 								});
 							});	
 						}
@@ -752,8 +755,7 @@
 								deleteQuestions(questionsToDelete,defer);
 								defer.promise.then(function(){
 									console.log("All done deleting child questions");						
-									showNextQuestionNew();	
-									refreshDisplayNew(newQuestionAsked);
+									$scope.resetInterview();
 								});
 							});	
 						}
