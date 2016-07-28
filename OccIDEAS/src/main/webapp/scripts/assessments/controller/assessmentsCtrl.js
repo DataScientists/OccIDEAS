@@ -103,6 +103,7 @@
 				var obj = {A:[]};
 				obj.A.push(data.interviewId);
 				obj.A.push(data.referenceNumber);
+				//put notes and status
 //				obj.A.push(data.module.idNode);
 				_.each(questionIdList,function(qId){
 					//check if qId has delimeter "_" which means is multiple
@@ -125,6 +126,9 @@
 										}else{
 											obj.A.push(ans.name);
 											numberExist = true;
+											//console.error("could not find freetext");
+											//invalid = true;
+											//notes = ""
 										}
 									}
 								})
@@ -141,6 +145,7 @@
 							&& qHistory.deleted == 0;
 						});
 						if(question){
+							//check for deleted
 							if(question.answers.length > 0){
 								    var ans = question.answers[0];
 									if(ans.answerFreetext){
@@ -166,20 +171,20 @@
 				});
 				// get unique questions by number and name , place it to listOfQuestion
 				listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
-					return item.number && item.name;
+					return item.questionId;
 				});
 			});
-			var sortQuestionList = {};
+			var sortHeaderList = {};
 			var header = "";
 			_.each(listOfQuestion,function(data){
 				//check if the unique question is a module/ajsm or fragment, if yes add it to the header
 				// to be display along with the question number in the CSV
 				if(data.nodeClass == 'M' || data.type == 'M_IntroModule' || data.type == 'Q_linkedajsm' || data.type == 'F_ajsm'){
 					if(header != ""){
-						sortQuestionList[header] = _.sortBy(sortQuestionList[header], 'header');
+						sortHeaderList[header] = _.sortBy(sortHeaderList[header], 'header');
 					}
 					header = data.name.substring(0, 4);
-					sortQuestionList[header] = [];
+					sortHeaderList[header] = [];
 				// if the unique question is an actual question get the number and append to its
 				// respective header which can be a module/ajsm or fragment
 				}else if(data.questionId){
@@ -191,17 +196,17 @@
 							return question.idNode == data.questionId;
 						});
 						// look for the top node id in listquestion
-						// build the header and check it in sortQuestionList
+						// build the header and check it in sortHeaderList
 						var topModule = _.find(listOfQuestion,function(lq){
 							return lq.link == data.topNodeId;
 						});
 						var topHeader = topModule.name.substring(0, 4);
-						if(!sortQuestionList[topHeader]){
-						sortQuestionList[topHeader] = [];
+						if(!sortHeaderList[topHeader]){
+						sortHeaderList[topHeader] = [];
 						}
 						_.each(nodeQuestion.nodes,function(posAns){
 							//loop through all possible answer
-							sortQuestionList[topHeader].push({
+							sortHeaderList[topHeader].push({
 								header:topHeader+"_"+data.number +"_"+posAns.number,
 								questionId:data.questionId +"_"+posAns.number
 							});
@@ -211,15 +216,15 @@
 					//for standard questions add the header + question number
 					else{
 					// look for the top node id in listquestion
-					// build the header and check it in sortQuestionList
+					// build the header and check it in sortHeaderList
 					var topModule = _.find(listOfQuestion,function(lq){
 						return lq.link == data.topNodeId;
 					});
 					var topHeader = topModule.name.substring(0, 4);
-					if(!sortQuestionList[topHeader]){
-						sortQuestionList[topHeader] = [];
+					if(!sortHeaderList[topHeader]){
+						sortHeaderList[topHeader] = [];
 					}
-					sortQuestionList[topHeader].push({
+					sortHeaderList[topHeader].push({
 						header:topHeader+"_"+data.number,
 						questionId:data.questionId
 					});
@@ -228,9 +233,10 @@
 			});
 			
 			
-			_.each(sortQuestionList,function(headers){
-				var uniqueHeaders = _.unionBy(headers,headers,function(o){return o.header;});
-				_.each(uniqueHeaders,function(data){
+			_.each(sortHeaderList,function(headerGroup){
+				
+				//var uniqueHeaders = _.unionBy(headers,headers,function(o){return o.header;});
+				_.each(headerGroup,function(data){
 					csvTemp[0].Q.push(data.header);
 					questionIdList.push(data.questionId);
 				})

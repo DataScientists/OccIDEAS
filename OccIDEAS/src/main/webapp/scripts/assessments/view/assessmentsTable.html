@@ -1,31 +1,23 @@
 <div ng-cloak>
 	<div>
-		
 		<button class="btn btn-default"
 			ng-click="showExportCSVButton()">Export</button>
 		<button style="display: none;" id="exportCSV" class="btn btn-default"
 			ng-csv="getCSVButton()" lazy-load="true" filename="export.csv"
 			field-separator=","></button>
 		Size : {{vm.tableParams.total()}}
-		<table ng-table="vm.tableParams"
-			class="table table-condensed table-bordered table-striped">
-<!-- 			<tr> -->
-<!-- 				<td>THIS FUNCTION IS IN PROGRESS AND WILL BE AVAILABLE SOON.</td> -->
-<!-- 			</tr> -->
-							<tr ng-repeat="participant in $data">
-								<td title="'idParticipant'">
-									{{participant.idParticipant}}</td>
-								<td title="'referenceNumber'">{{participant.interviews[0].referenceNumber}}</td>
-								<td title="'interviewId'">{{participant.interviews[0].interviewId}}</td>
-								<td>
-									<button class="btn btn-default btn-sm"
-										ng-click="vm.openFiredRules(participant.interviews[0].interviewId)">
-										<span class="glyphicon glyphicon-folder-open"></span>
-									</button>
-								</td>
+		<table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped">
+			<tr ng-repeat="participant in $data">
+				<td title="'idParticipant'">{{participant.idParticipant}}</td>
+				<td title="'interviewId'">{{participant.interviews[0].interviewId}}</td>
+				<td title="'referenceNumber'">{{participant.referenceNumber}}</td>	
 				<td>
-					<button class="btn btn-default btn-sm"
-						ng-click="addAssessmentTab(participant.interviews[0])">
+					<button ng-click="vm.openFiredRules(participant.interviews[0].interviewId)" class="btn btn-default btn-sm" >
+						<span class="glyphicon glyphicon-folder-open"></span>
+					</button>
+				</td>
+				<td>
+					<button ng-click="addAssessmentTab(participant.interviews[0])" class="btn btn-default btn-sm" >
 						<span class="glyphicon glyphicon-list-alt"></span>
 					</button>
 				</td>

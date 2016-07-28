@@ -24,6 +24,7 @@
         <td title="'Participant Id'" sortable="'idParticipant'" filter="{ idParticipant: 'text'}">
 			{{participant.idParticipant}}
 		</td>
+		<td title="'interviewId'">{{participant.interviews[0].interviewId}}</td>
         <td title="'AWES ID'" sortable="'reference'" filter="{ reference: 'text'}">
             {{participant.reference}}</td>
         <td title="'Status'" sortable="'statusDescription'" filter="{ statusDescription: 'text'}">

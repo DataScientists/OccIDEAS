@@ -52,7 +52,7 @@
 	    self.tableParams = new NgTableParams(
 			{	
 				page: 1,            
-                count: 100
+                count: 10
             }, {	
             
 			getData: function(params) {

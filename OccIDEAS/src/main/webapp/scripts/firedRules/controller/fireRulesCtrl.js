@@ -43,8 +43,8 @@
 					//view
 					_.each(interviewFiredRules,function(data){
 						//loop rules
-						_.each(data.rules,function(rules){
-							var condition = rules.conditions[0];
+						_.each(data.rules,function(rule){
+							var condition = rule.conditions[0];
 							if(condition){
 								FiredRulesService.findNodeById(condition.topNodeId)
 									.then(function(response){
@@ -67,27 +67,27 @@
 										// otherwise register agentId
 										// this is to group it by agent
 										var existingAgent = _.find(existingModule.firedRules,function(agent){
-											return agent.idAgent == rules.agent.agentGroup.idAgent;
+											return agent.idAgent == rule.agent.agentGroup.idAgent;
 										});
 										if(!existingAgent){
 											existingAgent = {
-													idAgent:rules.agent.agentGroup.idAgent,
+													idAgent:rule.agent.agentGroup.idAgent,
 													child:[],
-													agentGroupName:rules.agent.agentGroup.name
+													agentGroupName:rule.agent.agentGroup.name
 											};
 											existingModule.firedRules.push(existingAgent);
 										}
 										//make sure we dont get duplicate
 										var existingRule = _.find(existingAgent.child,function(exRule){
-											return rules.idRule == exRule.idRule;
+											return rule.idRule == exRule.idRule;
 										});
 										if(!existingRule){
 										existingAgent.child.push({
-											agentName:rules.agent.name,
-											idRule:rules.idRule,
-											level:rules.level,
-											levelValue:rules.levelValue,
-											conditions:rules.conditions
+											agentName:rule.agent.name,
+											idRule:rule.idRule,
+											level:rule.level,
+											levelValue:rule.levelValue,
+											conditions:rule.conditions
 										});
 										}
 										}
