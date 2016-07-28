@@ -5,6 +5,9 @@ import java.util.Set;
 
 import org.occideas.security.model.State;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class UserVO {
 
 	private int id;

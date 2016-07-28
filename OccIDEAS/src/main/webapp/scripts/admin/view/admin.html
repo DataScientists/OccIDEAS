@@ -1,4 +1,9 @@
 <div ng-cloak>
+	<div style="margin-top:2px;margin-bottom:2px;">
+		<button ng-click="vm.showAddUserDialog()" class="btn btn-default" aria-label="Left Align">
+  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+  	Add User</button>
+	</div>
 	<div>
 		<table ng-table="vm.tableParams" ng-cloak
 		class="table table-bordered table-hover 
@@ -14,8 +19,8 @@
 					{{user.email}}</td>
 				<td title="'State'" filter="{ state:'text'}" sortable="'state'">
 					{{user.state}}</td>
-				<td title="'Role'" filter="{ id:'text'}" sortable="'id'">
-					{{user.userProfiles}}
+				<td title="'Role'" filter="{ roles:'text'}">
+					{{user.roles}}
 				</td>
 			</tr>
 		</table>

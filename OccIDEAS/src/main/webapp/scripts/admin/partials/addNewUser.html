@@ -1,0 +1,69 @@
+<md-dialog aria-label="Add User" style="margin:0 0 0 0;padding:0 0 0 0;"
+	ng-cloak> <!-- <pre>{{data | json}}</pre> -->
+<form>
+	<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>Add User</h2>
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancel()"> <span
+			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
+	</div>
+	</md-toolbar>
+	<md-dialog-content>
+	<div class="md-dialog-content">
+		<div layout="column" ng-cloak class="md-inline-form">
+			<md-content>
+			<form class="navbar-form navbar-left">    	
+			<table>
+				<tr>
+					<td class="col_title">
+						<span class="col_title">Username</span>
+						<input required type="text" name="ssoId" ng-model="vm.newUser.ssoId"/>
+						
+					</td>
+				</tr>
+				<tr>
+					<td class="col_title" style="padding-top: 5px;">
+						<span class="col_title">Firstname</span>
+						<input required type="text" name="firstName" ng-model="vm.newUser.firstName"/>
+						
+					</td>
+				</tr>	
+				<tr>
+					<td class="col_title" style="padding-top: 5px;">
+						<span class="col_title">Lastname</span>
+						<input required name="lastName" ng-model="vm.newUser.lastName"/>
+					</td>
+				</tr>	
+				<tr>
+					<td class="col_title" style="padding-top: 5px;">
+						<span class="col_title">Email</span>
+						<input required name="email" ng-model="vm.newUser.email"/>
+					</td>
+				</tr>	
+				<tr>
+					<td class="col_title" style="padding-top: 5px;">
+						<span class="col_title">State</span>
+						<input required name="state" ng-model="vm.newUser.state"/>
+					</td>
+				</tr>		
+				<tr>
+					<td class="col_title" style="padding-top: 5px;">
+						<span class="col_title">Roles</span>
+						<input required name="roles" name="roles" 
+						ng-model="vm.newUser.state"/>	
+					</td>
+				</tr>	
+				<tr>
+					<td class="col_title" style="padding-top: 5px;">
+						<button type="submit" class="btn btn-default">Submit</button>
+					</td>
+				</tr>
+			</table>
+			</form>
+			</md-content>
+		</div>
+	</div>
+	</md-dialog-content>
+</form>
+</md-dialog>
