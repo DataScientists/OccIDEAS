@@ -447,15 +447,10 @@
 		function updateFreeTextAnswer(answer){
 			var answers = [];
 			answers.push(answer);
-			//if(oldanswer){
-			//	oldanswer.deleted = 1;
-			//answers.push(oldanswer);
-			//}
 			InterviewsService.saveAnswers(answers).then(function(response){
 				if (response.status === 200) {
 					console.log("Updated free text answer");
-					$scope.displayHistoryNew = undefined;
-					refreshDisplayNew();
+					$scope.resetInterview();
 				}else{
 					var msg = "Failed to updateFreeTextAnswer";
 					console.error(msg);
@@ -688,38 +683,24 @@
 						bDeleteAnswersRequired = true;
 					}else{
 						if(selectedAnswer.type=='P_freetext'){
-							var historyQuestion = _.find($scope.interview.questionHistory,function(ques){
-								return ques.questionId == question.idNode;
-							});
-							var newAnswer = _.find(historyQuestion.answers,function(answ){
-								return answ.answerId == selectedAnswer.idNode && answ.deleted==0;
-							});	
-							if(newAnswer){
-								newAnswer.answerFreetext = selectedAnswer.name;
-								newAnswer.name = selectedAnswer.name;
-								//check if newAnswer is different from old
-								//var oldAnswer = undefined;
-								//if(listOfAnswersGiven.length > 0){
-								//	oldAnswer = _.find(listOfAnswersGiven,function(ans){
-								//		return newAnswer.answerId == ans.answerId
-								//	});
-								//}else{
-								//	oldAnswer = _.find(interview.answerHistory,function(ans){
-								//		return newAnswer.id == ans.id;
-								//	});
-								//}
-								//refresh new id for new answer
-								//delete newAnswer.id;
-								updateFreeTextAnswer(newAnswer);
-								// need to refresh once freetext is udpated
-								//saveInterviewDisplay(newQuestionAsked);
-								
-								bIsFreeText = true;
-							}else{
-								var msg = "Could not find free text answer to update";
-								console.error(msg);
-								alert(msg);
-							}						
+							bIsFreeText = true;
+							InterviewsService.getInterviewQuestion(newQuestionAsked.id).then(function(response){
+								if(response.status === 200){
+									ques = response.data;
+									var newAnswer = _.find(ques.answers,function(answ){
+										return answ.answerId == selectedAnswer.idNode && answ.deleted==0;
+									});	
+									if(newAnswer){
+										newAnswer.answerFreetext = selectedAnswer.name;
+										newAnswer.name = selectedAnswer.name;
+										updateFreeTextAnswer(newAnswer);	
+									}else{
+										var msg = "Could not find free text answer to update";
+										console.error(msg);
+										alert(msg);
+									}	
+								}
+							});					
 						}
 					}
 				}	
@@ -745,8 +726,6 @@
 					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
 						if (response.status === 200) {
 							console.log("Saved Interview q:"+newQuestionAsked.questionId);
-							//saveInterviewDisplay(newQuestionAsked);
-							
 							var defer1 = $q.defer();
 							deleteAnswers(answersToDelete,defer1);
 							defer1.promise.then(function(){
