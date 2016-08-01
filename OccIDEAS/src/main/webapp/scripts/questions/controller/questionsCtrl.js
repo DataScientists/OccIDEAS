@@ -13,7 +13,7 @@
 			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout, auth) {
 		var self = this;
 		$scope.data = data;	
-		saveModuleWithoutReload();
+		//saveModuleWithoutReload();
 		var moduleIdNode = $scope.data[0].idNode;
 		$scope.$window = $window;  
 		$scope.isDragging = false;
@@ -572,14 +572,14 @@
 			$log.info("cascadeTemplateNullIds:"+nodes);
 		}
 		
-		ModulesService.getActiveModules().then(function(data) {	
+		/*ModulesService.getActiveModules().then(function(data) {	
 			for(var i=0;i < data.length;i++){
 				var node = data[i];
 				node.type = "Q_linkedmodule";
 				node.nodeclass = "Q";
 			}
 			$scope.moduleSlider = data;
-		});
+		});*/
 		$scope.rightNav = "slideFrag";
 		$scope.toggleRight = function(){
 		    if ($scope.rightNav === "slideFrag"){
