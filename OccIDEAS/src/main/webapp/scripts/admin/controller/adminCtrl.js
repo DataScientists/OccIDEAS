@@ -7,6 +7,14 @@
 	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog){
 		var self = this;
 		self.newUser = {};
+		self.states = [{
+			name:'Active'	
+		},{name:'Inactive'}];
+		
+		AdminService.getRoles().then(function(data){
+			self.roleList = data;
+		});
+		
 		self.showAddUserDialog = function(){
 			$mdDialog.show({
 				scope: $scope,  
@@ -18,6 +26,41 @@
 		
 		$scope.cancel = function() {
 			$mdDialog.cancel();
+		};
+		
+		$scope.addUser = function(newUser){
+			if(angular.element("#newUserForm").input){
+				if(angular.element("#newUserForm").input.$error){
+					return;
+				}
+			}else if(angular.element("#newUserForm").roles){
+				if(angular.element("#newUserForm").roles.$error){
+					return;
+				}
+			}else if(angular.element("#newUserForm").state){
+				if(angular.element("#newUserForm").state.$error){
+					return;
+				}
+			}
+			var selectedState = newUser.state.name;
+			newUser.state = selectedState;
+			AdminService.addUser(newUser).then(function(response){
+				if(response.status == 200){
+					console.log('User was successfully added');
+					var profile = {
+							userId:response.data.id,
+							userProfileId:newUser.role
+					};
+					AdminService.saveUserProfile(profile).then(function(response){
+						if(response.status == 200){
+							self.tableParams.reload();
+							$mdDialog.cancel();
+						}
+					});
+				}else{
+					$mdDialog.cancel();
+				}
+			});
 		};
 		
 		self.tableParams = new NgTableParams(

@@ -7,7 +7,7 @@ import org.occideas.security.model.State;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserVO {
 
 	private int id;
@@ -18,6 +18,7 @@ public class UserVO {
 	private String email;
 	private String state = State.ACTIVE.getState();
 	private Set<UserProfileVO> userProfiles = new HashSet<UserProfileVO>();
+	private UserProfileVO profile;
 
 	public int getId() {
 		return id;
@@ -81,6 +82,14 @@ public class UserVO {
 
 	public void setUserProfiles(Set<UserProfileVO> userProfiles) {
 		this.userProfiles = userProfiles;
+	}
+
+	public UserProfileVO getProfile() {
+		return profile;
+	}
+
+	public void setProfile(UserProfileVO profile) {
+		this.profile = profile;
 	}
 
 	@Override

@@ -15,6 +15,36 @@
 				return data;
 			});
 		};
+		
+		var addUser = function(data){
+			var restSaveUrl = adminEndpoint +'/addUser';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		};
+		
+		var saveUserProfile = function(data){
+			var restSaveUrl = adminEndpoint +'/saveUserProfile';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		};
+		
+		var getRoles = function() {
+			return $http.get(adminEndpoint + '/getRoles', {
+				cache : true
+			}).then(function(response) {
+				var data = response.data;
+				return data;
+			});
+		};
+		
 		function handleError(response) {
 			if (!angular.isObject(response.data) || !response.data.message) {
 				return ($q.reject("An unknown error occurred."));
@@ -27,7 +57,10 @@
 		}
 
 		return {
-			getUserRoles : getUserRoles
+			getUserRoles : getUserRoles,
+			addUser:addUser,
+			getRoles:getRoles,
+			saveUserProfile:saveUserProfile
 		};
 	}
 

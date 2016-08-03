@@ -16,9 +16,10 @@ public class UserDao{
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public void save(User user) {
+	public User save(User user) {
 		final Session session = sessionFactory.getCurrentSession();
 		session.saveOrUpdate(user);
+		return user;
 	}
 
 	public User findById(long id) {
