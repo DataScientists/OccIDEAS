@@ -16,7 +16,9 @@ public enum AuditingActionType {
 	DEL_QUESTION("Delete Question"), 
 	CREATE_RULE("Create Rule"), 
 	SAVE_UPD_RULE("Save Rule"), 
+	GENERIC("Generic"), 
 	DELETE_RULE("Delete Rule");
+	
 
 	AuditingActionType(String value) {
 		this.value = value;

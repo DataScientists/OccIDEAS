@@ -197,7 +197,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		vo.setParentAnswerId(question.getParentAnswerId());
 		vo.setModCount(question.getModCount());
 		vo.setLink(question.getLink());
-		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
+		//vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		vo.setProcessed(question.isProcessed());
 		vo.setLastUpdated(question.getLastUpdated());

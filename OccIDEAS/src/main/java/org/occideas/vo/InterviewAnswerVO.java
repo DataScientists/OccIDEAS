@@ -1,6 +1,9 @@
 package org.occideas.vo;
 
+import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class InterviewAnswerVO {
 
@@ -20,7 +23,9 @@ public class InterviewAnswerVO {
 	private Integer deleted;
 	private Integer modCount;
 	private boolean isProcessed;
-
+	@JsonFormat(pattern="dd/MM/yyyy HH:mm:ss")
+	private Date lastUpdated;
+	
 	private List<ModuleRuleVO> rules;
 
 	public long getIdInterview() {
@@ -166,6 +171,14 @@ public class InterviewAnswerVO {
 				+ ", answerId=" + answerId + ", link=" + link + ", name=" + name + ", description=" + description
 				+ ", answerFreetext=" + answerFreetext + ", nodeClass=" + nodeClass + ", number=" + number + ", type="
 				+ type + ", deleted=" + deleted + ", isProcessed=" + isProcessed + "]";
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 
 

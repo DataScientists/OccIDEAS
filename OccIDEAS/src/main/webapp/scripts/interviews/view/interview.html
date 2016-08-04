@@ -220,7 +220,11 @@
 								&nbsp;
 							</span>
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
-							<span class="badge">{{as.number}}</span>					
+							<span class="badge">{{as.number}}</span>	
+							
+							<span permission="['ROLE_ADMIN']" class="badge">
+								{{as.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}}
+							</span>				
 						</div>
 						<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip" data-placement="bottom" title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext}}
 						</span>
