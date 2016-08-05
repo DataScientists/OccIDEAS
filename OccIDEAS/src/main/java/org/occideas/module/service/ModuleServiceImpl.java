@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Module;
-import org.occideas.entity.NodeRule;
 import org.occideas.mapper.ModuleMapper;
+import org.occideas.mapper.NodeRuleMapper;
 import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.ModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
@@ -14,6 +14,7 @@ import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleIdNodeRuleHolder;
 import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeRuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
@@ -36,6 +37,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private RuleMapper ruleMapper;
 	@Autowired
 	private NodeRuleDao nodeRuleDao;
+	@Autowired
+	private NodeRuleMapper nodeRuleMapper;
 
 	@Override
 	public List<ModuleVO> listAll() {
@@ -147,7 +150,7 @@ public class ModuleServiceImpl implements ModuleService {
 		}
 	}
 
-	private void populateRulesWithIdRule(PossibleAnswerVO vo, List<ModuleRuleVO> moduleRule,
+	private void populateRulesWithIdRule(PossibleAnswerVO possibleAnswer, List<ModuleRuleVO> moduleRule,
 			ModuleIdNodeRuleHolder idNodeRuleHolder) {
 		boolean ruleExist = false;
 		for (ModuleRuleVO ruleVo : moduleRule) {
@@ -161,25 +164,28 @@ public class ModuleServiceImpl implements ModuleService {
 				idNodeRuleHolder.getRuleIdStorage().put(ruleVo.getRule().getIdRule(), 
 						idNodeRuleHolder.getLastIdRule());
 				ruleVo.getRule().setIdRule(idNodeRuleHolder.getLastIdRule());
+				ruleExist = false;
 			}
-			populateRuleCondition(vo, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
+			populateRuleCondition(possibleAnswer, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
 					idNodeRuleHolder,ruleExist);
 		}
 	}
 
-	private void populateRuleCondition(PossibleAnswerVO vo, List<PossibleAnswerVO> conditions, RuleVO ruleVO,
+	private void populateRuleCondition(PossibleAnswerVO possibleAnswer, List<PossibleAnswerVO> conditions, RuleVO ruleVO,
 			ModuleIdNodeRuleHolder idNodeRuleHolder,boolean ruleExist) {
 		boolean readyToSaveRule = true;
 		boolean hasIdNodeBeenSet = false;
 		for (PossibleAnswerVO condition : conditions) {
-			if (condition.getNumber().equalsIgnoreCase(vo.getNumber()) && condition.getName().equalsIgnoreCase(vo.getName())) {
-				NodeRule nodeRule = new NodeRule();
-				nodeRule.setIdNode(vo.getIdNode());
+			if (condition.getNumber().equalsIgnoreCase(possibleAnswer.getNumber()) && condition.getName().equalsIgnoreCase(possibleAnswer.getName())) {
+				// here we know that the condition rule in rulevo 
+				// pertains to the possible answer ->vo
+				NodeRuleVO nodeRule = new NodeRuleVO();
+				nodeRule.setIdNode(possibleAnswer.getIdNode());
 				nodeRule.setIdRule(ruleVO.getIdRule());
 				idNodeRuleHolder.getNodeRuleList().add(nodeRule);
 				hasIdNodeBeenSet = true;
 			}
-			if (idNodeRuleHolder.getFirstIdRuleGenerated() > vo.getIdNode()) {
+			if (idNodeRuleHolder.getFirstIdRuleGenerated() > ruleVO.getIdRule()) {
 				readyToSaveRule = false;
 				if (hasIdNodeBeenSet) {
 					break;
@@ -201,8 +207,9 @@ public class ModuleServiceImpl implements ModuleService {
 	
 	@Override
 	public void addNodeRules(ModuleIdNodeRuleHolder idNodeHolder) {
-		for (NodeRule nodeRule : idNodeHolder.getNodeRuleList()) {
-			nodeRuleDao.save(nodeRule);
+		List<NodeRuleVO> list = idNodeHolder.getNodeRuleList();
+		for (NodeRuleVO vo : list) {
+			nodeRuleDao.save(nodeRuleMapper.convertToNodeRule(vo));
 		}
 	}
 

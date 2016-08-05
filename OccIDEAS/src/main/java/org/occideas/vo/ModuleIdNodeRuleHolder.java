@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.occideas.entity.NodeRule;
-
 public class ModuleIdNodeRuleHolder {
 
 	private long idNode = 0L;
@@ -15,7 +13,7 @@ public class ModuleIdNodeRuleHolder {
 	private long firstIdRuleGenerated = 0L;
 	private long topNodeId = 0L;
 	private List<RuleVO> ruleList = new ArrayList<>();
-	private List<NodeRule> nodeRuleList = new ArrayList<>();
+	private List<NodeRuleVO> nodeRuleList = new ArrayList<>();
 	private Map<Long, Long> ruleIdStorage = new HashMap<>();
 
 	public long getLastIdNode() {
@@ -50,11 +48,11 @@ public class ModuleIdNodeRuleHolder {
 		this.ruleList = ruleList;
 	}
 
-	public List<NodeRule> getNodeRuleList() {
+	public List<NodeRuleVO> getNodeRuleList() {
 		return nodeRuleList;
 	}
 
-	public void setNodeRuleList(List<NodeRule> nodeRuleList) {
+	public void setNodeRuleList(List<NodeRuleVO> nodeRuleList) {
 		this.nodeRuleList = nodeRuleList;
 	}
 

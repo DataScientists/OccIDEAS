@@ -14,7 +14,6 @@
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	<aop:aspectj-autoproxy />
 	<context:component-scan base-package="org.occideas" />
-
 	 <bean class="org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator"/>
    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
 
