@@ -35,6 +35,7 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper{
 		vo.setType(answer.getType());
 		vo.setAnswerFreetext(answer.getAnswerFreetext());
 		vo.setIsProcessed(answer.isProcessed());
+		vo.setLastUpdated(answer.getLastUpdated());
 		
 		return vo;
 	}

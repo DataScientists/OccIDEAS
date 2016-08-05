@@ -37,6 +37,7 @@
 			createParticipant(data);
 		}
 		$scope.resetInterview = function() {
+			$scope.inProgress = true;
 			var idInterview = $scope.interview.interviewId;
 			InterviewsService.get(idInterview).then(function(response) {
 				if (response.status === 200) {
@@ -46,6 +47,7 @@
 					resumeInterview();
 					refreshDisplayNew();
 					showNextQuestionNew();	
+					$scope.inProgress = false;
 				} else if (response.status === 401) {
 					$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
 					alert("Could not reset please close tab and resume from the participants list");
@@ -555,10 +557,24 @@
 							if(newAnswer.deleted==0){
 								bExists = true;
 								if(possibleAnswer.type=='P_freetext'){
-									newAnswer.answerFreetext = possibleAnswer.name;
-									newAnswer.name = possibleAnswer.name;
-									updateFreeTextAnswer(newAnswer);
 									bIsFreeText = true;
+									InterviewsService.getInterviewQuestion(newQuestionAsked.id).then(function(response){
+										if(response.status === 200){
+											ques = response.data;
+											var newAnswer = _.find(ques.answers,function(answ){
+												return answ.answerId == possibleAnswer.idNode && answ.deleted==0;
+											});	
+											if(newAnswer){
+												newAnswer.answerFreetext = possibleAnswer.name;
+												newAnswer.name = possibleAnswer.name;
+												updateFreeTextAnswer(newAnswer);	
+											}else{
+												var msg = "Could not find free text answer to update";
+												console.error(msg);
+												alert(msg);
+											}	
+										}
+									});	
 								}
 							}													
 							break;
@@ -589,6 +605,11 @@
 						break;
 					}	
 				}
+				if(oldAnswer.type=='P_freetext'){ //if it is a free text then lets remove it, no need to save again
+					_.remove(newQuestionAsked.answers,function(ans){
+						return ans.answerId == oldAnswer.idNode;
+					});
+				}
 				if(!bFound){//this old answer is missing
 					var oldAnswerlisted = _.find($scope.interview.answerHistory,function(ans){
 						return ans.answerId == oldAnswer.idNode;
@@ -608,13 +629,12 @@
 					_.remove(newQuestionAsked.answers,function(ans){
 						return ans.answerId == oldAnswer.idNode;
 					});
-				}else{//this old answer is still remaining
-					if(oldAnswer.type!='P_freetext'){ //if its not free text then lets remove it, no need to save again
-						_.remove(newQuestionAsked.answers,function(ans){
-							return ans.answerId == oldAnswer.idNode;
-						});
-					}
-				}
+				}else{
+					//same answer as before so lets remove it, no need to save again
+					_.remove(newQuestionAsked.answers,function(ans){
+						return ans.answerId == oldAnswer.idNode;
+					});					
+				}			
 			}
 			if(bDeleteAnswersRequired || bSaveAnswersRequired){
 				$scope.displayQuestions = [];

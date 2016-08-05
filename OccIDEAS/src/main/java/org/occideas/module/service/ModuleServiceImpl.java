@@ -10,6 +10,8 @@ import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.ModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.rule.dao.RuleDao;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleIdNodeRuleHolder;
 import org.occideas.vo.ModuleRuleVO;
@@ -40,7 +42,8 @@ public class ModuleServiceImpl implements ModuleService {
 	@Autowired
 	private NodeRuleMapper nodeRuleMapper;
 
-	@Override
+	@Auditable(actionType = AuditingActionType.GENERIC)
+    @Override
 	public List<ModuleVO> listAll() {
 		return mapper.convertToModuleVOList(dao.getAllActive(), false);
 	}
