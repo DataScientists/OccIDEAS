@@ -2,6 +2,8 @@ package org.occideas.security.provider;
 
 import java.util.List;
 
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.AuthenticationWithToken;
 import org.occideas.security.service.ExternalServiceAuthenticator;
@@ -12,9 +14,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 
+@Transactional
 public class DomainUsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 
     private ExternalServiceAuthenticator externalServiceAuthenticator;
@@ -26,7 +30,7 @@ public class DomainUsernamePasswordAuthenticationProvider implements Authenticat
         this.externalServiceAuthenticator = externalServiceAuthenticator;
         this.tokenManager = tokenManager;
     }
-
+    @Auditable(actionType = AuditingActionType.GENERIC)
     @SuppressWarnings("unchecked")
 	@Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

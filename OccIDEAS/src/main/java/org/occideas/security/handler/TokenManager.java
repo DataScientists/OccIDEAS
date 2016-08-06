@@ -14,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.log4j.Logger;
+import org.occideas.utilities.PropUtil;
 import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,7 +36,7 @@ public class TokenManager {
 	public TokenManager() {
 		try {
 			byte[] secretKey = DatatypeConverter
-					.parseBase64Binary("occideas");
+					.parseBase64Binary(PropUtil.getInstance().getProperty(SECRET_KEY));
 			hmac = Mac.getInstance(HMAC_ALGO);
 			hmac.init(new SecretKeySpec(secretKey, HMAC_ALGO));
 		} catch (Exception e) {

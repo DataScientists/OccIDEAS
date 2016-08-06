@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 
 import javax.transaction.Transactional;
 
+import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -21,6 +22,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @Aspect
 public class AuditAspect {
+	
+	private Logger log = Logger.getLogger(this.getClass()); 
 	
 	@Autowired
 	private AuditDao dao;
@@ -61,7 +64,8 @@ public class AuditAspect {
 		try {
 			return extractUserFromToken();
 		} catch (NullPointerException npe) {
-			return null;
+			log.error("Function getUserName in AuditAspect - No UserName",npe);
+			return "";
 		}
 	}
 	
@@ -69,7 +73,8 @@ public class AuditAspect {
 		try{
 			return extractAuthFromToken();
 		}catch(NullPointerException npe){
-			return null;
+			log.error("Function getRoles in AuditAspect - No Roles",npe);
+			return "";
 		}
 	}
 
