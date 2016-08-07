@@ -1223,3 +1223,36 @@ li.borderless {
 .red{
    color: red;
 }
+/* admin */
+.multiSelect {
+    overflow: auto;
+}
+.multiSelect .select {
+    margin-right: 20px;
+    float: left;
+}
+.multiSelect .text {
+    clear: both;
+    font-size: 11px;
+}
+.multiSelect label::after {
+    content: ":";
+}
+.btn.mover {
+    display: block;
+    margin-top: 0px;
+    vertical-align: top;
+}
+.btn.mover.left {
+}
+.btn.mover.right {
+    margin-top: 8px;
+}
+.btn.mover i {
+    margin: 0;
+}
+
+/* demo css */
+li {
+    list-style-type: disc;
+}

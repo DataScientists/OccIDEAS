@@ -1,26 +1,29 @@
 <div ng-cloak>
-	<div style="margin-top:2px;margin-bottom:2px;">
-		<button ng-click="vm.showAddUserDialog()" class="btn btn-default" aria-label="Left Align">
-  <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-  	Add User</button>
+	<div style="margin-top: 2px; margin-bottom: 2px;">
+		<button ng-click="vm.showAddUserDialog()" class="btn btn-default"
+			aria-label="Left Align">
+			<span class="glyphicon glyphicon-user" aria-hidden="true"></span> Add
+			User
+		</button>
 	</div>
 	<div>
 		<table ng-table="vm.tableParams" ng-cloak
-		class="table table-bordered table-hover 
-  table-condensed editable-table" show-filter="true">
+			class="table table-bordered table-hover 
+  table-condensed editable-table"
+			show-filter="true">
 			<tr ng-repeat="user in $data">
-				<td title="'Username'" filter="{ ssoId: 'text'}" sortable="'ssoId'">
+				<td width="15%" title="'Username'" filter="{ ssoId: 'text'}" sortable="'ssoId'">
 					{{user.ssoId}}</td>
-				<td title="'Firstname'" filter="{ firstName:'text'}" sortable="'firstName'">
-					{{user.firstName}}</td>
-				<td title="'Lastname'" filter="{ lastName:'text'}" sortable="'lastName'">
-					{{user.lastName}}</td>
-				<td title="'Email'" filter="{ email:'text'}" sortable="'email'">
+				<td width="10%" title="'Email'" filter="{ email:'text'}" sortable="'email'">
 					{{user.email}}</td>
-				<td title="'State'" filter="{ state:'text'}" sortable="'state'">
+				<td width="10%" title="'State'" filter="{ state:'text'}" sortable="'state'">
 					{{user.state}}</td>
-				<td title="'Role'" filter="{ roles:'text'}">
-					{{user.roles}}
+				<td width="30%" title="'Role'" filter="{ roles:'text'}">{{user.rolesStr}}</td>
+				<td width="10%">
+					<button type="button" class="btn btn-default"
+						aria-label="Edit" ng-click="vm.showEditUserDialog(user)">
+						<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+					</button> 
 				</td>
 			</tr>
 		</table>

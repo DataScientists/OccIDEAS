@@ -1,0 +1,42 @@
+package org.occideas.security.dao;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.occideas.entity.UserUserProfilePK;
+import org.occideas.security.model.UserUserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+@Repository
+public class UserUserProfileDaoImpl implements UserUserProfileDao {
+
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void save(UserUserProfile profile) {
+		final Session session = sessionFactory.getCurrentSession();
+		session.saveOrUpdate(profile);
+	}
+	
+	public void delete(int userId) {
+		final Session session = sessionFactory.getCurrentSession();
+	    UserUserProfile userUserProfile = (UserUserProfile)session.
+	    		get(UserUserProfile.class,new UserUserProfilePK(userId));
+	    if(userUserProfile != null){
+	    	session.delete(userUserProfile);
+	    }
+	    session.flush() ;
+	}
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+}

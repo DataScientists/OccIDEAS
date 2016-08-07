@@ -151,4 +151,19 @@ public class UserMapperImpl implements UserMapper {
 		return vo;
 	}
 
+	@Override
+	public User convertToUserVOWithoutPassword(UserVO vo) {
+		if (vo == null) {
+			return null;
+		}
+		User entity = new User();
+		entity.setEmail(vo.getEmail());
+		entity.setFirstName(vo.getFirstName());
+		entity.setId(vo.getId());
+		entity.setLastName(vo.getLastName());
+		entity.setSsoId(vo.getSsoId());
+		entity.setState(vo.getState());
+		return entity;
+	}
+
 }

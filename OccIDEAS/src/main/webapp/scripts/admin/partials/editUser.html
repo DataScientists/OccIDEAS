@@ -1,0 +1,47 @@
+<md-dialog aria-label="Edit User" style="margin:0 0 0 0;padding:0 0 0 0;"
+	ng-cloak> <!-- <pre>{{data | json}}</pre> -->
+<form>
+	<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>Edit User - {{existingUser.ssoId}}</h2> 
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancel()"> <span
+			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
+	</div>
+	</md-toolbar>
+	<md-dialog-content style="width:510px;">
+	<div class="md-dialog-content">
+		<div layout="column" ng-cloak class="md-inline-form">
+			<md-content>
+			<form name="existingUserForm" class="navbar-form navbar-left"
+				id="existingUserForm">
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>*Email</label> <input required minlength="10"
+						maxlength="100" ng-pattern="/^.+@.+\..+$/" name="email"
+						ng-model="existingUser.email" /> </md-input-container>
+					<div flex="5" hide-xs hide-sm>
+						<!-- Spacer //-->
+					</div>
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>*State</label> <md-select required ng-model="existingUser.state">
+					<md-option ng-repeat="state in vm.states" 
+					value="{{state.name}}">
+					{{state.name}} </md-option> </md-select>
+					</md-input-container>
+				</div>
+				<multi-select ng-model="existingUser.roles"
+					available="vm.roleList" selected-label="Current roles"
+					available-label="Available roles" display-attr="type">
+				</multi-select>
+				<md-dialog-actions layout="row">
+					<md-button ng-click="cancel()" class="md-raised">Cancel</md-button>
+					<md-button ng-click="editUserBtn(existingUser)" class="md-raised">Submit</md-button>
+				</md-dialog-actions>
+			</form>
+			</md-content>
+		</div>
+	</div>
+	</md-dialog-content>
+</form>
+</md-dialog>

@@ -28,8 +28,6 @@ public class ModuleDao {
 	  sessionFactory.getCurrentSession().save(module);
 	}
 
-
-
     public void delete(Module module){
       sessionFactory.getCurrentSession().delete(module);
     }

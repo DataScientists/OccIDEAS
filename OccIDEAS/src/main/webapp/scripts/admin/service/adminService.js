@@ -26,12 +26,42 @@
 			return request.then(handleSuccess,handleError);
 		};
 		
+		var updateUser = function(data){
+			var restSaveUrl = adminEndpoint +'/updateUser';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		};
+		
 		var saveUserProfile = function(data){
 			var restSaveUrl = adminEndpoint +'/saveUserProfile';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,
 				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		};
+		
+		var saveUserProfileList = function(data){
+			var restSaveUrl = adminEndpoint +'/saveUserProfileList';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		};
+		
+		var deleteUserProfile = function(id){
+			var restSaveUrl = adminEndpoint +'/deleteUserProfile';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:id
 				})
 			return request.then(handleSuccess,handleError);
 		};
@@ -60,7 +90,10 @@
 			getUserRoles : getUserRoles,
 			addUser:addUser,
 			getRoles:getRoles,
-			saveUserProfile:saveUserProfile
+			saveUserProfile:saveUserProfile,
+			deleteUserProfile:deleteUserProfile,
+			updateUser:updateUser,
+			saveUserProfileList:saveUserProfileList
 		};
 	}
 

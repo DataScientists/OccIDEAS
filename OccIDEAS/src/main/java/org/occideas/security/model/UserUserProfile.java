@@ -5,10 +5,20 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.occideas.entity.UserUserProfilePK;
+
 @Entity
+@DynamicUpdate(value = true)
+@DynamicInsert(value = true)
+@SelectBeforeUpdate(value = true)
 @Table(name = "APP_USER_USER_PROFILE")
+@IdClass(UserUserProfilePK.class)
 public class UserUserProfile implements Serializable {
 
 	/**
@@ -19,6 +29,7 @@ public class UserUserProfile implements Serializable {
 	@Id
 	@Column(name = "user_id")
 	private int userId;
+	@Id
 	@Column(name = "user_profile_id")
 	private int userProfileId;
 

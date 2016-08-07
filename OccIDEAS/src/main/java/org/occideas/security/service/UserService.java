@@ -10,6 +10,8 @@ import org.occideas.vo.UserVO;
 public interface UserService {
 
 	UserVO save(UserVO userVO);
+	
+	UserVO update(UserVO userVO);
     
     User findById(int id);
      
@@ -20,5 +22,9 @@ public interface UserService {
     List<UserProfileVO> getRoles();
     
     void saveUserUserProfile(UserUserProfileVO vo);
+    
+    void saveUserUserProfileList(List<UserUserProfileVO> vo);
+    
+    void deleteUserUserProfile(int id);
 	
 }

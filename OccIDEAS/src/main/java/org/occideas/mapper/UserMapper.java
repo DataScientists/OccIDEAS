@@ -33,4 +33,6 @@ public interface UserMapper {
 	UserUserProfile convertToUserUserProfile(UserUserProfileVO vo);
 	
 	UserUserProfileVO convertToUserUserProfileVO(UserUserProfile entity);
+
+	User convertToUserVOWithoutPassword(UserVO vo);
 }

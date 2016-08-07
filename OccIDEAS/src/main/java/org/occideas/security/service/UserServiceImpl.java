@@ -34,6 +34,10 @@ public class UserServiceImpl implements UserService{
         vo.setPassword(passwordEncoder.encode(vo.getPassword()));
         return mapper.convertToUserVO(dao.save(mapper.convertToUser(vo)));
     }
+    
+    public UserVO update(UserVO vo){
+        return mapper.convertToUserVO(dao.save(mapper.convertToUser(vo)));
+    }
      
     public User findById(int id) {
         return dao.findById(id);
@@ -57,6 +61,18 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void saveUserUserProfile(UserUserProfileVO vo) {
 		userUserProfileDao.save(mapper.convertToUserUserProfile(vo));
+	}
+
+	@Override
+	public void deleteUserUserProfile(int id) {
+		userUserProfileDao.delete(id);
+	}
+
+	@Override
+	public void saveUserUserProfileList(List<UserUserProfileVO> list) {
+		for(UserUserProfileVO vo:list){
+			userUserProfileDao.save(mapper.convertToUserUserProfile(vo));
+		}
 	}
 	
 }
