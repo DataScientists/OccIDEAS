@@ -1,11 +1,13 @@
 package org.occideas.security.service;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.occideas.security.model.AuthenticatedExternalWebService;
+import org.occideas.security.model.State;
 import org.occideas.security.model.TokenResponse;
 import org.occideas.security.model.User;
 import org.occideas.security.model.UserProfile;
@@ -27,12 +29,16 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
 	private PasswordEncoder passwordEncoder;
 	
     @Override
-    public AuthenticatedExternalWebService authenticate(String username, String password) {
+    public AuthenticatedExternalWebService authenticate(String username, String password) throws GeneralSecurityException{
     	 AuthenticatedExternalWebService authenticatedExternalWebService = null;
     	 User user = userService.findBySso(username);
     	 log.info("User is "+user);
-        try {
         	if(user!=null && !StringUtils.isEmpty(password)){
+        		if(!State.ACTIVE.getState().equals(user.getState())){
+        			log.info("User is no longer Active.");
+        			throw new GeneralSecurityException("User is no longer Active.");
+        		}
+        		
         		if(passwordEncoder.matches(password,user.getPassword())){
         			TokenResponse tokenResponse = new TokenResponse();
             		tokenResponse.getUserInfo().put("roles", getGrantedAuthorities(user));
@@ -43,16 +49,13 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
                 	log.info("Login successful token was generated");
         		}else{
         			log.info("Invalid username or password");
-        			return authenticatedExternalWebService;
+        			throw new GeneralSecurityException("Invalid Domain User Credentials");
         		}
         		
         	}else{
         		return authenticatedExternalWebService;
         	}
         	
-        } catch (Exception e) {
-			log.error("Error during login.",e);
-		}
 
         return authenticatedExternalWebService;
     }

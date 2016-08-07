@@ -36,9 +36,7 @@ public class UserMapperImpl implements UserMapper {
 
 		UserVO vo = new UserVO();
 		vo.setEmail(entity.getEmail());
-		vo.setFirstName(entity.getFirstName());
 		vo.setId(entity.getId());
-		vo.setLastName(entity.getLastName());
 		vo.setPassword(entity.getPassword());
 		vo.setSsoId(entity.getSsoId());
 		vo.setState(entity.getState());
@@ -76,9 +74,7 @@ public class UserMapperImpl implements UserMapper {
 		}
 		User entity = new User();
 		entity.setEmail(vo.getEmail());
-		entity.setFirstName(vo.getFirstName());
 		entity.setId(vo.getId());
-		entity.setLastName(vo.getLastName());
 		entity.setPassword(vo.getPassword());
 		entity.setSsoId(vo.getSsoId());
 		entity.setState(vo.getState());
@@ -158,9 +154,7 @@ public class UserMapperImpl implements UserMapper {
 		}
 		User entity = new User();
 		entity.setEmail(vo.getEmail());
-		entity.setFirstName(vo.getFirstName());
 		entity.setId(vo.getId());
-		entity.setLastName(vo.getLastName());
 		entity.setSsoId(vo.getSsoId());
 		entity.setState(vo.getState());
 		return entity;

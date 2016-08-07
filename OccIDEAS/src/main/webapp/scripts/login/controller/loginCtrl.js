@@ -38,8 +38,9 @@
 
                 var res = loginService.getLoginResp(vm.userId, vm.password);
 
-                res.success(function(data, status) {
-
+                res.then(function(response) {
+                	var data = response.data;
+                	var status = response.status;
                     if(status === 200) {
 
                     	$sessionStorage.userId = vm.userId;
@@ -64,7 +65,7 @@
                         }  
                     }else if (status === 401) {
                         vm.hasErrMsg = true;
-                        vm.errMsg = 'Invalid UserId/Password.';
+                        vm.errMsg = 'Unauthorized (Invalid UserId/Password or user is Inactive)';
                     }else {
                         vm.hasErrMsg = true;
                         vm.errMsg = 'failure message: ' + JSON.stringify({data: data}) +' status: '+status;

@@ -39,14 +39,6 @@ public class User implements Serializable{
     private String password;
          
     @NotEmpty
-    @Column(name="FIRST_NAME", nullable=false)
-    private String firstName;
- 
-    @NotEmpty
-    @Column(name="LAST_NAME", nullable=false)
-    private String lastName;
- 
-    @NotEmpty
     @Column(name="EMAIL", nullable=false)
     private String email;
  
@@ -82,22 +74,6 @@ public class User implements Serializable{
  
     public void setPassword(String password) {
         this.password = password;
-    }
- 
-    public String getFirstName() {
-        return firstName;
-    }
- 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
- 
-    public String getLastName() {
-        return lastName;
-    }
- 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
  
     public String getEmail() {

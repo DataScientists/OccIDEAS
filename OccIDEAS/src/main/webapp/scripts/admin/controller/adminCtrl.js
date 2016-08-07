@@ -16,7 +16,7 @@
 		});
 		
 		self.showAddUserDialog = function(){
-			self.newUser = {};
+			self.newUser = {roles:[]};
 			$mdDialog.show({
 				scope: $scope,  
 				preserveScope: true,
@@ -30,34 +30,28 @@
 		};
 		
 		$scope.addUserBtn = function(newUser){
-			if(angular.element("#newUserForm").input){
-				if(angular.element("#newUserForm").input.$error){
-					return;
-				}
-			}else if(angular.element("#newUserForm").roles){
-				if(angular.element("#newUserForm").roles.$error){
-					return;
-				}
-			}else if(angular.element("#newUserForm").state){
-				if(angular.element("#newUserForm").state.$error){
-					return;
-				}
-			}
-			var selectedState = newUser.state.name;
-			newUser.state = selectedState;
 			AdminService.addUser(newUser).then(function(response){
 				if(response.status == 200){
 					console.log('User was successfully added');
-					var profile = {
-							userId:response.data.id,
-							userProfileId:newUser.role
-					};
-					AdminService.saveUserProfile(profile).then(function(response){
-						if(response.status == 200){
-							self.tableParams.reload();
+					if(response.status == '200'){				
+						// time to add the roles
+						var profiles = [];
+						_.each(newUser.roles,function(role){
+						var profile = {
+								userId:response.data.id,
+								userProfileId:role.id
+						};
+						profiles.push(profile);
+						});
+						AdminService.saveUserProfileList(profiles).then(function(response){
+							if(response.status == 200){
+								self.tableParams.reload();
+								$mdDialog.cancel();
+							}
+						});
+						}else{
 							$mdDialog.cancel();
 						}
-					});
 				}else{
 					$mdDialog.cancel();
 				}

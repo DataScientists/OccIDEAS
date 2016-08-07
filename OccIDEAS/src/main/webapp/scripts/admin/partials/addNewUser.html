@@ -9,66 +9,48 @@
 			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
 	</div>
 	</md-toolbar>
-	<md-dialog-content>
+	<md-dialog-content style="width:510px;">
 	<div class="md-dialog-content">
 		<div layout="column" ng-cloak class="md-inline-form">
 			<md-content>
-			<form name="newUserForm" class="navbar-form navbar-left" id="newUserForm">    	
-			<table>
-				<tr>
-					<td class="col_title">
-						<span class="col_title"><span class="red">*</span>Username</span>
-						<input required type="text" name="ssoId" ng-model="vm.newUser.ssoId"/>
-					</td>
-					<td class="col_title">
-						<span class="col_title"><span class="red">*</span>Password</span>
-						<input required type="password" name="password" ng-model="vm.newUser.password"/>
-						
-					</td>
-				</tr>
-				<tr>
-					<td class="col_title" style="padding-top: 5px;">
-						<span class="col_title"><span class="red">*</span>Firstname</span>
-						<input required type="text" name="firstName" ng-model="vm.newUser.firstName"/>
-					</td>
-					<td class="col_title" style="padding-top: 5px;">
-						<span class="col_title"><span class="red">*</span>Lastname</span>
-						<input required name="lastName" ng-model="vm.newUser.lastName"/>
-					</td>
-				</tr>	
-				<tr>
-					<td class="col_title" style="padding-top: 5px;">
-						<span class="col_title"><span class="red">*</span>Email</span>
-						<input type="email" required name="email" ng-model="vm.newUser.email"/>
-					</td>
-					<td class="col_title" style="padding-top: 5px;">
-						<span class="col_title"><span class="red">*</span>State</span>
-						<select name="state" required
-						 ng-options="state as state.name for state in vm.states" 
-						 ng-model="vm.newUser.state">
-							<option value="">
-							</option>
-						</select>
-					</td>
-				</tr>	
-				<tr>
-					<td class="col_title" style="padding-top: 5px;">
-						<span class="col_title"><span class="red">*</span>Roles</span>
-						<select name="roles" required
-						ng-model="vm.newUser.role">
-							<option value="{{prop.id}}" ng-repeat="(key, prop) in vm.roleList">
-								{{prop.type}}
-							</option>
-						</select>
-					</td>
-					<td></td>
-				</tr>	
-				<tr>
-					<td class="col_title" style="padding-top: 5px;">
-						<button type="submit" ng-click="addUserBtn(vm.newUser)" class="btn btn-default">Submit</button>
-					</td>
-				</tr>
-			</table>
+			<form name="newUserForm" class="navbar-form navbar-left" id="newUserForm">  
+				 <div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>*Username</label> <input required 
+						maxlength="20" name="ssoId"
+						ng-model="vm.newUser.ssoId" /> </md-input-container>
+					<div flex="5" hide-xs hide-sm>
+						<!-- Spacer //-->
+					</div>
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>*Password</label> <input type="password" required 
+						maxlength="20" name="password"
+						ng-model="vm.newUser.password" />
+					</md-input-container>
+				</div>  	
+			    <div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>*Email</label> <input required minlength="10"
+						maxlength="100" ng-pattern="/^.+@.+\..+$/" name="email"
+						ng-model="vm.newUser.email" /> </md-input-container>
+					<div flex="5" hide-xs hide-sm>
+						<!-- Spacer //-->
+					</div>
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>*State</label> <md-select required ng-model="vm.newUser.state">
+					<md-option ng-repeat="state in vm.states" 
+					value="{{state.name}}">
+					{{state.name}} </md-option> </md-select>
+					</md-input-container>
+				</div>
+				<multi-select ng-model="vm.newUser.roles"
+					available="vm.roleList" selected-label="Current roles"
+					available-label="Available roles" display-attr="type">
+				</multi-select>
+				<md-dialog-actions layout="row">
+					<md-button ng-click="cancel()" class="md-raised">Cancel</md-button>
+					<md-button ng-click="addUserBtn(vm.newUser)" class="md-raised">Submit</md-button>
+				</md-dialog-actions>
 			</form>
 			</md-content>
 		</div>

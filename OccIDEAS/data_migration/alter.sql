@@ -79,3 +79,6 @@ DELETE FROM occideas.Participant WHERE reference like 'HT%';
 DELETE FROM occideas.Interview WHERE referenceNumber like 'HT%';
 
 ALTER TABLE `occideas`.`Interview_Answer` DROP COLUMN `topIntQuestionId`;
+
+ALTER TABLE app_user DROP COLUMN first_name;
+ALTER TABLE app_user DROP COLUMN last_name;

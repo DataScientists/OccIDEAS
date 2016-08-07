@@ -84,6 +84,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 			httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (AuthenticationException authenticationException) {
 			SecurityContextHolder.clearContext();
+			httpResponse.addHeader("ErrorMsg", authenticationException.getMessage());
 			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
 			log.error(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED), authenticationException);
 		} finally {
