@@ -6,11 +6,11 @@
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile',
-	                          '$rootScope','ModuleRuleService','$log','$timeout', 'AuthenticationService'];
+	                          '$rootScope','ModuleRuleService','$log','$timeout', 'AuthenticationService','$document'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout, auth) {
+			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout, auth,$document) {
 		var self = this;
 		$scope.data = data;	
 		//saveModuleWithoutReload();
@@ -1308,7 +1308,26 @@
 				} 
 			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
-					alert('under development');
+		          var blob = new Blob([JSON.stringify($scope.data)], {
+		            type: "application/json;charset="+ "utf-8" + ";"
+		          });
+
+		          if (window.navigator.msSaveOrOpenBlob) {
+		            navigator.msSaveBlob(blob, $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
+		          } else {
+
+		            var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
+		            var downloadLink = angular.element(downloadContainer.children()[0]);
+		            downloadLink.attr('href', window.URL.createObjectURL(blob));
+		            downloadLink.attr('download', $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
+		            downloadLink.attr('target', '_blank');
+
+		            $document.find('body').append(downloadContainer);
+		            $timeout(function () {
+		              downloadLink[0].click();
+		              downloadLink.remove();
+		            }, null);
+		          }
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
