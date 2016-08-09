@@ -12,7 +12,7 @@ public interface UserService {
 	UserVO save(UserVO userVO);
 	
 	UserVO update(UserVO userVO);
-    
+	
     User findById(int id);
      
     User findBySso(String sso);

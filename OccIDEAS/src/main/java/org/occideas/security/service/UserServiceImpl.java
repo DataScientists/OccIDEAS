@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService{
     public UserVO update(UserVO vo){
         return mapper.convertToUserVO(dao.save(mapper.convertToUser(vo)));
     }
-     
+    
     public User findById(int id) {
         return dao.findById(id);
     }
@@ -74,5 +74,5 @@ public class UserServiceImpl implements UserService{
 			userUserProfileDao.save(mapper.convertToUserUserProfile(vo));
 		}
 	}
-	
+
 }

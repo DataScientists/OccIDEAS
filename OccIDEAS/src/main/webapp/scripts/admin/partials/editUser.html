@@ -17,14 +17,30 @@
 				id="existingUserForm">
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-					<label>*Email</label> <input required minlength="10"
+					<label>Firstname</label> <input
+						maxlength="100" name="firstName"
+						ng-model="existingUser.firstName" /> </md-input-container>
+					<div flex="5" hide-xs hide-sm>
+						<!-- Spacer //-->
+					</div>
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>Lastname</label> 
+					<input
+						maxlength="100" name="lastName"
+						ng-model="existingUser.lastName" />
+					</md-input-container>
+				</div>
+				<div layout-gt-sm="row">
+					<md-input-container class="md-block" flex-gt-sm>
+					<label>Email</label> <input minlength="10"
 						maxlength="100" ng-pattern="/^.+@.+\..+$/" name="email"
 						ng-model="existingUser.email" /> </md-input-container>
 					<div flex="5" hide-xs hide-sm>
 						<!-- Spacer //-->
 					</div>
 					<md-input-container class="md-block" flex-gt-sm>
-					<label>*State</label> <md-select required ng-model="existingUser.state">
+					<label>*State</label> 
+					<md-select name="state" required ng-model="existingUser.state">
 					<md-option ng-repeat="state in vm.states" 
 					value="{{state.name}}">
 					{{state.name}} </md-option> </md-select>
@@ -36,7 +52,7 @@
 				</multi-select>
 				<md-dialog-actions layout="row">
 					<md-button ng-click="cancel()" class="md-raised">Cancel</md-button>
-					<md-button ng-click="editUserBtn(existingUser)" class="md-raised">Submit</md-button>
+					<md-button type="submit" ng-click="editUserBtn(existingUser)" class="md-raised">Submit</md-button>
 				</md-dialog-actions>
 			</form>
 			</md-content>

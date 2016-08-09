@@ -10,6 +10,21 @@
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    $scope.importJson = function(){
+			  $mdDialog.show({
+				  scope: $scope.$new(),
+			      templateUrl: 'scripts/modules/partials/importJson.html',
+			      parent: angular.element(document.body),
+			      clickOutsideToClose:true
+			    })
+			    .then(function(answer) {
+			      $scope.status = 'You said the information was "' + answer + '".';
+			    }, function() {
+			      $scope.status = 'You cancelled the dialog.';
+			    });			                   
+		}; 
+	    
 		self.tableParams = new NgTableParams(
 				{
 					group: "type"

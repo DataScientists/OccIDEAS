@@ -82,3 +82,10 @@ ALTER TABLE `occideas`.`Interview_Answer` DROP COLUMN `topIntQuestionId`;
 
 ALTER TABLE app_user DROP COLUMN first_name;
 ALTER TABLE app_user DROP COLUMN last_name;
+
+ALTER TABLE APP_USER 
+ADD COLUMN `first_name` VARCHAR(30) NULL;
+ALTER TABLE APP_USER 
+ADD COLUMN `last_name` VARCHAR(30) NULL;
+ALTER TABLE APP_USER 
+CHANGE COLUMN `email` `email` VARCHAR(30) NULL;

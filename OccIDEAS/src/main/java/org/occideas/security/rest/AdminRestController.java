@@ -83,6 +83,20 @@ public class AdminRestController {
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 	}
+	
+	@Path(value = "/updatePassword")
+	@POST
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response updatePassword(UserVO vo) {
+		try {
+			UserVO userVO = service.save(vo);
+			return Response.ok(userVO).build();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+	}
 
 	@Path(value = "/saveUserProfile")
 	@POST

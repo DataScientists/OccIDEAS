@@ -1,0 +1,35 @@
+<md-dialog aria-label=""  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Module Information</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <p>
+         <label>Name:</label>
+        <input type="text" ng-model="name"/>
+        </p>
+        <p>
+          <md-checkbox ng-model="includeRules" aria-label="Include Rules">
+  			Include Rules
+ 		  </md-checkbox>
+        </p>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+       <span flex></span>
+      <md-button ng-click="saveAsModule(vo,name,includeRules)">
+       Save
+      </md-button>
+      <md-button ng-click="cancel()" style="margin-right:20px;">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

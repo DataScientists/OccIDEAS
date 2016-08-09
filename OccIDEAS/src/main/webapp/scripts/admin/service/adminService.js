@@ -36,6 +36,16 @@
 			return request.then(handleSuccess,handleError);
 		};
 		
+		var updatePassword = function(data){
+			var restSaveUrl = adminEndpoint +'/updatePassword';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		var saveUserProfile = function(data){
 			var restSaveUrl = adminEndpoint +'/saveUserProfile';
 			var request =  $http({
@@ -93,7 +103,8 @@
 			saveUserProfile:saveUserProfile,
 			deleteUserProfile:deleteUserProfile,
 			updateUser:updateUser,
-			saveUserProfileList:saveUserProfileList
+			saveUserProfileList:saveUserProfileList,
+			updatePassword:updatePassword
 		};
 	}
 

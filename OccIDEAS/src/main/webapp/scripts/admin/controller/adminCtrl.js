@@ -30,6 +30,15 @@
 		};
 		
 		$scope.addUserBtn = function(newUser){
+			if(!newUser.state){
+				alert("State is a required field.");
+				return;
+			}
+			if(newUser.roles.length == 0){
+				alert("Please select a role for the user.");
+				return;
+			}
+			
 			AdminService.addUser(newUser).then(function(response){
 				if(response.status == 200){
 					console.log('User was successfully added');
@@ -58,6 +67,36 @@
 			});
 		};
 		
+		self.showChangePasswordDialog = function(existingUser){
+			$scope.existingUser = existingUser;
+			$scope.existingUser.id = existingUser.id;
+			$scope.existingUser.roles = existingUser.userProfiles;
+			$scope.existingUser.state = existingUser.state;
+			$scope.existingUser.password = existingUser.password;
+			$scope.existingUser.previousPassword = existingUser.password;
+			$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/admin/partials/changePasswordDialog.html',
+				clickOutsideToClose:false
+			});
+		}
+		
+		$scope.changePasswordBtn = function(existingUser){
+			if($scope.existingUser.previousPassword == existingUser.newPassword){
+				alert("No changes on the password.");
+				return;
+			}
+			$scope.existingUser.password = existingUser.newPassword;
+			AdminService.updatePassword(existingUser).then(function(response){
+				if(response.status == 200){
+					console.log('User was successfully updated');
+					self.tableParams.reload();
+				}
+				$mdDialog.cancel();
+			});
+		}
+		
 		self.showEditUserDialog = function(existingUser){
 			$scope.existingUser = existingUser;
 			$scope.existingUser.id = existingUser.id
@@ -71,6 +110,15 @@
 		}
 		
 		$scope.editUserBtn = function(existingUser){
+			if(!existingUser.state){
+				alert("State is a required field.");
+				return;
+			}
+			if(existingUser.roles.length == 0){
+				alert("Please select a role for the user.");
+				return;
+			}
+			
 			AdminService.updateUser(existingUser).then(function(response){
 				if(response.status == 200){
 					var userId = response.data.id;

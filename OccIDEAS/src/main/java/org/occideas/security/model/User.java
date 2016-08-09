@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,8 +39,13 @@ public class User implements Serializable{
     @Column(name="PASSWORD", nullable=false)
     private String password;
          
-    @NotEmpty
-    @Column(name="EMAIL", nullable=false)
+    @Column(name="FIRST_NAME", nullable=true)
+    private String firstName;
+ 
+    @Column(name="LAST_NAME", nullable=true)
+    private String lastName;
+ 
+    @Column(name="EMAIL", nullable=true)
     private String email;
  
     @NotEmpty
@@ -48,8 +54,8 @@ public class User implements Serializable{
  
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "APP_USER_USER_PROFILE", 
-             joinColumns = { @JoinColumn(name = "USER_ID") }, 
-             inverseJoinColumns = { @JoinColumn(name = "USER_PROFILE_ID") })
+             joinColumns = { @JoinColumn(name = "USER_ID",insertable=false,updatable=false)}, 
+             inverseJoinColumns = { @JoinColumn(name = "USER_PROFILE_ID",insertable=false,updatable=false) })
     private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
  
     public int getId() {
@@ -74,6 +80,22 @@ public class User implements Serializable{
  
     public void setPassword(String password) {
         this.password = password;
+    }
+ 
+    public String getFirstName() {
+        return firstName;
+    }
+ 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+ 
+    public String getLastName() {
+        return lastName;
+    }
+ 
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
  
     public String getEmail() {
