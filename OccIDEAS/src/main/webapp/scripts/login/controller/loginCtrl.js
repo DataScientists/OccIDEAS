@@ -6,11 +6,11 @@
     LoginCtrl.$inject = ['$state','toaster','$timeout',
                          '$scope','$http','$rootScope', 
                          'dataBeanService', '$window','loginService',
-                         '$sessionStorage','AuthenticationService'];
+                         '$sessionStorage','AuthenticationService','$mdDialog'];
     function LoginCtrl($state, toaster, $timeout, 
     		$scope, $http, $rootScope, 
     		dataBeanService,$window, loginService,
-    		$sessionStorage,auth) {
+    		$sessionStorage,auth,$mdDialog) {
         var vm = this;
         $scope.user = {};
         vm.userId = $sessionStorage.userId;
@@ -18,6 +18,10 @@
         vm.hasErrMsg = false;
         vm.errMsg = '';
         vm.isAuthenticated = $sessionStorage.isAuthenticated;
+        
+        vm.currentPassword = '';
+        vm.newPassword = '';
+        vm.retypeNewPassword = '';
         
         if(!(angular.isUndefinedOrNull(vm.isAuthenticated))){
         	if(!vm.isAuthenticated){
@@ -88,5 +92,35 @@
             vm.LoginHasErr = false;
             vm.hasErrMsg = false;
         };
+        var originatorEv;
+        vm.openMenu = function($mdOpenMenu, ev) {
+            originatorEv = ev;
+            $mdOpenMenu(ev);
+          };
+          vm.showChangePasswordDialog = function(){
+  			$mdDialog.show({
+  				scope: $scope,  
+  				preserveScope: true,
+  				templateUrl : 'scripts/login/partials/changePasswordDialog.html',
+  				clickOutsideToClose:false
+  			});
+  		}
+  		
+  		$scope.changePasswordBtn = function(){
+  			// change password by user id
+//  			$sessionStorage.userId
+  			if($scope.existingUser.previousPassword == existingUser.newPassword){
+  				alert("No changes on the password.");
+  				return;
+  			}
+  			$scope.existingUser.password = existingUser.newPassword;
+  			AdminService.updatePassword(existingUser).then(function(response){
+  				if(response.status == 200){
+  					console.log('User was successfully updated');
+  					self.tableParams.reload();
+  				}
+  				$mdDialog.cancel();
+  			});
+  		}
     }
 })();

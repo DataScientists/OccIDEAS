@@ -1,7 +1,32 @@
 <div ng-controller="LoginCtrl as vm">
 <div ng-if="vm.isAuthenticated" ng-cloak>
 <ul class="nav nav-pills pull-right">
-  <li><a ui-sref="logout" >Sign out {{vm.userId}}</a></li>
+  <li>
+  	Welcome {{vm.userId}}
+  	<md-menu>
+      <md-button aria-label="Open phone interactions menu" 
+      				class="md-icon-button" 
+      				ng-click="vm.openMenu($mdOpenMenu, $event)">
+        <span class="glyphicon glyphicon-user"></span>
+      </md-button>
+      <md-menu-content width="4">
+        <md-menu-item>
+          <md-button ng-click="vm.showChangePasswordDialog()">
+           <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+            Change Password
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button ui-sref="logout">
+            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+            &nbsp;
+            Sign Out
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+<!--   	<a ui-sref="logout" >Sign out {{vm.userId}}</a> -->
+  	</li>
 </ul>
 <h3 class="text-muted">OccIDEAS Version 3.9.0</h3>
 </div>
