@@ -2,7 +2,7 @@
 <div >
 
 <!-- 	<md-content flex> -->
-	<button class="form-control" ng-click="importJson()">
+	<button permission="['ROLE_ADMIN']" class="form-control" ng-click="importJson()">
 		Import JSON
 	</button>
 	<table ng-table="vm.tableParams" ng-cloak
