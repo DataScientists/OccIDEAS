@@ -1007,7 +1007,7 @@
 							processInterviewQuestionNew(interview, node);
 						}
 					}
-					if (confirm('Stop Interview?')) {
+					if (confirm('You have pressed the Stop Button.  Do you realy want to stop the interview?')) {
 						addInterviewNote('Interview Stopped','System');
 						var participant = $rootScope.participant;
 						participant.status = 1;//partial

@@ -61,7 +61,9 @@
 		      }
 	        	
 	          if(params.filter().reference || params.filter().idParticipant){
-	        	  return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+	        	  if(awesIdIsValid(params.filter().reference)){
+	        		  return $filter('filter')(self.tableParams.settings().dataset, params.filter()); 
+	        	  }     	  
 		      }
 	          if(!self.tableParams.shouldGetData){
 	        	  var last = params.page() * params.count();
