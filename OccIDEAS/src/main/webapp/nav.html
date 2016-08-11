@@ -28,7 +28,11 @@
 <!--   	<a ui-sref="logout" >Sign out {{vm.userId}}</a> -->
   	</li>
 </ul>
-<h3 class="text-muted">OccIDEAS Version 3.9.0</h3>
+<h3 class="text-muted">OccIDEAS Version 3.9.0
+	<span permission="['ROLE_READONLY']" class="badge btn-warning">
+		READ-ONLY MODE
+	</span>	
+</h3>
 </div>
 <div ng-if="!vm.isAuthenticated" ng-cloak>
 	<div  ng-include="'scripts/login/view/login.html'"></div>
