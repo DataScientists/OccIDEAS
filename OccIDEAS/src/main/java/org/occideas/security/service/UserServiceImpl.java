@@ -2,6 +2,7 @@ package org.occideas.security.service;
 
 import java.util.List;
 
+import org.occideas.exceptions.InvalidCurrentPasswordException;
 import org.occideas.mapper.UserMapper;
 import org.occideas.security.dao.UserDao;
 import org.occideas.security.dao.UserProfileDao;
@@ -14,6 +15,7 @@ import org.occideas.vo.UserUserProfileVO;
 import org.occideas.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,8 @@ public class UserServiceImpl implements UserService{
 	private UserUserProfileDao userUserProfileDao;
 	@Autowired
 	private UserMapper mapper;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
      
     public UserVO save(UserVO vo){
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -77,8 +81,20 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public void changePassword(PasswordVO vo) {
-		
+	public void changePassword(PasswordVO vo) throws InvalidCurrentPasswordException {
+		//check if current password is valid
+		User user = checkCurrentPasswordIsValid(vo.getUserId(),vo.getCurrentPassword());
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		user.setPassword(passwordEncoder.encode(vo.getNewPassword()));
+		dao.save(user);
+	}
+
+	private User checkCurrentPasswordIsValid(String userId,String currentPassword) throws InvalidCurrentPasswordException {
+		User user = dao.findBySSO(userId);
+		if(!passwordEncoder.matches(currentPassword,user.getPassword())){
+			throw new InvalidCurrentPasswordException("Current Password is Incorrect for user id "+userId);
+		}
+		return user;
 	}
 
 }

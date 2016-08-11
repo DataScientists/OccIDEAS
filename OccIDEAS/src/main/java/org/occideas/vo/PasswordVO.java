@@ -2,6 +2,7 @@ package org.occideas.vo;
 
 public class PasswordVO {
 
+	private String userId;
 	private String currentPassword;
 	private String newPassword;
 
@@ -19,6 +20,14 @@ public class PasswordVO {
 
 	public void setNewPassword(String newPassword) {
 		this.newPassword = newPassword;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 }

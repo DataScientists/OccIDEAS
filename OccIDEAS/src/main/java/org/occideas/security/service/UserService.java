@@ -2,6 +2,7 @@ package org.occideas.security.service;
 
 import java.util.List;
 
+import org.occideas.exceptions.InvalidCurrentPasswordException;
 import org.occideas.security.model.User;
 import org.occideas.vo.PasswordVO;
 import org.occideas.vo.UserProfileVO;
@@ -14,7 +15,7 @@ public interface UserService {
 	
 	UserVO update(UserVO userVO);
 	
-	void changePassword(PasswordVO vo);
+	void changePassword(PasswordVO vo) throws InvalidCurrentPasswordException;
 	
     User findById(int id);
      

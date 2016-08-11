@@ -24,9 +24,9 @@ public class UserLoginRestController {
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response changePassword(PasswordVO vo) {
 		try {
-//			UserVO userVO = service.save(vo);
+			service.changePassword(vo);
 			return Response.ok().build();
-		} catch (Throwable e) {
+		}catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}

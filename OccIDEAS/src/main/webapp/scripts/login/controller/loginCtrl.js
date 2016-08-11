@@ -19,9 +19,7 @@
         vm.errMsg = '';
         vm.isAuthenticated = $sessionStorage.isAuthenticated;
         
-        vm.currentPassword = '';
-        vm.newPassword = '';
-        vm.retypeNewPassword = '';
+        vm.passwordVO = {};
         
         if(!(angular.isUndefinedOrNull(vm.isAuthenticated))){
         	if(!vm.isAuthenticated){
@@ -105,20 +103,25 @@
   		}
   		
   		$scope.changePasswordBtn = function(){
-  			// change password by user id
-//  			$sessionStorage.userId
-  			if($scope.existingUser.previousPassword == existingUser.newPassword){
-  				alert("No changes on the password.");
+  			if(vm.passwordVO.newPassword != vm.passwordVO.retypeNewPassword){
+  				alert("New Password and Retype Password is not the same.");
   				return;
   			}
-  			$scope.existingUser.password = existingUser.newPassword;
-  			AdminService.updatePassword(existingUser).then(function(response){
+  			var passwordJson = {
+  					userId:$sessionStorage.userId,
+  					currentPassword:vm.passwordVO.currentPassword,
+  					newPassword:vm.passwordVO.newPassword
+  			}
+  			loginService.changePassword(passwordJson).then(function(response){
   				if(response.status == 200){
-  					console.log('User was successfully updated');
-  					self.tableParams.reload();
+  					alert("Password change was successful.");
   				}
   				$mdDialog.cancel();
   			});
   		}
+  		
+  		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
     }
 })();
