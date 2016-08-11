@@ -12,31 +12,31 @@
         		data: ""
         	});
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             $scope.tabOptions.push({
                 state: "tabs.modules",
                 data: ""
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             $scope.tabOptions.push({
                 state: "tabs.fragments",
                 data: ""
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             $scope.tabOptions.push({
                 state: "tabs.agents",
                 data: ""
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER','ROLE_ADMIN'])) {
             $scope.tabOptions.push({
                 state: "tabs.participants",
                 data: ""
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR','ROLE_ADMIN'])) {
             $scope.tabOptions.push({
                 state: "tabs.assessments",
                 data: ""
@@ -88,31 +88,31 @@
                 viewName: 'admin@tabs'
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
                 title: 'Module List',
                 viewName: 'modules@tabs',
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
                 title: 'Fragment List',
                 viewName: 'fragments@tabs'
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
                 title: 'Agent List',
                 viewName: 'agents@tabs'
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER','ROLE_ADMIN'])) {
             tabs.push({
                 title: 'Participants',
                 viewName: 'participants@tabs'
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_READONLY','ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR','ROLE_ADMIN'])) {
             tabs.push({
                 title: 'Assessments',
                 viewName: 'assessments@tabs'

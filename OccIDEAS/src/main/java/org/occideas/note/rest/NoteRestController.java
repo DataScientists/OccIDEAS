@@ -1,17 +1,22 @@
 package org.occideas.note.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.note.service.NoteService;
-import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.NoteVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/note")
 public class NoteRestController implements BaseRestController<NoteVO>{
@@ -66,9 +71,6 @@ public class NoteRestController implements BaseRestController<NoteVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(NoteVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.create(json);
 		}catch(Throwable e){
@@ -83,9 +85,6 @@ public class NoteRestController implements BaseRestController<NoteVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(NoteVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.update(json);
 		}catch(Throwable e){
@@ -98,9 +97,6 @@ public class NoteRestController implements BaseRestController<NoteVO>{
 	@Path(value="/delete")
 	@POST
 	public Response delete(NoteVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.delete(json);
 		}catch(Throwable e){

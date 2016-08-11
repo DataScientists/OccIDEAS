@@ -17,7 +17,6 @@ import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.service.RuleService;
-import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
@@ -237,9 +236,6 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Path(value = "/delete")
     @POST
     public Response delete(InterviewVO json) {
-    	if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
         try {
             service.delete(json);
         } catch (Throwable e) {

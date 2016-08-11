@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.occideas.security.filter.AuthenticationFilter;
-import org.occideas.security.filter.ManagementEndpointAuthenticationFilter;
+import org.occideas.security.filter.ReadOnlyFilter;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.provider.BackendAdminUsernamePasswordAuthenticationProvider;
 import org.occideas.security.provider.DomainUsernamePasswordAuthenticationProvider;
@@ -35,9 +35,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 @EnableWebSecurity
 @Order(2)
-@ImportResource({
-    "classpath:applicationContext.xml" 
-})
+@ImportResource("/WEB-INF/spring/applicationContext.xml")
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	
@@ -63,10 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 		http.addFilterBefore(new AuthenticationFilter(authenticationManager()),
 				BasicAuthenticationFilter.class).addFilterBefore(
-				new ManagementEndpointAuthenticationFilter(
-						authenticationManager()),
+						new ReadOnlyFilter(),
 				BasicAuthenticationFilter.class);
-
 	}
 	
 	@Bean

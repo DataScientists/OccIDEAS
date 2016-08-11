@@ -12,7 +12,6 @@ import org.occideas.security.model.TokenResponse;
 import org.occideas.security.model.User;
 import org.occideas.security.model.UserProfile;
 import org.occideas.security.model.UserProfileType;
-import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -65,7 +64,6 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
          
         for(UserProfile userProfile : user.getUserProfiles()){
             System.out.println("UserProfile : "+userProfile);
-            checkIfUserHasReadOnlyRole(userProfile.getType());
             authorities.add(new SimpleGrantedAuthority("ROLE_"+userProfile.getType()));
         }
         if(authorities.isEmpty()){
@@ -74,10 +72,4 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
         log.info("authorities :"+authorities);
         return authorities;
     }
-
-	private void checkIfUserHasReadOnlyRole(String type) {
-		if(UserProfileType.READONLY.name().equals(type)){
-			CommonUtil.setReadOnly(true);
-		}
-	}
 }

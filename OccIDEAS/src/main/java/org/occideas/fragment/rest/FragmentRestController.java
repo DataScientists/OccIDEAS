@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.fragment.service.FragmentService;
-import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.FragmentVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -70,9 +69,6 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(FragmentVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.createFragment(json);
 		}catch(Throwable e){
@@ -87,9 +83,6 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(FragmentVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.update(json);
 		}catch(Throwable e){
@@ -102,9 +95,6 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 	@Path(value="/delete")
 	@POST
 	public Response delete(FragmentVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.merge(json);
 		}catch(Throwable e){

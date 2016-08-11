@@ -1,19 +1,24 @@
 package org.occideas.agent.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.rule.service.RuleService;
-import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/agent")
 public class AgentRestController implements BaseRestController<AgentVO>{
@@ -57,9 +62,6 @@ public class AgentRestController implements BaseRestController<AgentVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response create(AgentVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.create(json);
 		}catch(Throwable e){
@@ -74,9 +76,6 @@ public class AgentRestController implements BaseRestController<AgentVO>{
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
     @Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response update(AgentVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.update(json);
 		}catch(Throwable e){
@@ -89,9 +88,6 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 	@Path(value="/delete")
 	@POST
 	public Response delete(AgentVO json) {
-		if(CommonUtil.isReadOnlyEnabled()){
-			return Response.status(Status.FORBIDDEN).build();
-		}
 		try{
 			service.delete(json);
 		}catch(Throwable e){

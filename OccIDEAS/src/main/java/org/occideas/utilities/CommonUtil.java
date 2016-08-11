@@ -9,16 +9,6 @@ public class CommonUtil {
 		return list == null || list.isEmpty();
 	}
 	
-	private static boolean isReadOnly = false;
-	
-	public static boolean isReadOnlyEnabled(){
-		return isReadOnly;
-	}
-	
-	public static boolean setReadOnly(boolean readOnly){
-		return isReadOnly = readOnly;
-	}
-
 	public static boolean isNumeric(String str) {
 		try {
 			Integer.parseInt(str);

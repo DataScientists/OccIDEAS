@@ -8,6 +8,7 @@ import org.occideas.security.dao.UserProfileDao;
 import org.occideas.security.dao.UserUserProfileDao;
 import org.occideas.security.model.User;
 import org.occideas.security.model.UserProfile;
+import org.occideas.vo.PasswordVO;
 import org.occideas.vo.UserProfileVO;
 import org.occideas.vo.UserUserProfileVO;
 import org.occideas.vo.UserVO;
@@ -73,6 +74,11 @@ public class UserServiceImpl implements UserService{
 		for(UserUserProfileVO vo:list){
 			userUserProfileDao.save(mapper.convertToUserUserProfile(vo));
 		}
+	}
+
+	@Override
+	public void changePassword(PasswordVO vo) {
+		
 	}
 
 }
