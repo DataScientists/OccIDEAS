@@ -1,8 +1,10 @@
 package org.occideas.security.dao;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.occideas.entity.UserUserProfilePK;
+import org.hibernate.criterion.Restrictions;
 import org.occideas.security.model.UserUserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,9 +25,9 @@ public class UserUserProfileDaoImpl implements UserUserProfileDao {
 	
 	public void delete(int userId) {
 		final Session session = sessionFactory.getCurrentSession();
-	    UserUserProfile userUserProfile = (UserUserProfile)session.
-	    		get(UserUserProfile.class,new UserUserProfilePK(userId));
-	    if(userUserProfile != null){
+	    List<UserUserProfile> userUserProfileList = (List<UserUserProfile>) session.createCriteria(UserUserProfile.class)
+                .add(Restrictions.eq("userId", userId)).list();
+	    for(UserUserProfile userUserProfile:userUserProfileList){
 	    	session.delete(userUserProfile);
 	    }
 	    session.flush() ;
