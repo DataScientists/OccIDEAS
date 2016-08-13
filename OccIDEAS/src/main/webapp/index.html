@@ -30,7 +30,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.6/ng-csv.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.5.7/angular-sanitize.js"></script>
 	<script src="scripts/angular/dialog.js"></script>
-	<script src="scripts/angular/toaster.js"></script>
+	<script src="scripts/angular/ngToast.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.4.8/angular-sanitize.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-animate.min.js"></script>
 	  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
@@ -69,7 +69,7 @@
 	<link rel="stylesheet" href="styles/angular-material.css"/>
 	<link rel="stylesheet" href="styles/loading-bar.css"/>
 	<!-- Login requirements -->
-	<link rel="stylesheet" href="styles/toaster.css">
+	<link rel="stylesheet" href="styles/ngToast.min.css">
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
@@ -80,6 +80,7 @@
 	
 </head>
 <body ng-app="occIDEASApp">
+	<toast></toast>
     <div class="container">
       <header ng-include="'nav.html'" ng-cloak></header>
       <div ui-view>      

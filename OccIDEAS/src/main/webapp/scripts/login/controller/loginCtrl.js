@@ -3,11 +3,11 @@
     angular.module('occIDEASApp.Login').controller('LoginCtrl',
             LoginCtrl);
 
-    LoginCtrl.$inject = ['$state','toaster','$timeout',
+    LoginCtrl.$inject = ['$state','ngToast','$timeout',
                          '$scope','$http','$rootScope', 
                          'dataBeanService', '$window','loginService',
                          '$sessionStorage','AuthenticationService','$mdDialog'];
-    function LoginCtrl($state, toaster, $timeout, 
+    function LoginCtrl($state, ngToast, $timeout, 
     		$scope, $http, $rootScope, 
     		dataBeanService,$window, loginService,
     		$sessionStorage,auth,$mdDialog) {
@@ -115,8 +115,8 @@
   			loginService.changePassword(passwordJson).then(function(response){
   				if(response.status == 200){
   					alert("Password change was successful.");
+  					$mdDialog.cancel();
   				}
-  				$mdDialog.cancel();
   			});
   		}
   		

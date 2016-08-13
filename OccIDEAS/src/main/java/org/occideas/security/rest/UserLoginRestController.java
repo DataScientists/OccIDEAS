@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.occideas.exceptions.InvalidCurrentPasswordException;
 import org.occideas.security.service.UserService;
 import org.occideas.vo.PasswordVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,11 @@ public class UserLoginRestController {
 		try {
 			service.changePassword(vo);
 			return Response.ok().build();
-		}catch (Throwable e) {
+		}catch(InvalidCurrentPasswordException e){
+			e.printStackTrace();
+			return Response.status(Status.EXPECTATION_FAILED).type("text/plain").entity(e.getMessage()).build();
+		}
+		catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}

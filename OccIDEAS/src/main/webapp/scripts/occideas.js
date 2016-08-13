@@ -4,7 +4,6 @@
 angular
   .module("occIDEASApp", [
     "ui.router",
-    "toaster",
     "ngMaterial",
     "ngStorage",
     "ui.tree",
@@ -13,6 +12,7 @@ angular
     "ngCsv",
     "angular-confirm",
     "sticky",
+    "ngToast",
     "fsm",
     "angular.filter",
     "ui.bootstrap.contextMenu",
@@ -162,6 +162,7 @@ angular
             },
            'responseError': function(response) {
         	   var $sessionStorage = $injector.get('$sessionStorage');
+        	   var $ngToast = $injector.get('ngToast');
         	   var state = $injector.get('$state');
         	   var http = $injector.get('$http');
                if (response.status === 401) {
@@ -172,7 +173,19 @@ angular
                else if(response.status == 403){
       	        	var state = $injector.get('$state');       
       	          	alert("Occideas is in READ-ONLY mode, update/delete action is not premitted.");
-      	        }
+      	       }else if(response.status == '417'){
+      	    	 var errorMessages = [];
+          	   if(response.data){
+          		   errorMessages.push(response.data);
+          	   }
+      	    	 $ngToast.create({
+      	    		  className: 'danger',
+      	    		  content: errorMessages,
+      	    		  dismissButton: true,
+      	    		  dismissOnClick:false,
+      	    		  animation:'slide'
+      	    	 });
+      	       }
                else{
             	    /*state.go('error',{
        	            	error:"Response Status returned:"
@@ -206,11 +219,14 @@ angular
        }
    }
    
-   service.$inject = ['$state', '$rootScope', 'AuthenticationService', 'dataBeanService', 'toaster','$window','$sessionStorage'];
-   function service ($state, $rootScope, AuthenticationService, dataBeanService, toaster,$window,$sessionStorage){
+   service.$inject = ['$state', '$rootScope', 'AuthenticationService', 'dataBeanService', 'ngToast','$window','$sessionStorage'];
+   function service ($state, $rootScope, AuthenticationService, dataBeanService, ngToast,$window,$sessionStorage){
        var app = this;
        app.logout = function() {
-           toaster.pop('success', "Logout Successfull", "Goodbye");
+    	   ngToast.create({
+	    		  className: 'success',
+	    		  content: 'Logout Successfull", "Goodbye'
+	    	 });
            $sessionStorage.userId = null;
            $sessionStorage.token = null;
            $state.go('login', {}, {reload: true});
