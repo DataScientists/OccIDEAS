@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@JsonIgnoreProperties({"isOpen","selectedAnswer","editEnabled","info","warning","placeholder","isEditing","showAgentSlider","id","collapsed"})
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswerVO>{
 
 	@JsonInclude(Include.NON_NULL)

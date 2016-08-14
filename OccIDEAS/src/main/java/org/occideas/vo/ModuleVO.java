@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"questionsAsked","count","placeholder","isEditing"})
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ModuleVO extends NodeVO{
 
 	@JsonInclude(Include.NON_NULL)

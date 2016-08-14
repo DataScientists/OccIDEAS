@@ -3,14 +3,12 @@ package org.occideas.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.utilities.CommonUtil;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({"hours","minutes","isOpen","selectedAnswer","editEnabled","info","warning","placeholder","isEditing","showAgentSlider","id","collapsed","count"})
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class QuestionVO extends NodeVO implements Cloneable, Comparable<QuestionVO>{
 
 	@JsonInclude(Include.NON_NULL)

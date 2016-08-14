@@ -2,14 +2,37 @@
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
-                          '$anchorScroll','$location','$log'];
+                          '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
-			$anchorScroll,$location,$log){
+			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    $scope.uploadFiles = function(file, errFiles) {
+	        $scope.f = file;
+	        $scope.errFile = errFiles && errFiles[0];
+	        if (file) {
+	            file.upload = Upload.upload({
+	                url: 'web/rest/module/importJson',
+	                file: file
+	            }).progress(function (evt) {
+	                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+	                console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+	            }).success(function (data, status, headers, config) {
+	                console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
+	                alert("Import was Successful!");
+	                self.tableParams.reload();
+	                $mdDialog.cancel();
+	            });
+	        } 
+	    }
+	    
+	    $scope.cancel = function() {
+			$mdDialog.cancel();
+		};
 	    
 	    $scope.importJson = function(){
 			  $mdDialog.show({

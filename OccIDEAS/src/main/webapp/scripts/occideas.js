@@ -15,6 +15,7 @@ angular
     "ngToast",
     "fsm",
     "angular.filter",
+    "ngFileUpload",
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
     "occIDEASApp.Tabs",

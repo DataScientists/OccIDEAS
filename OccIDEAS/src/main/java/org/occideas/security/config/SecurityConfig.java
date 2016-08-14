@@ -36,35 +36,23 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @EnableWebSecurity
 @Order(2)
 @ImportResource("/WEB-INF/spring/applicationContext.xml")
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	
-	
+
 	@Value("${backend.admin.role}")
 	private String backendAdminRole;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.authorizeRequests()
-				.antMatchers(actuatorEndpoints())
-				.hasRole(backendAdminRole)
-				.anyRequest()
-				.authenticated()
-				.and()
-				.anonymous()
-				.disable()
-				.exceptionHandling()
+		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+				.authorizeRequests().antMatchers(actuatorEndpoints()).hasRole(backendAdminRole).anyRequest()
+				.authenticated().and().anonymous().disable().exceptionHandling()
 				.authenticationEntryPoint(unauthorizedEntryPoint());
 
-		http.addFilterBefore(new AuthenticationFilter(authenticationManager()),
-				BasicAuthenticationFilter.class).addFilterBefore(
-						new ReadOnlyFilter(),
-				BasicAuthenticationFilter.class);
+		http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
+				.addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
 	}
-	
+
 	@Bean
 	public TokenManager tokenManager() {
 		return new TokenManager();
@@ -76,8 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			@Override
 			public void commence(HttpServletRequest request, HttpServletResponse response,
 					AuthenticationException authException) throws IOException, ServletException {
-				response
-						.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			}
 		};
 	}
@@ -89,24 +76,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	}
 
 	@Override
-	protected void configure(AuthenticationManagerBuilder auth)
-			throws Exception {
-		auth.authenticationProvider(
-				domainUsernamePasswordAuthenticationProvider())
-				.authenticationProvider(
-						backendAdminUsernamePasswordAuthenticationProvider())
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(domainUsernamePasswordAuthenticationProvider())
+				.authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider())
 				.authenticationProvider(tokenAuthenticationProvider());
 	}
 
 	private String[] actuatorEndpoints() {
 		return new String[] { "/web", "/mobile", "/desktop" };
 	}
-	
+
 	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-     
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
 	@Bean
 	public ExternalServiceAuthenticator getExternalServiceAuthenticator() {
 		return new DaoServiceAuthenticator();

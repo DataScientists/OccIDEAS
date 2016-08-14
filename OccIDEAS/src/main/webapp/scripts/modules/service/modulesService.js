@@ -61,6 +61,15 @@
 			  });
 			  return request.then(handleSuccess,handleError);
 		}
+		
+		var importJson = function(vo){
+			var request = $http({
+				method:'POST',
+				url: modulesUrl+'/importJson',
+				data:vo
+			  });
+			  return request.then(handleSuccess,handleError);
+		}
 
 		function handleError( response ) {
             if (
@@ -82,7 +91,8 @@
 			save:save,
 		    post: postNewModule, 
 		    deleteModule: deleteModule,
-		    copyModule:copyModule
+		    copyModule:copyModule,
+		    importJson:importJson
 		};
 	}
 	
