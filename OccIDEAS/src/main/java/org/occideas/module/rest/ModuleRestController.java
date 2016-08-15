@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +26,11 @@ import org.occideas.utilities.PropUtil;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleIdNodeRuleHolder;
 import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
+import org.occideas.vo.ReportVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.core.JsonParser.Feature;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/module")
@@ -156,6 +154,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Path(value = "/importJson")
 	@POST
 	public Response importJson(FormDataMultiPart multiPart) {
+		ReportVO report = null;
 		try {
 			Map<String, List<FormDataBodyPart>> fieldsByName = multiPart.getFields();
 
@@ -164,37 +163,27 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					InputStream in = field.getEntityAs(InputStream.class);
 					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 					ObjectMapper mapper = new ObjectMapper();
-					mapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES,true);
+					mapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 					ModuleIdNodeRuleHolder idNodeHolder = null;
-					String line;
-					while ((line = reader.readLine()) != null) {
-						ModuleVO[] modules = mapper.readValue(line,ModuleVO[].class);
-						// only expecting one module
-						ModuleVO vo = modules[0];
-						ModuleCopyVO copyVo = new ModuleCopyVO();
-						copyVo.setVo(vo);
-						copyVo.setIncludeRules(true);
-						copyVo.setName("(Copy from Import)"+vo.getName());
-						idNodeHolder = service.copyModule(copyVo);
-					}
+					String line = reader.readLine();
+					ModuleVO[] modules = mapper.readValue(line, ModuleVO[].class);
+					// only expecting one module
+					ModuleVO vo = modules[0];
+					ModuleCopyVO copyVo = new ModuleCopyVO();
+					copyVo.setVo(vo);
+					copyVo.setIncludeRules(true);
+					copyVo.setName("(Copy from Import)" + vo.getName());
+					idNodeHolder = service.copyModule(copyVo);
+					report = service.copyRulesValidateAgent(idNodeHolder);
+					service.addNodeRulesValidateAgent(idNodeHolder,report);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 
-		// try{
-		// idNodeHolder = service.copyModule(json);
-		// if(json.isIncludeRules()){
-		// service.copyRules(idNodeHolder);
-		// service.addNodeRules(idNodeHolder);
-		// }
-		// }catch(Throwable e){
-		// e.printStackTrace();
-		// return
-		// Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-		// }
-		return Response.ok().build();
+		return Response.ok(report).build();
 	}
 
 }

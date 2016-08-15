@@ -3,6 +3,8 @@ package org.occideas.module.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.agent.dao.AgentDao;
+import org.occideas.entity.Agent;
 import org.occideas.entity.Module;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeRuleMapper;
@@ -12,6 +14,7 @@ import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.rule.dao.RuleDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
+import org.occideas.vo.AgentVO;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleIdNodeRuleHolder;
 import org.occideas.vo.ModuleRuleVO;
@@ -19,6 +22,7 @@ import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeRuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.ReportVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +45,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private NodeRuleDao nodeRuleDao;
 	@Autowired
 	private NodeRuleMapper nodeRuleMapper;
+	@Autowired
+	private AgentDao agentDao;
 
 	@Auditable(actionType = AuditingActionType.GENERIC)
     @Override
@@ -209,10 +215,45 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 	
 	@Override
+	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder) {
+		ReportVO reportVO = new ReportVO();
+		List<AgentVO> missingAgentList = new ArrayList<>();
+		List<RuleVO> missingRuleList = new ArrayList<>();
+		for (RuleVO ruleVO : idNodeHolder.getRuleList()) {
+			Agent agent = agentDao.get(ruleVO.getAgent().getIdAgent());
+			if(agent !=null){
+			    ruleDao.save(ruleMapper.convertToRule(ruleVO));
+			}else{
+				missingAgentList.add(ruleVO.getAgent());
+				missingRuleList.add(ruleVO);
+			}
+		}
+		reportVO.setMissingAgentsList(missingAgentList);
+		return reportVO;
+	}
+	
+	@Override
 	public void addNodeRules(ModuleIdNodeRuleHolder idNodeHolder) {
 		List<NodeRuleVO> list = idNodeHolder.getNodeRuleList();
 		for (NodeRuleVO vo : list) {
 			nodeRuleDao.save(nodeRuleMapper.convertToNodeRule(vo));
+		}
+	}
+
+	@Override
+	public void addNodeRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder, ReportVO report) {
+		List<NodeRuleVO> list = idNodeHolder.getNodeRuleList();
+		for (NodeRuleVO vo : list) {
+			boolean isRuleMissing = false;
+			for(RuleVO ruleVO:report.getMissingRuleAgentList()){
+				if(vo.getIdRule() == ruleVO.getIdRule()){
+					isRuleMissing = true;
+					break;
+				}
+			}
+			if(!isRuleMissing){
+				nodeRuleDao.save(nodeRuleMapper.convertToNodeRule(vo));
+			}
 		}
 	}
 

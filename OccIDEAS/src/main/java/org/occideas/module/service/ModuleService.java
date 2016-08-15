@@ -6,6 +6,7 @@ import org.occideas.base.service.BaseService;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleIdNodeRuleHolder;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.ReportVO;
 
 public interface ModuleService extends BaseService<ModuleVO>{
 	public void merge(ModuleVO module);
@@ -14,4 +15,6 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO json);
 	public void copyRules(ModuleIdNodeRuleHolder idNodeHolder);
 	void addNodeRules(ModuleIdNodeRuleHolder idNodeHolder);
+	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder);
+	public void addNodeRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder, ReportVO report);
 }
