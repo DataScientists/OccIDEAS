@@ -34,6 +34,18 @@
 			controller: 'TabsCtrl as vm',
 			deepStateRedirect: true,
 		}).state({
+			name:'tabs.importJsonValidationReport',
+			url: '/importJsonValidationReport/',
+			sticky: false,
+		    deepStateRedirect: false,
+		    authenticate:true,
+			views:{
+				'importJsonValidationReport@tabs':{
+					templateUrl : "scripts/modules/partials/importJsonValidation.html",
+					controller: 'ModuleCtrl as vm'
+				}
+			}
+		}).state({
 			name:'tabs.modules',
 			url: '/modules/',
 			sticky: false,

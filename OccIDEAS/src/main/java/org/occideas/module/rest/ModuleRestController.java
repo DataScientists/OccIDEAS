@@ -174,8 +174,12 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					copyVo.setIncludeRules(true);
 					copyVo.setName("(Copy from Import)" + vo.getName());
 					idNodeHolder = service.copyModule(copyVo);
+					//missing rules report
 					report = service.copyRulesValidateAgent(idNodeHolder);
 					service.addNodeRulesValidateAgent(idNodeHolder,report);
+					// adding module vo to the report
+					report.setVo(vo);
+					
 				}
 			}
 		} catch (IOException e) {

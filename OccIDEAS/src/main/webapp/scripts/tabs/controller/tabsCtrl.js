@@ -42,6 +42,12 @@
                 data: ""
             });
         }
+        if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])){
+        	$scope.tabOptions.push({
+                state: "tabs.importJsonValidationReport",
+                data: ""
+            });
+        }
         $scope.$watch('selectedIndex', function(current, old) {
             var state = null;
             var data = null;
@@ -128,7 +134,23 @@
             $scope.selectedIndex = 3;
         }
 
-
+        
+        $scope.addImportJsonValidationTab = function(report) {
+            tabs.push({
+                title: "Validation Report (Import JSON)",
+                viewName: 'importJsonValidationReport@tabs',
+                canClose: true,
+                disabled: false
+            });
+            $scope.tabOptions.push({
+                state: "tabs.importJsonValidationReport",
+                data: {
+                }
+            });
+            $scope.importJsonValidationReport = report;
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
+        };
         $scope.addFragmentTab = function(row) {
             tabs.push({
                 title: row.name,

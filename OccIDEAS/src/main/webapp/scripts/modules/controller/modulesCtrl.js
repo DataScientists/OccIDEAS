@@ -14,18 +14,29 @@
 	    $scope.uploadFiles = function(file, errFiles) {
 	        $scope.f = file;
 	        $scope.errFile = errFiles && errFiles[0];
-	        if (file) {
-	            file.upload = Upload.upload({
-	                url: 'web/rest/module/importJson',
-	                file: file
-	            }).progress(function (evt) {
-	                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-	                console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
-	            }).success(function (data, status, headers, config) {
-	                console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
-	                alert("Import was Successful!");
-	                self.tableParams.reload();
-	                $mdDialog.cancel();
+	    }
+	    
+	    $scope.importJsonBtn = function(){
+	    	var file = $scope.f;
+	    	if (file) {
+	    		file.upload = Upload.upload({
+	    			 url: 'web/rest/module/importJson',
+		             file: file
+	            });
+
+	            file.upload.then(function (response) {
+	                $timeout(function () {
+	                    file.result = response.data;
+	                    self.tableParams.reload();
+		                $mdDialog.cancel();
+		                $scope.addImportJsonValidationTab(response.data);
+	                });
+	            }, function (response) {
+	                if (response.status > 0)
+	                    $scope.errorMsg = response.status + ': ' + response.data;
+	            }, function (evt) {
+	                file.progress = Math.min(100, parseInt(100.0 * 
+	                                         evt.loaded / evt.total));
 	            });
 	        } 
 	    }

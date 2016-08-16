@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ReportVO {
 
+	private ModuleVO vo;
 	private List<AgentVO> missingAgentsList = new ArrayList<>();
 	private List<RuleVO> missingRuleAgentList = new ArrayList<>();
 
@@ -22,6 +23,14 @@ public class ReportVO {
 
 	public void setMissingRuleAgentList(List<RuleVO> missingRuleAgentList) {
 		this.missingRuleAgentList = missingRuleAgentList;
+	}
+
+	public ModuleVO getVo() {
+		return vo;
+	}
+
+	public void setVo(ModuleVO vo) {
+		this.vo = vo;
 	}
 
 }
