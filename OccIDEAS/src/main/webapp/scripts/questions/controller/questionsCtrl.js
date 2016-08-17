@@ -572,14 +572,7 @@
 			$log.info("cascadeTemplateNullIds:"+nodes);
 		}
 		
-		/*ModulesService.getActiveModules().then(function(data) {	
-			for(var i=0;i < data.length;i++){
-				var node = data[i];
-				node.type = "Q_linkedmodule";
-				node.nodeclass = "Q";
-			}
-			$scope.moduleSlider = data;
-		});*/
+		
 		$scope.rightNav = "slideFrag";
 		$scope.toggleRight = function(){
 		    if ($scope.rightNav === "slideFrag"){
@@ -588,9 +581,18 @@
 		    else{
 		      $scope.rightNav = "slideFrag";
 		    }
-		    if(angular.isUndefined($scope.templateData) || angular.isUndefined($scope.aJSMData)
-		    			|| angular.isUndefined($scope.frequencyData)){
+		    if(data[0].type != 'M_IntroModule' && (angular.isUndefined($scope.templateData) || angular.isUndefined($scope.aJSMData)
+		    			|| angular.isUndefined($scope.frequencyData))){
 				initFragmentData();
+			}else{
+				ModulesService.getActiveModules().then(function(data) {	
+					for(var i=0;i < data.length;i++){
+						var node = data[i];
+						node.type = "Q_linkedmodule";
+						node.nodeclass = "Q";
+					}
+					$scope.moduleSlider = data;
+				});
 			}
 		};
 		
