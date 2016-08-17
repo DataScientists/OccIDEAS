@@ -6,6 +6,8 @@ import java.util.List;
 public class ReportVO {
 
 	private ModuleVO vo;
+	private int totalQuestions;
+	private int totalAnswers;
 	private List<AgentVO> missingAgentsList = new ArrayList<>();
 	private List<RuleVO> missingRuleAgentList = new ArrayList<>();
 
@@ -31,6 +33,22 @@ public class ReportVO {
 
 	public void setVo(ModuleVO vo) {
 		this.vo = vo;
+	}
+
+	public int getTotalQuestions() {
+		return totalQuestions;
+	}
+
+	public void setTotalQuestions(int totalQuestions) {
+		this.totalQuestions = totalQuestions;
+	}
+
+	public int getTotalAnswers() {
+		return totalAnswers;
+	}
+
+	public void setTotalAnswers(int totalAnswers) {
+		this.totalAnswers = totalAnswers;
 	}
 
 }
