@@ -15,8 +15,8 @@
 			self.roleList = data;
 		});
 		
-		SystemPropertyService.getById('activeIntro').then(function(data){
-			self.sysprop.activemodule = data;
+		SystemPropertyService.getById('activeIntro').then(function(response){
+			self.sysprop.activemodule = response.data;
 		});
 		
 		self.saveSysPropBtn = function(){
