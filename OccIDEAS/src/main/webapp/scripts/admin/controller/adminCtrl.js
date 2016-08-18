@@ -20,7 +20,12 @@
 		});
 		
 		self.saveSysPropBtn = function(){
-			alert("attempt to save system property");
+			SystemPropertyService.save(self.sysprop.activemodule).then(function(response){
+				if(response.status == '200'){
+					alert("Config changed was saved successfully.");
+					self.sysprop.activemodule = response.data;
+				}
+			});
 		}
 		
 		self.showAddUserDialog = function(){
