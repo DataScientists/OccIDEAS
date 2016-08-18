@@ -121,6 +121,23 @@ public class ModuleServiceImpl implements ModuleService {
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
+	
+	@Override
+	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO vo,ReportVO report) {
+		ModuleVO copyVO = vo.getVo();
+		Long idNode = dao.generateIdNode() + 1;
+		copyVO.setIdNode(idNode);
+		copyVO.setName(vo.getName());
+		ModuleIdNodeRuleHolder idNodeRuleHolder = new ModuleIdNodeRuleHolder();
+		long maxRuleId = ruleDao.getMaxRuleId();
+		idNodeRuleHolder.setLastIdRule(maxRuleId);
+		idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
+		idNodeRuleHolder.setIdNode(idNode);
+		idNodeRuleHolder.setTopNodeId(idNode);
+		populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		dao.saveCopy(mapper.convertToModule(copyVO, true));
+		return idNodeRuleHolder;
+	}
 
 	private void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
 			ModuleIdNodeRuleHolder idNodeRuleHolder) {
@@ -133,6 +150,25 @@ public class ModuleServiceImpl implements ModuleService {
 			vo.setIdNode(qsIdNode);
 			if (!vo.getChildNodes().isEmpty()) {
 				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder);
+			}
+			if (qsIdNode > idNodeRuleHolder.getLastIdNode()) {
+				idNodeRuleHolder.setLastIdNode(qsIdNode);
+			}
+		}
+	}
+	
+	private void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
+			ModuleIdNodeRuleHolder idNodeRuleHolder,ReportVO report) {
+		idNodeRuleHolder.setLastIdNode(idNode);
+		for (QuestionVO vo : childNodes) {
+			vo.setParentId(String.valueOf(idNode));
+			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
+			Long qsIdNode = idNodeRuleHolder.getLastIdNode() + 1;
+			idNodeRuleHolder.setLastIdNode(qsIdNode);
+			vo.setIdNode(qsIdNode);
+			report.setTotalQuestions(report.getTotalQuestions() + 1);
+			if (!vo.getChildNodes().isEmpty()) {
+				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder,report);
 			}
 			if (qsIdNode > idNodeRuleHolder.getLastIdNode()) {
 				idNodeRuleHolder.setLastIdNode(qsIdNode);
@@ -156,6 +192,48 @@ public class ModuleServiceImpl implements ModuleService {
 				populateQuestionsWithIdNode(asIdNode, vo.getChildNodes(), idNodeRuleHolder);
 			}
 			count++;
+		}
+	}
+	
+	private void populateAnswerWithIdNode(Long qsIdNode, List<PossibleAnswerVO> childNodes,
+			ModuleIdNodeRuleHolder idNodeRuleHolder,ReportVO report) {
+		int count = 1;
+		for (PossibleAnswerVO vo : childNodes) {
+			vo.setParentId(String.valueOf(qsIdNode));
+			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
+			Long asIdNode = idNodeRuleHolder.getLastIdNode() + count;
+			vo.setIdNode(asIdNode);
+			report.setTotalAnswers(report.getTotalAnswers()+1);
+			idNodeRuleHolder.setLastIdNode(asIdNode);
+			if (!vo.getModuleRule().isEmpty()) {
+				populateRulesWithIdRule(vo, vo.getModuleRule(), idNodeRuleHolder,report);
+			}
+			if (!vo.getChildNodes().isEmpty()) {
+				populateQuestionsWithIdNode(asIdNode, vo.getChildNodes(), idNodeRuleHolder,report);
+			}
+			count++;
+		}
+	}
+	
+	private void populateRulesWithIdRule(PossibleAnswerVO possibleAnswer, List<ModuleRuleVO> moduleRule,
+			ModuleIdNodeRuleHolder idNodeRuleHolder,ReportVO report) {
+		boolean ruleExist = false;
+		for (ModuleRuleVO ruleVo : moduleRule) {
+			if(idNodeRuleHolder.getRuleIdStorage().
+					containsKey(ruleVo.getRule().getIdRule())){
+				ruleVo.getRule().setIdRule(idNodeRuleHolder.
+						getRuleIdStorage().get(ruleVo.getRule().getIdRule()));
+				ruleExist = true;
+			}else if (ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
+				idNodeRuleHolder.setLastIdRule(idNodeRuleHolder.getLastIdRule() + 1);
+				idNodeRuleHolder.getRuleIdStorage().put(ruleVo.getRule().getIdRule(), 
+						idNodeRuleHolder.getLastIdRule());
+				ruleVo.getRule().setIdRule(idNodeRuleHolder.getLastIdRule());
+				report.setTotalRules(report.getTotalRules()+1);
+				ruleExist = false;
+			}
+			populateRuleCondition(possibleAnswer, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
+					idNodeRuleHolder,ruleExist);
 		}
 	}
 
@@ -215,8 +293,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 	
 	@Override
-	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder) {
-		ReportVO reportVO = new ReportVO();
+	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder,ReportVO reportVO) {
 		List<AgentVO> missingAgentList = new ArrayList<>();
 		List<RuleVO> missingRuleList = new ArrayList<>();
 		for (RuleVO ruleVO : idNodeHolder.getRuleList()) {

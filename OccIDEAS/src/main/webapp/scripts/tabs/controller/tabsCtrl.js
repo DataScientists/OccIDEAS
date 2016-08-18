@@ -42,12 +42,6 @@
                 data: ""
             });
         }
-        if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])){
-        	$scope.tabOptions.push({
-                state: "tabs.importJsonValidationReport",
-                data: ""
-            });
-        }
         $scope.$watch('selectedIndex', function(current, old) {
             var state = null;
             var data = null;
@@ -145,6 +139,7 @@
             $scope.tabOptions.push({
                 state: "tabs.importJsonValidationReport",
                 data: {
+                	row:report.idNode
                 }
             });
             $scope.importJsonValidationReport = report;

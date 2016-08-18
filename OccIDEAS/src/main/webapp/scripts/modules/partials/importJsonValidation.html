@@ -3,7 +3,6 @@
 		Successful Upload - Report
 	</div>
 	<div>
-<!-- 		Click <a ng-click="addModuleTab(importJsonValidationReport.vo)">here</a> to open module. -->
 		
 		<table class="table-bordered">
 			<tr>
@@ -11,7 +10,7 @@
 			</tr>
 			<tr>
 				<td>Module Id</td>
-				<td>{{importJsonValidationReport.vo.idNode}}</td>
+				<td><a style="cursor:pointer;" href ng-click="addModuleTab(importJsonValidationReport.vo)">{{importJsonValidationReport.vo.idNode}}</a></td>
 			</tr>
 			<tr>
 				<td>Module Name</td>
@@ -19,39 +18,30 @@
 			</tr>
 			<tr>
 				<td>Number of Questions Imported</td>
-				<td></td>
+				<td>{{importJsonValidationReport.totalQuestions}}</td>
 			</tr>
 			<tr>
 				<td>Number of Answers Imported</td>
-				<td></td>
+				<td>{{importJsonValidationReport.totalAnswers}}</td>
 			</tr>
 			<tr>
 				<td>Number of Rules Imported</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
+				<td>{{importJsonValidationReport.totalRules}}</td>
 			</tr>
 		</table>
-		<div class="divider"></div>
-		Number of Rules per Agent
-		<table class="table-bordered">
-			<th>Agent</th>
-			<th>Total Number of Rules</th>
-			<tr>
-				<td></td>
-				<td></td>
-			</tr>
-		</table>
+		<div ng-if="importJsonValidationReport.missingAgentsList.length > 0">
+			{{importJsonValidationReport.missingAgentsList}}
+		</div>
+<!-- 		<div class="divider"></div> -->
+<!-- 		Number of Rules per Agent -->
+<!-- 		<table class="table-bordered"> -->
+<!-- 			<th>Agent</th> -->
+<!-- 			<th>Total Number of Rules</th> -->
+<!-- 			<tr> -->
+<!-- 				<td></td> -->
+<!-- 				<td></td> -->
+<!-- 			</tr> -->
+<!-- 		</table> -->
 		<div class="divider"></div>
 		
 <!-- 		<pre>DEBUG</pre> {{importJsonValidationReport}} -->

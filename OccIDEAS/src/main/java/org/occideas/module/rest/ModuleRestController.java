@@ -154,7 +154,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Path(value = "/importJson")
 	@POST
 	public Response importJson(FormDataMultiPart multiPart) {
-		ReportVO report = null;
+		ReportVO report = new ReportVO();
 		try {
 			Map<String, List<FormDataBodyPart>> fieldsByName = multiPart.getFields();
 
@@ -173,9 +173,9 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					copyVo.setVo(vo);
 					copyVo.setIncludeRules(true);
 					copyVo.setName("(Copy from Import)" + vo.getName());
-					idNodeHolder = service.copyModule(copyVo);
+					idNodeHolder = service.copyModule(copyVo,report);
 					//missing rules report
-					report = service.copyRulesValidateAgent(idNodeHolder);
+					service.copyRulesValidateAgent(idNodeHolder,report);
 					service.addNodeRulesValidateAgent(idNodeHolder,report);
 					// adding module vo to the report
 					report.setVo(vo);

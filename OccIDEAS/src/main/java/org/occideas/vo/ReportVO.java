@@ -8,6 +8,7 @@ public class ReportVO {
 	private ModuleVO vo;
 	private int totalQuestions;
 	private int totalAnswers;
+	private int totalRules;
 	private List<AgentVO> missingAgentsList = new ArrayList<>();
 	private List<RuleVO> missingRuleAgentList = new ArrayList<>();
 
@@ -50,5 +51,15 @@ public class ReportVO {
 	public void setTotalAnswers(int totalAnswers) {
 		this.totalAnswers = totalAnswers;
 	}
+
+	public int getTotalRules() {
+		return totalRules;
+	}
+
+	public void setTotalRules(int totalRules) {
+		this.totalRules = totalRules;
+	}
+	
+	
 
 }

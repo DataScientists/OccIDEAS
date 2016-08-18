@@ -36,8 +36,8 @@
 		}).state({
 			name:'tabs.importJsonValidationReport',
 			url: '/importJsonValidationReport/',
-			sticky: false,
-		    deepStateRedirect: false,
+			sticky: true,
+		    deepStateRedirect: true,
 		    authenticate:true,
 			views:{
 				'importJsonValidationReport@tabs':{

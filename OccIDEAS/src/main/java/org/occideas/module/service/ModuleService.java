@@ -14,7 +14,8 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	List<ModuleVO> findByIdForInterview(Long id);
 	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO json);
 	public void copyRules(ModuleIdNodeRuleHolder idNodeHolder);
+	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO vo,ReportVO report);
 	void addNodeRules(ModuleIdNodeRuleHolder idNodeHolder);
-	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder);
+	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder,ReportVO reportVO);
 	public void addNodeRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder, ReportVO report);
 }
