@@ -12,28 +12,44 @@
   table-condensed editable-table"
 			show-filter="true">
 			<tr ng-repeat="user in $data">
-				<td width="15%" title="'Username'" filter="{ ssoId: 'text'}" sortable="'ssoId'">
-					{{user.ssoId}}</td>
+				<td width="15%" title="'Username'" filter="{ ssoId: 'text'}"
+					sortable="'ssoId'">{{user.ssoId}}</td>
 				<td width="15%" title="'Firstname'" filter="{ firstName:'text'}"
 					sortable="'firstName'">{{user.firstName}}</td>
 				<td width="15%" title="'Lastname'" filter="{ lastName:'text'}"
 					sortable="'lastName'">{{user.lastName}}</td>
-				<td width="10%" title="'Email'" filter="{ email:'text'}" sortable="'email'">
-					{{user.email}}</td>
-				<td width="10%" title="'State'" filter="{ state:'text'}" sortable="'state'">
-					{{user.state}}</td>
+				<td width="10%" title="'Email'" filter="{ email:'text'}"
+					sortable="'email'">{{user.email}}</td>
+				<td width="10%" title="'State'" filter="{ state:'text'}"
+					sortable="'state'">{{user.state}}</td>
 				<td width="25%" title="'Role'" filter="{ roles:'text'}">{{user.rolesStr}}</td>
 				<td width="20%">
-					<button type="button" class="btn btn-default"
-						aria-label="Edit" ng-click="vm.showEditUserDialog(user)">
+					<button type="button" class="btn btn-default" aria-label="Edit"
+						ng-click="vm.showEditUserDialog(user)">
 						<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-					</button> 
+					</button>
 					<button type="button" class="btn btn-default"
-						aria-label="Change Password" ng-click="vm.showChangePasswordDialog(user)">
+						aria-label="Change Password"
+						ng-click="vm.showChangePasswordDialog(user)">
 						<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-					</button> 
+					</button>
 				</td>
 			</tr>
 		</table>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">Configuration</div>
+		<div class="panel-body">
+			<table class="table-striped">
+				<tr>
+					<td>Active Module</td>
+					<td><input type="text" ng-model="vm.sysprop.activemodule.value"></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input type="button" ng-click="vm.saveSysPropBtn()" value="Save Changes"/></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 </div>

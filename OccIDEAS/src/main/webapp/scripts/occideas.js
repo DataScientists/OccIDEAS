@@ -34,7 +34,8 @@ angular
     "occIDEASApp.Login",
     "occIDEASApp.Logout",
     "occIDEASApp.Admin",
-    "occIDEASApp.FiredRules"
+    "occIDEASApp.FiredRules",
+    "occIDEASApp.SystemProperty"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })

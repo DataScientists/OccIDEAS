@@ -89,3 +89,5 @@ ALTER TABLE APP_USER
 ADD COLUMN `last_name` VARCHAR(1024) NULL;
 ALTER TABLE APP_USER 
 CHANGE COLUMN `email` `email` VARCHAR(1024) NULL;
+
+insert into sys.sys_config (variable,value,set_by) values ('activeIntro','15001','system');

@@ -3,10 +3,10 @@
 	  .module('occIDEASApp.Admin')
 	  .controller('AdminCtrl',AdminCtrl);
 	
-	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog'];
-	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog){
+	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService'];
+	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService){
 		var self = this;
-		
+		self.sysprop = {};
 		self.states = [{
 			name:'Active'	
 		},{name:'Inactive'}];
@@ -14,6 +14,14 @@
 		AdminService.getRoles().then(function(data){
 			self.roleList = data;
 		});
+		
+		SystemPropertyService.getById('activeIntro').then(function(data){
+			self.sysprop.activemodule = data;
+		});
+		
+		self.saveSysPropBtn = function(){
+			alert("attempt to save system property");
+		}
 		
 		self.showAddUserDialog = function(){
 			self.newUser = {roles:[]};
