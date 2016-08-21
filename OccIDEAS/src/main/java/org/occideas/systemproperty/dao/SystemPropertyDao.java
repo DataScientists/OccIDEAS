@@ -1,5 +1,7 @@
 package org.occideas.systemproperty.dao;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -19,15 +21,23 @@ public class SystemPropertyDao {
 		session.saveOrUpdate(sysProp);
 		return sysProp;
 	}
-	
-	public SystemProperty getById(String variable){
+
+	public SystemProperty getById(String variable) {
 		final Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(SystemProperty.class);
 		criteria.add(Restrictions.eq("variable", variable));
-		
-		SystemProperty sysProp = (SystemProperty)criteria.uniqueResult();
+
+		SystemProperty sysProp = (SystemProperty) criteria.uniqueResult();
 		return sysProp;
 	}
-	
-	
+
+	public List<SystemProperty> getAll() {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(SystemProperty.class);
+		return crit.list();
+	}
+
+	public void delete(SystemProperty entity) {
+		sessionFactory.getCurrentSession().delete(entity);
+	}
 }

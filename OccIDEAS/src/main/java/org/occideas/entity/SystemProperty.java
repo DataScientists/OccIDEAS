@@ -4,11 +4,13 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema = "sys", name = "sys_config")
+@Table(name = "SYS_CONFIG")
 public class SystemProperty implements Serializable {
 
 	/**
@@ -17,18 +19,41 @@ public class SystemProperty implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	private String variable;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+	@Column(name = "type")
+	private String type;
+	@Column(name = "name")
+	private String name;
 	@Column(name = "value")
 	private String value;
-	@Column(name = "set_by")
-	private String setBy;
+	@Column(name = "updatedDt")
+	private String updatedDt;
+	@Column(name = "updatedBy")
+	private String updatedBy;
 
-	public String getVariable() {
-		return variable;
+	public long getId() {
+		return id;
 	}
 
-	public void setVariable(String variable) {
-		this.variable = variable;
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getValue() {
@@ -39,12 +64,20 @@ public class SystemProperty implements Serializable {
 		this.value = value;
 	}
 
-	public String getSetBy() {
-		return setBy;
+	public String getUpdatedDt() {
+		return updatedDt;
 	}
 
-	public void setSetBy(String setBy) {
-		this.setBy = setBy;
+	public void setUpdatedDt(String updatedDt) {
+		this.updatedDt = updatedDt;
+	}
+
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
 	}
 
 }

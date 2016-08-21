@@ -1,5 +1,7 @@
 package org.occideas.securityproperty.rest;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -31,6 +33,32 @@ public class SystemPropertyController {
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(sysProp).build();
+	}
+	
+	@GET
+	@Path(value = "/getAll")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getAll() {
+		List<SystemPropertyVO> list = null;
+		try {
+			list = service.getAll();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
+	@POST
+	@Path(value = "/delete")
+	public Response delete(SystemPropertyVO vo) {
+		try {
+			service.delete(vo);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
 	}
 	
 	@POST

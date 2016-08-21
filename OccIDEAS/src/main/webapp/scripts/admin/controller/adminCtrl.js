@@ -3,20 +3,167 @@
 	  .module('occIDEASApp.Admin')
 	  .controller('AdminCtrl',AdminCtrl);
 	
-	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService'];
-	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService){
+	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService','ngToast'];
+	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService,$ngToast){
 		var self = this;
-		self.sysprop = {};
+		self.isDeleting = false;
+		var dirtyCellsByRow = [];
+	    var invalidCellsByRow = [];
+	    self.cancel = cancel;
+	    self.del = del;
+	    self.save = save;
+	    self.add = add;
+	    self.toggleIsDeleting = toggleIsDeleting;
+		
 		self.states = [{
 			name:'Active'	
 		},{name:'Inactive'}];
+		
+		 function setInvalid(isInvalid) {
+		        self.$invalid = isInvalid;
+		        self.$valid = !isInvalid;
+		      }
+		
+		function untrack(row) {
+	        _.remove(invalidCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        _.remove(dirtyCellsByRow, function(item) {
+	          return item.row === row;
+	        });
+	        setInvalid(invalidCellsByRow.length > 0);
+	   }
+		function del(row) {
+	    	row.deleted = 1;
+	    	var data =  SystemPropertyService.deleteProperty(row).then(function(response) {
+	    		if(response.status === 200){
+	    			$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'System Property was deleted successfully.',
+	      	    		  animation:'slide'
+	      	    	 });
+					self.tableConfig.shouldGetData = true;
+			        self.tableConfig.reload().then(function (data) {
+			            if (data.length === 0 && self.tableConfig.total() > 0) {
+			                self.tableConfig.page(self.tableConfig.page() - 1);
+			                self.tableConfig.reload();
+			            }
+			        });
+				}
+	        });
+	    	_.remove(self.tableConfig.settings().dataset, function (item) {
+	            return row === item;
+	        });
+	        self.tableConfig.shouldGetData = false;
+	        self.tableConfig.reload().then(function (data) {
+	            if (data.length === 0 && self.tableConfig.total() > 0) {
+	                self.tableConfig.page(self.tableConfig.page() - 1);
+	                self.tableConfig.reload();
+	            }
+	        });
+	    }
+		function toggleIsDeleting(){
+	    	if(self.isDeleting){
+	    		self.isDeleting = false;
+	    	}else{
+	    		self.isDeleting = true;
+	    	}
+	    }
+		function add(type) {
+			self.isEditing = true;
+			self.isAdding = true;
+
+			self.tableConfig.settings().dataset.unshift({
+				name: "New Module",
+				type: type,
+				value: "New Value",
+				isEditing: true
+			});
+			self.originalData = angular.copy(self.tableConfig.settings().dataset);
+			self.tableConfig.sorting({});
+			self.tableConfig.page(1);
+			self.tableConfig.shouldGetData = false;
+			self.tableConfig.reload();
+			self.isAdding = false;
+		}
+		
+		function save(row, rowForm) {
+	    	self.isEditing = false;
+	    	SystemPropertyService.save(row).then(function(response){
+				if(response.status === 200){
+					$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'System Property Save was Successful!',
+	      	    		  animation:'slide'
+	      	    	 });
+					self.tableConfig.shouldGetData = true;
+			        self.tableConfig.reload().then(function (data) {
+			            if (data.length === 0 && self.tableConfig.total() > 0) {
+			                self.tableConfig.page(self.tableConfig.page() - 1);
+			                self.tableConfig.reload();
+			            }
+			        });
+				}
+			});
+	    }
+		
+		 function resetRow(row, rowForm) {
+		        row.isEditing = false;
+		        rowForm.$setPristine();
+		        self.tableTracker.untrack(row);
+		        return window._.find(self.originalData,{id:row.id});
+		 }
+		 
+		function cancel(row,rowForm) {
+	    	var originalRow = resetRow(row, rowForm);
+	    	if(row.id){
+	    		angular.extend(row, originalRow);
+	    	}else{
+	    		_.remove(self.tableConfig.settings().dataset, function (item) {
+		            return row === item;
+		        });
+	    		self.tableConfig.shouldGetData = false;
+		        self.tableConfig.reload().then(function (data) {
+		            if (data.length === 0 && self.tableConfig.total() > 0) {
+		                self.tableConfig.page(self.tableConfig.page() - 1);
+		                self.tableConfig.reload();
+		            }
+		        });
+	    	} 
+	    }
+		
+		self.tableConfig = new NgTableParams(
+				{
+					group: "type"
+				}, 
+				{	
+	        getData: function(params) {
+	          if(params.filter().name){	
+	        	return $filter('filter')(self.tableConfig.settings().dataset, params.filter());
+	          }
+	          if(!self.tableConfig.shouldGetData){
+	        	  return self.tableConfig.settings().dataset;
+	          }
+	          $log.info("Data getting from modules ajax ..."); 
+	          return  SystemPropertyService.getAll().then(function(response){
+	        	  if(response.status == '200'){
+	        		$log.info("Data received from modules ajax ...");        	 
+	        	    self.originalData = angular.copy(response.data);
+	        	    self.tableConfig.settings().dataset = response.data;
+	        	    self.tableConfig.shouldGetData = true;
+	        	  	return response.data;
+	        	  }
+	          });
+	          }
+	    });
+		self.tableConfig.shouldGetData = true;
 		
 		AdminService.getRoles().then(function(data){
 			self.roleList = data;
 		});
 		
-		SystemPropertyService.getById('activeIntro').then(function(response){
-			self.sysprop.activemodule = response.data;
+		SystemPropertyService.getAll().then(function(response){
+			self.sysprop = response.data;
 		});
 		
 		self.saveSysPropBtn = function(){

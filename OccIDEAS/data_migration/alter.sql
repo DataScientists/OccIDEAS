@@ -90,4 +90,15 @@ ADD COLUMN `last_name` VARCHAR(1024) NULL;
 ALTER TABLE APP_USER 
 CHANGE COLUMN `email` `email` VARCHAR(1024) NULL;
 
-insert into sys.sys_config (variable,value,set_by) values ('activeIntro','15001','system');
+CREATE TABLE `SYS_CONFIG` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`type` varchar(128) NOT NULL,
+`name` varchar(128) NOT NULL,
+`value` varchar(128) DEFAULT NULL,
+`updatedDt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+`updatedBy` varchar(128) DEFAULT NULL,
+
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into SYS_CONFIG (type,name,value,updatedBy) values ('config','activeIntro','15001','system');

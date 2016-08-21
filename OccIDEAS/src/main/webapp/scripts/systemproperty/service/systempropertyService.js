@@ -13,8 +13,27 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getAll() {
+			var restUrl = 'web/rest/systemproperty/getAll';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function save(data) {
 			var restSaveUrl = 'web/rest/systemproperty/save';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function deleteProperty(data) {
+			var restSaveUrl = 'web/rest/systemproperty/delete';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,
@@ -40,6 +59,8 @@
         }
 		return {
 			getById: getById,
+			getAll: getAll,
+			deleteProperty:deleteProperty,
 			save: save
 		};
 	}

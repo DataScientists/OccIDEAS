@@ -1,5 +1,7 @@
 package org.occideas.systemproperty.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.occideas.entity.SystemProperty;
@@ -28,6 +30,17 @@ public class SystemPropertyServiceImpl implements SystemPropertyService{
 	public SystemPropertyVO getById(String variable) {
 		SystemProperty sysProp = dao.getById(variable);
 		return mapper.convertSytemPropertyToSystemPropertyVO(sysProp);
+	}
+
+	@Override
+	public List<SystemPropertyVO> getAll() {
+		List<SystemProperty> list = dao.getAll();
+		return mapper.convertSystemPropertyListToSystemPropertyVOList(list);
+	}
+
+	@Override
+	public void delete(SystemPropertyVO vo) {
+		dao.delete(mapper.convertSytemPropertyVOtoSystemProperty(vo));
 	}
 
 }
