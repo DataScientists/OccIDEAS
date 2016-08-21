@@ -22,10 +22,10 @@ public class SystemPropertyDao {
 		return sysProp;
 	}
 
-	public SystemProperty getById(String variable) {
+	public SystemProperty getById(String name) {
 		final Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(SystemProperty.class);
-		criteria.add(Restrictions.eq("variable", variable));
+		criteria.add(Restrictions.eq("name", name));
 
 		SystemProperty sysProp = (SystemProperty) criteria.uniqueResult();
 		return sysProp;

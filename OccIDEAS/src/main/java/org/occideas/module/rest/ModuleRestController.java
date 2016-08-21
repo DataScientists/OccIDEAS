@@ -17,16 +17,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
-import org.occideas.utilities.PropUtil;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleIdNodeRuleHolder;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.ReportVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -38,6 +40,8 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 
 	@Autowired
 	private ModuleService service;
+	@Autowired
+	private SystemPropertyService sysPropService;
 
 	@GET
 	@Path(value = "/getlist")
@@ -58,10 +62,23 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response get(@QueryParam("id") Long id) {
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		SystemPropertyVO vo = null;
 		if (id == -1) {
-			id = Long.valueOf(PropUtil.getInstance().getProperty(Constant.STUDY_INTRO));
+			vo = sysPropService.getById(Constant.STUDY_INTRO);
+			if(vo !=null){
+				if(NumberUtils.isNumber(vo.getValue())){
+					id = Long.valueOf(vo.getValue());
+				}else{
+					return Response.status(Status.EXPECTATION_FAILED).type("text/plain").
+							entity("Verify that "+Constant.STUDY_INTRO +" in System Config is a number.").build();
+				}
+			}
 		}
-
+		if(id == -1 && vo == null){
+			return Response.status(Status.EXPECTATION_FAILED).type("text/plain").
+					entity("Unable to find "+Constant.STUDY_INTRO +" in System Config.").build();
+		}
+		
 		try {
 			list = service.findById(id);
 		} catch (Throwable e) {
@@ -78,9 +95,21 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
 		boolean isIntroModule = false;
 		try {
+			SystemPropertyVO vo = null;
 			if (id == -1) {
-				isIntroModule = true;
-				id = Long.valueOf(PropUtil.getInstance().getProperty(Constant.STUDY_INTRO));
+				vo = sysPropService.getById(Constant.STUDY_INTRO);
+				if(vo !=null){
+				   if(NumberUtils.isNumber(vo.getValue())){
+					   id = Long.valueOf(vo.getValue());
+				   }else{
+					   return Response.status(Status.EXPECTATION_FAILED).type("text/plain").
+								entity("Verify that "+Constant.STUDY_INTRO +" in System Config is a number.").build();
+				   }
+				}
+			}
+			if(id == -1 && vo == null){
+				return Response.status(Status.EXPECTATION_FAILED).type("text/plain").
+						entity("Unable to find "+Constant.STUDY_INTRO +" in System Config.").build();
 			}
 			list = service.findByIdForInterview(id);
 			if (isIntroModule && list.get(0) == null) {

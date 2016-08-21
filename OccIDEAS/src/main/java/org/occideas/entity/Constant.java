@@ -26,5 +26,5 @@ public class Constant {
     public static final String MODULE_JSON_SESSION = "moduleJson";
     
     public static final String IS_READ_ONLY = "readonly";
-    public static final String STUDY_INTRO = "studyintromoduleid";
+    public static final String STUDY_INTRO = "activeIntro";
 }
