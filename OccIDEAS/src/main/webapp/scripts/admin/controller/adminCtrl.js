@@ -14,6 +14,7 @@
 	    self.save = save;
 	    self.add = add;
 	    self.toggleIsDeleting = toggleIsDeleting;
+	    self.addNewConfigBtn = addNewConfigBtn;
 		
 		self.states = [{
 			name:'Active'	
@@ -69,6 +70,24 @@
 	    		self.isDeleting = true;
 	    	}
 	    }
+		function addNewConfigBtn(){
+			self.isEditing = true;
+			self.isAdding = true;
+
+			self.tableConfig.settings().dataset.unshift({
+				name: "New Module",
+				type: "New Type",
+				value: "New Value",
+				isEditing: true
+			});
+			self.originalData = angular.copy(self.tableConfig.settings().dataset);
+			self.tableConfig.sorting({});
+			self.tableConfig.page(1);
+			self.tableConfig.shouldGetData = false;
+			self.tableConfig.reload();
+			self.isAdding = false;
+		}
+		
 		function add(type) {
 			self.isEditing = true;
 			self.isAdding = true;
