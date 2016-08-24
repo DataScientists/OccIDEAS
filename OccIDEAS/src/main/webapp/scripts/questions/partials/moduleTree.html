@@ -20,7 +20,7 @@
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
+        <div context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' class="tree-node-content {{node.nodeclass}} {{node.warning}}" id="node-{{node.idNode}}">
 		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,
