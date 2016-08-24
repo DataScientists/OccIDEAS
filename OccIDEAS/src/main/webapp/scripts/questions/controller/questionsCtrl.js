@@ -899,6 +899,11 @@
 					recordAction($scope.data);
 					$scope.safeApply(function() {
 						scope.$modelValue.editEnabled = true;
+						if(scope.$modelValue.name=='New Question'){
+							scope.$modelValue.name="";
+						}else if(scope.$modelValue.name=='New Possible Answer'){
+							scope.$modelValue.name="";
+						}
 					});
 				}				
 			}		
