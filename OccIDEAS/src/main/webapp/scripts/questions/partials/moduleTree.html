@@ -34,11 +34,14 @@
 	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
           <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
 
-          <span class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(this)" data-nodrag>{{node.name}}</span>
+          <span class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(node)" 
+			event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
+				{{node.name}}
+		  </span>
           <div ng-if="node.editEnabled" class="editBox">
       		<input type="text" 
              ng-model="node.name" 
-             ng-focus="focus=true;blur=false;" 
+             id="editId_{{node.idNode}}" 
              ng-blur="saveEdit(this)" 
              class="form-control"  
              data-nodrag 

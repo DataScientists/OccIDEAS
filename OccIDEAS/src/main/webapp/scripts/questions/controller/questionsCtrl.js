@@ -893,22 +893,21 @@
 			saveModuleWithoutReload();
 		};
 
-		$scope.enable = function(scope) {
-			if(scope.$modelValue.nodeclass!='M'){
-				if(scope.$modelValue.nodeclass!='F'){
+		$scope.enable = function(node) {
+			if(node.nodeclass!='M'){
+				if(node.nodeclass!='F'){
 					recordAction($scope.data);
 					$scope.safeApply(function() {
-						scope.$modelValue.editEnabled = true;
-						if(scope.$modelValue.name=='New Question'){
-							scope.$modelValue.name="";
-						}else if(scope.$modelValue.name=='New Possible Answer'){
-							scope.$modelValue.name="";
+						node.editEnabled = true;
+						if(node.name=='New Question'){
+							node.name="";
+						}else if(node.name=='New Possible Answer'){
+							node.name="";
 						}
-					});
+					});					
 				}				
 			}		
 		};
-
 		$scope.safeApply = function(fn) {
 			var phase = this.$root.$$phase;
 			if (phase == '$apply' || phase == '$digest') {
