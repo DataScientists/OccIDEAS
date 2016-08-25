@@ -170,9 +170,10 @@
 					return qh.deleted == 0;
 				});
 				// get unique questions by number and name , place it to listOfQuestion
-				listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
-					return item.questionId;
-				});
+				//listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
+				//	return item.questionId;
+				//});
+				listOfQuestion = data.questionHistory;
 			});
 			var sortHeaderList = {};
 			var header = "";

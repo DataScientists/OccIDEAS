@@ -5,6 +5,10 @@
 	<button permission="['ROLE_ADMIN']" class="form-control" ng-click="importJson()">
 		Import JSON
 	</button>
+	<button type="button"
+			class="btn btn-default" ng-if="vm.originalData.length == 0" 
+			ng-click="vm.add('M_Module')">Add Module <span class="glyphicon glyphicon-plus">
+			</span></button>
 	<table ng-table="vm.tableParams" ng-cloak
 		class="table table-bordered table-hover 
   table-condensed editable-table moduleTable"
@@ -34,11 +38,12 @@
             <td sortable="type" data-title="'Type'" groupable="'type'" ng-if="false">
             	{{row.type}}
           	</td>
-            <td title="'Name'" filter="{name: 'text'}"
+            <td id="id_{{row.idNode}}" filter="{name: 'text'}"
 				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"
 				ng-form="name" demo-tracked-table-cell>
 				<div ng-click="row.isEditing = true">
 					<span ng-switch-default class="editable-text">{{row.name}}</span>
+					<span permission="['ROLE_ADMIN']" class="pull-right" ng-if="row.type == 'M_IntroModule'">{{row.idNode}}</span>
 					<div class="controls"
 						ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
 						ng-switch-when="true">
@@ -47,7 +52,7 @@
 					</div>
 				</div>
 			</td>
-			<td title="'Description'" filter="{description: 'text'}"
+			<td filter="{description: 'text'}"
 				ng-switch="row.isEditing"
 				ng-class="description.$dirty ? 'bg-warning' : ''"
 				ng-form="description" demo-tracked-table-cell>

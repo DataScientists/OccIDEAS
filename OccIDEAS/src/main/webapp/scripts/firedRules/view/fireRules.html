@@ -1,5 +1,106 @@
 <div ng-cloak>
-<!-- <span> debug{{displayHistoryNew | json}}</span> -->
+<div class="col-md-8"  >
+	<div class="assessmentWrapper" >
+	<div class="firedRulesScroller">
+		<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">	     	
+	     	<div class="verticalagents">
+				<div class="agentcontainer" >
+					<span class="rotatedagenttext"></span>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
+						Fired Rules
+					</div>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
+						Auto 
+					</div>
+				</div>
+			</div>			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="assessmentDescription" prevent-right-click >
+						Manual 
+					</div>
+				</div>
+			</div>
+		</div>
+		<div ng-repeat="agent in data.agents" 
+			class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
+	     	
+	     	<div class="verticalagents">
+				<div class="agentcontainer" >
+					<span class="rotatedagenttext">{{agent.name}}</span>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)" model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
+							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" prevent-right-click >
+						<span class="cell-lable" ng-repeat="mrule in data.autoAssessedRules" >
+							<div ng-class="mrule.level" class="assessment" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+			
+			<div class="verticalrules">
+				<div class="rulescontainer">
+					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showEditAssessmentMenu(this)" model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
+							<div ng-class="mrule.level" class="assessment" ng-if="(mrule.agentId == agent.idAgent)"></div>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+	</div>
+	</div>
+	<div class="noiseAssessmentWrapper" ng-if="noiseRows.length>0">
+		<table class="table table-bordered ">
+		<thead>
+		<tr>
+			<td>Node Number</td>
+			<td>dB</td>
+			<td>Hours</td>
+			<td>Partial Exposure</td>
+		</tr>
+		</thead> 
+		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
+			<td>{{noiseRow.nodeNumber}}</td>
+			<td>{{noiseRow.dB}}</td>
+			<td>{{noiseRow.backgroundhours}}</td>
+			<td>{{noiseRow.partialExposure}}</td>
+		</tr>
+		</table>
+		
+		<div>Total Partial Exposure: {{totalPartialExposure}}</div>
+		<div>Auto Exposure Level: {{autoExposureLevel}}</div>
+		<div>Peak Noise: {{peakNoise}}</div>
+		
+	</div>
+</div>
+
+<div id="interview-wrapper">
+&nbsp;
+</div>
 <div class="row" style="margin-top:2px;margin-bottom:2px;">
 	<div class="col-md-4">
 	<button class="form-control btn btn-default" ng-click="vm.runFiredRulesBtn()">
