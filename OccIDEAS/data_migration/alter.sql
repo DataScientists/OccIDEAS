@@ -102,3 +102,34 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 insert into SYS_CONFIG (type,name,value,updatedBy) values ('config','activeIntro','15001','system');
+
+DROP VIEW IF EXISTS InterviewIntroModule_Module;
+CREATE VIEW InterviewIntroModule_Module AS 
+SELECT 
+concat(m.idNode,':',iq.id,':',n.idNode) AS 
+primaryKey,
+m.idNode as idModule, 
+m.name as introModuleNodeName, 
+iq.id as interviewId,
+iq.name as interviewModuleName,
+n.idNode,
+n.number as nodeNumber
+FROM Node n
+INNER JOIN Node m ON n.topNodeId = m.idNode 
+INNER JOIN Interview_Question iq ON m.idNode = iq.link
+
+DROP VIEW IF EXISTS InterviewModule_Fragment;
+CREATE VIEW InterviewModule_Fragment AS 
+SELECT 
+concat(m.idNode,':',iq.id,':',n.idNode) AS 
+primaryKey, 
+m.idNode as idFragment, 
+m.name as fragmentNodeName, 
+iq.id as interviewId,
+iq.name as interviewFragmentName,
+n.idNode,
+n.number as nodeNumber
+FROM Node n
+INNER JOIN Node m ON n.topNodeId = m.idNode 
+INNER JOIN Interview_Question iq ON m.idNode = iq.link
+WHERE iq.type='Q_linkedajsm' AND iq.deleted=0
