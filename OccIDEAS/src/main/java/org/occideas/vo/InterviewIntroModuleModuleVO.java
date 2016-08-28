@@ -7,6 +7,7 @@ public class InterviewIntroModuleModuleVO {
 	private String introModuleNodeName;
 	private long interviewId;
 	private String interviewModuleName;
+	private long interviewPrimaryKey;
 
 	public long getIdModule() {
 		return idModule;
@@ -46,6 +47,14 @@ public class InterviewIntroModuleModuleVO {
 
 	public void setPrimaryKey(String primaryKey) {
 		this.primaryKey = primaryKey;
+	}
+
+	public long getInterviewPrimaryKey() {
+		return interviewPrimaryKey;
+	}
+
+	public void setInterviewPrimaryKey(long interviewPrimaryKey) {
+		this.interviewPrimaryKey = interviewPrimaryKey;
 	}
 
 }

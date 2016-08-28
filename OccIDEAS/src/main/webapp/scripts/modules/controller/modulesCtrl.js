@@ -191,7 +191,7 @@
 			    	$scope.interviewIdInProgress = data.interviewId;
 			    	$scope.counter++;
 					$scope.interviewCount = $scope.counter;
-			        return InterviewsService.updateModuleNameForInterviewId(data.interviewId,row.name)
+			        return InterviewsService.updateModuleNameForInterviewId(data.interviewPrimaryKey,row.name)
 	    			.then(function(response){
 	    				if(response.status == 200){
 	    					console.log("successful update for "+data.interviewId);

@@ -26,6 +26,7 @@ public class InterviewIntroModuleModule implements Serializable {
 	private String primaryKey;
 	private long idModule;
 	private String introModuleNodeName;
+	private long interviewPrimaryKey;
 	private long interviewId;
 	private String interviewModuleName;
 
@@ -67,6 +68,14 @@ public class InterviewIntroModuleModule implements Serializable {
 
 	public void setPrimaryKey(String primaryKey) {
 		this.primaryKey = primaryKey;
+	}
+
+	public long getInterviewPrimaryKey() {
+		return interviewPrimaryKey;
+	}
+
+	public void setInterviewPrimaryKey(long interviewPrimaryKey) {
+		this.interviewPrimaryKey = interviewPrimaryKey;
 	}
 
 }

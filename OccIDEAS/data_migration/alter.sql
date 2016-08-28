@@ -110,7 +110,8 @@ concat(m.idNode,':',iq.id) AS
 primaryKey,
 m.idNode as idModule, 
 m.name as introModuleNodeName, 
-iq.id as interviewId,
+iq.id as interviewPrimaryKey,
+iq.idInterview as interviewId,
 iq.name as interviewModuleName
 from Node m  
 INNER JOIN Interview_Question iq
