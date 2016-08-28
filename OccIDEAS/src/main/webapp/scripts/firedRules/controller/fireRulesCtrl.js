@@ -111,34 +111,6 @@
 	
 		vm.runFiredRulesBtn = function(){
 			//loop each answer
-			
-			_.each($scope.data.questionHistory,function(question){
-				_.each(question.answers,function(answer){
-					//get answer module rule
-					FiredRulesService.getAnswerWithModuleRule(answer.answerId)
-						.then(function(response){
-							if(response.status == '200'){
-								var possibleAnswerNode = response.data;
-									if(possibleAnswerNode.moduleRule.length > 0){
-										//loop each module rule, call service fire rules
-										_.each(possibleAnswerNode.moduleRule,function(moduleRule){
-											var isExist = _.find(vm.firedRules,function(firedRules){
-												return firedRules.idRule==moduleRule.rule.idRule;
-											});
-											if(!isExist){
-											var firedRule = {
-												idinterview:answer.idInterview,
-												idRule:moduleRule.rule.idRule
-											};
-																					
-											}
-											
-										});
-									}
-							}
-						});
-				})
-			});
 			$timeout(function() {
 				vm.getFiredRulesByInterviewId(data[0].interviewId);
             }, 2000);

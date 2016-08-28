@@ -10,7 +10,8 @@
 			<tr ng-repeat="participant in $data">
 				<td title="'idParticipant'">{{participant.idParticipant}}</td>
 				<td title="'interviewId'">{{participant.interviews[0].interviewId}}</td>
-				<td title="'referenceNumber'">{{participant.referenceNumber}}</td>	
+				<td title="'referenceNumber'">{{participant.reference}}</td>	
+				<td title="'status'">{{participant.status}}</td>	
 				<td>
 					<button ng-click="vm.openFiredRules(participant.interviews[0].interviewId)" class="btn btn-default btn-sm" >
 						<span class="glyphicon glyphicon-list-alt"></span>
