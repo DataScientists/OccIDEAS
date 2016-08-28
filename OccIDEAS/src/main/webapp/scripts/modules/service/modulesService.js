@@ -7,6 +7,15 @@
 		var apiUrl = 'web/rest/';
 		var modulesUrl = apiUrl + 'module';
 		var apiKey = '';
+		function findInterviewByModuleId(idModule) {
+			var restUrl = 'web/rest/interviewintromodule/findInterviewByModuleId?id=' + idModule;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		
 		var getModules = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
@@ -92,7 +101,8 @@
 		    post: postNewModule, 
 		    deleteModule: deleteModule,
 		    copyModule:copyModule,
-		    importJson:importJson
+		    importJson:importJson,
+            findInterviewByModuleId:findInterviewByModuleId
 		};
 	}
 	

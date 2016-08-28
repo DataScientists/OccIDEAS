@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.vo.InterviewIntroModuleModuleVO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class InterviewIntroModuleModuleMapperImpl implements InterviewIntroModuleModuleMapper {
 
 	@Override
@@ -16,11 +18,9 @@ public class InterviewIntroModuleModuleMapperImpl implements InterviewIntroModul
 		InterviewIntroModuleModuleVO vo = new InterviewIntroModuleModuleVO();
 		vo.setPrimaryKey(entity.getPrimaryKey());
 		vo.setIdModule(entity.getIdModule());
-		vo.setIdNode(entity.getIdNode());
 		vo.setInterviewId(entity.getInterviewId());
 		vo.setInterviewModuleName(entity.getInterviewModuleName());
 		vo.setIntroModuleNodeName(entity.getIntroModuleNodeName());
-		vo.setNodeNumber(entity.getNodeNumber());
 		return vo;
 	}
 

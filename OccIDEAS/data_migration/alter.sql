@@ -106,17 +106,16 @@ insert into SYS_CONFIG (type,name,value,updatedBy) values ('config','activeIntro
 DROP VIEW IF EXISTS InterviewIntroModule_Module;
 CREATE VIEW InterviewIntroModule_Module AS 
 SELECT 
-concat(m.idNode,':',iq.id,':',n.idNode) AS 
+concat(m.idNode,':',iq.id) AS 
 primaryKey,
 m.idNode as idModule, 
 m.name as introModuleNodeName, 
 iq.id as interviewId,
-iq.name as interviewModuleName,
-n.idNode,
-n.number as nodeNumber
-FROM Node n
-INNER JOIN Node m ON n.topNodeId = m.idNode 
-INNER JOIN Interview_Question iq ON m.idNode = iq.link
+iq.name as interviewModuleName
+from Node m  
+INNER JOIN Interview_Question iq
+where m.idNode = iq.link
+and iq.nodeClass = 'M';
 
 DROP VIEW IF EXISTS InterviewModule_Fragment;
 CREATE VIEW InterviewModule_Fragment AS 

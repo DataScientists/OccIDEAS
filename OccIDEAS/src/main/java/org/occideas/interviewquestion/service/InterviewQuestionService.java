@@ -6,6 +6,9 @@ import org.occideas.base.service.BaseService;
 import org.occideas.vo.InterviewQuestionVO;
 
 public interface InterviewQuestionService extends BaseService<InterviewQuestionVO> {
+	
+	void updateModuleNameForInterviewId(long idInterview,String newName);
+	
 	List<InterviewQuestionVO> findByInterviewId(Long id);
 	
 	InterviewQuestionVO findIntQuestion(long idInterview,long questionId);

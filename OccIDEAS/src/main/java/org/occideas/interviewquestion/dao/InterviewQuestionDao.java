@@ -7,11 +7,10 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.occideas.entity.Agent;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.question.service.QuestionService;
 import org.occideas.vo.QuestionVO;
@@ -26,6 +25,19 @@ public class InterviewQuestionDao {
 
 	@Autowired
     private QuestionService questionService;
+	
+	public void updateModuleNameForInterviewId(long idInterview,String newName){
+    	Session session = sessionFactory.openSession();
+    	Transaction tx = session.beginTransaction();
+
+    	String hqlUpdate = "update InterviewQuestion iq set iq.name = :newName where iq.idInterview = :idInterview";
+    	session.createQuery( hqlUpdate )
+    	        .setString( "newName", newName )
+    	        .setLong( "idInterview", idInterview )
+    	        .executeUpdate();
+    	tx.commit();
+    	session.close();
+    }
 	
 	public InterviewQuestion save(InterviewQuestion iq){
       return (InterviewQuestion) sessionFactory.getCurrentSession().save(iq);

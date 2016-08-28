@@ -105,6 +105,11 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 	public Long getMaxIntQuestionSequence(long idInterview) {
 		return dao.getMaxIntQuestionSequence(idInterview);
 	}
+
+	@Override
+	public void updateModuleNameForInterviewId(long idInterview, String newName) {
+		dao.updateModuleNameForInterviewId(idInterview, newName);
+	}
 	
 	
 }

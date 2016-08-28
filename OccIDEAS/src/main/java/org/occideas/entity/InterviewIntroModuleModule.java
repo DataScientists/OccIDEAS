@@ -28,8 +28,6 @@ public class InterviewIntroModuleModule implements Serializable {
 	private String introModuleNodeName;
 	private long interviewId;
 	private String interviewModuleName;
-	private long idNode;
-	private String nodeNumber;
 
 	public long getIdModule() {
 		return idModule;
@@ -61,22 +59,6 @@ public class InterviewIntroModuleModule implements Serializable {
 
 	public void setInterviewModuleName(String interviewModuleName) {
 		this.interviewModuleName = interviewModuleName;
-	}
-
-	public long getIdNode() {
-		return idNode;
-	}
-
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
-	}
-
-	public String getNodeNumber() {
-		return nodeNumber;
-	}
-
-	public void setNodeNumber(String nodeNumber) {
-		this.nodeNumber = nodeNumber;
 	}
 
 	public String getPrimaryKey() {

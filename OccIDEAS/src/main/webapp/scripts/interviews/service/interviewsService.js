@@ -139,6 +139,19 @@
             })
             return request.then(handleSuccess, handleError);
         }
+        
+        function updateModuleNameForInterviewId(interviewId,newName) {
+            var url = 'web/rest/interviewquestionanswer/updateModuleNameForInterviewId';
+            var request = $http({
+                method: 'POST',
+                url: url,
+                params:{
+                	idInterview: interviewId,
+                	newName:newName
+                }
+            })
+            return request.then(handleSuccess, handleError);
+        }
 
         function saveInterviewMod(data) {
      		var restURL = 'web/rest/interview/saveMod';
@@ -324,7 +337,8 @@
             getInterviewQuestionAnswer:getInterviewQuestionAnswer,
             getUnprocessedQuestions:getUnprocessedQuestions,
             getInterviewWithFiredRules:getInterviewWithFiredRules,
-            updateDisplayAnswerList:updateDisplayAnswerList
+            updateDisplayAnswerList:updateDisplayAnswerList,
+            updateModuleNameForInterviewId:updateModuleNameForInterviewId
         };
     }
 })();

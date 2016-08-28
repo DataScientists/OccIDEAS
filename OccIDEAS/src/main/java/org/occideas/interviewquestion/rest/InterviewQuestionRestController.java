@@ -22,23 +22,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @Path("/interviewquestionanswer")
-public class InterviewQuestionRestController implements BaseRestController<InterviewQuestionVO>{
+public class InterviewQuestionRestController implements BaseRestController<InterviewQuestionVO> {
 
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
-	private InterviewQuestionService service;	
+	private InterviewQuestionService service;
 	@Autowired
 	private InterviewAnswerService answerService;
-	
+
+	@POST
+	@Path(value = "/updateModuleNameForInterviewId")
+	public Response updateModuleNameForInterviewId(
+			@QueryParam("idInterview") long idInterview,
+			@QueryParam("newName") String newName) {
+		try {
+			service.updateModuleNameForInterviewId(idInterview, newName);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
+
 	@GET
-	@Path(value="/getlist")
-	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	@Path(value = "/getlist")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response listAll() {
 		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
-		try{
+		try {
 			list = service.listAll();
-		}catch(Throwable e){
+		} catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
@@ -46,41 +60,40 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	}
 
 	@GET
-	@Path(value="/getbyinterviewid")
-	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	@Path(value = "/getbyinterviewid")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response getByInterviewId(@QueryParam("id") Long id) {
 		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
-		try{
+		try {
 			list = service.findByInterviewId(id);
-		}catch(Throwable e){
+		} catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
 	}
-	
-	
+
 	@GET
-	@Path(value="/getIntQuestion")
-	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
-	public Response getIntQuestion( @QueryParam("idInterview") Long idInterview,
-			 @QueryParam("questionId") Long questionId){
-		InterviewQuestionVO intQuestion = service.findIntQuestion(idInterview,questionId);
+	@Path(value = "/getIntQuestion")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getIntQuestion(@QueryParam("idInterview") Long idInterview,
+			@QueryParam("questionId") Long questionId) {
+		InterviewQuestionVO intQuestion = service.findIntQuestion(idInterview, questionId);
 		return Response.ok(intQuestion).build();
 	}
-	
+
 	@GET
-	@Path(value="/getInterviewQuestion")
-	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
-	public Response getInterviewQuestion( @QueryParam("interviewQuestionId") Long interviewQuestionId){
+	@Path(value = "/getInterviewQuestion")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getInterviewQuestion(@QueryParam("interviewQuestionId") Long interviewQuestionId) {
 		List<InterviewQuestionVO> list = service.findById(interviewQuestionId);
 		InterviewQuestionVO interviewQuestion = null;
-		for(InterviewQuestionVO iq:list){
+		for (InterviewQuestionVO iq : list) {
 			interviewQuestion = iq;
 		}
 		return Response.ok(interviewQuestion).build();
 	}
-	
+
 	@Override
 	public Response get(Long id) {
 		// TODO Auto-generated method stub
@@ -94,55 +107,53 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	}
 
 	@POST
-	@Path(value="/save")
-	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	@Path(value = "/save")
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
 	@Override
 	public Response update(InterviewQuestionVO vo) {
 		return Response.ok(service.updateIntQ(vo)).build();
 	}
-	
+
 	@POST
-	@Path(value="/saveLinkAndQueueQuestions")
-	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	@Path(value = "/saveLinkAndQueueQuestions")
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response saveLinkAndQueueQuestions(InterviewQuestionVO vo) {
 		return Response.ok(service.updateInterviewLinkAndQueueQuestions(vo)).build();
 	}
-	
+
 	@POST
-	@Path(value="/saveAnswers")
-	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	@Path(value = "/saveAnswers")
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response updateAnswers(List<InterviewAnswerVO> vo) {
 		return Response.ok(answerService.updateIntA(vo)).build();
 	}
+
 	@POST
-	@Path(value="/saveQuestions")
-	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	@Path(value = "/saveQuestions")
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response updateQuestions(List<InterviewQuestionVO> vo) {
 		return Response.ok(service.updateIntQs(vo)).build();
 	}
-	
+
 	@POST
-	@Path(value="/saveAnswersandQueueQuestions")
-	@Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	@Path(value = "/saveAnswersandQueueQuestions")
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response saveAnswersandQueueQuestions(List<InterviewAnswerVO> vo) {
 		List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions = null;
-		try{
+		try {
 			saveIntervewAnswersAndQueueQuestions = answerService.saveIntervewAnswersAndQueueQuestions(vo);
-		}catch(Throwable ex){
+		} catch (Throwable ex) {
 			log.error("Error on saveAnswersandQueueQuestions:", ex);
 			return Response.serverError().build();
 		}
-		
+
 		return Response.ok(saveIntervewAnswersAndQueueQuestions).build();
 	}
-	
+
 	@Override
 	public Response delete(InterviewQuestionVO json) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
-	
 
 }
