@@ -26,17 +26,13 @@ public class InterviewQuestionDao {
 	@Autowired
     private QuestionService questionService;
 	
-	public void updateModuleNameForInterviewId(long idInterview,String newName){
-    	Session session = sessionFactory.openSession();
-    	Transaction tx = session.beginTransaction();
-
-    	String hqlUpdate = "update InterviewQuestion iq set iq.name = :newName where iq.idInterview = :idInterview";
+	public void updateModuleNameForInterviewId(long id,String newName){
+    	Session session = sessionFactory.getCurrentSession();
+    	String hqlUpdate = "update InterviewQuestion iq set iq.name = :newName where iq.id = :id";
     	session.createQuery( hqlUpdate )
     	        .setString( "newName", newName )
-    	        .setLong( "idInterview", idInterview )
+    	        .setLong( "id", id )
     	        .executeUpdate();
-    	tx.commit();
-    	session.close();
     }
 	
 	public InterviewQuestion save(InterviewQuestion iq){

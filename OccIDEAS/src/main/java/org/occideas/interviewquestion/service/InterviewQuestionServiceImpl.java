@@ -107,8 +107,8 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 	}
 
 	@Override
-	public void updateModuleNameForInterviewId(long idInterview, String newName) {
-		dao.updateModuleNameForInterviewId(idInterview, newName);
+	public void updateModuleNameForInterviewId(long id, String newName) {
+		dao.updateModuleNameForInterviewId(id, newName);
 	}
 	
 	

@@ -352,7 +352,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		rules = removeDuplicates(rules);  
     	//get list of answer nodes
 		List<InterviewAnswerVO> allActualAnswers = interview.getAnswerHistory();
-		
+		allActualAnswers = removeDeletedAnswers(allActualAnswers);  
     	for(RuleVO rule: rules){
 			boolean bFired = false;
 			for(PossibleAnswerVO  pa: rule.getConditions()){
@@ -379,7 +379,17 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	service.update(interview);
     	return interview;
     }
-    private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules){
+    private List<InterviewAnswerVO> removeDeletedAnswers(List<InterviewAnswerVO> allActualAnswers) {
+    	ArrayList<InterviewAnswerVO> retValue = new ArrayList<InterviewAnswerVO>();
+    	for(InterviewAnswerVO answer: allActualAnswers){
+    		if(answer.getDeleted()==0){
+    			retValue.add(answer);
+    		}
+    	}
+    	return retValue;
+	}
+
+	private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules){
     	ArrayList<RuleVO> retValue = new ArrayList<RuleVO>();
     	for(RuleVO rule: rules){
     		if(!retValue.contains(rule)){

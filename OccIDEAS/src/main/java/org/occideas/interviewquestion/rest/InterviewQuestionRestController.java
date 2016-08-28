@@ -34,10 +34,10 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 	@POST
 	@Path(value = "/updateModuleNameForInterviewId")
 	public Response updateModuleNameForInterviewId(
-			@QueryParam("idInterview") long idInterview,
+			@QueryParam("id") long id,
 			@QueryParam("newName") String newName) {
 		try {
-			service.updateModuleNameForInterviewId(idInterview, newName);
+			service.updateModuleNameForInterviewId(id, newName);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

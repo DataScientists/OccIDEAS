@@ -140,13 +140,13 @@
             return request.then(handleSuccess, handleError);
         }
         
-        function updateModuleNameForInterviewId(interviewId,newName) {
+        function updateModuleNameForInterviewId(id,newName) {
             var url = 'web/rest/interviewquestionanswer/updateModuleNameForInterviewId';
             var request = $http({
                 method: 'POST',
                 url: url,
                 params:{
-                	idInterview: interviewId,
+                	id: id,
                 	newName:newName
                 }
             })
