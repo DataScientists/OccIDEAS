@@ -8,6 +8,16 @@
 		var modulesUrl = apiUrl + 'fragment';
 		var apiKey = '';
 		
+		function findInterviewByFragmentId(id) {
+			var restUrl = 'web/rest/interviewmodulefragment/findInterviewByFragmentId?id=' + id;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
 		var getFragments = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
 		    var data = response.data;
@@ -94,7 +104,8 @@
 		    findFragment: findFragment,
 		    findFragmentChildNodes: findFragmentChildNodes,
 		    deleteFragment: deleteFragment,
-		    createFragment:createFragment
+		    createFragment:createFragment,
+		    findInterviewByFragmentId:findInterviewByFragmentId
 		};
 		function handleError( response ) {
             if (

@@ -2,13 +2,69 @@
 	angular.module('occIDEASApp.Fragments')
 		   .controller('FragmentCtrl',FragmentCtrl);
 	
-	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter'];
-	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter){
+	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter','$mdDialog','$q','InterviewsService','$timeout'];
+	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter,$mdDialog,$q,InterviewsService,$timeout){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    $scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+		
+		$scope.cancelChanges = function(){
+	    	$scope.cancel();
+	    	cancel($scope.row,$scope.rowForm);
+	    }
+		
+		$scope.updateInterviewModuleNames = function(){
+	    	var row = $scope.row;
+	    	$scope.cancel();
+	    	$scope.interviewIdCount = $scope.interviewDataForUpdate.length;
+	    	$scope.counter = 0;
+			$scope.interviewCount = $scope.counter;
+			$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/fragments/partials/updateInterviewFragmentDialog.html',
+				clickOutsideToClose:false
+			});
+	    	$scope.interviewDataForUpdate.reduce(function(p, data) {
+			    return p.then(function() {
+			    	$scope.interviewIdInProgress = data.interviewId;
+			    	$scope.counter++;
+					$scope.interviewCount = $scope.counter;
+			        return InterviewsService.updateModuleNameForInterviewId(data.interviewPrimaryKey,row.name)
+	    			.then(function(response){
+	    				if(response.status == 200){
+	    					console.log("successful update for "+data.interviewId);
+	    				}
+	    			});
+			    });
+			}, $q.when(true)).then(function(finalResult) {
+				console.log('finish updating modules');
+				$timeout(function() {
+					$scope.cancel();
+					FragmentsService.save(row).then(function(response){
+						if(response.status === 200){
+							console.log('Fragment Save was Successful!');
+							self.tableParams.shouldGetData = true;
+					        self.tableParams.reload().then(function (data) {
+					            if (data.length === 0 && self.tableParams.total() > 0) {
+					                self.tableParams.page(self.tableParams.page() - 1);
+					                self.tableParams.reload();
+					            }
+					        });
+						}
+					});
+	            }, 1000);	
+			}, function(err) {
+				console.log('error');
+			});
+	    }
+	    
 		self.tableParams = new NgTableParams({group: "type"}, {	
 	        getData: function(params) {
 	          if(params.filter().name || params.filter().description){	
@@ -114,18 +170,39 @@
 	    }
 	    function save(row, rowForm) {
 	    	self.isEditing = false;
-	    	FragmentsService.save(row).then(function(response){
-				if(response.status === 200){
-					console.log('Module Save was Successful!');
-					self.tableParams.shouldGetData = true;
-			        self.tableParams.reload().then(function (data) {
-			            if (data.length === 0 && self.tableParams.total() > 0) {
-			                self.tableParams.page(self.tableParams.page() - 1);
-			                self.tableParams.reload();
-			                $location.hash("");
-			    		    $anchorScroll();
-			            }
-			        });
+	    	$scope.row = row;
+	    	$scope.rowForm = rowForm;
+	    	$scope.interviewExist = false;
+	    	$scope.validationInProgress = true;
+			$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/fragments/partials/validateFragmentDialog.html',
+				clickOutsideToClose:false
+			});
+			FragmentsService.findInterviewByFragmentId(row.idNode).then(function(response){
+				if(response.status == 200){
+					$scope.validationInProgress = false;
+					if(response.data.length > 0){
+						$scope.interviewExist = true;
+						$scope.interviewDataForUpdate = response.data;
+					}else{
+					$mdDialog.cancel();
+					FragmentsService.save(row).then(function(response){
+						if(response.status === 200){
+							console.log('Fragment Save was Successful!');
+							self.tableParams.shouldGetData = true;
+					        self.tableParams.reload().then(function (data) {
+					            if (data.length === 0 && self.tableParams.total() > 0) {
+					                self.tableParams.page(self.tableParams.page() - 1);
+					                self.tableParams.reload();
+					                $location.hash("");
+					    		    $anchorScroll();
+					            }
+					        });
+						}
+					});
+					}
 				}
 			});
 	    }

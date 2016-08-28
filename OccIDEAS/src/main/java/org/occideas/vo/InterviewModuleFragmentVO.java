@@ -4,11 +4,10 @@ public class InterviewModuleFragmentVO {
 
 	private String primaryKey;
 	private long idFragment;
+	private long interviewPrimaryKey;
 	private String fragmentNodeName;
 	private String interviewId;
 	private String interviewFragmentName;
-	private long idNode;
-	private String nodeNumber;
 
 	public String getPrimaryKey() {
 		return primaryKey;
@@ -50,20 +49,12 @@ public class InterviewModuleFragmentVO {
 		this.interviewFragmentName = interviewFragmentName;
 	}
 
-	public long getIdNode() {
-		return idNode;
+	public long getInterviewPrimaryKey() {
+		return interviewPrimaryKey;
 	}
 
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
-	}
-
-	public String getNodeNumber() {
-		return nodeNumber;
-	}
-
-	public void setNodeNumber(String nodeNumber) {
-		this.nodeNumber = nodeNumber;
+	public void setInterviewPrimaryKey(long interviewPrimaryKey) {
+		this.interviewPrimaryKey = interviewPrimaryKey;
 	}
 
 }

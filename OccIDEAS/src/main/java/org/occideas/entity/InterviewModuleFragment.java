@@ -25,11 +25,10 @@ public class InterviewModuleFragment implements Serializable {
 	@Id
 	private String primaryKey;
 	private long idFragment;
+	private long interviewPrimaryKey;
 	private String fragmentNodeName;
 	private String interviewId;
 	private String interviewFragmentName;
-	private long idNode;
-	private String nodeNumber;
 
 	public long getIdFragment() {
 		return idFragment;
@@ -63,28 +62,20 @@ public class InterviewModuleFragment implements Serializable {
 		this.interviewFragmentName = interviewFragmentName;
 	}
 
-	public long getIdNode() {
-		return idNode;
-	}
-
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
-	}
-
-	public String getNodeNumber() {
-		return nodeNumber;
-	}
-
-	public void setNodeNumber(String nodeNumber) {
-		this.nodeNumber = nodeNumber;
-	}
-
 	public String getPrimaryKey() {
 		return primaryKey;
 	}
 
 	public void setPrimaryKey(String primaryKey) {
 		this.primaryKey = primaryKey;
+	}
+
+	public long getInterviewPrimaryKey() {
+		return interviewPrimaryKey;
+	}
+
+	public void setInterviewPrimaryKey(long interviewPrimaryKey) {
+		this.interviewPrimaryKey = interviewPrimaryKey;
 	}
 
 }

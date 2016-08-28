@@ -18,11 +18,10 @@ public class InterviewModuleFragmentMapperImpl implements InterviewModuleFragmen
 		InterviewModuleFragmentVO vo = new InterviewModuleFragmentVO();
 		vo.setFragmentNodeName(entity.getFragmentNodeName());
 		vo.setIdFragment(entity.getIdFragment());
-		vo.setIdNode(entity.getIdNode());
 		vo.setInterviewFragmentName(entity.getInterviewFragmentName());
 		vo.setInterviewId(entity.getInterviewId());
-		vo.setNodeNumber(entity.getNodeNumber());
 		vo.setPrimaryKey(entity.getPrimaryKey());
+		vo.setInterviewPrimaryKey(entity.getInterviewPrimaryKey());
 		return vo;
 	}
 

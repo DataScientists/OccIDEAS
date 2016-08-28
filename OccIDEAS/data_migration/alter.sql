@@ -120,15 +120,14 @@ and iq.nodeClass = 'M';
 DROP VIEW IF EXISTS InterviewModule_Fragment;
 CREATE VIEW InterviewModule_Fragment AS 
 SELECT 
-concat(m.idNode,':',iq.id,':',n.idNode) AS 
-primaryKey, 
+concat(m.idNode,':',iq.id) AS 
+primaryKey,
 m.idNode as idFragment, 
 m.name as fragmentNodeName, 
-iq.id as interviewId,
-iq.name as interviewFragmentName,
-n.idNode,
-n.number as nodeNumber
-FROM Node n
-INNER JOIN Node m ON n.topNodeId = m.idNode 
-INNER JOIN Interview_Question iq ON m.idNode = iq.link
-WHERE iq.type='Q_linkedajsm' AND iq.deleted=0
+iq.id as interviewPrimaryKey,
+iq.idInterview as interviewId,
+iq.name as interviewFragmentName
+from Node m  
+INNER JOIN Interview_Question iq
+where m.idNode = iq.link
+and iq.type='Q_linkedajsm' AND iq.deleted=0;
