@@ -169,6 +169,11 @@
 	        return window._.find(self.originalData,{idNode:row.idNode});
 	    }
 	    
+	    $scope.cancelChanges = function(){
+	    	$scope.cancel();
+	    	cancel($scope.row,$scope.rowForm);
+	    }
+	    
 	    $scope.updateInterviewModuleNames = function(){
 	    	var row = $scope.row;
 	    	$scope.cancel();
@@ -224,6 +229,7 @@
 	    	$scope.interviewExist = false;
 	    	$scope.validationInProgress = true;
 	    	$scope.row = row;
+	    	$scope.rowForm = rowForm;
 			$mdDialog.show({
 				scope: $scope,  
 				preserveScope: true,
