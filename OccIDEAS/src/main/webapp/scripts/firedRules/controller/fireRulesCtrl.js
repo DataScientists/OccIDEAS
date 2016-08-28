@@ -2,8 +2,10 @@
 	angular.module('occIDEASApp.FiredRules').controller('FiredRulesCtrl',
 			FiredRulesCtrl);
 
-	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout','InterviewsService','AssessmentsService','$log'];
-	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,InterviewsService,AssessmentsService,$log) {
+	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
+	                           'InterviewsService','AssessmentsService','$log','$compile'];
+	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
+			InterviewsService,AssessmentsService,$log,$compile) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = data[0];
@@ -109,7 +111,8 @@
 	
 		vm.runFiredRulesBtn = function(){
 			//loop each answer
-			_.each($scope.data,function(question){
+			
+			_.each($scope.data.questionHistory,function(question){
 				_.each(question.answers,function(answer){
 					//get answer module rule
 					FiredRulesService.getAnswerWithModuleRule(answer.answerId)
@@ -127,18 +130,7 @@
 												idinterview:answer.idInterview,
 												idRule:moduleRule.rule.idRule
 											};
-											if(vm.interviewFiredRules){
-												var firedRuleExist = _.find(vm.interviewFiredRules,function(firedrule){
-													return firedrule.idRule == moduleRule.rule.idRule;
-												});
-												if(firedRuleExist){
-													firedRule.id = firedRuleExist.id;
-												}
-											}
-											FiredRulesService.save(firedRule).then(function(response){
-												if(response.status == '200'){
-												}
-											});
+																					
 											}
 											
 										});
@@ -152,32 +144,11 @@
             }, 2000);
 		}
 		
-//		$scope.scrollTo = function(target) {
-//			$scope.selected = "";
-//			var scrollPane = $('#interview-question-list');
-//
-//			var scrollTarget = $('#questionlist-' + target);
-//			if (scrollTarget) {
-//				$scope.selected = target;
-//				if (scrollTarget.offset()) {
-//					var currentScroll = 0;
-//					if (scrollPane.scrollTop()) {
-//						currentScroll = scrollPane.scrollTop();
-//					}
-//					var offset = 150;
-//					var top = scrollTarget.offset().top;
-//					// alert(top);
-//					var currentScroll = scrollPane.scrollTop();
-//					// alert(currentScroll);
-//					var scrollY = top - offset + currentScroll;
-//					scrollPane.animate({
-//						scrollTop : scrollY
-//					}, 1000, 'swing');
-//				}
-//			}
-//		};
-		
-
+		$scope.closeIntDialog = function(elem,$event) {
+        	$($event.target).closest('.int-note').remove();
+        	
+        };
+        
 		if(data[0]){
 			$scope.data = data[0].questionHistory;
 			vm.getFiredRulesByInterviewId(data[0].interviewId);
@@ -434,7 +405,7 @@
 			  	}
 			  ]
 			];
-		self.editAssessmentsMenuOptions =
+		vm.editAssessmentsMenuOptions =
 			[
 			  [ 'Edit Assessment', function($itemScope, $event, model) {
 				  var ruleArray =_.filter(model.manualAssessedRules, function(r){
