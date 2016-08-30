@@ -7,6 +7,8 @@
 		Import JSON
 	</button>
 	<button type="button" ng-click='validateBtn()' class="btn btn-default"> Validate Modules</button>
+	<button type="button" ng-if="vm.tableParams.filter().isDuplicate == true" ng-click='unfilterValidateItems()' class="btn btn-default"> Remove Filter for Items With Warnings</button>
+	<button type="button" ng-if="vm.tableParams.filter().isDuplicate == false" ng-click='filterValidateItems()' class="btn btn-default"> Filter Items With Warnings</button>
 	<button type="button"
 			class="btn btn-default" ng-if="vm.originalData.length == 0" 
 			ng-click="vm.add('M_Module')">Add Module <span class="glyphicon glyphicon-plus">
@@ -40,6 +42,17 @@
         <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
             <td sortable="type" data-title="'Type'" groupable="'type'" ng-if="false">
             	{{row.type}}
+          	</td>
+          	<td>
+          		<span ng-if="row.isDuplicate" 
+          			    style="color:red;"
+          				class="glyphicon glyphicon-warning-sign"
+          				ng-mouseleave="validatePopOver.close(row)"
+          				popover-is-open="row.info['Mod'+row.idNode].modPopover.isOpen" 
+						popover-placement="right" popover-append-to-body="true" 
+						popover-popup-delay="1000" 
+						ng-mouseenter="validatePopOver.open(row)" 
+						uib-popover-template="validatePopOver.templateUrl"></span>
           	</td>
             <td id="id_{{row.idNode}}" filter="{name: 'text'}"
 				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"

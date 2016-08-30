@@ -12,18 +12,55 @@
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
 	    
+	    $scope.validatePopOver = {
+	    		templateUrl: 'scripts/modules/partials/validatePopOver.html',
+    		    open: function(row) {
+    		    	if(angular.isUndefined(row.info)){
+    		    		row.info = [];
+    		    	}
+    		    	row.info["Mod"+row.idNode] = {
+    		    			idNode:row.idNode,
+    		    			name:row.name,
+    		    			modPopover:{
+    		    				isOpen: false
+    		    			},
+    		    			modPopoverInProgress : false
+    		    	};
+    		    	var modInPopup = row.info["Mod"+row.idNode];
+    		    	modInPopup.modPopover.isOpen = true;
+    		    },
+  		        close: function close(row) {
+  		        	row.info["Mod"+row.idNode].modPopover.isOpen = false;
+  		        }
+    	};
+	    
 	    function checkUniqueModule (module){
 	    	var data = self.tableParams.settings().dataset;
 	    	var duplicateItem = 
-	    		  _.filter(data, function (x) {
+	    		  _.filter(data, function (item) {
 	    			//exclude the current module for the check
-	    			 if(x.idNode == module.idNode){
+	    			 if(item.idNode == module.idNode){
 	    				 return false;
 	    			 }
-	    		    return _.startsWith(x.name, module.name.substring(0,4));
+	    			 if(_.startsWith(item.name, module.name.substring(0,4))){
+	    				 item.isDuplicate = true;
+	    				 return true;
+	    			 }
+	    		     return false;
 	    		  });
-	    	console.log(duplicateItem);
+	    	if(duplicateItem.length > 0){
+	    		module.isDuplicate = true;
+	    		module.duplicateItems = duplicateItem;
+	    	}
 	    }
+	    
+	    $scope.filterValidateItems = function(){
+	    		self.tableParams.filter().isDuplicate = true;
+	    };
+	    
+	    $scope.unfilterValidateItems = function(){
+	    		self.tableParams.filter().isDuplicate = false;
+	    };
 	    
 	    $scope.validateBtn = function(){
 	    	//check if we have data
@@ -32,6 +69,13 @@
 	    		_.each(data,function(val){
 	    			checkUniqueModule(val);
 	    		});
+	    		// check if there are items with errors
+	    		var result = _.find(data,function(item){
+	    			return item.isDuplicate == true;
+	    		});
+	    		if(result){
+	    		self.tableParams.filter().isDuplicate = true;
+	    		}
 	    	}else{
 	    		$ngToast.create({
   	    		  className: 'danger',
@@ -97,7 +141,7 @@
 				}, 
 				{	
 	        getData: function(params) {
-	          if(params.filter().name || params.filter().description){	
+	          if(params.filter().name || params.filter().description || params.filter().isDuplicate){	
 	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 	          }
 	          if(!self.tableParams.shouldGetData){
