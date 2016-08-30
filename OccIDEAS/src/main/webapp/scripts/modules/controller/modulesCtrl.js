@@ -75,7 +75,7 @@
 	    			return item.isDuplicate == true;
 	    		});
 	    		if(result && shouldFilter){
-	    		self.tableParams.filter().isDuplicate = true;
+	    			self.tableParams.filter().isDuplicate = true;
 	    		}
 	    	}else{
 	    		$ngToast.create({

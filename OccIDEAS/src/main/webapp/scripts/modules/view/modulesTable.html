@@ -6,9 +6,9 @@
 	<button type="button" permission="['ROLE_ADMIN']" class="btn btn-default"  ng-click="importJson()">
 		Import JSON
 	</button>
-	<button type="button" ng-click='validateBtn(true)' class="btn btn-default"> Validate Modules</button>
-	<button type="button" ng-if="vm.tableParams.filter().isDuplicate == true" ng-click='unfilterValidateItems()' class="btn btn-default"> Remove Filter for Items With Warnings</button>
-	<button type="button" ng-if="vm.tableParams.filter().isDuplicate == false" ng-click='filterValidateItems()' class="btn btn-default"> Filter Items With Warnings</button>
+	<button type="button" permission="['ROLE_ADMIN']"  ng-click='validateBtn(true)' class="btn btn-default"> Validate Modules</button>
+	<button type="button" permission="['ROLE_ADMIN']"  ng-if="vm.tableParams.filter().isDuplicate == true" ng-click='unfilterValidateItems()' class="btn btn-default"> Remove Filter for Items With Warnings</button>
+	<button type="button" permission="['ROLE_ADMIN']"  ng-if="vm.tableParams.filter().isDuplicate == false" ng-click='filterValidateItems()' class="btn btn-default"> Filter Items With Warnings</button>
 	<button type="button"
 			class="btn btn-default" ng-if="vm.originalData.length == 0" 
 			ng-click="vm.add('M_Module')">Add Module <span class="glyphicon glyphicon-plus">
