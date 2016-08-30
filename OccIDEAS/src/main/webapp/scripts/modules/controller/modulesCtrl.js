@@ -2,14 +2,46 @@
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
-                          '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout','InterviewsService','$q'];
+                          '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout','InterviewsService'
+                          ,'$q','ngToast'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
-			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q){
+			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q,$ngToast){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    function checkUniqueModule (module){
+	    	var data = self.tableParams.settings().dataset;
+	    	var duplicateItem = 
+	    		  _.filter(data, function (x) {
+	    			//exclude the current module for the check
+	    			 if(x.idNode == module.idNode){
+	    				 return false;
+	    			 }
+	    		    return _.startsWith(x.name, module.name.substring(0,4));
+	    		  });
+	    	console.log(duplicateItem);
+	    }
+	    
+	    $scope.validateBtn = function(){
+	    	//check if we have data
+	    	var data = self.tableParams.settings().dataset;
+	    	if(data.length > 0){
+	    		_.each(data,function(val){
+	    			checkUniqueModule(val);
+	    		});
+	    	}else{
+	    		$ngToast.create({
+  	    		  className: 'danger',
+  	    		  content: 'Cannot validate no modules are available',
+  	    		  animation:'slide'
+	    		});
+	    		return;
+	    	}
+	    	self.tableParams.settings().dataset
+	    }
 	    
 	    $scope.uploadFiles = function(file, errFiles) {
 	        $scope.f = file;

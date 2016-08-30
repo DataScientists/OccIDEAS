@@ -2,13 +2,16 @@
 <div >
 
 <!-- 	<md-content flex> -->
-	<button permission="['ROLE_ADMIN']" class="form-control" ng-click="importJson()">
+	<div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
+	<button type="button" permission="['ROLE_ADMIN']" class="btn btn-default"  ng-click="importJson()">
 		Import JSON
 	</button>
+	<button type="button" ng-click='validateBtn()' class="btn btn-default"> Validate Modules</button>
 	<button type="button"
 			class="btn btn-default" ng-if="vm.originalData.length == 0" 
 			ng-click="vm.add('M_Module')">Add Module <span class="glyphicon glyphicon-plus">
 			</span></button>
+	</div>
 	<table ng-table="vm.tableParams" ng-cloak
 		class="table table-bordered table-hover 
   table-condensed editable-table moduleTable"
