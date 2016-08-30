@@ -215,8 +215,6 @@
 					}
 					//for standard questions add the header + question number
 					else{
-						$log.info("Questionid: "+data.questionId);
-						
 					// look for the top node id in listquestion
 					// build the header and check it in sortHeaderList
 					var topModule = _.find(listOfQuestion,function(lq){
