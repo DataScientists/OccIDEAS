@@ -60,6 +60,7 @@
 	    
 	    $scope.unfilterValidateItems = function(){
 	    		self.tableParams.filter().isDuplicate = false;
+	    		$scope.validateBtn();
 	    };
 	    
 	    $scope.validateBtn = function(){
