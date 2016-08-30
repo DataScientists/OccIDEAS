@@ -3,9 +3,9 @@
 			FiredRulesCtrl);
 
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
-	                           'InterviewsService','AssessmentsService','$log','$compile'];
+	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
-			InterviewsService,AssessmentsService,$log,$compile) {
+			InterviewsService,AssessmentsService,$log,$compile,RulesService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = data[0];
@@ -41,13 +41,25 @@
 				$log.info("Interview from questions AJAX ...");
 				$scope.data = response.data[0];
 			});
+			//getFiredRulesByInterviewId($scope.interview.interviewId);
 		}
 		vm.interviewFiredRules = null;
-		vm.getFiredRulesByInterviewId = function(interviewId){
+		function getFiredRulesByInterviewId(interviewId){
 			FiredRulesService.getByInterviewId(interviewId).then(function(response){
 				if(response.status == '200'){
 					var interviewFiredRules = response.data;
 					vm.interviewFiredRules = interviewFiredRules;
+					InterviewsService.findModulesByInterviewId(interviewId).then(function(response){
+						if(response.status == '200'){
+							if(response.data.length > 0){								
+								vm.modulesInInterview = response.data;
+								//vm.firedRulesByModule = $scope.modulesInInterview
+							}
+						}
+					});
+					
+					
+					
 					//loop to each fired rules and construct object to be used by the
 					//view
 					_.each(interviewFiredRules,function(data){
@@ -112,7 +124,7 @@
 		vm.runFiredRulesBtn = function(){
 			//loop each answer
 			$timeout(function() {
-				vm.getFiredRulesByInterviewId(data[0].interviewId);
+				getFiredRulesByInterviewId(data[0].interviewId);
             }, 2000);
 		}
 		
@@ -123,7 +135,7 @@
         
 		if(data[0]){
 			$scope.data = data[0].questionHistory;
-			vm.getFiredRulesByInterviewId(data[0].interviewId);
+			getFiredRulesByInterviewId(data[0].interviewId);
 		}else{
 			alert("no answered question for this interview id!");
 		}
@@ -335,26 +347,32 @@
 			  	}			  
 			  ],
 			  [ 'Run Auto Assessment', function($itemScope, $event, model) {
-				  model.autoAssessedRules = [];			  
-				  for(var i=0;i<model.agents.length;i++){
-					  var agentAssessing = model.agents[i]
-					  var rule = {levelValue:99};
-					  for(var j=0;j<model.firedRules.length;j++){
-						  var firedRule = model.firedRules[j];
-						  if(agentAssessing.idAgent == firedRule.agent.idAgent){
-							  if(firedRule.levelValue<rule.levelValue){
-								  rule = firedRule;
-							  }
-						  }	  
-					  }
-					  model.autoAssessedRules.push(rule);
-				  }
-				  $scope.data = model;
-				  InterviewsService.save(model).then(function (response) {
+				  AssessmentsService.updateFiredRules(model.interviewId).then(function (response) {
 		                if (response.status === 200) {
-		                	$log.info("Interview saved with auto assessments");
+		                	$log.info("Updated Fired Rules");
+		                	$scope.data = response.data[0];
+		                	$scope.data.autoAssessedRules = [];			  
+			  				for(var i=0;i<$scope.data.agents.length;i++){
+			  					var agentAssessing = $scope.data.agents[i]
+			  					var rule = {levelValue:99};
+			  					for(var j=0;j<$scope.data.firedRules.length;j++){
+			  						var firedRule = $scope.data.firedRules[j];
+			  						if(agentAssessing.idAgent == firedRule.agent.idAgent){
+			  							if(firedRule.levelValue<rule.levelValue){
+			  								rule = firedRule;
+			  							}
+			  						}	  
+			  					}
+			  					$scope.data.autoAssessedRules.push(rule);
+			  				 }
+			  				 InterviewsService.save($scope.data).then(function (response) {
+		  		                if (response.status === 200) {
+		  		                	$log.info("Interview saved with auto assessments");
+		  		                }
+			  				 });
 		                }
 				  });
+				  
 				  
 			  	}			  
 			  ],
@@ -394,6 +412,15 @@
 			  	}			  
 			  ]
 			];
+		
+		$scope.saveRule = function(rule){
+        	RulesService.save(rule).then(function(response){
+    			if(response.status === 200){
+    				$log.info('Rule Save was Successful!'+rule);
+    			}
+    		});
+        	
+        }
 	}
 
 })();

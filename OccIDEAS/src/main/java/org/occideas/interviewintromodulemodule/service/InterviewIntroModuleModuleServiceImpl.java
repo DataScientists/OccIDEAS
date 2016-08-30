@@ -25,5 +25,10 @@ public class InterviewIntroModuleModuleServiceImpl implements InterviewIntroModu
 		List<InterviewIntroModuleModule> list = dao.getInterviewIntroModByModId(idModule);
 		return mapper.convertToVOList(list);
 	}
+	@Override
+	public List<InterviewIntroModuleModuleVO> findModulesByInterviewId(long idInterview) {
+		List<InterviewIntroModuleModule> list = dao.getModulesByInterviewId(idInterview);
+		return mapper.convertToVOList(list);
+	}
 
 }

@@ -167,13 +167,12 @@
 			var questionIdList = [];
 			_.each(response,function(data){
 				data.questionHistory = _.filter(data.questionHistory,function(qh){
+					$log.info("Interviewid: "+data.interviewId+" Questionid: "+qh.questionId);
 					return qh.deleted == 0;
 				});
-				// get unique questions by number and name , place it to listOfQuestion
-				//listOfQuestion = _.unionBy(listOfQuestion, data.questionHistory, function(item){
-				//	return item.questionId;
-				//});
-				listOfQuestion = data.questionHistory;
+				$log.info("Interviewid: "+data.interviewId+" Questionid: "); 
+				// join all questions to listOfQuestion
+				listOfQuestion = listOfQuestion.concat(data.questionHistory);
 			});
 			var sortHeaderList = {};
 			var header = "";

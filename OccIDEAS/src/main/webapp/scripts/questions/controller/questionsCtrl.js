@@ -394,7 +394,7 @@
 							nodeclass : fragmentData[0].nodeclass,
 							nodes : fragmentData[0].nodes
 						});
-						saveModuleWithoutReload();
+						saveModuleAndReload();
 						deferred.resolve();
 						return false;
 					});
@@ -894,18 +894,27 @@
 		};
 
 		$scope.enable = function(node) {
-			if(node.nodeclass!='M'){
-				if(node.nodeclass!='F'){
-					recordAction($scope.data);
-					$scope.safeApply(function() {
-						node.editEnabled = true;
-						if(node.name=='New Question'){
-							node.name="";
-						}else if(node.name=='New Possible Answer'){
-							node.name="";
-						}
-					});					
-				}				
+			var canEdit = true;
+			if(node.nodeclass=='M'){
+				canEdit = false;
+			}else if(node.nodeclass=='F'){
+				canEdit = false;
+			}
+			if(node.type=='Q_linkedajsm'){
+				canEdit = false;
+			} else if(node.type=='Q_linkedmodule'){
+				canEdit = false;
+			}
+			if(canEdit){
+				recordAction($scope.data);
+				$scope.safeApply(function() {
+					node.editEnabled = true;
+					if(node.name=='New Question'){
+						node.name="";
+					}else if(node.name=='New Possible Answer'){
+						node.name="";
+					}
+				});	
 			}		
 		};
 		$scope.safeApply = function(fn) {
@@ -1667,9 +1676,11 @@
 					cascadeTemplateNullIds(destNode.nodes);
 					var nodes = destNode.nodes;
 					var parentId = destNode.idNode;
-					var parentNodeNumber = destNode.idNode.number;
+					var parentNodeNumber = 0;
 					var topNodeId = destNode.idNode;
-					generateIdNodeCascadeFragment(nodes,maxId,parentId);
+					//generateIdNodeCascadeFragment(nodes,maxId,parentId);
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
+					
 
 					var deffered = $q.defer();
 					FragmentsService.createFragment(destNode).then(function(response){

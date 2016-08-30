@@ -4,7 +4,17 @@
 
     InterviewsService.$inject = ['$http', '$q'];
     function InterviewsService($http, $q) {
-        function get(idNode) {
+    	
+    	function findModulesByInterviewId(idInterview) {
+			var restUrl = 'web/rest/interviewintromodule/findModulesByInterviewId?id=' + idInterview;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+    	function get(idNode) {
             var restURL = 'web/rest/interview/get?id=' + idNode;
             var request = $http({
                 method: 'GET',
@@ -338,7 +348,8 @@
             getUnprocessedQuestions:getUnprocessedQuestions,
             getInterviewWithFiredRules:getInterviewWithFiredRules,
             updateDisplayAnswerList:updateDisplayAnswerList,
-            updateModuleNameForInterviewId:updateModuleNameForInterviewId
+            updateModuleNameForInterviewId:updateModuleNameForInterviewId,
+            findModulesByInterviewId:findModulesByInterviewId
         };
     }
 })();

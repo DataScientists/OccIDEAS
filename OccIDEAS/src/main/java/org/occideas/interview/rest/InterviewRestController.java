@@ -216,6 +216,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
         			if(rule.getIdRule()==0){
         				RuleVO newAssessmentRule = ruleService.create(rule);
         				manualAssessedRules.add(newAssessmentRule);
+        			}else{
+        				manualAssessedRules.add(rule);
         			}
         		}
     			json.setManualAssessedRules(manualAssessedRules);

@@ -101,14 +101,6 @@
 <div id="interview-wrapper">
 &nbsp;
 </div>
-<div class="row" style="margin-top:2px;margin-bottom:2px;">
-	<div class="col-md-4">
-	<button class="form-control btn btn-default" ng-click="vm.runFiredRulesBtn()">
-		<span ng-if="vm.firedRulesByModule.length == 0">Run Fired Rules</span>
-		<span ng-if="vm.firedRulesByModule.length > 0">Rerun Fired Rules</span>
-	</button>
-	</div>
-</div>
 <div class="row">
   <div class="col-md-6" id="interview-question-list">
   	<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in displayHistoryNew | orderBy:'lastUpdated':false">
@@ -152,6 +144,22 @@
   <div class="col-md-6">
   	<div class="panel panel-default">
   <!-- Default panel contents -->
+  <div class="panel-heading">Modules</div> 
+  <div class="panel-body">
+    <div >
+    	<ul class="list-group">
+        <li class="list-group-item" ng-repeat="mod in vm.modulesInInterview">
+			<div>
+				<span class="badge">Module</span> {{mod.interviewModuleName}}
+			</div>
+						
+    	</li>
+  		</ul>
+    </div>
+    </div>
+  
+  
+  
   <div class="panel-heading">Fired Rules</div>
   <div class="panel-body">
     <div >

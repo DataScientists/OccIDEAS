@@ -22,5 +22,10 @@ public class InterviewIntroModuleModuleDao {
         		 					.add(Restrictions.eq("idModule", idModule));
          return crit.list();
 	}
-	
+	public List<InterviewIntroModuleModule> getModulesByInterviewId(long idInterview){
+		 final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(InterviewIntroModuleModule.class)
+       		 					.add(Restrictions.eq("interviewId", idInterview));
+        return crit.list();
+	}
 }
