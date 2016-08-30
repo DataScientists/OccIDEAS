@@ -60,10 +60,10 @@
 	    
 	    $scope.unfilterValidateItems = function(){
 	    		self.tableParams.filter().isDuplicate = false;
-	    		$scope.validateBtn();
+	    		$scope.validateBtn(false);
 	    };
 	    
-	    $scope.validateBtn = function(){
+	    $scope.validateBtn = function(shouldFilter){
 	    	//check if we have data
 	    	var data = self.tableParams.settings().dataset;
 	    	if(data.length > 0){
@@ -74,7 +74,7 @@
 	    		var result = _.find(data,function(item){
 	    			return item.isDuplicate == true;
 	    		});
-	    		if(result){
+	    		if(result && shouldFilter){
 	    		self.tableParams.filter().isDuplicate = true;
 	    		}
 	    	}else{
