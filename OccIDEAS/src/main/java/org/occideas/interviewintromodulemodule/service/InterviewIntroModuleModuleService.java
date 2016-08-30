@@ -7,5 +7,6 @@ import org.occideas.vo.InterviewIntroModuleModuleVO;
 public interface InterviewIntroModuleModuleService {
 
 	public List<InterviewIntroModuleModuleVO> findInterviewByModuleId(long idModule);
+	public List<InterviewIntroModuleModuleVO> findModulesByInterviewId(long idInterview);
 	
 }

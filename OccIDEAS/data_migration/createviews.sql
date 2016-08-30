@@ -30,7 +30,8 @@ iq.name as interviewModuleName
 from Node m  
 INNER JOIN Interview_Question iq
 where m.idNode = iq.link
-and iq.nodeClass = 'M';
+and (iq.type='Q_linkedmodule' OR iq.type='M_IntroModule') 
+AND iq.deleted=0;
 
 DROP VIEW IF EXISTS InterviewModule_Fragment;
 CREATE VIEW InterviewModule_Fragment AS 
