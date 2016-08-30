@@ -230,37 +230,55 @@
 	    	$scope.validationInProgress = true;
 	    	$scope.row = row;
 	    	$scope.rowForm = rowForm;
-			$mdDialog.show({
-				scope: $scope,  
-				preserveScope: true,
-				templateUrl : 'scripts/modules/partials/validateModuleDialog.html',
-				clickOutsideToClose:false
-			});
-			ModulesService.findInterviewByModuleId(row.idNode).then(function(response){
-				if(response.status == 200){
-					$scope.validationInProgress = false;
-					if(response.data.length > 0){
-						$scope.interviewExist = true;
-						$scope.interviewDataForUpdate = response.data;
-					}else{
-					$mdDialog.cancel();
-					ModulesService.save(row).then(function(response){
-						if(response.status === 200){
-							console.log('Module Save was Successful!');
-							self.tableParams.shouldGetData = true;
-					        self.tableParams.reload().then(function (data) {
-					            if (data.length === 0 && self.tableParams.total() > 0) {
-					                self.tableParams.page(self.tableParams.page() - 1);
-					                self.tableParams.reload();
-					                $location.hash("");
-					    		    $anchorScroll();
-					            }
-					        });
+	    	if(row.idNode){
+	    		$mdDialog.show({
+					scope: $scope,  
+					preserveScope: true,
+					templateUrl : 'scripts/modules/partials/validateModuleDialog.html',
+					clickOutsideToClose:false
+				});
+				ModulesService.findInterviewByModuleId(row.idNode).then(function(response){
+					if(response.status == 200){
+						$scope.validationInProgress = false;
+						if(response.data.length > 0){
+							$scope.interviewExist = true;
+							$scope.interviewDataForUpdate = response.data;
+						}else{
+						$mdDialog.cancel();
+						ModulesService.save(row).then(function(response){
+							if(response.status === 200){
+								console.log('Module Save was Successful!');
+								self.tableParams.shouldGetData = true;
+						        self.tableParams.reload().then(function (data) {
+						            if (data.length === 0 && self.tableParams.total() > 0) {
+						                self.tableParams.page(self.tableParams.page() - 1);
+						                self.tableParams.reload();
+						                $location.hash("");
+						    		    $anchorScroll();
+						            }
+						        });
+							}
+						});
 						}
-					});
 					}
-				}
-			});
+				});
+	    	}else{
+	    		ModulesService.save(row).then(function(response){
+					if(response.status === 200){
+						console.log('Module Save was Successful!');
+						self.tableParams.shouldGetData = true;
+				        self.tableParams.reload().then(function (data) {
+				            if (data.length === 0 && self.tableParams.total() > 0) {
+				                self.tableParams.page(self.tableParams.page() - 1);
+				                self.tableParams.reload();
+				                $location.hash("");
+				    		    $anchorScroll();
+				            }
+				        });
+					}
+				});
+	    	}
+			
 	        
 	    }
 	    
