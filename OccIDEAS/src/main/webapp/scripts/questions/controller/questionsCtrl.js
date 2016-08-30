@@ -1667,9 +1667,11 @@
 					cascadeTemplateNullIds(destNode.nodes);
 					var nodes = destNode.nodes;
 					var parentId = destNode.idNode;
-					var parentNodeNumber = destNode.idNode.number;
+					var parentNodeNumber = 0;
 					var topNodeId = destNode.idNode;
-					generateIdNodeCascadeFragment(nodes,maxId,parentId);
+					//generateIdNodeCascadeFragment(nodes,maxId,parentId);
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);
+					
 
 					var deffered = $q.defer();
 					FragmentsService.createFragment(destNode).then(function(response){
