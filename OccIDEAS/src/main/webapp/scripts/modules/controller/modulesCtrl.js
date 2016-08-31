@@ -33,6 +33,23 @@
   		        	row.info["Mod"+row.idNode].modPopover.isOpen = false;
   		        }
     	};
+	     var validationFilterEnabled = false;
+	    function isValidationFilterEnabled(){
+	    	if(self.tableParams.filter().isDuplicate == true){
+	    		validationFilterEnabled = true;
+	    	}else{
+	    		validationFilterEnabled = false;
+	    	}
+	    	return validationFilterEnabled;
+	    }
+	    function cleanseValidation(){
+	    	_.each(self.tableParams.settings().dataset,function(row){
+	    		delete row.info;
+		    	delete row.isDuplicate;
+		    	delete row.duplicateItems;
+	    	})
+	    	self.tableParams.filter().isDuplicate = undefined;
+	    }
 	    
 	    function checkUniqueModule (module){
 	    	var data = self.tableParams.settings().dataset;
@@ -74,7 +91,7 @@
 	    		var result = _.find(data,function(item){
 	    			return item.isDuplicate == true;
 	    		});
-	    		if(result && shouldFilter){
+	    		if(result && (shouldFilter == true)){
 	    			self.tableParams.filter().isDuplicate = true;
 	    		}
 	    	}else{
@@ -85,7 +102,6 @@
 	    		});
 	    		return;
 	    	}
-	    	self.tableParams.settings().dataset
 	    }
 	    
 	    $scope.uploadFiles = function(file, errFiles) {
@@ -216,6 +232,7 @@
 	    }
 	    function del(row) {
 	    	row.deleted = 1;
+	    	cleanseValidation();
 	    	var data =  ModulesService.deleteModule(row).then(function(response) {
 	    		if(response.status === 200){
 					console.log('Module was deleted!');
@@ -224,6 +241,9 @@
 			            if (data.length === 0 && self.tableParams.total() > 0) {
 			                self.tableParams.page(self.tableParams.page() - 1);
 			                self.tableParams.reload();
+			                if(isValidationFilterEnabled == true){
+			                	$scope.validateBtn(true);
+			                }
 			            }
 			        });
 				}
@@ -236,6 +256,9 @@
 	            if (data.length === 0 && self.tableParams.total() > 0) {
 	                self.tableParams.page(self.tableParams.page() - 1);
 	                self.tableParams.reload();
+	                if(isValidationFilterEnabled == true){
+	                	$scope.validateBtn(true);
+	                }
 	            }
 	        });
 	    }
@@ -307,6 +330,7 @@
 	    	$scope.validationInProgress = true;
 	    	$scope.row = row;
 	    	$scope.rowForm = rowForm;
+	    	cleanseValidation();
 	    	if(row.idNode){
 	    		$mdDialog.show({
 					scope: $scope,  
@@ -330,6 +354,9 @@
 						            if (data.length === 0 && self.tableParams.total() > 0) {
 						                self.tableParams.page(self.tableParams.page() - 1);
 						                self.tableParams.reload();
+						                if(isValidationFilterEnabled == true){
+						                	$scope.validateBtn(true);
+						                }
 						                $location.hash("");
 						    		    $anchorScroll();
 						            }
@@ -348,6 +375,9 @@
 				            if (data.length === 0 && self.tableParams.total() > 0) {
 				                self.tableParams.page(self.tableParams.page() - 1);
 				                self.tableParams.reload();
+				                if(isValidationFilterEnabled == true){
+				                	$scope.validateBtn(true);
+				                }
 				                $location.hash("");
 				    		    $anchorScroll();
 				            }
