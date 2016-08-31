@@ -80,7 +80,11 @@ public class ModuleDao {
     						.setResultTransformer(Transformers.aliasToBean(Node.class));
     	List<Node> list = (List<Node>)crit.list();
 		Long idNode = 0l;
-		if(!list.isEmpty()){
+		if(list.isEmpty()){
+			Module tempModule = new Module();
+			idNode = (Long) sessionFactory.getCurrentSession().save(tempModule);
+			delete(tempModule);
+		}else{
 			idNode = list.get(0).getIdNode();
 		}
     	return idNode;
