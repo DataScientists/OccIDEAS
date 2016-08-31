@@ -132,6 +132,22 @@
         	$($event.target).closest('.int-note').remove();
         	
         };
+
+		$scope.highlightNode = function(idNode){
+			var elementId = 'IntResult'+idNode;
+			$scope.scrollTo(elementId);
+			$('#'+elementId).toggleClass('highlight');
+			setTimeout(function(){
+				$('#'+elementId).toggleClass('highlight');
+			},1500);
+		}
+
+		$scope.scrollTo = function( target){
+			var scrollPane = $("body");
+			var scrollTarget = $('#'+target);
+			var scrollY = scrollTarget.offset().top - 150;
+			scrollPane.animate({scrollTop : scrollY }, 1000, 'swing');
+		};
         
 		if(data[0]){
 			$scope.data = data[0].questionHistory;
@@ -169,7 +185,9 @@
 				  		scope.model = model;
 				  		scope.rule = ruleArray[i];
 				  		scope.agentName = $itemScope.agent.name;
-				  		newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+						if($("#rule-dialog-" + scope.rule.idRule).length == 0){
+							newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+						}
 				  	}
 			  	}			  
 			  ],
