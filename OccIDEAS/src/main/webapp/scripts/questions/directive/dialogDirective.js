@@ -66,7 +66,7 @@ function newNote(element,$itemScope,$compile) {
 
 var noteIntZindex = 1050;
 function newInterviewNote(element,$itemScope,$compile) {
-	var tpl = $compile(angular.element("#interview-template").html())($itemScope);	
+	var tpl = $compile(angular.element("#interview-template").html())($itemScope);
 	angular.element(tpl).zIndex(++noteIntZindex);
 	angular.element(tpl).hide().appendTo("#interview-wrapper").show("fade", 300).draggable().on(
 		'dragstart', function() {
@@ -74,7 +74,6 @@ function newInterviewNote(element,$itemScope,$compile) {
 		});
 	angular.element('textarea').autogrow();
 	angular.element('.int-note');
-
 	return false;
 };
 function editAssessmentDialog(element,$itemScope,$compile) {

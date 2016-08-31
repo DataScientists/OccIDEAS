@@ -72,7 +72,13 @@ public class RuleDao {
 				.setMaxResults(1)
     			.setProjection(Projections.projectionList()
     						.add(Projections.property("idRule"),"idRule"));
-    	return (Long)crit.uniqueResult();
+		Long maxRuleId = (Long) crit.uniqueResult();
+		if(maxRuleId == null){
+			Rule tempRule = new Rule();
+			maxRuleId = save(tempRule);
+			delete(tempRule);
+		}
+    	return maxRuleId;
     }
 
 }

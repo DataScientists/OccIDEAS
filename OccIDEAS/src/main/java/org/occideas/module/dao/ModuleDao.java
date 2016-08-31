@@ -1,8 +1,7 @@
 package org.occideas.module.dao;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -13,6 +12,9 @@ import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigInteger;
+import java.util.List;
 
 @Repository
 public class ModuleDao {
@@ -79,7 +81,15 @@ public class ModuleDao {
     						.add(Projections.property("idNode"),"idNode"))
     						.setResultTransformer(Transformers.aliasToBean(Node.class));
     	List<Node> list = (List<Node>)crit.list();
-    	return list.get(0).getIdNode();
+		Long idNode = 0l;
+		if(list.isEmpty()){
+			Query query = session.createSQLQuery("SELECT AUTO_INCREMENT FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = \'occideas\' AND   TABLE_NAME   = \'Node\'");
+			BigInteger id = (BigInteger) query.list().get(0);
+			idNode = id.longValue();
+		}else{
+			idNode = list.get(0).getIdNode();
+		}
+    	return idNode;
     }
 
 }

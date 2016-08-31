@@ -127,17 +127,17 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     }
     
     @GET
-    @Path(value = "/getInterviewWithFiredRules")
+    @Path(value = "/getInterviewWithRules")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response getInterviewWithFiredRules(@QueryParam("id") Long id) {
-    	InterviewVO vo = new InterviewVO();
+    public Response getInterviewWithRules(@QueryParam("id") Long id) {
+    	List<InterviewVO> list = new ArrayList<InterviewVO>();
 		try{
-			vo = service.findInterviewWithFiredRulesById(id);
+			list = service.findByIdWithRules(id);
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
-		return Response.ok(vo).build();
+		return Response.ok(list).build();
     }
     
     @GET
@@ -188,6 +188,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		}
 		return Response.ok(list).build();
     }
+    
 
     @Path(value = "/create")
     @POST
