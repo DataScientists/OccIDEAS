@@ -23,8 +23,8 @@
             return request.then(handleSuccess, handleError);
         }
         
-        function getInterviewWithFiredRules(idNode){
-        	var restURL = 'web/rest/interview/getInterviewWithFiredRules?id='+idNode;
+        function getInterviewWithRules(idNode){
+        	var restURL = 'web/rest/interview/getInterviewWithRules?id='+idNode;
         	var request = $http({
                 method: 'GET',
                 url: restURL
@@ -346,7 +346,7 @@
             getInterviewsWithoutAnswers:getInterviewsWithoutAnswers,
             getInterviewQuestionAnswer:getInterviewQuestionAnswer,
             getUnprocessedQuestions:getUnprocessedQuestions,
-            getInterviewWithFiredRules:getInterviewWithFiredRules,
+            getInterviewWithRules:getInterviewWithRules,
             updateDisplayAnswerList:updateDisplayAnswerList,
             updateModuleNameForInterviewId:updateModuleNameForInterviewId,
             findModulesByInterviewId:findModulesByInterviewId

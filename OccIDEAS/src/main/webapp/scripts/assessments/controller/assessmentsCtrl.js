@@ -82,6 +82,8 @@
 			}
 		});
 		
+		
+		
 		function populateInterviewAnswerList(interviewId,questionIdList){
 			return InterviewsService.getInterviewQuestionAnswer(interviewId).then(function(response){
 				if(response.status == '200'){
@@ -94,10 +96,65 @@
 			//with deffered
 		};
 		
+		$scope.showExportAssessmentCSVButton = function() {
+			//get list of interview id
+			InterviewsService.getInterviewIdList().then(function(response){
+				if(response.status == '200'){
+					//display modal with list of id + progress bar
+					$scope.interviewIdList = response.data;
+					$scope.interviewIdCount = $scope.interviewIdList.length;
+					$scope.counter = 0;
+					$scope.interviewCount = $scope.counter;
+					$mdDialog.show({
+						scope: $scope,  
+						preserveScope: true,
+						templateUrl : 'scripts/assessments/partials/exportCSVDialog.html',
+						clickOutsideToClose:false
+					});
+					$scope.csv = [];
+					$scope.csvTemp = [{
+						Q:[]
+					}];
+					$scope.interviewIdList.reduce(function(p, interviewId) {
+					    return p.then(function() {
+					    	$scope.interviewIdInProgress = interviewId;
+					    	$scope.counter++;
+							$scope.interviewCount = $scope.counter;
+					        return convertInterviewToAssessmentRow(interviewId);
+					    });
+					}, $q.when(true)).then(function(finalResult) {
+						console.log('finish extracting data for CSV');
+						$timeout(function() {
+							angular.element(document.querySelector('#exportAssessmentCSV')).triggerHandler('click');
+							$scope.cancel();
+			            }, 1000);	
+					}, function(err) {
+						console.log('error');
+					});
+				}
+			});
+			function convertInterviewToAssessmentRow(interviewId){
+				return InterviewsService.getInterviewWithRules(interviewId).then(function(response){
+					if(response.status == '200'){
+						addAssessmentRowToCsv(response.data[0]);
+					}
+				});
+			}
+		};
+		
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
-		
+		function addAssessmentRowToCsv(interview){
+			var obj = {A:[]};
+			obj.A.push(interview.interviewId);
+			obj.A.push(interview.referenceNumber);
+			
+			_.each(interview.manualAssessedRules,function(rule){
+				obj.A.push(rule.level);				
+			});
+			$scope.csv.push(obj.A);
+		}
 		function listAllInterviewAnswers(response,csvTemp,questionIdList){
 			_.each(response,function(data){
 				var obj = {A:[]};

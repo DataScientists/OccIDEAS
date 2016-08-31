@@ -1,0 +1,19 @@
+<div class="form-group">
+	<div class="popoverTitle"></div>
+	<md-progress-circular
+		ng-if="row.info['Mod'+row.idNode].modPopoverInProgress"
+		md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+	<div
+		ng-if="!row.info['Mod'+row.idNode].modPopoverInProgress">
+		<form>
+			<div>
+				Items with the same 1st 4 char
+			</div>
+			<md-divider></md-divider>
+			<div class="form-group" ng-repeat="item in row.duplicateItems">
+				<span class="badge-parent">{{item.idNode}}</span>
+				{{item.name}}
+			</div>
+		</form>
+	</div>
+</div>

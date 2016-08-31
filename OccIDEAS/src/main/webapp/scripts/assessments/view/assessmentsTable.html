@@ -5,6 +5,11 @@
 		<button style="display: none;" id="exportCSV" class="btn btn-default"
 			ng-csv="getCSVButton()" lazy-load="true" filename="export.csv"
 			field-separator=","></button>
+			<button class="btn btn-default"
+			ng-click="showExportAssessmentCSVButton()">Export Assessments</button>
+		<button style="display: none;" id="exportAssessmentCSV" class="btn btn-default"
+			ng-csv="getCSVButton()" lazy-load="true" filename="exportAssessments.csv"
+			field-separator=","></button>
 		Size : {{vm.tableParams.total()}}
 		<table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped">
 			<tr ng-repeat="participant in $data">

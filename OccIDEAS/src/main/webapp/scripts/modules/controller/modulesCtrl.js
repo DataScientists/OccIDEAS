@@ -2,14 +2,91 @@
 	angular.module('occIDEASApp.Modules')
 		   .controller('ModuleCtrl',ModuleCtrl);
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
-                          '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout','InterviewsService','$q'];
+                          '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout','InterviewsService'
+                          ,'$q','ngToast'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
-			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q){
+			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q,$ngToast){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    $scope.validatePopOver = {
+	    		templateUrl: 'scripts/modules/partials/validatePopOver.html',
+    		    open: function(row) {
+    		    	if(angular.isUndefined(row.info)){
+    		    		row.info = [];
+    		    	}
+    		    	row.info["Mod"+row.idNode] = {
+    		    			idNode:row.idNode,
+    		    			name:row.name,
+    		    			modPopover:{
+    		    				isOpen: false
+    		    			},
+    		    			modPopoverInProgress : false
+    		    	};
+    		    	var modInPopup = row.info["Mod"+row.idNode];
+    		    	modInPopup.modPopover.isOpen = true;
+    		    },
+  		        close: function close(row) {
+  		        	row.info["Mod"+row.idNode].modPopover.isOpen = false;
+  		        }
+    	};
+	    
+	    function checkUniqueModule (module){
+	    	var data = self.tableParams.settings().dataset;
+	    	var duplicateItem = 
+	    		  _.filter(data, function (item) {
+	    			//exclude the current module for the check
+	    			 if(item.idNode == module.idNode){
+	    				 return false;
+	    			 }
+	    			 if(_.startsWith(item.name, module.name.substring(0,4))){
+	    				 item.isDuplicate = true;
+	    				 return true;
+	    			 }
+	    		     return false;
+	    		  });
+	    	if(duplicateItem.length > 0){
+	    		module.isDuplicate = true;
+	    		module.duplicateItems = duplicateItem;
+	    	}
+	    }
+	    
+	    $scope.filterValidateItems = function(){
+	    		self.tableParams.filter().isDuplicate = true;
+	    };
+	    
+	    $scope.unfilterValidateItems = function(){
+	    		self.tableParams.filter().isDuplicate = false;
+	    		$scope.validateBtn(false);
+	    };
+	    
+	    $scope.validateBtn = function(shouldFilter){
+	    	//check if we have data
+	    	var data = self.tableParams.settings().dataset;
+	    	if(data.length > 0){
+	    		_.each(data,function(val){
+	    			checkUniqueModule(val);
+	    		});
+	    		// check if there are items with errors
+	    		var result = _.find(data,function(item){
+	    			return item.isDuplicate == true;
+	    		});
+	    		if(result && shouldFilter){
+	    			self.tableParams.filter().isDuplicate = true;
+	    		}
+	    	}else{
+	    		$ngToast.create({
+  	    		  className: 'danger',
+  	    		  content: 'Cannot validate no modules are available',
+  	    		  animation:'slide'
+	    		});
+	    		return;
+	    	}
+	    	self.tableParams.settings().dataset
+	    }
 	    
 	    $scope.uploadFiles = function(file, errFiles) {
 	        $scope.f = file;
@@ -65,7 +142,7 @@
 				}, 
 				{	
 	        getData: function(params) {
-	          if(params.filter().name || params.filter().description){	
+	          if(params.filter().name || params.filter().description || params.filter().isDuplicate){	
 	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 	          }
 	          if(!self.tableParams.shouldGetData){

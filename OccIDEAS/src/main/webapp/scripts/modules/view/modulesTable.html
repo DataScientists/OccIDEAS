@@ -2,13 +2,18 @@
 <div >
 
 <!-- 	<md-content flex> -->
-	<button permission="['ROLE_ADMIN']" class="form-control" ng-click="importJson()">
+	<div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
+	<button type="button" permission="['ROLE_ADMIN']" class="btn btn-default"  ng-click="importJson()">
 		Import JSON
 	</button>
+	<button type="button" permission="['ROLE_ADMIN']"  ng-click='validateBtn(true)' class="btn btn-default"> Validate Modules</button>
+	<button type="button" permission="['ROLE_ADMIN']"  ng-if="vm.tableParams.filter().isDuplicate == true" ng-click='unfilterValidateItems()' class="btn btn-default"> Remove Filter for Items With Warnings</button>
+	<button type="button" permission="['ROLE_ADMIN']"  ng-if="vm.tableParams.filter().isDuplicate == false" ng-click='filterValidateItems()' class="btn btn-default"> Filter Items With Warnings</button>
 	<button type="button"
 			class="btn btn-default" ng-if="vm.originalData.length == 0" 
 			ng-click="vm.add('M_Module')">Add Module <span class="glyphicon glyphicon-plus">
 			</span></button>
+	</div>
 	<table ng-table="vm.tableParams" ng-cloak
 		class="table table-bordered table-hover 
   table-condensed editable-table moduleTable"
@@ -37,6 +42,17 @@
         <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
             <td sortable="type" data-title="'Type'" groupable="'type'" ng-if="false">
             	{{row.type}}
+          	</td>
+          	<td>
+          		<span ng-if="row.isDuplicate" 
+          			    style="color:red;"
+          				class="glyphicon glyphicon-warning-sign"
+          				ng-mouseleave="validatePopOver.close(row)"
+          				popover-is-open="row.info['Mod'+row.idNode].modPopover.isOpen" 
+						popover-placement="right" popover-append-to-body="true" 
+						popover-popup-delay="1000" 
+						ng-mouseenter="validatePopOver.open(row)" 
+						uib-popover-template="validatePopOver.templateUrl"></span>
           	</td>
             <td id="id_{{row.idNode}}" filter="{name: 'text'}"
 				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"
