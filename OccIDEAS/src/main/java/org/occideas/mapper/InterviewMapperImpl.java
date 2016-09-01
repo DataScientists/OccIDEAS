@@ -122,7 +122,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		}
 		return list;
 	}
-
+	
 	@Override
 	public List<InterviewVO> convertToInterviewWithRulesVOList(List<Interview> interviewEntity) {
 		if (interviewEntity == null) {

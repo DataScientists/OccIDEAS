@@ -95,10 +95,24 @@
 			//loop through and trigger InterviewService.getInterview(interviewId) 
 			//with deffered
 		};
-		
+		function generateUniqueAgentsList(interviews){			
+			_.each(interviews,function(interview){
+				appendToUniqueListOfAgents(interview);					
+			});							
+		}
+		function prepareHeaderRow(){			
+			var obj = {A:[]};
+			obj.A.push("InterviewId");
+			obj.A.push("ReferenceNumber");
+			_.each($scope.uniqueListOfAgents,function(agent){				
+				obj.A.push(agent.name+"_Auto");				
+				obj.A.push(agent.name+"_Manual");
+			});
+			$scope.csv.push(obj.A);						
+		}
 		$scope.showExportAssessmentCSVButton = function() {
 			//get list of interview id
-			InterviewsService.getInterviewIdList().then(function(response){
+			InterviewsService.getInterviewsListWithRules().then(function(response){
 				if(response.status == '200'){
 					//display modal with list of id + progress bar
 					$scope.interviewIdList = response.data;
@@ -115,12 +129,14 @@
 					$scope.csvTemp = [{
 						Q:[]
 					}];
-					$scope.interviewIdList.reduce(function(p, interviewId) {
+					generateUniqueAgentsList(response.data);
+					prepareHeaderRow();
+					$scope.interviewIdList.reduce(function(p, interview) {
 					    return p.then(function() {
-					    	$scope.interviewIdInProgress = interviewId;
+					    	$scope.interviewIdInProgress = interview.interviewId;
 					    	$scope.counter++;
 							$scope.interviewCount = $scope.counter;
-					        return convertInterviewToAssessmentRow(interviewId);
+					        return convertInterviewToAssessmentRow(interview.interviewId);
 					    });
 					}, $q.when(true)).then(function(finalResult) {
 						console.log('finish extracting data for CSV');
@@ -134,7 +150,7 @@
 				}
 			});
 			function convertInterviewToAssessmentRow(interviewId){
-				return InterviewsService.getInterviewWithRules(interviewId).then(function(response){
+				InterviewsService.getInterviewWithRules(interviewId).then(function(response){
 					if(response.status == '200'){
 						addAssessmentRowToCsv(response.data[0]);
 					}
@@ -145,13 +161,39 @@
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
+		$scope.uniqueListOfAgents = [];
+		function appendToUniqueListOfAgents(interview){
+			_.each(interview.autoAssessedRules,function(rule){
+				var agentInList = false;
+				_.each($scope.uniqueListOfAgents,function(agent){
+					if(agent.idAgent==rule.agent.idAgent){
+						agentInList = true;
+					}					
+				});
+				if(!agentInList){
+					$scope.uniqueListOfAgents.push(rule.agent);
+				}				
+			});
+		}
 		function addAssessmentRowToCsv(interview){
 			var obj = {A:[]};
 			obj.A.push(interview.interviewId);
 			obj.A.push(interview.referenceNumber);
-			
-			_.each(interview.manualAssessedRules,function(rule){
-				obj.A.push(rule.level);				
+			_.each($scope.uniqueListOfAgents,function(agent){
+				var level = "Not Set";
+				_.each(interview.autoAssessedRules,function(rule){
+					if(agent.idAgent==rule.agent.idAgent){
+						level = rule.level;	
+					}								
+				});	
+				obj.A.push(level);
+				level = "Not Set";
+				_.each(interview.manualAssessedRules,function(rule){
+					if(agent.idAgent==rule.agent.idAgent){
+						level = rule.level;	
+					}								
+				});
+				obj.A.push(level);
 			});
 			$scope.csv.push(obj.A);
 		}
@@ -557,7 +599,7 @@
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
 									dB:level,
 									backgroundhours: modHours,
-									partialExposure:partialExposurePercentageAdjusted}
+									partialExposure:partialExposure}
 					
 							$scope.noiseRows.push(noiseRow);	
 							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
