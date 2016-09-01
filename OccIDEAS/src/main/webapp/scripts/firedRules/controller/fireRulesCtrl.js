@@ -3,9 +3,9 @@
 			FiredRulesCtrl);
 
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
-	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService'];
+	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService','ngToast'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
-			InterviewsService,AssessmentsService,$log,$compile,RulesService) {
+			InterviewsService,AssessmentsService,$log,$compile,RulesService,$ngToast) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = data[0];
@@ -135,6 +135,14 @@
 
 		$scope.highlightNode = function(idNode){
 			var elementId = 'IntResult'+idNode;
+			if ($('#' + elementId).length == 0) {
+				$ngToast.create({
+    	    		  className: 'warning',
+    	    		  content: 'The node ' + idNode + ' does not exist.',
+    	    		  animation:'slide'
+    	    	 });
+				return false;
+			}
 			$scope.scrollTo(elementId);
 			$('#'+elementId).toggleClass('highlight');
 			setTimeout(function(){
