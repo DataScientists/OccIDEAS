@@ -1,17 +1,17 @@
 package org.occideas.vo;
 
-public class ModuleCopyVO {
+public class FragmentCopyVO {
 
-	private ModuleVO vo;
+	private FragmentVO vo;
 	private String name;
 	private boolean includeRules;
 	private boolean includeLinks;
 
-	public ModuleVO getVo() {
+	public FragmentVO getVo() {
 		return vo;
 	}
 
-	public void setVo(ModuleVO vo) {
+	public void setVo(FragmentVO vo) {
 		this.vo = vo;
 	}
 

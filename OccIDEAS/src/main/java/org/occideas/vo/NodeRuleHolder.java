@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModuleIdNodeRuleHolder {
+public class NodeRuleHolder {
 
 	private long idNode = 0L;
 	private long lastIdNode = 0L;

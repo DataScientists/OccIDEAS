@@ -4,18 +4,18 @@ import java.util.List;
 
 import org.occideas.base.service.BaseService;
 import org.occideas.vo.ModuleCopyVO;
-import org.occideas.vo.ModuleIdNodeRuleHolder;
+import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.ModuleVO;
-import org.occideas.vo.ReportVO;
+import org.occideas.vo.ModuleReportVO;
 
 public interface ModuleService extends BaseService<ModuleVO>{
 	public void merge(ModuleVO module);
 	public Long getMaxId();
 	List<ModuleVO> findByIdForInterview(Long id);
-	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO json);
-	public void copyRules(ModuleIdNodeRuleHolder idNodeHolder);
-	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO vo,ReportVO report);
-	void addNodeRules(ModuleIdNodeRuleHolder idNodeHolder);
-	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder,ReportVO reportVO);
-	public void addNodeRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder, ReportVO report);
+	public NodeRuleHolder copyModule(ModuleCopyVO json);
+	public void copyRules(NodeRuleHolder idNodeHolder);
+	public NodeRuleHolder copyModule(ModuleCopyVO vo,ModuleReportVO report);
+	void addNodeRules(NodeRuleHolder idNodeHolder);
+	public ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder,ModuleReportVO reportVO);
+	public void addNodeRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO report);
 }
