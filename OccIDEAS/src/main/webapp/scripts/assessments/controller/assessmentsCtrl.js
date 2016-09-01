@@ -599,7 +599,7 @@
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
 									dB:level,
 									backgroundhours: modHours,
-									partialExposure:partialExposurePercentageAdjusted}
+									partialExposure:partialExposure}
 					
 							$scope.noiseRows.push(noiseRow);	
 							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));

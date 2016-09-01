@@ -172,7 +172,20 @@
 		vm.showEditAssessmentMenu = function(scope){
 			return vm.editAssessmentsMenuOptions;
 		}
-		
+		function cascadeFindNode(nodes,node){
+			_.each(nodes, function(data) {
+				if(data.answerId == node.idNode){
+					$scope.foundNode = data;
+				}else{
+					if(data.nodes){
+						if(data.nodes.length>0){
+							cascadeFindNode(data.nodes,node);
+						}
+					}
+				}	
+						 
+			});
+		}
 		vm.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
@@ -218,10 +231,10 @@
 					  var totalFrequency = 0;
 					  var backgroundHours = 0;
 					  var shiftHours = 0;
-					  for(var m=0;m<model.questionsAsked.length;m++){
-						  var iqa = model.questionsAsked[m];
-						  if(iqa.possibleAnswer.type=='P_frequencyshifthours'){
-							  shiftHours = iqa.interviewQuestionAnswerFreetext;
+					  for(var m=0;m<model.answerHistory.length;m++){
+						  var iqa = model.answerHistory[m];
+						  if(iqa.type=='P_frequencyshifthours'){
+							  shiftHours = iqa.answerFreetext;
 							  break;
 						  }
 					  }
@@ -229,20 +242,20 @@
 						  var noiseRule = noiseRules[k];
 						  if(noiseRule.type!='BACKGROUND'){
 							  var parentNode = noiseRule.conditions[0];
-							  if(model.module){
-								  cascadeFindNode(model.module.nodes,parentNode);
-							  }else{
-								  cascadeFindNode(model.fragment.nodes,parentNode); 
-							  }
+							  //if(model.module){
+								//  cascadeFindNode(model.module.nodes,parentNode);
+							  //}else{
+								  cascadeFindNode(model.answerHistory,parentNode); 
+							  //}
 							  var answeredValue = 0;
 							  if($scope.foundNode){
 								  if($scope.foundNode.nodes[0]){
 									  if($scope.foundNode.nodes[0].nodes[0]){
 										  var frequencyHoursIdNode = $scope.foundNode.nodes[0].nodes[0].idNode;
-										  for(var l=0;l<model.questionsAsked.length;l++){
-											  var iqa = model.questionsAsked[l];
-											  if(iqa.possibleAnswer.idNode==frequencyHoursIdNode){
-												  answeredValue = iqa.interviewQuestionAnswerFreetext;
+										  for(var l=0;l<model.answerHistory.length;l++){
+											  var iqa = model.answerHistory[l];
+											  if(iqa.idNode==frequencyHoursIdNode){
+												  answeredValue = iqa.answerFreetext;
 												  break;
 											  }
 										  }
@@ -289,19 +302,19 @@
 							var hours = 0.0;
 							var frequencyhours = 0;
 							var parentNode = noiseRule.conditions[0];
-							if(model.module){
-								  cascadeFindNode(model.module.nodes,parentNode);
-							  }else{
-								  cascadeFindNode(model.fragment.nodes,parentNode); 
-							  }
+							//if(model.module){
+								  cascadeFindNode(model.answerHistory,parentNode);
+							//  }else{
+							//	  cascadeFindNode(model.fragment.nodes,parentNode); 
+							 // }
 							  if($scope.foundNode){
 								  if($scope.foundNode.nodes[0]){
 									  if($scope.foundNode.nodes[0].nodes[0]){
 										  var frequencyHoursIdNode = $scope.foundNode.nodes[0].nodes[0].idNode;
-										  for(var l=0;l<model.questionsAsked.length;l++){
-											  var iqa = model.questionsAsked[l];
-											  if(iqa.possibleAnswer.idNode==frequencyHoursIdNode){
-												  frequencyhours = iqa.interviewQuestionAnswerFreetext;
+										  for(var l=0;l<model.answerHistory.length;l++){
+											  var iqa = model.answerHistory[l];
+											  if(iqa.idNode==frequencyHoursIdNode){
+												  frequencyhours = iqa.answerFreetext;
 											  }
 										  }
 									  } 
@@ -328,7 +341,7 @@
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
 									dB:level,
 									backgroundhours: modHours,
-									partialExposure:partialExposurePercentageAdjusted}
+									partialExposure:partialExposure}
 					
 							$scope.noiseRows.push(noiseRow);	
 							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
