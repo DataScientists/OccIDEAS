@@ -31,6 +31,14 @@
             })
             return request.then(handleSuccess, handleError);
         }
+        function getInterviewsListWithRules(){
+        	var restURL = 'web/rest/interview/getInterviewsListWithRules';
+        	var request = $http({
+                method: 'GET',
+                url: restURL
+            })
+            return request.then(handleSuccess, handleError);
+        }
         
         function getUnprocessedQuestions(idNode) {
             var restURL = 'web/rest/interview/getUnprocessedQuestions?id=' + idNode;
@@ -349,7 +357,8 @@
             getInterviewWithRules:getInterviewWithRules,
             updateDisplayAnswerList:updateDisplayAnswerList,
             updateModuleNameForInterviewId:updateModuleNameForInterviewId,
-            findModulesByInterviewId:findModulesByInterviewId
+            findModulesByInterviewId:findModulesByInterviewId,
+            getInterviewsListWithRules:getInterviewsListWithRules
         };
     }
 })();
