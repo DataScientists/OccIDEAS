@@ -194,7 +194,8 @@
 						 
 			});
 		}
-		function findFrequencyIdNode(node){
+		
+		function findFrequencyIdNode(node){ 
 			var childQuestionNode = _.find($scope.interview.questionHistory,function(qnode){
 				var retValue = false;
 				  
