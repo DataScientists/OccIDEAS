@@ -3,9 +3,9 @@
 			FiredRulesCtrl);
 
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
-	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService'];
+	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService','ngToast'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
-			InterviewsService,AssessmentsService,$log,$compile,RulesService) {
+			InterviewsService,AssessmentsService,$log,$compile,RulesService,$ngToast) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = data[0];
@@ -135,6 +135,14 @@
 
 		$scope.highlightNode = function(idNode){
 			var elementId = 'IntResult'+idNode;
+			if ($('#' + elementId).length == 0) {
+				$ngToast.create({
+    	    		  className: 'warning',
+    	    		  content: 'The node ' + idNode + ' does not exist.',
+    	    		  animation:'slide'
+    	    	 });
+				return false;
+			}
 			$scope.scrollTo(elementId);
 			$('#'+elementId).toggleClass('highlight');
 			setTimeout(function(){
@@ -185,6 +193,30 @@
 				}	
 						 
 			});
+		}
+		function findFrequencyIdNode(node){
+			var childQuestionNode = _.find($scope.interview.questionHistory,function(qnode){
+				var retValue = false;
+				  
+				if(qnode.parentAnswerId == node.answerId){
+					retValue = true;
+				}				  
+				return retValue;
+			});
+			if(childQuestionNode){
+				var childFrequencyNode = _.find($scope.interview.answerHistory,function(anode){
+					var retValue = false;
+					  
+					if(anode.parentQuestionId == childQuestionNode.questionId){
+						retValue = true;
+					}				  
+					return retValue;
+				});
+				return childFrequencyNode;
+			}else{
+				return;
+			}
+			
 		}
 		vm.rulesMenuOptions =
 			[
@@ -249,19 +281,12 @@
 							  //}
 							  var answeredValue = 0;
 							  if($scope.foundNode){
-								  if($scope.foundNode.nodes[0]){
-									  if($scope.foundNode.nodes[0].nodes[0]){
-										  var frequencyHoursIdNode = $scope.foundNode.nodes[0].nodes[0].idNode;
-										  for(var l=0;l<model.answerHistory.length;l++){
-											  var iqa = model.answerHistory[l];
-											  if(iqa.idNode==frequencyHoursIdNode){
-												  answeredValue = iqa.answerFreetext;
-												  break;
-											  }
-										  }
-									  } 
-								  }
-								  $scope.foundNode=null;
+								 var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);
+									
+								 if(frequencyHoursNode){
+									 answeredValue = frequencyHoursNode.answerFreetext;
+								 }								
+								 $scope.foundNode=null;
 							  }
 							  
 							  totalFrequency += Number(answeredValue);
@@ -308,16 +333,9 @@
 							//	  cascadeFindNode(model.fragment.nodes,parentNode); 
 							 // }
 							  if($scope.foundNode){
-								  if($scope.foundNode.nodes[0]){
-									  if($scope.foundNode.nodes[0].nodes[0]){
-										  var frequencyHoursIdNode = $scope.foundNode.nodes[0].nodes[0].idNode;
-										  for(var l=0;l<model.answerHistory.length;l++){
-											  var iqa = model.answerHistory[l];
-											  if(iqa.idNode==frequencyHoursIdNode){
-												  frequencyhours = iqa.answerFreetext;
-											  }
-										  }
-									  } 
+								  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
+								  if(frequencyHoursNode){
+									  frequencyhours = frequencyHoursNode.answerFreetext;
 								  }
 								  $scope.foundNode=null;
 							  }
