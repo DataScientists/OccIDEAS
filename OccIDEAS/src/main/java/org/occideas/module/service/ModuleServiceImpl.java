@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.agent.dao.AgentDao;
+import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
 import org.occideas.entity.Module;
 import org.occideas.mapper.ModuleMapper;
@@ -16,13 +17,10 @@ import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.ModuleCopyVO;
-import org.occideas.vo.ModuleIdNodeRuleHolder;
-import org.occideas.vo.ModuleRuleVO;
+import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeRuleVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.ReportVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +45,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private NodeRuleMapper nodeRuleMapper;
 	@Autowired
 	private AgentDao agentDao;
+	@Autowired
+	private IQuestionCopier questionCopier;
 
 	@Auditable(actionType = AuditingActionType.GENERIC)
     @Override
@@ -106,194 +106,48 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO vo) {
+	public NodeRuleHolder copyModule(ModuleCopyVO vo) {
 		ModuleVO copyVO = vo.getVo();
 		Long idNode = dao.generateIdNode() + 1;
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
-		ModuleIdNodeRuleHolder idNodeRuleHolder = new ModuleIdNodeRuleHolder();
+		NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
 		long maxRuleId = ruleDao.getMaxRuleId();
 		idNodeRuleHolder.setLastIdRule(maxRuleId);
 		idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
 		idNodeRuleHolder.setIdNode(idNode);
 		idNodeRuleHolder.setTopNodeId(idNode);
-		populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder);
+		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
 	
 	@Override
-	public ModuleIdNodeRuleHolder copyModule(ModuleCopyVO vo,ReportVO report) {
+	public NodeRuleHolder copyModule(ModuleCopyVO vo,ModuleReportVO report) {
 		ModuleVO copyVO = vo.getVo();
 		Long idNode = dao.generateIdNode() + 1;
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
-		ModuleIdNodeRuleHolder idNodeRuleHolder = new ModuleIdNodeRuleHolder();
+		NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
 		long maxRuleId = ruleDao.getMaxRuleId();
 		idNodeRuleHolder.setLastIdRule(maxRuleId);
 		idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
 		idNodeRuleHolder.setIdNode(idNode);
 		idNodeRuleHolder.setTopNodeId(idNode);
-		populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
 
-	private void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
-			ModuleIdNodeRuleHolder idNodeRuleHolder) {
-		idNodeRuleHolder.setLastIdNode(idNode);
-		for (QuestionVO vo : childNodes) {
-			vo.setParentId(String.valueOf(idNode));
-			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
-			Long qsIdNode = idNodeRuleHolder.getLastIdNode() + 1;
-			idNodeRuleHolder.setLastIdNode(qsIdNode);
-			vo.setIdNode(qsIdNode);
-			if (!vo.getChildNodes().isEmpty()) {
-				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder);
-			}
-			if (qsIdNode > idNodeRuleHolder.getLastIdNode()) {
-				idNodeRuleHolder.setLastIdNode(qsIdNode);
-			}
-		}
-	}
-	
-	private void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
-			ModuleIdNodeRuleHolder idNodeRuleHolder,ReportVO report) {
-		idNodeRuleHolder.setLastIdNode(idNode);
-		for (QuestionVO vo : childNodes) {
-			vo.setParentId(String.valueOf(idNode));
-			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
-			Long qsIdNode = idNodeRuleHolder.getLastIdNode() + 1;
-			idNodeRuleHolder.setLastIdNode(qsIdNode);
-			vo.setIdNode(qsIdNode);
-			report.setTotalQuestions(report.getTotalQuestions() + 1);
-			if (!vo.getChildNodes().isEmpty()) {
-				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder,report);
-			}
-			if (qsIdNode > idNodeRuleHolder.getLastIdNode()) {
-				idNodeRuleHolder.setLastIdNode(qsIdNode);
-			}
-		}
-	}
-
-	private void populateAnswerWithIdNode(Long qsIdNode, List<PossibleAnswerVO> childNodes,
-			ModuleIdNodeRuleHolder idNodeRuleHolder) {
-		int count = 1;
-		for (PossibleAnswerVO vo : childNodes) {
-			vo.setParentId(String.valueOf(qsIdNode));
-			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
-			Long asIdNode = idNodeRuleHolder.getLastIdNode() + count;
-			vo.setIdNode(asIdNode);
-			idNodeRuleHolder.setLastIdNode(asIdNode);
-			if (!vo.getModuleRule().isEmpty()) {
-				populateRulesWithIdRule(vo, vo.getModuleRule(), idNodeRuleHolder);
-			}
-			if (!vo.getChildNodes().isEmpty()) {
-				populateQuestionsWithIdNode(asIdNode, vo.getChildNodes(), idNodeRuleHolder);
-			}
-			count++;
-		}
-	}
-	
-	private void populateAnswerWithIdNode(Long qsIdNode, List<PossibleAnswerVO> childNodes,
-			ModuleIdNodeRuleHolder idNodeRuleHolder,ReportVO report) {
-		int count = 1;
-		for (PossibleAnswerVO vo : childNodes) {
-			vo.setParentId(String.valueOf(qsIdNode));
-			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
-			Long asIdNode = idNodeRuleHolder.getLastIdNode() + count;
-			vo.setIdNode(asIdNode);
-			report.setTotalAnswers(report.getTotalAnswers()+1);
-			idNodeRuleHolder.setLastIdNode(asIdNode);
-			if (!vo.getModuleRule().isEmpty()) {
-				populateRulesWithIdRule(vo, vo.getModuleRule(), idNodeRuleHolder,report);
-			}
-			if (!vo.getChildNodes().isEmpty()) {
-				populateQuestionsWithIdNode(asIdNode, vo.getChildNodes(), idNodeRuleHolder,report);
-			}
-			count++;
-		}
-	}
-	
-	private void populateRulesWithIdRule(PossibleAnswerVO possibleAnswer, List<ModuleRuleVO> moduleRule,
-			ModuleIdNodeRuleHolder idNodeRuleHolder,ReportVO report) {
-		boolean ruleExist = false;
-		for (ModuleRuleVO ruleVo : moduleRule) {
-			if(idNodeRuleHolder.getRuleIdStorage().
-					containsKey(ruleVo.getRule().getIdRule())){
-				ruleVo.getRule().setIdRule(idNodeRuleHolder.
-						getRuleIdStorage().get(ruleVo.getRule().getIdRule()));
-				ruleExist = true;
-			}else if (ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
-				idNodeRuleHolder.setLastIdRule(idNodeRuleHolder.getLastIdRule() + 1);
-				idNodeRuleHolder.getRuleIdStorage().put(ruleVo.getRule().getIdRule(), 
-						idNodeRuleHolder.getLastIdRule());
-				ruleVo.getRule().setIdRule(idNodeRuleHolder.getLastIdRule());
-				report.setTotalRules(report.getTotalRules()+1);
-				ruleExist = false;
-			}
-			populateRuleCondition(possibleAnswer, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
-					idNodeRuleHolder,ruleExist);
-		}
-	}
-
-	private void populateRulesWithIdRule(PossibleAnswerVO possibleAnswer, List<ModuleRuleVO> moduleRule,
-			ModuleIdNodeRuleHolder idNodeRuleHolder) {
-		boolean ruleExist = false;
-		for (ModuleRuleVO ruleVo : moduleRule) {
-			if(idNodeRuleHolder.getRuleIdStorage().
-					containsKey(ruleVo.getRule().getIdRule())){
-				ruleVo.getRule().setIdRule(idNodeRuleHolder.
-						getRuleIdStorage().get(ruleVo.getRule().getIdRule()));
-				ruleExist = true;
-			}else if (ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
-				idNodeRuleHolder.setLastIdRule(idNodeRuleHolder.getLastIdRule() + 1);
-				idNodeRuleHolder.getRuleIdStorage().put(ruleVo.getRule().getIdRule(), 
-						idNodeRuleHolder.getLastIdRule());
-				ruleVo.getRule().setIdRule(idNodeRuleHolder.getLastIdRule());
-				ruleExist = false;
-			}
-			populateRuleCondition(possibleAnswer, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
-					idNodeRuleHolder,ruleExist);
-		}
-	}
-
-	private void populateRuleCondition(PossibleAnswerVO possibleAnswer, List<PossibleAnswerVO> conditions, RuleVO ruleVO,
-			ModuleIdNodeRuleHolder idNodeRuleHolder,boolean ruleExist) {
-		boolean readyToSaveRule = true;
-		boolean hasIdNodeBeenSet = false;
-		for (PossibleAnswerVO condition : conditions) {
-			if (condition.getNumber().equalsIgnoreCase(possibleAnswer.getNumber()) && condition.getName().equalsIgnoreCase(possibleAnswer.getName())) {
-				// here we know that the condition rule in rulevo 
-				// pertains to the possible answer ->vo
-				NodeRuleVO nodeRule = new NodeRuleVO();
-				nodeRule.setIdNode(possibleAnswer.getIdNode());
-				nodeRule.setIdRule(ruleVO.getIdRule());
-				idNodeRuleHolder.getNodeRuleList().add(nodeRule);
-				hasIdNodeBeenSet = true;
-			}
-			if (idNodeRuleHolder.getFirstIdRuleGenerated() > ruleVO.getIdRule()) {
-				readyToSaveRule = false;
-				if (hasIdNodeBeenSet) {
-					break;
-				}
-			}
-		}
-		if (readyToSaveRule && !ruleExist) {
-			ruleVO.getConditions().clear();
-			idNodeRuleHolder.getRuleList().add(ruleVO);
-		}
-	}
-
 	@Override
-	public void copyRules(ModuleIdNodeRuleHolder idNodeHolder) {
+	public void copyRules(NodeRuleHolder idNodeHolder) {
 		for (RuleVO ruleVO : idNodeHolder.getRuleList()) {
 			ruleDao.save(ruleMapper.convertToRule(ruleVO));
 		}
 	}
 	
 	@Override
-	public ReportVO copyRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder,ReportVO reportVO) {
+	public ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder,ModuleReportVO reportVO) {
 		List<AgentVO> missingAgentList = new ArrayList<>();
 		List<RuleVO> missingRuleList = new ArrayList<>();
 		for (RuleVO ruleVO : idNodeHolder.getRuleList()) {
@@ -310,7 +164,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 	
 	@Override
-	public void addNodeRules(ModuleIdNodeRuleHolder idNodeHolder) {
+	public void addNodeRules(NodeRuleHolder idNodeHolder) {
 		List<NodeRuleVO> list = idNodeHolder.getNodeRuleList();
 		for (NodeRuleVO vo : list) {
 			nodeRuleDao.save(nodeRuleMapper.convertToNodeRule(vo));
@@ -318,7 +172,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public void addNodeRulesValidateAgent(ModuleIdNodeRuleHolder idNodeHolder, ReportVO report) {
+	public void addNodeRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO report) {
 		List<NodeRuleVO> list = idNodeHolder.getNodeRuleList();
 		for (NodeRuleVO vo : list) {
 			boolean isRuleMissing = false;

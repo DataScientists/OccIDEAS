@@ -3,14 +3,24 @@ package org.occideas.fragment.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.vo.FragmentCopyVO;
+import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.NodeRuleHolder;
 
-public interface FragmentService extends BaseService<FragmentVO>{
-	public void createFragment(FragmentVO fragmentVO);
+public interface FragmentService extends BaseService<FragmentVO> {
+	
+	void createFragment(FragmentVO fragmentVO);
 
-	public void merge(FragmentVO json);
+	void merge(FragmentVO json);
 
 	boolean checkExists(Long id);
 
 	List<FragmentVO> findByIdForInterview(Long id);
+
+	NodeRuleHolder copyFragment(FragmentCopyVO vo, FragmentReportVO report);
+
+	NodeRuleHolder deepCopyFragment(FragmentCopyVO vo, 
+			   FragmentReportVO report,
+			   Long parentIdNode,Long topNodeId);
 }

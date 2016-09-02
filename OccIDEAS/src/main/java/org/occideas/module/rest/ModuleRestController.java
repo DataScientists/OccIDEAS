@@ -25,9 +25,9 @@ import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.ModuleCopyVO;
-import org.occideas.vo.ModuleIdNodeRuleHolder;
+import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.ModuleVO;
-import org.occideas.vo.ReportVO;
+import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -166,7 +166,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Path(value = "/saveAs")
 	@POST
 	public Response saveCopy(ModuleCopyVO json) {
-		ModuleIdNodeRuleHolder idNodeHolder = null;
+		NodeRuleHolder idNodeHolder = null;
 		try {
 			idNodeHolder = service.copyModule(json);
 			if (json.isIncludeRules()) {
@@ -183,7 +183,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Path(value = "/importJson")
 	@POST
 	public Response importJson(FormDataMultiPart multiPart) {
-		ReportVO report = new ReportVO();
+		ModuleReportVO report = new ModuleReportVO();
 		try {
 			Map<String, List<FormDataBodyPart>> fieldsByName = multiPart.getFields();
 
@@ -193,7 +193,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 					ObjectMapper mapper = new ObjectMapper();
 					mapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-					ModuleIdNodeRuleHolder idNodeHolder = null;
+					NodeRuleHolder idNodeHolder = null;
 					String line = reader.readLine();
 					ModuleVO[] modules = mapper.readValue(line, ModuleVO[].class);
 					// only expecting one module

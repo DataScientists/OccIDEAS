@@ -4,10 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Fragment;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
+import org.occideas.module.dao.ModuleDao;
+import org.occideas.rule.dao.RuleDao;
+import org.occideas.vo.FragmentCopyVO;
+import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.NodeRuleHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +26,19 @@ public class FragmentServiceImpl implements FragmentService {
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
+	private ModuleDao moduleDao;
+	
+	@Autowired
+	private RuleDao ruleDao;
+	
+	@Autowired
 	private FragmentDao dao;
 	
 	@Autowired
 	private FragmentMapper mapper;
+	
+	@Autowired
+	private IQuestionCopier questionCopier;
 	
 	@Override
 	public List<FragmentVO> listAll() {
@@ -81,5 +96,45 @@ public class FragmentServiceImpl implements FragmentService {
 	@Override
 	public void merge(FragmentVO module) {
 		dao.merge(mapper.convertToFragment(module,true));
+	}
+
+	@Override
+	public NodeRuleHolder copyFragment(FragmentCopyVO vo, FragmentReportVO report) {
+		FragmentVO copyVO = vo.getVo();
+		Long idNode = moduleDao.generateIdNode() + 1;
+		copyVO.setIdNode(idNode);
+		copyVO.setName(vo.getName());
+		NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
+		long maxRuleId = ruleDao.getMaxRuleId();
+		idNodeRuleHolder.setLastIdRule(maxRuleId);
+		idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
+		idNodeRuleHolder.setIdNode(idNode);
+		idNodeRuleHolder.setTopNodeId(idNode);
+		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		dao.save(mapper.convertToFragment(copyVO, true));
+		return idNodeRuleHolder;
+	}
+	
+	@Override
+	public NodeRuleHolder deepCopyFragment(FragmentCopyVO vo, 
+										   FragmentReportVO report,
+										   Long parentIdNode,Long topNodeId) {
+		FragmentVO copyVO = vo.getVo();
+		Long idNode = moduleDao.generateIdNode() + 1;
+		copyVO.setIdNode(idNode);
+		copyVO.setName(vo.getName());
+		copyVO.setParentId(String.valueOf(parentIdNode));
+		if(topNodeId != null){
+			copyVO.setTopNodeId(topNodeId);
+		}
+		NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
+		long maxRuleId = ruleDao.getMaxRuleId();
+		idNodeRuleHolder.setLastIdRule(maxRuleId);
+		idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
+		idNodeRuleHolder.setIdNode(idNode);
+		idNodeRuleHolder.setTopNodeId(idNode);
+		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		dao.save(mapper.convertToFragment(copyVO, true));
+		return idNodeRuleHolder;
 	}
 }
