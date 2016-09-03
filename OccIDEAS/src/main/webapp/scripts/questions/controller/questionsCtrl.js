@@ -1308,6 +1308,7 @@
 				  var newScope = $itemScope.$new();
 				  newScope.name = '(Copy)'+$itemScope.$modelValue.name;
 				  newScope.includeRules = true;
+				  newScope.includeLinks = true;
 				  newScope.vo = $itemScope.$modelValue;
 				  $mdDialog.show({
 					  scope: newScope,
@@ -1323,26 +1324,39 @@
 				} 
 			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
-		          var blob = new Blob([JSON.stringify($scope.data)], {
-		            type: "application/json;charset="+ "utf-8" + ";"
-		          });
+				  var copyData = angular.copy($scope.data);
+				  var counter = 0;
+				   var promises = [];
 
-		          if (window.navigator.msSaveOrOpenBlob) {
-		            navigator.msSaveBlob(blob, $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
-		          } else {
+				   angular.forEach(copyData[0].nodes , function(node) {
+					   if(node.type == 'Q_linkedajsm' && node.nodes.length < 1){
+						   promises.push(populateChildNodesOfFragment(node));
+				    	}
+				   });
 
-		            var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
-		            var downloadLink = angular.element(downloadContainer.children()[0]);
-		            downloadLink.attr('href', window.URL.createObjectURL(blob));
-		            downloadLink.attr('download', $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
-		            downloadLink.attr('target', '_blank');
+				  $q.all(promises).then(function () {
+					  console.log('finish creating the JSON.. exporting in progress.');
+					  var blob = new Blob([JSON.stringify(copyData)], {
+						  type: "application/json;charset="+ "utf-8" + ";"
+					  });
 
-		            $document.find('body').append(downloadContainer);
-		            $timeout(function () {
-		              downloadLink[0].click();
-		              downloadLink.remove();
-		            }, null);
-		          }
+					  if (window.navigator.msSaveOrOpenBlob) {
+						  navigator.msSaveBlob(blob, $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
+					  } else {
+
+						  var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
+						  var downloadLink = angular.element(downloadContainer.children()[0]);
+						  downloadLink.attr('href', window.URL.createObjectURL(blob));
+						  downloadLink.attr('download', $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
+						  downloadLink.attr('target', '_blank');
+
+						  $document.find('body').append(downloadContainer);
+						  $timeout(function () {
+							  downloadLink[0].click();
+							  downloadLink.remove();
+						  }, null);
+					  }
+				  });
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
@@ -1468,6 +1482,14 @@
 	    				  },
 	    				  nodePopoverInProgress : false
 	          };
+		}
+		
+		function populateChildNodesOfFragment(node){
+			return FragmentsService.findFragmentChildNodes(node.link).then(function(response){
+				if(response.length > 0){
+					node.nodes = response;
+				}
+			});
 		}
 		
 		function getUpdatedModuleRule(model,deffered){
@@ -2053,11 +2075,12 @@
         }
         $scope.newModName = null;
         $scope.includeRuleInMod = null;
-        $scope.saveAsModule = function(vo,name,includeRules){
+        $scope.saveAsModule = function(vo,name,includeRules,includeLinks){
         	var copyVO = {
         		vo:angular.copy(vo),
         		name:name,
-        		includeRules:includeRules	
+        		includeRules:includeRules,
+        		includeLinks:includeLinks
         	};
         	ModulesService.copyModule(copyVO).then(function(data){
         		var row = {};

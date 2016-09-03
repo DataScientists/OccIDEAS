@@ -12,6 +12,9 @@ public interface IQuestionCopier {
 			NodeRuleHolder idNodeRuleHolder);
 	
 	void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
-			NodeRuleHolder idNodeRuleHolder,BaseReportVO report);
+			NodeRuleHolder idNodeRuleHolder,BaseReportVO reportVO);
+	
+	void populateQuestionsIncludeLinksWithIdNode(Long idNode, List<QuestionVO> childNodes,
+			NodeRuleHolder idNodeRuleHolder);
 	
 }

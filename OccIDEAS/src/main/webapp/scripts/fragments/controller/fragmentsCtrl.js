@@ -172,6 +172,7 @@
 	    	self.isEditing = false;
 	    	$scope.row = row;
 	    	$scope.rowForm = rowForm;
+	    	if(row.idNode){
 	    	$scope.interviewExist = false;
 	    	$scope.validationInProgress = true;
 			$mdDialog.show({
@@ -205,6 +206,22 @@
 					}
 				}
 			});
+			}else{
+				FragmentsService.save(row).then(function(response){
+					if(response.status === 200){
+						console.log('Fragment Save was Successful!');
+						self.tableParams.shouldGetData = true;
+				        self.tableParams.reload().then(function (data) {
+				            if (data.length === 0 && self.tableParams.total() > 0) {
+				                self.tableParams.page(self.tableParams.page() - 1);
+				                self.tableParams.reload();
+				                $location.hash("");
+				    		    $anchorScroll();
+				            }
+				        });
+					}
+				});
+			}
 	    }
 	    
 	    function setInvalid(isInvalid) {

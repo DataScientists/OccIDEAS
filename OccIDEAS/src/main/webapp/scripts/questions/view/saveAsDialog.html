@@ -15,6 +15,11 @@
          <label>Name:</label>
         <input type="text" ng-model="name"/>
         </p>
+         <p>
+          <md-checkbox ng-model="includeLinks" aria-label="Include Rules">
+  			Include Full Fragments
+ 		  </md-checkbox>
+        </p>
         <p>
           <md-checkbox ng-model="includeRules" aria-label="Include Rules">
   			Include Rules
@@ -24,7 +29,7 @@
     </md-dialog-content>
     <md-dialog-actions layout="row">
        <span flex></span>
-      <md-button ng-click="saveAsModule(vo,name,includeRules)">
+      <md-button ng-click="saveAsModule(vo,name,includeRules,includeLinks)">
        Save
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">

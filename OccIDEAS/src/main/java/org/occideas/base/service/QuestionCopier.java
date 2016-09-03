@@ -2,18 +2,29 @@ package org.occideas.base.service;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.occideas.fragment.service.FragmentService;
 import org.occideas.vo.BaseReportVO;
+import org.occideas.vo.FragmentCopyVO;
+import org.occideas.vo.FragmentReportVO;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeRuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QuestionCopier implements IQuestionCopier{
 
+	private Logger log = Logger.getLogger(this.getClass());
+	
+	@Autowired
+	private FragmentService fragmentService;
+	
 	public void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
 			NodeRuleHolder idNodeRuleHolder) {
 		idNodeRuleHolder.setLastIdNode(idNode);
@@ -159,5 +170,41 @@ public class QuestionCopier implements IQuestionCopier{
 			idNodeRuleHolder.getRuleList().add(ruleVO);
 		}
 	}
-	
+
+	@Override
+	public void populateQuestionsIncludeLinksWithIdNode(Long idNode, List<QuestionVO> childNodes, NodeRuleHolder idNodeRuleHolder
+			) {
+		idNodeRuleHolder.setLastIdNode(idNode);
+		for (QuestionVO vo : childNodes) {
+			vo.setParentId(String.valueOf(idNode));
+			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
+			Long qsIdNode = idNodeRuleHolder.getLastIdNode() + 1;
+			idNodeRuleHolder.setLastIdNode(qsIdNode);
+			vo.setIdNode(qsIdNode);
+			if("Q_linkedajsm".equals(vo.getType())){
+				// fetch fragment based on idnode
+				List<FragmentVO> list = fragmentService.findById(vo.getIdNode());
+				if(!list.isEmpty()){
+					// build copyFragment
+					FragmentCopyVO copyFragment = new FragmentCopyVO();
+					copyFragment.setIncludeRules(true);
+					copyFragment.setIncludeLinks(true);
+					copyFragment.setVo(list.get(0));
+					copyFragment.setName(vo.getName());
+					// call service copyFragment and pass the copy fragment
+					FragmentReportVO reportVO = new FragmentReportVO();
+					fragmentService.copyFragment(copyFragment, reportVO);
+				}else{
+					log.error("Tried to search fragment id node "+vo.getIdNode());
+				}
+			}
+			if (!vo.getChildNodes().isEmpty()) {
+				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder);
+			}
+			if (qsIdNode > idNodeRuleHolder.getLastIdNode()) {
+				idNodeRuleHolder.setLastIdNode(qsIdNode);
+			}
+		}
+	}
+
 }
