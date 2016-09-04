@@ -6,11 +6,13 @@
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile',
-	                          '$rootScope','ModuleRuleService','$log','$timeout', 'AuthenticationService','$document'];
+	                          '$rootScope','ModuleRuleService','$log','$timeout', 
+	                          'AuthenticationService','$document'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
-			AgentsService,RulesService,$compile,$rootScope,ModuleRuleService,$log,$timeout, auth,$document) {
+			AgentsService,RulesService,$compile,$rootScope,
+			ModuleRuleService,$log,$timeout, auth,$document) {
 		var self = this;
 		$scope.data = data;	
 		//saveModuleWithoutReload();
@@ -2064,13 +2066,26 @@
         		includeRules:includeRules,
         		includeLinks:includeLinks
         	};
+        	if('F' == vo.nodeclass){
+        	FragmentsService.copyModule(copyVO).then(function(data){
+        		var row = {};
+        		row.name = name;
+        		row.idNode = data.data;
+        		$mdDialog.hide();
+            	$scope.addFragmentTab(row);
+            	return;
+        	});
+        	}
+        	if('M' == vo.nodeclass){
         	ModulesService.copyModule(copyVO).then(function(data){
         		var row = {};
         		row.name = name;
         		row.idNode = data.data;
         		$mdDialog.hide();
             	$scope.addModuleTab(row);
+            	return;
         	});
+        	}
         }
         
         $scope.exportToJSON = function(name,includeLinks){

@@ -14,7 +14,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.fragment.service.FragmentService;
+import org.occideas.module.service.ModuleService;
+import org.occideas.vo.FragmentCopyVO;
+import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.NodeRuleHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -23,6 +27,9 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 
 	@Autowired
 	private FragmentService service;
+	
+	@Autowired
+	private ModuleService moduleService;
 
 	@GET
 	@Path(value="/getlist")
@@ -102,6 +109,24 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
+	}
+	
+	@Path(value = "/saveAs")
+	@POST
+	public Response saveCopy(FragmentCopyVO json) {
+		NodeRuleHolder idNodeHolder = null;
+		try {
+			FragmentReportVO vo = new FragmentReportVO();
+			idNodeHolder = service.copyFragment(json,vo);
+			if (json.isIncludeRules()) {
+				moduleService.copyRules(idNodeHolder);
+				moduleService.addNodeRules(idNodeHolder);
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(idNodeHolder.getIdNode()).build();
 	}
 	
 

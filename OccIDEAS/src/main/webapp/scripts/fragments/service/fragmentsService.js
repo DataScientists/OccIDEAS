@@ -95,6 +95,15 @@
 				})
 		    return request.then(handleSuccess1,handleError);
 		};
+		
+		var copyModule = function(vo){
+			var request = $http({
+				method:'POST',
+				url:'web/rest/fragment/saveAs',
+				data:vo
+			  });
+			  return request.then(handleSuccess1,handleError);
+		}
 
 		return {		  
 			checkExists: checkExists,
@@ -105,7 +114,8 @@
 		    findFragmentChildNodes: findFragmentChildNodes,
 		    deleteFragment: deleteFragment,
 		    createFragment:createFragment,
-		    findInterviewByFragmentId:findInterviewByFragmentId
+		    findInterviewByFragmentId:findInterviewByFragmentId,
+		    copyModule:copyModule
 		};
 		function handleError( response ) {
             if (
