@@ -2,7 +2,7 @@
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>Module Information</h2>
+        <h2>Export To JSON</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -12,20 +12,20 @@
     <md-dialog-content>
       <div class="md-dialog-content">
         <p>
-         <label>Name:</label>
-        <input type="text" ng-model="name"/>
+         	<label>Filename:</label>
+        	<input type="text" ng-model="name"/>
         </p>
         <p>
-          <md-checkbox ng-model="includeRules" aria-label="Include Rules">
-  			Include Rules
+          <md-checkbox ng-model="includeLinks" aria-label="Include Links">
+  			Include Links
  		  </md-checkbox>
         </p>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
        <span flex></span>
-      <md-button ng-click="saveAsModule(vo,name,includeRules)">
-       Save
+      <md-button ng-click="exportToJSON(name,includeLinks)">
+        Submit
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">
         Cancel

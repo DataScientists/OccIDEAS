@@ -1324,39 +1324,21 @@
 				} 
 			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
-				  var copyData = angular.copy($scope.data);
-				  var counter = 0;
-				   var promises = [];
-
-				   angular.forEach(copyData[0].nodes , function(node) {
-					   if(node.type == 'Q_linkedajsm' && node.nodes.length < 1){
-						   promises.push(populateChildNodesOfFragment(node));
-				    	}
-				   });
-
-				  $q.all(promises).then(function () {
-					  console.log('finish creating the JSON.. exporting in progress.');
-					  var blob = new Blob([JSON.stringify(copyData)], {
-						  type: "application/json;charset="+ "utf-8" + ";"
-					  });
-
-					  if (window.navigator.msSaveOrOpenBlob) {
-						  navigator.msSaveBlob(blob, $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
-					  } else {
-
-						  var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
-						  var downloadLink = angular.element(downloadContainer.children()[0]);
-						  downloadLink.attr('href', window.URL.createObjectURL(blob));
-						  downloadLink.attr('download', $scope.data[0].name+"_"+$scope.data[0].idNode+".json");
-						  downloadLink.attr('target', '_blank');
-
-						  $document.find('body').append(downloadContainer);
-						  $timeout(function () {
-							  downloadLink[0].click();
-							  downloadLink.remove();
-						  }, null);
-					  }
-				  });
+				  //need to display pop up first
+				  var newScope = $itemScope.$new();
+				  newScope.name = $scope.data[0].name+"_"+$scope.data[0].idNode+".json";
+				  newScope.includeLinks = true;
+				  $mdDialog.show({
+					  scope: newScope,
+				      templateUrl: 'scripts/questions/view/exportToJsonDialog.html',
+				      parent: angular.element(document.body),
+				      clickOutsideToClose:true
+				    })
+				    .then(function(answer) {
+				      $scope.status = 'You said the information was "' + answer + '".';
+				    }, function() {
+				      $scope.status = 'You cancelled the dialog.';
+				    });			                   
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
@@ -2089,6 +2071,45 @@
         		$mdDialog.hide();
             	$scope.addModuleTab(row);
         	});
+        }
+        
+        $scope.exportToJSON = function(name,includeLinks){
+        	var copyData = angular.copy($scope.data);
+			  var counter = 0;
+			   var promises = [];
+			   
+			   if(includeLinks){
+			   angular.forEach(copyData[0].nodes , function(node) {
+				   if(node.type == 'Q_linkedajsm' && node.nodes.length < 1){
+					   promises.push(populateChildNodesOfFragment(node));
+			    	}
+			   });
+			   }
+
+			  $q.all(promises).then(function () {
+				  console.log('finish creating the JSON.. exporting in progress.');
+				  var blob = new Blob([JSON.stringify(copyData)], {
+					  type: "application/json;charset="+ "utf-8" + ";"
+				  });
+
+				  if (window.navigator.msSaveOrOpenBlob) {
+					  navigator.msSaveBlob(blob, name);
+				  } else {
+
+					  var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
+					  var downloadLink = angular.element(downloadContainer.children()[0]);
+					  downloadLink.attr('href', window.URL.createObjectURL(blob));
+					  downloadLink.attr('download', name);
+					  downloadLink.attr('target', '_blank');
+
+					  $document.find('body').append(downloadContainer);
+					  $timeout(function () {
+						  downloadLink[0].click();
+						  downloadLink.remove();
+					  }, null);
+				  }
+			  });
+			  $mdDialog.hide();
         }
         
         $scope.deleteRule = function(rule,model,$event){
