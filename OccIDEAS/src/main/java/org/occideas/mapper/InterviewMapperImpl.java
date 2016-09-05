@@ -1,6 +1,7 @@
 package org.occideas.mapper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.occideas.entity.Interview;
@@ -129,8 +130,10 @@ public class InterviewMapperImpl implements InterviewMapper {
 			return null;
 		}
 		List<InterviewVO> list = new ArrayList<InterviewVO>();
+		int iCount = 0;
 		for (Interview interview : interviewEntity) {
 			list.add(convertToInterviewWithRulesVO(interview));
+			System.out.println((iCount++)+"convertToInterviewWithRulesVOList:"+new Date());
 		}
 		return list;
 	}

@@ -74,6 +74,7 @@
 	</div>
 	</div>
 	<div class="noiseAssessmentWrapper" ng-if="noiseRows.length>0">
+		<div>Shift Hours: {{shiftHours}}</div>
 		<table class="table table-bordered ">
 		<thead>
 		<tr>
@@ -83,6 +84,7 @@
 			<td>Partial Exposure</td>
 		</tr>
 		</thead> 
+		
 		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
 			<td>{{noiseRow.nodeNumber}}</td>
 			<td>{{noiseRow.dB}}</td>

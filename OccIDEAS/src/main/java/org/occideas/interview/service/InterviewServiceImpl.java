@@ -1,6 +1,7 @@
 package org.occideas.interview.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.occideas.base.dao.BaseDao;
@@ -33,7 +34,18 @@ public class InterviewServiceImpl implements InterviewService {
     }
     @Override
     public List<InterviewVO> listAllWithRules() {
-        return mapper.convertToInterviewWithRulesVOList(interviewDao.getAll());
+    	System.out.println("1:listAllWithRules:"+new Date());
+    	List<Interview> debug = interviewDao.getAll();
+		List<Interview> debug1 = new ArrayList<Interview>();
+		for(int i=0;i<debug.size();i++){
+			if(i<10){
+				debug1.add(debug.get(i));
+			}		
+		}
+		System.out.println("2:listAllWithRules:"+new Date());
+		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesVOList(debug);
+		System.out.println("3:listAllWithRules:"+new Date());
+        return retValue;
     }
     @Override
     public List<InterviewVO> listAllWithAnswers() {
@@ -102,11 +114,29 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 	@Override
 	public List<Long> getInterviewIdlist() {
-		return mapper.convertToInterviewIdList(interviewDao.getInterviewIdList());
+		System.out.println("1:getInterviewIdlist:"+new Date());
+		List<Interview> debug = interviewDao.getInterviewIdList();
+		List<Interview> debug1 = new ArrayList<Interview>();
+		for(int i=0;i<debug.size();i++){
+			if(i<5){
+				debug1.add(debug.get(i));
+			}		
+		}
+		System.out.println("2:getInterviewIdlist:"+new Date());
+		return mapper.convertToInterviewIdList(debug);
 	}
 	@Override
 	public List<InterviewVO> listAllInterviewsWithoutAnswers() {
-		return mapper.convertToInterviewWithoutAnswersList(interviewDao.getAll());
+		System.out.println("1:listAllInterviewsWithoutAnswers:"+new Date());
+		List<Interview> debug = interviewDao.getAll();
+		List<Interview> debug1 = new ArrayList<Interview>();
+		for(int i=0;i<debug.size();i++){
+			if(i<5){
+				debug1.add(debug.get(i));
+			}		
+		}
+		System.out.println("2:listAllInterviewsWithoutAnswers:"+new Date());
+		return mapper.convertToInterviewWithoutAnswersList(debug);
 	}
 	@Override
 	public List<InterviewVO> getInterviewQuestionAnswer(long idinterview) {
