@@ -379,6 +379,7 @@
 						$scope.totalPartialExposure = totalPartialExposure;
 						$scope.autoExposureLevel = autoExposureLevel;
 						$scope.peakNoise = peakNoise;
+						$scope.shiftHours = shiftHours;
 				  }
 			  	}			  
 			  ]

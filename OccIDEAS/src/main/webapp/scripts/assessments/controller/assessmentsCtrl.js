@@ -87,7 +87,7 @@
 		function populateInterviewAnswerList(interviewId,questionIdList){
 			return InterviewsService.getInterviewQuestionAnswer(interviewId).then(function(response){
 				if(response.status == '200'){
-					listAllInterviewAnswers(response.data,$scope.csvTemp,questionIdList);
+					listAllInterviewAnswers(response.data,$scope.csvTemp,questionIdList);								
 				}
 			});
 		}
@@ -108,6 +108,17 @@
 				obj.A.push(agent.name+"_Auto");				
 				obj.A.push(agent.name+"_Manual");
 			});
+			$scope.csv.push(obj.A);						
+		}
+		function prepareNoiseHeaderRow(){			
+			var obj = {A:[]};
+			obj.A.push("InterviewId");
+			obj.A.push("ReferenceNumber");
+			obj.A.push("totalPartialExposure");
+			obj.A.push("autoExposureLevel");
+			obj.A.push("peakNoise");
+			obj.A.push("ShiftLength");
+			
 			$scope.csv.push(obj.A);						
 		}
 		$scope.showExportAssessmentCSVButton = function() {
@@ -157,7 +168,53 @@
 				});
 			}
 		};
-		
+		$scope.showExportAssessmentNoiseCSVButton = function() {
+			//get list of interview id
+			InterviewsService.getInterviewsListWithRules().then(function(response){
+				if(response.status == '200'){
+					//display modal with list of id + progress bar
+					$scope.interviewIdList = response.data;
+					$scope.interviewIdCount = $scope.interviewIdList.length;
+					$scope.counter = 0;
+					$scope.interviewCount = $scope.counter;
+					$mdDialog.show({
+						scope: $scope,  
+						preserveScope: true,
+						templateUrl : 'scripts/assessments/partials/exportCSVDialog.html',
+						clickOutsideToClose:false
+					});
+					$scope.csv = [];
+					$scope.csvTemp = [{
+						Q:[]
+					}];
+					//generateUniqueAgentsList(response.data);
+					prepareNoiseHeaderRow();
+					$scope.interviewIdList.reduce(function(p, interview) {
+					    return p.then(function() {
+					    	$scope.interviewIdInProgress = interview.interviewId;
+					    	$scope.counter++;
+							$scope.interviewCount = $scope.counter;
+					        return convertInterviewToAssessmentNoiseRow(interview.interviewId);
+					    });
+					}, $q.when(true)).then(function(finalResult) {
+						console.log('finish extracting data for CSV');
+						$timeout(function() {
+							angular.element(document.querySelector('#exportAssessmentCSV')).triggerHandler('click');
+							$scope.cancel();
+			            }, 1000);	
+					}, function(err) {
+						console.log('error');
+					});
+				}
+			});
+			function convertInterviewToAssessmentNoiseRow(interviewId){
+				AssessmentsService.updateFiredRules(interviewId).then(function(response){
+					if(response.status == '200'){
+						addAssessmentNoiseRowToCsv(response.data[0]);
+					}
+				});
+			}
+		};
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
@@ -195,6 +252,156 @@
 				});
 				obj.A.push(level);
 			});
+			$scope.csv.push(obj.A);
+		}
+		function addAssessmentNoiseRowToCsv(interview){
+			var model = interview;
+			var obj = {A:[]};
+			obj.A.push(interview.interviewId);
+			obj.A.push(interview.referenceNumber);
+			var bFoundNoiseRules = false;
+			  var noiseRules = [];
+			  for(var i=0;i<model.agents.length;i++){
+				  var agentAssessing = model.agents[i]
+				  var rule = {levelValue:99};
+				  for(var j=0;j<model.firedRules.length;j++){
+					  var firedRule = model.firedRules[j];
+					  if(agentAssessing.idAgent == firedRule.agent.idAgent){
+						  if(firedRule.agent.idAgent==116){
+							  bFoundNoiseRules = true;
+							  noiseRules.push(firedRule);
+						  }
+					  }	  
+				  }  
+			  }
+			  if(bFoundNoiseRules){
+				  var totalPartialExposure = 0;
+				  var totalPartialExposurePerAdj = 0;
+				  var peakNoise = 0;
+				  var maxBackgroundPartialExposure = 0;
+				  var maxBackgroundHours = 0;
+				  
+				  $scope.noiseRows = [];
+				  var totalFrequency = 0;
+				  var backgroundHours = 0;
+				  var shiftHours = 0;
+				  for(var m=0;m<model.answerHistory.length;m++){
+					  var iqa = model.answerHistory[m];
+					  if(iqa.type=='P_frequencyshifthours'){
+						  shiftHours = iqa.answerFreetext;
+						  break;
+					  }
+				  }
+				  for(var k=0;k<noiseRules.length;k++){
+					  var noiseRule = noiseRules[k];
+					  if(noiseRule.type!='BACKGROUND'){
+						  var parentNode = noiseRule.conditions[0];
+						  //if(model.module){
+							//  cascadeFindNode(model.module.nodes,parentNode);
+						  //}else{
+							  cascadeFindNode(model.answerHistory,parentNode); 
+						  //}
+						  var answeredValue = 0;
+						  if($scope.foundNode){
+							 var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);
+								
+							 if(frequencyHoursNode){
+								 answeredValue = frequencyHoursNode.answerFreetext;
+							 }								
+							 $scope.foundNode=null;
+						  }
+						  
+						  totalFrequency += Number(answeredValue);
+					  }
+				  }
+				  var useRatio = false;
+				  var ratio = 1.0;
+				  if(totalFrequency>shiftHours){
+					  useRatio = true;
+					  ratio = parseFloat(totalFrequency)/parseFloat(shiftHours);
+					  ratio = ratio.toFixed(4);
+				  }				
+				  var level = 0;
+				  var peakNoise = 0;
+				  for(var k=0;k<noiseRules.length;k++){
+					  var noiseRule = noiseRules[k];
+					  if(noiseRule.type=='BACKGROUND'){
+						var hoursbg = shiftHours-totalFrequency;
+						if(hoursbg<0){
+							hoursbg = 0;
+						}
+						var partialExposure = 4*hoursbg*(Math.pow(10,(level-100)/10));
+						partialExposure = partialExposure.toFixed(4);
+						hoursbg = hoursbg.toFixed(4);
+						level = noiseRule.ruleAdditionalfields[0].value;
+						var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
+										dB:level+'B',
+										backgroundhours: hoursbg,
+										partialExposure:partialExposure,
+										type:'backgroundNoise'}
+						
+						$scope.noiseRows.push(noiseRow);
+						if(partialExposure>maxBackgroundPartialExposure){
+							maxBackgroundPartialExposure = partialExposure;
+							maxBackgroundHours = hoursbg;
+						}
+					  }else{
+						var hours = 0.0;
+						var frequencyhours = 0;
+						var parentNode = noiseRule.conditions[0];
+						//if(model.module){
+							  cascadeFindNode(model.answerHistory,parentNode);
+						//  }else{
+						//	  cascadeFindNode(model.fragment.nodes,parentNode); 
+						 // }
+						  if($scope.foundNode){
+							  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
+							  if(frequencyHoursNode){
+								  frequencyhours = frequencyHoursNode.answerFreetext;
+							  }
+							  $scope.foundNode=null;
+						  }
+						if(useRatio){
+							hours = parseFloat(frequencyhours)/ratio;		
+						}else{
+							hours = parseFloat(frequencyhours);		
+						}
+						level = noiseRule.ruleAdditionalfields[0].value;
+						var percentage = 100;
+						var partialExposure = 4*hours*(Math.pow(10,(level-100)/10));
+						partialExposure = partialExposure.toFixed(4);				
+						hours = hours.toFixed(4);
+						var modHours = "";
+						if(useRatio){
+							modHours = "*"+hours+"*";
+						}else{
+							modHours = hours;
+						}
+						
+						var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
+								dB:level,
+								backgroundhours: modHours,
+								partialExposure:partialExposure}
+				
+						$scope.noiseRows.push(noiseRow);	
+						totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
+						
+					  }
+					  if(peakNoise<Number(level)){
+						peakNoise = Number(level);
+					  }
+				  }
+				  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
+				  	totalPartialExposure = totalPartialExposure.toFixed(4);
+					totalFrequency += maxBackgroundHours;
+
+					var autoExposureLevel = 10*(Math.log10(totalPartialExposure/(3.2*(Math.pow(10,-9)))))
+					autoExposureLevel = autoExposureLevel.toFixed(4);
+					obj.A.push(totalPartialExposure);
+					obj.A.push(autoExposureLevel);
+					obj.A.push(peakNoise);
+					obj.A.push(shiftHours);
+			  }
 			$scope.csv.push(obj.A);
 		}
 		function listAllInterviewAnswers(response,csvTemp,questionIdList){
@@ -266,10 +473,10 @@
 			var questionIdList = [];
 			_.each(response,function(data){
 				data.questionHistory = _.filter(data.questionHistory,function(qh){
-					$log.info("Interviewid: "+data.interviewId+" Questionid: "+qh.questionId);
+					//$log.info("Interviewid: "+data.interviewId+" Questionid: "+qh.questionId);
 					return qh.deleted == 0;
 				});
-				$log.info("Interviewid: "+data.interviewId+" Questionid: "); 
+				//$log.info("Interviewid: "+data.interviewId+" Questionid: "); 
 				// join all questions to listOfQuestion
 				listOfQuestion = listOfQuestion.concat(data.questionHistory);
 			});
@@ -373,7 +580,7 @@
 		self.tableParams = new NgTableParams(
 				{
 					page: 1,            
-	                count: 100
+	                count: 50
 				}, 
 				{	
 					getData: function(params) {
