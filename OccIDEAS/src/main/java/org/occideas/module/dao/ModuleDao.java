@@ -1,5 +1,11 @@
 package org.occideas.module.dao;
 
+import java.math.BigInteger;
+import java.util.List;
+
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -13,11 +19,8 @@ import org.occideas.entity.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigInteger;
-import java.util.List;
-
 @Repository
-public class ModuleDao {
+public class ModuleDao implements IModuleDao{
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -26,13 +29,21 @@ public class ModuleDao {
       return (Module) sessionFactory.getCurrentSession().save(module);
     }
 	
+	@Transactional(value=TxType.REQUIRES_NEW)
 	public void saveCopy(Module module){
-	  sessionFactory.getCurrentSession().save(module);
+	  sessionFactory.getCurrentSession().saveOrUpdate(module);
 	}
 
     public void delete(Module module){
       sessionFactory.getCurrentSession().delete(module);
     }
+    
+    public List<Module> findByName(String name){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Module.class)
+				.add(Restrictions.eq("name", name));
+		return crit.list();
+	}
 
 	public Module get(Long id){
       return (Module) sessionFactory.getCurrentSession().get(Module.class, id);

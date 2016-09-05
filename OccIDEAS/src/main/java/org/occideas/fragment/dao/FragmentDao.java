@@ -23,6 +23,13 @@ public class FragmentDao {
 	public void save(Fragment fragment){
 		sessionFactory.getCurrentSession().persist(fragment);
     }
+	
+	public List<Fragment> findByName(String name){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Fragment.class)
+				.add(Restrictions.eq("name", name));
+		return crit.list();
+	}
 
 
     public void delete(Fragment fragment){

@@ -3,14 +3,15 @@ package org.occideas.base.service;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.occideas.fragment.service.FragmentService;
+import org.occideas.entity.Fragment;
+import org.occideas.fragment.dao.FragmentDao;
+import org.occideas.module.service.ModuleService;
 import org.occideas.vo.BaseReportVO;
-import org.occideas.vo.FragmentCopyVO;
-import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeRuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
@@ -23,12 +24,14 @@ public class QuestionCopier implements IQuestionCopier{
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private FragmentService fragmentService;
+	private FragmentDao fragmentDao;
+	@Autowired
+	private ModuleService moduleService;
 	
-	public void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
+	public void populateQuestionsWithIdNode(Long idNode, List<? extends NodeVO> childNodes,
 			NodeRuleHolder idNodeRuleHolder) {
 		idNodeRuleHolder.setLastIdNode(idNode);
-		for (QuestionVO vo : childNodes) {
+		for (QuestionVO vo : (List<QuestionVO>)childNodes) {
 			vo.setParentId(String.valueOf(idNode));
 			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
 			Long qsIdNode = idNodeRuleHolder.getLastIdNode() + 1;
@@ -173,38 +176,62 @@ public class QuestionCopier implements IQuestionCopier{
 
 	@Override
 	public void populateQuestionsIncludeLinksWithIdNode(Long idNode, List<QuestionVO> childNodes, NodeRuleHolder idNodeRuleHolder
-			) {
+			,BaseReportVO report) {
 		idNodeRuleHolder.setLastIdNode(idNode);
 		for (QuestionVO vo : childNodes) {
 			vo.setParentId(String.valueOf(idNode));
 			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
 			Long qsIdNode = idNodeRuleHolder.getLastIdNode() + 1;
 			idNodeRuleHolder.setLastIdNode(qsIdNode);
+			vo.setAnchorId(qsIdNode);
 			vo.setIdNode(qsIdNode);
 			if("Q_linkedajsm".equals(vo.getType())){
-				// fetch fragment based on idnode
-				List<FragmentVO> list = fragmentService.findById(vo.getIdNode());
-				if(!list.isEmpty()){
-					// build copyFragment
-					FragmentCopyVO copyFragment = new FragmentCopyVO();
-					copyFragment.setIncludeRules(true);
-					copyFragment.setIncludeLinks(true);
-					copyFragment.setVo(list.get(0));
-					copyFragment.setName(vo.getName());
-					// call service copyFragment and pass the copy fragment
-					FragmentReportVO reportVO = new FragmentReportVO();
-					fragmentService.copyFragment(copyFragment, reportVO);
-				}else{
-					log.error("Tried to search fragment id node "+vo.getIdNode());
+//				//the question is a fragment we need to check if a fragment
+//				//with the same name exist
+				List<Fragment> list = fragmentDao.findByName(vo.getName());
+				if(list.isEmpty()){
+					idNodeRuleHolder.getQuestionAjsmList().add(vo);
+				}else if(list.size() == 1){
+					// fragment already exist reuse the existing fragment
+					// need to add to report +1 to existing was reused
+				}else if(list.size() > 1){
+					// rare case scenario , more than 1 fragments with same name
+					log.error("More than 1 fragment found for name "+vo.getName());
 				}
 			}
+			report.setTotalQuestions(report.getTotalQuestions() + 1);
 			if (!vo.getChildNodes().isEmpty()) {
-				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder);
+				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder,report);
 			}
 			if (qsIdNode > idNodeRuleHolder.getLastIdNode()) {
 				idNodeRuleHolder.setLastIdNode(qsIdNode);
 			}
 		}
+		
 	}
+
+	public void buildFragment(List<? extends NodeVO> childNodes, QuestionVO vo,
+			NodeRuleHolder idNodeRuleHolder) {
+		FragmentVO newFragmentVO  = new FragmentVO();
+		idNodeRuleHolder.setLastIdNode(idNodeRuleHolder.getLastIdNode()+1);
+		newFragmentVO.setIdNode(idNodeRuleHolder.getLastIdNode());
+		newFragmentVO.setName(vo.getName());
+		newFragmentVO.setType("F_ajsm");
+		newFragmentVO.setDescription(vo.getDescription());
+		newFragmentVO.setNodeclass(vo.getNodeclass());
+		newFragmentVO.setNotes(vo.getNotes());
+		newFragmentVO.setNumber(vo.getNumber());
+		newFragmentVO.setParentId(null);
+		newFragmentVO.setSequence(vo.getSequence());
+		newFragmentVO.setTopNodeId(0L);
+		newFragmentVO.setNodeclass("F");
+		vo.setLink(idNodeRuleHolder.getLastIdNode());
+		idNodeRuleHolder.getFragmentList().add(newFragmentVO);
+		// we need to populate the child nodes with new Ids
+//		if(!childNodes.isEmpty()){
+//			populateQuestionsWithIdNode(idNodeRuleHolder.getLastIdNode(), childNodes, idNodeRuleHolder);
+//		}
+	}
+
 
 }

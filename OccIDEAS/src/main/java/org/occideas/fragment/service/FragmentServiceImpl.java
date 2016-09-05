@@ -8,7 +8,7 @@ import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Fragment;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
-import org.occideas.module.dao.ModuleDao;
+import org.occideas.module.dao.IModuleDao;
 import org.occideas.rule.dao.RuleDao;
 import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
@@ -26,7 +26,7 @@ public class FragmentServiceImpl implements FragmentService {
 	private Logger log = Logger.getLogger(this.getClass());
 	
 	@Autowired
-	private ModuleDao moduleDao;
+	private IModuleDao moduleDao;
 	
 	@Autowired
 	private RuleDao ruleDao;

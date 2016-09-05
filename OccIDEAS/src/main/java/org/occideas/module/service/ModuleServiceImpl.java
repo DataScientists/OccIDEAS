@@ -7,20 +7,25 @@ import org.occideas.agent.dao.AgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
 import org.occideas.entity.Module;
+import org.occideas.fragment.dao.FragmentDao;
+import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeRuleMapper;
 import org.occideas.mapper.RuleMapper;
+import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.dao.ModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.rule.dao.RuleDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.AgentVO;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeRuleVO;
+import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +37,11 @@ import org.springframework.util.StringUtils;
 public class ModuleServiceImpl implements ModuleService {
 
 	@Autowired
-	private ModuleDao dao;
+	private IModuleDao dao;
+	@Autowired
+	private FragmentMapper fragmentMapper;
+	@Autowired
+	private FragmentDao fragmentDao;
 	@Autowired
 	private ModuleMapper mapper;
 	@Autowired
@@ -111,12 +120,7 @@ public class ModuleServiceImpl implements ModuleService {
 		Long idNode = dao.generateIdNode() + 1;
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
-		NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
-		long maxRuleId = ruleDao.getMaxRuleId();
-		idNodeRuleHolder.setLastIdRule(maxRuleId);
-		idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
-		idNodeRuleHolder.setIdNode(idNode);
-		idNodeRuleHolder.setTopNodeId(idNode);
+		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
 		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
@@ -128,14 +132,19 @@ public class ModuleServiceImpl implements ModuleService {
 		Long idNode = dao.generateIdNode() + 1;
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
+		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
+		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		dao.saveCopy(mapper.convertToModule(copyVO, true));
+		return idNodeRuleHolder;
+	}
+
+	private NodeRuleHolder createNodeRuleHolder(Long idNode) {
 		NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
 		long maxRuleId = ruleDao.getMaxRuleId();
 		idNodeRuleHolder.setLastIdRule(maxRuleId);
 		idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
 		idNodeRuleHolder.setIdNode(idNode);
 		idNodeRuleHolder.setTopNodeId(idNode);
-		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
-		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
 
@@ -186,6 +195,29 @@ public class ModuleServiceImpl implements ModuleService {
 				nodeRuleDao.save(nodeRuleMapper.convertToNodeRule(vo));
 			}
 		}
+	}
+
+	@Override
+	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo,ModuleReportVO report) {
+		ModuleVO copyVO = vo.getVo();
+		Long idNode = dao.generateIdNode()+1;
+		copyVO.setIdNode(idNode);
+		copyVO.setName(vo.getName());
+		copyVO.setAnchorId(idNode);
+//		List<Module> moduleList = dao.findByName(copyVO.getName());
+		//need to check if the module exist if not create it
+//		if(moduleList.isEmpty()){
+//			// no modules found create one
+//			dao.saveCopy(mapper.convertToModule(copyVO, false));
+//		}
+		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
+		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		dao.saveCopy(mapper.convertToModule(copyVO, true));
+		// create the missing fragment
+//		for(FragmentVO newFragmentVO:idNodeRuleHolder.getFragmentList()){
+//			fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(newFragmentVO, false));
+//		}
+		return idNodeRuleHolder;
 	}
 
 }

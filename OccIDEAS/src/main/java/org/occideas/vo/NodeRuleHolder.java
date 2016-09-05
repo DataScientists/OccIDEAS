@@ -12,7 +12,9 @@ public class NodeRuleHolder {
 	private long lastIdRule = 0L;
 	private long firstIdRuleGenerated = 0L;
 	private long topNodeId = 0L;
+	private List<QuestionVO> questionAjsmList = new ArrayList<>();
 	private List<RuleVO> ruleList = new ArrayList<>();
+	private List<FragmentVO> fragmentList = new ArrayList<>();
 	private List<NodeRuleVO> nodeRuleList = new ArrayList<>();
 	private Map<Long, Long> ruleIdStorage = new HashMap<>();
 
@@ -78,6 +80,22 @@ public class NodeRuleHolder {
 
 	public void setRuleIdStorage(Map<Long, Long> ruleIdStorage) {
 		this.ruleIdStorage = ruleIdStorage;
+	}
+
+	public List<FragmentVO> getFragmentList() {
+		return fragmentList;
+	}
+
+	public void setFragmentList(List<FragmentVO> fragmentList) {
+		this.fragmentList = fragmentList;
+	}
+
+	public List<QuestionVO> getQuestionAjsmList() {
+		return questionAjsmList;
+	}
+
+	public void setQuestionAjsmList(List<QuestionVO> questionAjsmList) {
+		this.questionAjsmList = questionAjsmList;
 	}
 
 }

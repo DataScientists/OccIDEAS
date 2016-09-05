@@ -13,6 +13,7 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public Long getMaxId();
 	List<ModuleVO> findByIdForInterview(Long id);
 	public NodeRuleHolder copyModule(ModuleCopyVO json);
+	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO json,ModuleReportVO report);
 	public void copyRules(NodeRuleHolder idNodeHolder);
 	public NodeRuleHolder copyModule(ModuleCopyVO vo,ModuleReportVO report);
 	void addNodeRules(NodeRuleHolder idNodeHolder);

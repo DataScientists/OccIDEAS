@@ -48,3 +48,16 @@ INNER JOIN Interview_Question iq
 where m.idNode = iq.link
 and iq.type='Q_linkedajsm' AND iq.deleted=0;
 
+DROP VIEW IF EXISTS Module_Fragment;
+CREATE VIEW Module_Fragment AS 
+SELECT 
+m.idNode as moduleId, 
+m.name as moduleName,
+n.idNode as idNode,
+ n.name as fragmentName,
+ n.number as nodeNumber,
+ n.link as fragmentId
+FROM Node m
+INNER JOIN Node n ON n.topNodeId = m.idNode
+WHERE n.type = 'Q_linkedajsm';
+
