@@ -220,15 +220,15 @@
 		};
 		$scope.uniqueListOfAgents = [];
 		function appendToUniqueListOfAgents(interview){
-			_.each(interview.autoAssessedRules,function(rule){
+			_.each(interview.agents,function(agent){
 				var agentInList = false;
-				_.each($scope.uniqueListOfAgents,function(agent){
-					if(agent.idAgent==rule.agent.idAgent){
+				_.each($scope.uniqueListOfAgents,function(agnt){
+					if(agnt.idAgent==agent.idAgent){
 						agentInList = true;
 					}					
 				});
 				if(!agentInList){
-					$scope.uniqueListOfAgents.push(rule.agent);
+					$scope.uniqueListOfAgents.push(agent);
 				}				
 			});
 		}
