@@ -2,10 +2,6 @@ package org.occideas.base.service;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.occideas.entity.Fragment;
-import org.occideas.fragment.dao.FragmentDao;
-import org.occideas.module.service.ModuleService;
 import org.occideas.vo.BaseReportVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleRuleVO;
@@ -15,23 +11,15 @@ import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QuestionCopier implements IQuestionCopier{
 
-	private Logger log = Logger.getLogger(this.getClass());
-	
-	@Autowired
-	private FragmentDao fragmentDao;
-	@Autowired
-	private ModuleService moduleService;
-	
-	public void populateQuestionsWithIdNode(Long idNode, List<? extends NodeVO> childNodes,
+	public void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
 			NodeRuleHolder idNodeRuleHolder) {
 		idNodeRuleHolder.setLastIdNode(idNode);
-		for (QuestionVO vo : (List<QuestionVO>)childNodes) {
+		for (QuestionVO vo : childNodes) {
 			vo.setParentId(String.valueOf(idNode));
 			vo.setTopNodeId(idNodeRuleHolder.getTopNodeId());
 			Long qsIdNode = idNodeRuleHolder.getLastIdNode() + 1;
@@ -185,20 +173,6 @@ public class QuestionCopier implements IQuestionCopier{
 			idNodeRuleHolder.setLastIdNode(qsIdNode);
 			vo.setAnchorId(qsIdNode);
 			vo.setIdNode(qsIdNode);
-			if("Q_linkedajsm".equals(vo.getType())){
-//				//the question is a fragment we need to check if a fragment
-//				//with the same name exist
-				List<Fragment> list = fragmentDao.findByName(vo.getName());
-				if(list.isEmpty()){
-					idNodeRuleHolder.getQuestionAjsmList().add(vo);
-				}else if(list.size() == 1){
-					// fragment already exist reuse the existing fragment
-					// need to add to report +1 to existing was reused
-				}else if(list.size() > 1){
-					// rare case scenario , more than 1 fragments with same name
-					log.error("More than 1 fragment found for name "+vo.getName());
-				}
-			}
 			report.setTotalQuestions(report.getTotalQuestions() + 1);
 			if (!vo.getChildNodes().isEmpty()) {
 				populateAnswerWithIdNode(qsIdNode, vo.getChildNodes(), idNodeRuleHolder,report);

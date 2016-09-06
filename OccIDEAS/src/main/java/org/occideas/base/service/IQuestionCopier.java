@@ -9,7 +9,7 @@ import org.occideas.vo.QuestionVO;
 
 public interface IQuestionCopier {
 
-	void populateQuestionsWithIdNode(Long idNode, List<? extends NodeVO> childNodes,
+	void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,
 			NodeRuleHolder idNodeRuleHolder);
 	
 	void populateQuestionsWithIdNode(Long idNode, List<QuestionVO> childNodes,

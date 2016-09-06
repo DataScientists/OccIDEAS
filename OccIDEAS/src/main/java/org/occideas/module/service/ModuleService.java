@@ -5,6 +5,7 @@ import java.util.List;
 import org.occideas.base.service.BaseService;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.NodeRuleHolder;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.ModuleReportVO;
 
@@ -19,4 +20,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	void addNodeRules(NodeRuleHolder idNodeHolder);
 	public ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder,ModuleReportVO reportVO);
 	public void addNodeRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO report);
+	public void updateMissingLinks(NodeVO nodeVO);
 }

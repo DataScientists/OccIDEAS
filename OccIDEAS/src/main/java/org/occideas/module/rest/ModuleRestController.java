@@ -21,19 +21,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.occideas.base.rest.BaseRestController;
-import org.occideas.base.service.QuestionCopier;
 import org.occideas.entity.Constant;
-import org.occideas.fragment.service.FragmentService;
 import org.occideas.module.service.ModuleService;
-import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleCopyVO;
-import org.occideas.vo.NodeRuleHolder;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.ModuleVO;
 import org.occideas.vo.ModuleReportVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -48,13 +43,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	private ModuleService service;
 	@Autowired
 	private SystemPropertyService sysPropService;
-	@Autowired
-	private FragmentService fragmentService;
-	@Autowired
-	private QuestionCopier questionCopier;
-	@Autowired
-	private QuestionService questionService;
-
+	
 	@GET
 	@Path(value = "/getlist")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -212,20 +201,13 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					ModuleVO vo = modules[0];
 					ModuleCopyVO copyVo = new ModuleCopyVO();
 					copyVo.setVo(vo);
+					copyVo.setFragments(vo.getFragments());
 					copyVo.setIncludeRules(true);
 					copyVo.setName("(Copy from Import)" + vo.getName());
 					idNodeHolder = service.copyModuleAutoGenerateFragments(copyVo,report);
-					for(QuestionVO questionVO:idNodeHolder.getQuestionAjsmList()){
-						//if child is a question need to convert it
-						
-						//if child is a ajsm need to convert it
-						
-						questionCopier.buildFragment(questionVO.getChildNodes(), questionVO, idNodeHolder);
-						questionService.update(questionVO);
-					}
-					// create missing fragments
-					for(FragmentVO fragmentVO: idNodeHolder.getFragmentList()){
-						fragmentService.createFragment(fragmentVO);
+					service.updateMissingLinks(copyVo.getVo());
+					for(FragmentVO fragmentVO:copyVo.getFragments()){
+						service.updateMissingLinks(fragmentVO);
 					}
 					//missing rules report
 					service.copyRulesValidateAgent(idNodeHolder,report);

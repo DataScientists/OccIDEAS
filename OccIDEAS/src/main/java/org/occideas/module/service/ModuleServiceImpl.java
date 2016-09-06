@@ -6,6 +6,7 @@ import java.util.List;
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
+import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
@@ -13,8 +14,8 @@ import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeRuleMapper;
 import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
-import org.occideas.module.dao.ModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
+import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.RuleDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
@@ -25,6 +26,8 @@ import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeRuleVO;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +59,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private AgentDao agentDao;
 	@Autowired
 	private IQuestionCopier questionCopier;
+	@Autowired
+	private QuestionService questionService;
 
 	@Auditable(actionType = AuditingActionType.GENERIC)
     @Override
@@ -204,20 +209,73 @@ public class ModuleServiceImpl implements ModuleService {
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
 		copyVO.setAnchorId(idNode);
-//		List<Module> moduleList = dao.findByName(copyVO.getName());
-		//need to check if the module exist if not create it
-//		if(moduleList.isEmpty()){
-//			// no modules found create one
-//			dao.saveCopy(mapper.convertToModule(copyVO, false));
-//		}
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
 		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
-		// create the missing fragment
-//		for(FragmentVO newFragmentVO:idNodeRuleHolder.getFragmentList()){
-//			fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(newFragmentVO, false));
-//		}
+		createMissingFragments(copyVO,idNodeRuleHolder);
 		return idNodeRuleHolder;
+	}
+
+	private void createMissingFragments(ModuleVO copyVO, NodeRuleHolder idNodeRuleHolder) {
+		List<FragmentVO> fragments = copyVO.getFragments();
+		for(FragmentVO vo:fragments){
+			//check if fragment exist
+			List<Fragment> list = fragmentDao.findByName(vo.getName());
+			if(list.isEmpty()){
+				// no fragment lets create one
+				generateIdNodeForFragments(vo,idNodeRuleHolder);
+				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
+			}else if(list.size() > 1){
+				// found name more than one add warning
+			}else{
+				// use existing fragment
+			}
+		}
+		
+	}
+
+	private void generateIdNodeForFragments(FragmentVO vo, NodeRuleHolder idNodeRuleHolder) {
+		Long idNode = dao.generateIdNode() + 1;
+		vo.setIdNode(idNode);
+		questionCopier.populateQuestionsWithIdNode(idNode, vo.getChildNodes(), idNodeRuleHolder);
+	}
+
+	@Override
+	public void updateMissingLinks(NodeVO nodeVO) {
+		List<QuestionVO> qVoList = new ArrayList<>();
+		
+		ModuleVO moduleVO = new ModuleVO();
+		if(nodeVO instanceof ModuleVO){
+			moduleVO = (ModuleVO)nodeVO;
+			qVoList = moduleVO.getChildNodes();
+		}
+		FragmentVO fragmentVO = new FragmentVO();
+		if(nodeVO instanceof FragmentVO){
+			fragmentVO = (FragmentVO)nodeVO;
+			qVoList = fragmentVO.getChildNodes();
+		}
+		PossibleAnswerVO answerVO = new PossibleAnswerVO();
+		if(nodeVO instanceof PossibleAnswerVO){
+			answerVO = (PossibleAnswerVO)nodeVO;
+			qVoList = answerVO.getChildNodes();
+		}
+
+		//lets check our module questions
+		for(QuestionVO qVO : qVoList){
+			if("Q_linkedajsm".equals(qVO.getType())){
+				List<FragmentVO> list = fragmentMapper.convertToFragmentVOList(fragmentDao.findByName(qVO.getName()), true);
+				if(!list.isEmpty()){
+					FragmentVO fragment = list.get(0);
+					qVO.setLink(fragment.getIdNode());
+					questionService.updateWithIndependentTransaction(qVO);
+				}
+			}
+			if(!qVO.getChildNodes().isEmpty()){
+				for(PossibleAnswerVO ansVo:qVO.getChildNodes()){
+					updateMissingLinks(ansVo);
+				}
+			}
+		}
 	}
 
 }

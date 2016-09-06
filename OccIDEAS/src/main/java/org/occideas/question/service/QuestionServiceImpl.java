@@ -18,6 +18,7 @@ import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -104,6 +105,12 @@ public class QuestionServiceImpl implements QuestionService {
 	@Override
 	public List<QuestionVO> getAllMultipleQuestions() {
 		return mapper.convertToInterviewQuestionVOList(qdao.getAllMultipleQuestions());
+	}
+
+	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public void updateWithIndependentTransaction(QuestionVO o) {
+		 dao.saveOrUpdate(mapper.convertToQuestion(o));
 	}
 
 }

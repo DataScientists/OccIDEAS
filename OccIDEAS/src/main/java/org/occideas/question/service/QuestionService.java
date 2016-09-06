@@ -17,4 +17,6 @@ public interface QuestionService extends BaseService<QuestionVO> {
 	List<QuestionVO> getQuestionsWithParentId(String parentId);
 	
 	List<QuestionVO> getAllMultipleQuestions();
+	
+	void updateWithIndependentTransaction(QuestionVO o);
 }

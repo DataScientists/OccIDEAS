@@ -14,6 +14,8 @@ public class ModuleVO extends NodeVO{
 	@JsonInclude(Include.NON_NULL)
 	@JsonProperty(value = "nodes")
 	private List<QuestionVO> childNodes;
+	
+	private List<FragmentVO> fragments = new ArrayList<>();
 
 	public List<QuestionVO> getChildNodes() {
 		if(childNodes == null){
@@ -25,5 +27,15 @@ public class ModuleVO extends NodeVO{
 	public void setChildNodes(List<QuestionVO> childNodes) {
 		this.childNodes = childNodes;
 	}
+
+	public List<FragmentVO> getFragments() {
+		return fragments;
+	}
+
+	public void setFragments(List<FragmentVO> fragments) {
+		this.fragments = fragments;
+	}
+	
+	
 
 }

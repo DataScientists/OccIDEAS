@@ -1,11 +1,14 @@
 package org.occideas.vo;
 
+import java.util.List;
+
 public class ModuleCopyVO {
 
 	private ModuleVO vo;
 	private String name;
 	private boolean includeRules;
 	private boolean includeLinks;
+	private List<FragmentVO> fragments;
 
 	public ModuleVO getVo() {
 		return vo;
@@ -39,4 +42,11 @@ public class ModuleCopyVO {
 		this.includeLinks = includeLinks;
 	}
 
+	public List<FragmentVO> getFragments() {
+		return fragments;
+	}
+
+	public void setFragments(List<FragmentVO> fragments) {
+		this.fragments = fragments;
+	}
 }
