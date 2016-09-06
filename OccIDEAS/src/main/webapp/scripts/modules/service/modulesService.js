@@ -7,9 +7,20 @@
 		var apiUrl = 'web/rest/';
 		var modulesUrl = apiUrl + 'module';
 		var apiKey = '';
+		
 		function findInterviewByModuleId(idModule) {
 			var restUrl = 'web/rest/interviewintromodule/findInterviewByModuleId?id=' + idModule;
 			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getModuleFragmentByModuleId(idModule){
+			var restUrl = 'web/rest/modulefragment/getModuleFragmentByModuleId?id=' + idModule;
+
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -102,7 +113,8 @@
 		    deleteModule: deleteModule,
 		    copyModule:copyModule,
 		    importJson:importJson,
-            findInterviewByModuleId:findInterviewByModuleId
+            findInterviewByModuleId:findInterviewByModuleId,
+            getModuleFragmentByModuleId:getModuleFragmentByModuleId
 		};
 	}
 	

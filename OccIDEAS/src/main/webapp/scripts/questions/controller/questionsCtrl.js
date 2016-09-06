@@ -1468,10 +1468,10 @@
 	          };
 		}
 		
-		function populateChildNodesOfFragment(node){
-			return FragmentsService.findFragmentChildNodes(node.link).then(function(response){
+		function populateChildNodesOfFragment(data,fragments){
+			return FragmentsService.findFragment(data.fragmentId).then(function(response){
 				if(response.length > 0){
-					node.nodes = response;
+					fragments.push(response[0]);
 				}
 			});
 		}
@@ -2090,41 +2090,44 @@
         
         $scope.exportToJSON = function(name,includeLinks){
         	var copyData = angular.copy($scope.data);
-			  var counter = 0;
-			   var promises = [];
-			   
-			   if(includeLinks){
-			   angular.forEach(copyData[0].nodes , function(node) {
-				   if(node.type == 'Q_linkedajsm' && node.nodes.length < 1){
-					   promises.push(populateChildNodesOfFragment(node));
-			    	}
-			   });
-			   }
+        	var counter = 0;
 
-			  $q.all(promises).then(function () {
-				  console.log('finish creating the JSON.. exporting in progress.');
-				  var blob = new Blob([JSON.stringify(copyData)], {
-					  type: "application/json;charset="+ "utf-8" + ";"
-				  });
+        	var promises = [];
+        	var fragments = [];
+        	// get from module fragment view
+        	ModulesService.getModuleFragmentByModuleId(copyData[0].idNode).then(function (response) {
+        		if(response.status == '200'){
+        			// loop each fragment get details for each
+        			_.each(response.data,function(data){
+        				promises.push(populateChildNodesOfFragment(data,fragments));
+        			});
+        			$q.all(promises).then(function () {
+        				console.log('finish creating the JSON.. exporting in progress.');
+        				copyData[0].fragments = fragments;
+        				var blob = new Blob([JSON.stringify(copyData)], {
+        					type: "application/json;charset="+ "utf-8" + ";"
+        				});
 
-				  if (window.navigator.msSaveOrOpenBlob) {
-					  navigator.msSaveBlob(blob, name);
-				  } else {
+        				if (window.navigator.msSaveOrOpenBlob) {
+        					navigator.msSaveBlob(blob, name);
+        				} else {
 
-					  var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
-					  var downloadLink = angular.element(downloadContainer.children()[0]);
-					  downloadLink.attr('href', window.URL.createObjectURL(blob));
-					  downloadLink.attr('download', name);
-					  downloadLink.attr('target', '_blank');
+        					var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
+        					var downloadLink = angular.element(downloadContainer.children()[0]);
+        					downloadLink.attr('href', window.URL.createObjectURL(blob));
+        					downloadLink.attr('download', name);
+        					downloadLink.attr('target', '_blank');
 
-					  $document.find('body').append(downloadContainer);
-					  $timeout(function () {
-						  downloadLink[0].click();
-						  downloadLink.remove();
-					  }, null);
-				  }
-			  });
-			  $mdDialog.hide();
+        					$document.find('body').append(downloadContainer);
+        					$timeout(function () {
+        						downloadLink[0].click();
+        						downloadLink.remove();
+        					}, null);
+        				}
+        			});
+        			$mdDialog.hide();
+        		}
+        	});
         }
         
         $scope.deleteRule = function(rule,model,$event){

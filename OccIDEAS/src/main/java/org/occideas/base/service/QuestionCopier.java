@@ -228,9 +228,9 @@ public class QuestionCopier implements IQuestionCopier{
 		vo.setLink(idNodeRuleHolder.getLastIdNode());
 		idNodeRuleHolder.getFragmentList().add(newFragmentVO);
 		// we need to populate the child nodes with new Ids
-//		if(!childNodes.isEmpty()){
-//			populateQuestionsWithIdNode(idNodeRuleHolder.getLastIdNode(), childNodes, idNodeRuleHolder);
-//		}
+		if(!childNodes.isEmpty()){
+//			populateQuestionsForFragment(idNodeRuleHolder.getLastIdNode(), childNodes, idNodeRuleHolder);
+		}
 	}
 
 

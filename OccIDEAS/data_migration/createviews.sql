@@ -50,7 +50,7 @@ and iq.type='Q_linkedajsm' AND iq.deleted=0;
 
 DROP VIEW IF EXISTS Module_Fragment;
 CREATE VIEW Module_Fragment AS 
-SELECT 
+SELECT concat(m.idNode, ':',n.idNode, ':',n.number, ':',n.link)  as primaryKey, 
 m.idNode as moduleId, 
 m.name as moduleName,
 n.idNode as idNode,
