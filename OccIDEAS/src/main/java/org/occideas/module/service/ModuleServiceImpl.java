@@ -211,8 +211,8 @@ public class ModuleServiceImpl implements ModuleService {
 		copyVO.setAnchorId(idNode);
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
 		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
-		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		createMissingFragments(copyVO,idNodeRuleHolder);
+		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
 
@@ -237,6 +237,7 @@ public class ModuleServiceImpl implements ModuleService {
 	private void generateIdNodeForFragments(FragmentVO vo, NodeRuleHolder idNodeRuleHolder) {
 		Long idNode = idNodeRuleHolder.getLastIdNode() + 1;
 		idNodeRuleHolder.setLastIdNode(idNode);
+		idNodeRuleHolder.setTopNodeId(idNode);
 		vo.setIdNode(idNode);
 		questionCopier.populateQuestionsWithIdNode(idNode, vo.getChildNodes(), idNodeRuleHolder);
 	}

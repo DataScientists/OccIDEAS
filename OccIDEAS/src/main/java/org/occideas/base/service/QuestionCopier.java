@@ -123,7 +123,7 @@ public class QuestionCopier implements IQuestionCopier{
 				ruleVo.getRule().setIdRule(idNodeRuleHolder.
 						getRuleIdStorage().get(ruleVo.getRule().getIdRule()));
 				ruleExist = true;
-			}else if (ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
+			}else if (ruleVo.getRule().getIdRule() != idNodeRuleHolder.getLastIdRule()) {
 				idNodeRuleHolder.setLastIdRule(idNodeRuleHolder.getLastIdRule() + 1);
 				idNodeRuleHolder.getRuleIdStorage().put(ruleVo.getRule().getIdRule(), 
 						idNodeRuleHolder.getLastIdRule());
