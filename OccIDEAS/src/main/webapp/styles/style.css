@@ -1253,3 +1253,6 @@ li.borderless {
 }
 
 
+.fixedDialog{
+    position: fixed;
+}
