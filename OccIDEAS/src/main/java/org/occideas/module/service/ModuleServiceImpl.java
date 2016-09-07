@@ -235,7 +235,8 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	private void generateIdNodeForFragments(FragmentVO vo, NodeRuleHolder idNodeRuleHolder) {
-		Long idNode = dao.generateIdNode() + 1;
+		Long idNode = idNodeRuleHolder.getLastIdNode() + 1;
+		idNodeRuleHolder.setLastIdNode(idNode);
 		vo.setIdNode(idNode);
 		questionCopier.populateQuestionsWithIdNode(idNode, vo.getChildNodes(), idNodeRuleHolder);
 	}
