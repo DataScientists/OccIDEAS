@@ -345,8 +345,8 @@
             $rootScope.tabsLoading = true;
             safeDigest($rootScope.tabsLoading);
         };
-        $scope.addFiredRulesTab = function(interviewId) {
-            var tabTitle = "Fired Rules " + interviewId;
+        $scope.addFiredRulesTab = function(interview) {
+            var tabTitle = "Assessment " + interview.referenceNumber;
             var state = "tabs.firedrules";
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
                 tabs.push({
@@ -358,7 +358,7 @@
                 $scope.tabOptions.push({
                     state: state,
                     data: {
-                    	interviewId: interviewId
+                    	interviewId: interview.interviewId
                     }
                 });
             }

@@ -370,15 +370,19 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		List<InterviewAnswerVO> allActualAnswers = interview.getAnswerHistory();
 		allActualAnswers = removeDeletedAnswers(allActualAnswers);  
     	for(RuleVO rule: rules){
-			boolean bFired = false;
+    		boolean bFired = false;   		
 			for(PossibleAnswerVO  pa: rule.getConditions()){
+				boolean bPartialFired = false;
 				for(InterviewAnswerVO ia:allActualAnswers){
 					if(pa.getIdNode()==ia.getAnswerId()){
-	    	    		bFired = true;
+						bPartialFired = true;
+						bFired = true;
 	    	    		break;
-	    	    	}else{
-	    	    		bFired = false;
 	    	    	}
+				}
+				if(!bPartialFired){
+					bFired = false;
+					break;
 				}
 			}
 			if(bFired){
