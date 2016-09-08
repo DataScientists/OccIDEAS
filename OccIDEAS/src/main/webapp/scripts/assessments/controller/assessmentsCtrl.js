@@ -25,8 +25,8 @@
 		];
 		
 		
-		self.openFiredRules = function(interviewId) {
-	    	$scope.addFiredRulesTab(interviewId);
+		self.openFiredRules = function(interview) {
+	    	$scope.addFiredRulesTab(interview);
 	    }
 		
 		
@@ -325,6 +325,10 @@
 				  var peakNoise = 0;
 				  for(var k=0;k<noiseRules.length;k++){
 					  var noiseRule = noiseRules[k];
+					  if(noiseRule.ruleAdditionalfields == undefined){
+						  alert("Error on Noise rule:"+noiseRule.idRule);
+						  break;
+					  }
 					  if(noiseRule.type=='BACKGROUND'){
 						var hoursbg = shiftHours-totalFrequency;
 						if(hoursbg<0){
@@ -579,8 +583,7 @@
 		}
 		self.tableParams = new NgTableParams(
 				{
-					page: 1,            
-	                count: 50
+					               
 				}, 
 				{	
 					getData: function(params) {
@@ -603,7 +606,7 @@
 					        	  self.tableParams.shouldGetData = false;
 					        	  self.tableParams.total(self.originalData.length);
 					        	  var last = params.page() * params.count();
-						          return _.slice(data,last - params.count(),last);
+						          return self.originalData;
 				        	  }
 				          });
 					},

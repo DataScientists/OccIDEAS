@@ -65,7 +65,7 @@
                         }  
                     }else if (status === 401) {
                         vm.hasErrMsg = true;
-                        vm.errMsg = 'Unauthorized (Invalid UserId/Password or user is Inactive)';
+                        vm.errMsg = "Hmm, that's not the right password. Please try again or email info@occideas.org to request a new one.";
                     }else {
                         vm.hasErrMsg = true;
                         vm.errMsg = 'failure message: ' + JSON.stringify({data: data}) +' status: '+status;
