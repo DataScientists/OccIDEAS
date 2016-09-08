@@ -2,7 +2,7 @@ package org.occideas.vo;
 
 public class RuleAdditionalFieldVO {
 
-	private long idRuleAdditionalField;
+	private Long idRuleAdditionalField;
 
 	private AdditionalFieldVO additionalfield;
 	
@@ -10,11 +10,11 @@ public class RuleAdditionalFieldVO {
 
 	private long idRule;
 	
-	public long getIdRuleAdditionalField() {
+	public Long getIdRuleAdditionalField() {
 		return idRuleAdditionalField;
 	}
 
-	public void setIdRuleAdditionalField(long idRuleAdditionalField) {
+	public void setIdRuleAdditionalField(Long idRuleAdditionalField) {
 		this.idRuleAdditionalField = idRuleAdditionalField;
 	}
 

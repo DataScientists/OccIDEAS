@@ -1,6 +1,7 @@
 package org.occideas.vo;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -22,7 +23,7 @@ public class RuleVO {
 	private List<PossibleAnswerVO> conditions;
 	private Long legacyRuleId;
 	@JsonInclude(Include.NON_NULL)
-	private List<RuleAdditionalFieldVO> ruleAdditionalfields;
+	private List<RuleAdditionalFieldVO> ruleAdditionalfields = new ArrayList<>();
 	private int levelValue;
 
 	public long getIdRule() {

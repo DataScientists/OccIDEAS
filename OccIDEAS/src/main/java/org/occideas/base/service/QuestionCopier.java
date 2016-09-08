@@ -2,6 +2,7 @@ package org.occideas.base.service;
 
 import java.util.List;
 
+import org.occideas.entity.RuleAdditionalField;
 import org.occideas.vo.BaseReportVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleRuleVO;
@@ -10,6 +11,7 @@ import org.occideas.vo.NodeRuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.RuleAdditionalFieldVO;
 import org.occideas.vo.RuleVO;
 import org.springframework.stereotype.Component;
 
@@ -102,13 +104,21 @@ public class QuestionCopier implements IQuestionCopier{
 						getRuleIdStorage().get(ruleVo.getRule().getIdRule()));
 				ruleExist = true;
 			}else if (ruleVo.getRule().getIdRule() != idNodeRuleHolder.getLastIdRule()
-						|| ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
+					|| ruleVo.getRule().getIdRule() <= idNodeRuleHolder.getFirstIdRuleGenerated()) {
 				idNodeRuleHolder.setLastIdRule(idNodeRuleHolder.getLastIdRule() + 1);
 				idNodeRuleHolder.getRuleIdStorage().put(ruleVo.getRule().getIdRule(), 
 						idNodeRuleHolder.getLastIdRule());
 				ruleVo.getRule().setIdRule(idNodeRuleHolder.getLastIdRule());
 				report.setTotalRules(report.getTotalRules()+1);
 				ruleExist = false;
+			}
+			// lets check if the rule has additional fields
+			if(!ruleVo.getRule().getRuleAdditionalfields().isEmpty()){
+				for(RuleAdditionalFieldVO ruleAdditionalFieldVo:
+					ruleVo.getRule().getRuleAdditionalfields()){
+					ruleAdditionalFieldVo.setIdRuleAdditionalField(null);
+					ruleAdditionalFieldVo.setIdRule(idNodeRuleHolder.getLastIdRule());
+				}
 			}
 			populateRuleCondition(possibleAnswer, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
 					idNodeRuleHolder,ruleExist);
@@ -132,6 +142,15 @@ public class QuestionCopier implements IQuestionCopier{
 				ruleVo.getRule().setIdRule(idNodeRuleHolder.getLastIdRule());
 				ruleExist = false;
 			}
+			// lets check if the rule has additional fields
+			if(!ruleVo.getRule().getRuleAdditionalfields().isEmpty()){
+				for(RuleAdditionalFieldVO ruleAdditionalFieldVo:
+					ruleVo.getRule().getRuleAdditionalfields()){
+					ruleAdditionalFieldVo.setIdRuleAdditionalField(null);
+					ruleAdditionalFieldVo.setIdRule(idNodeRuleHolder.getLastIdRule());
+				}
+			}
+			
 			populateRuleCondition(possibleAnswer, ruleVo.getRule().getConditions(), ruleVo.getRule(), 
 					idNodeRuleHolder,ruleExist);
 		}

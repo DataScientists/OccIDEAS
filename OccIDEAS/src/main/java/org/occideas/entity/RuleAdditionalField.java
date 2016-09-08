@@ -25,7 +25,7 @@ public class RuleAdditionalField implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue
-	private long idRuleAdditionalField;
+	private Long idRuleAdditionalField;
 	private long idRule;
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "idadditionalfield", referencedColumnName = "idadditionalfield")
@@ -52,11 +52,11 @@ public class RuleAdditionalField implements java.io.Serializable {
 		this.value = value;
 	}
 
-	public long getIdRuleAdditionalField() {
+	public Long getIdRuleAdditionalField() {
 		return idRuleAdditionalField;
 	}
 
-	public void setIdRuleAdditionalField(long idRuleAdditionalField) {
+	public void setIdRuleAdditionalField(Long idRuleAdditionalField) {
 		this.idRuleAdditionalField = idRuleAdditionalField;
 	}
 

@@ -77,7 +77,7 @@ public class RuleAdditionalFieldMapperImpl implements RuleAdditionalFieldMapper 
 
         List<RuleAdditionalField> list = new ArrayList<RuleAdditionalField>();
         for ( RuleAdditionalFieldVO vo : voList ) {
-        	if(vo.getIdRuleAdditionalField() != 0){
+        	if(vo.getIdRuleAdditionalField() != null){
         		list.add( convertToRuleAdditionalFieldWithId( vo ) );
         	}else{
         		list.add( convertToRuleAdditionalField( vo ) );
