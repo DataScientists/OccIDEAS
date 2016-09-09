@@ -102,6 +102,20 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 insert into SYS_CONFIG (type,name,value,updatedBy) values ('config','activeIntro','15001','system');
+INSERT INTO SYS_CONFIG (type,value,name,updatedBy) VALUES 
+('studyagent',9,'Trichloroethylene','system'),
+('studyagent',51,'Lead','system'),
+('studyagent',77,'Styrene','system'),
+('studyagent',116,'noise2','system'),
+('studyagent',126,'IMPACT NOISE','system'),
+('studyagent',133,'Mercury','system'),
+('studyagent',134,'Toluene','system'),
+('studyagent',135,'p-xylene','system'),
+('studyagent',136,'Ethyl Benzene','system'),
+('studyagent',137,'n-hexane','system'),
+('studyagent',139,'Carbon Monoxide','system'),
+('studyagent',140,'Carbon Disulphide','system'),
+('studyagent',157,'Vibration','system');
 
 DROP VIEW IF EXISTS InterviewIntroModule_Module;
 CREATE VIEW InterviewIntroModule_Module AS 

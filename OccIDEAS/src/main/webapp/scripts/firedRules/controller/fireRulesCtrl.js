@@ -3,9 +3,9 @@
 			FiredRulesCtrl);
 
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
-	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService','ngToast'];
+	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService','ngToast','SystemPropertyService'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
-			InterviewsService,AssessmentsService,$log,$compile,RulesService,$ngToast) {
+			InterviewsService,AssessmentsService,$log,$compile,RulesService,$ngToast,SystemPropertyService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = data[0];
@@ -33,6 +33,17 @@
 					  node.header = linkNode.name.substr(0,4);
 				  } 
 			});	
+			SystemPropertyService.getAll().then(function(response){
+				var sysprops = response.data;
+				var ssagents = _.filter(sysprops, function(sysprop) {
+					return sysprop.type=='studyagent';
+				});
+				$scope.agents = [];
+				_.each(ssagents, function(ssagent) {
+					var agent = {name:ssagent.name,idAgent:ssagent.value};
+					$scope.agents.push(agent);
+				});
+			});
 		}
 		refreshAssessmentDisplay();
 		function refreshAssessmentDisplay(){
@@ -96,7 +107,12 @@
 													child:[],
 													agentGroupName:rule.agent.agentGroup.name
 											};
-											existingModule.firedRules.push(existingAgent);
+											var isSSAgent = _.find($scope.agents,function(agent){
+												return agent.idAgent == rule.agent.idAgent;
+											});
+											if(isSSAgent){
+												existingModule.firedRules.push(existingAgent);
+											}											
 										}
 										//make sure we dont get duplicate
 										var existingRule = _.find(existingAgent.child,function(exRule){
@@ -111,6 +127,7 @@
 											conditions:rule.conditions
 										});
 										}
+										
 										}
 									});
 								
@@ -403,8 +420,8 @@
 		                	$log.info("Updated Fired Rules");
 		                	$scope.data = response.data[0];
 		                	$scope.data.autoAssessedRules = [];			  
-			  				for(var i=0;i<$scope.data.agents.length;i++){
-			  					var agentAssessing = $scope.data.agents[i]
+			  				for(var i=0;i<$scope.agents.length;i++){
+			  					var agentAssessing = $scope.agents[i]
 			  					var rule = {levelValue:99};
 			  					for(var j=0;j<$scope.data.firedRules.length;j++){
 			  						var firedRule = $scope.data.firedRules[j];
