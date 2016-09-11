@@ -1476,6 +1476,14 @@
 			});
 		}
 		
+		function populateChildNodesOfModules(data,modules){
+			return ModulesService.getWithFragments(data.moduleLinkId).then(function(response){
+				if(response.status == '200' && response.data.length > 0){
+					modules.push(response.data);
+				}
+			});
+		}
+		
 		function getUpdatedModuleRule(model,deffered){
 			ModuleRuleService.getModuleRule(model.idNode).then(function(data) {	
 				if(data.data){
@@ -2088,12 +2096,47 @@
         	}
         }
         
-        $scope.exportToJSON = function(name,includeLinks){
-        	var copyData = angular.copy($scope.data);
-        	var counter = 0;
-
+        function exportJsonForIntroModule(copyData,name,includeLinks){
+        	// get modules from modules view
+        	var modules = [];
         	var promises = [];
+        	ModulesService.getModuleIntroModuleByModuleId(copyData[0].idNode).then(function(response){
+        		if(response.status == '200'){
+        			// loop each module get details for each
+        			_.each(response.data,function(data){
+        				promises.push(populateChildNodesOfModules(data,modules));
+        			});
+        			$q.all(promises).then(function () {
+        				console.log('finish creating the JSON.. exporting in progress.');
+        				copyData[0].modules = modules;
+        				var blob = new Blob([JSON.stringify(copyData)], {
+        					type: "application/json;charset="+ "utf-8" + ";"
+        				});
+
+        				if (window.navigator.msSaveOrOpenBlob) {
+        					navigator.msSaveBlob(blob, name);
+        				} else {
+        					var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
+        					var downloadLink = angular.element(downloadContainer.children()[0]);
+        					downloadLink.attr('href', window.URL.createObjectURL(blob));
+        					downloadLink.attr('download', name);
+        					downloadLink.attr('target', '_blank');
+
+        					$document.find('body').append(downloadContainer);
+        					$timeout(function () {
+        						downloadLink[0].click();
+        						downloadLink.remove();
+        					}, null);
+        				}
+        			});
+        			$mdDialog.hide();
+        		}
+        	});
+        }
+        
+        function exportJsonForModule(copyData,name,includeLinks){
         	var fragments = [];
+        	var	promises = [];
         	// get from module fragment view
         	ModulesService.getModuleFragmentByModuleId(copyData[0].idNode).then(function (response) {
         		if(response.status == '200'){
@@ -2128,6 +2171,34 @@
         			$mdDialog.hide();
         		}
         	});
+        }
+        
+        function populateFragmentsForModule(module){
+        	var fragments = [];
+        	var	promises = [];
+        	// get from module fragment view
+        	ModulesService.getModuleFragmentByModuleId(module.idNode).then(function (response) {
+        		if(response.status == '200'){
+        			// loop each fragment get details for each
+        			_.each(response.data,function(data){
+        				promises.push(populateChildNodesOfFragment(data,fragments));
+        			});
+        			$q.all(promises).then(function () {
+        				module.fragments = fragments;
+        			});
+        		}
+        	});
+        }
+        
+        $scope.exportToJSON = function(name,includeLinks){
+        	var copyData = angular.copy($scope.data);
+        	var counter = 0;
+
+        	if(copyData[0].type == 'M_IntroModule'){
+        		exportJsonForIntroModule(copyData,name,includeLinks);
+        	}else{
+        		exportJsonForModule(copyData,name,includeLinks);
+        	}
         }
         
         $scope.deleteRule = function(rule,model,$event){

@@ -28,6 +28,36 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getModuleIntroModuleByModuleId(idModule){
+			var restUrl = 'web/rest/moduleintromodule/getModuleIntroModuleByModuleId?id=' + idModule;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function get(idModule){
+			var restUrl = 'web/rest/module/get?id=' + idModule;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getWithFragments(idModule){
+			var restUrl = 'web/rest/moduleintromodule/getWithFragments?id=' + idModule;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		var getModules = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
 		    var data = response.data;
@@ -114,7 +144,9 @@
 		    copyModule:copyModule,
 		    importJson:importJson,
             findInterviewByModuleId:findInterviewByModuleId,
-            getModuleFragmentByModuleId:getModuleFragmentByModuleId
+            getModuleFragmentByModuleId:getModuleFragmentByModuleId,
+            getModuleIntroModuleByModuleId:getModuleIntroModuleByModuleId,
+            getWithFragments:getWithFragments
 		};
 	}
 	

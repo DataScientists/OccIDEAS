@@ -61,3 +61,16 @@ FROM Node m
 INNER JOIN Node n ON n.topNodeId = m.idNode
 WHERE n.type = 'Q_linkedajsm';
 
+DROP VIEW IF EXISTS Module_IntroModule;
+CREATE VIEW Module_IntroModule AS 
+SELECT concat(m.idNode, ':',n.idNode, ':',n.number, ':',n.link)  as primaryKey, 
+m.idNode as moduleId, 
+m.name as moduleName,
+n.idNode as idNode,
+ n.name as moduleLinkName,
+ n.number as nodeNumber,
+ n.link as moduleLinkId
+FROM Node m
+INNER JOIN Node n ON n.topNodeId = m.idNode
+WHERE n.type = 'Q_linkedmodule';
+
