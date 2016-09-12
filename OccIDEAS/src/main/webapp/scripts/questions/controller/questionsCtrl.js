@@ -1055,83 +1055,53 @@
 				});				
 			}
 		}
-		function getStudyNodes(nodes,module){
-			var agents = [];
-			agents[0]=138;
-			agents[1]=64;
-			agents[2]=65;
-			agents[3]=66;
-			agents[4]=72;
-			agents[5]=80;
-			agents[6]=78;
-			agents[7]=75;
-			agents[8]=74;
-			agents[9]=81;
-			agents[10]=152;
-			agents[11]=79;
-			agents[12]=153;
-			agents[13]=76;
-			agents[14]=151;
-			agents[15]=77;
-			agents[16]=73;
-			agents[17]=31;
-			agents[18]=35;
-			agents[19]=34;
-			agents[20]=37;
-			agents[21]=39;
-			agents[22]=16;
-			agents[23]=12;
-			agents[24]=55;
-			agents[25]=56;
-			agents[26]=57;
-			agents[27]=58;
-			agents[28]=59;
-			agents[29]=51;
-			agents[30]=60;
-			agents[31]=132;
-			agents[32]=47;
-			agents[33]=150;
-			agents[34]=131;
-			agents[35]=4;
-			agents[36]=10;
-			agents[37]=134;
-			agents[38]=9;
-			var studyNodes = [];
-			if(nodes.length > 0){
-				var i=0;
-				_.each(nodes, function(node) {
-					var found = _.find(node.moduleRule,function(o) { 
-						var bFound = _.find(agents,function(agentId) { 
-							return o.idAgent == agentId; 
+		function getStudyNodes(nodes,module){			
+			SystemPropertyService.getAll().then(function(response){
+				var sysprops = response.data;
+				var ssagents = _.find(sysprops, function(sysprop) {
+					return sysprop.type=='studyagent';
+				});
+				var agents = [];
+				_.each(ssagents, function(ssagent) {
+					agents.push(ssagent.value)
+				}); 
+				var studyNodes = [];
+				if(nodes.length > 0){
+					var i=0;
+					_.each(nodes, function(node) {
+						var found = _.find(node.moduleRule,function(o) { 
+							var bFound = _.find(agents,function(agentId) { 
+								return o.idAgent == agentId; 
+								})
+							if(bFound){
+								console.log("Found rule on "+node.idNode);
+							}
+							return bFound; 
 							})
-						if(bFound){
-							console.log("Found rule on "+node.idNode);
+						if(!found){
+							if(node.type.indexOf('frequency')==-1){//not a frequency 
+								if(node.type.indexOf('linked')==-1){//not a link
+									node.deleted = 1;
+								}else{
+									studyNodes.push(node);
+								}		
+							}			
+						}else{
+							studyNodes.push(node);				
+						} 
+						if(node.nodes){
+							if(node.nodes.length > 0){
+								var sNodes = getStudyNodes(node.nodes,module);
+								for(var i=0;i<sNodes.length;i++){
+									studyNodes.push(sNodes[i]);
+								}						
+							}
 						}
-						return bFound; 
-						})
-					if(!found){
-						if(node.type.indexOf('frequency')==-1){//not a frequency 
-							if(node.type.indexOf('linked')==-1){//not a link
-								node.deleted = 1;
-							}else{
-								studyNodes.push(node);
-							}		
-						}			
-					}else{
-						studyNodes.push(node);				
-					} 
-					if(node.nodes){
-						if(node.nodes.length > 0){
-							var sNodes = getStudyNodes(node.nodes,module);
-							for(var i=0;i<sNodes.length;i++){
-								studyNodes.push(sNodes[i]);
-							}						
-						}
-					}
-					i++;
-				});			
-			}
-			return studyNodes;
+						i++;
+					});			
+				}
+				return studyNodes;
+			});			
 		}							
 		
 		function findAjsms(nodes){
@@ -1219,8 +1189,19 @@
 					}, function(reason) {
 						  alert('Failed: ' + reason);
 					}, function(update) {
-					  conloadModulesToScopesole.log('Got notification: ' + update);
+					  console.log('Got notification: ' + update);
 					});
+				}, function(reason) {
+					  alert('Failed: ' + reason);
+				}, function(update) {
+				  console.log('Got notification: ' + update);
+				});
+		}
+		function processStudyModule(node){
+			var promise = processModuleAndChildAjsms(node);
+			promise.then(function(module) {
+				  console.log('Success on process Module: ' + module.name);
+				  return module;
 				}, function(reason) {
 					  alert('Failed: ' + reason);
 				}, function(update) {
@@ -1311,6 +1292,7 @@
 				  newScope.name = '(Copy)'+$itemScope.$modelValue.name;
 				  newScope.includeRules = true;
 				  newScope.includeLinks = true;
+				  
 				  newScope.vo = $itemScope.$modelValue;
 				  $mdDialog.show({
 					  scope: newScope,
@@ -1330,6 +1312,7 @@
 				  var newScope = $itemScope.$new();
 				  newScope.name = $scope.data[0].name+"_"+$scope.data[0].idNode+".json";
 				  newScope.includeLinks = true;
+				  newScope.filterOnStudyAgents = false;
 				  $mdDialog.show({
 					  scope: newScope,
 				      templateUrl: 'scripts/questions/view/exportToJsonDialog.html',
@@ -2096,11 +2079,11 @@
         	}
         }
         
-        function exportJsonForIntroModule(copyData,name,includeLinks){
+        function exportJsonForIntroModule(ssmodule,name,includeLinks){
         	// get modules from modules view
         	var modules = [];
         	var promises = [];
-        	ModulesService.getModuleIntroModuleByModuleId(copyData[0].idNode).then(function(response){
+        	ModulesService.getModuleIntroModuleByModuleId(ssmodule.idNode).then(function(response){
         		if(response.status == '200'){
         			// loop each module get details for each
         			_.each(response.data,function(data){
@@ -2108,8 +2091,8 @@
         			});
         			$q.all(promises).then(function () {
         				console.log('finish creating the JSON.. exporting in progress.');
-        				copyData[0].modules = modules;
-        				var blob = new Blob([JSON.stringify(copyData)], {
+        				ssmodule.modules = modules;
+        				var blob = new Blob([JSON.stringify(ssmodule)], {
         					type: "application/json;charset="+ "utf-8" + ";"
         				});
 
@@ -2134,20 +2117,22 @@
         	});
         }
         
-        function exportJsonForModule(copyData,name,includeLinks){
+        function exportJsonForModule(ssmodule,name,includeLinks){
         	var fragments = [];
         	var	promises = [];
         	// get from module fragment view
-        	ModulesService.getModuleFragmentByModuleId(copyData[0].idNode).then(function (response) {
+        	ModulesService.getModuleFragmentByModuleId(ssmodule.idNode).then(function (response) {
         		if(response.status == '200'){
         			// loop each fragment get details for each
         			_.each(response.data,function(data){
-        				promises.push(populateChildNodesOfFragment(data,fragments));
+        				if(includeLinks){
+        					promises.push(populateChildNodesOfFragment(data,fragments));
+        				}      				
         			});
         			$q.all(promises).then(function () {
         				console.log('finish creating the JSON.. exporting in progress.');
-        				copyData[0].fragments = fragments;
-        				var blob = new Blob([JSON.stringify(copyData)], {
+        				ssmodule.fragments = fragments;
+        				var blob = new Blob([JSON.stringify(ssmodule)], {
         					type: "application/json;charset="+ "utf-8" + ";"
         				});
 
@@ -2190,14 +2175,19 @@
         	});
         }
         
-        $scope.exportToJSON = function(name,includeLinks){
+        $scope.exportToJSON = function(name,includeLinks,filterOnStudyAgents){
         	var copyData = angular.copy($scope.data);
         	var counter = 0;
-
+        	
+        	var ssmodule = copyData[0];
+        	if(filterOnStudyAgents){
+        		ssmodule = processStudyModule(copyData[0]);
+        	}
+        	
         	if(copyData[0].type == 'M_IntroModule'){
-        		exportJsonForIntroModule(copyData,name,includeLinks);
+        		exportJsonForIntroModule(ssmodule,name,includeLinks);
         	}else{
-        		exportJsonForModule(copyData,name,includeLinks);
+        		exportJsonForModule(ssmodule,name,includeLinks);
         	}
         }
         

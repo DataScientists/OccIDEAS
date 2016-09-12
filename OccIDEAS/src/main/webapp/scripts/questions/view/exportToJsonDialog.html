@@ -16,15 +16,19 @@
         	<input type="text" ng-model="name"/>
         </p>
         <p>
-          <md-checkbox ng-model="includeLinks" aria-label="Include Links">
-  			Include Links
+          <md-checkbox ng-model="includeLinks" aria-label="Export aJSMs">
+  			Export aJSMs
+ 		  </md-checkbox>
+        </p><p>
+          <md-checkbox ng-model="filterOnStudyAgents" aria-label="Filter on Study Agents">
+  			Filter on Study Agents
  		  </md-checkbox>
         </p>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
        <span flex></span>
-      <md-button ng-click="exportToJSON(name,includeLinks)">
+      <md-button ng-click="exportToJSON(name,includeLinks,filterOnStudyAgents)">
         Submit
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">
