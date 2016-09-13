@@ -21,4 +21,7 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder,ModuleReportVO reportVO);
 	public void addNodeRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO report);
 	public void updateMissingLinks(NodeVO nodeVO);
+	public NodeRuleHolder copyModuleAutoGenerateModule(ModuleCopyVO copyVo, ModuleReportVO report);
+	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo, ModuleReportVO report,
+			NodeRuleHolder idNodeRuleHolder);
 }

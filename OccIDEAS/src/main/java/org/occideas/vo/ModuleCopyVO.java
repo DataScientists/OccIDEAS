@@ -9,6 +9,7 @@ public class ModuleCopyVO {
 	private boolean includeRules;
 	private boolean includeLinks;
 	private List<FragmentVO> fragments;
+	private List<ModuleVO> modules;
 
 	public ModuleVO getVo() {
 		return vo;
@@ -49,4 +50,13 @@ public class ModuleCopyVO {
 	public void setFragments(List<FragmentVO> fragments) {
 		this.fragments = fragments;
 	}
+
+	public List<ModuleVO> getModules() {
+		return modules;
+	}
+
+	public void setModules(List<ModuleVO> modules) {
+		this.modules = modules;
+	}
+
 }

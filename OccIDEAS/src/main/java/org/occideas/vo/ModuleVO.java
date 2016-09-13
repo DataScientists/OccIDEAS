@@ -8,17 +8,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class ModuleVO extends NodeVO{
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ModuleVO extends NodeVO {
 
 	@JsonInclude(Include.NON_NULL)
 	@JsonProperty(value = "nodes")
 	private List<QuestionVO> childNodes;
-	
+
 	private List<FragmentVO> fragments = new ArrayList<>();
 
+	private List<ModuleVO> modules = new ArrayList<>();
+
 	public List<QuestionVO> getChildNodes() {
-		if(childNodes == null){
+		if (childNodes == null) {
 			childNodes = new ArrayList<QuestionVO>();
 		}
 		return childNodes;
@@ -35,7 +37,13 @@ public class ModuleVO extends NodeVO{
 	public void setFragments(List<FragmentVO> fragments) {
 		this.fragments = fragments;
 	}
-	
-	
+
+	public List<ModuleVO> getModules() {
+		return modules;
+	}
+
+	public void setModules(List<ModuleVO> modules) {
+		this.modules = modules;
+	}
 
 }

@@ -3,6 +3,7 @@ package org.occideas.module.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.hql.internal.ast.tree.IdentNode;
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
@@ -203,6 +204,20 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
+	public NodeRuleHolder copyModuleAutoGenerateModule(ModuleCopyVO copyVo, ModuleReportVO report) {
+		ModuleVO vo = copyVo.getVo();
+		Long idNode = dao.generateIdNode()+1;
+		vo.setIdNode(idNode);
+		vo.setName(copyVo.getName());
+		vo.setAnchorId(idNode);
+		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
+		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, vo.getChildNodes(), idNodeRuleHolder,report);
+		createMissingModule(vo,copyVo,idNodeRuleHolder);
+		dao.saveCopy(mapper.convertToModule(vo, true));
+		return idNodeRuleHolder;
+	}
+
+	@Override
 	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo,ModuleReportVO report) {
 		ModuleVO copyVO = vo.getVo();
 		Long idNode = dao.generateIdNode()+1;
@@ -210,6 +225,19 @@ public class ModuleServiceImpl implements ModuleService {
 		copyVO.setName(vo.getName());
 		copyVO.setAnchorId(idNode);
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
+		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		createMissingFragments(copyVO,idNodeRuleHolder);
+		dao.saveCopy(mapper.convertToModule(copyVO, true));
+		return idNodeRuleHolder;
+	}
+	
+	@Override
+	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo,ModuleReportVO report,NodeRuleHolder idNodeRuleHolder) {
+		ModuleVO copyVO = vo.getVo();
+		Long idNode = idNodeRuleHolder.getLastIdNode()+1;
+		copyVO.setIdNode(idNode);
+		copyVO.setName(vo.getName());
+		copyVO.setAnchorId(idNode);
 		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
 		createMissingFragments(copyVO,idNodeRuleHolder);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
@@ -225,6 +253,35 @@ public class ModuleServiceImpl implements ModuleService {
 				// no fragment lets create one
 				generateIdNodeForFragments(vo,idNodeRuleHolder);
 				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
+			}else if(list.size() > 1){
+				// found name more than one add warning
+			}else{
+				// use existing fragment
+			}
+		}
+		
+	}
+	
+	public void createMissingModule(ModuleVO moduleVO,ModuleCopyVO copyVO,
+				NodeRuleHolder idNodeRuleHolder) {
+		List<ModuleVO> modules = moduleVO.getModules();
+		for(ModuleVO vo:modules){
+			//check if module exist
+			List<Module> list = dao.findByName(vo.getName());
+			if(list.isEmpty()){
+				ModuleVO newModuleVO = copyVO.getVo();
+				Long idNode = idNodeRuleHolder.getLastIdNode()+1;
+				idNodeRuleHolder.setLastIdNode(idNode);
+				newModuleVO.setIdNode(idNode);
+				newModuleVO.setAnchorId(idNode);
+				ModuleCopyVO newModuleCopyVO = new ModuleCopyVO();
+				newModuleCopyVO.setVo(newModuleVO);
+				newModuleCopyVO.setFragments(vo.getFragments());
+				newModuleCopyVO.setIncludeRules(true);
+				newModuleCopyVO.setName("(Copy from Import)" + vo.getName());
+				newModuleVO.setName(newModuleCopyVO.getName());
+				copyModuleAutoGenerateFragments(newModuleCopyVO,new ModuleReportVO(),idNodeRuleHolder);
+//				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
 			}else if(list.size() > 1){
 				// found name more than one add warning
 			}else{
@@ -272,6 +329,14 @@ public class ModuleServiceImpl implements ModuleService {
 					questionService.updateWithIndependentTransaction(qVO);
 				}
 			}
+			if("Q_linkedmodule".equals(qVO.getType())){
+				List<ModuleVO> list = mapper.convertToModuleVOList(dao.findByName(qVO.getName()), true);
+				if(!list.isEmpty()){
+					ModuleVO module = list.get(0);
+					qVO.setLink(module.getIdNode());
+					questionService.updateWithIndependentTransaction(qVO);
+				}
+			}
 			if(!qVO.getChildNodes().isEmpty()){
 				for(PossibleAnswerVO ansVo:qVO.getChildNodes()){
 					updateMissingLinks(ansVo);
@@ -279,5 +344,6 @@ public class ModuleServiceImpl implements ModuleService {
 			}
 		}
 	}
+
 
 }

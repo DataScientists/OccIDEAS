@@ -204,10 +204,21 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					copyVo.setFragments(vo.getFragments());
 					copyVo.setIncludeRules(true);
 					copyVo.setName("(Copy from Import)" + vo.getName());
-					idNodeHolder = service.copyModuleAutoGenerateFragments(copyVo,report);
-					service.updateMissingLinks(copyVo.getVo());
-					for(FragmentVO fragmentVO:copyVo.getFragments()){
-						service.updateMissingLinks(fragmentVO);
+					copyVo.setModules(vo.getModules());
+					// this is for intro module
+					if("M_IntroModule".equals(vo.getType())){
+						idNodeHolder = service.copyModuleAutoGenerateModule(copyVo,report);
+						service.updateMissingLinks(copyVo.getVo());
+						for(ModuleVO moduleVO:copyVo.getModules()){
+							service.updateMissingLinks(moduleVO);
+						}
+					}else{
+						// this is for fragment
+						idNodeHolder = service.copyModuleAutoGenerateFragments(copyVo,report);
+						service.updateMissingLinks(copyVo.getVo());
+						for(FragmentVO fragmentVO:copyVo.getFragments()){
+							service.updateMissingLinks(fragmentVO);
+						}
 					}
 					//missing rules report
 					service.copyRulesValidateAgent(idNodeHolder,report);
