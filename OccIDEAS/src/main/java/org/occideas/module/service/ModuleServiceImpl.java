@@ -3,7 +3,6 @@ package org.occideas.module.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.hql.internal.ast.tree.IdentNode;
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
@@ -233,14 +232,9 @@ public class ModuleServiceImpl implements ModuleService {
 	
 	@Override
 	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo,ModuleReportVO report,NodeRuleHolder idNodeRuleHolder) {
-		ModuleVO copyVO = vo.getVo();
-		Long idNode = idNodeRuleHolder.getLastIdNode()+1;
-		copyVO.setIdNode(idNode);
-		copyVO.setName(vo.getName());
-		copyVO.setAnchorId(idNode);
-		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
-		createMissingFragments(copyVO,idNodeRuleHolder);
-		dao.saveCopy(mapper.convertToModule(copyVO, true));
+		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNodeRuleHolder.getLastIdNode(), vo.getVo().getChildNodes(), idNodeRuleHolder,report);
+		createMissingFragments(vo.getVo(),idNodeRuleHolder);
+		dao.saveCopy(mapper.convertToModule(vo.getVo(), true));
 		return idNodeRuleHolder;
 	}
 
@@ -269,16 +263,17 @@ public class ModuleServiceImpl implements ModuleService {
 			//check if module exist
 			List<Module> list = dao.findByName(vo.getName());
 			if(list.isEmpty()){
-				ModuleVO newModuleVO = copyVO.getVo();
+				ModuleVO newModuleVO = vo;
 				Long idNode = idNodeRuleHolder.getLastIdNode()+1;
 				idNodeRuleHolder.setLastIdNode(idNode);
+				idNodeRuleHolder.setTopNodeId(idNode);
 				newModuleVO.setIdNode(idNode);
 				newModuleVO.setAnchorId(idNode);
 				ModuleCopyVO newModuleCopyVO = new ModuleCopyVO();
 				newModuleCopyVO.setVo(newModuleVO);
 				newModuleCopyVO.setFragments(vo.getFragments());
 				newModuleCopyVO.setIncludeRules(true);
-				newModuleCopyVO.setName("(Copy from Import)" + vo.getName());
+				newModuleCopyVO.setName(vo.getName());
 				newModuleVO.setName(newModuleCopyVO.getName());
 				copyModuleAutoGenerateFragments(newModuleCopyVO,new ModuleReportVO(),idNodeRuleHolder);
 //				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
