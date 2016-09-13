@@ -1462,7 +1462,9 @@
 		function populateChildNodesOfModules(data,modules){
 			return ModulesService.getWithFragments(data.moduleLinkId).then(function(response){
 				if(response.status == '200' && response.data.length > 0){
-					modules.push(response.data);
+					if(response.data.length > 0){
+						modules.push(response.data[0]);
+					}
 				}
 			});
 		}
@@ -2079,20 +2081,22 @@
         	}
         }
         
-        function exportJsonForIntroModule(ssmodule,name,includeLinks){
+        function exportJsonForIntroModule(copyData,name,includeLinks){
         	// get modules from modules view
         	var modules = [];
         	var promises = [];
-        	ModulesService.getModuleIntroModuleByModuleId(ssmodule.idNode).then(function(response){
+        	ModulesService.getModuleIntroModuleByModuleId(copyData[0].idNode).then(function(response){
         		if(response.status == '200'){
         			// loop each module get details for each
         			_.each(response.data,function(data){
-        				promises.push(populateChildNodesOfModules(data,modules));
+        				if(includeLinks){
+        					promises.push(populateChildNodesOfModules(data,modules));
+        				}
         			});
         			$q.all(promises).then(function () {
         				console.log('finish creating the JSON.. exporting in progress.');
-        				ssmodule.modules = modules;
-        				var blob = new Blob([JSON.stringify(ssmodule)], {
+        				copyData[0].modules = modules;
+        				var blob = new Blob([JSON.stringify(copyData)], {
         					type: "application/json;charset="+ "utf-8" + ";"
         				});
 
@@ -2117,11 +2121,11 @@
         	});
         }
         
-        function exportJsonForModule(ssmodule,name,includeLinks){
+        function exportJsonForModule(copyData,name,includeLinks){
         	var fragments = [];
         	var	promises = [];
         	// get from module fragment view
-        	ModulesService.getModuleFragmentByModuleId(ssmodule.idNode).then(function (response) {
+        	ModulesService.getModuleFragmentByModuleId(copyData[0].idNode).then(function (response) {
         		if(response.status == '200'){
         			// loop each fragment get details for each
         			_.each(response.data,function(data){
@@ -2131,8 +2135,8 @@
         			});
         			$q.all(promises).then(function () {
         				console.log('finish creating the JSON.. exporting in progress.');
-        				ssmodule.fragments = fragments;
-        				var blob = new Blob([JSON.stringify(ssmodule)], {
+        				copyData[0].fragments = fragments;
+        				var blob = new Blob([JSON.stringify(copyData)], {
         					type: "application/json;charset="+ "utf-8" + ";"
         				});
 
@@ -2185,9 +2189,9 @@
         	}
         	
         	if(copyData[0].type == 'M_IntroModule'){
-        		exportJsonForIntroModule(ssmodule,name,includeLinks);
+        		exportJsonForIntroModule(copyData,name,includeLinks);
         	}else{
-        		exportJsonForModule(ssmodule,name,includeLinks);
+        		exportJsonForModule(copyData,name,includeLinks);
         	}
         }
         
