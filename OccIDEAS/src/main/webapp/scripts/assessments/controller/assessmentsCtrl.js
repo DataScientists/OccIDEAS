@@ -161,7 +161,7 @@
 				}
 			});
 			function convertInterviewToAssessmentRow(interviewId){
-				InterviewsService.getInterviewWithRules(interviewId).then(function(response){
+				return InterviewsService.getInterviewWithRules(interviewId).then(function(response){
 					if(response.status == '200'){
 						addAssessmentRowToCsv(response.data[0]);
 					}
@@ -208,7 +208,7 @@
 				}
 			});
 			function convertInterviewToAssessmentNoiseRow(interviewId){
-				AssessmentsService.updateFiredRules(interviewId).then(function(response){
+				return AssessmentsService.updateFiredRules(interviewId).then(function(response){
 					if(response.status == '200'){
 						addAssessmentNoiseRowToCsv(response.data[0]);
 					}
