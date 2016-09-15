@@ -32,16 +32,31 @@
 		<div ng-if="importJsonValidationReport.missingAgentsList.length > 0">
 			{{importJsonValidationReport.missingAgentsList}}
 		</div>
-<!-- 		<div class="divider"></div> -->
-<!-- 		Number of Rules per Agent -->
-<!-- 		<table class="table-bordered"> -->
-<!-- 			<th>Agent</th> -->
-<!-- 			<th>Total Number of Rules</th> -->
-<!-- 			<tr> -->
-<!-- 				<td></td> -->
-<!-- 				<td></td> -->
-<!-- 			</tr> -->
-<!-- 		</table> -->
+		<div class="divider"></div>
+		Modules Summary
+		<table class="table-bordered">
+			<th>Module Id</th>
+			<th>Module Name</th>
+			<th>Created</th>
+			<tr ng-repeat="item in importJsonValidationReport.moduleVODecoratorList">
+				<td>{{item.moduleVO.idNode}}</td>
+				<td>{{item.moduleVO.name}}</td>
+				<td>{{item.created}}</td>
+			</tr>
+		</table>
+		<div class="divider"></div>
+		<div class="divider"></div>
+		Fragments Summary
+		<table class="table-bordered">
+			<th>Fragment Id</th>
+			<th>Fragment Name</th>
+			<th>Created</th>
+			<tr ng-repeat="item in importJsonValidationReport.fragmentVODecoratorList">
+				<td>{{item.fragmentVO.idNode}}</td>
+				<td>{{item.fragmentVO.name}}</td>
+				<td>{{item.created}}</td>
+			</tr>
+		</table>
 		<div class="divider"></div>
 		
 <!-- 		<pre>DEBUG</pre> {{importJsonValidationReport}} -->

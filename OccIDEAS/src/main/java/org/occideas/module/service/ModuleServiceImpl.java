@@ -3,6 +3,7 @@ package org.occideas.module.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
@@ -21,9 +22,11 @@ import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.FragmentVODecorator;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.ModuleVODecorator;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeRuleVO;
 import org.occideas.vo.NodeVO;
@@ -39,6 +42,8 @@ import org.springframework.util.StringUtils;
 @Transactional
 public class ModuleServiceImpl implements ModuleService {
 
+	private Logger log = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private IModuleDao dao;
 	@Autowired
@@ -211,7 +216,7 @@ public class ModuleServiceImpl implements ModuleService {
 		vo.setAnchorId(idNode);
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
 		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, vo.getChildNodes(), idNodeRuleHolder,report);
-		createMissingModule(vo,copyVo,idNodeRuleHolder);
+		createMissingModule(vo,copyVo,idNodeRuleHolder,report);
 		dao.saveCopy(mapper.convertToModule(vo, true));
 		return idNodeRuleHolder;
 	}
@@ -225,7 +230,7 @@ public class ModuleServiceImpl implements ModuleService {
 		copyVO.setAnchorId(idNode);
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
 		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
-		createMissingFragments(copyVO,idNodeRuleHolder);
+		createMissingFragments(copyVO,idNodeRuleHolder,report);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
@@ -233,12 +238,12 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo,ModuleReportVO report,NodeRuleHolder idNodeRuleHolder) {
 		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNodeRuleHolder.getLastIdNode(), vo.getVo().getChildNodes(), idNodeRuleHolder,report);
-		createMissingFragments(vo.getVo(),idNodeRuleHolder);
+		createMissingFragments(vo.getVo(),idNodeRuleHolder,report);
 		dao.saveCopy(mapper.convertToModule(vo.getVo(), true));
 		return idNodeRuleHolder;
 	}
 
-	private void createMissingFragments(ModuleVO copyVO, NodeRuleHolder idNodeRuleHolder) {
+	private void createMissingFragments(ModuleVO copyVO, NodeRuleHolder idNodeRuleHolder,ModuleReportVO report) {
 		List<FragmentVO> fragments = copyVO.getFragments();
 		for(FragmentVO vo:fragments){
 			//check if fragment exist
@@ -247,17 +252,22 @@ public class ModuleServiceImpl implements ModuleService {
 				// no fragment lets create one
 				generateIdNodeForFragments(vo,idNodeRuleHolder);
 				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
+				report.getFragmentVODecoratorList().add(new FragmentVODecorator(vo, true));
 			}else if(list.size() > 1){
 				// found name more than one add warning
+				log.error("Error on creating missing fragments, "
+						+ "found more than one possible match for fragment name "+
+						vo.getName());
 			}else{
 				// use existing fragment
+				report.getFragmentVODecoratorList().add(new FragmentVODecorator(vo, false));
 			}
 		}
 		
 	}
 	
 	public void createMissingModule(ModuleVO moduleVO,ModuleCopyVO copyVO,
-				NodeRuleHolder idNodeRuleHolder) {
+				NodeRuleHolder idNodeRuleHolder,ModuleReportVO report) {
 		List<ModuleVO> modules = moduleVO.getModules();
 		for(ModuleVO vo:modules){
 			//check if module exist
@@ -275,12 +285,17 @@ public class ModuleServiceImpl implements ModuleService {
 				newModuleCopyVO.setIncludeRules(true);
 				newModuleCopyVO.setName(vo.getName());
 				newModuleVO.setName(newModuleCopyVO.getName());
-				copyModuleAutoGenerateFragments(newModuleCopyVO,new ModuleReportVO(),idNodeRuleHolder);
+				report.getModuleVODecoratorList().add(new ModuleVODecorator(newModuleVO,true));
+				copyModuleAutoGenerateFragments(newModuleCopyVO,report,idNodeRuleHolder);
 //				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
 			}else if(list.size() > 1){
 				// found name more than one add warning
+				log.error("Error on creating missing module, "
+						+ "found more than one possible match for module name "+
+						vo.getName());
 			}else{
-				// use existing fragment
+				// use existing module
+				report.getModuleVODecoratorList().add(new ModuleVODecorator(vo,false));
 			}
 		}
 		

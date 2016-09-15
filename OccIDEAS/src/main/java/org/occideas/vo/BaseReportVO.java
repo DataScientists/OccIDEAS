@@ -10,6 +10,8 @@ public abstract class BaseReportVO {
 	private int totalRules;
 	private List<AgentVO> missingAgentsList = new ArrayList<>();
 	private List<RuleVO> missingRuleAgentList = new ArrayList<>();
+	private List<ModuleVODecorator> moduleVODecoratorList = new ArrayList<>();
+	private List<FragmentVODecorator> fragmentVODecoratorList = new ArrayList<>();
 
 	public int getTotalQuestions() {
 		return totalQuestions;
@@ -49,6 +51,22 @@ public abstract class BaseReportVO {
 
 	public void setMissingRuleAgentList(List<RuleVO> missingRuleAgentList) {
 		this.missingRuleAgentList = missingRuleAgentList;
+	}
+
+	public List<ModuleVODecorator> getModuleVODecoratorList() {
+		return moduleVODecoratorList;
+	}
+
+	public void setModuleVODecoratorList(List<ModuleVODecorator> moduleVODecoratorList) {
+		this.moduleVODecoratorList = moduleVODecoratorList;
+	}
+
+	public List<FragmentVODecorator> getFragmentVODecoratorList() {
+		return fragmentVODecoratorList;
+	}
+
+	public void setFragmentVODecoratorList(List<FragmentVODecorator> fragmentVODecoratorList) {
+		this.fragmentVODecoratorList = fragmentVODecoratorList;
 	}
 
 }
