@@ -1,4 +1,4 @@
-<md-dialog aria-label="Export CSV" style="margin:0 0 0 0;padding:0 0 0 0;"  ng-cloak>
+<md-dialog aria-label="Validate Fragments" style="margin:0 0 0 0;padding:0 0 0 0;"  ng-cloak>
 <!-- <pre>{{data | json}}</pre> -->
   <form>
     <md-dialog-content>
@@ -10,12 +10,11 @@
     			<md-progress-circular md-mode="indeterminate" class="col-md-offset-5">
     			</md-progress-circular>
     		</div>
-    		<div class="row" ng-if="interviewExist">
-    					<p>Interview Exist for this Fragment. </p>
-    					<p>Should we update the interviews with the new name?
-    					</p>
+    		<div class="row" ng-if="interviewExist || linkingNodeExist">
+    			<p>Interview or a linking question exist for this Fragment. </p>
+    			<p>Should we update this with the new name?</p>
     		</div>  
-    		<div class="row" ng-if="interviewExist">
+    		<div class="row" ng-if="interviewExist || linkingNodeExist">
     				<div>
     					<button ng-click="updateInterviewModuleNames()">Yes, Update All.</button>
     					<button ng-click="cancelChanges()">No, Cancel Update.</button>

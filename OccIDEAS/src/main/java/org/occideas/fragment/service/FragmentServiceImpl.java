@@ -8,12 +8,14 @@ import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Fragment;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
+import org.occideas.mapper.QuestionMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.rule.dao.RuleDao;
 import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.NodeRuleHolder;
+import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,9 @@ public class FragmentServiceImpl implements FragmentService {
 	
 	@Autowired
 	private IQuestionCopier questionCopier;
+	
+	@Autowired
+	private QuestionMapper questionMapper;
 	
 	@Override
 	public List<FragmentVO> listAll() {
@@ -136,5 +141,10 @@ public class FragmentServiceImpl implements FragmentService {
 		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
 		dao.save(mapper.convertToFragment(copyVO, true));
 		return idNodeRuleHolder;
+	}
+
+	@Override
+	public List<QuestionVO> getLinkingNodes(Long id) {
+		return questionMapper.convertToQuestionVOExcludeChildsList(dao.getLinkingNodeById(id));
 	}
 }

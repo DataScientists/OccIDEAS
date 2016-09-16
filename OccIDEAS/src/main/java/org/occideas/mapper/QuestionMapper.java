@@ -25,4 +25,8 @@ public interface QuestionMapper {
 	
 	List<QuestionVO> convertToQuestionVOReducedDetailsList(List<Question> questionList);
 	
+	List<QuestionVO> convertToQuestionVOExcludeChildsList(List<Question> questionList);
+	
+	QuestionVO convertToQuestionVOExcludeChilds(Question question);
+	
 }

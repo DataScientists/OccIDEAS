@@ -7,6 +7,7 @@ import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.NodeRuleHolder;
+import org.occideas.vo.QuestionVO;
 
 public interface FragmentService extends BaseService<FragmentVO> {
 	
@@ -23,4 +24,6 @@ public interface FragmentService extends BaseService<FragmentVO> {
 	NodeRuleHolder deepCopyFragment(FragmentCopyVO vo, 
 			   FragmentReportVO report,
 			   Long parentIdNode,Long topNodeId);
+
+	List<QuestionVO> getLinkingNodes(Long id);
 }

@@ -19,6 +19,7 @@ import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.NodeRuleHolder;
+import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -58,6 +59,21 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		}
 		return Response.ok(list).build();
 	}
+	
+	@GET
+	@Path(value="/getLinkingNodes")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getLinkingNodes(@QueryParam("id") Long id) {
+		List<QuestionVO> list = new ArrayList<QuestionVO>();
+		try{
+			list = service.getLinkingNodes(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
 	@GET
 	@Path(value="/checkexists")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)

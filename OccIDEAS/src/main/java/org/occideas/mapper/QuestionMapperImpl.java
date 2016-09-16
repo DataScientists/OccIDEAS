@@ -197,4 +197,41 @@ public class QuestionMapperImpl implements QuestionMapper {
 
 	}
 
+	@Override
+	public List<QuestionVO> convertToQuestionVOExcludeChildsList(List<Question> questionList) {
+		if (questionList == null) {
+			return null;
+		}
+
+		List<QuestionVO> list = new ArrayList<>();
+		for (Question entity : questionList) {
+			list.add(convertToQuestionVOExcludeChilds(entity));
+		}
+
+		return list;
+	}
+
+	@Override
+	public QuestionVO convertToQuestionVOExcludeChilds(Question question) {
+		if (question == null) {
+			return null;
+		}
+
+		QuestionVO questionVO = new QuestionVO();
+		questionVO.setIdNode(question.getIdNode());
+		questionVO.setName(question.getName());
+		questionVO.setDescription(question.getDescription());
+		questionVO.setType(question.getType());
+		questionVO.setSequence(question.getSequence());
+		questionVO.setNumber(question.getNumber());
+		questionVO.setParentId(question.getParentId());
+		questionVO.setLink(question.getLink());
+		questionVO.setTopNodeId(question.getTopNodeId());
+		questionVO.setLastUpdated(question.getLastUpdated());
+		questionVO.setOriginalId(question.getOriginalId());
+		questionVO.setDeleted(question.getDeleted());
+		questionVO.setNodeclass(question.getNodeclass());
+		return questionVO;
+	}
+
 }

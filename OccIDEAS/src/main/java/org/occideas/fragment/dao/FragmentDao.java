@@ -10,6 +10,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Fragment;
+import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -28,6 +30,14 @@ public class FragmentDao {
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(Fragment.class)
 				.add(Restrictions.eq("name", name));
+		return crit.list();
+	}
+	
+	public List<Question> getLinkingNodeById(long idNode){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Question.class)
+				.add(Restrictions.eq("link",idNode))
+				.add(Restrictions.eq("deleted",0));
 		return crit.list();
 	}
 

@@ -18,6 +18,16 @@
 			return request.then(handleSuccess1,handleError);
 		}
 		
+		function getLinkingNodes(id) {
+			var restUrl = 'web/rest/fragment/getLinkingNodes?id=' + id;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
 		var getFragments = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
 		    var data = response.data;
@@ -115,7 +125,8 @@
 		    deleteFragment: deleteFragment,
 		    createFragment:createFragment,
 		    findInterviewByFragmentId:findInterviewByFragmentId,
-		    copyModule:copyModule
+		    copyModule:copyModule,
+		    getLinkingNodes:getLinkingNodes
 		};
 		function handleError( response ) {
             if (
