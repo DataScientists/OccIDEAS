@@ -146,3 +146,18 @@ from Node m
 INNER JOIN Interview_Question iq
 where m.idNode = iq.link
 and iq.type='Q_linkedajsm' AND iq.deleted=0;
+
+DROP TABLE IF EXISTS REPORT_HISTORY;
+CREATE TABLE `REPORT_HISTORY` (
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`type` varchar(128) NOT NULL,
+`name` varchar(128) NOT NULL,
+`path` varchar(128) DEFAULT NULL,
+`status` varchar(128) NOT NULL,
+`requestor` varchar(128) NOT NULL,
+`jsonData` TEXT DEFAULT NULL,
+`updatedDt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+`updatedBy` varchar(128) DEFAULT NULL,
+
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

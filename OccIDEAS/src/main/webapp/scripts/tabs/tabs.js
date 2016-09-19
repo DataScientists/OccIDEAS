@@ -532,6 +532,27 @@
                     }
                 }
             }
+        }).state( {
+            name:'tabs.reports',
+			url: '/reports/',
+            sticky: false,
+		    deepStateRedirect: true,
+		    authenticate:true,
+            views:{
+                'reports@tabs':{
+                    templateUrl: 'scripts/reports/view/reports.html',
+                    controller: 'ReportsCtrl as vm',
+                    resolve:{
+                        data: function($stateParams,ReportsService) {
+                            return ReportsService.getAll()
+                                .then(function(response){
+                                    $log.info("Data getting from find reports AJAX ...");
+                                    return response.data;
+                                });
+                        }
+                    }
+                }
+            }
         });
 	}
 })();

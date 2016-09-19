@@ -2,9 +2,10 @@
 	angular.module('occIDEASApp.Assessments')
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
-                          'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService','QuestionsService'];
+                          'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService','QuestionsService'
+                          ,'$sessionStorage','ReportsService'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
-			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService){
+			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService,$sessionStorage,ReportsService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -73,8 +74,10 @@
 							$timeout(function() {
 								angular.element(document.querySelector('#exportCSV')).triggerHandler('click');
 								$scope.cancel();
+								addToReports("Export Report CSV",$scope.csv,"completed");
 				            }, 1000);	
 						}, function(err) {
+							addToReports("Export Report CSV",$scope.csv,"error");
 							console.log('error');
 						});
 					}
@@ -82,7 +85,23 @@
 			}
 		});
 		
-		
+		function addToReports(name,data,status){
+			var jsonData = JSON.stringify(data);
+			var report = {
+				type:"csv",
+				name:name,
+				path:"",
+				status:status,
+				requestor:$sessionStorage.userId,
+				updatedBy:$sessionStorage.userId,
+				jsonData:jsonData
+			}
+			ReportsService.save(report).then(function(response){
+				if(response.status == '200'){
+					console.log("reports was successfully saved.");
+				}
+			});
+		}
 		
 		function populateInterviewAnswerList(interviewId,questionIdList){
 			return InterviewsService.getInterviewQuestionAnswer(interviewId).then(function(response){
