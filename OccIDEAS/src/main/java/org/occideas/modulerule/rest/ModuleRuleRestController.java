@@ -51,6 +51,20 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 	}
 	
 	@GET
+	@Path(value = "/getRuleCountById")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getRuleCountById(@QueryParam("id") Long id) {
+		Number ruleCountById = 0;
+		try {
+			ruleCountById = service.getRuleCountById(id);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(ruleCountById).build();
+	}
+	
+	@GET
 	@Path(value="/getbyidnode")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getByIdNode(@QueryParam("id") Long id) {

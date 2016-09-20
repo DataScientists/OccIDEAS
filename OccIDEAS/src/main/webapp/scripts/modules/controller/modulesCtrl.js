@@ -3,14 +3,37 @@
 		   .controller('ModuleCtrl',ModuleCtrl);
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
                           '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout','InterviewsService'
-                          ,'$q','ngToast'];
+                          ,'$q','ngToast','ModuleRuleService'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
-			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q,$ngToast){
+			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q,
+			$ngToast,ModuleRuleService){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    $scope.showRuleCount = function(row,$event){
+	    	ModuleRuleService.getRuleCountById(row.idNode).then(function(response){
+	    		if(response.status == '200'){
+	    			row.ruleCount = response.data;
+	    			safeDigest(row);
+	    		}
+	    	});
+	    	 if ($event.stopPropagation) $event.stopPropagation();
+	    	    if ($event.preventDefault) $event.preventDefault();
+	    	    $event.cancelBubble = true;
+	    	    $event.returnValue = false;
+	    };
+	    
+	    var safeDigest = function (obj){
+        	if (!obj.$$phase) {
+		        try {
+		        	obj.$digest();
+		        }
+		        catch (e) { }
+        	}
+        };
 	    
 	    $scope.validatePopOver = {
 	    		templateUrl: 'scripts/modules/partials/validatePopOver.html',

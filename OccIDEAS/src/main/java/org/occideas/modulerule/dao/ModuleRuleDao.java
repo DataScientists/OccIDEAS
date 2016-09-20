@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.ModuleRule;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,14 @@ public class ModuleRuleDao {
 	public ModuleRule get(Long id){
       return (ModuleRule) sessionFactory.getCurrentSession().get(ModuleRule.class, id);
     }
+	
+	public Number getRuleCountById(Long id){
+		final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(ModuleRule.class);
+        crit.add(Restrictions.eq("idModule",id));
+        crit.setProjection(Projections.rowCount());
+		return (Number)crit.uniqueResult();
+	}
 
 	public ModuleRule merge(ModuleRule module)   {
       return (ModuleRule) sessionFactory.getCurrentSession().merge(module);

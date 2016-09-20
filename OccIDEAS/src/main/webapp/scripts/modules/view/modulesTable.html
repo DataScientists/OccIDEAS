@@ -58,8 +58,14 @@
 				ng-switch="row.isEditing" ng-class="name.$dirty ? 'bg-warning' : ''"
 				ng-form="name" demo-tracked-table-cell>
 				<div ng-click="row.isEditing = true">
-					<span ng-switch-default class="editable-text">{{row.name}}</span>
-					<span permission="['ROLE_ADMIN']" class="pull-right" ng-if="row.type == 'M_IntroModule'">{{row.idNode}}</span>
+					<span ng-switch-default class="editable-text">
+						{{row.name}}
+					</span>
+					<span permission="['ROLE_ADMIN']" ng-if="row.type == 'M_IntroModule'">{{row.idNode}}</span>
+					<span permission="['ROLE_ADMIN']">
+						<span class="badge" ng-if="row.ruleCount == undefined" ng-click="showRuleCount(row,$event)">rule count</span>
+						<span class="badge" ng-if="row.ruleCount >= 0">rule count:{{row.ruleCount}}</span>
+					</span>
 					<div class="controls"
 						ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
 						ng-switch-when="true">

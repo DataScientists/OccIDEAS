@@ -123,7 +123,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		}
 		return Response.ok(list).build();
 	}
-
+	
 	@Path(value = "/create")
 	@POST
 	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)

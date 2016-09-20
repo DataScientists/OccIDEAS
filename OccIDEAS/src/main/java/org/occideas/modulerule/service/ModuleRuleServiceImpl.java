@@ -69,6 +69,11 @@ public class ModuleRuleServiceImpl implements ModuleRuleService {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Number getRuleCountById(Long id) {
+		return dao.getRuleCountById(id);
+	}
 	
 	
 

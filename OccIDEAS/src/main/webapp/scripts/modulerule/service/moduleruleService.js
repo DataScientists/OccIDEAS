@@ -14,7 +14,15 @@
 			  });
 			  return request.then(handleSuccess,handleError);
 		}; 
-
+		
+		var getRuleCountById = function(idNode) {
+			  var request = $http({
+				method:'GET',
+				url: moduleRuleUrl+'/getRuleCountById?id='+idNode
+			  });
+			  return request.then(handleSuccess,handleError);
+		}; 
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -30,7 +38,8 @@
         }
 		
 		return {
-			getModuleRule: getModuleRule
+			getModuleRule: getModuleRule,
+			getRuleCountById:getRuleCountById
 		};
 	}
 })();
