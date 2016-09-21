@@ -43,6 +43,9 @@
 					var agent = {name:ssagent.name,idAgent:ssagent.value};
 					$scope.agents.push(agent);
 				});
+				if($scope.agents.length==0){
+					$scope.agents = $scope.interview.agents;
+				}
 			});
 		}
 		refreshAssessmentDisplay();
@@ -52,7 +55,7 @@
 				$log.info("Interview from questions AJAX ...");
 				$scope.data = response.data[0];
 			});
-			//getFiredRulesByInterviewId($scope.interview.interviewId);
+			getFiredRulesByInterviewId($scope.interview.interviewId);
 		}
 		vm.interviewFiredRules = null;
 		function getFiredRulesByInterviewId(interviewId){
@@ -137,14 +140,7 @@
 				}
 			});
 		}
-	
-		vm.runFiredRulesBtn = function(){
-			//loop each answer
-			$timeout(function() {
-				getFiredRulesByInterviewId(data[0].interviewId);
-            }, 2000);
-		}
-		
+
 		$scope.closeIntDialog = function(elem,$event) {
         	$($event.target).closest('.int-note').remove();
         	
@@ -173,13 +169,7 @@
 			var scrollY = scrollTarget.offset().top - 150;
 			scrollPane.animate({scrollTop : scrollY }, 1000, 'swing');
 		};
-        
-		if(data[0]){
-			$scope.data = data[0].questionHistory;
-			getFiredRulesByInterviewId(data[0].interviewId);
-		}else{
-			alert("no answered question for this interview id!");
-		}
+
 		vm.showRulesMenu = function(scope){
 			var menu = angular.copy(vm.rulesMenuOptions);
 			if(scope.agent.idAgent!=116){
@@ -239,8 +229,9 @@
 		vm.rulesMenuOptions =
 			[
 			  [ 'Show Rules', function($itemScope, $event, model) {
-				  var ruleArray =_.filter(model.firedRules, function(r){
-						return $itemScope.agent.idAgent === r.agentId; 
+				  
+				  var ruleArray =_.filter($scope.data.firedRules, function(r){
+						return $itemScope.agent.idAgent == r.agentId; 
 				  	});
 				  	 
 				  	for(var i=0;i<ruleArray.length;i++){
@@ -331,7 +322,9 @@
 							hoursbg = hoursbg.toFixed(4);
 							level = noiseRule.ruleAdditionalfields[0].value;
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
-											dB:level+'B',
+									idNode:noiseRule.conditions[0].idNode,
+									nodeText:noiseRule.conditions[0].name,
+									dB:level+'B',
 											backgroundhours: hoursbg,
 											partialExposure:partialExposure,
 											type:'backgroundNoise'}
@@ -375,6 +368,8 @@
 							}
 							
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
+									idNode:noiseRule.conditions[0].idNode,
+									nodeText:noiseRule.conditions[0].name,
 									dB:level,
 									backgroundhours: modHours,
 									partialExposure:partialExposure}

@@ -3,9 +3,10 @@
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
                           'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService','QuestionsService'
-                          ,'$sessionStorage','ReportsService'];
+                          ,'$sessionStorage','ReportsService','SystemPropertyService'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
-			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService,$sessionStorage,ReportsService){
+			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService,
+			$sessionStorage,ReportsService,SystemPropertyService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -188,51 +189,66 @@
 			}
 		};
 		$scope.showExportAssessmentNoiseCSVButton = function() {
-			//get list of interview id
-			InterviewsService.getInterviewsListWithRules().then(function(response){
-				if(response.status == '200'){
-					//display modal with list of id + progress bar
-					$scope.interviewIdList = response.data;
-					$scope.interviewIdCount = $scope.interviewIdList.length;
-					$scope.counter = 0;
-					$scope.interviewCount = $scope.counter;
-					$mdDialog.show({
-						scope: $scope,  
-						preserveScope: true,
-						templateUrl : 'scripts/assessments/partials/exportCSVDialog.html',
-						clickOutsideToClose:false
-					});
-					$scope.csv = [];
-					$scope.csvTemp = [{
-						Q:[]
-					}];
-					//generateUniqueAgentsList(response.data);
-					prepareNoiseHeaderRow();
-					$scope.interviewIdList.reduce(function(p, interview) {
-					    return p.then(function() {
-					    	$scope.interviewIdInProgress = interview.interviewId;
-					    	$scope.counter++;
-							$scope.interviewCount = $scope.counter;
-					        return convertInterviewToAssessmentNoiseRow(interview.interviewId);
-					    });
-					}, $q.when(true)).then(function(finalResult) {
-						console.log('finish extracting data for CSV');
-						$timeout(function() {
-							angular.element(document.querySelector('#exportAssessmentCSV')).triggerHandler('click');
-							$scope.cancel();
-			            }, 1000);	
-					}, function(err) {
-						console.log('error');
-					});
-				}
-			});
-			function convertInterviewToAssessmentNoiseRow(interviewId){
-				return AssessmentsService.updateFiredRules(interviewId).then(function(response){
+			SystemPropertyService.getAll().then(function(response){
+				var sysprops = response.data;
+				var ssagents = _.filter(sysprops, function(sysprop) {
+					return sysprop.type=='studyagent';
+				});
+				$scope.agents = [];
+				_.each(ssagents, function(ssagent) {
+					var agent = {name:ssagent.name,idAgent:ssagent.value};
+					$scope.agents.push(agent);
+				});
+				//get list of interview id
+				InterviewsService.getInterviewsListWithRules().then(function(response){
 					if(response.status == '200'){
-						addAssessmentNoiseRowToCsv(response.data[0]);
+						//display modal with list of id + progress bar
+						$scope.interviewIdList = response.data;
+						$scope.interviewIdCount = $scope.interviewIdList.length;
+						$scope.counter = 0;
+						$scope.interviewCount = $scope.counter;
+						$mdDialog.show({
+							scope: $scope,  
+							preserveScope: true,
+							templateUrl : 'scripts/assessments/partials/exportCSVDialog.html',
+							clickOutsideToClose:false
+						});
+						$scope.csv = [];
+						$scope.csvTemp = [{
+							Q:[]
+						}];
+						if($scope.agents.length==0){
+							generateUniqueAgentsList(response.data);
+						}else{
+							$scope.uniqueListOfAgents = $scope.agents;
+						}
+						prepareNoiseHeaderRow();
+						$scope.interviewIdList.reduce(function(p, interview) {
+						    return p.then(function() {
+						    	$scope.interviewIdInProgress = interview.interviewId;
+						    	$scope.counter++;
+								$scope.interviewCount = $scope.counter;
+						        return convertInterviewToAssessmentNoiseRow(interview.interviewId);
+						    });
+						}, $q.when(true)).then(function(finalResult) {
+							console.log('finish extracting data for CSV');
+							$timeout(function() {
+								angular.element(document.querySelector('#exportAssessmentCSV')).triggerHandler('click');
+								$scope.cancel();
+				            }, 1000);	
+						}, function(err) {
+							console.log('error');
+						});
 					}
 				});
-			}
+				function convertInterviewToAssessmentNoiseRow(interviewId){
+					return AssessmentsService.updateFiredRules(interviewId).then(function(response){
+						if(response.status == '200'){
+							addAssessmentNoiseRowToCsv(response.data[0]);
+						}
+					});
+				}				
+			});			
 		};
 		$scope.cancel = function() {
 			$mdDialog.cancel();

@@ -71,9 +71,9 @@ VALUES ('readonly','$2a$10$0.2nTVeqCm0WAzy3g.cw0.W9qT/GiCJOKYaWciW3kBVd6WZ/2JHWC
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
 VALUES ('admin','$2a$10$lT0RYDaULC.WR3cJNT5JVOs0VQHr/Jdb.gFBydPfuCozGaxL1bL2a', 'admin','admin','int@yahoo.com', 'Active');
 
-INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('1', '1');
-INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('2', '2');
-INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('3', '3');
-INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('4', '4');
-INSERT INTO `occideas`.`APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('5', '5');
+INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('1', '1');
+INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('2', '2');
+INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('3', '3');
+INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('4', '4');
+INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('5', '5');
 

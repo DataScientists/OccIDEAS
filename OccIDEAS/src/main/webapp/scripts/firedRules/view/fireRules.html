@@ -79,6 +79,7 @@
 		<thead>
 		<tr>
 			<td>Node Number</td>
+			<td>Answer</td>
 			<td>dB</td>
 			<td>Hours</td>
 			<td>Partial Exposure</td>
@@ -86,7 +87,8 @@
 		</thead> 
 		
 		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
-			<td>{{noiseRow.nodeNumber}}</td>
+			<td ng-click="highlightNode(noiseRow.idNode)">{{noiseRow.nodeNumber}}</td>
+			<td>{{noiseRow.nodeText}}</td>
 			<td>{{noiseRow.dB}}</td>
 			<td>{{noiseRow.backgroundhours}}</td>
 			<td>{{noiseRow.partialExposure}}</td>

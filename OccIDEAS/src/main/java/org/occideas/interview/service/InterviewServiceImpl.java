@@ -118,7 +118,7 @@ public class InterviewServiceImpl implements InterviewService {
 		List<Interview> debug = interviewDao.getInterviewIdList();
 		List<Interview> debug1 = new ArrayList<Interview>();
 		for(int i=0;i<debug.size();i++){
-			if(i<5){
+			if(i<10){
 				debug1.add(debug.get(i));
 			}		
 		}
@@ -131,7 +131,7 @@ public class InterviewServiceImpl implements InterviewService {
 		List<Interview> debug = interviewDao.getAll();
 		List<Interview> debug1 = new ArrayList<Interview>();
 		for(int i=0;i<debug.size();i++){
-			if(i<5){
+			if(i<10){
 				debug1.add(debug.get(i));
 			}		
 		}
