@@ -62,10 +62,7 @@
 						{{row.name}}
 					</span>
 					<span permission="['ROLE_ADMIN']" ng-if="row.type == 'M_IntroModule'">{{row.idNode}}</span>
-					<span permission="['ROLE_ADMIN']">
-						<span class="badge" ng-if="row.ruleCount == undefined" ng-click="showRuleCount(row,$event)">rule count</span>
-						<span class="badge" ng-if="row.ruleCount >= 0">rule count:{{row.ruleCount}}</span>
-					</span>
+					
 					<div class="controls"
 						ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
 						ng-switch-when="true">
@@ -86,6 +83,14 @@
 						<input type="text" name="description" ng-model="row.description"
 							class="editable-input form-control input-sm" required />
 					</div>
+				</div>
+			</td>
+			<td permission="['ROLE_ADMIN']">
+				<div >
+					<span >
+						<span class="badge" ng-if="row.ruleCount == undefined" ng-click="showRuleCount(row,$event)" title="Click for Rule Count">&nbsp;</span>
+						<span class="badge" ng-if="row.ruleCount >= 0">{{row.ruleCount}}</span>
+					</span>
 				</div>
 			</td>
 			<td>

@@ -43,7 +43,7 @@ public class InterviewServiceImpl implements InterviewService {
 			}		
 		}
 		System.out.println("2:listAllWithRules:"+new Date());
-		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesVOList(debug);
+		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesVOList(debug1);
 		System.out.println("3:listAllWithRules:"+new Date());
         return retValue;
     }
@@ -123,7 +123,7 @@ public class InterviewServiceImpl implements InterviewService {
 			}		
 		}
 		System.out.println("2:getInterviewIdlist:"+new Date());
-		return mapper.convertToInterviewIdList(debug);
+		return mapper.convertToInterviewIdList(debug1);
 	}
 	@Override
 	public List<InterviewVO> listAllInterviewsWithoutAnswers() {
@@ -136,7 +136,7 @@ public class InterviewServiceImpl implements InterviewService {
 			}		
 		}
 		System.out.println("2:listAllInterviewsWithoutAnswers:"+new Date());
-		return mapper.convertToInterviewWithoutAnswersList(debug);
+		return mapper.convertToInterviewWithoutAnswersList(debug1);
 	}
 	@Override
 	public List<InterviewVO> getInterviewQuestionAnswer(long idinterview) {
