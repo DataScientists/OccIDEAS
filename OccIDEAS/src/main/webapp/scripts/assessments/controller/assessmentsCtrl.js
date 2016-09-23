@@ -531,7 +531,9 @@
 						sortHeaderList[header] = _.sortBy(sortHeaderList[header], 'header');
 					}
 					header = data.name.substring(0, 4);
-					sortHeaderList[header] = [];
+					if(!sortHeaderList[topHeader]){
+						sortHeaderList[topHeader] = [];
+					}
 				// if the unique question is an actual question get the number and append to its
 				// respective header which can be a module/ajsm or fragment
 				}else if(data.questionId){
@@ -564,6 +566,9 @@
 					else{
 					// look for the top node id in listquestion
 					// build the header and check it in sortHeaderList
+						if(data.questionId==43552){
+							console.log(data);
+						}
 					var topModule = _.find(listOfQuestion,function(lq){
 						return lq.link == data.topNodeId;
 					});
