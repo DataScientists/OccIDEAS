@@ -498,6 +498,8 @@
 									}else{
 										obj.A.push(ans.name);
 									}
+							}else{
+								obj.A.push("-- No Answer --");
 							}
 						}else{
 							obj.A.push("-- Question Not Asked --");
@@ -513,7 +515,7 @@
 			_.each(response,function(data){
 				data.questionHistory = _.filter(data.questionHistory,function(qh){
 					//$log.info("Interviewid: "+data.interviewId+" Questionid: "+qh.questionId);
-					return qh.deleted == 0;
+					return qh.deleted == 0 && qh.topNodeId==15001;
 				});
 				//$log.info("Interviewid: "+data.interviewId+" Questionid: "); 
 				// join all questions to listOfQuestion
