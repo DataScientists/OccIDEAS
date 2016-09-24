@@ -15,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
@@ -134,4 +135,13 @@ public class Rule implements Serializable {
 	public void setAgent(Agent agent) {
 		this.agent = agent;
 	}	
+	@Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).toHashCode();
+    }
+	@Override
+    public boolean equals(Object o)
+    {
+        return this.getIdRule()==((Rule)o).getIdRule();
+    }
 }

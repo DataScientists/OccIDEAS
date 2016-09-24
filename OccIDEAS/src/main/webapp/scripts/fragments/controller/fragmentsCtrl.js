@@ -2,13 +2,36 @@
 	angular.module('occIDEASApp.Fragments')
 		   .controller('FragmentCtrl',FragmentCtrl);
 	
-	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter','$mdDialog','$q','InterviewsService','$timeout','QuestionsService'];
-	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter,$mdDialog,$q,InterviewsService,$timeout,QuestionsService){
+	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter','$mdDialog','$q',
+	                        'InterviewsService','$timeout','QuestionsService','ModuleRuleService'];
+	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter,$mdDialog,$q,
+			InterviewsService,$timeout,QuestionsService,ModuleRuleService){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    $scope.showRuleCount = function(row,$event){
+	    	ModuleRuleService.getRuleCountById(row.idNode).then(function(response){
+	    		if(response.status == '200'){
+	    			row.ruleCount = response.data;
+	    			safeDigest(row);
+	    		}
+	    	});
+	    	 if ($event.stopPropagation) $event.stopPropagation();
+	    	    if ($event.preventDefault) $event.preventDefault();
+	    	    $event.cancelBubble = true;
+	    	    $event.returnValue = false;
+	    };
+	    var safeDigest = function (obj){
+        	if (!obj.$$phase) {
+		        try {
+		        	obj.$digest();
+		        }
+		        catch (e) { }
+        	}
+        };
 	    
 	    $scope.cancel = function() {
 			$mdDialog.cancel();
@@ -208,6 +231,7 @@
 	    }
 	    function del(row) {
 	    	row.deleted = 1;
+	    	row.name = 'DELETED_'+row.name;
 	    	var data =  FragmentsService.deleteFragment(row).then(function(response) {
 	    		if(response.status === 200){
 					console.log('Module was deleted!');

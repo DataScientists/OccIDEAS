@@ -1,17 +1,17 @@
 package org.occideas.modulerule.dao;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.ModuleRule;
+import org.occideas.entity.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ModuleRuleDao {
@@ -35,8 +35,14 @@ public class ModuleRuleDao {
 		final Session session = sessionFactory.getCurrentSession();
         final Criteria crit = session.createCriteria(ModuleRule.class);
         crit.add(Restrictions.eq("idModule",id));
-        crit.setProjection(Projections.rowCount());
-		return (Number)crit.uniqueResult();
+        ArrayList<Rule> rules = new ArrayList<Rule>();
+        for(Object o:crit.list()){
+        	ModuleRule mr = (ModuleRule)o;
+        	if(!rules.contains(mr.getRule())){
+        		rules.add(mr.getRule());
+        	}
+        }
+		return (Number)rules.size();
 	}
 
 	public ModuleRule merge(ModuleRule module)   {

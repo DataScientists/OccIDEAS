@@ -255,6 +255,7 @@
 	    }
 	    function del(row) {
 	    	row.deleted = 1;
+	    	row.name = 'DELETED_'+row.name;
 	    	cleanseValidation();
 	    	var data =  ModulesService.deleteModule(row).then(function(response) {
 	    		if(response.status === 200){

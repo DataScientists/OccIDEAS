@@ -507,6 +507,8 @@
 									}else{
 										obj.A.push(ans.name);
 									}
+							}else{
+								obj.A.push("-- No Answer --");
 							}
 						}else{
 							obj.A.push("-- Question Not Asked --");
@@ -522,7 +524,7 @@
 			_.each(response,function(data){
 				data.questionHistory = _.filter(data.questionHistory,function(qh){
 					//$log.info("Interviewid: "+data.interviewId+" Questionid: "+qh.questionId);
-					return qh.deleted == 0;
+					return qh.deleted == 0 && qh.topNodeId==15001;
 				});
 				//$log.info("Interviewid: "+data.interviewId+" Questionid: "); 
 				// join all questions to listOfQuestion
@@ -538,7 +540,9 @@
 						sortHeaderList[header] = _.sortBy(sortHeaderList[header], 'header');
 					}
 					header = data.name.substring(0, 4);
-					sortHeaderList[header] = [];
+					if(!sortHeaderList[topHeader]){
+						sortHeaderList[topHeader] = [];
+					}
 				// if the unique question is an actual question get the number and append to its
 				// respective header which can be a module/ajsm or fragment
 				}else if(data.questionId){
@@ -571,6 +575,9 @@
 					else{
 					// look for the top node id in listquestion
 					// build the header and check it in sortHeaderList
+						if(data.questionId==43552){
+							console.log(data);
+						}
 					var topModule = _.find(listOfQuestion,function(lq){
 						return lq.link == data.topNodeId;
 					});
