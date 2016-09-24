@@ -1,5 +1,6 @@
 package org.occideas.reporthistory.service;
 
+import java.io.File;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -37,6 +38,8 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 
 	@Override
 	public void delete(ReportHistoryVO vo) {
+		File file = new File(vo.getPath());
+		file.delete();
 		dao.delete(mapper.convertToReportHistory(vo));
 	}
 

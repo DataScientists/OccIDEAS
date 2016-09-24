@@ -65,7 +65,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
 		SystemPropertyVO vo = null;
 		if (id == -1) {
-			vo = sysPropService.getById(Constant.STUDY_INTRO);
+			vo = sysPropService.getByName(Constant.STUDY_INTRO);
 			if(vo !=null){
 				if(NumberUtils.isNumber(vo.getValue())){
 					id = Long.valueOf(vo.getValue());
@@ -98,7 +98,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		try {
 			SystemPropertyVO vo = null;
 			if (id == -1) {
-				vo = sysPropService.getById(Constant.STUDY_INTRO);
+				vo = sysPropService.getByName(Constant.STUDY_INTRO);
 				if(vo !=null){
 				   if(NumberUtils.isNumber(vo.getValue())){
 					   id = Long.valueOf(vo.getValue());
