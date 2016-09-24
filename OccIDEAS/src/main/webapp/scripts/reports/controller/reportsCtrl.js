@@ -8,6 +8,21 @@
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		
+		$scope.del = function(reportHistoryVO){
+			ReportsService.deleteReport(reportHistoryVO).then(function(response) {
+	    		if(response.status === 200){
+					console.log('Report was deleted!');
+					self.tableParams.shouldGetData = true;
+			        self.tableParams.reload().then(function (data) {
+			            if (data.length === 0 && self.tableParams.total() > 0) {
+			                self.tableParams.page(self.tableParams.page() - 1);
+			                self.tableParams.reload();
+			            }
+			        });
+				}
+	        });
+		}
+		
 		$scope.downloadReport = function(reportHistoryVO){
 			ReportsService.downloadReport(reportHistoryVO).then(function(response){
 				var data = response.data;
