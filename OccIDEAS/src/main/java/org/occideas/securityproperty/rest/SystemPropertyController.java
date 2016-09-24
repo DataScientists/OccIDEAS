@@ -24,10 +24,24 @@ public class SystemPropertyController {
 	@GET
 	@Path(value = "/getById")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
-	public Response getById(@QueryParam("id") String id) {
+	public Response getById(@QueryParam("id") long id) {
 		SystemPropertyVO sysProp = null;
 		try {
 			sysProp = service.getById(id);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(sysProp).build();
+	}
+	
+	@GET
+	@Path(value = "/getByName")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getByName(@QueryParam("name") String name) {
+		SystemPropertyVO sysProp = null;
+		try {
+			sysProp = service.getByName(name);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

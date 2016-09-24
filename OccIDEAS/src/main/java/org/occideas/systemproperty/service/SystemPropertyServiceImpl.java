@@ -27,8 +27,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService{
 	}
 
 	@Override
-	public SystemPropertyVO getById(String variable) {
-		SystemProperty sysProp = dao.getById(variable);
+	public SystemPropertyVO getById(long id) {
+		SystemProperty sysProp = dao.getById(id);
 		return mapper.convertSytemPropertyToSystemPropertyVO(sysProp);
 	}
 
@@ -41,6 +41,12 @@ public class SystemPropertyServiceImpl implements SystemPropertyService{
 	@Override
 	public void delete(SystemPropertyVO vo) {
 		dao.delete(mapper.convertSytemPropertyVOtoSystemProperty(vo));
+	}
+
+	@Override
+	public SystemPropertyVO getByName(String name) {
+		SystemProperty sysProp = dao.getByName(name);
+		return mapper.convertSytemPropertyToSystemPropertyVO(sysProp);
 	}
 
 }

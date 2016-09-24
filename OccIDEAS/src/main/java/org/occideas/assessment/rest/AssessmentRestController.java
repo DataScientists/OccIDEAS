@@ -65,7 +65,7 @@ public class AssessmentRestController {
     public Response exportInterviewsCSV() {
 		//check if we have the directory TreeSet ins sys prop
 		SystemPropertyVO property = systemPropertyService.
-				getById(Constant.REPORT_EXPORT_CSV_DIR);
+				getByName(Constant.REPORT_EXPORT_CSV_DIR);
 		if(property == null){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
 		}

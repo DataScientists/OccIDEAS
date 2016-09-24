@@ -41,11 +41,25 @@
 		}
 		
 		$scope.newExportCSVButton = function(){
-			 ngToast.create({
-	    		  className: 'success',
-	    		  content: 'Your report is now running .... Kindly check the reports tab for details.'
-	    	 });
-			InterviewsService.exportInterviewsCSV().then(function(response){
+			SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response){
+				if(response.status == '200'){
+					if(response.data){
+						 ngToast.create({
+				    		  className: 'success',
+				    		  content: 'Your report is now running .... Kindly check the reports tab for details.'
+				    	 });
+						InterviewsService.exportInterviewsCSV().then(function(response){
+						});
+					}else{
+						ngToast.create({
+				    		  className: 'danger',
+				    		  content: 'Unable to generate report no directory path defined. SystemProperty "REPORT_EXPORT_CSV_DIR" is not defined.',
+				    		  dismissButton: true,
+			      	    	  dismissOnClick:false,
+			      	    	  animation:'slide'
+						});
+					}
+				}
 			});
 		}
 		

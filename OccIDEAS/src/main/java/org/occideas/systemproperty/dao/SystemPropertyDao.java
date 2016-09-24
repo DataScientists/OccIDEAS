@@ -22,10 +22,10 @@ public class SystemPropertyDao {
 		return sysProp;
 	}
 
-	public SystemProperty getById(String name) {
+	public SystemProperty getById(long id) {
 		final Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(SystemProperty.class);
-		criteria.add(Restrictions.eq("name", name));
+		criteria.add(Restrictions.eq("id", id));
 
 		SystemProperty sysProp = (SystemProperty) criteria.uniqueResult();
 		return sysProp;
@@ -39,5 +39,14 @@ public class SystemPropertyDao {
 
 	public void delete(SystemProperty entity) {
 		sessionFactory.getCurrentSession().delete(entity);
+	}
+
+	public SystemProperty getByName(String name) {
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(SystemProperty.class);
+		criteria.add(Restrictions.eq("name", name));
+
+		SystemProperty sysProp = (SystemProperty) criteria.uniqueResult();
+		return sysProp;
 	}
 }

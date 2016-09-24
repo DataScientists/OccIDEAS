@@ -7,8 +7,9 @@ import org.occideas.vo.SystemPropertyVO;
 public interface SystemPropertyService {
 
 	public SystemPropertyVO save(SystemPropertyVO sysProp);
-	public SystemPropertyVO getById(String variable);
+	public SystemPropertyVO getById(long id);
 	public List<SystemPropertyVO> getAll();
 	public void delete(SystemPropertyVO vo);
+	public SystemPropertyVO getByName(String name);
 	
 }

@@ -13,6 +13,15 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getByName(name) {
+			var restUrl = 'web/rest/systemproperty/getByName?name=' + name;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function getAll() {
 			var restUrl = 'web/rest/systemproperty/getAll';
 			var request =  $http({
@@ -59,6 +68,7 @@
         }
 		return {
 			getById: getById,
+			getByName:getByName,
 			getAll: getAll,
 			deleteProperty:deleteProperty,
 			save: save
