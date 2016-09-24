@@ -1,5 +1,5 @@
 <div ng-cloak>
-	<table ng-table="vm.tableParams" class="table" show-filter="true">
+	<table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped" show-filter="true">
 		<tr ng-repeat="reports in $data">
 			<td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
 				{{reports.name}}</td>
@@ -10,8 +10,6 @@
 			<td title="'Progress'" >{{reports.progress}}</td>
 			<td title="'Status'" filter="{ status: 'text'}" sortable="'status'">
 				{{reports.status}}</td>
-			<td title="'Date'" filter="{ updatedDt: 'text'}"
-				sortable="'updatedDt'">{{reports.updatedDt | date:'yyyy-MM-dd'}}</td>
 			<td title="'Download'">
 				<button type="button"
 				    ng-if="reports.type == 'Module JSON (Export)'" 
@@ -31,6 +29,13 @@
 					ng-disabled="reports.status != 'Completed'"
 					ng-click="downloadReport(reports)">
 					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+				</button> 
+			</td>
+			<td title="'Delete'">
+				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
+					ng-disabled="reports.status != 'Completed'"
+					confirm="Delete file permanently {{reports.name}}?">
+					<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
 				</button> 
 			</td>
 		</tr>
