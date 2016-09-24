@@ -3,10 +3,10 @@
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
                           'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService','QuestionsService'
-                          ,'$sessionStorage','ReportsService','SystemPropertyService'];
+                          ,'$sessionStorage','ReportsService','SystemPropertyService','ngToast'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
 			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService,
-			$sessionStorage,ReportsService,SystemPropertyService){
+			$sessionStorage,ReportsService,SystemPropertyService,ngToast){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -41,10 +41,11 @@
 		}
 		
 		$scope.newExportCSVButton = function(){
+			 ngToast.create({
+	    		  className: 'success',
+	    		  content: 'Your report is now running .... Kindly check the reports tab for details.'
+	    	 });
 			InterviewsService.exportInterviewsCSV().then(function(response){
-				if(response.status == '200'){
-					alert("success");
-				}
 			});
 		}
 		

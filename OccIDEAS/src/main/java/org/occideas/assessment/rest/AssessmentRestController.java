@@ -141,7 +141,7 @@ public class AssessmentRestController {
 
 	private String createFileName() {
 		Date date = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy-HH:mm");
+		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy-HHmm");
 		String now = format.format(date);
 		String exportFileCSV = "export_interviews_"+now+".csv";
 		return exportFileCSV;
