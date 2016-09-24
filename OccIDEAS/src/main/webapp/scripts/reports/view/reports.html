@@ -7,18 +7,29 @@
 				{{reports.type}}</td>
 			<td title="'Requestor'" filter="{ requestor: 'text'}"
 				sortable="'requestor'">{{reports.requestor}}</td>
+			<td title="'Progress'" >{{reports.progress}}</td>
 			<td title="'Status'" filter="{ status: 'text'}" sortable="'status'">
 				{{reports.status}}</td>
 			<td title="'Date'" filter="{ updatedDt: 'text'}"
 				sortable="'updatedDt'">{{reports.updatedDt | date:'yyyy-MM-dd'}}</td>
 			<td title="'Download'">
-				<button type="button" 
+				<button type="button"
+				    ng-if="reports.type == 'Module JSON (Export)'" 
 					ng-csv="getArray(reports.jsonData)"
-					filename="export.csv"
+					filename="export_module_json.csv"
 					lazy-load="true"
 					field-separator=","
 					class="btn btn-default"
-					aria-label="Left Align">
+					aria-label="Left Align"
+					ng-disabled="">
+					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+				</button>
+				<button type="button"
+				    ng-if="reports.type != 'Module JSON (Export)'" 
+					class="btn btn-default"
+					aria-label="Left Align"
+					ng-disabled="reports.status != 'Completed'"
+					ng-click="downloadReport(reports)">
 					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 				</button> 
 			</td>

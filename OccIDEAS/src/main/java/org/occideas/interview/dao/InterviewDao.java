@@ -10,6 +10,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Agent;
 import org.occideas.entity.Interview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -120,6 +121,20 @@ public class InterviewDao {
 	    			    .setResultTransformer(Transformers.aliasToBean(Interview.class));
 	    List<Interview> list = crit.list();
 		return list;
+	}
+
+	public List<Interview> getAllInterviewsWithoutAnswers() {
+		final Session session = sessionFactory.getCurrentSession();
+	      final Criteria crit = session.createCriteria(Interview.class)		  						
+	    		  						.setProjection(Projections.projectionList()
+	    	       		  					.add(Projections.property("fragment"),"fragment")
+	    	       		  					.add(Projections.property("module"),"module")
+	    	       		  					.add(Projections.property("idinterview"),"idinterview")
+	    	       		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
+	    		  						.addOrder(Order.asc("referenceNumber"))
+	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
+	      List<Interview> temp = crit.list();
+	      return temp;
 	}
 
 }

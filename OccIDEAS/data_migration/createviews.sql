@@ -16,7 +16,6 @@ INNER JOIN Rule r ON nr.idRule = r.idRule
 INNER JOIN AgentInfo a ON r.agentId = a.idAgent
 WHERE m.deleted=0 and n.deleted=0 and r.deleted=0;
 
-
 DROP VIEW IF EXISTS InterviewIntroModule_Module;
 CREATE VIEW InterviewIntroModule_Module AS 
 SELECT 

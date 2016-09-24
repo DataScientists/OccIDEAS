@@ -40,6 +40,14 @@
 			return $scope.csv;
 		}
 		
+		$scope.newExportCSVButton = function(){
+			InterviewsService.exportInterviewsCSV().then(function(response){
+				if(response.status == '200'){
+					alert("success");
+				}
+			});
+		}
+		
 		$scope.showExportCSVButton = function() {
 		//get list of interview id
 		InterviewsService.getInterviewIdList().then(function(response){
@@ -89,10 +97,11 @@
 		function addToReports(name,data,status){
 			var jsonData = JSON.stringify(data);
 			var report = {
-				type:"csv",
+				type:"Module JSON (Export)",
 				name:name,
 				path:"",
 				status:status,
+				progress:"100",
 				requestor:$sessionStorage.userId,
 				updatedBy:$sessionStorage.userId,
 				jsonData:jsonData

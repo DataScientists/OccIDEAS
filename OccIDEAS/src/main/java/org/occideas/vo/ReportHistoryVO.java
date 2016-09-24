@@ -10,6 +10,7 @@ public class ReportHistoryVO {
 	private String path;
 	private String status;
 	private String requestor;
+	private String progress;
 	private Date updatedDt;
 	private String updatedBy;
 	private String jsonData;
@@ -60,6 +61,14 @@ public class ReportHistoryVO {
 
 	public void setRequestor(String requestor) {
 		this.requestor = requestor;
+	}
+	
+	public String getProgress() {
+		return progress;
+	}
+
+	public void setProgress(String progress) {
+		this.progress = progress;
 	}
 
 	public Date getUpdatedDt() {

@@ -8,6 +8,20 @@
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		
+		$scope.downloadReport = function(reportHistoryVO){
+			ReportsService.downloadReport(reportHistoryVO).then(function(response){
+				var data = response.data;
+				if(response.status == '200'){
+					 var anchor = angular.element('<a/>');
+				     anchor.attr({
+				         href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data),
+				         target: '_blank',
+				         download: reportHistoryVO.name
+				     })[0].click();
+				}
+			});
+		};
+		
 		$scope.getArray = function(jsonData){
 			return JSON.parse(jsonData);
 		}

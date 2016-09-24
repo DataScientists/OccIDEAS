@@ -12,6 +12,7 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+    	
     	function getInterviews() {
 			var restUrl = 'web/rest/interview/getlist';
 			var request =  $http({

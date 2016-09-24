@@ -129,6 +129,16 @@
             return request.then(handleSuccess, handleError);
         }
         
+        function exportInterviewsCSV() {
+            var url = 'web/rest/assessment/exportInterviewsCSV';
+            var request = $http({
+                method: 'GET',
+                url: url,
+                ignoreLoadingBar: true
+            })
+            return request.then(handleSuccess, handleError);
+        }
+        
         function getInterviewIdList(){
         	var url = 'web/rest/interview/getAllInterviewId';
         	var request = $http({
@@ -358,7 +368,8 @@
             updateDisplayAnswerList:updateDisplayAnswerList,
             updateModuleNameForInterviewId:updateModuleNameForInterviewId,
             findModulesByInterviewId:findModulesByInterviewId,
-            getInterviewsListWithRules:getInterviewsListWithRules
+            getInterviewsListWithRules:getInterviewsListWithRules,
+            exportInterviewsCSV:exportInterviewsCSV
         };
     }
 })();

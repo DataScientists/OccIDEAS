@@ -154,6 +154,7 @@ CREATE TABLE `REPORT_HISTORY` (
 `name` varchar(128) NOT NULL,
 `path` varchar(128) DEFAULT NULL,
 `status` varchar(128) NOT NULL,
+`progress` varchar(128) NOT NULL,
 `requestor` varchar(128) NOT NULL,
 `jsonData` LONGTEXT DEFAULT NULL,
 `updatedDt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * Created by quangnn on 2/17/2016.
  */
-@JsonIgnoreProperties({"endNotes","interviewStarted","interviewEnded","showedQuestion"})
+@JsonIgnoreProperties({ "endNotes", "interviewStarted", "interviewEnded", "showedQuestion" })
 public class InterviewVO {
 	private final String INTRO_MODULE = "M_IntroModule";
 
@@ -30,13 +30,13 @@ public class InterviewVO {
 	private ParticipantVO participant;
 
 	private List<InterviewQuestionVO> actualQuestion = new ArrayList<>();
-	
+
 	private List<InterviewQuestionVO> questionHistory = new ArrayList<>();
-	
+
 	private List<InterviewQuestionVO> questionQueueUnprocessed = new ArrayList<>();
-	
+
 	private List<InterviewAnswerVO> answerHistory = new ArrayList<>();
-	
+
 	private List<InterviewModuleVO> modules = new ArrayList<>();
 
 	private List<RuleVO> firedRules;
@@ -46,7 +46,7 @@ public class InterviewVO {
 	private List<RuleVO> manualAssessedRules;
 
 	private List<AgentVO> agents;
-	
+
 	private List<NoteVO> notes;
 
 	@JsonInclude(Include.NON_NULL)
@@ -255,7 +255,7 @@ public class InterviewVO {
 	}
 
 	public List<NoteVO> getNotes() {
-		if(notes==null){
+		if (notes == null) {
 			notes = new ArrayList<NoteVO>();
 		}
 		return notes;
@@ -296,5 +296,33 @@ public class InterviewVO {
 	public void setQuestionQueueUnprocessed(List<InterviewQuestionVO> questionQueueUnprocessed) {
 		this.questionQueueUnprocessed = questionQueueUnprocessed;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (interviewId ^ (interviewId >>> 32));
+		result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		InterviewVO other = (InterviewVO) obj;
+		if (interviewId != other.interviewId)
+			return false;
+		if (referenceNumber == null) {
+			if (other.referenceNumber != null)
+				return false;
+		} else if (!referenceNumber.equals(other.referenceNumber))
+			return false;
+		return true;
+	}
+
 }

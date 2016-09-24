@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -25,6 +26,22 @@ public class InterviewQuestionDao {
 
 	@Autowired
     private QuestionService questionService;
+	
+	private final String UNIQUE_INT_QUESTION_SQL = 	
+			" select distinct(question_id) as question_id,id,idinterview,type,name,topNodeId,"
+			+ "nodeClass,parentModuleId,modCount,parentAnswerId,link,"
+			+ "deleted,isProcessed,description,number,intQuestionSequence,lastUpdated "+
+			" from interview_question "+
+			" where deleted = 0 and idinterview in ("+
+			" select idinterview from Interview)";
+	
+	public List<InterviewQuestion> getUniqueInterviewQuestions(){
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(UNIQUE_INT_QUESTION_SQL).
+				addEntity(InterviewQuestion.class);
+		List<InterviewQuestion> list = sqlQuery.list();
+		return list;
+	}
 	
 	public void updateModuleNameForInterviewId(long id,String newName){
     	Session session = sessionFactory.getCurrentSession();

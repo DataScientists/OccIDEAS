@@ -128,7 +128,8 @@ public class InterviewServiceImpl implements InterviewService {
 	@Override
 	public List<InterviewVO> listAllInterviewsWithoutAnswers() {
 		System.out.println("1:listAllInterviewsWithoutAnswers:"+new Date());
-		List<Interview> debug = interviewDao.getAll();
+//		List<Interview> debug = interviewDao.getAll();
+		List<Interview> debug = interviewDao.getAllInterviewsWithoutAnswers();
 		List<Interview> debug1 = new ArrayList<Interview>();
 		for(int i=0;i<debug.size();i++){
 			if(i<10){

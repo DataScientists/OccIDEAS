@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.base.dao.BaseDao;
+import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.mapper.ModuleMapper;
@@ -13,7 +14,9 @@ import org.occideas.question.dao.QuestionDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,7 +43,7 @@ public class QuestionServiceImpl implements QuestionService {
     
     @Autowired
     private ModuleMapper modMapper;
-
+    
     @Override
     public List<QuestionVO> listAll() {
         return mapper.convertToQuestionVOList(dao.getAll(Question.class));
@@ -111,6 +114,38 @@ public class QuestionServiceImpl implements QuestionService {
 	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void updateWithIndependentTransaction(QuestionVO o) {
 		 dao.saveOrUpdate(mapper.convertToQuestion(o));
+	}
+
+	@Override
+	public QuestionVO findMultipleQuestion(long questionId) {
+		return mapper.convertToQuestionVO(qdao.findMultipleQuestion(questionId));
+	}
+
+	@Override
+	public NodeVO getTopModuleByTopNodeId(long topNodeId) {
+		Node node = qdao.getTopModuleByTopNodeId(topNodeId);
+		if("M".equals(node.getNodeclass())){
+			ModuleVO moduleVO = new ModuleVO();
+			moduleVO.setAnchorId(node.getIdNode());
+			moduleVO.setIdNode(node.getIdNode());
+			moduleVO.setDeleted(node.getDeleted());
+			moduleVO.setDescription(node.getDescription());
+			moduleVO.setName(node.getName());
+			moduleVO.setNumber(node.getNumber());
+			moduleVO.setNodeclass(node.getNodeclass());
+			moduleVO.setTopNodeId(node.getTopNodeId());
+			moduleVO.setLink(node.getLink());
+			return moduleVO;
+		}else{
+			FragmentVO fragmentVO = new FragmentVO();
+			fragmentVO.setAnchorId(node.getIdNode());
+			fragmentVO.setIdNode(node.getIdNode());
+			fragmentVO.setName(node.getName());
+			fragmentVO.setNodeclass(node.getNodeclass());
+			fragmentVO.setNumber(node.getNumber());
+			fragmentVO.setTopNodeId(node.getTopNodeId());
+			return fragmentVO;
+		}
 	}
 
 }

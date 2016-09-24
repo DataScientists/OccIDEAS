@@ -20,4 +20,6 @@ public interface InterviewQuestionService extends BaseService<InterviewQuestionV
 	List<InterviewQuestionVO> updateIntQs(List<InterviewQuestionVO> o);
 	
 	Long getMaxIntQuestionSequence(long idInterview);
+	
+	List<InterviewQuestionVO> getUniqueInterviewQuestions();
 }

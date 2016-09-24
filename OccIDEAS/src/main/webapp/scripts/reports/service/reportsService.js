@@ -26,6 +26,16 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function downloadReport(reportVo){
+			var restDownloadReportUrl = url+'downloadReport';
+			var request =  $http({
+				  method: 'POST',
+				  url: restDownloadReportUrl,
+				  data:reportVo
+				})
+			return request.then(handleSuccess,handleError);
+    	}
+		
 		function save(data){
 			var restSaveUrl = url+'save';
 			var request =  $http({
@@ -65,7 +75,8 @@
 			getAll: getAll,
 			getByType: getByType,
 			save: save,
-			deleteReport: deleteReport
+			deleteReport: deleteReport,
+			downloadReport:downloadReport
 		};
 	}
 	

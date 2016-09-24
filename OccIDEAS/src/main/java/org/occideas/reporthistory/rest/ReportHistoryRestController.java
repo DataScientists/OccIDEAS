@@ -1,16 +1,24 @@
 package org.occideas.reporthistory.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.occideas.reporthistory.service.ReportHistoryService;
 import org.occideas.vo.ReportHistoryVO;
@@ -22,6 +30,40 @@ public class ReportHistoryRestController {
 
 	@Autowired
 	private ReportHistoryService service;
+	
+	@Path(value="/downloadReport")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	@Produces({ "application/csv"})
+	public Response downloadReport(ReportHistoryVO vo) throws IOException {
+		java.nio.file.Path path = Paths.get(vo.getPath());
+		return Response.ok(getOut(Files.readAllBytes(path),vo.getPath()), 
+				javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM)
+				.header("content-disposition","attachment; filename = "+vo.getName())
+                .build();
+	}
+	
+	private StreamingOutput getOut(final byte[] excelBytes,String pathStr) {
+		 StreamingOutput fileStream =  new StreamingOutput() 
+	        {
+	            @Override
+	            public void write(java.io.OutputStream output) throws IOException, WebApplicationException 
+	            {
+	                try
+	                {
+	                    java.nio.file.Path path = Paths.get(pathStr);
+	                    byte[] data = Files.readAllBytes(path);
+	                    output.write(data);
+	                    output.flush();
+	                } 
+	                catch (Exception e) 
+	                {
+	                    throw new WebApplicationException("File Not Found !!");
+	                }
+	            }
+	        };
+	        return fileStream;
+	}
 	
 	@GET
 	@Path(value="/getAll")

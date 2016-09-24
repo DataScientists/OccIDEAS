@@ -20,6 +20,7 @@ public class ReportHistoryMapperImpl implements ReportHistoryMapper{
 		entity.setName(vo.getName());
 		entity.setPath(vo.getPath());
 		entity.setRequestor(vo.getRequestor());
+		entity.setProgress(vo.getProgress());
 		entity.setStatus(vo.getStatus());
 		entity.setType(vo.getType());
 		if(vo.getJsonData() != null){
@@ -53,6 +54,7 @@ public class ReportHistoryMapperImpl implements ReportHistoryMapper{
 		vo.setPath(entity.getPath());
 		vo.setRequestor(entity.getRequestor());
 		vo.setStatus(entity.getStatus());
+		vo.setProgress(entity.getProgress());
 		vo.setType(entity.getType());
 		vo.setUpdatedBy(entity.getUpdatedBy());
 		vo.setUpdatedDt(entity.getUpdatedDt());

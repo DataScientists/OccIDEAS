@@ -110,6 +110,10 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 	public void updateModuleNameForInterviewId(long id, String newName) {
 		dao.updateModuleNameForInterviewId(id, newName);
 	}
-	
-	
+
+	@Override
+	public List<InterviewQuestionVO> getUniqueInterviewQuestions() {
+		return mapper.convertToInterviewQuestionVOList(dao.getUniqueInterviewQuestions());
+	}
+
 }

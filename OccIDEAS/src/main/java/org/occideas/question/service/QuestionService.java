@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.occideas.base.service.BaseService;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 
 public interface QuestionService extends BaseService<QuestionVO> {
@@ -19,4 +20,8 @@ public interface QuestionService extends BaseService<QuestionVO> {
 	List<QuestionVO> getAllMultipleQuestions();
 	
 	void updateWithIndependentTransaction(QuestionVO o);
+
+	QuestionVO findMultipleQuestion(long questionId);
+
+	NodeVO getTopModuleByTopNodeId(long topNodeId);
 }
