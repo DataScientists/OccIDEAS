@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.occideas.entity.Constant;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
@@ -48,6 +49,8 @@ import com.opencsv.CSVWriter;
 @Path("/assessment")
 public class AssessmentRestController {
 
+	private Logger log = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private InterviewService interviewService;
 	@Autowired
@@ -73,7 +76,9 @@ public class AssessmentRestController {
 		String fullPath = property.getValue()+exportFileCSV;
 		ReportHistoryVO reportHistoryVO = 
 				insertToReportHistory(exportFileCSV, fullPath,null,0);
+		log.info("[Report] before getting unique interview questions ");
 		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions();
+		log.info("[Report] after getting unique interview questions ");
 		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO);
 		CSVWriter writer;
 		try {
@@ -160,6 +165,7 @@ public class AssessmentRestController {
 		headers.add("Interview Id");
 		headers.add("AWES ID");
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
+			log.info("[Report] adding header for "+interviewQuestionVO.getIdInterview());
 			addHeaders(headers, interviewQuestionVO,exportCSVVO);
 		}
 		int intervalCountBeforeReportUpdate = uniqueInterviewQuestions.size()/6;
@@ -174,6 +180,7 @@ public class AssessmentRestController {
 			List<InterviewVO> interviewQuestionAnswer = interviewService.
 					getInterviewQuestionAnswer(interviewQuestionVO.getIdInterview());
 			for(InterviewVO interviewVO:interviewQuestionAnswer){
+				log.info("[Report] processing interview id "+interviewVO.getInterviewId());
 				List<String> answers = new ArrayList<>();
 				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 				answers.add(String.valueOf(interviewVO.getInterviewId()));
