@@ -48,5 +48,18 @@ public class InterviewIntroModuleModuleRestController {
 		return Response.ok(list).build();
 	}
 	
+	@GET
+	@Path(value = "/getDistinctModules")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getDistinctModules() {
+		List<InterviewIntroModuleModuleVO> list = null;
+		try {
+			list = service.getDistinctModules();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
 	
 }

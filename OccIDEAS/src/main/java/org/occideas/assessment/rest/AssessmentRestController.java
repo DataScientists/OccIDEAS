@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -62,10 +63,10 @@ public class AssessmentRestController {
 	@Autowired
 	private ReportHistoryService reportHistoryService;
 	
-	@GET
+	@POST
     @Path(value = "/exportInterviewsCSV")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response exportInterviewsCSV() {
+    public Response exportInterviewsCSV(String[] filterModule) {
 		//check if we have the directory TreeSet ins sys prop
 		SystemPropertyVO property = systemPropertyService.
 				getByName(Constant.REPORT_EXPORT_CSV_DIR);
@@ -77,7 +78,7 @@ public class AssessmentRestController {
 		ReportHistoryVO reportHistoryVO = 
 				insertToReportHistory(exportFileCSV, fullPath,null,0);
 		log.info("[Report] before getting unique interview questions ");
-		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions();
+		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModule);
 		log.info("[Report] after getting unique interview questions ");
 		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO);
 		CSVWriter writer;

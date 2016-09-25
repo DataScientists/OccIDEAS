@@ -112,8 +112,8 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 	}
 
 	@Override
-	public List<InterviewQuestionVO> getUniqueInterviewQuestions() {
-		return mapper.convertToInterviewQuestionVOListExcAnswers(dao.getUniqueInterviewQuestions());
+	public List<InterviewQuestionVO> getUniqueInterviewQuestions(String[] filterModule) {
+		return mapper.convertToInterviewQuestionVOListExcAnswers(dao.getUniqueInterviewQuestions(filterModule));
 	}
 
 }

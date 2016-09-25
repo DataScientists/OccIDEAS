@@ -41,14 +41,74 @@
 		}
 		
 		$scope.newExportCSVButton = function(){
+			$scope.checkboxes = { 'checked': false, items: {} };
+			$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
+				clickOutsideToClose:false
+			});
+		}
+		
+		self.filterModTableParams =  new NgTableParams(
+				{
+				}, 
+			{	
+	        getData: function(params) {
+	          $log.info("Data getting from intro modules ajax ..."); 
+	          return  InterviewsService.getDistinctModules().then(function(response) {
+	        	  $log.info("Data received from modules ajax ...");        	
+	        	  var data = response.data;
+	        	  self.originalData = angular.copy(data);
+	        	  self.filterModTableParams.settings().dataset = data;
+	            return data;
+	          });
+	          }
+	      });
+		
+		 $scope.checkboxes = { 'checked': false, items: {} };
+
+		    // watch for check all checkbox
+		    $scope.$watch('checkboxes.checked', function(value) {
+		        angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
+		            if (angular.isDefined(item.id)) {
+		                $scope.checkboxes.items[item.id] = value;
+		            }
+		        });
+		    });
+
+		    // watch for data checkboxes
+		    $scope.$watch('checkboxes.items', function(values) {
+		        if (!$scope.users) {
+		            return;
+		        }
+		        var checked = 0, unchecked = 0,
+		            total = $scope.users.length;
+		        angular.forEach($scope.users, function(item) {
+		            checked   +=  ($scope.checkboxes.items[item.id]) || 0;
+		            unchecked += (!$scope.checkboxes.items[item.id]) || 0;
+		        });
+		        if ((unchecked == 0) || (checked == 0)) {
+		            $scope.checkboxes.checked = (checked == total);
+		        }
+		        // grayed checkbox
+		        angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+		    }, true);
+		
+		$scope.exportCSVInterviews = function(){
 			SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response){
 				if(response.status == '200'){
 					if(response.data){
+						$scope.cancel();
 						 ngToast.create({
 				    		  className: 'success',
 				    		  content: 'Your report is now running .... Kindly check the reports tab for details.'
 				    	 });
-						InterviewsService.exportInterviewsCSV().then(function(response){
+						 var filterModule = [];
+						 _.each($scope.checkboxes.items,function(value, key){
+							 filterModule.push(key);
+						 });
+						InterviewsService.exportInterviewsCSV(filterModule).then(function(response){
 						});
 					}else{
 						ngToast.create({

@@ -14,6 +14,16 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+    	
+    	function getDistinctModules() {
+			var restUrl = 'web/rest/interviewintromodule/getDistinctModules';
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
     	function get(idNode) {
             var restURL = 'web/rest/interview/get?id=' + idNode;
             var request = $http({
@@ -129,12 +139,13 @@
             return request.then(handleSuccess, handleError);
         }
         
-        function exportInterviewsCSV() {
+        function exportInterviewsCSV(filterModule) {
             var url = 'web/rest/assessment/exportInterviewsCSV';
             var request = $http({
-                method: 'GET',
+                method: 'POST',
                 url: url,
-                ignoreLoadingBar: true
+                ignoreLoadingBar: true,
+                data:filterModule
             })
             return request.then(handleSuccess, handleError);
         }
@@ -369,7 +380,8 @@
             updateModuleNameForInterviewId:updateModuleNameForInterviewId,
             findModulesByInterviewId:findModulesByInterviewId,
             getInterviewsListWithRules:getInterviewsListWithRules,
-            exportInterviewsCSV:exportInterviewsCSV
+            exportInterviewsCSV:exportInterviewsCSV,
+            getDistinctModules:getDistinctModules
         };
     }
 })();

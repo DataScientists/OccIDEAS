@@ -21,5 +21,5 @@ public interface InterviewQuestionService extends BaseService<InterviewQuestionV
 	
 	Long getMaxIntQuestionSequence(long idInterview);
 	
-	List<InterviewQuestionVO> getUniqueInterviewQuestions();
+	List<InterviewQuestionVO> getUniqueInterviewQuestions(String[] filterModule);
 }

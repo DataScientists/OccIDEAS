@@ -1,0 +1,44 @@
+<md-dialog aria-label="Filter Module"
+	style="margin:0 0 0 0;padding:0 0 0 0;width:500px;" ng-cloak> <!-- <pre>{{data | json}}</pre> -->
+<form>
+	<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>Filter Module</h2>
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancel()">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </md-button>
+	</div>
+	</md-toolbar>
+	<md-dialog-content>
+	<div class="md-dialog-content">
+		<div layout="column" ng-cloak class="md-inline-form">
+			<md-content>
+			<table ng-table="vm.filterModTableParams"
+				class="table table-condensed table-bordered table-striped">
+				<tr ng-repeat="mod in $data track by $index">
+					<td width="30" style="text-align: left" header="'ng-table/headers/checkbox.html'">
+						<input type="checkbox" style="position:static;" ng-model="checkboxes.items[mod.idModule]" />
+					</td>
+					<td title="'Module Id'">{{mod.idModule}}</td>
+					<td title="'Module Name'" filter="{interviewModuleName:'text'}">{{mod.interviewModuleName}}</td>
+				</tr>
+			</table>
+			<script type="text/ng-template" id="ng-table/headers/checkbox.html">
+        		<input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value="" />
+    		</script>
+			</md-content>
+		</div>
+	</div>
+	</md-dialog-content>
+	<md-dialog-actions layout="row">
+       <span flex></span>
+      <md-button ng-click="exportCSVInterviews(checkboxes)">
+        Submit
+      </md-button>
+      <md-button ng-click="cancel()" style="margin-right:20px;">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+</form>
+</md-dialog>

@@ -32,13 +32,14 @@ public class InterviewQuestionDao {
 			+ "nodeClass,parentModuleId,modCount,parentAnswerId,link,"
 			+ "deleted,isProcessed,description,number,intQuestionSequence,lastUpdated "+
 			" from interview_question "+
-			" where deleted = 0 and idinterview in ("+
+			" where deleted = 0 and topNodeId in (:param) and idinterview in ("+
 			" select idinterview from Interview)";
 	
-	public List<InterviewQuestion> getUniqueInterviewQuestions(){
+	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){
 		final Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery(UNIQUE_INT_QUESTION_SQL).
 				addEntity(InterviewQuestion.class);
+		sqlQuery.setParameterList("param", filterModule);
 		List<InterviewQuestion> list = sqlQuery.list();
 		return list;
 	}
