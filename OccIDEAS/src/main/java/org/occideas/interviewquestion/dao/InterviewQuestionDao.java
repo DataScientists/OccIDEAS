@@ -8,7 +8,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -31,7 +30,7 @@ public class InterviewQuestionDao {
 			" select distinct(question_id) as question_id,id,idinterview,type,name,topNodeId,"
 			+ "nodeClass,parentModuleId,modCount,parentAnswerId,link,"
 			+ "deleted,isProcessed,description,number,intQuestionSequence,lastUpdated "+
-			" from interview_question "+
+			" from Interview_Question "+
 			" where deleted = 0 and topNodeId in (:param) and idinterview in ("+
 			" select idinterview from Interview)";
 	
