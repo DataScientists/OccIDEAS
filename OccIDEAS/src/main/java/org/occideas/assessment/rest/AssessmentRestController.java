@@ -266,8 +266,6 @@ public class AssessmentRestController {
 					StringBuilder header = new StringBuilder();
 					header.append(topModule.getName().substring(0, 4));
 					header.append("_");
-					header.append(interviewQuestionVO.getQuestionId());
-					header.append("_");
 					header.append(interviewQuestionVO.getNumber());
 					header.append("_");
 					header.append(pVO.getNumber());
@@ -281,8 +279,6 @@ public class AssessmentRestController {
 			NodeVO topModule = getTopModuleByTopNodeId(interviewQuestionVO.getTopNodeId());
 			StringBuilder header = new StringBuilder();
 			header.append(topModule.getName().substring(0, 4));
-			header.append("_");
-			header.append(interviewQuestionVO.getQuestionId());
 			header.append("_");
 			header.append(interviewQuestionVO.getNumber());
 			headers.add(header.toString());

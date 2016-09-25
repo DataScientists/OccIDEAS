@@ -31,7 +31,7 @@ public class InterviewQuestionDao {
 			" select distinct(question_id) as question_id,id,idinterview,type,name,topNodeId,"
 			+ "nodeClass,parentModuleId,modCount,parentAnswerId,link,"
 			+ "deleted,isProcessed,description,number,intQuestionSequence,lastUpdated "+
-			" from interview_question "+
+			" from Interview_Question "+
 			" where deleted = 0 and idinterview in ("+
 			" select idinterview from Interview)";
 	
