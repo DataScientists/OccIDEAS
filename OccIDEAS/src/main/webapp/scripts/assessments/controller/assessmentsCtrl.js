@@ -55,17 +55,24 @@
 				}, 
 			{	
 	        getData: function(params) {
+	          if(params.filter().interviewModuleName){	
+		        return $filter('filter')(self.filterModTableParams.settings().dataset, params.filter());
+		      }
+		      if(!self.filterModTableParams.shouldGetData){
+		        return self.filterModTableParams.settings().dataset;
+		      }
 	          $log.info("Data getting from intro modules ajax ..."); 
 	          return  InterviewsService.getDistinctModules().then(function(response) {
 	        	  $log.info("Data received from modules ajax ...");        	
 	        	  var data = response.data;
 	        	  self.originalData = angular.copy(data);
 	        	  self.filterModTableParams.settings().dataset = data;
+	        	  self.filterModTableParams.shouldGetData = true;
 	            return data;
 	          });
 	          }
 	      });
-		
+		 self.filterModTableParams.shouldGetData = true;
 		 $scope.checkboxes = { 'checked': false, items: {} };
 
 		    // watch for check all checkbox
