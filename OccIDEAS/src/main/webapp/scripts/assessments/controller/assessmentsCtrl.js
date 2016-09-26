@@ -71,22 +71,22 @@
 		    // watch for check all checkbox
 		    $scope.$watch('checkboxes.checked', function(value) {
 		        angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
-		            if (angular.isDefined(item.id)) {
-		                $scope.checkboxes.items[item.id] = value;
+		            if (angular.isDefined(item.idModule)) {
+		                $scope.checkboxes.items[item.idModule] = value;
 		            }
 		        });
 		    });
 
 		    // watch for data checkboxes
 		    $scope.$watch('checkboxes.items', function(values) {
-		        if (!$scope.users) {
+		        if (!self.filterModTableParams.settings().dataset) {
 		            return;
 		        }
 		        var checked = 0, unchecked = 0,
-		            total = $scope.users.length;
-		        angular.forEach($scope.users, function(item) {
-		            checked   +=  ($scope.checkboxes.items[item.id]) || 0;
-		            unchecked += (!$scope.checkboxes.items[item.id]) || 0;
+		            total = self.filterModTableParams.settings().dataset.length;
+		        angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
+		            checked   +=  ($scope.checkboxes.items[item.idModule]) || 0;
+		            unchecked += (!$scope.checkboxes.items[item.idModule]) || 0;
 		        });
 		        if ((unchecked == 0) || (checked == 0)) {
 		            $scope.checkboxes.checked = (checked == total);

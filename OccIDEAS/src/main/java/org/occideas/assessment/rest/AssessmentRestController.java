@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -80,6 +81,7 @@ public class AssessmentRestController {
 		log.info("[Report] before getting unique interview questions ");
 		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModule);
 		log.info("[Report] after getting unique interview questions ");
+		uniqueInterviewQuestions.removeAll(Collections.singleton(null));
 		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO);
 		CSVWriter writer;
 		try {
