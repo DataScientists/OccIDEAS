@@ -3,18 +3,15 @@ package org.occideas.assessment.rest;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -34,6 +31,7 @@ import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.ReportsEnum;
 import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.vo.ExportCSVVO;
+import org.occideas.vo.FilterModuleVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
@@ -67,19 +65,29 @@ public class AssessmentRestController {
 	@POST
     @Path(value = "/exportInterviewsCSV")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response exportInterviewsCSV(String[] filterModule) {
+    public Response exportInterviewsCSV(FilterModuleVO filterModuleVO) {
+		
+		if(filterModuleVO.getFilterModule() == null || 
+				filterModuleVO.getFilterModule().length <1){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("No module was selected in the filter dialog.").build();
+		}
+		
+		if(StringUtils.isEmpty(filterModuleVO.getFileName())){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("Filename cannot be empty.").build();
+		}
+		
 		//check if we have the directory TreeSet ins sys prop
 		SystemPropertyVO property = systemPropertyService.
 				getByName(Constant.REPORT_EXPORT_CSV_DIR);
 		if(property == null){
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
 		}
-		String exportFileCSV = createFileName();
+		String exportFileCSV = createFileName(filterModuleVO.getFileName());
 		String fullPath = property.getValue()+exportFileCSV;
 		ReportHistoryVO reportHistoryVO = 
 				insertToReportHistory(exportFileCSV, fullPath,null,0);
 		log.info("[Report] before getting unique interview questions ");
-		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModule);
+		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
 		log.info("[Report] after getting unique interview questions ");
 		uniqueInterviewQuestions.removeAll(Collections.singleton(null));
 		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO);
@@ -147,11 +155,8 @@ public class AssessmentRestController {
 		return tokenManager.parseUsernameFromToken(token);
 	}
 
-	private String createFileName() {
-		Date date = new Date();
-		SimpleDateFormat format = new SimpleDateFormat("ddMMyyyy-HHmm");
-		String now = format.format(date);
-		String exportFileCSV = "export_interviews_"+now+".csv";
+	private String createFileName(String filename) {
+		String exportFileCSV = filename+".csv";
 		return exportFileCSV;
 	}
 
@@ -171,11 +176,10 @@ public class AssessmentRestController {
 			log.info("[Report] adding header for "+interviewQuestionVO.getIdInterview());
 			addHeaders(headers, interviewQuestionVO,exportCSVVO);
 		}
-		int intervalCountBeforeReportUpdate = uniqueInterviewQuestions.size()/6;
 		double count = 0;
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
 			count++;
-			if(intervalCountBeforeReportUpdate == count){
+			if(count % 10 == 0){
 				double progress = Math.floor((count/uniqueInterviewQuestions.size())*100);
 				updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(), 
 						progress);

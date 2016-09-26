@@ -139,13 +139,16 @@
             return request.then(handleSuccess, handleError);
         }
         
-        function exportInterviewsCSV(filterModule) {
+        function exportInterviewsCSV(filterModule,fileName) {
             var url = 'web/rest/assessment/exportInterviewsCSV';
             var request = $http({
                 method: 'POST',
                 url: url,
                 ignoreLoadingBar: true,
-                data:filterModule
+                data:{
+                	fileName:fileName,
+                	filterModule:filterModule
+                }
             })
             return request.then(handleSuccess, handleError);
         }

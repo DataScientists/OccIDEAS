@@ -14,6 +14,10 @@
 	<div class="md-dialog-content">
 		<div layout="column" ng-cloak class="md-inline-form">
 			<md-content>
+			<p>
+				<label>Filename:</label> 
+				<input type="text" ng-model="fileName" />
+			</p>
 			<table ng-table="vm.filterModTableParams"
 				class="table table-condensed table-bordered table-striped">
 				<tr ng-repeat="mod in $data track by $index">
