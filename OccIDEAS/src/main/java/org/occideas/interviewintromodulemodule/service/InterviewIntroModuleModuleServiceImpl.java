@@ -34,5 +34,10 @@ public class InterviewIntroModuleModuleServiceImpl implements InterviewIntroModu
 	public List<InterviewIntroModuleModuleVO> getDistinctModules() {
 		return mapper.convertToVOList(dao.getDistinctModules());
 	}
+	@Override
+	public List<InterviewIntroModuleModuleVO> findInterviewIdByModuleId(long idModule) {
+		List<InterviewIntroModuleModule> list = dao.getInterviewByModuleId(idModule);
+		return mapper.convertToVOList(list);
+	}
 
 }

@@ -5,6 +5,16 @@
     InterviewsService.$inject = ['$http', '$q'];
     function InterviewsService($http, $q) {
     	
+    	function findInterviewIdByModuleId(moduleId) {
+			var restUrl = 'web/rest/interviewintromodule/findInterviewIdByModuleId?id=' + moduleId;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+    	
     	function findModulesByInterviewId(idInterview) {
 			var restUrl = 'web/rest/interviewintromodule/findModulesByInterviewId?id=' + idInterview;
 			
@@ -384,7 +394,8 @@
             findModulesByInterviewId:findModulesByInterviewId,
             getInterviewsListWithRules:getInterviewsListWithRules,
             exportInterviewsCSV:exportInterviewsCSV,
-            getDistinctModules:getDistinctModules
+            getDistinctModules:getDistinctModules,
+            findInterviewIdByModuleId:findInterviewIdByModuleId
         };
     }
 })();

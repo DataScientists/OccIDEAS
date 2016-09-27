@@ -9,5 +9,6 @@ public interface InterviewIntroModuleModuleService {
 	public List<InterviewIntroModuleModuleVO> findInterviewByModuleId(long idModule);
 	public List<InterviewIntroModuleModuleVO> findModulesByInterviewId(long idInterview);
 	public List<InterviewIntroModuleModuleVO> getDistinctModules();
+	public List<InterviewIntroModuleModuleVO> findInterviewIdByModuleId(long idModule);
 	
 }

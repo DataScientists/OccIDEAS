@@ -11,6 +11,20 @@
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		
+		$scope.showInterviewCount = function(mod,$event){
+			InterviewsService.findInterviewIdByModuleId(mod.idModule)
+				.then(function(response){
+				if(response.status == '200'){
+					mod.intCount = response.data.length;
+					safeDigest(mod);
+				}
+			});
+			if ($event.stopPropagation) $event.stopPropagation();
+			if ($event.preventDefault) $event.preventDefault();
+			$event.cancelBubble = true;
+			$event.returnValue = false;
+		};
+		
 		QuestionsService.getAllMultipleQuestion().then(function(response){
 			if(response.status == '200'){
 				$scope.multipleQuestions = response.data;
@@ -44,7 +58,7 @@
 			$scope.checkboxes = { 'checked': false, items: {} };
 			$scope.fileName = "";
 			$mdDialog.show({
-				scope: $scope,  
+				scope: $scope.$new(),  
 				preserveScope: true,
 				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
 				clickOutsideToClose:false

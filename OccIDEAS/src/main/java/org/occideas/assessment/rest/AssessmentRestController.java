@@ -187,7 +187,8 @@ public class AssessmentRestController {
 			List<InterviewVO> interviewQuestionAnswer = interviewService.
 					getInterviewQuestionAnswer(interviewQuestionVO.getIdInterview());
 			for(InterviewVO interviewVO:interviewQuestionAnswer){
-				log.info("[Report] processing interview id "+interviewVO.getInterviewId());
+				log.info("[Report] processing interview id "
+						+interviewVO.getInterviewId()+"-reference number:"+interviewVO.getReferenceNumber());
 				List<String> answers = new ArrayList<>();
 				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 				answers.add(String.valueOf(interviewVO.getInterviewId()));

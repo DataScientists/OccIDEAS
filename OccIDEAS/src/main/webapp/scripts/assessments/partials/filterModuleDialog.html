@@ -26,6 +26,18 @@
 					</td>
 					<td title="'Module Id'">{{mod.idModule}}</td>
 					<td title="'Module Name'" filter="{interviewModuleName:'text'}">{{mod.interviewModuleName}}</td>
+					<td>
+						<div>
+							<span> <span class="badge"
+								ng-if="mod.intCount == undefined"
+								ng-click="showInterviewCount(mod,$event)"
+								title="Click for Interview Count">&nbsp;</span> 
+								<span class="badge"
+								ng-if="mod.intCount >= 0">{{mod.intCount}}
+								</span>
+							</span>
+						</div>
+					</td>
 				</tr>
 			</table>
 			<script type="text/ng-template" id="ng-table/headers/checkbox.html">

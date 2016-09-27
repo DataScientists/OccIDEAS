@@ -46,4 +46,11 @@ public class InterviewIntroModuleModuleDao {
 		}
 		return null;
 	}
+	
+	public List<InterviewIntroModuleModule> getInterviewByModuleId(long idModule) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewIntroModuleModule.class)
+				.add(Restrictions.eq("idModule", idModule));
+		return crit.list();
+	}
 }
