@@ -63,6 +63,11 @@
 				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
 				clickOutsideToClose:false
 			});
+			angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
+	            if (angular.isDefined(item.idModule)) {
+	                $scope.checkboxes.items[item.idModule] = true;
+	            }
+			});
 		}
 		
 		self.filterModTableParams =  new NgTableParams(
@@ -86,11 +91,6 @@
 	        	  if(data.length > 0){
 	        		  $scope.fileName = data[0].interviewModuleName;
 	        	  }
-	        	  angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
-			            if (angular.isDefined(item.idModule)) {
-			                $scope.checkboxes.items[item.idModule] = true;
-			            }
-			      });
 	            return data;
 	          });
 	          }
