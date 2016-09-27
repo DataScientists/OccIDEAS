@@ -63,11 +63,6 @@
 				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
 				clickOutsideToClose:false
 			});
-			angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
-	            if (angular.isDefined(item.idModule)) {
-	                $scope.checkboxes.items[item.idModule] = true;
-	            }
-			});
 		}
 		
 		self.filterModTableParams =  new NgTableParams(
@@ -125,7 +120,7 @@
 		        angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
 		    }, true);
 		
-		$scope.exportCSVInterviews = function(){
+		$scope.exportCSVInterviews = function(fileName){
 			SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response){
 				if(response.status == '200'){
 					if(response.data){
@@ -138,7 +133,7 @@
 						 _.each($scope.checkboxes.items,function(value, key){
 							 filterModule.push(key);
 						 });
-						InterviewsService.exportInterviewsCSV(filterModule,$scope.fileName).then(function(response){
+						InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){
 						});
 					}else{
 						ngToast.create({
