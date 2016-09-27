@@ -738,9 +738,10 @@
 			return self.editAssessmentsMenuOptions;
 		}
 		self.tableParams = new NgTableParams(
-				{
-					               
-				}, 
+				{	
+					page: 1,            
+	                count: 10
+	            }, 
 				{	
 					getData: function(params) {
 						if((params.filter().idParticipant)||(params.filter().interviewId)
@@ -748,7 +749,8 @@
 				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 				        }						
 					    if(!self.tableParams.shouldGetData){
-					    	return self.tableParams.settings().dataset;
+					    	 var last = params.page() * params.count();
+					          return _.slice(self.tableParams.settings().dataset,last - params.count(),last);
 					    }
 					    $log.info("Data getting from interviews ajax ..."); 
 					    return ParticipantsService.getParticipants().then(function(response) {
@@ -763,7 +765,7 @@
 					        	  self.tableParams.shouldGetData = false;
 					        	  self.tableParams.total(self.originalData.length);
 					        	  var last = params.page() * params.count();
-						          return self.originalData;
+						          return _.slice(data,last - params.count(),last);
 				        	  }
 				          });
 					},
