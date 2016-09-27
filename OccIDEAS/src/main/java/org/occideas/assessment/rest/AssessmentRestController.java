@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -162,14 +162,14 @@ public class AssessmentRestController {
 
 	private ExportCSVVO populateCSV(List<InterviewQuestionVO> uniqueInterviewQuestions,ReportHistoryVO reportHistoryVO) {
 		ExportCSVVO vo = new ExportCSVVO();
-		TreeSet<String> headers = populateHeadersAndAnswers(uniqueInterviewQuestions,vo,reportHistoryVO);
+		Set<String> headers = populateHeadersAndAnswers(uniqueInterviewQuestions,vo,reportHistoryVO);
 		vo.setHeaders(headers);
 		return vo;
 	}
 
-	private TreeSet<String> populateHeadersAndAnswers(List<InterviewQuestionVO> uniqueInterviewQuestions
+	private Set<String> populateHeadersAndAnswers(List<InterviewQuestionVO> uniqueInterviewQuestions
 				,ExportCSVVO exportCSVVO,ReportHistoryVO reportHistoryVO) {
-		TreeSet<String> headers = new TreeSet<>();
+		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
@@ -257,7 +257,7 @@ public class AssessmentRestController {
 		return headers;
 	}
 
-	private void addHeaders(TreeSet<String> headers, 
+	private void addHeaders(Set<String> headers, 
 			InterviewQuestionVO interviewQuestionVO, ExportCSVVO exportCSVVO) {
 		if(isModuleOrAjsm(interviewQuestionVO)){
 //				headers.add(interviewQuestionVO.getName().substring(0, 4));
