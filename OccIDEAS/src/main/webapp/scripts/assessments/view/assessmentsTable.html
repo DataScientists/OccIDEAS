@@ -19,10 +19,10 @@
 		<table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped">
 			<tr ng-repeat="participant in $data | orderBy:'-(idParticipant)'">
 				<td >{{$index}}</td>
-				<td title="'idParticipant'">{{participant.idParticipant}}</td>
-				<td title="'interviewId'">{{participant.interviews[0].interviewId}}</td>
-				<td title="'referenceNumber'">{{participant.reference}}</td>	
-				<td title="'status'">{{participant.status}}</td>	
+				<td filter="{idParticipant: 'text'}" title="'idParticipant'">{{participant.idParticipant}}</td>
+				<td filter="{interviewId: 'text'}" title="'interviewId'">{{participant.interviewId}}</td>
+				<td filter="{reference: 'text'}" title="'referenceNumber'">{{participant.reference}}</td>	
+				<td filter="{status: 'text'}" title="'status'">{{participant.status}}</td>	
 				<td>
 					<button ng-click="vm.openFiredRules(participant.interviews[0])" class="btn btn-default btn-sm" >
 						<span class="glyphicon glyphicon-list-alt"></span>

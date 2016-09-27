@@ -743,12 +743,10 @@
 				}, 
 				{	
 					getData: function(params) {
-//						if((params.filter().referenceNumber)||(params.filter().moduleName)){	
-//				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-//				        }						
-//						if ((params.sorting().referenceNumber)||(params.sorting().moduleName)){
-//							return $filter('orderBy')(self.tableParams.settings().dataset, params.orderBy());
-//				        }
+						if((params.filter().idParticipant)||(params.filter().interviewId)
+								||(params.filter().reference)||(params.filter().status)){	
+				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+				        }						
 					    if(!self.tableParams.shouldGetData){
 					    	return self.tableParams.settings().dataset;
 					    }
@@ -756,6 +754,9 @@
 					    return ParticipantsService.getParticipants().then(function(response) {
 				        	  if(response.status == '200'){
 				        		  var data = response.data;
+				        		  _.each(data,function(participant){
+				        			  participant.interviewId = participant.interviews[0].interviewId;
+				        		  });
 				        		  console.log("Data get list from getParticipants ajax ...");        	 
 				        		  self.originalData = angular.copy(data);
 					        	  self.tableParams.settings().dataset = data;
