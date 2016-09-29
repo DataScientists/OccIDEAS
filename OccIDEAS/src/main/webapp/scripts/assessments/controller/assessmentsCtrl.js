@@ -54,6 +54,23 @@
 			return $scope.csv;
 		}
 		
+		$scope.displayModulesForInterviewId = function(interviewId){
+			$mdDialog.show({
+				scope: $scope.$new(),  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/moduleListDialog.html',
+				clickOutsideToClose:false
+			});
+			InterviewsService.findModulesByInterviewId(interviewId).then(function(response){
+				if(response.status == '200'){
+					if(response.data.length > 0){								
+						self.modulesInInterview = response.data;
+						//vm.firedRulesByModule = $scope.modulesInInterview
+					}
+				}
+			});
+		}
+		
 		$scope.newExportCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
 			$scope.fileName = "";

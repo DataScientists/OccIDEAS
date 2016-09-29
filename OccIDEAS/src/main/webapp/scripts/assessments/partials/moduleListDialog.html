@@ -1,0 +1,49 @@
+<md-dialog aria-label="Filter Module"
+	style="margin:0 0 0 0;padding:0 0 0 0;width:500px;" ng-cloak>
+<!-- <pre>{{data | json}}</pre> -->
+<form>
+	<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>List of Modules</h2>
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancel()"> <span
+			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
+	</div>
+	</md-toolbar>
+	<md-dialog-content>
+	<div class="md-dialog-content">
+		<div layout="column" ng-cloak class="md-inline-form">
+			<md-content>
+			<div class="panel panel-default">
+				<!-- Default panel contents -->
+				<div class="panel-heading">Modules</div>
+				<div class="panel-body">
+					<div>
+						<ul class="list-group">
+							<li class="list-group-item"
+								ng-if="vm.modulesInInterview.length < 1"
+								>
+								<div>
+									No modules found
+								</div>
+							</li>
+							<li class="list-group-item"
+								ng-if="vm.modulesInInterview.length > 0"
+								ng-repeat="mod in vm.modulesInInterview">
+								<div>
+									<span class="badge">Module - {{mod.idModule}}</span>
+									{{mod.interviewModuleName}}
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</md-content>
+		</div>
+	</div>
+	</md-dialog-content>
+	<md-dialog-actions layout="row"> <span flex></span>
+	<md-button ng-click="cancel()" style="margin-right:20px;">
+	Cancel </md-button> </md-dialog-actions>
+</form>
+</md-dialog>
