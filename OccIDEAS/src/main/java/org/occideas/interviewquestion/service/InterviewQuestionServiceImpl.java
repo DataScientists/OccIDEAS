@@ -1,11 +1,14 @@
 package org.occideas.interviewquestion.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.ModuleFragment;
 import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.mapper.InterviewQuestionMapper;
+import org.occideas.modulefragment.dao.ModuleFragmentDao;
 import org.occideas.question.dao.QuestionDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
@@ -26,6 +29,9 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 
     @Autowired
     private InterviewQuestionMapper mapper;
+    
+    @Autowired
+    private ModuleFragmentDao modFragmentDao;
 
     @Override
     public List<InterviewQuestionVO> listAll() {
@@ -113,7 +119,24 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 
 	@Override
 	public List<InterviewQuestionVO> getUniqueInterviewQuestions(String[] filterModule) {
+		filterModule = addChildModules(filterModule);
+		System.out.println(">>>>>>>>>>>>>>>>"+Arrays.toString(filterModule));
 		return mapper.convertToInterviewQuestionVOListExcAnswers(dao.getUniqueInterviewQuestions(filterModule));
+	}
+
+	private String[] addChildModules(String[] filterModule) {
+		List<String> fixedModuleList = Arrays.asList(filterModule);
+		List<String> newFilterModList =  new ArrayList<>(fixedModuleList);
+		for(String moduleStr:filterModule){
+			List<ModuleFragment> moduleFragmentList = modFragmentDao.getModuleFragmentByModuleId(Long.valueOf(moduleStr));
+			for(ModuleFragment modFragment:moduleFragmentList){
+				newFilterModList.add(String.valueOf(modFragment.getIdNode()));
+			}
+		}
+		if(!newFilterModList.isEmpty()){
+			filterModule = newFilterModList.toArray(new String[0]);
+		}
+		return filterModule;
 	}
 
 }
