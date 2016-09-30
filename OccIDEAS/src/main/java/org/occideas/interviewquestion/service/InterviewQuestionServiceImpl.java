@@ -130,7 +130,7 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 		for(String moduleStr:filterModule){
 			List<ModuleFragment> moduleFragmentList = modFragmentDao.getModuleFragmentByModuleId(Long.valueOf(moduleStr));
 			for(ModuleFragment modFragment:moduleFragmentList){
-				newFilterModList.add(String.valueOf(modFragment.getIdNode()));
+				newFilterModList.add(String.valueOf(modFragment.getFragmentId()));
 			}
 		}
 		if(!newFilterModList.isEmpty()){

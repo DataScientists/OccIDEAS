@@ -73,7 +73,7 @@
 		
 		$scope.newExportCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
-			$scope.fileName = "";
+			$scope.fileName = "export";
 			$mdDialog.show({
 				scope: $scope.$new(),  
 				preserveScope: true,
@@ -101,7 +101,7 @@
 	        	  self.filterModTableParams.settings().dataset = data;
 	        	  self.filterModTableParams.shouldGetData = true;
 	        	  if(data.length > 0){
-	        		  $scope.fileName = data[0].interviewModuleName;
+	        		  $scope.fileName = "InterviewExport";
 	        	  }
 	            return data;
 	          });
