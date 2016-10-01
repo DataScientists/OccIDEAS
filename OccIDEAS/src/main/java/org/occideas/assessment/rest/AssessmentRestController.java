@@ -172,11 +172,14 @@ public class AssessmentRestController {
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
+		int iUniqueColumeCount = 0;
+		int iSize = uniqueInterviewQuestions.size();
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-			log.info("[Report] adding header for "+interviewQuestionVO.getIdInterview());
+			log.info("[Report] adding header "+iUniqueColumeCount+" of "+iSize+" for "+interviewQuestionVO.getIdInterview());
 			addHeaders(headers, interviewQuestionVO,exportCSVVO);
+			iUniqueColumeCount++;
 		}
-		double count = 0;
+		double count = 0;	
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
 			count++;
 			if(count % 10 == 0){
@@ -187,7 +190,7 @@ public class AssessmentRestController {
 			List<InterviewVO> interviewQuestionAnswer = interviewService.
 					getInterviewQuestionAnswer(interviewQuestionVO.getIdInterview());
 			for(InterviewVO interviewVO:interviewQuestionAnswer){
-				log.info("[Report] processing interview id "
+				log.info("[Report] processing "+count+" of "+iSize+" interview id "
 						+interviewVO.getInterviewId()+"-reference number:"+interviewVO.getReferenceNumber());
 				List<String> answers = new ArrayList<>();
 				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
