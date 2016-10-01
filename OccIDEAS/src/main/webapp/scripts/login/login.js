@@ -10,6 +10,18 @@
             url: '/login',
             controller: 'LoginCtrl',
             controllerAs: 'vm',
+            resolve:{
+	        	message: function() {
+	        		return '';
+	        	}
+	        },
+            authenticate: false
+        })
+        .state('loginHome', {
+            url: '/loginHome/:message',
+            templateUrl : "scripts/login/view/login.html",
+            controller: 'LoginCtrl',
+            controllerAs: 'vm',
             authenticate: false
         });
     }

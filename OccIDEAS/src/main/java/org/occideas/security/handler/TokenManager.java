@@ -22,11 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TokenManager {
 
+	public static final String duration = "420";
+	
 	private static final String HMAC_ALGO = "HmacSHA256";
 	private static final String SEPARATOR = ".";
 	private static final String SEPARATOR_SPLITTER = "\\.";
 	private static final String OBJECT_SPLITTER = "@@";
-
 	private static final String SECRET_KEY = "secret.key";
 
 	private Logger logger = Logger.getLogger(TokenManager.class);
@@ -117,7 +118,6 @@ public class TokenManager {
 		sb.append(OBJECT_SPLITTER);
 		sb.append(convertToHashBytes(authorities));
 		sb.append(OBJECT_SPLITTER);
-		String duration = "480";
 		LocalDateTime localDateTime = ZonedDateTime.now(ZoneId.of("Z")).toLocalDateTime()
 				.plusMinutes(Long.valueOf(duration));
 		sb.append(convertToHashBytes(localDateTime.toString()));

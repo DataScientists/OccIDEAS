@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
+import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -84,8 +85,14 @@ public class AuthenticationFilter extends GenericFilterBean {
 			httpResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (AuthenticationException authenticationException) {
 			SecurityContextHolder.clearContext();
-			httpResponse.addHeader("ErrorMsg", authenticationException.getMessage());
+			if(authenticationException.getMessage().contains("expired")){
+				httpResponse.addHeader("ErrorMsg", authenticationException.getMessage()+"- duration "
+						+TokenManager.duration+"minutes");
+				httpResponse.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, TokenManager.duration);	
+			}else{
+				httpResponse.addHeader("ErrorMsg", authenticationException.getMessage());
 			httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
+			}
 			log.error(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED), authenticationException);
 		} finally {
 			MDC.remove(TOKEN_SESSION_KEY);
