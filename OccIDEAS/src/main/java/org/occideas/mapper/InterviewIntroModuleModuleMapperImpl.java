@@ -22,6 +22,8 @@ public class InterviewIntroModuleModuleMapperImpl implements InterviewIntroModul
 		vo.setInterviewModuleName(entity.getInterviewModuleName());
 		vo.setIntroModuleNodeName(entity.getIntroModuleNodeName());
 		vo.setInterviewPrimaryKey(entity.getInterviewPrimaryKey());
+		vo.setLinkId(entity.getLinkId());
+		vo.setLinkName(entity.getLinkName());
 		return vo;
 	}
 

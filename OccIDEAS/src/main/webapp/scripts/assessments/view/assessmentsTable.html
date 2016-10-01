@@ -23,13 +23,12 @@
 				<td filter="{interviewId: 'text'}" title="'interviewId'">{{participant.interviewId}}</td>
 				<td filter="{reference: 'text'}" title="'referenceNumber'">{{participant.reference}}</td>	
 				<td filter="{status: 'text'}" title="'status'">{{participant.status}}</td>
-				<td>
-					<button ng-click="displayModulesForInterviewId
-							(participant.interviewId)" 
-							data-toggle="tooltip" title="List of Modules"
-							class="btn btn-default btn-sm" >
-						<span class="glyphicon glyphicon-list-alt"></span>
-					</button>
+				<td filter="{module: 'text'}" title="'module'">
+					<md-progress-circular ng-if="participant.inProgress" 
+					md-mode="indeterminate"></md-progress-circular>
+					<span class="badge" ng-if="participant.module">
+						{{participant.module}}
+					</span>
 				</td>	
 				<td>
 					<button data-toggle="tooltip" title="Open FiredRules" ng-click="vm.openFiredRules(participant.interviews[0])" class="btn btn-default btn-sm" >

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.log4j.Logger;
 import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.interviewintromodulemodule.dao.InterviewIntroModuleModuleDao;
 import org.occideas.mapper.InterviewIntroModuleModuleMapper;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class InterviewIntroModuleModuleServiceImpl implements InterviewIntroModuleModuleService {
 
+	private Logger log = Logger.getLogger(this.getClass());
+	
 	@Autowired
 	private InterviewIntroModuleModuleDao dao;
 	@Autowired
@@ -37,6 +40,11 @@ public class InterviewIntroModuleModuleServiceImpl implements InterviewIntroModu
 	@Override
 	public List<InterviewIntroModuleModuleVO> findInterviewIdByModuleId(long idModule) {
 		List<InterviewIntroModuleModule> list = dao.getInterviewByModuleId(idModule);
+		return mapper.convertToVOList(list);
+	}
+	@Override
+	public List<InterviewIntroModuleModuleVO> findNonIntroById(Long id) {
+		List<InterviewIntroModuleModule> list = dao.findNonIntroById(id);
 		return mapper.convertToVOList(list);
 	}
 

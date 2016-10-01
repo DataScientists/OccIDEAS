@@ -8,6 +8,8 @@ public class InterviewIntroModuleModuleVO {
 	private long interviewId;
 	private String interviewModuleName;
 	private long interviewPrimaryKey;
+	private String linkName;
+	private Long linkId;
 
 	public long getIdModule() {
 		return idModule;
@@ -55,6 +57,22 @@ public class InterviewIntroModuleModuleVO {
 
 	public void setInterviewPrimaryKey(long interviewPrimaryKey) {
 		this.interviewPrimaryKey = interviewPrimaryKey;
+	}
+
+	public String getLinkName() {
+		return linkName;
+	}
+
+	public void setLinkName(String linkName) {
+		this.linkName = linkName;
+	}
+
+	public Long getLinkId() {
+		return linkId;
+	}
+
+	public void setLinkId(Long linkId) {
+		this.linkId = linkId;
 	}
 
 }

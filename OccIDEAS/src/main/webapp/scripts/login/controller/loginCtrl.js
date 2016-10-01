@@ -6,11 +6,11 @@
     LoginCtrl.$inject = ['$state','ngToast','$timeout',
                          '$scope','$http','$rootScope', 
                          'dataBeanService', '$window','loginService',
-                         '$sessionStorage','AuthenticationService','$mdDialog'];
+                         '$sessionStorage','AuthenticationService','$mdDialog','SystemPropertyService'];
     function LoginCtrl($state, ngToast, $timeout, 
     		$scope, $http, $rootScope, 
     		dataBeanService,$window, loginService,
-    		$sessionStorage,auth,$mdDialog) {
+    		$sessionStorage,auth,$mdDialog,SystemPropertyService) {
         var vm = this;
         $scope.user = {};
         vm.userId = $sessionStorage.userId;
@@ -49,7 +49,21 @@
                     	$sessionStorage.token = data.token;
                     	$sessionStorage.roles = data.userInfo.roles;
                         vm.isAuthenticated = true;
-
+                        SystemPropertyService.getByName("activeIntro").then(function(response){
+                			if(response.status == '200'){
+                				if(response.data){
+                					$sessionStorage.activeIntro = response.data; 
+                				}else{
+                					ngToast.create({
+          				    		  className: 'danger',
+          				    		  content: 'activeIntro is not set in system property. contact admin.',
+          				    		  dismissButton: true,
+          			      	    	  dismissOnClick:false,
+          			      	    	  animation:'slide'
+                					});
+                				}
+                			}
+                        });
                         $sessionStorage.isAuthenticated = true;
                         if(auth.userHasPermission(['ROLE_INTERVIEWER'])){
                         	$state.go('tabs.participants');

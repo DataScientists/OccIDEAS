@@ -54,23 +54,6 @@
 			return $scope.csv;
 		}
 		
-		$scope.displayModulesForInterviewId = function(interviewId){
-			$mdDialog.show({
-				scope: $scope.$new(),  
-				preserveScope: true,
-				templateUrl : 'scripts/assessments/partials/moduleListDialog.html',
-				clickOutsideToClose:false
-			});
-			InterviewsService.findModulesByInterviewId(interviewId).then(function(response){
-				if(response.status == '200'){
-					if(response.data.length > 0){								
-						self.modulesInInterview = response.data;
-						//vm.firedRulesByModule = $scope.modulesInInterview
-					}
-				}
-			});
-		}
-		
 		$scope.newExportCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
 			$scope.fileName = "";
@@ -757,7 +740,7 @@
 				{	
 					getData: function(params) {
 						if((params.filter().idParticipant)||(params.filter().interviewId)
-								||(params.filter().reference)||(params.filter().status)){	
+								||(params.filter().reference)||(params.filter().status)||(params.filter().module)){	
 				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 				        }						
 					    if(!self.tableParams.shouldGetData){
@@ -776,14 +759,40 @@
 					        	  self.tableParams.settings().dataset = data;
 					        	  self.tableParams.shouldGetData = false;
 					        	  self.tableParams.total(self.originalData.length);
+					        	  $timeout(function() {
+					        		  $scope.refreshModules();
+						          }, 1000);
 					        	  var last = params.page() * params.count();
 						          return _.slice(data,last - params.count(),last);
 				        	  }
 				          });
 					},
 				});
-		self.tableParams.shouldGetData = true;
+				self.tableParams.shouldGetData = true;
 		
+				$scope.refreshModules = function(){
+					_.each(self.tableParams.settings().dataset,function(participant){
+						participant.inProgress = true;
+						InterviewsService.findNonIntroById(participant.interviewId).then(function(response){
+							if(response.status == '200'){
+								if(!response.data || response.data.length == 0){								
+									participant.module = 'Error no module.';
+								}else if(response.data.length > 1){								
+									participant.module = 'Error module is more that 1.';
+								}else if(response.data[0].linkId == null){								
+									participant.module = 'Error no module.';
+								}
+								else{
+									participant.module = response.data[0].linkId 
+										+ "-" + response.data[0].linkName;
+								}
+								participant.inProgress = false;
+							}
+						});
+					})
+				}
+				
+				
 		$scope.nodePopover = {
 	    		templateUrl: 'scripts/questions/partials/nodePopover.html',
     		    open: function(x,nodeclass) {
