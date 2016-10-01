@@ -79,8 +79,7 @@ public class QuestionDao{
 	public Node getTopModuleByTopNodeId(long topNodeId) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(Node.class)
-				.add(Restrictions.eq("idNode",topNodeId))
-				.add(Restrictions.eq("deleted",0));
+				.add(Restrictions.eq("idNode",topNodeId));
 		List list = crit.list();
 		if(!list.isEmpty()){
 			return (Node)list.get(0);
