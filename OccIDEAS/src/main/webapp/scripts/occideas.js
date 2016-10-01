@@ -165,14 +165,20 @@ angular
             },
            'responseError': function(response) {
         	   var $sessionStorage = $injector.get('$sessionStorage');
+        	   var dataBeanService = $injector.get('dataBeanService');
         	   var $ngToast = $injector.get('ngToast');
         	   var state = $injector.get('$state');
         	   var http = $injector.get('$http');
                if (response.status === 408) {
             	   if($sessionStorage.token){
-            	   delete $sessionStorage.token;
                    http.defaults.headers.common['X-Auth-Token'] = "";
-                   state.go('loginHome', {reload: true});
+                   	delete $sessionStorage.userId;
+               		delete $sessionStorage.token;
+               		delete $sessionStorage.roles;
+               		$sessionStorage.isAuthenticated = false;
+               		dataBeanService.setStatetransitionHasErr('0');
+               		state.go('loginHome', {reload: true});
+              		$window.location.href = 'index.html';
                    $ngToast.create({
      	    		  className: 'danger',
      	    		  content: response.headers().errormsg,
@@ -181,14 +187,19 @@ angular
             	   }
                }else if(response.status === 401){
             	   if($sessionStorage.token){
-                	   delete $sessionStorage.token;
-                       http.defaults.headers.common['X-Auth-Token'] = "";
-                       state.go('loginHome', {reload: true});
-                       $ngToast.create({
-         	    		  className: 'danger',
-         	    		  content: 'User Unauthorized ',
-               	    	  animation:'slide'
-                       });
+            		   http.defaults.headers.common['X-Auth-Token'] = "";
+                      	delete $sessionStorage.userId;
+                  		delete $sessionStorage.token;
+                  		delete $sessionStorage.roles;
+                  		$sessionStorage.isAuthenticated = false;
+                  		dataBeanService.setStatetransitionHasErr('0');
+                  		 state.go('loginHome', {reload: true});
+                   		$window.location.href = 'index.html';
+                      $ngToast.create({
+        	    		  className: 'danger',
+        	    		  content: response.headers().errormsg,
+              	    	  animation:'slide'
+                      });
             	   }
                }
                else if(response.status == 403){
