@@ -25,15 +25,9 @@ m.idNode as idModule,
 m.name as introModuleNodeName, 
 iq.id as interviewPrimaryKey,
 iq.idInterview as interviewId,
-iql.name as linkName,
-iql.link as linkId,
 iq.name as interviewModuleName
 from Node m  
 INNER JOIN Interview_Question iq
-LEFT JOIN (
- select iql.name,iql.link,iql.idInterview from Interview_Question iql
-where (iql.type='Q_linkedmodule')
-) iql ON (iq.idInterview = iql.idInterview)
 where m.idNode = iq.link
 and (iq.type='Q_linkedmodule' OR iq.type='M_IntroModule') 
 AND iq.deleted=0;

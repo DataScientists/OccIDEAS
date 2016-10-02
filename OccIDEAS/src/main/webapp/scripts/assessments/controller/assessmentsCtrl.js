@@ -56,7 +56,7 @@
 		
 		$scope.newExportCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
-			$scope.fileName = "export";
+			$scope.fileName = "";
 			$mdDialog.show({
 				scope: $scope.$new(),  
 				preserveScope: true,
@@ -84,7 +84,7 @@
 	        	  self.filterModTableParams.settings().dataset = data;
 	        	  self.filterModTableParams.shouldGetData = true;
 	        	  if(data.length > 0){
-	        		  $scope.fileName = "InterviewExport";
+	        		  $scope.fileName = data[0].interviewModuleName;
 	        	  }
 	            return data;
 	          });
@@ -779,12 +779,9 @@
 									participant.module = 'Error no module.';
 								}else if(response.data.length > 1){								
 									participant.module = 'Error module is more that 1.';
-								}else if(response.data[0].linkId == null){								
-									participant.module = 'Error no module.';
-								}
-								else{
-									participant.module = response.data[0].linkId 
-										+ "-" + response.data[0].linkName;
+								}else{
+									participant.module = response.data[0].idModule 
+										+ "-" + response.data[0].introModuleNodeName;
 								}
 								participant.inProgress = false;
 							}

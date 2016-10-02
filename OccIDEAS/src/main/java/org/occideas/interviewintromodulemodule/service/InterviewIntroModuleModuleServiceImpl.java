@@ -4,10 +4,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.occideas.entity.InterviewIntroModuleModule;
+import org.occideas.entity.SystemProperty;
 import org.occideas.interviewintromodulemodule.dao.InterviewIntroModuleModuleDao;
 import org.occideas.mapper.InterviewIntroModuleModuleMapper;
+import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,8 @@ public class InterviewIntroModuleModuleServiceImpl implements InterviewIntroModu
 	private InterviewIntroModuleModuleDao dao;
 	@Autowired
 	private InterviewIntroModuleModuleMapper mapper;
+	@Autowired
+	private SystemPropertyDao systemPropertyDao;
 	
 	@Override
 	public List<InterviewIntroModuleModuleVO> findInterviewByModuleId(long idModule) {
@@ -44,7 +49,12 @@ public class InterviewIntroModuleModuleServiceImpl implements InterviewIntroModu
 	}
 	@Override
 	public List<InterviewIntroModuleModuleVO> findNonIntroById(Long id) {
-		List<InterviewIntroModuleModule> list = dao.findNonIntroById(id);
+		SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
+		if(activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())){
+			log.error("Active intro is either null or is not numeric");
+			return null;
+		}
+		List<InterviewIntroModuleModule> list = dao.findNonIntroById(id,activeIntro.getValue());
 		return mapper.convertToVOList(list);
 	}
 

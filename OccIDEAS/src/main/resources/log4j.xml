@@ -24,19 +24,19 @@
 	</appender>
 
 	<logger name="org.occideas" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate.SQL" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="console" />
 	</logger>
 	<logger name="org.hibernate.type" additivity="false">
-		<level value="INFO" />
+		<level value="ERROR" />
 		<appender-ref ref="console" />
 	</logger>
 	<root>
-		<priority value="INFO"></priority>
+		<priority value="ERROR"></priority>
 		<appender-ref ref="FILE" />
 		<appender-ref ref="console" />
 	</root>

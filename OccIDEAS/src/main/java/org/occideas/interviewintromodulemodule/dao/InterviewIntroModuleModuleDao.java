@@ -54,16 +54,11 @@ public class InterviewIntroModuleModuleDao {
 		return crit.list();
 	}
 	
-	public List<InterviewIntroModuleModule> findNonIntroById(Long id) {
+	public List<InterviewIntroModuleModule> findNonIntroById(Long id, String value) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(InterviewIntroModuleModule.class)
 				.add(Restrictions.eq("interviewId", id))
-						.setProjection(
-							    Projections.distinct(Projections.projectionList()
-							    .add(Projections.property("linkName"), "linkName")
-							    .add(Projections.property("linkId"),"linkId")))
-							    .setResultTransformer(Transformers.aliasToBean(
-									InterviewIntroModuleModule.class));
+				.add(Restrictions.ne("idModule", Long.valueOf(value)));
 		return crit.list();
 	}
 }
