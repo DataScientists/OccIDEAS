@@ -42,7 +42,7 @@
                 data: ""
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_ADMIN'])) {
         	$scope.tabOptions.push({
         		state: "tabs.reports",
         		data:""
@@ -124,7 +124,7 @@
                 viewName: 'assessments@tabs'
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_ADMIN'])) {
             tabs.push({
                 title: 'Reports',
                 viewName: 'reports@tabs'
