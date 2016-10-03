@@ -771,22 +771,40 @@
 				self.tableParams.shouldGetData = true;
 		
 				$scope.refreshModules = function(){
-					_.each(self.tableParams.settings().dataset,function(participant){
-						participant.inProgress = true;
-						InterviewsService.findNonIntroById(participant.interviewId).then(function(response){
-							if(response.status == '200'){
-								if(!response.data || response.data.length == 0){								
-									participant.module = 'Error no module.';
-								}else if(response.data.length > 1){								
-									participant.module = 'Error module is more that 1.';
-								}else{
-									participant.module = response.data[0].idModule 
-										+ "-" + response.data[0].introModuleNodeName;
-								}
-								participant.inProgress = false;
-							}
-						});
-					})
+					SystemPropertyService.getByName("activeintro").then(function(response){
+						if(response.status == '200'){
+							var introModuleId = response.data.value;
+							_.each(self.tableParams.settings().dataset,function(participant){
+								participant.inProgress = true;
+								InterviewsService.findModulesByInterviewId(participant.interviewId).then(function(response){
+									if(response.status == '200'){
+										var introModule = "";
+										if(!response.data || response.data.length == 0){								
+											participant.module = 'Error no module.';
+										}else{
+											participant.module = "";
+											for(var i=0;i<response.data.length;i++){
+												var module = response.data[i];
+												if(module.idModule!=introModuleId){
+													participant.module += module.interviewModuleName;
+													if(i<response.data.length-1){
+														participant.module += ":";
+													}
+												}else{
+													introModule = module.interviewModuleName;
+												}												
+											}										
+										}
+										if(participant.module==""){								
+											participant.module = introModule;
+										}
+										participant.inProgress = false;
+									}
+								});
+							})
+						}
+					});
+					
 				}
 				
 				

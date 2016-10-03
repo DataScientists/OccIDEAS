@@ -196,7 +196,11 @@ public class AssessmentRestController {
 				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 				answers.add(String.valueOf(interviewVO.getInterviewId()));
 				Set<String> questionIdList = exportCSVVO.getQuestionIdList();
+				int iqCount = 0;
+				int iqSize = questionIdList.size();
 				for(String questionId:questionIdList){
+					System.out.println("processing "+questionId);
+					System.out.println(iqCount+" of "+iqSize);
 					if(questionId.contains("_")){
 						String[] temp = questionId.split("_");
 						long tempQId = Long.valueOf(temp[0]);
@@ -253,6 +257,7 @@ public class AssessmentRestController {
 							answers.add("-- Question Not Asked --");
 						}
 					}
+					iqCount++;
 				}
 				exportCSVVO.getAnswers().put(interviewVO, answers);
 			}

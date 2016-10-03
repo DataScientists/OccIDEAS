@@ -203,7 +203,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					copyVo.setVo(vo);
 					copyVo.setFragments(vo.getFragments());
 					copyVo.setIncludeRules(true);
-					copyVo.setName("(Copy from Import)" + vo.getName());
+					copyVo.setName(vo.getName());
 					copyVo.setModules(vo.getModules());
 					// this is for intro module
 					if("M_IntroModule".equals(vo.getType())){

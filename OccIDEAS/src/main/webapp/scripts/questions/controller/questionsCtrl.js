@@ -1289,7 +1289,7 @@
 			  ], null, // Divider
 			  [ 'Save Module As', function($itemScope) {	
 				  var newScope = $itemScope.$new();
-				  newScope.name = '(Copy)'+$itemScope.$modelValue.name;
+				  newScope.name = $itemScope.$modelValue.name+"(Copy)";
 				  newScope.includeRules = true;
 				  newScope.includeLinks = true;
 				  

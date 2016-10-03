@@ -29,8 +29,8 @@ public class InterviewIntroModuleModule implements Serializable {
 	private long interviewPrimaryKey;
 	private long interviewId;
 	private String interviewModuleName;
-	private String linkName;
-	private Long linkId;
+	//private String linkName;
+	//private Long linkId;
 
 	public long getIdModule() {
 		return idModule;
@@ -80,7 +80,7 @@ public class InterviewIntroModuleModule implements Serializable {
 		this.interviewPrimaryKey = interviewPrimaryKey;
 	}
 
-	public String getLinkName() {
+	/*public String getLinkName() {
 		return linkName;
 	}
 
@@ -94,6 +94,6 @@ public class InterviewIntroModuleModule implements Serializable {
 
 	public void setLinkId(Long linkId) {
 		this.linkId = linkId;
-	}
+	}*/
 
 }

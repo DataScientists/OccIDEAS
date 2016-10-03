@@ -39,7 +39,7 @@
 			var retValue = false;
 			$scope.awesIdSize = awesId.length;
 			if($scope.awesIdSize==$scope.awesIdMaxSize){
-				if(_.startsWith(awesId, 'H')){
+				if(_.startsWith(awesId, 'M')){
 					retValue = true;
 					$scope.searchAWESID = awesId;
 				}
