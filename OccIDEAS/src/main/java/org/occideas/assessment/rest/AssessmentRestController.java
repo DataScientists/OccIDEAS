@@ -3,12 +3,18 @@ package org.occideas.assessment.rest;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -174,6 +180,10 @@ public class AssessmentRestController {
 		headers.add("AWES ID");
 		int iUniqueColumeCount = 0;
 		int iSize = uniqueInterviewQuestions.size();
+		if(iSize > 0){
+			//sort interviewquestion
+			uniqueInterviewQuestions = sortInterviewQuestions(uniqueInterviewQuestions);
+		}
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
 			log.info("[Report] adding header "+iUniqueColumeCount+" of "+iSize+" for "+interviewQuestionVO.getIdInterview());
 			addHeaders(headers, interviewQuestionVO,exportCSVVO);
@@ -263,6 +273,48 @@ public class AssessmentRestController {
 			}
 		}
 		return headers;
+	}
+
+	private List<InterviewQuestionVO> sortInterviewQuestions(List<InterviewQuestionVO> uniqueInterviewQuestions) {
+		Map<String,List<InterviewQuestionVO>> map = new LinkedHashMap<>();
+		// sort the questions by its top node id
+		for(InterviewQuestionVO iqv:uniqueInterviewQuestions){
+			if(!map.containsKey(String.valueOf(iqv.getTopNodeId()))){
+				map.put(String.valueOf(iqv.getTopNodeId()), 
+						new LinkedList<InterviewQuestionVO>());
+			}
+			map.get(String.valueOf(iqv.getTopNodeId())).add(iqv);
+		}
+		// sort and merge by number
+		List<InterviewQuestionVO> resultList = new LinkedList<>();
+		for (Map.Entry<String,List<InterviewQuestionVO>> entry : map.entrySet()) {
+			List<InterviewQuestionVO> value = entry.getValue();
+			InterviewQuestionVO firstElement = value.remove(0);
+			Collections.sort(value, new Comparator<InterviewQuestionVO>(){
+			     public int compare(InterviewQuestionVO o1, InterviewQuestionVO o2){
+			    	 
+			    	 	StringBuilder sbO1 = new StringBuilder();
+			    	    for (char c : o1.getNumber().toCharArray()){
+			    	    	sbO1.append((int)c);
+			    	    }
+			    	    BigInteger o1Int = new BigInteger(sbO1.toString());
+			    	    
+			    	    StringBuilder sbO2 = new StringBuilder();
+			    	    for (char c : o2.getNumber().toCharArray()){
+			    	    	sbO2.append((int)c);
+			    	    }
+			    	    BigInteger o2Int = new BigInteger(sbO2.toString());
+			    	 if(o1Int.intValue() == o2Int.intValue()){
+			             return 0;
+			         }
+			         return o1Int.intValue() < o2Int.intValue() ? -1 : 1;
+			     }
+			});
+			value.add(0, firstElement);
+			resultList.addAll(value);
+		}
+		
+		return resultList;
 	}
 
 	private void addHeaders(Set<String> headers, 
