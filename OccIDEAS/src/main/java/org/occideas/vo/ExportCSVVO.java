@@ -1,16 +1,16 @@
 package org.occideas.vo;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class ExportCSVVO {
 
-	private Set<String> headers = new TreeSet<>();
-	private Set<String> questionIdList = new TreeSet<>();
-	private Map<InterviewVO, List<String>> answers = new HashMap<>();
+	private Set<String> headers = new LinkedHashSet<>();
+	private Set<String> questionIdList = new LinkedHashSet<>();
+	private Map<InterviewVO, List<String>> answers = new LinkedHashMap<>();
 
 	public Set<String> getHeaders() {
 		return headers;
