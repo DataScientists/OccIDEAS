@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -200,17 +200,13 @@ public class AssessmentRestController {
 			List<InterviewVO> interviewQuestionAnswer = interviewService.
 					getInterviewQuestionAnswer(interviewQuestionVO.getIdInterview());
 			for(InterviewVO interviewVO:interviewQuestionAnswer){
-				log.info("[Report] processing "+count+" of "+iSize+" interview id "
-						+interviewVO.getInterviewId()+"-reference number:"+interviewVO.getReferenceNumber());
+				log.info("[Report] interviewQuestionAnswer processing "+count+" of "+iSize+" interview id "
+						+interviewVO.getInterviewId()+"-reference number:"+interviewVO.getReferenceNumber()+" "+new Date());
 				List<String> answers = new ArrayList<>();
 				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 				answers.add(String.valueOf(interviewVO.getInterviewId()));
 				Set<String> questionIdList = exportCSVVO.getQuestionIdList();
-				int iqCount = 0;
-				int iqSize = questionIdList.size();
 				for(String questionId:questionIdList){
-					System.out.println("processing "+questionId);
-					System.out.println(iqCount+" of "+iqSize);
 					if(questionId.contains("_")){
 						String[] temp = questionId.split("_");
 						long tempQId = Long.valueOf(temp[0]);
@@ -266,8 +262,7 @@ public class AssessmentRestController {
 						}else{
 							answers.add("-- Question Not Asked --");
 						}
-					}
-					iqCount++;
+					}				
 				}
 				exportCSVVO.getAnswers().put(interviewVO, answers);
 			}
@@ -367,6 +362,7 @@ public class AssessmentRestController {
 		return "M".equals(interviewQuestionVO.getNodeClass())
 				|| "M_IntroModule".equals(interviewQuestionVO.getType())
 				|| "Q_linkedajsm".equals(interviewQuestionVO.getType())
+				|| "Q_linkedmodule".equals(interviewQuestionVO.getType())
 				|| "F_ajsm".equals(interviewQuestionVO.getType());
 	}
 
