@@ -31,25 +31,23 @@ public class User implements Serializable{
 	@GeneratedValue
     private int id;
  
-    @NotEmpty
-    @Column(name="SSO_ID", unique=true, nullable=false)
+    @Column(name="SSO_ID")
     private String ssoId;
      
-    @NotEmpty
-    @Column(name="PASSWORD", nullable=false)
+    @Column(name="PASSWORD")
     private String password;
          
-    @Column(name="FIRST_NAME", nullable=true)
+    @Column(name="FIRST_NAME")
     private String firstName;
  
-    @Column(name="LAST_NAME", nullable=true)
+    @Column(name="LAST_NAME")
     private String lastName;
  
-    @Column(name="EMAIL", nullable=true)
+    @Column(name="EMAIL")
     private String email;
  
     @NotEmpty
-    @Column(name="STATE", nullable=false)
+    @Column(name="STATE")
     private String state=State.ACTIVE.getState();
  
     @ManyToMany(fetch = FetchType.EAGER)

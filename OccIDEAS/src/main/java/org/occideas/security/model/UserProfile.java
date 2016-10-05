@@ -18,10 +18,11 @@ public class UserProfile implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id 
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id; 
  
-    @Column(name="TYPE", length=15, unique=true, nullable=false)
+    @Column(name="TYPE")
     private String type = UserProfileType.READONLY.getUserProfileType();
      
     public int getId() {
