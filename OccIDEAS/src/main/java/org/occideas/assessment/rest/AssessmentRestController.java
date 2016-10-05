@@ -185,11 +185,14 @@ public class AssessmentRestController {
 			uniqueInterviewQuestions = sortInterviewQuestions(uniqueInterviewQuestions);
 		}
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-			log.info("[Report] adding header "+iUniqueColumeCount+" of "+iSize+" for "+interviewQuestionVO.getIdInterview());
+			System.out.println("[Report] adding header "+iUniqueColumeCount+" of "+iSize+" for "+interviewQuestionVO.getIdInterview());
 			addHeaders(headers, interviewQuestionVO,exportCSVVO);
 			iUniqueColumeCount++;
 		}
 		double count = 0;	
+		int interviewCount = 0;
+		List<InterviewVO> interviewQuestionAnswer = null;
+		List<InterviewVO> runningInterviews = new ArrayList<>();
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
 			count++;
 			if(count % 10 == 0){
@@ -197,10 +200,25 @@ public class AssessmentRestController {
 				updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(), 
 						progress);
 			}
-			List<InterviewVO> interviewQuestionAnswer = interviewService.
-					getInterviewQuestionAnswer(interviewQuestionVO.getIdInterview());
+			long interviewId = interviewQuestionVO.getIdInterview();
+			InterviewVO interview = new InterviewVO();
+			interview.setInterviewId(interviewId);
+			if(!runningInterviews.contains(interview)){
+				interviewQuestionAnswer = interviewService.getInterviewQuestionAnswer(interviewId);
+				runningInterviews.addAll(interviewQuestionAnswer);
+				interviewCount++;
+				System.out.println("[Report] New interview "+interviewCount+" "+new Date());
+			}else{
+				interviewQuestionAnswer = new ArrayList<InterviewVO>();
+				for(InterviewVO interviewVO:runningInterviews){
+					if(interviewVO.getInterviewId()==interviewId){
+						interviewQuestionAnswer.add(interviewVO);
+					}
+				}
+			}
+			
 			for(InterviewVO interviewVO:interviewQuestionAnswer){
-				log.info("[Report] interviewQuestionAnswer processing "+count+" of "+iSize+" interview id "
+				System.out.println("[Report] interviewQuestionAnswer processing "+count+" of "+iSize+" interview id "
 						+interviewVO.getInterviewId()+"-reference number:"+interviewVO.getReferenceNumber()+" "+new Date());
 				List<String> answers = new ArrayList<>();
 				answers.add(String.valueOf(interviewVO.getReferenceNumber()));

@@ -119,7 +119,7 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 
 	@Override
 	public List<InterviewQuestionVO> getUniqueInterviewQuestions(String[] filterModule) {
-		filterModule = addChildModules(filterModule);
+		//filterModule = addChildModules(filterModule);
 		System.out.println(">>>>>>>>>>>>>>>>"+Arrays.toString(filterModule));
 		return mapper.convertToInterviewQuestionVOListExcAnswers(dao.getUniqueInterviewQuestions(filterModule));
 	}

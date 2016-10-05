@@ -2,6 +2,7 @@ package org.occideas.interviewquestion.dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -27,19 +28,21 @@ public class InterviewQuestionDao {
     private QuestionService questionService;
 	
 	private final String UNIQUE_INT_QUESTION_SQL = 	
-			" select distinct(question_id) as question_id,id,idinterview,type,name,topNodeId,"
-			+ "nodeClass,parentModuleId,modCount,parentAnswerId,link,"
-			+ "deleted,isProcessed,description,number,intQuestionSequence,lastUpdated "+
-			" from Interview_Question "+
-			" where deleted = 0 and topNodeId in (:param) and idinterview in ("+
-			" select idinterview from Interview)";
+			"select distinct(a.question_id) as question_id,a.id,a.idinterview,"
+			+ "a.type,a.name,a.topNodeId, a.nodeClass,a.parentModuleId,"
+			+ "a.modCount,a.parentAnswerId,a.link, a.deleted,a.isProcessed,"
+			+ "a.description,a.number,a.intQuestionSequence,a.lastUpdated "
+			+ "from Interview_Question a, Interview_Question b "
+			+ "where a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) ";
 	
 	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){
+		System.out.println("Start getUniqueInterviewQuestions:"+new Date());
 		final Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery(UNIQUE_INT_QUESTION_SQL).
 				addEntity(InterviewQuestion.class);
 		sqlQuery.setParameterList("param", filterModule);
 		List<InterviewQuestion> list = sqlQuery.list();
+		System.out.println("Complete getUniqueInterviewQuestions:"+new Date());
 		return list;
 	}
 	

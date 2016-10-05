@@ -317,6 +317,8 @@ public class InterviewVO {
 		InterviewVO other = (InterviewVO) obj;
 		if (interviewId != other.interviewId)
 			return false;
+		if (interviewId == other.interviewId)
+			return true;
 		if (referenceNumber == null) {
 			if (other.referenceNumber != null)
 				return false;
