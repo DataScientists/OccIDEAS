@@ -89,9 +89,13 @@ public class AssessmentRestController {
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
 		}
 		String exportFileCSV = createFileName(filterModuleVO.getFileName());
-		String fullPath = property.getValue()+exportFileCSV;
+		String fullPath = "";
 		ReportHistoryVO reportHistoryVO = 
 				insertToReportHistory(exportFileCSV, fullPath,null,0);
+		// filename saved on the report would be different from the one saved in dir
+		// this is to avoid overwritten reports
+		fullPath = property.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
+		reportHistoryVO = 	insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0);
 		log.info("[Report] before getting unique interview questions ");
 		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
 		log.info("[Report] after getting unique interview questions ");
