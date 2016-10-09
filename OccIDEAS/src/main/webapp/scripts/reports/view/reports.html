@@ -1,6 +1,8 @@
 <div ng-cloak>
 	<table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped" show-filter="true">
 		<tr ng-repeat="reports in $data">
+			<td title="'Id'" filter="{ id: 'text'}" sortable="'id'">
+				{{reports.id}}</td>
 			<td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
 				{{reports.name}}</td>
 			<td title="'Type'" filter="{ type: 'text'}" sortable="'type'">

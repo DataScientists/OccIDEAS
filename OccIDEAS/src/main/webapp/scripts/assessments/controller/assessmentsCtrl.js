@@ -56,7 +56,7 @@
 		
 		$scope.newExportCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
-			$scope.fileName = "";
+			$scope.fileName = "interviewsExport";
 			$mdDialog.show({
 				scope: $scope.$new(),  
 				preserveScope: true,
@@ -83,9 +83,7 @@
 	        	  self.originalData = angular.copy(data);
 	        	  self.filterModTableParams.settings().dataset = data;
 	        	  self.filterModTableParams.shouldGetData = true;
-	        	  if(data.length > 0){
-	        		  $scope.fileName = data[0].interviewModuleName;
-	        	  }
+	        	  
 	            return data;
 	          });
 	          }
@@ -94,10 +92,11 @@
 		 $scope.checkboxes = { 'checked': false, items: {} };
 
 		    // watch for check all checkbox
-		    $scope.$watch('checkboxes.checked', function(value) {
+		    $scope.$watch('checkboxes.checked', function(value) {	    	
 		        angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
 		            if (angular.isDefined(item.idModule)) {
 		                $scope.checkboxes.items[item.idModule] = value;
+		                 
 		            }
 		        });
 		    });
