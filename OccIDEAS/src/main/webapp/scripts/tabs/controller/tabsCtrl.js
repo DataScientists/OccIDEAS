@@ -63,6 +63,7 @@
                     	state = "tabs.participants";
                     }else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR'])) {
                     	state = "tabs.assessments";
+                    	$stickyState.reset('tabs.assessments');
                     }
                     
                 }
