@@ -11,6 +11,34 @@
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		
+		$scope.modules = function(column) {
+			  var def = $q.defer();
+
+			  /* http service is based on $q service */
+			  InterviewsService.getDistinctModules().then(function(response) {
+
+			    var arr = [],
+			      module = [];
+
+			    angular.forEach(response.data, function(item) {
+			      if (!_.find(module, _.matchesProperty('title', item.interviewModuleName))) {
+			        arr.push(item.interviewModuleName);
+			        module.push({
+			          'id': item.interviewModuleName,
+			          'title': item.interviewModuleName
+			        });
+			      }
+			    });
+			    
+			    /* whenever the data is available it resolves the object*/
+			    def.resolve(module);
+
+			  });
+
+			  return def;
+			};
+		
+		
 		$scope.showInterviewCount = function(mod,$event){
 			InterviewsService.findInterviewIdByModuleId(mod.idModule)
 				.then(function(response){
@@ -739,9 +767,10 @@
 				{	
 					getData: function(params) {
 						if((params.filter().idParticipant)||(params.filter().interviewId)
-								||(params.filter().reference)||(params.filter().status)||(params.filter().module)){	
+								||(params.filter().reference)||(params.filter().status)||params.filter().module){	
 				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-				        }						
+				        }
+						
 					    if(!self.tableParams.shouldGetData){
 					    	 var last = params.page() * params.count();
 					          return _.slice(self.tableParams.settings().dataset,last - params.count(),last);
@@ -778,6 +807,7 @@
 								InterviewsService.findModulesByInterviewId(participant.interviewId).then(function(response){
 									if(response.status == '200'){
 										var introModule = "";
+										var idModule = "";
 										if(!response.data || response.data.length == 0){								
 											participant.module = 'Error no module.';
 										}else{
@@ -786,16 +816,19 @@
 												var module = response.data[i];
 												if(module.idModule!=introModuleId){
 													participant.module += module.interviewModuleName;
+													participant.idModule += module.idModule;
 													if(i<response.data.length-1){
 														participant.module += ":";
 													}
 												}else{
 													introModule = module.interviewModuleName;
+													idModule = module.idModule;
 												}												
 											}										
 										}
 										if(participant.module==""){								
 											participant.module = introModule;
+											participant.idModule += idModule;
 										}
 										participant.inProgress = false;
 									}

@@ -23,7 +23,7 @@
 				<td filter="{interviewId: 'text'}" title="'interviewId'">{{participant.interviewId}}</td>
 				<td filter="{reference: 'text'}" title="'referenceNumber'">{{participant.reference}}</td>	
 				<td filter="{status: 'text'}" title="'status'">{{participant.status}}</td>
-				<td filter="{module: 'text'}" title="'module'">
+				<td filter="{module: 'select' }" filter-data="modules()" sortable="'modules'" title="'module'" >
 					<md-progress-circular ng-if="participant.inProgress" 
 					md-mode="indeterminate"></md-progress-circular>
 					<span class="badge" ng-if="participant.module">

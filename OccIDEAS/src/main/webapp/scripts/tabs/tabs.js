@@ -149,8 +149,8 @@
 		.state( {
 			name:'tabs.assessments',
 			url: '/assessments/',
-			sticky: false,
-		    deepStateRedirect: false,
+			sticky: true,
+		    deepStateRedirect: true,
 		    authenticate:true,
 			views:{
 				'assessments@tabs':{

@@ -41,6 +41,7 @@
                 state: "tabs.assessments",
                 data: ""
             });
+            $stickyState.reset('tabs.assessments');
         }
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_ADMIN'])) {
         	$scope.tabOptions.push({
@@ -175,6 +176,7 @@
             safeDigest($rootScope.tabsLoading);
         };
         $scope.addAssessmentTab = function(row) {
+        	var state = "tabs.assessment";
             tabs.push({
                 title: row.referenceNumber,
                 viewName: 'assessment@tabs',
@@ -189,6 +191,7 @@
             });
             $rootScope.tabsLoading = true;
             safeDigest($rootScope.tabsLoading);
+            $stickyState.reset(state);
         };
         $scope.addModuleTab = function(row) {
             var state = "tabs.questions";
