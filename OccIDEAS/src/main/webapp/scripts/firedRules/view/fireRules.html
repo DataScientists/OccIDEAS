@@ -102,6 +102,31 @@
 		<div>Peak Noise: {{peakNoise}}</div>
 		
 	</div>
+	<div class="vibrationAssessmentWrapper" ng-if="vibrationRows.length>0">
+		<div>Daily Vibration: {{dailyVibration}}</div>
+		<table class="table table-bordered ">
+		<thead>
+		<tr>
+			<td>Module Name</td>
+			<td>Node Number</td>
+			<td>vibMag</td>
+			<td>Hours</td>
+			
+		</tr>
+		</thead> 
+		
+		<tr ng-repeat="noiseRow in vibrationRows" class={{noiseRow.type}}>	
+			<td>{{noiseRow.moduleName}}</td>
+			<td ng-click="highlightNode(noiseRow.idNode)">{{noiseRow.nodeNumber}}</td>
+			<td>{{noiseRow.vibMag}}</td>
+			<td>{{noiseRow.frequencyhours}}</td>
+			
+		</tr>
+		</table>
+		
+		
+		
+	</div>
 </div>
 
 <div id="interview-wrapper">

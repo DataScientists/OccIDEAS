@@ -176,6 +176,10 @@
 				_.remove(menu, {
 				    0: 'Run Noise Assessment'
 				});
+			}else if(scope.agent.idAgent!=157){
+				_.remove(menu, {
+				    0: 'Run Vibration Assessment'
+				});
 			}else{
 				
 			}
@@ -395,6 +399,70 @@
 						$scope.autoExposureLevel = autoExposureLevel;
 						$scope.peakNoise = peakNoise;
 						$scope.shiftHours = shiftHours;
+				  }
+			  	}			  
+			  ],
+			  [ 'Run Vibration Assessment', function($itemScope, $event, model) {
+				  var bFoundVibrationRules = false;
+				  var vibrationRules = [];
+				  
+				  for(var i=0;i<model.agents.length;i++){
+					  var agentAssessing = model.agents[i]
+					  var rule = {levelValue:99};
+					  for(var j=0;j<model.firedRules.length;j++){
+						  var firedRule = model.firedRules[j];
+						  if(agentAssessing.idAgent == firedRule.agent.idAgent){
+							  if(firedRule.agent.idAgent==157){
+								  bFoundVibrationRules = true;
+								  vibrationRules.push(firedRule);
+							  }
+						  }	  
+					  }  
+				  }
+				  if(bFoundVibrationRules){
+					  var totalExposure = 0;
+					  var totalFrequency = 0;
+					  var dailyVibration = 0;
+					  var level = 0;					  				  
+					  $scope.vibrationRows = [];
+					  /*for(var m=0;m<model.questionsAsked.length;m++){
+						  var iqa = model.questionsAsked[m];
+						  if(iqa.possibleAnswer.type=='P_frequencyshifthours'){
+							  shiftHours = iqa.interviewQuestionAnswerFreetext;
+							  break;
+						  }
+					  }*/
+					  for(var k=0;k<vibrationRules.length;k++){
+						  var vibrationRule = vibrationRules[k];
+						  
+						  var parentNode = vibrationRule.conditions[0];
+						  cascadeFindNode(model.answerHistory,parentNode); 
+						  var frequencyhours = 0;
+						  if($scope.foundNode){
+							  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
+							  if(frequencyHoursNode){
+								  frequencyhours = frequencyHoursNode.answerFreetext;
+							  }
+							  $scope.foundNode=null;
+						  }
+						  var level = vibrationRule.ruleAdditionalfields[0].value;
+						  var moduleName = getModuleNameOfNode(vibrationRule.conditions[0]);
+						  var vibrationRow = {nodeNumber:vibrationRule.conditions[0].number,
+								  	idNode:vibrationRule.conditions[0].idNode,
+								  	vibMag:level,								
+									frequencyhours:frequencyhours,
+									type:'vibration',
+									moduleName:moduleName}
+						  $scope.vibrationRows.push(vibrationRow);
+						  totalFrequency += Number(frequencyhours);
+						  totalExposure += Number(level);
+						  
+					  }
+					  
+					 
+					  dailyVibration = Math.sqrt(Number(totalFrequency)*Number(totalFrequency)*Number(totalExposure)/8);
+
+					  $scope.dailyVibration = dailyVibration.toFixed(4);
 				  }
 			  	}			  
 			  ]
