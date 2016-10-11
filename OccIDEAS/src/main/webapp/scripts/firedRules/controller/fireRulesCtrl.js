@@ -321,13 +321,15 @@
 							partialExposure = partialExposure.toFixed(4);
 							hoursbg = hoursbg.toFixed(4);
 							level = noiseRule.ruleAdditionalfields[0].value;
+							var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
-									idNode:noiseRule.conditions[0].idNode,
-									nodeText:noiseRule.conditions[0].name,
-									dB:level+'B',
+											idNode:noiseRule.conditions[0].idNode,
+											nodeText:noiseRule.conditions[0].name,
+											dB:level+'B',
 											backgroundhours: hoursbg,
 											partialExposure:partialExposure,
-											type:'backgroundNoise'}
+											type:'backgroundNoise',
+											moduleName: moduleName}
 							
 							$scope.noiseRows.push(noiseRow);
 							if(partialExposure>maxBackgroundPartialExposure){
@@ -366,13 +368,14 @@
 							}else{
 								modHours = hours;
 							}
-							
+							var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
 									idNode:noiseRule.conditions[0].idNode,
 									nodeText:noiseRule.conditions[0].name,
 									dB:level,
 									backgroundhours: modHours,
-									partialExposure:partialExposure}
+									partialExposure:partialExposure,
+									moduleName:moduleName}
 					
 							$scope.noiseRows.push(noiseRow);	
 							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
@@ -484,6 +487,22 @@
     		});
         	
         }
+		function getModuleNameOfNode(node){
+			var moduleName = "";
+			var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+				  var retValue = false;
+				  if(qnode.link){
+					  if(qnode.link == node.topNodeId){
+						  retValue = true;
+					  }
+				  }
+				  return retValue;
+			  });
+			  if(linkNode){
+				  moduleName = linkNode.name.substr(0,4);
+			  } 
+			return moduleName;  
+		}
 	}
 
 })();

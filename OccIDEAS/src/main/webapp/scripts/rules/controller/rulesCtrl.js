@@ -1,9 +1,9 @@
 (function(){
 	angular.module('occIDEASApp.Rules')
 		   .controller('RulesCtrl',RulesCtrl);
-	RulesCtrl.$inject = ['RulesService','ngTableParams','$state','$scope','RulesCache','$filter',
+	RulesCtrl.$inject = ['RulesService','ngTableParams','$state','$scope','$rootScope','RulesCache','$filter',
                           '$anchorScroll','$location','templateData','QuestionsService','AgentsService'];
-	function RulesCtrl(RulesService,NgTableParams,$state,$scope,RulesCache,$filter,
+	function RulesCtrl(RulesService,NgTableParams,$state,$scope,$rootScope,RulesCache,$filter,
 			$anchorScroll,$location,templateData,QuestionsService){
 		var self = this;
 		self.isDeleting = false;
@@ -11,7 +11,7 @@
 	    var invalidCellsByRow = [];
 		self.tableParams = new NgTableParams(
 				{
-					group: "agentId",
+					group: "agentName",
 					count: 200
 				}, 
 				{	
@@ -46,7 +46,7 @@
 				});
 		
 		self.tableParams.shouldGetData = true;
-		
+		$rootScope.tabsLoading = false;
 	    function setInvalid(isInvalid) {
 	        self.$invalid = isInvalid;
 	        self.$valid = !isInvalid;

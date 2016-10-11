@@ -78,6 +78,7 @@
 		<table class="table table-bordered ">
 		<thead>
 		<tr>
+			<td>Module Name</td>
 			<td>Node Number</td>
 			<td>Answer</td>
 			<td>dB</td>
@@ -87,6 +88,7 @@
 		</thead> 
 		
 		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
+			<td>{{noiseRow.moduleName}}</td>
 			<td ng-click="highlightNode(noiseRow.idNode)">{{noiseRow.nodeNumber}}</td>
 			<td>{{noiseRow.nodeText}}</td>
 			<td>{{noiseRow.dB}}</td>

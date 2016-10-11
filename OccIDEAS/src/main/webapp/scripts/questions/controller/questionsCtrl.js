@@ -266,6 +266,11 @@
 					
 				}
 			}
+			RulesService.save(rule).then(function(response){
+    			if(response.status === 200){
+    				$log.info('Change Rule Type was Successful!'+rule.idRule);
+    			}
+    		});
 		}
 		
 		$scope.aJsmTreeOptions = {
