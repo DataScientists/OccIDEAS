@@ -43,7 +43,7 @@
              ng-model="node.name" 
              id="editId_{{node.idNode}}" 
              ng-blur="saveEdit(this)" 
-             class="form-control"  
+             class="form-control-edit form-control"  
              data-nodrag 
 			 ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
      	  </div>

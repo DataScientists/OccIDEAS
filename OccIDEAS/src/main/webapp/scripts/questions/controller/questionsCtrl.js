@@ -251,6 +251,16 @@
 											value: ''}
 							});
 					
+				}else if(rule.ruleAdditionalfields.length==0){
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 1,
+											type: 'NOISE_Db',
+											value: ''}
+							});
+					
 				}
 			}else if((type=='VIBRATION')){
 				if(rule.ruleAdditionalfields==null){
@@ -264,13 +274,18 @@
 											value: ''}
 							});
 					
+				}else if(rule.ruleAdditionalfields.length==0){
+					rule.ruleAdditionalfields.push(
+							{
+								idRule:rule.idRule,
+								value:'',
+								additionalfield:{idadditionalfield: 3,
+											type: 'VIBRATION_level',
+											value: ''}
+							});
+					
 				}
 			}
-			RulesService.save(rule).then(function(response){
-    			if(response.status === 200){
-    				$log.info('Change Rule Type was Successful!'+rule.idRule);
-    			}
-    		});
 		}
 		
 		$scope.aJsmTreeOptions = {

@@ -1143,7 +1143,7 @@ md-list-item.interviewAnswers{
 .backgroundNoise{
     background: #F8FAFF;
 }
- .form-control {
+ .form-control-edit {
 	width:50% !important;	
 }
 .interviewNotesButton{
