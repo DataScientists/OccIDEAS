@@ -11,53 +11,16 @@
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		
-		$scope.modules = function(column) {
-			  var def = $q.defer();
-
-			  /* http service is based on $q service */
-			  InterviewsService.getDistinctModules().then(function(response) {
-
-			    var arr = [],
-			      module = [];
-
-			    angular.forEach(response.data, function(item) {
-			      if (!_.find(module, _.matchesProperty('title', item.interviewModuleName))) {
-			        arr.push(item.interviewModuleName);
-			        module.push({
-			          'id': item.interviewModuleName,
-			          'title': item.interviewModuleName
-			        });
-			      }
-			    });
-			    
-			    /* whenever the data is available it resolves the object*/
-			    def.resolve(module);
-
-			  });
-
-			  return def;
-			};
 		
 		
-		$scope.showInterviewCount = function(mod,$event){
-			InterviewsService.findInterviewIdByModuleId(mod.idModule)
-				.then(function(response){
-				if(response.status == '200'){
-					mod.intCount = response.data.length;
-					safeDigest(mod);
-				}
-			});
-			if ($event.stopPropagation) $event.stopPropagation();
-			if ($event.preventDefault) $event.preventDefault();
-			$event.cancelBubble = true;
-			$event.returnValue = false;
-		};
 		
-		QuestionsService.getAllMultipleQuestion().then(function(response){
-			if(response.status == '200'){
-				$scope.multipleQuestions = response.data;
-			}
-		});
+		
+		
+		//QuestionsService.getAllMultipleQuestion().then(function(response){
+		//	if(response.status == '200'){
+		//		$scope.multipleQuestions = response.data;
+		//	}
+		//});
 		
 		
 		$scope.openInterviewBtn = function(){
@@ -82,98 +45,10 @@
 			return $scope.csv;
 		}
 		
-		$scope.newExportCSVButton = function(){
-			$scope.checkboxes = { 'checked': false, items: {} };
-			$scope.fileName = "interviewsExport";
-			$mdDialog.show({
-				scope: $scope.$new(),  
-				preserveScope: true,
-				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
-				clickOutsideToClose:false
-			});
-		}
 		
-		self.filterModTableParams =  new NgTableParams(
-				{
-				}, 
-			{	
-	        getData: function(params) {
-	          if(params.filter().interviewModuleName){	
-		        return $filter('filter')(self.filterModTableParams.settings().dataset, params.filter());
-		      }
-		      if(!self.filterModTableParams.shouldGetData){
-		        return self.filterModTableParams.settings().dataset;
-		      }
-	          $log.info("Data getting from intro modules ajax ..."); 
-	          return  InterviewsService.getDistinctModules().then(function(response) {
-	        	  $log.info("Data received from modules ajax ...");        	
-	        	  var data = response.data;
-	        	  self.originalData = angular.copy(data);
-	        	  self.filterModTableParams.settings().dataset = data;
-	        	  self.filterModTableParams.shouldGetData = true;
-	        	  
-	            return data;
-	          });
-	          }
-	      });
-		 self.filterModTableParams.shouldGetData = true;
-		 $scope.checkboxes = { 'checked': false, items: {} };
-
-		    // watch for check all checkbox
-		    $scope.$watch('checkboxes.checked', function(value) {	    	
-		        angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
-		            if (angular.isDefined(item.idModule)) {
-		                $scope.checkboxes.items[item.idModule] = value;
-		                 
-		            }
-		        });
-		    });
-
-		    // watch for data checkboxes
-		    $scope.$watch('checkboxes.items', function(values) {
-		        if (!self.filterModTableParams.settings().dataset) {
-		            return;
-		        }
-		        var checked = 0, unchecked = 0,
-		            total = self.filterModTableParams.settings().dataset.length;
-		        angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
-		            checked   +=  ($scope.checkboxes.items[item.idModule]) || 0;
-		            unchecked += (!$scope.checkboxes.items[item.idModule]) || 0;
-		        });
-		        if ((unchecked == 0) || (checked == 0)) {
-		            $scope.checkboxes.checked = (checked == total);
-		        }
-		        // grayed checkbox
-		        angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
-		    }, true);
 		
-		$scope.exportCSVInterviews = function(fileName){
-			SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response){
-				if(response.status == '200'){
-					if(response.data){
-						$scope.cancel();
-						 ngToast.create({
-				    		  className: 'success',
-				    		  content: 'Your report is now running .... Kindly check the reports tab for details.'
-				    	 });
-						 var filterModule = [];
-						 _.each($scope.checkboxes.items,function(value, key){
-							 filterModule.push(key);
-						 });
-						InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){
-						});
-					}else{
-						ngToast.create({
-				    		  className: 'danger',
-				    		  content: 'Unable to generate report no directory path defined. SystemProperty "REPORT_EXPORT_CSV_DIR" is not defined.',
-				    		  dismissButton: true,
-			      	    	  dismissOnClick:false,
-			      	    	  animation:'slide'
-						});
-					}
-				}
-			});
-		}
+				
+		
 		
 		$scope.showExportCSVButton = function() {
 		//get list of interview id
