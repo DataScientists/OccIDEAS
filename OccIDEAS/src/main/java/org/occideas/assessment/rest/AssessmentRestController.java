@@ -179,9 +179,11 @@ public class AssessmentRestController {
 
 	private Set<String> populateHeadersAndAnswers(List<InterviewQuestionVO> uniqueInterviewQuestions
 				,ExportCSVVO exportCSVVO,ReportHistoryVO reportHistoryVO) {
+		updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(),1.11);
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
+		ArrayList<Long> uniqueInterviews = new ArrayList<Long>();
 		int iUniqueColumeCount = 0;
 		int iSize = uniqueInterviewQuestions.size();
 		if(iSize > 0){
@@ -189,21 +191,21 @@ public class AssessmentRestController {
 			uniqueInterviewQuestions = sortInterviewQuestions(uniqueInterviewQuestions);
 		}
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-			System.out.println("[Report] adding header "+iUniqueColumeCount+" of "+iSize+" for "+interviewQuestionVO.getIdInterview());
 			addHeaders(headers, interviewQuestionVO,exportCSVVO);
 			iUniqueColumeCount++;
+			if(!uniqueInterviews.contains(interviewQuestionVO.getIdInterview())){
+				uniqueInterviews.add(interviewQuestionVO.getIdInterview());
+			}
 		}
+		updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(),2.22);
 		double count = 0;	
 		int interviewCount = 0;
+		int interviewSize = uniqueInterviews.size();
 		List<InterviewVO> interviewQuestionAnswer = null;
 		List<InterviewVO> runningInterviews = new ArrayList<>();
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
 			count++;
-			if(count % 10 == 0){
-				double progress = Math.floor((count/uniqueInterviewQuestions.size())*100);
-				updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(), 
-						progress);
-			}
+			
 			long interviewId = interviewQuestionVO.getIdInterview();
 			InterviewVO interview = new InterviewVO();
 			interview.setInterviewId(interviewId);
@@ -211,7 +213,9 @@ public class AssessmentRestController {
 				interviewQuestionAnswer = interviewService.getInterviewQuestionAnswer(interviewId);
 				runningInterviews.addAll(interviewQuestionAnswer);
 				interviewCount++;
-				System.out.println("[Report] New interview "+interviewCount+" "+new Date());
+				System.out.println("[Report] New interview "+interviewCount+" of "+interviewSize+" at "+new Date());
+				double progress = Math.floor((interviewCount/interviewSize)*100);
+				updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(),progress);
 			}else{
 				interviewQuestionAnswer = new ArrayList<InterviewVO>();
 				for(InterviewVO interviewVO:runningInterviews){
@@ -222,8 +226,6 @@ public class AssessmentRestController {
 			}
 			
 			for(InterviewVO interviewVO:interviewQuestionAnswer){
-				System.out.println("[Report] interviewQuestionAnswer processing "+count+" of "+iSize+" interview id "
-						+interviewVO.getInterviewId()+"-reference number:"+interviewVO.getReferenceNumber()+" "+new Date());
 				List<String> answers = new ArrayList<>();
 				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 				answers.add(String.valueOf(interviewVO.getInterviewId()));
