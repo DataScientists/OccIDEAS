@@ -11,6 +11,32 @@
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		
+		$scope.modules = function(column) {
+			  var def = $q.defer();
+
+			  /* http service is based on $q service */
+			  InterviewsService.getDistinctModules().then(function(response) {
+
+			    var arr = [],
+			      module = [];
+
+			    angular.forEach(response.data, function(item) {
+			      if (!_.find(module, _.matchesProperty('title', item.interviewModuleName))) {
+			        arr.push(item.interviewModuleName);
+			        module.push({
+			          'id': item.interviewModuleName,
+			          'title': item.interviewModuleName
+			        });
+			      }
+			    });
+			    
+			    /* whenever the data is available it resolves the object*/
+			    def.resolve(module);
+
+			  });
+
+			  return def;
+			};
 		
 		
 		
