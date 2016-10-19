@@ -103,37 +103,57 @@
 		
 	</div>
 	<div class="vibrationAssessmentWrapper" ng-if="vibrationRows.length>0">
-		<div>Daily Vibration: {{dailyVibration}}</div>
+		
 		<table class="table table-bordered ">
 		<thead>
 		<tr>
 			<td>Module Name</td>
 			<td>Node Number</td>
+			<td>Answer</td>
 			<td>vibMag</td>
 			<td>Hours</td>
-			
+			<td>Partial Exposure</td>
 		</tr>
 		</thead> 
 		
 		<tr ng-repeat="noiseRow in vibrationRows" class={{noiseRow.type}}>	
 			<td>{{noiseRow.moduleName}}</td>
 			<td ng-click="highlightNode(noiseRow.idNode)">{{noiseRow.nodeNumber}}</td>
+			<td>{{noiseRow.nodeText}}</td>
 			<td>{{noiseRow.vibMag}}</td>
 			<td>{{noiseRow.frequencyhours}}</td>
+			<td>{{noiseRow.partialExposure}}</td>
 			
 		</tr>
 		</table>
 		
-		
+		<div>Daily Vibration: {{dailyVibration}}</div>
 		
 	</div>
 </div>
-
+<div class="col-md-4">
+  <div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Modules</div> 
+  <div class="panel-body">
+    <div >
+    	<ul class="list-group">
+        <li class="list-group-item" ng-repeat="mod in vm.modulesInInterview">
+			<div>
+				<span class="badge">Module</span> {{mod.interviewModuleName}}
+			</div>
+						
+    	</li>
+  		</ul>
+    </div>
+   </div>
+   </div>
+</div>
 <div id="interview-wrapper">
 &nbsp;
 </div>
 <div class="row">
-  <div class="col-md-6" id="interview-question-list">
+  <div class="col-md-8" id="interview-question-list">
   	<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in displayHistoryNew | orderBy:'lastUpdated':false">
 			<div class="angular-ui-tree">
 				<div class="tree-node">
@@ -175,60 +195,24 @@
 			</div>
 		</div>
   </div>
-  <div class="col-md-6">
-  	<div class="panel panel-default">
+  <div class="col-md-4">
+  <div class="panel panel-default">
   <!-- Default panel contents -->
-  <div class="panel-heading">Modules</div> 
+  <div class="panel-heading">AJSMs</div> 
   <div class="panel-body">
     <div >
     	<ul class="list-group">
-        <li class="list-group-item" ng-repeat="mod in vm.modulesInInterview">
+        <li class="list-group-item" ng-repeat="mod in vm.fragmentsInInterview">
 			<div>
-				<span class="badge">Module</span> {{mod.interviewModuleName}}
+				<span class="badge">Fragment</span> {{mod.interviewFragmentName}}
 			</div>
 						
     	</li>
   		</ul>
     </div>
-    </div>
-  
-  
-  
-  <div class="panel-heading">Fired Rules</div>
-  <div class="panel-body">
-    <div >
-    	 <ul class="list-group">
-        <li class="list-group-item" ng-repeat="mod in vm.firedRulesByModule">
-			<div>
-				<span class="badge">Module</span> {{mod.name}}
-			</div>
-				<ul class="list-group">
-    				<li class="list-group-item" ng-repeat="agent in mod.firedRules | orderBy:'agentName'">
-    					<div>
-            				<span class="badge">Agent</span> {{agent.agentGroupName}}
-            				<table class="table table-bordered table-hover">
-    							<tr>
-								<th>Id Rule</th>
-								<th>Name</th>
-								<th>Level</th>
-								</tr>
-								<tr ng-repeat="rules in agent.child | orderBy:'agentName'" 
-									class="firedrules_{{rules.level}}" >
-								<td>{{rules.idRule}}</td>
-								<td>{{rules.agentName}}</td>
-								<td>{{rules.level}}</td>
-								</tr>  						
-    						</table>
-         				 </div>		
-         				 <ul>
-  				</ul>		
-    				</li>
-  				</ul>
-		</li>
-      </ul>
-    	
-    </div>
-    </div>
+   </div>
+   </div>
+</div>
     </div>
   </div>
 </div>

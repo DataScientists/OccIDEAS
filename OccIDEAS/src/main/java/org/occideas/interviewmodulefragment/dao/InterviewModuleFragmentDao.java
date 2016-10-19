@@ -22,5 +22,11 @@ public class InterviewModuleFragmentDao {
         		 					.add(Restrictions.eq("idFragment", id));
          return crit.list();
 	}
+	public List<InterviewModuleFragment> getModFragmentByInterviewId(long id){
+		 final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(InterviewModuleFragment.class)
+       		 					.add(Restrictions.eq("interviewId", String.valueOf(id)));
+        return crit.list();
+	}
 	
 }

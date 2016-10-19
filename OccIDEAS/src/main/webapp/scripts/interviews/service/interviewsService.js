@@ -38,6 +38,16 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		function findFragmentsByInterviewId(idInterview) {
+			var restUrl = 'web/rest/interviewmodulefragment/findFragmentsByInterviewId?id='
+					+ idInterview;
+
+			var request = $http({
+				method : 'GET',
+				url : restUrl
+			})
+			return request.then(handleSuccess, handleError);
+		}
 
 		function getDistinctModules() {
 			var restUrl = 'web/rest/interviewintromodule/getDistinctModules';
@@ -428,6 +438,7 @@
 			updateDisplayAnswerList : updateDisplayAnswerList,
 			updateModuleNameForInterviewId : updateModuleNameForInterviewId,
 			findModulesByInterviewId : findModulesByInterviewId,
+			findFragmentsByInterviewId : findFragmentsByInterviewId,
 			getInterviewsListWithRules : getInterviewsListWithRules,
 			exportInterviewsCSV : exportInterviewsCSV,
 			exportAssessmentsCSV : exportAssessmentsCSV,

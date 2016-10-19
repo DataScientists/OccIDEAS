@@ -33,6 +33,18 @@ public class InterviewModuleFragmentRestController {
 		}
 		return Response.ok(list).build();
 	}
-	
+	@GET
+	@Path(value = "/findFragmentsByInterviewId")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response findFragmentByLinterviewId(@QueryParam("id") Long id) {
+		List<InterviewModuleFragmentVO> list = null;
+		try {
+			list = service.findFragmentByInterviewId(Long.valueOf(id));
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
 	
 }

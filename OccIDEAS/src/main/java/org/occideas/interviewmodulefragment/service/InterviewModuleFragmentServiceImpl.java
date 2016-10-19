@@ -25,5 +25,10 @@ public class InterviewModuleFragmentServiceImpl implements InterviewModuleFragme
 		List<InterviewModuleFragment> list = dao.getModFragmentById(id);
 		return mapper.convertToVOList(list);
 	}
+	@Override
+	public List<InterviewModuleFragmentVO> findFragmentByInterviewId(long id) {
+		List<InterviewModuleFragment> list = dao.getModFragmentByInterviewId(id);
+		return mapper.convertToVOList(list);
+	}
 
 }

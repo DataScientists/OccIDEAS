@@ -690,7 +690,7 @@
 					        	  self.tableParams.total(self.originalData.length);
 					        	  $timeout(function() {
 					        		  $scope.refreshModules();
-						          }, 1000);
+						          }, 100);
 					        	  var last = params.page() * params.count();
 						          return _.slice(data,last - params.count(),last);
 				        	  }

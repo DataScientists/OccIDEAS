@@ -8,31 +8,41 @@
 			InterviewsService,AssessmentsService,$log,$compile,RulesService,$ngToast,SystemPropertyService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
-		$scope.interview = data[0];
+		$scope.interview = undefined;
+		$scope.interviewId = data;
 		$scope.displayHistoryNew = undefined;
 		refreshInterviewDisplay();
 		function refreshInterviewDisplay(){
 			
 			if(!$scope.displayHistoryNew){
-				$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
-				_.remove($scope.displayHistoryNew, function(node) {
-					  return node.link || node.deleted || !node.processed;
-					});
+				AssessmentsService.updateFiredRules($scope.interviewId).then(function(response){
+					if(response.status == '200'){	
+						$scope.interview = response.data[0];
+						$scope.data = response.data[0];
+						$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
+						_.remove($scope.displayHistoryNew, function(node) {
+							  return node.link || node.deleted || !node.processed;
+							});
+						_.each($scope.displayHistoryNew, function(node) {
+							  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+								  var retValue = false;
+								  if(qnode.link){
+									  if(qnode.link == node.topNodeId){
+										  retValue = true;
+									  }
+								  }
+								  return retValue;
+							  });
+							  if(linkNode){
+								  node.header = linkNode.name.substr(0,4);
+							  } 
+						});	
+					}
+                });
+				
+				
 			}
-			_.each($scope.displayHistoryNew, function(node) {
-				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
-					  var retValue = false;
-					  if(qnode.link){
-						  if(qnode.link == node.topNodeId){
-							  retValue = true;
-						  }
-					  }
-					  return retValue;
-				  });
-				  if(linkNode){
-					  node.header = linkNode.name.substr(0,4);
-				  } 
-			});	
+			
 			SystemPropertyService.getAll().then(function(response){
 				var sysprops = response.data;
 				var ssagents = _.filter(sysprops, function(sysprop) {
@@ -47,15 +57,33 @@
 					$scope.agents = $scope.interview.agents;
 				}
 			});
+			
+			InterviewsService.findModulesByInterviewId($scope.interviewId).then(function(response){
+				if(response.status == '200'){
+					if(response.data.length > 0){								
+						vm.modulesInInterview = response.data;
+						//vm.firedRulesByModule = $scope.modulesInInterview
+					}
+				}
+			});
+			InterviewsService.findFragmentsByInterviewId($scope.interviewId).then(function(response){
+				if(response.status == '200'){
+					if(response.data.length > 0){								
+						vm.fragmentsInInterview = response.data;
+						//vm.firedRulesByModule = $scope.modulesInInterview
+					}
+				}
+			});
 		}
-		refreshAssessmentDisplay();
+		//refreshAssessmentDisplay();
 		function refreshAssessmentDisplay(){
-			AssessmentsService.updateFiredRules($scope.interview.interviewId)
+			AssessmentsService.updateFiredRules($scope.interviewId)
 			.then(function(response){
-				$log.info("Interview from questions AJAX ...");
+				$log.info("refreshAssessmentDisplay");
 				$scope.data = response.data[0];
 			});
-			getFiredRulesByInterviewId($scope.interview.interviewId);
+			//getFiredRulesByInterviewId($scope.interview.interviewId);
+			
 		}
 		vm.interviewFiredRules = null;
 		function getFiredRulesByInterviewId(interviewId){
@@ -447,15 +475,21 @@
 						  }
 						  var level = vibrationRule.ruleAdditionalfields[0].value;
 						  var moduleName = getModuleNameOfNode(vibrationRule.conditions[0]);
+						  particalVibration = Math.sqrt(Number(frequencyhours)*Number(frequencyhours)*Number(level)/8);
+
 						  var vibrationRow = {nodeNumber:vibrationRule.conditions[0].number,
 								  	idNode:vibrationRule.conditions[0].idNode,
+								  	nodeText:vibrationRule.conditions[0].name,
 								  	vibMag:level,								
 									frequencyhours:frequencyhours,
+									partialExposure:particalVibration,
 									type:'vibration',
 									moduleName:moduleName}
+						  
 						  $scope.vibrationRows.push(vibrationRow);
 						  totalFrequency += Number(frequencyhours);
 						  totalExposure += Number(level);
+						  
 						  
 					  }
 					  
