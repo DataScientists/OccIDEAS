@@ -84,11 +84,15 @@ public class Interview implements java.io.Serializable {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Interview_AutoAssessedRules", joinColumns = {
 			@JoinColumn(name = "idinterview") }, inverseJoinColumns = { @JoinColumn(name = "idRule") })
+	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
+	@Where(clause = "deleted = 0")
 	private List<Rule> autoAssessedRules;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Interview_ManualAssessedRules", joinColumns = {
 			@JoinColumn(name = "idinterview") }, inverseJoinColumns = { @JoinColumn(name = "idRule") })
+	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
+	@Where(clause = "deleted = 0")
 	private List<Rule> manualAssessedRules;
 
 	private String referenceNumber;
@@ -220,8 +224,6 @@ public class Interview implements java.io.Serializable {
 	public void setQuestionHistory(List<InterviewQuestion> questionHistory) {
 		this.questionHistory = questionHistory;
 	}
-
-	
 
 	public List<InterviewAnswer> getAnswerHistory() {
 		return answerHistory;

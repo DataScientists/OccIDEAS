@@ -3,6 +3,7 @@
 	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeIntDialog(this,$event)" aria-label="Left Align">
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
+	<span ng-if="rule.deleted" class="badge-deleted" title="deleted">	&nbsp;</span>
 	<div class="title" id="rule-dialog-{{rule.idRule}}">{{rule.idRule}} {{agentName}}</div>
 	<ul class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item nodeNumber" 

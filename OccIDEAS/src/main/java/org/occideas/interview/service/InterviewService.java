@@ -30,4 +30,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	InterviewVO findInterviewWithFiredRulesById(Long id);
 
+	List<InterviewVO> listAllWithAssessments();
+
 }

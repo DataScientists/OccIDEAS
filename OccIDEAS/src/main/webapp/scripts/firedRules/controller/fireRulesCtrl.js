@@ -485,15 +485,21 @@
 		                if (response.status === 200) {
 		                	$log.info("Updated Fired Rules");
 		                	$scope.data = response.data[0];
-		                	$scope.data.autoAssessedRules = [];			  
+		                	if($scope.data.autoAssessedRules.length>0){
+		                		for(var i=0;i<$scope.data.autoAssessedRules.length;i++){
+		                			var rule = $scope.data.autoAssessedRules[i];
+		                			rule.deleted=1;
+		                		}
+		                	}		  
 			  				for(var i=0;i<$scope.agents.length;i++){
 			  					var agentAssessing = $scope.agents[i]
-			  					var rule = {levelValue:99};
+			  					var rule = {agentId:agentAssessing.idAgent,level:'noExposure',levelValue:5};
 			  					for(var j=0;j<$scope.data.firedRules.length;j++){
 			  						var firedRule = $scope.data.firedRules[j];
 			  						if(agentAssessing.idAgent == firedRule.agent.idAgent){
 			  							if(firedRule.levelValue<rule.levelValue){
-			  								rule = firedRule;
+			  								//rule = firedRule;
+			  								rule = {agentId:agentAssessing.idAgent,level:firedRule.level,levelValue:firedRule.levelValue}					
 			  							}
 			  						}	  
 			  					}
@@ -523,8 +529,15 @@
       				  InterviewsService.save(model).then(function (response) {
       		                if (response.status === 200) {
       		                	$log.info("Interview saved with manual assessments");
+      		                	refreshAssessmentDisplay();
       		                }
       				  });
+                    }else{
+                    	$ngToast.create({
+          	    		  className: 'warning',
+          	    		  content: 'Auto Assessments already applied. Please update assessments manually.',
+          	    		  animation:'slide'
+          	    	 });
                     }	  
 			  	}
 			  ]
@@ -533,7 +546,7 @@
 			[
 			  [ 'Edit Assessment', function($itemScope, $event, model) {
 				  var ruleArray =_.filter(model.manualAssessedRules, function(r){
-						return $itemScope.agent.idAgent === r.agentId; 
+						return $itemScope.agent.idAgent == r.agentId; 
 				  	});
 				  	 
 				  	for(var i=0;i<ruleArray.length;i++){

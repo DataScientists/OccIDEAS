@@ -25,6 +25,7 @@ public class RuleVO {
 	@JsonInclude(Include.NON_NULL)
 	private List<RuleAdditionalFieldVO> ruleAdditionalfields = new ArrayList<>();
 	private int levelValue;
+	private Integer deleted;
 
 	public long getIdRule() {
 		return idRule;
@@ -113,6 +114,17 @@ public class RuleVO {
 
 	public void setLevelValue(int levelValue) {
 		this.levelValue = levelValue;
+	}
+
+	public Integer getDeleted() {
+		if(deleted==null){
+			deleted=0;
+		}
+		return deleted;
+	}
+
+	public void setDeleted(Integer deleted) {
+		this.deleted = deleted;
 	}
 	
 }

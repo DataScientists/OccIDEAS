@@ -53,7 +53,7 @@
 				<div class="rulescontainer">
 					<div class="agentACell" id="{{agent.idAgent}}" prevent-right-click >
 						<span class="cell-lable" ng-repeat="mrule in data.autoAssessedRules" >
-							<div ng-class="mrule.level" class="assessment" ng-if="(mrule.agentId == agent.idAgent)"></div>
+							<div ng-class="mrule.level" class="assessment" ng-if="((!mrule.deleted)&&(mrule.agentId == agent.idAgent))"></div>
 						</span>
 					</div>
 				</div>
@@ -63,7 +63,7 @@
 				<div class="rulescontainer">
 					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showEditAssessmentMenu(this)" model="data">
 						<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
-							<div ng-class="mrule.level" class="assessment" ng-if="(mrule.agentId == agent.idAgent)"></div>
+							<div ng-class="mrule.level" class="assessment" ng-if="((!mrule.deleted)&&(mrule.agentId == agent.idAgent))"></div>
 						</span>
 					</div>
 				</div>

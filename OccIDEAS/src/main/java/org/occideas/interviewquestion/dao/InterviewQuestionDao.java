@@ -33,7 +33,7 @@ public class InterviewQuestionDao {
 			+ "a.modCount,a.parentAnswerId,a.link, a.deleted,a.isProcessed,"
 			+ "a.description,a.number,a.intQuestionSequence,a.lastUpdated "
 			+ "from Interview_Question a, Interview_Question b "
-			+ "where a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) ";
+			+ "where a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and a.topNodeId in (:param) ";
 	
 	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){
 		System.out.println("Start getUniqueInterviewQuestions:"+new Date());

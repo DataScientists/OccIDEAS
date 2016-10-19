@@ -38,12 +38,27 @@ public class InterviewServiceImpl implements InterviewService {
     	List<Interview> debug = interviewDao.getAll();
 		List<Interview> debug1 = new ArrayList<Interview>();
 		for(int i=0;i<debug.size();i++){
-			if(i<10){
+			if(i<2){
 				debug1.add(debug.get(i));
 			}		
 		}
 		System.out.println("2:listAllWithRules:"+new Date());
-		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesVOList(debug1);
+		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesVOList(debug);
+		System.out.println("3:listAllWithRules:"+new Date());
+        return retValue;
+    }
+    @Override
+    public List<InterviewVO> listAllWithAssessments() {
+    	System.out.println("1:listAllWithRules:"+new Date());
+    	List<Interview> debug = interviewDao.getAll();
+		List<Interview> debug1 = new ArrayList<Interview>();
+		for(int i=0;i<debug.size();i++){
+			if(i<2){
+				debug1.add(debug.get(i));
+			}		
+		}
+		System.out.println("2:listAllWithRules:"+new Date());
+		List<InterviewVO> retValue = mapper.convertToInterviewWithAssessmentsVOList(debug);
 		System.out.println("3:listAllWithRules:"+new Date());
         return retValue;
     }

@@ -37,6 +37,7 @@ public class RuleMapperImpl implements RuleMapper {
 
         ruleVO.setIdRule( ruleEntity.getIdRule() );
         ruleVO.setLastUpdated( ruleEntity.getLastUpdated() ); 
+        ruleVO.setDeleted( ruleEntity.getDeleted() ); 
         ruleVO.setAgentId(ruleEntity.getAgentId());
         ruleVO.setAgent(agentMapper.convertToAgentVO(ruleEntity.getAgent(),false));
         ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
@@ -75,6 +76,7 @@ public class RuleMapperImpl implements RuleMapper {
         }
         Rule rule = new Rule();
         rule.setIdRule( ruleVO.getIdRule() );
+        rule.setDeleted( ruleVO.getDeleted() ); 
         rule.setAgentId(ruleVO.getAgentId());
         rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(),false));
         rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
@@ -101,6 +103,7 @@ public class RuleMapperImpl implements RuleMapper {
         }
         Rule rule = new Rule();
         rule.setIdRule( ruleVO.getIdRule() );
+        rule.setDeleted( ruleVO.getDeleted() ); 
         rule.setAgentId(ruleVO.getAgentId());
         rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(),false));
         rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
@@ -147,6 +150,7 @@ public class RuleMapperImpl implements RuleMapper {
 
         ruleVO.setIdRule( rule.getIdRule() );
         ruleVO.setLastUpdated( rule.getLastUpdated() ); 
+        ruleVO.setDeleted( rule.getDeleted() ); 
         ruleVO.setAgentId(rule.getAgentId());
         ruleVO.setAgent(agentMapper.convertToAgentVO(rule.getAgent(),false));
         ruleVO.setLegacyRuleId(rule.getLegacyRuleId());

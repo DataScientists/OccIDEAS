@@ -36,6 +36,7 @@ import org.occideas.security.model.TokenResponse;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.ReportsEnum;
 import org.occideas.utilities.ReportsStatusEnum;
+import org.occideas.vo.AgentVO;
 import org.occideas.vo.ExportCSVVO;
 import org.occideas.vo.FilterModuleVO;
 import org.occideas.vo.InterviewAnswerVO;
@@ -45,6 +46,7 @@ import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.ReportHistoryVO;
+import org.occideas.vo.RuleVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -130,6 +132,53 @@ public class AssessmentRestController {
 		}
 		return Response.ok().build();
     }
+	@POST
+    @Path(value = "/exportAssessmentsCSV")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response exportAssessmentsCSV(FilterModuleVO filterModuleVO) {
+		
+		//check if we have the directory TreeSet ins sys prop
+		SystemPropertyVO property = systemPropertyService.
+				getByName(Constant.REPORT_EXPORT_CSV_DIR);
+		if(property == null){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
+		}
+		String exportFileCSV = createFileName(filterModuleVO.getFileName());
+		String fullPath = "";
+		ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,null,0);
+		fullPath = property.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
+		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0);
+		List<InterviewVO> uniqueInterviews = interviewService.listAllWithAssessments();
+		ExportCSVVO csvVO = populateAssessmentCSV(uniqueInterviews,reportHistoryVO);
+		CSVWriter writer;
+		try {
+			File file = new File(fullPath);
+			writer = new CSVWriter(new FileWriter(file), ',');
+			// feed in your array (or convert your data to an array)
+			String[] headers = Arrays.copyOf(csvVO.getHeaders().toArray(), 
+					csvVO.getHeaders().toArray().length, String[].class);
+			//write header
+			writer.writeNext(headers);
+			//write answers
+			//iterate map
+			Iterator listOfAnswers = csvVO.getAnswers().entrySet().iterator();
+			while (listOfAnswers.hasNext()) {
+			  Entry thisEntry = (Entry) listOfAnswers.next();
+			  List<String> value = (List<String>) thisEntry.getValue();
+			  String[] answers = Arrays.copyOf(value.toArray(), 
+						value.toArray().length, String[].class);
+			  writer.writeNext(answers);
+			}
+			writer.close();
+			updateProgress(reportHistoryVO,ReportsStatusEnum.COMPLETED.getValue(), 
+					100);
+		} catch (IOException e) {
+			e.printStackTrace();
+			updateProgress(reportHistoryVO,ReportsStatusEnum.FAILED.getValue(), 
+					0);
+		}
+		return Response.ok().build();
+    }
 
 	private ReportHistoryVO insertToReportHistory(String exportFileCSV, 
 			String fullPath,
@@ -176,13 +225,77 @@ public class AssessmentRestController {
 		vo.setHeaders(headers);
 		return vo;
 	}
+	private ExportCSVVO populateAssessmentCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO) {
+		ExportCSVVO vo = new ExportCSVVO();
+		Set<String> headers = populateHeadersAndAnswersAssessment(uniqueInterviews,vo,reportHistoryVO);
+		vo.setHeaders(headers);
+		return vo;
+	}
 
+	private Set<String> populateHeadersAndAnswersAssessment(List<InterviewVO> uniqueInterviews,
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
+		Set<String> headers = new LinkedHashSet<>();
+		headers.add("Interview Id");
+		headers.add("AWES ID");
+		headers.add("Status");		
+		int iSize = uniqueInterviews.size();
+		List<SystemPropertyVO> properties = systemPropertyService.getAll();
+		List<AgentVO> agents = new ArrayList<AgentVO>();
+		for (SystemPropertyVO prop : properties) {
+			if (prop.getType().equalsIgnoreCase("STUDYAGENT")) {
+				AgentVO agent = new AgentVO();
+				agent.setIdAgent(Long.valueOf(prop.getValue()));
+				agent.setName(prop.getName());
+				agents.add(agent);
+				
+			}
+		}
+		for(AgentVO agent:agents){
+			headers.add(agent.getName()+"_MANUAL");
+			headers.add(agent.getName()+"_AUTO");
+		}
+		double count = 0;
+		for (InterviewVO interviewVO : uniqueInterviews) {
+			List<String> answers = new ArrayList<>();
+			answers.add(String.valueOf(interviewVO.getInterviewId()));
+			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+			answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
+			for(AgentVO agent:agents){
+				boolean aAgentFound = false;
+				for(RuleVO rule:interviewVO.getManualAssessedRules()){
+					if(agent.getIdAgent()==rule.getAgentId()){
+						answers.add(rule.getLevel());
+						aAgentFound = true;
+						break;
+					}
+				}
+				if(!aAgentFound){
+					answers.add("-NA-");
+				}
+				aAgentFound = false;
+				for(RuleVO rule:interviewVO.getAutoAssessedRules()){
+					if(agent.getIdAgent()==rule.getAgentId()){
+						answers.add(rule.getLevel());
+						aAgentFound = true;
+						break;
+					}
+				}
+				if(!aAgentFound){
+					answers.add("-NA-");
+				}
+			}
+			exportCSVVO.getAnswers().put(interviewVO, answers);
+		}
+		return headers;
+	}
 	private Set<String> populateHeadersAndAnswers(List<InterviewQuestionVO> uniqueInterviewQuestions
 				,ExportCSVVO exportCSVVO,ReportHistoryVO reportHistoryVO) {
 		updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(),1.11);
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
+		headers.add("Status");
 		ArrayList<Long> uniqueInterviews = new ArrayList<Long>();
 		int iUniqueColumeCount = 0;
 		int iSize = uniqueInterviewQuestions.size();
@@ -214,7 +327,7 @@ public class AssessmentRestController {
 				runningInterviews.addAll(interviewQuestionAnswer);
 				interviewCount++;
 				System.out.println("[Report] New interview "+interviewCount+" of "+interviewSize+" at "+new Date());
-				double progress = Math.floor((interviewCount/interviewSize)*100);
+				double progress = (Float.valueOf(interviewCount)/Float.valueOf(interviewSize))*100;
 				updateProgress(reportHistoryVO,ReportsStatusEnum.IN_PROGRESS.getValue(),progress);
 			}else{
 				interviewQuestionAnswer = new ArrayList<InterviewVO>();
@@ -227,8 +340,9 @@ public class AssessmentRestController {
 			
 			for(InterviewVO interviewVO:interviewQuestionAnswer){
 				List<String> answers = new ArrayList<>();
-				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 				answers.add(String.valueOf(interviewVO.getInterviewId()));
+				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+				answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
 				Set<String> questionIdList = exportCSVVO.getQuestionIdList();
 				for(String questionId:questionIdList){
 					if(questionId.contains("_")){
@@ -258,11 +372,11 @@ public class AssessmentRestController {
 									}
 								}
 								if(!numberExist){
-									answers.add("-- No Answer --");
+									answers.add("-NoA-");
 								}
 							}
 						}else{
-							answers.add("-- Question Not Asked --");
+							answers.add("-QNotAsked-");
 						}
 					}else{
 						InterviewQuestionVO questionAsked = null;
@@ -281,10 +395,10 @@ public class AssessmentRestController {
 									answers.add(questionAskedAns.getName());
 								}
 							}else{
-								answers.add("-- No Answer --");
+								answers.add("-NoA-");
 							}
 						}else{
-							answers.add("-- Question Not Asked --");
+							answers.add("-QNotAsked-");
 						}
 					}				
 				}

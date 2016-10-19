@@ -224,23 +224,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response update(InterviewVO json) {
     	try{
-    		if(json.getManualAssessedRules()!=null){
-    			List<RuleVO> manualAssessedRules = new ArrayList<RuleVO>();
-    			for(RuleVO rule:json.getManualAssessedRules()){
-        			if(rule.getIdRule()==0){
-        				RuleVO newAssessmentRule = ruleService.create(rule);
-        				manualAssessedRules.add(newAssessmentRule);
-        			}else{
-        				manualAssessedRules.add(rule);
-        			}
-        		}
-    			json.setManualAssessedRules(manualAssessedRules);
-    		}  
-    		NoteVO note = new NoteVO();
-        	note.setInterviewId(json.getInterviewId());
-        	note.setText("Interview Updated");
-        	note.setType("System");
-        	json.getNotes().add(note);
+    		
 			service.update(json);
 		}catch(Throwable e){
 			e.printStackTrace();

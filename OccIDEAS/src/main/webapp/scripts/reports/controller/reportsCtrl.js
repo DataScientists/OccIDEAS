@@ -91,6 +91,17 @@
 				clickOutsideToClose:false
 			});
 		}
+	    $scope.newExportAssessmentCSVButton = function(){
+			$scope.checkboxes = { 'checked': false, items: {} };
+			$scope.fileName = "assessmentExport";
+			$scope.exportType = "ASSESSMENT";
+			$mdDialog.show({
+				scope: $scope.$new(),  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
+				clickOutsideToClose:false
+			});
+		}
 	    $scope.showInterviewCount = function(mod,$event){
 			InterviewsService.findInterviewIdByModuleId(mod.idModule)
 				.then(function(response){
@@ -117,8 +128,13 @@
 						 _.each($scope.checkboxes.items,function(value, key){
 							 filterModule.push(key);
 						 });
-						InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){
-						});
+						 if($scope.exportType=="ASSESSMENT"){
+							 InterviewsService.exportAssessmentsCSV(filterModule,fileName).then(function(response){});
+						 }else{
+							 InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){
+								}); 
+						 }
+						
 					}else{
 						ngToast.create({
 				    		  className: 'danger',
