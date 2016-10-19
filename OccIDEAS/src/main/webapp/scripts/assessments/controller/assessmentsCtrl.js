@@ -13,13 +13,17 @@
 		
 		$scope.modules = function(column) {
 			  var def = $q.defer();
-
+			 
 			  /* http service is based on $q service */
 			  InterviewsService.getDistinctModules().then(function(response) {
 
 			    var arr = [],
 			      module = [];
-
+			    arr.push('Load Module Column');
+		        module.push({
+		          'id': true,
+		          'title': 'Load Module Column'
+		        });
 			    angular.forEach(response.data, function(item) {
 			      if (!_.find(module, _.matchesProperty('title', item.interviewModuleName))) {
 			        arr.push(item.interviewModuleName);
@@ -668,8 +672,40 @@
 				{	
 					getData: function(params) {
 						if((params.filter().idParticipant)||(params.filter().interviewId)
-								||(params.filter().reference)||(params.filter().status)||params.filter().module){	
-				        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+								||(params.filter().reference)||(params.filter().status)){	
+							return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+				        }else if(params.filter().module){   
+				        	if($scope.isModulesSet){
+				        		if(!(params.filter().module===true)){
+				        			return $filter('filter')(self.tableParams.settings().dataset, params.filter());
+				        		}						
+				        	}else{
+				        		ngToast.create({
+				    	    		  className: 'warning',
+				    	    		  content: 'Updating interview module column, please wait.',
+				    	    		  animation:'slide'
+				    	    	 });
+				        		
+				        		return ParticipantsService.getParticipants().then(function(response) {
+						        	  if(response.status == '200'){
+						        		  var data = response.data;
+						        		  _.each(data,function(participant){
+						        			  participant.interviewId = participant.interviews[0].interviewId;
+						        		  });
+						        		  console.log("Data get list from getParticipants ajax ...");        	 
+						        		  self.originalData = angular.copy(data);
+							        	  self.tableParams.settings().dataset = data;
+							        	  self.tableParams.shouldGetData = false;
+							        	  self.tableParams.total(self.originalData.length);
+							        	  $timeout(function() {
+							        		 $scope.refreshModules();
+								          }, 100);
+							        	  var last = params.page() * params.count();
+								          return _.slice(data,last - params.count(),last);
+						        	  }
+						          });
+				        	}
+				        	
 				        }
 						
 					    if(!self.tableParams.shouldGetData){
@@ -687,10 +723,7 @@
 				        		  self.originalData = angular.copy(data);
 					        	  self.tableParams.settings().dataset = data;
 					        	  self.tableParams.shouldGetData = false;
-					        	  self.tableParams.total(self.originalData.length);
-					        	  $timeout(function() {
-					        		  $scope.refreshModules();
-						          }, 100);
+					        	  self.tableParams.total(self.originalData.length);					        	  
 					        	  var last = params.page() * params.count();
 						          return _.slice(data,last - params.count(),last);
 				        	  }
@@ -698,8 +731,9 @@
 					},
 				});
 				self.tableParams.shouldGetData = true;
-		
+				$scope.isModulesSet = false;
 				$scope.refreshModules = function(){
+					$scope.isModulesSet = true;
 					SystemPropertyService.getByName("activeintro").then(function(response){
 						if(response.status == '200'){
 							var introModuleId = response.data.value;
