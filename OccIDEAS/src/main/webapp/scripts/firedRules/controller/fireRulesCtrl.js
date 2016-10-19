@@ -168,10 +168,21 @@
 				}
 			});
 		}
-
+		var safeDigest = function (obj){
+        	if (!obj.$$phase) {
+		        try {
+		        	obj.$digest();
+		        }
+		        catch (e) { }
+        	}
+        }
 		$scope.closeIntDialog = function(elem,$event) {
-        	$($event.target).closest('.int-note').remove();
-        	
+			$($event.target).closest('.int-note').remove();
+        	$scope.activeIntRuleDialog = '';
+        	$scope.activeIntRuleCell = '';
+        	safeDigest($scope.activeIntRuleDialog);
+        	safeDigest($scope.activeIntRuleCell);
+        	noteIntZindex = 1050;
         };
 
 		$scope.highlightNode = function(idNode){

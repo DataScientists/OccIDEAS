@@ -68,6 +68,16 @@ var noteIntZindex = 1050;
 function newInterviewNote(element,$itemScope,$compile) {
 	var tpl = $compile(angular.element("#interview-template").html())($itemScope);
 	angular.element(tpl).zIndex(++noteIntZindex);
+	
+	var leftPoint = 20;
+	var topPoint = ((noteIntZindex-1050)*100);
+	var windowHeight = window.innerHeight;
+	if(topPoint>windowHeight-20){
+		topPoint = 0;
+		leftPoint = 40;
+	}
+	angular.element(tpl).css('left', leftPoint+'px');
+	angular.element(tpl).css('top', topPoint+'px');
 	angular.element(tpl).hide().appendTo("#interview-wrapper").show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteIntZindex);
