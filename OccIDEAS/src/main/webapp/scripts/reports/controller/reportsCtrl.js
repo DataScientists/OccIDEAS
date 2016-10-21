@@ -102,6 +102,17 @@
 				clickOutsideToClose:false
 			});
 		}
+	    $scope.newExportAssessmentNoiseCSVButton = function(){
+			$scope.checkboxes = { 'checked': false, items: {} };
+			$scope.fileName = "assessmentNoiseExport";
+			$scope.exportType = "ASSESSMENTNOISE";
+			$mdDialog.show({
+				scope: $scope.$new(),  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
+				clickOutsideToClose:false
+			});
+		}
 	    $scope.showInterviewCount = function(mod,$event){
 			InterviewsService.findInterviewIdByModuleId(mod.idModule)
 				.then(function(response){
@@ -130,6 +141,8 @@
 						 });
 						 if($scope.exportType=="ASSESSMENT"){
 							 InterviewsService.exportAssessmentsCSV(filterModule,fileName).then(function(response){});
+						 } else if($scope.exportType=="ASSESSMENTNOISE"){
+							 InterviewsService.exportAssessmentsNoiseCSV(filterModule,fileName).then(function(response){});
 						 }else{
 							 InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){
 								}); 

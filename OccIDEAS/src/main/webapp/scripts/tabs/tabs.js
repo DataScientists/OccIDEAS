@@ -416,7 +416,7 @@
 		    authenticate:true,
             views:{
                 'rules@tabs':{
-                    templateUrl: 'scripts/rules/view/rulesTable.html',
+                    templateUrl: 'scripts/rules/view/rulesTable2.html',
                     controller: 'RulesCtrl as vm',
                     params:{row: null},
                     resolve:{
@@ -449,15 +449,15 @@
                         controller: 'RulesCtrl as vm',
                         params:{row: null,module:null},
                         resolve:{
-                            data: function($stateParams,AgentsService) {
+                            data: function($stateParams,RulesService) {
                                 $log.info("inside agentinfo@tabs resolve",$stateParams);
                                 $log.info("Data getting from questions AJAX ...");
-                                return AgentsService.getRules($stateParams.row).then(function(response){
-                                        $log.info("Data received from questions AJAX ...", response);
+                                return RulesService.listByAgent($stateParams.row).then(function(response){
+                                        //$log.info("Data received from questions AJAX ...", response);
                                         if(angular.isUndefined($window.sliderVal)){
                                             $window.sliderVal = [];
                                         }
-                                        return response.data;
+                                        return response;
                                     });
                             },
                             templateData: function($stateParams) {

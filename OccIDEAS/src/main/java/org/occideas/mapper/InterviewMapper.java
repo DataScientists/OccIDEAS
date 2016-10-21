@@ -47,5 +47,9 @@ public interface InterviewMapper {
 	InterviewVO convertToInterviewWithAssessmentsVO(Interview interview);
 
 	List<InterviewVO> convertToInterviewWithAssessmentsVOList(List<Interview> interviewEntity);
+
+	InterviewVO convertToInterviewWithRulesNoAnswersVO(Interview interview);
+
+	List<InterviewVO> convertToInterviewWithRulesNoAnswersVOList(List<Interview> interviewEntity);
 	
 }

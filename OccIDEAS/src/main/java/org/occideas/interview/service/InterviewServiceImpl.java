@@ -38,12 +38,12 @@ public class InterviewServiceImpl implements InterviewService {
     	List<Interview> debug = interviewDao.getAll();
 		List<Interview> debug1 = new ArrayList<Interview>();
 		for(int i=0;i<debug.size();i++){
-			if(i<2){
+			if(i<10){
 				debug1.add(debug.get(i));
 			}		
 		}
 		System.out.println("2:listAllWithRules:"+new Date());
-		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesVOList(debug);
+		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(debug);
 		System.out.println("3:listAllWithRules:"+new Date());
         return retValue;
     }

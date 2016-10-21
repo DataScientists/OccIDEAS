@@ -179,7 +179,53 @@ public class AssessmentRestController {
 		}
 		return Response.ok().build();
     }
-
+	@POST
+    @Path(value = "/exportAssessmentsNoiseCSV")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response exportAssessmentsNoiseCSV(FilterModuleVO filterModuleVO) {
+		
+		//check if we have the directory TreeSet ins sys prop
+		SystemPropertyVO property = systemPropertyService.
+				getByName(Constant.REPORT_EXPORT_CSV_DIR);
+		if(property == null){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
+		}
+		String exportFileCSV = createFileName(filterModuleVO.getFileName());
+		String fullPath = "";
+		ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,null,0);
+		fullPath = property.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
+		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0);
+		List<InterviewVO> uniqueInterviews = interviewService.listAllWithRules();
+		ExportCSVVO csvVO = populateAssessmentNoiseCSV(uniqueInterviews,reportHistoryVO);
+		CSVWriter writer;
+		try {
+			File file = new File(fullPath);
+			writer = new CSVWriter(new FileWriter(file), ',');
+			// feed in your array (or convert your data to an array)
+			String[] headers = Arrays.copyOf(csvVO.getHeaders().toArray(), 
+					csvVO.getHeaders().toArray().length, String[].class);
+			//write header
+			writer.writeNext(headers);
+			//write answers
+			//iterate map
+			Iterator listOfAnswers = csvVO.getAnswers().entrySet().iterator();
+			while (listOfAnswers.hasNext()) {
+			  Entry thisEntry = (Entry) listOfAnswers.next();
+			  List<String> value = (List<String>) thisEntry.getValue();
+			  String[] answers = Arrays.copyOf(value.toArray(), 
+						value.toArray().length, String[].class);
+			  writer.writeNext(answers);
+			}
+			writer.close();
+			updateProgress(reportHistoryVO,ReportsStatusEnum.COMPLETED.getValue(), 
+					100);
+		} catch (IOException e) {
+			e.printStackTrace();
+			updateProgress(reportHistoryVO,ReportsStatusEnum.FAILED.getValue(), 
+					0);
+		}
+		return Response.ok().build();
+    }
 	private ReportHistoryVO insertToReportHistory(String exportFileCSV, 
 			String fullPath,
 			Long id,
@@ -231,7 +277,202 @@ public class AssessmentRestController {
 		vo.setHeaders(headers);
 		return vo;
 	}
+	private ExportCSVVO populateAssessmentNoiseCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO) {
+		ExportCSVVO vo = new ExportCSVVO();
+		Set<String> headers = populateHeadersAndAnswersAssessmentNoise(uniqueInterviews,vo,reportHistoryVO);
+		vo.setHeaders(headers);
+		return vo;
+	}
 
+	private Set<String> populateHeadersAndAnswersAssessmentNoise(List<InterviewVO> uniqueInterviews,
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
+		Set<String> headers = new LinkedHashSet<>();
+		headers.add("Interview Id");
+		headers.add("AWES ID");
+		headers.add("Status");
+		int iSize = uniqueInterviews.size();
+		List<SystemPropertyVO> properties = systemPropertyService.getAll();
+		AgentVO noiseAgent = new AgentVO();
+		for (SystemPropertyVO prop : properties) {
+			if (prop.getType().equalsIgnoreCase("NOISEAGENT")) {
+				noiseAgent.setIdAgent(Long.valueOf(prop.getValue()));
+				noiseAgent.setName(prop.getName());
+			}
+		}
+		headers.add("Shiftlength");
+		headers.add("Total Exposure");
+		headers.add("LAEQ8");
+		headers.add("Peak Noise");
+		headers.add("Ratio");
+
+		double count = 0;
+		for (InterviewVO interviewVO : uniqueInterviews) {
+			boolean bFoundNoiseRules = false;
+			List<RuleVO> noiseRules = new ArrayList<RuleVO>();
+			List<String> answers = new ArrayList<>();
+			answers.add(String.valueOf(interviewVO.getInterviewId()));
+			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+			answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
+			for (RuleVO rule : interviewVO.getFiredRules()) {
+				if (noiseAgent.getIdAgent() == rule.getAgentId()) {
+					noiseRules.add(rule);
+					bFoundNoiseRules = true;
+				}
+			}
+			String shiftHours = "-NA-";
+			String totalExposure = "-NA-";
+			String laeq8 = "-NA-";
+			String peakNoise = "-NA-";
+			String strRatio = "-NA-";
+
+			for (InterviewAnswerVO ia : interviewVO.getAnswerHistory()) {
+				if (ia.getType().equalsIgnoreCase("P_frequencyshifthours")) {
+					shiftHours = ia.getAnswerFreetext();
+					break;
+				}
+			}
+			answers.add(shiftHours);
+			if (bFoundNoiseRules) {
+				Float totalFrequency = new Float(0);
+				Float maxBackgroundPartialExposure = new Float(0);
+				Float maxBackgroundHours = new Float(0);
+				for (RuleVO noiseRule : noiseRules) {
+					if (!noiseRule.getType().equalsIgnoreCase("BACKGROUND")) {
+						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewVO.getAnswerHistory(),parentNode);
+
+						String answeredValue = "0";
+						if (actualAnswer != null) {
+							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewVO,actualAnswer);
+
+							if (frequencyHoursNode != null) {
+								answeredValue = frequencyHoursNode.getAnswerFreetext();
+							}
+						}
+						try{
+							totalFrequency += Float.valueOf(answeredValue);	
+						}catch(Exception e){
+							System.err.println("Invalid not bg frequency! Check interview "+interviewVO.getInterviewId()+" Rule "+noiseRule.getIdRule());
+						}
+						
+					}
+				}
+				boolean useRatio = false;
+				Float ratio = new Float(1);
+				Float fShiftHours = Float.valueOf(shiftHours);
+				if (totalFrequency > fShiftHours) {
+					useRatio = true;
+					ratio = totalFrequency / fShiftHours;
+				}
+				Integer level = 0;
+				Integer iPeakNoise = 0;
+				Float totalPartialExposure = new Float(0);
+				for (RuleVO noiseRule : noiseRules) {
+
+					if (noiseRule.getType().equalsIgnoreCase("BACKGROUND")) {
+						Float hoursbg = fShiftHours - totalFrequency;
+						if (hoursbg < 0) {
+							hoursbg = new Float(0);
+						}
+						Float partialExposure = (float) (4 * hoursbg * (Math.pow(10, (level - 100) / 10)));
+						try{
+							String sLevel = noiseRule.getRuleAdditionalfields().get(0).getValue();
+							level = Integer.valueOf(sLevel);
+						}catch(Exception e){
+							System.err.println("Invalid noise rule! Check rule "+noiseRule.getIdRule());
+						}
+						if (partialExposure > maxBackgroundPartialExposure) {
+							maxBackgroundPartialExposure = partialExposure;
+							maxBackgroundHours = hoursbg;
+						}
+					} else {
+						
+						Float hours = new Float(0);
+						Float frequencyhours = new Float(0);
+						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewVO.getAnswerHistory(),parentNode);
+
+						if (actualAnswer != null) {
+							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewVO,actualAnswer);
+
+							if (frequencyHoursNode != null) {
+								try{
+									frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+								}catch(Exception e){
+									System.err.println("Invalid frequency! Check interview "+interviewVO.getInterviewId());
+								}
+							}
+						}
+						if (useRatio) {
+							hours = frequencyhours / ratio;
+						} else {
+							hours = frequencyhours;
+						}
+						try{
+							level = Integer.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+						}catch(Exception e){
+							System.err.println("Invalid noise rule! Check rule "+noiseRule.getIdRule());
+						}
+						Float partialExposure = (float) ((float) 4 * hours * (Math.pow(10, (float)(level - 100) / (float)10)));
+						//System.out.println(parentNode.getNumber() + " " + parentNode.getIdNode() + " "
+						//		+ parentNode.getName() + " " + level + " " + hours + " " + partialExposure);
+						totalPartialExposure = ((totalPartialExposure) + (partialExposure));
+
+					}
+					if (iPeakNoise < level) {
+						iPeakNoise = level;
+					}
+				}
+				totalPartialExposure = ((totalPartialExposure) + (maxBackgroundPartialExposure));
+				// totalPartialExposure = totalPartialExposure.toFixed(4);
+				totalFrequency += maxBackgroundHours;
+
+				Float autoExposureLevel = (float) (10 * (Math.log10(totalPartialExposure / (3.2 * (Math.pow(10, -9))))));
+				// autoExposureLevel = autoExposureLevel.toFixed(4);
+
+				totalExposure = totalPartialExposure.toString();
+				laeq8 = autoExposureLevel.toString();
+				peakNoise = iPeakNoise.toString();
+				strRatio = ratio.toString();
+			}
+			answers.add(totalExposure);
+			answers.add(laeq8);
+			answers.add(peakNoise);
+			answers.add(strRatio.toString());
+			exportCSVVO.getAnswers().put(interviewVO, answers);
+		}
+		return headers;
+	}
+	private InterviewAnswerVO findFrequencyInterviewAnswer(InterviewVO interview,InterviewAnswerVO actualAnswer) {
+		InterviewAnswerVO retValue = null;
+		InterviewQuestionVO piq = null;
+		for(InterviewQuestionVO iq: interview.getQuestionHistory()){
+			if(iq.getParentAnswerId()>0){
+				if(iq.getParentAnswerId()==actualAnswer.getAnswerId()){
+					piq = iq;
+					break;
+				}
+			}		
+		}
+		if(piq!=null){
+			for(InterviewAnswerVO ia: interview.getAnswerHistory()){
+				if(ia.getParentQuestionId()==piq.getQuestionId()){
+					retValue = ia;
+				}
+			}
+		}
+		return retValue;
+	}
+	private InterviewAnswerVO findInterviewAnswer(List<InterviewAnswerVO> answerHistory, PossibleAnswerVO parentNode) {
+		InterviewAnswerVO retValue = null;
+		for(InterviewAnswerVO ia: answerHistory){
+			if(ia.getAnswerId()==parentNode.getIdNode()){
+				retValue = ia;
+			}
+		}
+		return retValue;
+	}
 	private Set<String> populateHeadersAndAnswersAssessment(List<InterviewVO> uniqueInterviews,
 			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);

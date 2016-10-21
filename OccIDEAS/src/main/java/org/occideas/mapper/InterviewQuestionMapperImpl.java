@@ -42,6 +42,33 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		
 		return vo;
 	}
+	@Override
+	public InterviewQuestionVO convertToInterviewQuestionNoAnswersVO(InterviewQuestion question) {
+		if (question == null) {
+			return null;
+		}
+		InterviewQuestionVO vo = new InterviewQuestionVO();
+		vo.setId(question.getId());
+		vo.setIdInterview(question.getIdInterview());
+		vo.setName(question.getName());
+		vo.setNodeClass(question.getNodeClass());
+		vo.setNumber(question.getNumber());
+		vo.setQuestionId(question.getQuestionId());
+		vo.setType(question.getType());
+		vo.setDescription(question.getDescription());
+		vo.setDeleted(question.getDeleted());
+		vo.setParentModuleId(question.getParentModuleId());
+		vo.setTopNodeId(question.getTopNodeId());
+		vo.setParentAnswerId(question.getParentAnswerId());
+		vo.setModCount(question.getModCount());
+		vo.setLink(question.getLink());
+		//vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
+		vo.setIntQuestionSequence(question.getIntQuestionSequence());
+		vo.setProcessed(question.isProcessed());
+		vo.setLastUpdated(question.getLastUpdated());
+		
+		return vo;
+	}
 
 	@Override
 	public InterviewQuestionVO convertToInterviewQuestionWithRulesVO(InterviewQuestion question) {
@@ -79,6 +106,19 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		for (InterviewQuestion iq : question) {
 			// if(iq.getDeleted() == 0){
 			list.add(convertToInterviewQuestionVO(iq));
+			// }
+		}
+		return list;
+	}
+	@Override
+	public List<InterviewQuestionVO> convertToInterviewQuestionNoAnswersVOList(List<InterviewQuestion> question) {
+		if (question == null) {
+			return null;
+		}
+		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
+		for (InterviewQuestion iq : question) {
+			// if(iq.getDeleted() == 0){
+			list.add(convertToInterviewQuestionNoAnswersVO(iq));
 			// }
 		}
 		return list;

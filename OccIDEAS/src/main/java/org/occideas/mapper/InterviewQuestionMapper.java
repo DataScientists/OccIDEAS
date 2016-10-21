@@ -30,5 +30,9 @@ public interface InterviewQuestionMapper {
 	List<InterviewQuestionVO> convertToInterviewQuestionVOListExcAnswers(List<InterviewQuestion> question);
 
 	InterviewQuestionVO convertToInterviewQuestionVOExcAnswers(InterviewQuestion question);
+
+	InterviewQuestionVO convertToInterviewQuestionNoAnswersVO(InterviewQuestion question);
+
+	List<InterviewQuestionVO> convertToInterviewQuestionNoAnswersVOList(List<InterviewQuestion> question);
 	
 }
