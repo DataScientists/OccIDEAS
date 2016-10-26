@@ -154,23 +154,31 @@
 	    	}
 	    	
 	    	if($scope.checkboxes.items[row.idAgent]){
+	    		if (confirm('Are you sure you want to add '+row.name+' as study agent?')) {
 	    		AgentsService.updateStudyAgents(row).then(function(response){
 	    			if(response.status === 200){
 	    				console.log('Added to Study Agent was Successful!');
 	    				loadStudyAgents();
 	    			}
 	    		});
+	    		}else{
+	    			$scope.checkboxes.items[row.idAgent] = false;
+	    		}
 	    	}else{
 	    		var studyAgent = _.find($scope.studyAgents.data,function(studyAgent){
 	    			return studyAgent.value == row.idAgent;  
 	    		});
 	    		if(studyAgent){
-	    		AgentsService.deleteStudyAgents(studyAgent).then(function(response){
-	    			if(response.status === 200){
-	    				console.log('Delete Study Agent was Successful!');
-	    				loadStudyAgents();
+	    			if (confirm('Are you sure you want to delete '+row.name+' as study agent?')) {
+	    				AgentsService.deleteStudyAgents(studyAgent).then(function(response){
+	    					if(response.status === 200){
+	    						console.log('Delete Study Agent was Successful!');
+	    						loadStudyAgents();
+	    					}
+	    				});
+	    			}else{
+	    				$scope.checkboxes.items[row.idAgent] = true;
 	    			}
-	    		});
 	    		}
 	    	}
 	    }
