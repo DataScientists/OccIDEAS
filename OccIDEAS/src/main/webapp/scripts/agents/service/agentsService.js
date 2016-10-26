@@ -58,6 +58,32 @@
             });
             return request.then(handleSuccess,handleError);
         };
+        var loadStudyAgents = function() {
+            var request = $http({
+                method:'GET',
+                url: agentEndpoint+'/loadStudyAgents'
+            });
+            return request.then(handleSuccess,handleError);
+        };
+        
+        var updateStudyAgents = function(agent){
+        	var request = $http({
+                method:'POST',
+                url: agentEndpoint+'/updateStudyAgents',
+                data:agent
+            });
+            return request.then(handleSuccess,handleError);
+        };
+        
+        var deleteStudyAgents = function(agent){
+        	var request = $http({
+                method:'POST',
+                url: agentEndpoint+'/deleteStudyAgents',
+                data:agent
+            });
+            return request.then(handleSuccess,handleError);
+        };
+        
 		function handleError( response ) {
 	            if (
 	                ! angular.isObject( response.data ) ||
@@ -79,7 +105,10 @@
 		      deleteAgent: deleteAgent,
               hasRules: hasRules,
               findAgent:findAgent,
-              getRules:getRules
+              getRules:getRules,
+              loadStudyAgents:loadStudyAgents,
+              updateStudyAgents:updateStudyAgents,
+              deleteStudyAgents:deleteStudyAgents
 		};
 	}
 	

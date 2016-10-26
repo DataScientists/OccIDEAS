@@ -11,5 +11,6 @@ public interface SystemPropertyService {
 	public List<SystemPropertyVO> getAll();
 	public void delete(SystemPropertyVO vo);
 	public SystemPropertyVO getByName(String name);
+	public List<SystemPropertyVO> getByType(String studyAgentSysProp);
 	
 }

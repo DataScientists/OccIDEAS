@@ -14,8 +14,10 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.log4j.Logger;
+import org.occideas.security.model.TokenResponse;
 import org.occideas.utilities.PropUtil;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -185,6 +187,12 @@ public class TokenManager {
 
 	private boolean indexExists(final Object[] obj, int index) {
 		return index >= 0 && index < obj.length;
+	}
+	
+	public String extractUserFromToken() {
+		TokenManager tokenManager = new TokenManager();
+		String token = ((TokenResponse)SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+		return tokenManager.parseUsernameFromToken(token);
 	}
 
 }

@@ -5,8 +5,12 @@ import java.util.List;
 
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.entity.Agent;
+import org.occideas.entity.Constant;
 import org.occideas.mapper.AgentMapper;
+import org.occideas.security.handler.TokenManager;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.AgentVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +22,8 @@ public class AgentServiceImpl implements AgentService {
 
 	@Autowired
 	private AgentDao dao;
+	@Autowired
+	private SystemPropertyService sysPropService;
 	
 	@Autowired
 	private AgentMapper mapper;
@@ -51,6 +57,26 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public void delete(AgentVO o) {
 		dao.delete(mapper.convertToAgent(o,false));
+	}
 
+	@Override
+	public void updateStudyAgents(AgentVO json) {
+		// insert into sys config
+		SystemPropertyVO sysPropVO = new SystemPropertyVO();
+		sysPropVO.setName(json.getName());
+		sysPropVO.setType(Constant.STUDY_AGENT_SYS_PROP);
+		sysPropVO.setValue(String.valueOf(json.getIdAgent()));
+		sysPropVO.setUpdatedBy(new TokenManager().extractUserFromToken());
+		sysPropService.save(sysPropVO);
+	}
+
+	@Override
+	public List<SystemPropertyVO> loadStudyAgents() {
+		return sysPropService.getByType(Constant.STUDY_AGENT_SYS_PROP);
+	}
+
+	@Override
+	public void deleteStudyAgents(SystemPropertyVO vo) {
+		sysPropService.delete(vo);
 	}
 }

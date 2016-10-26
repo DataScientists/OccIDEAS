@@ -9,6 +9,14 @@
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    function loadStudyAgents(){
+	    	 AgentsService.loadStudyAgents().then(function(data) {
+	    		 $scope.studyAgents = data;
+			 });
+	    }
+	    loadStudyAgents();
+	    
 		self.tableParams = new NgTableParams({group: "agentGroup.name",count: 100}, {	
 	        getData: function($defer,params) {
 	        	if(params.filter().name || params.filter().description){	
@@ -18,7 +26,15 @@
 		        	  return self.tableParams.settings().dataset;
 		          }
 	          return  AgentsService.get().then(function(data) {
-	        	  console.log("Data get list from agents ajax ...");        	 
+	        	  console.log("Data get list from agents ajax ...");
+	        	  _.each(data,function(agent){
+	        		  var isStudyAgent = _.find($scope.studyAgents.data,function(studyAgents){
+	        			  return agent.idAgent == studyAgents.value;
+	        		  });
+	        		  if(isStudyAgent){
+	        			  agent.isChecked = true;
+	        		  }
+	        	  });
 	        	  self.originalData = angular.copy(data);
 	        	  self.tableParams.settings().dataset = data;
 	            return data;
@@ -131,6 +147,63 @@
 	        });
 	        setInvalid(invalidCellsByRow.length > 0);
 	      }
+	    
+	    $scope.toggleStudyAgent = function(row){
+	    	if($scope.checkboxes.items.length < 1){
+	    		return;
+	    	}
+	    	
+	    	if($scope.checkboxes.items[row.idAgent]){
+	    		AgentsService.updateStudyAgents(row).then(function(response){
+	    			if(response.status === 200){
+	    				console.log('Added to Study Agent was Successful!');
+	    				loadStudyAgents();
+	    			}
+	    		});
+	    	}else{
+	    		var studyAgent = _.find($scope.studyAgents.data,function(studyAgent){
+	    			return studyAgent.value == row.idAgent;  
+	    		});
+	    		if(studyAgent){
+	    		AgentsService.deleteStudyAgents(studyAgent).then(function(response){
+	    			if(response.status === 200){
+	    				console.log('Delete Study Agent was Successful!');
+	    				loadStudyAgents();
+	    			}
+	    		});
+	    		}
+	    	}
+	    }
+	    
+	    $scope.checkboxes = { 'checked': false, items: {} };
+
+		// watch for check all checkbox
+		$scope.$watch('checkboxes.checked', function(value) {	    	
+		    angular.forEach(self.tableParams.settings().dataset, function(item) {
+		        if (angular.isDefined(item.idAgent)) {
+		            $scope.checkboxes.items[item.idAgent] = value;
+		        }
+		    });
+		});
+		
+		// watch for data checkboxes
+		$scope.$watch('checkboxes.items', function(values) {
+		    if (!self.tableParams.settings().dataset) {
+		        return;
+		    }
+		    var checked = 0, unchecked = 0,
+		        total = self.tableParams.settings().dataset.length;
+		    angular.forEach(self.tableParams.settings().dataset, function(item) {
+		        checked   +=  ($scope.checkboxes.items[item.idAgent]) || 0;
+		        unchecked += (!$scope.checkboxes.items[item.idAgent]) || 0;
+		    });
+		    if ((unchecked == 0) || (checked == 0)) {
+		        $scope.checkboxes.checked = (checked == total);
+		    }
+		    // grayed checkbox
+		    angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+		    
+		  }, true);
 	}
 })();
 

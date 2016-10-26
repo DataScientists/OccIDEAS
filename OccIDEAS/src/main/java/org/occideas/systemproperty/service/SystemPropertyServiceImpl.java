@@ -49,4 +49,10 @@ public class SystemPropertyServiceImpl implements SystemPropertyService{
 		return mapper.convertSytemPropertyToSystemPropertyVO(sysProp);
 	}
 
+	@Override
+	public List<SystemPropertyVO> getByType(String type) {
+		List<SystemProperty> list = dao.getByType(type);
+		return mapper.convertSystemPropertyListToSystemPropertyVOList(list);
+	}
+
 }

@@ -17,6 +17,7 @@ import org.occideas.base.rest.BaseRestController;
 import org.occideas.rule.service.RuleService;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.RuleVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -83,6 +84,48 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
+	}
+	
+	@Path(value="/updateStudyAgents")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response updateStudyAgents(AgentVO json) {
+		try{
+			service.updateStudyAgents(json);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
+	
+	@Path(value="/deleteStudyAgents")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response deleteStudyAgents(SystemPropertyVO vo) {
+		try{
+			service.deleteStudyAgents(vo);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
+	
+	@Path(value="/loadStudyAgents")
+	@GET
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response loadStudyAgents() {
+		List<SystemPropertyVO> list = null;
+		try{
+			list = service.loadStudyAgents();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
 	}
 
 	@Path(value="/delete")

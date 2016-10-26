@@ -49,4 +49,16 @@ public class SystemPropertyDao {
 		SystemProperty sysProp = (SystemProperty) criteria.uniqueResult();
 		return sysProp;
 	}
+
+	public List<SystemProperty> getByType(String type) {
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(SystemProperty.class);
+		criteria.add(Restrictions.eq("type", type));
+
+		List<SystemProperty> list = criteria.list();
+		if(list.isEmpty()){
+			return null;
+		}
+		return list;
+	}
 }
