@@ -7,12 +7,14 @@
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile',
 	                          '$rootScope','ModuleRuleService','$log','$timeout', 
-	                          'AuthenticationService','$document'];
+	                          'AuthenticationService','$document','InterviewsService',
+	                          'SystemPropertyService'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
-			ModuleRuleService,$log,$timeout, auth,$document) {
+			ModuleRuleService,$log,$timeout, auth,$document,InterviewsService,
+			SystemPropertyService) {
 		var self = this;
 		$scope.data = data;	
 		//saveModuleWithoutReload();
@@ -1303,8 +1305,61 @@
 			        collapseOrExpand($itemScope);
 					} 
 				  ], null, // Divider
-			  [ 'Run Interview', function($itemScope) {		
-					 $scope.addInterviewTab($itemScope);			                   
+			  [ 'Run Interview', function($itemScope) {	
+				  SystemPropertyService.getByName("activeIntro").then(function(response){
+					  if(response.status == '200'){
+						  if(response.data == ""){
+							  if(confirm("This module is not an active intro module. Should we set this as active intro module?")){
+								  ModulesService.setActiveIntroModule($scope.data[0])
+							  		.then(function(response){
+							  			if(response.status == '200'){
+							  				 var newScope = $itemScope.$new();
+											  $mdDialog.show({
+												  scope: newScope,
+											      templateUrl: 'scripts/questions/view/interviewDialog.html',
+											      parent: angular.element(document.body),
+											      clickOutsideToClose:true
+											    })
+											    .then(function(answer) {
+											    }, function() {
+											    });	
+							  			}
+							  	  });
+			    			  }
+						  }else if(response.data.value){
+							  if(response.data.value == moduleIdNode){
+								  var newScope = $itemScope.$new();
+								  $mdDialog.show({
+									  scope: newScope,
+								      templateUrl: 'scripts/questions/view/interviewDialog.html',
+								      parent: angular.element(document.body),
+								      clickOutsideToClose:true
+								    })
+								    .then(function(answer) {
+								    }, function() {
+								    });	
+							  }else{
+								  if(confirm("This module is not an active intro module. Should we set this as active intro module?")){
+									  ModulesService.setActiveIntroModule($scope.data[0])
+								  		.then(function(response){
+								  			if(response.status == '200'){
+								  				 var newScope = $itemScope.$new();
+												  $mdDialog.show({
+													  scope: newScope,
+												      templateUrl: 'scripts/questions/view/interviewDialog.html',
+												      parent: angular.element(document.body),
+												      clickOutsideToClose:true
+												    })
+												    .then(function(answer) {
+												    }, function() {
+												    });	
+								  			}
+								  	  });
+				    			  }
+							  }
+						  }
+					  }
+				  });
 				} 
 			  ], null, // Divider
 			  [ 'Save Module As', function($itemScope) {	
@@ -2260,5 +2315,63 @@
     			}
     		});      	
         }
+        
+        $scope.reference = null;
+		$scope.awesIdMaxSize = 7;
+		$scope.awesIdSize = 0;
+        $scope.filterAndValidate = function(event){			
+			var elem = angular.element( document.querySelector('#awesid'));
+			var counter = angular.element( document.querySelector('#awesidcounter'));
+			var label = angular.element( document.querySelector('#awesidlabel'));
+			if(event.which === 13 || event.which === 32){
+				if(awesIdIsValid(elem.val())){
+					self.add();
+				}else{
+					counter.append("Please enter a valid AWES ID");
+				}
+			}else{
+				if(!awesIdIsValid(elem.val())){
+					elem.addClass("awesidwarning");
+					label.addClass("awesidwarning");
+					counter.addClass("awesidwarning");
+				}else{
+					elem.removeClass("awesidwarning");
+					label.removeClass("awesidwarning");
+					counter.removeClass("awesidwarning");						
+				}								
+			}
+		}
+        
+        $scope.runInterview = function(reference){
+        	if(awesIdIsValid($scope.searchAWESID)){
+	    		InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data){
+	    			if(data.status == 200){
+	    				if(confirm("This AWES ID has already been used. Would you like to add a duplicate?")){
+	    					$scope.addInterviewTabInterviewers(-1,$scope.searchAWESID);
+	    					$mdDialog.cancel();
+	    				}
+	    			}else if(data.status == 204){
+	    				$scope.addInterviewTabInterviewers(-1,$scope.searchAWESID);
+	    				$mdDialog.cancel();
+	    			}else{
+	    				alert("Error occured during checkReferenceNumberExists.");
+	    			}
+	    		})
+	    	}else{
+	    		alert("You need to add a valid AWES ID before you can start.");
+	    	}
+        }
+        function awesIdIsValid(awesId){
+			$scope.searchAWESID = '';
+			var retValue = false;
+			$scope.awesIdSize = awesId.length;
+			if($scope.awesIdSize==$scope.awesIdMaxSize){
+				if(_.startsWith(awesId, 'H')){
+					retValue = true;
+					$scope.searchAWESID = awesId;
+				}
+			}			
+			return retValue;
+		}
 	}
 })();
