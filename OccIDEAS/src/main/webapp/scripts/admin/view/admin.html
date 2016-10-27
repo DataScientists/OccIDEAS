@@ -113,6 +113,12 @@
 								</div>
 							</div>
 						</td>
+						<td title="'Updated By'" filter="{updatedBy: 'text'}">
+							{{row.updatedBy}}
+						</td>
+						<td title="'Updated Dt'" filter="{updatedDt: 'text'}">
+							{{row.updatedDt}}
+						</td>
 						<td>
 							<button class="btn btn-primary btn-sm"
 								ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
