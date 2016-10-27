@@ -1352,7 +1352,16 @@
                       pdf.save($itemScope.$modelValue.name + '.pdf');
                   });
               }
-			  ]
+			  ],
+			  ['Set Active Intro Module',function($itemScope){
+				  if (confirm('Are you sure you want to set  '+$itemScope.$modelValue.name
+						  +' as active intro module?')) {
+				  ModulesService.setActiveIntroModule($itemScope.$modelValue)
+				  		.then(function(response){
+					  alert("success");
+				  });
+				  }
+			  }]
 			];
 		
 		$scope.questionMenuOptions = 

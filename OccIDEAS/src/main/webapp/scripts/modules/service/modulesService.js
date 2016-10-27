@@ -94,6 +94,16 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function setActiveIntroModule(data){
+			var restSaveUrl = 'web/rest/module/setActiveIntroModule';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+
 		var deleteModule = function(moduleObj) {
 			  var request = $http({
 				method:'POST',
@@ -146,7 +156,8 @@
             findInterviewByModuleId:findInterviewByModuleId,
             getModuleFragmentByModuleId:getModuleFragmentByModuleId,
             getModuleIntroModuleByModuleId:getModuleIntroModuleByModuleId,
-            getWithFragments:getWithFragments
+            getWithFragments:getWithFragments,
+            setActiveIntroModule:setActiveIntroModule
 		};
 	}
 	

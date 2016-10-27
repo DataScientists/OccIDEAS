@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
+import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.fragment.dao.FragmentDao;
@@ -20,6 +21,8 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.RuleDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
+import org.occideas.security.handler.TokenManager;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.FragmentVODecorator;
@@ -33,6 +36,7 @@ import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,6 +70,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private IQuestionCopier questionCopier;
 	@Autowired
 	private QuestionService questionService;
+	@Autowired
+	private SystemPropertyService sysPropService;
 
 	@Auditable(actionType = AuditingActionType.GENERIC)
     @Override
@@ -353,6 +359,24 @@ public class ModuleServiceImpl implements ModuleService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setActiveIntroModule(ModuleVO vo) {
+		SystemPropertyVO activeIntro = sysPropService.getByName(Constant.STUDY_INTRO);
+		Long id = null;
+		if(activeIntro!=null){
+			id = activeIntro.getId();
+		}
+		SystemPropertyVO sysPropVO = new SystemPropertyVO();
+		if(id != null){
+			sysPropVO.setId(id);
+		}
+		sysPropVO.setName(Constant.STUDY_INTRO);
+		sysPropVO.setType("config");
+		sysPropVO.setValue(String.valueOf(vo.getIdNode()));
+		sysPropVO.setUpdatedBy(new TokenManager().extractUserFromToken());
+		sysPropService.save(sysPropVO);
 	}
 
 

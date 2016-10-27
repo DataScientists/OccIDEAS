@@ -137,6 +137,20 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		}
 		return Response.ok().build();
 	}
+	
+	@Path(value="/setActiveIntroModule")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response setActiveIntroModule(ModuleVO vo) {
+		try{
+			service.setActiveIntroModule(vo);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
 
 	@Path(value = "/update")
 	@POST

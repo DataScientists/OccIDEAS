@@ -18,6 +18,7 @@ public class SystemPropertyDao {
 
 	public SystemProperty save(SystemProperty sysProp) {
 		final Session session = sessionFactory.getCurrentSession();
+		session.clear();
 		session.saveOrUpdate(sysProp);
 		return sysProp;
 	}
