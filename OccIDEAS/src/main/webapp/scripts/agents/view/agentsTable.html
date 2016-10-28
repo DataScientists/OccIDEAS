@@ -22,15 +22,11 @@
 								<span class="glyphicon glyphicon-trash"></span>
 							</button>
 						</div></td>
+						
 				</tr>
 				<tr ng-hide="group.$hideRows" ng-repeat="row in group.data"
 					ng-form="rowForm" demo-tracked-table-row="row">
-					<td width="30" style="text-align: center;">
-						<input
-						type="checkbox" style="position: static;"
-						ng-model="checkboxes.items[row.idAgent]" 
-						ng-checked="row.isChecked"
-						ng-click="toggleStudyAgent(row)"/></td>
+					
 					<td data-title="'Agent Group'" groupable="'agentGroup.name'"
 						ng-if="false">{{row.agentGroup}}</td>
 					<td title="'Name'" filter="{name: 'text'}"
@@ -61,6 +57,12 @@
 							</div>
 						</div>
 					</td>
+					<td title="'Study'" filter="{isChecked: 'text'}" width="30" style="text-align: center;"> {{row.isChecked}}
+						<input permission="['ROLE_ADMIN']"
+						type="checkbox" style="position: static;"
+						ng-model="checkboxes.items[row.idAgent]" 
+						ng-checked="row.isChecked"
+						ng-click="toggleStudyAgent(row)"/></td>
 					<td>
 						<button class="btn btn-primary btn-sm"
 							ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"

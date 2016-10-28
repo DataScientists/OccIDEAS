@@ -19,7 +19,7 @@
 	    
 		self.tableParams = new NgTableParams({group: "agentGroup.name",count: 100}, {	
 	        getData: function($defer,params) {
-	        	if(params.filter().name || params.filter().description){	
+	        	if(params.filter().name || params.filter().description || params.filter().isChecked){	
 		        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 		          }
 		          if(!self.tableParams.shouldGetData){
