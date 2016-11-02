@@ -58,6 +58,16 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getModuleFilterStudyAgent(idModule){
+			var restUrl = 'web/rest/module/getModuleFilterStudyAgent?id=' + idModule;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		var getModules = function() {
 		  return $http.get(modulesUrl+'/getlist').then(function(response) {
 		    var data = response.data;
@@ -157,7 +167,8 @@
             getModuleFragmentByModuleId:getModuleFragmentByModuleId,
             getModuleIntroModuleByModuleId:getModuleIntroModuleByModuleId,
             getWithFragments:getWithFragments,
-            setActiveIntroModule:setActiveIntroModule
+            setActiveIntroModule:setActiveIntroModule,
+            getModuleFilterStudyAgent:getModuleFilterStudyAgent
 		};
 	}
 	

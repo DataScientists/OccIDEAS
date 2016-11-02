@@ -10,6 +10,7 @@ import org.occideas.mapper.SystemPropertyMapper;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleRuleVO;
+import org.occideas.vo.ModuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
@@ -61,7 +62,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	}
 
 	@Override
-	public FragmentVO getNodesWithStudyAgents(FragmentVO vo) {
+	public FragmentVO getFragmentNodesWithStudyAgents(FragmentVO vo) {
 		List<Long> listOfIdNodesWithStudyAgents = new ArrayList<>();
 		List<ModuleRuleVO> moduleRuleList = vo.getModuleRule();
 		for (ModuleRuleVO mod : moduleRuleList) {
@@ -119,5 +120,33 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		}
 
 	}
+
+	@Override
+	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO vo) {
+		List<Long> listOfIdNodesWithStudyAgents = new ArrayList<>();
+		List<ModuleRuleVO> moduleRuleList = vo.getModuleRule();
+		List<ModuleRuleVO> newModuleRuleList = new ArrayList<>();
+		for (ModuleRuleVO mod : moduleRuleList) {
+			if (dao.isStudyAgent(mod.getRule().getAgentId())) {
+				listOfIdNodesWithStudyAgents.add(mod.getIdNode());
+				newModuleRuleList.add(mod);
+			}
+		}
+		vo.setModuleRule(newModuleRuleList);
+		return filterModuleNodesWithStudyAgents(vo, listOfIdNodesWithStudyAgents);
+	}
+	
+	private ModuleVO filterModuleNodesWithStudyAgents(ModuleVO vo, List<Long> listOfIdNodesWithStudyAgents) {
+		List<QuestionVO> questionVOList = vo.getChildNodes();
+		List<QuestionVO> newQuestionVOList = new ArrayList<>();
+		filterQuestionNodesWithStudyAgents(questionVOList, listOfIdNodesWithStudyAgents, newQuestionVOList);
+		if (newQuestionVOList.isEmpty()) {
+			vo.setChildNodes(null);
+		} else {
+			vo.setChildNodes(newQuestionVOList);
+		}
+		return vo;
+	}
+
 
 }

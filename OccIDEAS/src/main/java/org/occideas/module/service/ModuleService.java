@@ -25,4 +25,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo, ModuleReportVO report,
 			NodeRuleHolder idNodeRuleHolder);
 	public void setActiveIntroModule(ModuleVO vo);
+	public ModuleVO getModuleFilterStudyAgent(Long id);
 }

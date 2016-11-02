@@ -379,5 +379,13 @@ public class ModuleServiceImpl implements ModuleService {
 		sysPropService.save(sysPropVO);
 	}
 
+	@Override
+	public ModuleVO getModuleFilterStudyAgent(Long id) {
+		Module module = dao.get(id);
+		ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
+		ModuleVO newModuleVO = sysPropService.filterModulesNodesWithStudyAgents(moduleVO);
+		return moduleVO;
+	}
+
 
 }

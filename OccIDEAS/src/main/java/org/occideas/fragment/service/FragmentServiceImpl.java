@@ -156,7 +156,7 @@ public class FragmentServiceImpl implements FragmentService {
 	public List<FragmentVO> getFilterStudyAgents(Long id) {
 		Fragment fragment = dao.get(id);
 		FragmentVO fragmentVO = mapper.convertToFragmentVO(fragment,true);
-		FragmentVO filteredFragmentVO = systemPropertyService.getNodesWithStudyAgents(fragmentVO);
+		FragmentVO filteredFragmentVO = systemPropertyService.getFragmentNodesWithStudyAgents(fragmentVO);
 		List<FragmentVO> list = new ArrayList<FragmentVO>();
 		list.add(filteredFragmentVO);
 		return list;
