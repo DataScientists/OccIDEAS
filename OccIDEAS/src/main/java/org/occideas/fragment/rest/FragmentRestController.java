@@ -61,6 +61,20 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 	}
 	
 	@GET
+	@Path(value="/getFilterStudyAgents")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getFilterStudyAgents(@QueryParam("id") Long id) {
+		List<FragmentVO> list = new ArrayList<FragmentVO>();
+		try{
+			list = service.getFilterStudyAgents(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
+	@GET
 	@Path(value="/getLinkingNodes")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getLinkingNodes(@QueryParam("id") Long id) {

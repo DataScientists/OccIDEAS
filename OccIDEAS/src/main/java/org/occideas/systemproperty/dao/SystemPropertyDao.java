@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.entity.Constant;
 import org.occideas.entity.SystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -61,5 +62,17 @@ public class SystemPropertyDao {
 			return null;
 		}
 		return list;
+	}
+
+	public boolean isStudyAgent(long agentId) {
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(SystemProperty.class);
+		criteria.add(Restrictions.eq("type", Constant.STUDY_AGENT_SYS_PROP));
+		criteria.add(Restrictions.eq("value", String.valueOf(agentId)));
+		SystemProperty sysProp = (SystemProperty) criteria.uniqueResult();
+		if(sysProp != null){
+			return true;
+		}
+		return false;
 	}
 }

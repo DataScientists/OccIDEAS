@@ -2205,6 +2205,53 @@
         	});
         }
         
+        function exportToJsonFilterStudyAgents(copyData,name){
+        	var fragments = [];
+        	var	promises = [];
+        	ModulesService.getModuleFragmentByModuleId(copyData[0].idNode).then(function (response) {
+        		if(response.status == '200'){
+        			// loop each fragment get details for each
+        			_.each(response.data,function(data){
+        					promises.push(populateChildNodesOfFragmentFilterStudyAgents(data,fragments));
+        			});
+        			$q.all(promises).then(function () {
+        				console.log('finish creating the JSON.. exporting in progress.');
+        				copyData[0].fragments = fragments;
+        				var blob = new Blob([JSON.stringify(copyData)], {
+        					type: "application/json;charset="+ "utf-8" + ";"
+        				});
+
+        				if (window.navigator.msSaveOrOpenBlob) {
+        					navigator.msSaveBlob(blob, name);
+        				} else {
+
+        					var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
+        					var downloadLink = angular.element(downloadContainer.children()[0]);
+        					downloadLink.attr('href', window.URL.createObjectURL(blob));
+        					downloadLink.attr('download', name);
+        					downloadLink.attr('target', '_blank');
+
+        					$document.find('body').append(downloadContainer);
+        					$timeout(function () {
+        						downloadLink[0].click();
+        						downloadLink.remove();
+        					}, null);
+        				}
+        			});
+        			$mdDialog.hide();
+        		}
+        	});
+        }
+        
+        function populateChildNodesOfFragmentFilterStudyAgents(data,fragments){
+        	// todo filtering by study agent
+        	return FragmentsService.getFilterStudyAgents(data.fragmentId).then(function(response){
+				if(response.length > 0){
+					fragments.push(response[0]);
+				}
+			});
+        }
+        
         function exportJsonForModule(copyData,name,includeLinks){
         	var fragments = [];
         	var	promises = [];
@@ -2267,9 +2314,11 @@
         	var copyData = angular.copy($scope.data);
         	var counter = 0;
         	
-        	var ssmodule = copyData[0];
+//        	var ssmodule = copyData[0];
         	if(filterOnStudyAgents){
-        		ssmodule = processStudyModule(copyData[0]);
+//        		ssmodule = processStudyModule(copyData[0]);
+        		exportToJsonFilterStudyAgents(copyData,name);
+        		return;
         	}
         	
         	if(copyData[0].type == 'M_IntroModule'){

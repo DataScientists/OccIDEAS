@@ -79,6 +79,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		function getFilterStudyAgents(idNode){
+			var restUrl = 'web/rest/fragment/getFilterStudyAgents?id=' + idNode;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function checkExists(idNode) {
 			var restUrl = 'web/rest/fragment/checkexists?id=' + idNode;
 			var request =  $http({
@@ -126,7 +135,8 @@
 		    createFragment:createFragment,
 		    findInterviewByFragmentId:findInterviewByFragmentId,
 		    copyModule:copyModule,
-		    getLinkingNodes:getLinkingNodes
+		    getLinkingNodes:getLinkingNodes,
+		    getFilterStudyAgents:getFilterStudyAgents
 		};
 		function handleError( response ) {
             if (

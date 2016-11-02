@@ -2,6 +2,7 @@ package org.occideas.systemproperty.service;
 
 import java.util.List;
 
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.SystemPropertyVO;
 
 public interface SystemPropertyService {
@@ -12,5 +13,6 @@ public interface SystemPropertyService {
 	public void delete(SystemPropertyVO vo);
 	public SystemPropertyVO getByName(String name);
 	public List<SystemPropertyVO> getByType(String studyAgentSysProp);
+	public FragmentVO getNodesWithStudyAgents(FragmentVO vo);
 	
 }

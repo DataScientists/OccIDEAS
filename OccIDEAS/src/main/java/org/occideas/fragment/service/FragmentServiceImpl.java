@@ -11,6 +11,7 @@ import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.rule.dao.RuleDao;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
@@ -44,6 +45,9 @@ public class FragmentServiceImpl implements FragmentService {
 	
 	@Autowired
 	private QuestionMapper questionMapper;
+	
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 	
 	@Override
 	public List<FragmentVO> listAll() {
@@ -146,5 +150,15 @@ public class FragmentServiceImpl implements FragmentService {
 	@Override
 	public List<QuestionVO> getLinkingNodes(Long id) {
 		return questionMapper.convertToQuestionVOExcludeChildsList(dao.getLinkingNodeById(id));
+	}
+
+	@Override
+	public List<FragmentVO> getFilterStudyAgents(Long id) {
+		Fragment fragment = dao.get(id);
+		FragmentVO fragmentVO = mapper.convertToFragmentVO(fragment,true);
+		FragmentVO filteredFragmentVO = systemPropertyService.getNodesWithStudyAgents(fragmentVO);
+		List<FragmentVO> list = new ArrayList<FragmentVO>();
+		list.add(filteredFragmentVO);
+		return list;
 	}
 }
