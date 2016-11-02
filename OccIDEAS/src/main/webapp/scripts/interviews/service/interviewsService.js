@@ -215,6 +215,19 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		function exportAssessmentsVibrationCSV(filterModule, fileName) {
+			var url = 'web/rest/assessment/exportAssessmentsVibrationCSV';
+			var request = $http({
+				method : 'POST',
+				url : url,
+				ignoreLoadingBar : true,
+				data : {
+					fileName : fileName,
+					filterModule : filterModule
+				}
+			})
+			return request.then(handleSuccess, handleError);
+		}
 
 		function getInterviewIdList() {
 			var url = 'web/rest/interview/getAllInterviewId';
@@ -456,6 +469,7 @@
 			exportInterviewsCSV : exportInterviewsCSV,
 			exportAssessmentsCSV : exportAssessmentsCSV,
 			exportAssessmentsNoiseCSV : exportAssessmentsNoiseCSV,
+			exportAssessmentsVibrationCSV : exportAssessmentsVibrationCSV,
 			getDistinctModules : getDistinctModules,
 			findInterviewIdByModuleId : findInterviewIdByModuleId,
 			findNonIntroById:findNonIntroById

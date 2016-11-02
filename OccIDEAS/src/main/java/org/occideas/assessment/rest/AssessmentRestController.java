@@ -226,6 +226,52 @@ public class AssessmentRestController {
 		}
 		return Response.ok().build();
     }
+	@POST
+    @Path(value = "/exportAssessmentsVibrationCSV")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response exportAssessmentsVibrationCSV(FilterModuleVO filterModuleVO) {
+		
+		//check if we have the directory TreeSet ins sys prop
+		SystemPropertyVO property = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
+		if(property == null){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
+		}
+		String exportFileCSV = createFileName(filterModuleVO.getFileName());
+		String fullPath = "";
+		ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,null,0);
+		fullPath = property.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
+		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0);
+		List<InterviewVO> uniqueInterviews = interviewService.listAllWithRules();
+		ExportCSVVO csvVO = populateAssessmentVibrationCSV(uniqueInterviews,reportHistoryVO);
+		CSVWriter writer;
+		try {
+			File file = new File(fullPath);
+			writer = new CSVWriter(new FileWriter(file), ',');
+			// feed in your array (or convert your data to an array)
+			String[] headers = Arrays.copyOf(csvVO.getHeaders().toArray(), 
+					csvVO.getHeaders().toArray().length, String[].class);
+			//write header
+			writer.writeNext(headers);
+			//write answers
+			//iterate map
+			Iterator listOfAnswers = csvVO.getAnswers().entrySet().iterator();
+			while (listOfAnswers.hasNext()) {
+			  Entry thisEntry = (Entry) listOfAnswers.next();
+			  List<String> value = (List<String>) thisEntry.getValue();
+			  String[] answers = Arrays.copyOf(value.toArray(), 
+						value.toArray().length, String[].class);
+			  writer.writeNext(answers);
+			}
+			writer.close();
+			updateProgress(reportHistoryVO,ReportsStatusEnum.COMPLETED.getValue(), 
+					100);
+		} catch (IOException e) {
+			e.printStackTrace();
+			updateProgress(reportHistoryVO,ReportsStatusEnum.FAILED.getValue(), 
+					0);
+		}
+		return Response.ok().build();
+    }
 	private ReportHistoryVO insertToReportHistory(String exportFileCSV, 
 			String fullPath,
 			Long id,
@@ -283,7 +329,104 @@ public class AssessmentRestController {
 		vo.setHeaders(headers);
 		return vo;
 	}
+	private ExportCSVVO populateAssessmentVibrationCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO) {
+		ExportCSVVO vo = new ExportCSVVO();
+		Set<String> headers = populateHeadersAndAnswersAssessmentVibration(uniqueInterviews,vo,reportHistoryVO);
+		vo.setHeaders(headers);
+		return vo;
+	}
+	private Set<String> populateHeadersAndAnswersAssessmentVibration(List<InterviewVO> uniqueInterviews,
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
+		Set<String> headers = new LinkedHashSet<>();
+		headers.add("Interview Id");
+		headers.add("AWES ID");
+		headers.add("Status");
+		int iSize = uniqueInterviews.size();
+		List<SystemPropertyVO> properties = systemPropertyService.getAll();
+		AgentVO vibrationAgent = new AgentVO();
+		for (SystemPropertyVO prop : properties) {
+			if (prop.getType().equalsIgnoreCase("VIBRATIONAGENT")) {
+				vibrationAgent.setIdAgent(Long.valueOf(prop.getValue()));
+				vibrationAgent.setName(prop.getName());
+			}
+		}
+		headers.add("Shift Length");
+		headers.add("Daily Vibration");
 
+		double count = 0;
+		for (InterviewVO interviewVO : uniqueInterviews) {
+			boolean bFoundVibrationRules = false;
+			List<RuleVO> vibrationRules = new ArrayList<RuleVO>();
+			List<String> answers = new ArrayList<>();
+			answers.add(String.valueOf(interviewVO.getInterviewId()));
+			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+			answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
+			for (RuleVO rule : interviewVO.getFiredRules()) {
+				if (vibrationAgent.getIdAgent() == rule.getAgentId()) {
+					vibrationRules.add(rule);
+					bFoundVibrationRules = true;
+				}
+			}
+			String shiftHours = "-NA-";
+			String dailyvibration = "-NA-";
+			
+			for (InterviewAnswerVO ia : interviewVO.getAnswerHistory()) {
+				if (ia.getType().equalsIgnoreCase("P_frequencyshifthours")) {
+					shiftHours = ia.getAnswerFreetext();
+					break;
+				}
+			}
+			answers.add(shiftHours);
+			if (bFoundVibrationRules) {
+				Float totalFrequency = new Float(0);
+				Float maxBackgroundPartialExposure = new Float(0);
+				Float maxBackgroundHours = new Float(0);
+				
+				Float level = new Float(0);
+				Integer iPeakNoise = 0;
+				Float totalPartialExposure = new Float(0);
+				for (RuleVO noiseRule : vibrationRules) {											
+					Float hours = new Float(0);
+					Float frequencyhours = new Float(0);
+					PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+					InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewVO.getAnswerHistory(),parentNode);
+
+					if (actualAnswer != null) {
+						InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewVO,actualAnswer);
+
+						if (frequencyHoursNode != null) {
+							try{
+								frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+							}catch(Exception e){
+								System.err.println("Invalid frequency! Check interview "+interviewVO.getInterviewId());
+							}
+						}
+					}
+					
+					hours = frequencyhours;
+					
+					try{
+						level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+					}catch(Exception e){
+						System.err.println("Invalid noise rule! Check rule "+noiseRule.getIdRule());
+					}
+					Float partialExposure = (float) Math.sqrt((float)(frequencyhours)*(float)(frequencyhours)*(float)(level)/8);
+
+					totalPartialExposure = ((totalPartialExposure) + (partialExposure));
+					totalFrequency += frequencyhours;									
+				}
+
+				Float dailyVibration = (float)Math.sqrt((float)(totalFrequency)*(float)(totalFrequency)*(float)(totalPartialExposure)/8);
+				dailyvibration = dailyVibration.toString();
+				
+			}
+			answers.add(dailyvibration);
+			
+			exportCSVVO.getAnswers().put(interviewVO, answers);
+		}
+		return headers;
+	}
 	private Set<String> populateHeadersAndAnswersAssessmentNoise(List<InterviewVO> uniqueInterviews,
 			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
