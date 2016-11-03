@@ -17,6 +17,7 @@ import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.service.RuleService;
+import org.occideas.vo.AgentVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
@@ -186,6 +187,42 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		
     }
     @GET
+    @Path(value = "/updateAutoAssessments")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response updateAutoAssessments() {
+    	List<InterviewVO> list = new ArrayList<InterviewVO>();
+		try{
+			list = service.listAllWithRules();
+			for(InterviewVO interviewVO:list){
+				interviewVO = this.determineFiredRules(interviewVO);
+				ArrayList<RuleVO> autoAssessedRules = new ArrayList<RuleVO>();
+				for(AgentVO agent:interviewVO.getAgents()){
+					RuleVO rule = new RuleVO();
+					rule.setLevel("noExposure");
+					rule.setLevelValue(5);
+					rule.setAgentId(agent.getIdAgent());
+					for(RuleVO ruleFired: interviewVO.getFiredRules()){
+						if(ruleFired.getAgentId()==agent.getIdAgent()){
+							if(ruleFired.getLevelValue()<=rule.getLevelValue()){
+								rule.setLevel(ruleFired.getLevel());
+								rule.setLevelValue(ruleFired.getLevelValue());
+								rule.setAgentId(ruleFired.getAgentId());
+								rule.setLegacyRuleId(ruleFired.getIdRule());
+							  }
+						}
+					}
+					autoAssessedRules.add(rule);
+				}
+				interviewVO.setAutoAssessedRules(autoAssessedRules);
+				service.update(interviewVO);
+         	}
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+    }
+    @GET
     @Path(value = "/updatefiredrules")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response updateFiredRules(@QueryParam("id") Long id) {
@@ -201,7 +238,6 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		}
 		return Response.ok(list).build();
     }
-    
 
     @Path(value = "/create")
     @POST

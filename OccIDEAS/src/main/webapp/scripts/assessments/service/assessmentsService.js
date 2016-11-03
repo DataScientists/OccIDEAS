@@ -38,6 +38,24 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+    	function updateAutoAssessments() {
+			var restUrl = 'web/rest/interview/updateAutoAssessments';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl,
+				  ignoreLoadingBar: true
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+    	function getAssessments() {
+			var restUrl = 'web/rest/interview/getassessments';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl,
+				  ignoreLoadingBar: true
+				})
+			return request.then(handleSuccess1,handleError);
+		}
     	function getAssessments() {
 			var restUrl = 'web/rest/interview/getassessments';
 			var request =  $http({
@@ -66,6 +84,7 @@
 
         return {
         	updateFiredRules: updateFiredRules,
+        	updateAutoAssessments:updateAutoAssessments,
         	listByInterview: listByInterview,
         	getInterview: getInterview,
         	getInterviews: getInterviews,

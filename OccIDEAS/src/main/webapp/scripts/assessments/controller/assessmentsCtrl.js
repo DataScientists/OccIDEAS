@@ -76,7 +76,13 @@
 		}
 		
 		
-		
+		$scope.updateAutoAssessmentsButton = function() {
+			AssessmentsService.updateAutoAssessments().then(function(response){
+				if(response.status == '200'){
+					console.log('Assessments Updated');
+				}
+			});
+		}
 				
 		
 		
