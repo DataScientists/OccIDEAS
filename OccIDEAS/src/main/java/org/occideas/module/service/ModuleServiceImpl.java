@@ -384,7 +384,7 @@ public class ModuleServiceImpl implements ModuleService {
 		Module module = dao.get(id);
 		ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
 		ModuleVO newModuleVO = sysPropService.filterModulesNodesWithStudyAgents(moduleVO);
-		return moduleVO;
+		return newModuleVO;
 	}
 
 

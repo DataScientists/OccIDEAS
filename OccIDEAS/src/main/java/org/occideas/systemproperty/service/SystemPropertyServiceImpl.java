@@ -106,7 +106,11 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			if (listOfIdNodesWithStudyAgents.contains(aVo.getIdNode())) {
 				newPossibleAnswerList.add(aVo);
 				isPushed = true;
+				// if an answer is identified with rules which is a study agent , 
+				// we must add the other answers to this question
 			}
+			// additional check for child questions, verify if its answers has rules with study agent and
+			// add to the hierarchy accordingly
 			if (!isPushed && !aVo.getChildNodes().isEmpty()) {
 				List<QuestionVO> newQuestionVOList = new ArrayList<>();
 				filterQuestionNodesWithStudyAgents(aVo.getChildNodes(), listOfIdNodesWithStudyAgents,
