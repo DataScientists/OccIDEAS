@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
+import org.occideas.entity.PossibleAnswer;
 
 public interface IModuleDao {
 
@@ -28,5 +29,7 @@ public interface IModuleDao {
 	public Long generateIdNode();
 	
 	public Node getNodeById(Long idNode);
+	
+	public List<PossibleAnswer> getNodeByLinkAndModId(Long link, Long modId);
 
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
@@ -15,8 +14,10 @@ import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.mapper.SystemPropertyMapper;
 import org.occideas.module.dao.IModuleDao;
+import org.occideas.modulefragment.service.ModuleFragmentService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.ModuleFragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
@@ -41,6 +42,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	private QuestionMapper questionMapper;
 	@Autowired
 	private ModuleMapper moduleMapper;
+	@Autowired
+	private ModuleFragmentService moduleFragmentService;
 	
 	@Override
 	public SystemPropertyVO save(SystemPropertyVO sysProp) {
@@ -131,8 +134,34 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	@Override
 	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO vo) {
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
-		vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+		// check child links if we have study agents
+		addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		if(posAnsWithStudyAgentsList.isEmpty()){
+			return null;
+		}else{
+			vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+		}
 		return vo;
+	}
+
+	private void addAnsDependencyFromLinkAjsm(ModuleVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
+		List<ModuleFragmentVO> moduleFragments = moduleFragmentService.getModuleFragmentByModuleId(vo.getIdNode());
+		for(ModuleFragmentVO modFragVO:moduleFragments){
+			List<PossibleAnswerVO> fragmentStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList
+					(dao.getPosAnsWithStudyAgentsByIdMod(modFragVO.getFragmentId()));
+			if(!fragmentStudyAgentsList.isEmpty()){
+				//link ajsm has answers with study agents
+				// will need to  get the parent answer for the link ajsm
+				List<PossibleAnswerVO> listPosAnsFromFragment = 
+						posAnsMapper.convertToPossibleAnswerVOExModRuleList(
+								moduleDao.getNodeByLinkAndModId(modFragVO.getFragmentId(), vo.getIdNode()));
+				for(PossibleAnswerVO ansVO:listPosAnsFromFragment){
+					if(!posAnsWithStudyAgentsList.contains(ansVO)){
+						posAnsWithStudyAgentsList.add(ansVO);
+					}
+				}
+			}
+		}
 	}
 
 	private List<QuestionVO> buildChildNodesWithStudyAgents(List<PossibleAnswerVO> posAnsWithStudyAgentsList) {

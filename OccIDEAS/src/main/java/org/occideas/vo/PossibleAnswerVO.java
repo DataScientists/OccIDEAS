@@ -52,5 +52,31 @@ public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswe
 				return nodeNumberB.compareTo(nodeNumberA);
 			} 
 		}		
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = (int) (prime * result + ((idNode == 0) ? 0 : idNode));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PossibleAnswerVO other = (PossibleAnswerVO) obj;
+		if (idNode == 0) {
+			if (other.idNode != 0)
+				return false;
+		} else if (!(idNode == (other.idNode)))
+			return false;
+		return true;
 	}	
+	
 }

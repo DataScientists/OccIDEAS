@@ -8,6 +8,7 @@ import javax.transaction.Transactional.TxType;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -16,6 +17,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
+import org.occideas.entity.PossibleAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -106,6 +108,20 @@ public class ModuleDao implements IModuleDao{
 	@Override
 	public Node getNodeById(Long idNode) {
 		return (Node) sessionFactory.getCurrentSession().get(Node.class, idNode);
+	}
+
+	private final String GET_NODE_BY_LINK_AND_MOD_ID = "SELECT * FROM Node where idNode "+ 
+			" in (select parent_idNode from node where link = :link and topNodeId = :modId)";
+	
+	@Override
+	public List<PossibleAnswer> getNodeByLinkAndModId(Long link, Long modId) {
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(GET_NODE_BY_LINK_AND_MOD_ID).
+				addEntity(PossibleAnswer.class);
+		sqlQuery.setParameter("modId", String.valueOf(modId));
+		sqlQuery.setParameter("link", String.valueOf(link));
+		List<PossibleAnswer> list = sqlQuery.list();
+		return list;
 	}
 
     

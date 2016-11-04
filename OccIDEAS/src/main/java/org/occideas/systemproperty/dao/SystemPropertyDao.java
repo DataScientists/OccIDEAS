@@ -78,9 +78,9 @@ public class SystemPropertyDao {
 		return false;
 	}
 	
-	private final String POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM occideas.Node where idNode in" 
-			+" (SELECT idNode FROM occideas.ModuleRule where idModule=:param "
-			+" and idAgent in (select value from occideas.sys_config where type='studyagent'"
+	private final String POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM Node where idNode in" 
+			+" (SELECT idNode FROM ModuleRule where idModule=:param "
+			+" and idAgent in (select value from sys_config where type='studyagent'"
 			+"))";
 	
 	public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(long idModule){

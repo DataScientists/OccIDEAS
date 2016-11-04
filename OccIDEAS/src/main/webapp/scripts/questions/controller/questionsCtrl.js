@@ -2211,6 +2211,11 @@
         	//get filtered module
         	ModulesService.getModuleFilterStudyAgent(copyData[0].idNode).then(function(response){
         		if(response.status == '200'){
+        			if(response.data[0] == null){
+        				alert("Warning: No study agent exist.");
+        				return;
+        			}
+        			
         			var studyAgentData = response.data;
         			//get list of ajsm
         			ModulesService.getModuleFragmentByModuleId(studyAgentData[0].idNode).then(function (response) {
@@ -2253,7 +2258,10 @@
         function populateChildNodesOfFragmentFilterStudyAgents(data,fragments){
         	// todo filtering by study agent
         	return FragmentsService.getFilterStudyAgents(data.fragmentId).then(function(response){
-				if(response.length > 0){
+				if(response[0] == null){
+					return;
+				}
+        		if(response.length > 0){
 					fragments.push(response[0]);
 				}
 			});
