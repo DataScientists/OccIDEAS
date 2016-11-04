@@ -196,6 +196,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			for(InterviewVO interviewVO:list){
 				interviewVO = this.determineFiredRules(interviewVO);
 				ArrayList<RuleVO> autoAssessedRules = new ArrayList<RuleVO>();
+				for(RuleVO existingRule: interviewVO.getAutoAssessedRules()){
+					existingRule.setDeleted(1);
+					autoAssessedRules.add(existingRule);
+				}
+				
 				for(AgentVO agent:interviewVO.getAgents()){
 					RuleVO rule = new RuleVO();
 					rule.setLevel("noExposure");
