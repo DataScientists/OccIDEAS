@@ -3,10 +3,12 @@ package org.occideas.systemproperty.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.SystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -74,5 +76,19 @@ public class SystemPropertyDao {
 			return true;
 		}
 		return false;
+	}
+	
+	private final String POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM occideas.Node where idNode in" 
+			+" (SELECT idNode FROM occideas.ModuleRule where idModule=:param "
+			+" and idAgent in (select value from occideas.sys_config where type='studyagent'"
+			+"))";
+	
+	public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(long idModule){
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(POS_ANS_WITH_STUDY_AGENTS_SQL).
+				addEntity(PossibleAnswer.class);
+		sqlQuery.setParameter("param", String.valueOf(idModule));
+		List<PossibleAnswer> list = sqlQuery.list();
+		return list;
 	}
 }

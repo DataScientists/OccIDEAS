@@ -3,6 +3,7 @@ package org.occideas.module.dao;
 import java.util.List;
 
 import org.occideas.entity.Module;
+import org.occideas.entity.Node;
 
 public interface IModuleDao {
 
@@ -25,5 +26,7 @@ public interface IModuleDao {
 	public List<Module> getAllActive();
 
 	public Long generateIdNode();
+	
+	public Node getNodeById(Long idNode);
 
 }

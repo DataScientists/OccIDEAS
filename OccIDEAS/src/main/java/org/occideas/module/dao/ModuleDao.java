@@ -103,4 +103,10 @@ public class ModuleDao implements IModuleDao{
     	return idNode;
     }
 
+	@Override
+	public Node getNodeById(Long idNode) {
+		return (Node) sessionFactory.getCurrentSession().get(Node.class, idNode);
+	}
+
+    
 }
