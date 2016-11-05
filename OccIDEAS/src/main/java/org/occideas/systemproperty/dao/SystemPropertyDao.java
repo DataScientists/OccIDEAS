@@ -80,7 +80,7 @@ public class SystemPropertyDao {
 	
 	private final String POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM Node where idNode in" 
 			+" (SELECT idNode FROM ModuleRule where idModule=:param "
-			+" and idAgent in (select value from sys_config where type='studyagent'"
+			+" and idAgent in (select value from SYS_CONFIG where type='studyagent'"
 			+"))";
 	
 	public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(long idModule){

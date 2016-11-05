@@ -111,7 +111,7 @@ public class ModuleDao implements IModuleDao{
 	}
 
 	private final String GET_NODE_BY_LINK_AND_MOD_ID = "SELECT * FROM Node where idNode "+ 
-			" in (select parent_idNode from node where link = :link and topNodeId = :modId)";
+			" in (select parent_idNode from Node where link = :link and topNodeId = :modId)";
 	
 	@Override
 	public List<? extends Node> getNodeByLinkAndModId(Long link, Long modId) {
