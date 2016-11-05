@@ -114,13 +114,13 @@ public class ModuleDao implements IModuleDao{
 			" in (select parent_idNode from node where link = :link and topNodeId = :modId)";
 	
 	@Override
-	public List<PossibleAnswer> getNodeByLinkAndModId(Long link, Long modId) {
+	public List<? extends Node> getNodeByLinkAndModId(Long link, Long modId) {
 		final Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery(GET_NODE_BY_LINK_AND_MOD_ID).
-				addEntity(PossibleAnswer.class);
+				addEntity(Node.class);
 		sqlQuery.setParameter("modId", String.valueOf(modId));
 		sqlQuery.setParameter("link", String.valueOf(link));
-		List<PossibleAnswer> list = sqlQuery.list();
+		List<Node> list = sqlQuery.list();
 		return list;
 	}
 

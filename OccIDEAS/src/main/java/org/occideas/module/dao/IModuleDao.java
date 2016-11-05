@@ -30,6 +30,6 @@ public interface IModuleDao {
 	
 	public Node getNodeById(Long idNode);
 	
-	public List<PossibleAnswer> getNodeByLinkAndModId(Long link, Long modId);
+	public List<? extends Node> getNodeByLinkAndModId(Long link, Long modId);
 
 }

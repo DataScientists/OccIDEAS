@@ -135,8 +135,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO vo) {
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
 		// check child links if we have study agents
-		addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
-		if(posAnsWithStudyAgentsList.isEmpty()){
+		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
 			return null;
 		}else{
 			vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
@@ -144,7 +144,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		return vo;
 	}
 
-	private void addAnsDependencyFromLinkAjsm(ModuleVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
+	private boolean addAnsDependencyFromLinkAjsm(ModuleVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
+		boolean shouldReturnNull = true;
 		List<ModuleFragmentVO> moduleFragments = moduleFragmentService.getModuleFragmentByModuleId(vo.getIdNode());
 		for(ModuleFragmentVO modFragVO:moduleFragments){
 			List<PossibleAnswerVO> fragmentStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList
@@ -152,16 +153,23 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			if(!fragmentStudyAgentsList.isEmpty()){
 				//link ajsm has answers with study agents
 				// will need to  get the parent answer for the link ajsm
-				List<PossibleAnswerVO> listPosAnsFromFragment = 
-						posAnsMapper.convertToPossibleAnswerVOExModRuleList(
-								moduleDao.getNodeByLinkAndModId(modFragVO.getFragmentId(), vo.getIdNode()));
-				for(PossibleAnswerVO ansVO:listPosAnsFromFragment){
-					if(!posAnsWithStudyAgentsList.contains(ansVO)){
-						posAnsWithStudyAgentsList.add(ansVO);
+				List<? extends Node> nodeLink = moduleDao.getNodeByLinkAndModId(modFragVO.getFragmentId(), vo.getIdNode());
+				if(!nodeLink.isEmpty() && "P".equals(nodeLink.get(0).getNodeclass())){
+					List<PossibleAnswerVO> listPosAnsFromFragment = 
+							posAnsMapper.convertToPossibleAnswerVOExModRuleList(
+									(List<PossibleAnswer>)nodeLink);
+					for(PossibleAnswerVO ansVO:listPosAnsFromFragment){
+						if(!posAnsWithStudyAgentsList.contains(ansVO)){
+							posAnsWithStudyAgentsList.add(ansVO);
+						}
 					}
+				}else if(!nodeLink.isEmpty() && "M".equals(nodeLink.get(0).getNodeclass())){
+					//parent is a module
+					shouldReturnNull = false;
 				}
 			}
 		}
+		return shouldReturnNull;
 	}
 
 	private List<QuestionVO> buildChildNodesWithStudyAgents(List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
