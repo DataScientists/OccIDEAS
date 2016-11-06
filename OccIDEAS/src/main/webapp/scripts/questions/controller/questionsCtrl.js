@@ -1267,16 +1267,6 @@
 		}
 		$scope.moduleMenuOptions = 
 			[ 
-			  [ 'Make Study Specific', function($itemScope) {
-				  if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
-					  var introModule = $itemScope.$modelValue;
-					  findModules(introModule.nodes);
-				  }else{
-					  alert("Admin Role Required");
-				  }
-				  
-				}
-			  ],
 			  [ 'Show Rules', function($itemScope) {
 					$scope.addRulesTab($itemScope);
 					}
@@ -1418,7 +1408,12 @@
 				  }
 			  }]
 			];
-		
+		if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+			$scope.moduleMenuOptions.unshift([ 'Make Study Specific', function($itemScope) {
+					previewStudySpecific();
+			}
+		  ]);
+		}
 		$scope.questionMenuOptions = 
 			[ [ 'Add Possible Answer', function($itemScope) {
 						$scope.newSubItem($itemScope);
@@ -2437,5 +2432,32 @@
 			}			
 			return retValue;
 		}
+        
+        function previewStudySpecific(){
+        	ModulesService.getModuleFilterStudyAgent(moduleIdNode).then(function(response){
+        		if(response.status == '200'){
+        			if(response.data[0] == null){
+        				alert("Warning: No study agent exist.");
+        				return;
+        			}
+        			if(response.data[0].nodes.length < 1){
+        				alert("There is no study specific node for this tree, check the link ajsm.");
+        				return;
+        			}
+        			var studyAgentData = response.data;
+        			highlightStudySpecificNode(studyAgentData[0].nodes);
+        		}
+        	});
+        }
+        
+        function highlightStudySpecificNode(childNodes){
+        	for(i=0;i<childNodes.length;i++){
+        		var node = childNodes[i];
+				angular.element("#node-"+node.idNode).addClass("incl_expjson");
+				if(node.nodes){
+					highlightStudySpecificNode(node.nodes);
+				}
+			}
+        }
 	}
 })();
