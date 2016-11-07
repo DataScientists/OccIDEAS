@@ -2434,6 +2434,7 @@
 		}
         
         function previewStudySpecific(){
+        	angular.element(document).find('.incl_expjson').removeClass('incl_expjson');
         	var fragments = [];
         	var	promises = [];
         	ModulesService.getModuleFilterStudyAgent(moduleIdNode).then(function(response){
@@ -2455,7 +2456,7 @@
         	        				alert("There is no study specific node for this tree, check the link ajsm.");
         	        				return;
         	        			}
-        						for(i=0;i<fragments.length;i++){
+        						for(var i=0;i<fragments.length;i++){
         							higlightAjsms(fragments[i].idNode,$scope.data[0].nodes);
         						}
         					});
@@ -2477,7 +2478,7 @@
 		}
         
         function highlightStudySpecificNode(childNodes){
-        	for(i=0;i<childNodes.length;i++){
+        	for(var i=0;i<childNodes.length;i++){
         		var node = childNodes[i];
 				angular.element("#node-"+node.idNode).addClass("incl_expjson");
 				if(node.nodes){
