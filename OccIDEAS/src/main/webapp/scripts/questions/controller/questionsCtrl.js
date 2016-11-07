@@ -1409,7 +1409,7 @@
 			  }]
 			];
 		if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
-			$scope.moduleMenuOptions.unshift([ 'Make Study Specific', function($itemScope) {
+			$scope.moduleMenuOptions.unshift([ 'View Study Specific', function($itemScope) {
 					previewStudySpecific();
 			}
 		  ]);
