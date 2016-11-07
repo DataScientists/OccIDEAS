@@ -58,7 +58,8 @@ n.idNode as idNode,
  n.link as fragmentId
 FROM Node m
 INNER JOIN Node n ON n.topNodeId = m.idNode
-WHERE n.type = 'Q_linkedajsm';
+WHERE n.type = 'Q_linkedajsm'
+AND n.deleted=0;
 
 DROP VIEW IF EXISTS Module_IntroModule;
 CREATE VIEW Module_IntroModule AS 
@@ -71,5 +72,6 @@ n.idNode as idNode,
  n.link as moduleLinkId
 FROM Node m
 INNER JOIN Node n ON n.topNodeId = m.idNode
-WHERE n.type = 'Q_linkedmodule';
+WHERE n.type = 'Q_linkedmodule'
+AND n.deleted=0;
 

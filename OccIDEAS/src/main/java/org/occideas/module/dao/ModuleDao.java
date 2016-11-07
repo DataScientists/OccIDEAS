@@ -112,7 +112,8 @@ public class ModuleDao implements IModuleDao{
 	}
 
 	private final String GET_NODE_BY_LINK_AND_MOD_ID = "SELECT * FROM Node where idNode "+ 
-			" in (select parent_idNode from Node where link = :link and topNodeId = :modId)";
+			" in (select parent_idNode from Node where link = :link and topNodeId = :modId"
+			+ " and deleted = 0)";
 	
 	@Override
 	public List<? extends Node> getNodeByLinkAndModId(Long link, Long modId) {
@@ -126,7 +127,7 @@ public class ModuleDao implements IModuleDao{
 	}
 	
 	private final String GET_LINKING_QUESTION_BY_MOD_ID = "select * from Node where link "
-			+ "= :link and topNodeId = :modId";
+			+ "= :link and topNodeId = :modId and deleted = 0";
 
 	@Override
 	public Question getLinkingQuestionByModId(Long link, Long modId) {
@@ -135,7 +136,10 @@ public class ModuleDao implements IModuleDao{
 				addEntity(Node.class);
 		sqlQuery.setParameter("modId", String.valueOf(modId));
 		sqlQuery.setParameter("link", String.valueOf(link));
-		Question question = (Question) sqlQuery.uniqueResult();
-		return question;
+		List<Question> list =  sqlQuery.list();
+		if(!list.isEmpty()){
+			return list.get(0);
+		}
+		return null;
 	}
 }
