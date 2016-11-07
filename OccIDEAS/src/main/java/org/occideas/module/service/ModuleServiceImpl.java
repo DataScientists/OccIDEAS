@@ -10,6 +10,7 @@ import org.occideas.entity.Agent;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
+import org.occideas.entity.Node;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
@@ -380,11 +381,18 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public ModuleVO getModuleFilterStudyAgent(Long id) {
-		Module module = dao.get(id);
-		ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
-		ModuleVO newModuleVO = sysPropService.filterModulesNodesWithStudyAgents(moduleVO);
-		return newModuleVO;
+	public NodeVO getModuleFilterStudyAgent(Long id) {
+		Node node = dao.getNodeById(id);
+		if("M".equals(node.getNodeclass())){
+			ModuleVO moduleVO = mapper.convertToModuleVO((Module)node, true);
+			ModuleVO newModuleVO = sysPropService.filterModulesNodesWithStudyAgents(moduleVO);
+			return newModuleVO;
+		}else if("F".equals(node.getNodeclass())){
+			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment)node, true);
+			FragmentVO newFragmentVO =  sysPropService.filterFragmentNodesWithStudyAgents(fragmentVO);
+			return newFragmentVO;
+		}
+		return null;
 	}
 
 

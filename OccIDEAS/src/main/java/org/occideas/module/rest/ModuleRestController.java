@@ -29,6 +29,7 @@ import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeRuleHolder;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -93,14 +94,14 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Path(value = "/getModuleFilterStudyAgent")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response getModuleFilterStudyAgent(@QueryParam("id") Long id) {
-		ModuleVO vo = null;
+		NodeVO vo = null;
 		try {
 			vo = service.getModuleFilterStudyAgent(id);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
-		List<ModuleVO> list = new ArrayList<>();
+		List<NodeVO> list = new ArrayList<>();
 		list.add(vo);
 		return Response.ok(list).build();
 	}

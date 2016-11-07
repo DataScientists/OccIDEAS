@@ -1,6 +1,7 @@
 package org.occideas.systemproperty.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -140,11 +141,12 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			return null;
 		}else{
 			vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+			vo.getChildNodes().removeAll(Collections.singleton(null));
 		}
 		return vo;
 	}
 
-	private boolean addAnsDependencyFromLinkAjsm(ModuleVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
+	private boolean addAnsDependencyFromLinkAjsm(NodeVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
 		boolean shouldReturnNull = true;
 		List<ModuleFragmentVO> moduleFragments = moduleFragmentService.getModuleFragmentByModuleId(vo.getIdNode());
 		for(ModuleFragmentVO modFragVO:moduleFragments){
@@ -214,6 +216,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			return getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
 		}else if("M".equals(node.getNodeclass())){
 			return (QuestionVO)nodeVO;
+		}else if("F".equals(node.getNodeclass())){
+			return (QuestionVO)nodeVO;
 		}
 		return null;
 	}
@@ -223,6 +227,20 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				dao.getPosAnsWithStudyAgentsByIdMod(vo.getIdNode());
 		List<PossibleAnswerVO> newPosAnsWithStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList(posAnsWithStudyAgentsList);
 		return newPosAnsWithStudyAgentsList;
+	}
+
+	@Override
+	public FragmentVO filterFragmentNodesWithStudyAgents(FragmentVO vo) {
+		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
+		// check child links if we have study agents
+		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
+			return null;
+		}else{
+			vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+			vo.getChildNodes().removeAll(Collections.singleton(null));
+		}
+		return vo;
 	}
 	
 

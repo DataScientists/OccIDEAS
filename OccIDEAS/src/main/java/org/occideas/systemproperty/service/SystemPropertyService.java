@@ -16,5 +16,5 @@ public interface SystemPropertyService {
 	public List<SystemPropertyVO> getByType(String studyAgentSysProp);
 	public FragmentVO getFragmentNodesWithStudyAgents(FragmentVO vo);
 	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO moduleVO);
-	
+	public FragmentVO filterFragmentNodesWithStudyAgents(FragmentVO fragmentVO);
 }
