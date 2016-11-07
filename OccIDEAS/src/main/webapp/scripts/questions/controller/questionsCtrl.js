@@ -2434,21 +2434,47 @@
 		}
         
         function previewStudySpecific(){
+        	var fragments = [];
+        	var	promises = [];
         	ModulesService.getModuleFilterStudyAgent(moduleIdNode).then(function(response){
         		if(response.status == '200'){
         			if(response.data[0] == null){
         				alert("Warning: No study agent exist.");
         				return;
         			}
-        			if(response.data[0].nodes.length < 1){
-        				alert("There is no study specific node for this tree, check the link ajsm.");
-        				return;
-        			}
         			var studyAgentData = response.data;
         			highlightStudySpecificNode(studyAgentData[0].nodes);
+        			ModulesService.getModuleFragmentByModuleId(studyAgentData[0].idNode).then(function (response) {
+        				if(response.status == '200'){
+        					// loop each fragment get details for each, filter study agents
+        					_.each(response.data,function(data){
+        						promises.push(populateChildNodesOfFragmentFilterStudyAgents(data,fragments));
+        					});
+        					$q.all(promises).then(function () {
+        						if(studyAgentData[0].nodes.length < 1 && fragments.length < 1){
+        	        				alert("There is no study specific node for this tree, check the link ajsm.");
+        	        				return;
+        	        			}
+        						for(i=0;i<fragments.length;i++){
+        							higlightAjsms(fragments[i].idNode,$scope.data[0].nodes);
+        						}
+        					});
+        				}
+        			});
         		}
         	});
         }
+        
+        function higlightAjsms(fragmentIdNode,childNodes){
+        _.each(childNodes,function(item){
+			if(item.link == fragmentIdNode){
+				angular.element("#node-"+item.idNode).addClass("incl_expjson");
+			}
+			if(item.nodes.length > 0){
+				higlightAjsms(fragmentIdNode,item.nodes);
+			}
+		});
+		}
         
         function highlightStudySpecificNode(childNodes){
         	for(i=0;i<childNodes.length;i++){
