@@ -134,13 +134,14 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 
 	@Override
 	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO vo) {
+		vo.getChildNodes().clear();
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
 		// check child links if we have study agents
 		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
 		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
 			return null;
 		}else{
-			vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+			vo.getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
 			vo.getChildNodes().removeAll(Collections.singleton(null));
 		}
 		return vo;
@@ -164,14 +165,37 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 						if(!posAnsWithStudyAgentsList.contains(ansVO)){
 							posAnsWithStudyAgentsList.add(ansVO);
 						}
+						addLinkingQuestionAsChild(vo, posAnsWithStudyAgentsList, modFragVO, ansVO);
 					}
 				}else if(!nodeLink.isEmpty() && "M".equals(nodeLink.get(0).getNodeclass())){
 					//parent is a module
+					addLinkingQuestionAsChildForModule(vo,modFragVO);
 					shouldReturnNull = false;
 				}
 			}
 		}
 		return shouldReturnNull;
+	}
+
+	private void addLinkingQuestionAsChild(NodeVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList, ModuleFragmentVO modFragVO,
+			PossibleAnswerVO ansVO) {
+		QuestionVO qVO = questionMapper.convertToQuestionVO(
+				moduleDao.getLinkingQuestionByModId(modFragVO.getFragmentId(), 
+				vo.getIdNode()));
+		if(qVO != null){
+		posAnsWithStudyAgentsList.get(posAnsWithStudyAgentsList.indexOf(ansVO))
+			.getChildNodes().add(qVO);
+		}
+	}
+	
+	private void addLinkingQuestionAsChildForModule(NodeVO vo, ModuleFragmentVO modFragVO) {
+		QuestionVO qVO = questionMapper.convertToQuestionVO(
+				moduleDao.getLinkingQuestionByModId(modFragVO.getFragmentId(), 
+				vo.getIdNode()));
+		if(qVO != null){
+			ModuleVO modVo = (ModuleVO)vo;
+			modVo.getChildNodes().add(qVO);
+		}
 	}
 
 	private List<QuestionVO> buildChildNodesWithStudyAgents(List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
@@ -182,6 +206,13 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			if("Q".equals(node.getNodeclass())){
 				//parent is a question
 				QuestionVO questionVO = questionMapper.convertToQuestionVOReducedDetails((Question)node);
+				if(!ans.getChildNodes().isEmpty()){
+					// got a linking question
+					PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
+					if(posAns != null){
+						posAns.getChildNodes().addAll(ans.getChildNodes());
+					}
+				}
 				nodeVOList.add(getQuestionUntilRootModule(questionVO.getParentId(),questionVO));
 			}else if("F".equals(node.getNodeclass())){
 				//parent is a link

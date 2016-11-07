@@ -18,6 +18,7 @@ import org.hibernate.transform.Transformers;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -123,6 +124,18 @@ public class ModuleDao implements IModuleDao{
 		List<Node> list = sqlQuery.list();
 		return list;
 	}
+	
+	private final String GET_LINKING_QUESTION_BY_MOD_ID = "select * from Node where link "
+			+ "= :link and topNodeId = :modId";
 
-    
+	@Override
+	public Question getLinkingQuestionByModId(Long link, Long modId) {
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(GET_LINKING_QUESTION_BY_MOD_ID).
+				addEntity(Node.class);
+		sqlQuery.setParameter("modId", String.valueOf(modId));
+		sqlQuery.setParameter("link", String.valueOf(link));
+		Question question = (Question) sqlQuery.uniqueResult();
+		return question;
+	}
 }
