@@ -692,9 +692,9 @@
 				    	    		  animation:'slide'
 				    	    	 });
 				        		
-				        		return ParticipantsService.getParticipants().then(function(response) {
+				        		return ParticipantsService.getPaginatedParticipantList(params.page(),10).then(function(response) {
 						        	  if(response.status == '200'){
-						        		  var data = response.data;
+						        		  var data = response.data.content;
 						        		  _.each(data,function(participant){
 						        			  participant.interviewId = participant.interviews[0].interviewId;
 						        		  });
@@ -702,26 +702,21 @@
 						        		  self.originalData = angular.copy(data);
 							        	  self.tableParams.settings().dataset = data;
 							        	  self.tableParams.shouldGetData = false;
-							        	  self.tableParams.total(self.originalData.length);
+							        	  self.tableParams.total(response.data.totalSize);
 							        	  $timeout(function() {
 							        		 $scope.refreshModules();
 								          }, 100);
-							        	  var last = params.page() * params.count();
-								          return _.slice(data,last - params.count(),last);
+								          return data;
 						        	  }
 						          });
 				        	}
 				        	
 				        }
 						
-					    if(!self.tableParams.shouldGetData){
-					    	 var last = params.page() * params.count();
-					          return _.slice(self.tableParams.settings().dataset,last - params.count(),last);
-					    }
 					    $log.info("Data getting from interviews ajax ..."); 
-					    return ParticipantsService.getParticipants().then(function(response) {
+					    return ParticipantsService.getPaginatedParticipantList(params.page(),10).then(function(response) {
 				        	  if(response.status == '200'){
-				        		  var data = response.data;
+				        		  var data = response.data.content;
 				        		  _.each(data,function(participant){
 				        			  participant.interviewId = participant.interviews[0].interviewId;
 				        		  });
@@ -729,9 +724,8 @@
 				        		  self.originalData = angular.copy(data);
 					        	  self.tableParams.settings().dataset = data;
 					        	  self.tableParams.shouldGetData = false;
-					        	  self.tableParams.total(self.originalData.length);					        	  
-					        	  var last = params.page() * params.count();
-						          return _.slice(data,last - params.count(),last);
+					        	  self.tableParams.total(response.data.totalSize);					        	  
+						          return data;
 				        	  }
 				          });
 					},

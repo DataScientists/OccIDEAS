@@ -8,6 +8,8 @@ import org.occideas.mapper.ParticipantMapper;
 import org.occideas.participant.dao.ParticipantDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
+import org.occideas.utilities.PageUtil;
+import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 
 	@Autowired
     private ParticipantMapper mapper;
+	
+	@Autowired
+	private PageUtil<ParticipantVO> pageUtil;
 
     @Override
     public List<ParticipantVO> listAll() {
@@ -68,5 +73,14 @@ public class ParticipantServiceImpl implements ParticipantService {
 	@Override
 	public List<ParticipantVO> listAllParticipantWithInt() {
 		return mapper.convertToParticipantVOListOnly(participantDao.getAll());
+	}
+
+	@Override
+	public PageVO<ParticipantVO> getPaginatedParticipantList(int pageNumber, int size) {
+		List<ParticipantVO> list = mapper.convertToParticipantVOListOnly(
+				participantDao.getPaginatedParticipantList(pageNumber, size));
+		PageVO<ParticipantVO> page = pageUtil.populatePage(list, pageNumber, size);
+		page.setTotalSize(participantDao.getParticipantTotalCount());
+		return page;
 	}
 }

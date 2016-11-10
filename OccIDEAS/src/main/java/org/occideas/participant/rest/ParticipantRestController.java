@@ -20,6 +20,7 @@ import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
@@ -54,6 +55,22 @@ public class ParticipantRestController implements BaseRestController<Participant
 		}
 		return Response.ok(list).build();
     }
+    
+    @GET
+    @Path(value = "/getPaginatedParticipantList")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getPaginatedParticipantList(@QueryParam("pageNumber") Integer pageNumber,
+    			@QueryParam("size") Integer size) {
+    	PageVO<ParticipantVO> page = null;
+		try{
+			page = service.getPaginatedParticipantList(pageNumber, size);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(page).build();
+    }
+    
     @GET
     @Path(value = "/get")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)

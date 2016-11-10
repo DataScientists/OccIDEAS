@@ -15,6 +15,15 @@
                });
            return request.then(handleSuccess1,handleError);	
 		};
+		
+		var getPaginatedParticipantList = function(pageNumber,size){
+			var request =  $http({
+                method: 'GET',
+                url: modulesUrl+'/getPaginatedParticipantList?pageNumber=' + pageNumber+'&size='+size
+              });
+          return request.then(handleSuccess1,handleError);
+		}
+		
 		function save(data){
 			var restSaveUrl = 'web/rest/participant/update';
 			var request =  $http({
@@ -84,7 +93,8 @@
 		    findInterviewParticipant: findInterviewParticipant,
 		    findParticipant: findParticipant,
 		    deleteParticipant: deleteParticipant,
-		    createParticipant:createParticipant
+		    createParticipant:createParticipant,
+		    getPaginatedParticipantList:getPaginatedParticipantList
 		};
 		function handleError( response ) {
             if (

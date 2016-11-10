@@ -5,20 +5,21 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.transform.Transformers;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
+import org.occideas.utilities.PageUtil;
+import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ParticipantDao {
 
     @Autowired
     private SessionFactory sessionFactory;
+    @Autowired
+    private PageUtil<ParticipantVO> pageUtil;
 
     public Long save(Participant participant){
         return (Long) sessionFactory.getCurrentSession().save(participant);
@@ -47,6 +48,22 @@ public class ParticipantDao {
       final Criteria crit = session.createCriteria(Participant.class);
       
       return crit.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public List<Participant> getPaginatedParticipantList(int pageNumber,int size) {
+    	 final Session session = sessionFactory.getCurrentSession();
+         final Criteria crit = session.createCriteria(Participant.class);
+         crit.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
+         crit.setMaxResults(size);
+         return crit.list();
+    }
+    
+    public Integer getParticipantTotalCount(){
+    	final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(Participant.class);
+    	Integer totalResult = ((Number)crit.setProjection(Projections.rowCount()).uniqueResult()).intValue();
+    	return totalResult;
     }
 
 }
