@@ -3,9 +3,11 @@
 			FiredRulesCtrl);
 
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
-	                           'InterviewsService','AssessmentsService','$log','$compile','RulesService','ngToast','SystemPropertyService'];
+	                           'InterviewsService','AssessmentsService','$log','$compile',
+	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
-			InterviewsService,AssessmentsService,$log,$compile,RulesService,$ngToast,SystemPropertyService) {
+			InterviewsService,AssessmentsService,$log,$compile,
+			RulesService,$ngToast,SystemPropertyService, $mdDialog) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -628,6 +630,42 @@
 				  moduleName = linkNode.name.substr(0,4);
 			  } 
 			return moduleName;  
+		}
+		$scope.showNotePrompt = function(ev) {
+			$mdDialog.show({
+				scope : $scope.$new(),
+				templateUrl : 'scripts/interviews/view/noteDialog.html',
+				clickOutsideToClose:true
+			});
+		};
+		$scope.saveNewNoteButton = function(data) {
+			saveNewNote(data);
+		}
+		function saveNewNote(result) {
+			var noteText = result;
+			var interview = $scope.interview;
+			if (!(interview.notes)) {
+				interview.notes = [];
+			}
+			interview.notes.push({
+				interviewId : interview.interviewId,
+				text : noteText,
+				type : 'Assessor'
+			});
+			saveInterview(interview);
+			$mdDialog.cancel();
+		}
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+		function saveInterview(interview) {
+			
+			InterviewsService.save(interview).then(function(response) {
+				if (response.status === 200) {
+					$log.info("Saving interview at assessment note with id:"+ interview.interviewId + " successful");
+					
+				}
+			});
 		}
 	}
 

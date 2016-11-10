@@ -145,6 +145,13 @@
 						
     	</li>
   		</ul>
+  		<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note </md-button>
+			<ol>
+				<li ng-if="note.type=='Interviewer'||note.type=='Assessor'" ng-repeat='note in interview.notes'>
+					{{note.type}}:{{note.text}}
+				</li>
+			</ol>
+			
     </div>
    </div>
    </div>
