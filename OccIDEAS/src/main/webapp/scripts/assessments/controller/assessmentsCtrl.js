@@ -700,7 +700,8 @@
 						if(!self.tableParams.settings().dataset || (assessmentFilter.pageNumber != currentPage)  
 								|| assessmentFilter.idParticipant
 								|| assessmentFilter.interviewId || assessmentFilter.reference
-								|| assessmentFilter.status || assessmentFilter.interviewModuleName){
+								|| assessmentFilter.status || assessmentFilter.interviewModuleName || 
+								ifEmptyFilter(params.filter())){
 					    $log.info("Data getting from interviews ajax ..."); 
 					    return ParticipantsService.getPaginatedParticipantList(assessmentFilter).then(function(response) {
 				        	  if(response.status == '200'){
@@ -763,6 +764,16 @@
 					
 				}
 		
+		function ifEmptyFilter(filter){
+			if((!filter.idParticipant || filter.idParticipant.length == 0)&&
+				(!filter.idinterview || filter.idinterview.length == 0)&&
+				(!filter.reference || filter.reference.length == 0)&&
+				(!filter.status || filter.status.length == 0)&&
+				(!filter.interviewModuleName || filter.interviewModuleName.length == 0)){
+						return true;
+				}
+		}		
+				
 		function lengthGreaterThan2(variable){
 			if(variable && variable.length > 2){
 				return variable;

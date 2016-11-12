@@ -13,7 +13,7 @@ public class ParticipantIntMod implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	private Long idParticipant;
 	private String reference;
@@ -23,6 +23,7 @@ public class ParticipantIntMod implements Serializable {
 	private Long idinterview;
 	private Long idModule;
 	private String interviewModuleName;
+	private transient String statusDescription;
 
 	public Long getIdParticipant() {
 		return idParticipant;
@@ -86,6 +87,22 @@ public class ParticipantIntMod implements Serializable {
 
 	public void setInterviewModuleName(String interviewModuleName) {
 		this.interviewModuleName = interviewModuleName;
+	}
+
+	public String getStatusDescription() {
+
+		if (status == 0) {
+			statusDescription = "Running";
+		} else if (status == 1) {
+			statusDescription = "Partial";
+		} else if (status == 2) {
+			statusDescription = "Completed";
+		}
+		return statusDescription;
+	}
+
+	public void setStatusDescription(String statusDescription) {
+		this.statusDescription = statusDescription;
 	}
 
 }
