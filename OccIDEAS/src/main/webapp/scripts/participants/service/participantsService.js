@@ -16,11 +16,12 @@
            return request.then(handleSuccess1,handleError);	
 		};
 		
-		var getPaginatedParticipantList = function(pageNumber,size){
+		var getPaginatedParticipantList = function(assessmentFilter){
 			var request =  $http({
-                method: 'GET',
-                url: modulesUrl+'/getPaginatedParticipantList?pageNumber=' + pageNumber+'&size='+size
-              });
+                method: 'POST',
+                url: modulesUrl+'/getPaginatedParticipantList',
+                data:assessmentFilter
+			});
           return request.then(handleSuccess1,handleError);
 		}
 		

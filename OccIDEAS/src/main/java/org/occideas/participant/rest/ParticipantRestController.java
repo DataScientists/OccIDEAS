@@ -13,9 +13,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.ParticipantIntMod;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
+import org.occideas.vo.AssessmentFilterVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
@@ -56,14 +58,14 @@ public class ParticipantRestController implements BaseRestController<Participant
 		return Response.ok(list).build();
     }
     
-    @GET
+    @POST
     @Path(value = "/getPaginatedParticipantList")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response getPaginatedParticipantList(@QueryParam("pageNumber") Integer pageNumber,
-    			@QueryParam("size") Integer size) {
-    	PageVO<ParticipantVO> page = null;
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getPaginatedParticipantList(AssessmentFilterVO filterVO) {
+    	PageVO<ParticipantIntMod> page = null;
 		try{
-			page = service.getPaginatedParticipantList(pageNumber, size);
+			page = service.getPaginatedParticipantList(filterVO.getPageNumber(), filterVO.getSize(),filterVO);
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

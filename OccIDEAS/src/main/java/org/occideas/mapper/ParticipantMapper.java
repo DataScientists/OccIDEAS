@@ -24,4 +24,8 @@ public interface ParticipantMapper {
 	
 	ParticipantVO convertToInterviewParticipantVO(Participant interview);
 	
+	List<ParticipantVO> convertToParticipantVOListWithoutInterview(List<Participant> ParticipantList);
+	
+	ParticipantVO convertToParticipantVOWithoutInterview(Participant interview);
+	
 }

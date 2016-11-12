@@ -3,6 +3,8 @@ package org.occideas.participant.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.ParticipantIntMod;
+import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
 
@@ -12,6 +14,6 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
 
 	 public List<ParticipantVO> listAllParticipantWithInt();
 	 
-	 public PageVO<ParticipantVO> getPaginatedParticipantList(int pageNumber,int size);
+	 public PageVO<ParticipantIntMod> getPaginatedParticipantList(int pageNumber,int size, GenericFilterVO filterVO);
 	
 }

@@ -9,16 +9,17 @@
 			<tr ng-repeat="participant in $data | orderBy:'-(idParticipant)'">
 				<td >{{$index}}</td>
 				<td filter="{idParticipant: 'text'}" title="'idParticipant'">{{participant.idParticipant}}</td>
-				<td filter="{interviewId: 'text'}" title="'interviewId'">{{participant.interviewId}}</td>
+				<td filter="{idinterview: 'text'}" title="'interviewId'">{{participant.idinterview}}</td>
 				<td filter="{reference: 'text'}" title="'referenceNumber'">{{participant.reference}}</td>	
+				<td filter="{interviewModuleName: 'text'}" title="'module'">{{participant.interviewModuleName}}</td>
+<!-- 				<td filter="{module: 'select' }" filter-data="modules()" sortable="'modules'" title="'module'" > -->
+<!-- 					<md-progress-circular ng-if="participant.inProgress"  -->
+<!-- 					md-mode="indeterminate"></md-progress-circular> -->
+<!-- 					<span class="badge" ng-if="participant.module"> -->
+<!-- 						{{participant.module}} -->
+<!-- 					</span> -->
+<!-- 				</td>	 -->
 				<td filter="{status: 'text'}" title="'status'">{{participant.status}}</td>
-				<td filter="{module: 'select' }" filter-data="modules()" sortable="'modules'" title="'module'" >
-					<md-progress-circular ng-if="participant.inProgress" 
-					md-mode="indeterminate"></md-progress-circular>
-					<span class="badge" ng-if="participant.module">
-						{{participant.module}}
-					</span>
-				</td>	
 				<td>
 					<button data-toggle="tooltip" title="Open FiredRules" ng-click="vm.openFiredRules(participant.interviews[0])" class="btn btn-default btn-sm" >
 						<span class="glyphicon glyphicon-fire"></span>

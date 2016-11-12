@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Participant;
+import org.occideas.entity.ParticipantIntMod;
 import org.occideas.mapper.ParticipantMapper;
 import org.occideas.participant.dao.ParticipantDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.utilities.PageUtil;
+import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     private ParticipantMapper mapper;
 	
 	@Autowired
-	private PageUtil<ParticipantVO> pageUtil;
+	private PageUtil<ParticipantIntMod> pageUtil;
 
     @Override
     public List<ParticipantVO> listAll() {
@@ -76,11 +78,11 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 
 	@Override
-	public PageVO<ParticipantVO> getPaginatedParticipantList(int pageNumber, int size) {
-		List<ParticipantVO> list = mapper.convertToParticipantVOListOnly(
-				participantDao.getPaginatedParticipantList(pageNumber, size));
-		PageVO<ParticipantVO> page = pageUtil.populatePage(list, pageNumber, size);
-		page.setTotalSize(participantDao.getParticipantTotalCount());
+	public PageVO<ParticipantIntMod> getPaginatedParticipantList(int pageNumber, int size,GenericFilterVO filterVO) {
+		List<ParticipantIntMod> list = participantDao.getPaginatedParticipantList(pageNumber, size,filterVO);
+		PageVO<ParticipantIntMod> page = pageUtil.populatePage(list, pageNumber, size);
+		page.setTotalSize(participantDao.getParticipantTotalCount(filterVO).intValue());
+		page.setFilterVO(filterVO);
 		return page;
 	}
 }

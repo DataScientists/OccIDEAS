@@ -670,6 +670,17 @@
 		self.showEditAssessmentMenu = function(scope){
 			return self.editAssessmentsMenuOptions;
 		}
+		
+		$scope.assessmentFilter = {
+				idParticipant:null,
+				interviewId:null,
+				reference:null,
+				status:null,
+				interviewModuleName:null,
+				pageNumber:null,
+				size:null
+		};
+		
 		self.tableParams = new NgTableParams(
 				{	
 					page: 1,            
@@ -677,49 +688,26 @@
 	            }, 
 				{	
 					getData: function(params) {
-						if((params.filter().idParticipant)||(params.filter().interviewId)
-								||(params.filter().reference)||(params.filter().status)){	
-							return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-				        }else if(params.filter().module){   
-				        	if($scope.isModulesSet){
-				        		if(!(params.filter().module===true)){
-				        			return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-				        		}						
-				        	}else{
-				        		ngToast.create({
-				    	    		  className: 'warning',
-				    	    		  content: 'Updating interview module column, please wait.',
-				    	    		  animation:'slide'
-				    	    	 });
-				        		
-				        		return ParticipantsService.getPaginatedParticipantList(params.page(),10).then(function(response) {
-						        	  if(response.status == '200'){
-						        		  var data = response.data.content;
-						        		  _.each(data,function(participant){
-						        			  participant.interviewId = participant.interviews[0].interviewId;
-						        		  });
-						        		  console.log("Data get list from getParticipants ajax ...");        	 
-						        		  self.originalData = angular.copy(data);
-							        	  self.tableParams.settings().dataset = data;
-							        	  self.tableParams.shouldGetData = false;
-							        	  self.tableParams.total(response.data.totalSize);
-							        	  $timeout(function() {
-							        		 $scope.refreshModules();
-								          }, 100);
-								          return data;
-						        	  }
-						          });
-				        	}
-				        	
-				        }
-						
+						var currentPage = $scope.assessmentFilter.pageNumber;
+						$scope.assessmentFilter.idParticipant=lengthGreaterThan2(params.filter().idParticipant);
+						$scope.assessmentFilter.interviewId=lengthGreaterThan2(params.filter().idinterview);
+						$scope.assessmentFilter.reference=lengthGreaterThan2(params.filter().reference);
+						$scope.assessmentFilter.status=lengthGreaterThan2(params.filter().status);
+						$scope.assessmentFilter.interviewModuleName=lengthGreaterThan2(params.filter().interviewModuleName);
+						$scope.assessmentFilter.pageNumber=params.page();
+						$scope.assessmentFilter.size=params.count();
+						var assessmentFilter = $scope.assessmentFilter;
+						if(!self.tableParams.settings().dataset || (assessmentFilter.pageNumber != currentPage)  
+								|| assessmentFilter.idParticipant
+								|| assessmentFilter.interviewId || assessmentFilter.reference
+								|| assessmentFilter.status || assessmentFilter.interviewModuleName){
 					    $log.info("Data getting from interviews ajax ..."); 
-					    return ParticipantsService.getPaginatedParticipantList(params.page(),10).then(function(response) {
+					    return ParticipantsService.getPaginatedParticipantList(assessmentFilter).then(function(response) {
 				        	  if(response.status == '200'){
 				        		  var data = response.data.content;
-				        		  _.each(data,function(participant){
-				        			  participant.interviewId = participant.interviews[0].interviewId;
-				        		  });
+//				        		  _.each(data,function(participant){
+//				        			  participant.interviewId = participant.interviews[0].interviewId;
+//				        		  });
 				        		  console.log("Data get list from getParticipants ajax ...");        	 
 				        		  self.originalData = angular.copy(data);
 					        	  self.tableParams.settings().dataset = data;
@@ -728,6 +716,7 @@
 						          return data;
 				        	  }
 				          });
+						}
 					},
 				});
 				self.tableParams.shouldGetData = true;
@@ -773,7 +762,14 @@
 					});
 					
 				}
-				
+		
+		function lengthGreaterThan2(variable){
+			if(variable && variable.length > 2){
+				return variable;
+			}else{
+				return null;
+			}
+		}
 				
 		$scope.nodePopover = {
 	    		templateUrl: 'scripts/questions/partials/nodePopover.html',

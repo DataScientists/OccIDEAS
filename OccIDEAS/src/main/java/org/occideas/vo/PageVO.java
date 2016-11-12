@@ -12,6 +12,7 @@ public class PageVO<T> {
 	private int sizePerPage;
 	private int calculatedPageNumber;
 	private boolean hasContent;
+	private GenericFilterVO filterVO;
 
 	public List<T> getContent() {
 		return content;
@@ -80,6 +81,14 @@ public class PageVO<T> {
 			pageNumber = pageNumber * sizePerPage;
 		}
 		this.calculatedPageNumber = pageNumber;
+	}
+
+	public GenericFilterVO getFilterVO() {
+		return filterVO;
+	}
+
+	public void setFilterVO(GenericFilterVO filterVO) {
+		this.filterVO = filterVO;
 	}
 	
 	

@@ -1,14 +1,17 @@
 package org.occideas.participant.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
+import org.occideas.entity.ParticipantIntMod;
 import org.occideas.utilities.PageUtil;
+import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -50,20 +53,55 @@ public class ParticipantDao {
       return crit.list();
     }
     
-    @SuppressWarnings("unchecked")
-	public List<Participant> getPaginatedParticipantList(int pageNumber,int size) {
-    	 final Session session = sessionFactory.getCurrentSession();
-         final Criteria crit = session.createCriteria(Participant.class);
-         crit.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
-         crit.setMaxResults(size);
-         return crit.list();
-    }
+    private final String paginatedParticipantSQL 
+    = "select p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview,im.idModule"
+    		+",im.interviewModuleName from participant p " 
+    		+" join interview i join interviewintromodule_module im "
+    		+" where p.idParticipant = i.idParticipant " 
+    		+ " and i.idinterview = im.interviewId "
+    		+ " and p.idParticipant like :idParticipant"
+    		+ " and p.reference like :reference"
+    		+ " and p.status like :status"
+    		+ " and i.idinterview like :idinterview"
+    		+ " and im.interviewModuleName like :interviewModuleName"
+    		+ " and p.deleted = 0";
     
-    public Integer getParticipantTotalCount(){
+    @SuppressWarnings("unchecked")
+	public List<ParticipantIntMod> getPaginatedParticipantList(int pageNumber,int size,GenericFilterVO filter) {
+//    	 final Session session = sessionFactory.getCurrentSession();
+//         final Criteria crit = session.createCriteria(Participant.class);
+//         crit.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
+//         crit.setMaxResults(size);
+//         crit.setFetchMode("interviews", FetchMode.JOIN);
+//         filter.applyFilter(filter, crit);
+//         return crit.list();
     	final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(Participant.class);
-    	Integer totalResult = ((Number)crit.setProjection(Projections.rowCount()).uniqueResult()).intValue();
-    	return totalResult;
+		SQLQuery sqlQuery = session.createSQLQuery(paginatedParticipantSQL).
+				addEntity(ParticipantIntMod.class);
+		sqlQuery.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
+		sqlQuery.setMaxResults(size);
+		filter.applyFilter(filter, sqlQuery);
+		List<ParticipantIntMod> list = sqlQuery.list();
+		return list;
+    }
+
+    private final String participantCountWithModule = 
+    		"select count(*) from participant p " 
+    	    		+" join interview i join interviewintromodule_module im "
+    	    		+" where p.idParticipant = i.idParticipant " 
+    	    		+ " and i.idinterview = im.interviewId "
+    	    		+ " and p.idParticipant like :idParticipant"
+    	    		+ " and p.reference like :reference"
+    	    		+ " and p.status like :status"
+    	    		+ " and i.idinterview like :idinterview"
+    	    		+ " and im.interviewModuleName like :interviewModuleName"
+    	    		+ " and p.deleted = 0";
+    
+    public BigInteger getParticipantTotalCount(GenericFilterVO filter){
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(participantCountWithModule);
+		filter.applyFilter(filter, sqlQuery);
+		return (BigInteger) sqlQuery.uniqueResult();
     }
 
 }
