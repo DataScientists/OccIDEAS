@@ -34,6 +34,13 @@
 	</span>	
 </h3>
 </div>
+<div ng-if="vm.isAuthenticated">
+	<label>Language</label>
+	<select ng-change="vm.changeLanguage()" ng-model="vm.language">
+		 <option value="en">English</option>
+		 <option value="my">Malay</option>
+   </select>
+</div>
 <div ng-if="!vm.isAuthenticated" ng-cloak>
 	<div ng-include="'scripts/login/view/login.html'"></div>
 </div>

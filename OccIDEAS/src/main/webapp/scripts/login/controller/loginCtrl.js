@@ -6,11 +6,12 @@
     LoginCtrl.$inject = ['$state','ngToast','$timeout',
                          '$scope','$http','$rootScope', 
                          'dataBeanService', '$window','loginService',
-                         '$sessionStorage','AuthenticationService','$mdDialog','SystemPropertyService'];
+                         '$sessionStorage','AuthenticationService','$mdDialog',
+                         'SystemPropertyService','$translate'];
     function LoginCtrl($state, ngToast, $timeout, 
     		$scope, $http, $rootScope, 
     		dataBeanService,$window, loginService,
-    		$sessionStorage,auth,$mdDialog,SystemPropertyService) {
+    		$sessionStorage,auth,$mdDialog,SystemPropertyService,$translate) {
         var vm = this;
         $scope.user = {};
         vm.userId = $sessionStorage.userId;
@@ -18,6 +19,11 @@
         vm.hasErrMsg = false;
         vm.errMsg = '';
         vm.isAuthenticated = $sessionStorage.isAuthenticated;
+        vm.language = 'en';
+        
+        vm.changeLanguage = function(){
+        	 $translate.use(vm.language);
+        }
         
         vm.passwordVO = {};
         

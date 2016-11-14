@@ -16,6 +16,7 @@ angular
     "fsm",
     "angular.filter",
     "ngFileUpload",
+    "pascalprecht.translate",
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
     "occIDEASApp.Tabs",
@@ -36,12 +37,15 @@ angular
     "occIDEASApp.Admin",
     "occIDEASApp.FiredRules",
     "occIDEASApp.SystemProperty",
-    "occIDEASApp.Reports"
+    "occIDEASApp.Reports",
+    "occIDEASApp.angular.translate",
+    "occIDEASApp.angular.translate.service"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })
   .constant('_', window._)
-  .config(['$urlRouterProvider', '$stateProvider','$httpProvider',function($urlRouterProvider, $stateProvider,$httpProvider) {
+  .config(['$urlRouterProvider', '$stateProvider','$httpProvider','$translateProvider',
+           function($urlRouterProvider, $stateProvider,$httpProvider,$translateProvider) {
 	$httpProvider.interceptors.push('ErrorHandler');
 	$httpProvider.interceptors.push('TokenRefreshInterceptor');
     $urlRouterProvider.otherwise('/');
@@ -60,6 +64,7 @@ angular
 				}
         }
       });
+    
   }])
   .run(configureDefaults)
   .provider({
@@ -251,8 +256,8 @@ angular
        }
    }
    
-   service.$inject = ['$state', '$rootScope', 'AuthenticationService', 'dataBeanService', 'ngToast','$window','$sessionStorage'];
-   function service ($state, $rootScope, AuthenticationService, dataBeanService, ngToast,$window,$sessionStorage){
+   service.$inject = ['$state', '$rootScope', 'AuthenticationService', 'dataBeanService', 'ngToast','$window','$sessionStorage','translateService'];
+   function service ($state, $rootScope, AuthenticationService, dataBeanService, ngToast,$window,$sessionStorage,translateService){
        var app = this;
        app.logout = function() {
     	   ngToast.create({
@@ -263,6 +268,7 @@ angular
            $sessionStorage.token = null;
            $state.go('loginHome', {}, {reload: true});
        };
+       
    }
    
    angular.isUndefinedOrNull = function(val) {

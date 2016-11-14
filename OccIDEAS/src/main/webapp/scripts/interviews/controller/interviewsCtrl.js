@@ -7,12 +7,12 @@
 			'InterviewsService', 'ParticipantsService', 'AssessmentsService',
 			'$anchorScroll', '$location', '$mdMedia', '$window', '$state',
 			'$rootScope', '$compile', '$timeout', '$log', 'updateData',
-			'startWithReferenceNumber','$filter'];
+			'startWithReferenceNumber','$filter','$translate'];
 	function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
 			QuestionsService, ModulesService, InterviewsService,
 			ParticipantsService, AssessmentsService, $anchorScroll, $location,
 			$mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
-			updateData,startWithReferenceNumber,$filter) {
+			updateData,startWithReferenceNumber,$filter,$translate) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -120,6 +120,7 @@
 						$scope.interviewStarted = true;
 						var ques = response.data[0];
 						$scope.interview.showedQuestion = ques;
+						
 						safeDigest($scope.interview.showedQuestion);
 						if (ques.type == 'Q_frequency') { //if frequency set up frequency lists
 							$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
@@ -1044,6 +1045,10 @@
 			});
 		}
 
+		function translateNode(node){
+			return $translate.instant(node.name);
+		}
+		
 		function createParticipant(data) {
 			var participant = {
 				reference : $scope.referenceNumber,
@@ -1098,6 +1103,7 @@
 													if(response.status === 200){
 														var ques = response.data[0];
 														$scope.interview.showedQuestion = ques;
+														
 														safeDigest($scope.interview.showedQuestion);
 														if (ques.type == 'Q_frequency') { //if frequency set up frequency lists
 															$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
@@ -1530,6 +1536,7 @@
 									var ques = response.data[0];
 									
 									$scope.interview.showedQuestion = ques;
+									
 									safeDigest($scope.interview.showedQuestion);
 									if (ques.type == 'Q_frequency') { //if frequency set up frequency lists
 										$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();

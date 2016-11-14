@@ -11,14 +11,14 @@
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
 							<span class="badge">{{as.number}}</span>
 						</div>
-						<span>{{as.answerFreetext?as.answerFreetext:as.name}} </span>
+						<span>{{as.answerFreetext?as.answerFreetext:as.name | translate}} </span>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div ng-if="!inProgress">
 		<ul id="interviewing-{{interview.showedQuestion.idNode}}" ng-if="interviewStarted">
-			<md-toolbar>{{interview.showedQuestion.name}}
+			<md-toolbar>{{interview.showedQuestion.name | translate}}
 				<md-button id="numId" event-focus> <span class="badge">{{questionheader.name}}</span>
 					<span class="badge">{{interview.showedQuestion.number}}</span> 
 					
@@ -33,7 +33,7 @@
 			<div ng-if="interview.showedQuestion.type == 'Q_multiple'">
 				<div ng-repeat="node in interview.showedQuestion.nodes">
 					<md-checkbox aria-label="{{node.name}}" ng-model="node.isSelected" ng-click="multiToggle(node, multiSelected)" class="green" select-free-text-on-click>
-						<span ng-if="node.type!='P_freetext'">{{node.name}}</span>
+						<span ng-if="node.type!='P_freetext'">{{node.name | translate}}</span>
 						<md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 							<label>Free Text</label>
 							<input style="width: 270px;" ng-model="node.name" ng-keyup="allowSpaceOnFreeText($event,node)">
@@ -113,7 +113,7 @@
 				<md-radio-group ng-model="interview.showedQuestion.selectedAnswer">
 					<div ng-repeat='node in interview.showedQuestion.nodes'>
 						<div flex layout-align="start center">
-							<md-radio-button flex ng-value="node" class="md-primary interview-radio-button" select-free-text-on-click> <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
+							<md-radio-button flex ng-value="node" class="md-primary interview-radio-button" select-free-text-on-click> <span ng-if="node.type!='P_freetext'">{{node.name | translate}}</span>
 								<md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
 									<label>Free Text</label>
 									<input style="width: 270px;" ng-model="node.name">
@@ -213,7 +213,7 @@
 							</span>
 						</div>
 						<span ng-if="!element.deleted && !element.link" ng-click="showEditQuestionPrompt($event,element)"  class="glyphicon glyphicon-edit" style="margin-top: 5px;margin-left:2px;" aria-hidden="true" ></span>
-						<span id="{{'IntResult'+element.idNode}}" data-toggle="tooltip" data-placement="bottom" title="{{ element.name }}">{{ element.name }}</span>
+						<span id="{{'IntResult'+element.idNode}}" data-toggle="tooltip" data-placement="bottom" title="{{ element.name }}">{{ element.name | translate}}</span>
 					</div>
 					<!-- 			show answers -->				
 					<div class="tree-node-content P_interviewresult" ng-repeat="as in element.answers | orderBy:orderByNumber">
@@ -227,7 +227,7 @@
 								{{as.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}}
 							</span>				
 						</div>
-						<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip" data-placement="bottom" title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext}}
+						<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip" data-placement="bottom" title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext | translate}}
 						</span>
 					</div>
 				</div>
