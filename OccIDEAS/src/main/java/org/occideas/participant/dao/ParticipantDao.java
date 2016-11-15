@@ -64,6 +64,7 @@ public class ParticipantDao {
     		+ " and p.status like :status"
     		+ " and i.idinterview like :idinterview"
     		+ " and im.interviewModuleName like :interviewModuleName"
+    		+ " and im.idModule != (select value from sys_config where name = 'activeintro' limit 1)"
     		+ " and p.deleted = 0";
     
     @SuppressWarnings("unchecked")
@@ -95,6 +96,7 @@ public class ParticipantDao {
     	    		+ " and p.status like :status"
     	    		+ " and i.idinterview like :idinterview"
     	    		+ " and im.interviewModuleName like :interviewModuleName"
+    	    		+ " and im.idModule != (select value from sys_config where name = 'activeintro' limit 1)"
     	    		+ " and p.deleted = 0";
     
     public BigInteger getParticipantTotalCount(GenericFilterVO filter){

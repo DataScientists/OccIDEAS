@@ -13,8 +13,8 @@
 				<td filter="{reference: 'text'}" title="'referenceNumber'">{{participant.reference}}</td>
 				<td  title="'interview status'">{{participant.statusDescription}}</td>
 				<td  title="'assessment status'">Not Assessed</td>	
-				<td filter="{interviewModuleName: 'text'}" title="'module'">{{participant.interviewModuleName}}</td>
-<!-- 				<td filter="{module: 'select' }" filter-data="modules()" sortable="'modules'" title="'module'" > -->
+				<td filter="{interviewModuleName: 'select' }" filter-data="modules()" sortable="'interviewModuleName'" title="'module'" >{{participant.interviewModuleName}}</td>
+<!-- 				<td filter="{interviewModuleName: 'select' }" filter-data="modules()" sortable="'interviewModuleName'" title="'module'" > -->
 <!-- 					<md-progress-circular ng-if="participant.inProgress"  -->
 <!-- 					md-mode="indeterminate"></md-progress-circular> -->
 <!-- 					<span class="badge" ng-if="participant.module"> -->

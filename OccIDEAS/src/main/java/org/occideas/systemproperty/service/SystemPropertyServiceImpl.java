@@ -243,6 +243,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				if(aVO.getIdNode() == nodeVO.getIdNode()){
 					questionVO.getChildNodes().set(i,(PossibleAnswerVO)nodeVO);
 				}
+				// if answer is a frequency we should add it as well
+				//@TODO
 			}
 			return getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
 		}else if("M".equals(node.getNodeclass())){

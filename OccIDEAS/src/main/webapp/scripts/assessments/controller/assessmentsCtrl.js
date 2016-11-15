@@ -19,18 +19,15 @@
 
 			    var arr = [],
 			      module = [];
-			    arr.push('Load Module Column');
-		        module.push({
-		          'id': true,
-		          'title': 'Load Module Column'
-		        });
 			    angular.forEach(response.data, function(item) {
 			      if (!_.find(module, _.matchesProperty('title', item.interviewModuleName))) {
-			        arr.push(item.interviewModuleName);
+			        if(item.idModule != $sessionStorage.activeIntro.value){
+			    	arr.push(item.interviewModuleName);
 			        module.push({
 			          'id': item.interviewModuleName,
 			          'title': item.interviewModuleName
 			        });
+			        }
 			      }
 			    });
 			    
