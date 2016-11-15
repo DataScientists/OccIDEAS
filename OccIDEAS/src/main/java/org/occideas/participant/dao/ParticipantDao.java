@@ -55,8 +55,8 @@ public class ParticipantDao {
     
     private final String paginatedParticipantSQL 
     = "select p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview,im.idModule"
-    		+",im.interviewModuleName from participant p " 
-    		+" join interview i join interviewintromodule_module im "
+    		+",im.interviewModuleName from Participant p " 
+    		+" join Interview i join InterviewIntroModule_Module im "
     		+" where p.idParticipant = i.idParticipant " 
     		+ " and i.idinterview = im.interviewId "
     		+ " and p.idParticipant like :idParticipant"
@@ -86,8 +86,8 @@ public class ParticipantDao {
     }
 
     private final String participantCountWithModule = 
-    		"select count(*) from participant p " 
-    	    		+" join interview i join interviewintromodule_module im "
+    		"select count(*) from Participant p " 
+    	    		+" join Interview i join InterviewIntroModule_Module im "
     	    		+" where p.idParticipant = i.idParticipant " 
     	    		+ " and i.idinterview = im.interviewId "
     	    		+ " and p.idParticipant like :idParticipant"
