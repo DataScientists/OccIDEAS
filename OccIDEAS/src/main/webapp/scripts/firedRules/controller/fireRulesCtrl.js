@@ -201,7 +201,7 @@
 			$('#'+elementId).toggleClass('highlight');
 			setTimeout(function(){
 				$('#'+elementId).toggleClass('highlight');
-			},1500);
+			},5500);
 		}
 
 		$scope.scrollTo = function( target){
