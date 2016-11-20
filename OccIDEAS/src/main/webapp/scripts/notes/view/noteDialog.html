@@ -1,0 +1,27 @@
+<md-dialog aria-label="" ng-cloak>
+<form>
+	<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>Notes</h2>
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancelNotes()"> <span
+			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
+	</div>
+	</md-toolbar>
+	<md-dialog-content>
+	<div class="md-dialog-content">
+		<md-content> 
+			<md-list> 
+				<md-list-item class="md-3-line" ng-repeat="item in notes | orderBy: 'lastUpdated':true">
+					<div class="md-list-item-text">
+						<h4>{{item.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}}</h4>
+						<p>{{item.text}}</p>
+					</div>
+					<md-divider	ng-if="!$last"></md-divider> 
+				</md-list-item> 
+			</md-list> 
+		</md-content>
+	</div>
+	</md-dialog-content>
+</form>
+</md-dialog>

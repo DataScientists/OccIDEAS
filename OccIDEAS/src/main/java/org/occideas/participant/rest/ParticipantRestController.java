@@ -23,6 +23,7 @@ import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.PageVO;
+import org.occideas.vo.ParticipantFilterVO;
 import org.occideas.vo.ParticipantVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
@@ -59,11 +60,26 @@ public class ParticipantRestController implements BaseRestController<Participant
     }
     
     @POST
+    @Path(value = "/getPaginatedParticipantWithModList")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getPaginatedParticipantWithModList(AssessmentFilterVO filterVO) {
+    	PageVO<ParticipantIntMod> page = null;
+		try{
+			page = service.getPaginatedParticipantWithModList(filterVO.getPageNumber(), filterVO.getSize(),filterVO);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(page).build();
+    }
+    
+    @POST
     @Path(value = "/getPaginatedParticipantList")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response getPaginatedParticipantList(AssessmentFilterVO filterVO) {
-    	PageVO<ParticipantIntMod> page = null;
+    public Response getPaginatedParticipant(ParticipantFilterVO filterVO) {
+    	PageVO<ParticipantVO> page = null;
 		try{
 			page = service.getPaginatedParticipantList(filterVO.getPageNumber(), filterVO.getSize(),filterVO);
 		}catch(Throwable e){

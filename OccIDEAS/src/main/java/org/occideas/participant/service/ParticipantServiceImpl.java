@@ -28,7 +28,10 @@ public class ParticipantServiceImpl implements ParticipantService {
     private ParticipantMapper mapper;
 	
 	@Autowired
-	private PageUtil<ParticipantIntMod> pageUtil;
+	private PageUtil<ParticipantIntMod> pageUtilIntMod;
+	
+	@Autowired
+	private PageUtil<ParticipantVO> pageUtil;
 
     @Override
     public List<ParticipantVO> listAll() {
@@ -78,10 +81,21 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 
 	@Override
-	public PageVO<ParticipantIntMod> getPaginatedParticipantList(int pageNumber, int size,GenericFilterVO filterVO) {
-		List<ParticipantIntMod> list = participantDao.getPaginatedParticipantList(pageNumber, size,filterVO);
-		PageVO<ParticipantIntMod> page = pageUtil.populatePage(list, pageNumber, size);
-		page.setTotalSize(participantDao.getParticipantTotalCount(filterVO).intValue());
+	public PageVO<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber, int size,GenericFilterVO filterVO) {
+		List<ParticipantIntMod> list = participantDao.getPaginatedParticipantWithModList(pageNumber, size,filterVO);
+		PageVO<ParticipantIntMod> page = pageUtilIntMod.populatePage(list, pageNumber, size);
+		page.setTotalSize(participantDao.getParticipantWithModTotalCount(filterVO).intValue());
+		page.setFilterVO(filterVO);
+		return page;
+	}
+
+	@Override
+	public PageVO<ParticipantVO> getPaginatedParticipantList(int pageNumber, int size, GenericFilterVO filterVO) {
+		List<ParticipantVO> list = mapper.convertToParticipantVOList(
+				participantDao.getPaginatedParticipantList(pageNumber, size, filterVO),
+				false);
+		PageVO<ParticipantVO> page = pageUtil.populatePage(list, pageNumber, size);
+		page.setTotalSize(participantDao.getPaginatedParticipantTotalCount(filterVO).intValue());
 		page.setFilterVO(filterVO);
 		return page;
 	}

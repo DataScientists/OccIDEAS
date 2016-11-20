@@ -16,13 +16,22 @@
            return request.then(handleSuccess1,handleError);	
 		};
 		
-		var getPaginatedParticipantList = function(assessmentFilter){
+		var getPaginatedParticipantWithModList = function(assessmentFilter){
 			var request =  $http({
                 method: 'POST',
-                url: modulesUrl+'/getPaginatedParticipantList',
+                url: modulesUrl+'/getPaginatedParticipantWithModList',
                 data:assessmentFilter
 			});
-          return request.then(handleSuccess1,handleError);
+			return request.then(handleSuccess1,handleError);
+		}
+		
+		var getPaginatedParticipantList = function(participantFilter){
+			var request = $http({
+				method:'POST',
+				url: modulesUrl + '/getPaginatedParticipantList',
+				data:participantFilter
+			});
+			return request.then(handleSuccess1,handleError);
 		}
 		
 		function save(data){
@@ -95,7 +104,7 @@
 		    findParticipant: findParticipant,
 		    deleteParticipant: deleteParticipant,
 		    createParticipant:createParticipant,
-		    getPaginatedParticipantList:getPaginatedParticipantList
+		    getPaginatedParticipantWithModList:getPaginatedParticipantWithModList
 		};
 		function handleError( response ) {
             if (

@@ -69,11 +69,8 @@ public class NoteDao {
         final Criteria crit = session.createCriteria(Note.class)
                 .add(Restrictions.eq("interviewId",interviewId))
                 .add(Restrictions.eq("deleted", 0))
-                .setProjection(Projections.projectionList()
-                        .add(Projections.property("idNote"), "idNote")
-                        .add(Projections.property("text"), "text")
-                        .add(Projections.property("type"), "type"))
-                .setResultTransformer(Transformers.aliasToBean(Note.class));
+                .add(Restrictions.ne("type", "System"))
+                .add(Restrictions.isNotNull("text"));
         return crit.list();
     }
 

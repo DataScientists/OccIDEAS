@@ -54,6 +54,47 @@ public class ParticipantDao {
     }
     
     private final String paginatedParticipantSQL 
+    = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview"+
+			"  from Participant p "+ 
+    		"  join Interview i "+  
+    		" where p.idParticipant = i.idParticipant"+ 
+    		" and p.idParticipant like :idParticipant"+
+    		" and p.reference like :reference"+
+    		" and p.status like :status"+
+    		" and i.idinterview like :idinterview"+
+    		" and p.deleted = 0";
+    
+    @SuppressWarnings("unchecked")
+	public List<Participant> getPaginatedParticipantList(int pageNumber,int size,GenericFilterVO filter) {
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(paginatedParticipantSQL).
+				addEntity(ParticipantIntMod.class);
+		sqlQuery.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
+		sqlQuery.setMaxResults(size);
+		filter.applyFilter(filter, sqlQuery);
+		List<Participant> list = sqlQuery.list();
+		return list;
+    }
+    
+    private final String participantCountSQL 
+    		= "select count(1) from (select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview"+
+    				  " from Participant p "+  
+    		    		" join Interview i "+  
+    		    		" where p.idParticipant = i.idParticipant"+
+    		            " and p.idParticipant like :idParticipant"+
+    		    		" and p.reference like :reference"+
+    		    		" and p.status like :status"+
+    		    		" and i.idinterview like :idinterview"+
+    		    		" and p.deleted = 0) a";
+    
+    public BigInteger getPaginatedParticipantTotalCount(GenericFilterVO filter){
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(participantCountSQL);
+		filter.applyFilter(filter, sqlQuery);
+		return (BigInteger) sqlQuery.uniqueResult();
+    }
+    
+    private final String paginatedParticipantWithModSQL 
     = "select p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview,im.idModule"
     		+",im.interviewModuleName from Participant p " 
     		+" join Interview i join InterviewIntroModule_Module im "
@@ -68,16 +109,9 @@ public class ParticipantDao {
     		+ " and p.deleted = 0";
     
     @SuppressWarnings("unchecked")
-	public List<ParticipantIntMod> getPaginatedParticipantList(int pageNumber,int size,GenericFilterVO filter) {
-//    	 final Session session = sessionFactory.getCurrentSession();
-//         final Criteria crit = session.createCriteria(Participant.class);
-//         crit.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
-//         crit.setMaxResults(size);
-//         crit.setFetchMode("interviews", FetchMode.JOIN);
-//         filter.applyFilter(filter, crit);
-//         return crit.list();
+	public List<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber,int size,GenericFilterVO filter) {
     	final Session session = sessionFactory.getCurrentSession();
-		SQLQuery sqlQuery = session.createSQLQuery(paginatedParticipantSQL).
+		SQLQuery sqlQuery = session.createSQLQuery(paginatedParticipantWithModSQL).
 				addEntity(ParticipantIntMod.class);
 		sqlQuery.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
 		sqlQuery.setMaxResults(size);
@@ -99,7 +133,7 @@ public class ParticipantDao {
     	    		+ " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
     	    		+ " and p.deleted = 0";
     
-    public BigInteger getParticipantTotalCount(GenericFilterVO filter){
+    public BigInteger getParticipantWithModTotalCount(GenericFilterVO filter){
     	final Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery(participantCountWithModule);
 		filter.applyFilter(filter, sqlQuery);

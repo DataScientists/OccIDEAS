@@ -39,7 +39,8 @@ angular
     "occIDEASApp.SystemProperty",
     "occIDEASApp.Reports",
     "occIDEASApp.angular.translate",
-    "occIDEASApp.angular.translate.service"
+    "occIDEASApp.angular.translate.service",
+    "occIDEASApp.Notes"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })

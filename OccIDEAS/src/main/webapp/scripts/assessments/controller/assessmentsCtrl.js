@@ -704,7 +704,7 @@
 								|| assessmentFilter.status || assessmentFilter.interviewModuleName || 
 								ifEmptyFilter(params.filter())){
 					    $log.info("Data getting from interviews ajax ..."); 
-					    return ParticipantsService.getPaginatedParticipantList(assessmentFilter).then(function(response) {
+					    return ParticipantsService.getPaginatedParticipantWithModList(assessmentFilter).then(function(response) {
 				        	  if(response.status == '200'){
 				        		  var data = response.data.content;
 //				        		  _.each(data,function(participant){
