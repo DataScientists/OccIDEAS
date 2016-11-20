@@ -213,6 +213,15 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 						posAns.getChildNodes().addAll(ans.getChildNodes());
 					}
 				}
+				// get all frequency question under study filtered answer
+				List<QuestionVO> childFrequencyNodes = questionMapper.
+						convertToQuestionVOReducedDetailsList(moduleDao.getChildFrequencyNodes(String.valueOf(ans.getIdNode())));
+				if(!childFrequencyNodes.isEmpty()){
+					PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
+					if(posAns != null){
+						posAns.getChildNodes().addAll(childFrequencyNodes);
+					}
+				}
 				nodeVOList.add(getQuestionUntilRootModule(questionVO.getParentId(),questionVO));
 			}else if("F".equals(node.getNodeclass())){
 				//parent is a link
@@ -243,8 +252,6 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				if(aVO.getIdNode() == nodeVO.getIdNode()){
 					questionVO.getChildNodes().set(i,(PossibleAnswerVO)nodeVO);
 				}
-				// if answer is a frequency we should add it as well
-				//@TODO
 			}
 			return getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
 		}else if("M".equals(node.getNodeclass())){

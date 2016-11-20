@@ -11,6 +11,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -19,6 +20,7 @@ import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
+import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -141,5 +143,14 @@ public class ModuleDao implements IModuleDao{
 			return list.get(0);
 		}
 		return null;
+	}
+	
+	@Override
+	public List<Question> getChildFrequencyNodes(String idNode){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Question.class)
+				.add(Restrictions.eq("parentId",idNode))
+				.add(Restrictions.ilike("type", "frequency", MatchMode.ANYWHERE));
+		return crit.list();
 	}
 }
