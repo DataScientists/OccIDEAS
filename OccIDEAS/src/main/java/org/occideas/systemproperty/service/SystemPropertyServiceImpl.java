@@ -213,12 +213,14 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 						posAns.getChildNodes().addAll(ans.getChildNodes());
 					}
 				}
-				// get all frequency question under study filtered answer
-				List<QuestionVO> childFrequencyNodes = getChildFrequencyNodes(String.valueOf(ans.getIdNode()),ans);
-				if(childFrequencyNodes != null && !childFrequencyNodes.isEmpty()){
-					PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
-					if(posAns != null){
-						posAns.getChildNodes().addAll(childFrequencyNodes);
+				for(PossibleAnswerVO answer:questionVO.getChildNodes()){
+					// get all frequency question under study filtered answer
+					List<QuestionVO> childFrequencyNodes = getChildFrequencyNodes(String.valueOf(answer.getIdNode()),answer);
+					if(childFrequencyNodes != null && !childFrequencyNodes.isEmpty()){
+						PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(answer));
+						if(posAns != null){
+							posAns.getChildNodes().addAll(childFrequencyNodes);
+						}
 					}
 				}
 				nodeVOList.add(getQuestionUntilRootModule(questionVO.getParentId(),questionVO));
