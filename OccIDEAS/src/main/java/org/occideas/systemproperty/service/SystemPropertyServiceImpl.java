@@ -214,9 +214,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 					}
 				}
 				// get all frequency question under study filtered answer
-				List<QuestionVO> childFrequencyNodes = questionMapper.
-						convertToQuestionVOReducedDetailsList(moduleDao.getChildFrequencyNodes(String.valueOf(ans.getIdNode())));
-				if(!childFrequencyNodes.isEmpty()){
+				List<QuestionVO> childFrequencyNodes = getChildFrequencyNodes(String.valueOf(ans.getIdNode()),ans);
+				if(childFrequencyNodes != null && !childFrequencyNodes.isEmpty()){
 					PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
 					if(posAns != null){
 						posAns.getChildNodes().addAll(childFrequencyNodes);
@@ -225,9 +224,28 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				nodeVOList.add(getQuestionUntilRootModule(questionVO.getParentId(),questionVO));
 			}else if("F".equals(node.getNodeclass())){
 				//parent is a link
+				
 			}
 		}
 		return nodeVOList;
+	}
+	
+	public List<QuestionVO> getChildFrequencyNodes(String idNode, PossibleAnswerVO answerVO){
+		List<Question> childQuestions = moduleDao.getChildFrequencyNodes(String.valueOf(answerVO.getIdNode()));
+		if(childQuestions.isEmpty()){
+			return null;
+		}
+		List<QuestionVO> childFrequencyNodes = questionMapper.
+				convertToQuestionVOReducedDetailsList(childQuestions);
+		if(!childFrequencyNodes.isEmpty()){
+			for(QuestionVO qVO:childFrequencyNodes){
+				for(PossibleAnswerVO ansVO:qVO.getChildNodes()){
+					List<QuestionVO> childFrequencyNodes2 = getChildFrequencyNodes(String.valueOf(ansVO.getIdNode()),ansVO);
+					ansVO.setChildNodes(childFrequencyNodes2);
+				}
+			}
+		}
+		return childFrequencyNodes;
 	}
 
 	private QuestionVO getQuestionUntilRootModule(String parentId, NodeVO nodeVO) {
