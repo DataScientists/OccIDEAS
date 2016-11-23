@@ -205,7 +205,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
 			if("Q".equals(node.getNodeclass())){
 				//parent is a question
-				QuestionVO questionVO = questionMapper.convertToQuestionVOReducedDetails((Question)node);
+				QuestionVO questionVO = questionMapper.convertToQuestionVO((Question)node);
 				if(!ans.getChildNodes().isEmpty()){
 					// got a linking question
 					PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
