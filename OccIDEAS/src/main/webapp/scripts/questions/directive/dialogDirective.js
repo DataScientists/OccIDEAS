@@ -65,7 +65,7 @@ function newNote(element,$itemScope,$compile) {
 };
 
 var noteIntZindex = 1050;
-function newInterviewNote(element,$itemScope,$compile) {
+function firedRuleDialog(element,$itemScope,$compile,interviewId) {
 	var tpl = $compile(angular.element("#interview-template").html())($itemScope);
 	angular.element(tpl).zIndex(++noteIntZindex);
 	
@@ -78,7 +78,7 @@ function newInterviewNote(element,$itemScope,$compile) {
 	}
 	angular.element(tpl).css('left', leftPoint+'px');
 	angular.element(tpl).css('top', topPoint+'px');
-	angular.element(tpl).hide().appendTo("#interview-wrapper").show("fade", 300).draggable().on(
+	angular.element(tpl).hide().appendTo("#interview-wrapper-"+interviewId).show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteIntZindex);
 		});
@@ -86,10 +86,10 @@ function newInterviewNote(element,$itemScope,$compile) {
 	angular.element('.int-note');
 	return false;
 };
-function editAssessmentDialog(element,$itemScope,$compile) {
+function editAssessmentDialog(element,$itemScope,$compile,interviewId) {
 	var tpl = $compile(angular.element("#editAssessment-template").html())($itemScope);	
 	angular.element(tpl).zIndex(++noteIntZindex);
-	angular.element(tpl).hide().appendTo("#interview-wrapper").show("fade", 300).draggable().on(
+	angular.element(tpl).hide().appendTo("#interview-wrapper-"+interviewId).show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteIntZindex);
 		});

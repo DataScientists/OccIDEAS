@@ -87,10 +87,12 @@ public class InterviewServiceImpl implements InterviewService {
     }
     @Override
     public List<InterviewVO> findByIdWithRules(Long id) {
+    	System.out.println("1:findByIdWithRules:"+new Date());
         Interview interview = interviewDao.get( id);
         InterviewVO InterviewVO = mapper.convertToInterviewWithRulesVO(interview);
         List<InterviewVO> list = new ArrayList<InterviewVO>();
         list.add(InterviewVO);
+        System.out.println("2:findByIdWithRules:"+new Date());
         return list;
     }
 

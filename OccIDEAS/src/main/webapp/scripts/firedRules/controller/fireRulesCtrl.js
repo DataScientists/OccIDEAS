@@ -284,8 +284,8 @@
 				  		scope.model = model;
 				  		scope.rule = ruleArray[i];
 				  		scope.agentName = $itemScope.agent.name;
-						if($("#rule-dialog-" + scope.rule.idRule).length == 0){
-							newInterviewNote($event.currentTarget.parentElement,scope,$compile);
+						if($("#rule-dialog-"+$scope.interviewId+"-"+scope.rule.idRule).length == 0){
+							firedRuleDialog($event.currentTarget.parentElement,scope,$compile,$scope.interviewId);
 						}
 				  	}
 			  	}			  
@@ -601,7 +601,7 @@
 				  		scope.model = model;
 				  		scope.rule = ruleArray[i];
 				  		scope.agentName = $itemScope.agent.name;
-				  		editAssessmentDialog($event.currentTarget.parentElement,scope,$compile);
+				  		editAssessmentDialog($event.currentTarget.parentElement,scope,$compile,$scope.interviewId);
 				  	}
 			  	}			  
 			  ]

@@ -156,7 +156,7 @@
    </div>
    </div>
 </div>
-<div id="interview-wrapper">
+<div id="interview-wrapper-{{interviewId}}">
 &nbsp;
 </div>
 <div class="row">
@@ -186,9 +186,7 @@
 					</div>
 					<!-- 			show answers -->				
 					<div class="tree-node-content P_interviewresult" ng-repeat="as in element.answers | orderBy:orderByNumber">
-						<span ng-if="as.deleted" class="badge-deleted" title="deleted">
-								&nbsp;
-							</span>
+						<div ng-if="!as.deleted" >		
 						<div class="form-group pull-left" style="margin-top: 5px; margin-left: -15px;">
 							<span class="badge">
 								{{element.header}}
@@ -197,6 +195,7 @@
 						</div>
 						<span id="{{'IntResult'+as.answerId}}" data-toggle="tooltip" data-placement="bottom" title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext}}
 						</span>
+						</div>
 					</div>
 				</div>
 			</div>
