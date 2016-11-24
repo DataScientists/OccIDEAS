@@ -28,4 +28,12 @@ public interface PossibleAnswerMapper {
 	PossibleAnswerVO convertToPossibleAnswerVOExModRule(PossibleAnswer answerEntity);
 
 	List<PossibleAnswerVO> convertToPossibleAnswerVOExModRuleList(List<PossibleAnswer> answerEntity);
+	
+	PossibleAnswerVO convertToPossibleAnswerVOWithFlag(PossibleAnswer answerEntity,
+			boolean includeChildNode,
+			boolean includeRules);
+	
+	List<PossibleAnswerVO> convertToPossibleAnswerVOWithFlagList(List<PossibleAnswer> answerEntity,
+			boolean includeChildNode,
+			boolean includeRules);
 }

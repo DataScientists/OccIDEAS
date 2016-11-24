@@ -29,4 +29,6 @@ public interface QuestionMapper {
 	
 	QuestionVO convertToQuestionVOExcludeChilds(Question question);
 	
+	QuestionVO convertToQuestionWithModRulesReduced(Question question);
+	
 }

@@ -150,7 +150,7 @@ public class ModuleDao implements IModuleDao{
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(Question.class)
 				.add(Restrictions.eq("parentId",idNode))
-				.add(Restrictions.ilike("type", "frequency", MatchMode.ANYWHERE));
+				.add(Restrictions.like("type", "frequency", MatchMode.ANYWHERE));
 		return crit.list();
 	}
 }

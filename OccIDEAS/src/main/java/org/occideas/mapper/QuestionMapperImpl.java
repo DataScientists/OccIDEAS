@@ -234,4 +234,36 @@ public class QuestionMapperImpl implements QuestionMapper {
 		return questionVO;
 	}
 
+	@Override
+	public QuestionVO convertToQuestionWithModRulesReduced(Question question) {
+		if (question == null) {
+			return null;
+		}
+
+		QuestionVO questionVO = new QuestionVO();
+
+		questionVO.setIdNode(question.getIdNode());
+		questionVO.setName(question.getName());
+		questionVO.setDescription(question.getDescription());
+		questionVO.setType(question.getType());
+		questionVO.setSequence(question.getSequence());
+		questionVO.setNumber(question.getNumber());
+		questionVO.setParentId(question.getParentId());
+		questionVO.setLink(question.getLink());
+		questionVO.setTopNodeId(question.getTopNodeId());
+		questionVO.setLastUpdated(question.getLastUpdated());
+		
+		List<PossibleAnswer> childNodes = question.getChildNodes();
+		if (!CommonUtil.isListEmpty(childNodes)) {
+			questionVO.setChildNodes(mapper.convertToPossibleAnswerVOWithFlagList(childNodes,false,true));
+		}
+		
+		questionVO.setOriginalId(question.getOriginalId());
+		questionVO.setDeleted(question.getDeleted());
+		questionVO.setNodeclass(question.getNodeclass());
+		questionVO.setModuleRule(moduleRuleMapper.convertToModuleRuleVOList(question.getModuleRule()));
+
+		return questionVO;
+	}
+
 }

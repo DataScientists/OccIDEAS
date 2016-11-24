@@ -22,6 +22,46 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
     private ModuleRuleMapper ruleMapper;
 	
 	@Override
+	public PossibleAnswerVO convertToPossibleAnswerVOWithFlag(PossibleAnswer answerEntity,
+			boolean includeChildNode,
+			boolean includeRules) {
+		if ( answerEntity == null ) {
+            return null;
+        }
+
+		PossibleAnswerVO answerVO = new PossibleAnswerVO();
+
+        answerVO.setIdNode( answerEntity.getIdNode() );
+        answerVO.setName( answerEntity.getName() );
+        answerVO.setDescription( answerEntity.getDescription() );
+        answerVO.setType( answerEntity.getType() );
+        answerVO.setSequence( answerEntity.getSequence() );
+        answerVO.setNumber( answerEntity.getNumber() );
+        answerVO.setParentId( answerEntity.getParentId());
+        answerVO.setLink( answerEntity.getLink() );
+        answerVO.setTopNodeId( answerEntity.getTopNodeId() );
+        answerVO.setLastUpdated( answerEntity.getLastUpdated() );
+        List<Question> childNodes = new ArrayList<Question>();
+        if(includeChildNode){
+        	childNodes = answerEntity.getChildNodes();
+        	if(!CommonUtil.isListEmpty(childNodes)){
+                answerVO.setChildNodes( mapper.convertToQuestionVOList( childNodes ) );
+            }
+        }
+        if(includeRules){
+        	List<ModuleRule> moduleRule = answerEntity.getModuleRule();
+            if(!CommonUtil.isListEmpty(moduleRule)){
+            	answerVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+            }
+        }
+        answerVO.setOriginalId( answerEntity.getOriginalId() );
+        answerVO.setDeleted( answerEntity.getDeleted() );
+        answerVO.setNodeclass( answerEntity.getNodeclass() );
+        
+        return answerVO;
+	}
+	
+	@Override
 	public PossibleAnswerVO convertToPossibleAnswerVO(PossibleAnswer answerEntity,boolean includeChildNode) {
 		if ( answerEntity == null ) {
             return null;
@@ -250,6 +290,21 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 		vo.setTopNodeId(answerEntity.getTopNodeId());
 		vo.setType(answerEntity.getType());
 		return vo;
+	}
+
+	@Override
+	public List<PossibleAnswerVO> convertToPossibleAnswerVOWithFlagList(List<PossibleAnswer> answerEntity,
+			boolean includeChildNode, boolean includeRules) {
+		if ( answerEntity == null ) {
+            return null;
+        }
+
+        List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
+        for ( PossibleAnswer answer : answerEntity ) {
+            list.add( convertToPossibleAnswerVOWithFlag(answer, includeChildNode, includeRules) );
+        }
+
+        return list;
 	}
 
 }
