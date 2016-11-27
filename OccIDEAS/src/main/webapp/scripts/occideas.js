@@ -40,7 +40,8 @@ angular
     "occIDEASApp.Reports",
     "occIDEASApp.angular.translate",
     "occIDEASApp.angular.translate.service",
-    "occIDEASApp.Notes"
+    "occIDEASApp.Notes",
+    "occIDEASApp.NodeLanguage"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })

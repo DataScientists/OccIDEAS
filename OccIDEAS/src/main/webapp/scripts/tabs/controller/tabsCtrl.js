@@ -49,6 +49,12 @@
         		data:""
         	});
         }
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
+            $scope.tabOptions.push({
+                state: "tabs.language",
+                data: ""
+            });
+        }
         $scope.$watch('selectedIndex', function(current, old) {
             var state = null;
             var data = null;
@@ -130,6 +136,12 @@
             tabs.push({
                 title: 'Reports',
                 viewName: 'reports@tabs'
+            });
+        }
+        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
+            tabs.push({
+                title: 'Language',
+                viewName: 'language@tabs'
             });
         }
         $scope.tabs = tabs;

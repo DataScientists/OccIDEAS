@@ -549,6 +549,19 @@
                     }
                 }
             }
+        }).state( {
+            name:'tabs.language',
+        	url: '/language/:row',
+            sticky: false,
+		    deepStateRedirect: false,
+		    authenticate:true,
+            views:{
+                'language@tabs':{
+                    templateUrl: 'scripts/translate/view/manageLanguageTable.html',
+                    controller: 'NodeLanguageCtrl as vm',
+                    params:{row: null}
+                }
+            }
         });
 	}
 })();
