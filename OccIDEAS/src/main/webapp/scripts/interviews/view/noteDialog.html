@@ -3,7 +3,7 @@
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>New Interview Note</h2>
+        <h2>New Note</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -17,7 +17,7 @@
     		<div>
       		<md-input-container>
         		<label>New Note</label>
-        		<input type="text" data-ng-model="result"/>
+        		<input type="text" data-ng-model="result" maxlength="500"/>
         	</md-input-container>
     		</div>  		
   		</md-content>
