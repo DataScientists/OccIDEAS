@@ -1,4 +1,16 @@
 <div ng-cloak>
+	<div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
+	<label>Language</label>
+	<select ng-change="vm.changeLanguage()" ng-model="vm.language">
+		 <option value="en">English</option>
+		 <option value="my">Malay</option>
+   </select>
+	<button type="button"
+			class="btn btn-default" 
+			ng-click="vm.showNewLanguageDialog()">Add Language 
+			<span class="glyphicon glyphicon-plus">
+			</span></button>
+	</div>
 	<div>
 		<table ng-table="vm.tableParams"
 			class="table table-bordered table-hover 

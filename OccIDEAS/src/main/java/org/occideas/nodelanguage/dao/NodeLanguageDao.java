@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.entity.Language;
 import org.occideas.entity.NodeLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,17 @@ public class NodeLanguageDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-
+	
+	public void addLanguage(Language entity){
+		 sessionFactory.getCurrentSession().saveOrUpdate(entity);
+	}
+	
+	public List<Language> getAllLanguage(){
+		final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(Language.class);
+        return crit.list();
+	}
+	
 	public void save(NodeLanguage entity){
        sessionFactory.getCurrentSession().saveOrUpdate(entity);
     }

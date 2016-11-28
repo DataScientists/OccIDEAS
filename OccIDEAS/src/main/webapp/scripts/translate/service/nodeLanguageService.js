@@ -4,16 +4,34 @@
 	
 	NodeLanguageService.$inject = ['$http','$q'];
 	function NodeLanguageService($http,$q){
+		var url = 'web/rest/nodelanguage';
 		function getNodeByLanguage(language) {
-			var restUrl = 'web/rest/nodelanguage/getNodeByLanguage?language=' + language;
+			var restUrl = url+'/getNodeByLanguage?language=' + language;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		function getAllLanguage(){
+			var restUrl = url+'/getAllLanguage';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		function addLanguage(data){
+			var restUrl = url+'/addLanguage';
+			var request =  $http({
+				  method: 'POST',
+				  url: restUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		function save(data){
-			var restSaveUrl = 'web/rest/nodelanguage/save';
+			var restSaveUrl = url+'/save';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,
@@ -39,7 +57,9 @@
         }
 		return {
 			getNodeByLanguage:getNodeByLanguage,
-			save:save
+			save:save,
+			getAllLanguage:getAllLanguage,
+			addLanguage:addLanguage
 		};
 	}
 })();

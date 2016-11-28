@@ -3,7 +3,9 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.Language;
 import org.occideas.entity.NodeLanguage;
+import org.occideas.vo.LanguageVO;
 import org.occideas.vo.NodeLanguageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -72,6 +74,52 @@ public class NodeLanguageMapperImpl implements NodeLanguageMapper{
 			list.add(convertToNodeLanguage(vo));
 		}
 		
+		return list;
+	}
+
+	@Override
+	public Language convertToLanguage(LanguageVO vo) {
+		if(vo == null){
+			return null;
+		}
+		Language entity = new Language();
+		entity.setDescription(vo.getDescription());
+		entity.setLanguage(vo.getLanguage());
+		return entity;
+	}
+
+	@Override
+	public List<Language> convertToListLanguage(List<LanguageVO> voList) {
+		if(voList == null){
+			return null;
+		}
+		List<Language> list = new ArrayList<>();
+		for(LanguageVO vo:voList){
+			list.add(convertToLanguage(vo));
+		}
+		return list;
+	}
+
+	@Override
+	public LanguageVO convertToLanguageVO(Language entity) {
+		if(entity == null){
+			return null;
+		}
+		LanguageVO vo = new  LanguageVO();
+		vo.setDescription(entity.getDescription());
+		vo.setLanguage(entity.getLanguage());
+		return vo;
+	}
+
+	@Override
+	public List<LanguageVO> convertToListLanguageVO(List<Language> entityList) {
+		if(entityList == null){
+			return null;
+		}
+		List<LanguageVO> list = new ArrayList<>();
+		for(Language entity:entityList){
+			list.add(convertToLanguageVO(entity));
+		}
 		return list;
 	}
 
