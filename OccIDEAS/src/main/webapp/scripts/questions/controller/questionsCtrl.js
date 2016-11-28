@@ -8,13 +8,13 @@
 	                          'AgentsService','RulesService','$compile',
 	                          '$rootScope','ModuleRuleService','$log','$timeout', 
 	                          'AuthenticationService','$document','InterviewsService',
-	                          'SystemPropertyService'];
+	                          'SystemPropertyService','ngToast'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
 			ModuleRuleService,$log,$timeout, auth,$document,InterviewsService,
-			SystemPropertyService) {
+			SystemPropertyService,ngToast) {
 		var self = this;
 		$scope.data = data;	
 		//saveModuleWithoutReload();
@@ -1373,22 +1373,30 @@
 				} 
 			  ], null, // Divider
 			  [ 'Export to JSON', function($itemScope) {
-				  //need to display pop up first
-				  var newScope = $itemScope.$new();
-				  newScope.name = $scope.data[0].name+"_"+$scope.data[0].idNode+".json";
-				  newScope.includeLinks = true;
-				  newScope.filterOnStudyAgents = false;
-				  $mdDialog.show({
-					  scope: newScope,
-				      templateUrl: 'scripts/questions/view/exportToJsonDialog.html',
-				      parent: angular.element(document.body),
-				      clickOutsideToClose:true
-				    })
-				    .then(function(answer) {
-				      $scope.status = 'You said the information was "' + answer + '".';
-				    }, function() {
-				      $scope.status = 'You cancelled the dialog.';
-				    });			                   
+				  var activeModule = $scope.data[0];
+				  if(activeModule.type == 'M_IntroModule'){
+					  ngToast.create({
+			    		  className: 'warning',
+			    		  content: 'Cannot export an Intro modules.'
+			    	 });
+				  }else{
+					//need to display pop up first
+					  var newScope = $itemScope.$new();
+					  newScope.name = $scope.data[0].name+"_"+$scope.data[0].idNode+".json";
+					  newScope.includeLinks = true;
+					  newScope.filterOnStudyAgents = false;
+					  $mdDialog.show({
+						  scope: newScope,
+					      templateUrl: 'scripts/questions/view/exportToJsonDialog.html',
+					      parent: angular.element(document.body),
+					      clickOutsideToClose:true
+					    })
+					    .then(function(answer) {
+					      $scope.status = 'You said the information was "' + answer + '".';
+					    }, function() {
+					      $scope.status = 'You cancelled the dialog.';
+					    });	
+				  }				  		                   
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
