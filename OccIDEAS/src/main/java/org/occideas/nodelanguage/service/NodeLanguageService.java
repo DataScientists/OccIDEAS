@@ -14,5 +14,7 @@ public interface NodeLanguageService {
 	public void addLanguage(LanguageVO vo);
 	
 	public List<LanguageVO> getAllLanguage();
+
+	List<NodeLanguageVO> getNodeLanguageById(String id);
 	
 }

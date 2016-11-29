@@ -15,6 +15,7 @@
 			$log,$mdDialog,$timeout,$q,
 			$ngToast){
 		var vm = this;
+		$scope.selectLanguage = undefined;
 		
 		vm.showNewLanguageDialog = function(){
 			$mdDialog.show({
@@ -37,16 +38,55 @@
 			NodeLanguageService.addLanguage(data).then(function(response){
 				if(response.status == '200'){
 					alert("Save was successful");
+					$scope.getAllLanguage();
 					$scope.cancel();
 				}
 			})
 		};
-//		self.isDeleting = false;
-//		var dirtyCellsByRow = [];
-//	    var invalidCellsByRow = [];
-//	    $scope.$root.tabsLoading = false;
-	    
-	    
+		
+		$scope.$watch('selectLanguage', function(current, old) {
+			vm.tableParams.reload();
+        });
+		
+		$scope.languages = undefined;
+		$scope.getAllLanguage = function(){
+			NodeLanguageService.getAllLanguage().then(function(response){
+				if(response.status == '200'){
+					$scope.languages = response.data;
+					$scope.selectLanguage = $scope.languages[0];
+					safeDigest($scope.selectLanguage);
+				}
+			})
+		};
+		$scope.getAllLanguage();
+
+		vm.tableParams = new NgTableParams(
+				{
+				}, 
+				{	
+	        getData: function(params) {
+//	          if(params.filter().name || params.filter().description || params.filter().isDuplicate){	
+//	        	return $filter('filter')(vm.tableParams.settings().dataset, params.filter());
+//	          }
+	          if(!vm.tableParams.shouldGetData){
+	        	  return vm.tableParams.settings().dataset;
+	          }
+	          $log.info("Data getting from modules ajax ..."); 
+	          if($scope.selectLanguage){
+	          return  NodeLanguageService.getNodeLanguageById($scope.selectLanguage.id).then(function(data) {
+	        	  $log.info("Data received from modules ajax ...");        	 
+	        	  vm.originalData = angular.copy(data);
+	        	  vm.tableParams.settings().dataset = data;
+	        	  vm.tableParams.shouldGetData = true;
+	            return data;
+	          });
+	          }else{
+	        	  return [];
+	          }
+	          }
+	          
+	      });
+		vm.tableParams.shouldGetData = true;
 	    
 	}
 })();

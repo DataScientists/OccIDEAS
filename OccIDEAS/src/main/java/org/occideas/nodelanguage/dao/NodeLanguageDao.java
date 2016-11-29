@@ -39,6 +39,13 @@ public class NodeLanguageDao {
       return (NodeLanguage) sessionFactory.getCurrentSession().get(NodeLanguage.class, id);
     }
 	
+	public List<NodeLanguage> getNodeLanguageById(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(NodeLanguage.class)
+      		  						.add(Restrictions.eq("languageId",id));
+        return crit.list();
+	}
+	
 	public List<NodeLanguage> getNodesByLanguage(String language) {
         final Session session = sessionFactory.getCurrentSession();
         final Criteria crit = session.createCriteria(NodeLanguage.class)

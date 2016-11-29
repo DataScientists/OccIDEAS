@@ -5,3 +5,11 @@ function lengthGreaterThan2(variable) {
 		return null;
 	}
 }
+
+var safeDigest = function(obj) {
+    if (!obj.$$phase) {
+        try {
+            obj.$digest();
+        } catch (e) {}
+    }
+}

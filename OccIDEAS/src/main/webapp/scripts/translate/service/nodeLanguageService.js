@@ -5,8 +5,8 @@
 	NodeLanguageService.$inject = ['$http','$q'];
 	function NodeLanguageService($http,$q){
 		var url = 'web/rest/nodelanguage';
-		function getNodeByLanguage(language) {
-			var restUrl = url+'/getNodeByLanguage?language=' + language;
+		function getNodeLanguageById(id) {
+			var restUrl = url+'/getNodeLanguageById?id=' + id;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -56,7 +56,7 @@
             return( response.data );
         }
 		return {
-			getNodeByLanguage:getNodeByLanguage,
+			getNodeLanguageById:getNodeLanguageById,
 			save:save,
 			getAllLanguage:getAllLanguage,
 			addLanguage:addLanguage
