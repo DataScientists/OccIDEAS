@@ -73,8 +73,9 @@
 	          }
 	          $log.info("Data getting from modules ajax ..."); 
 	          if($scope.selectLanguage){
-	          return  NodeLanguageService.getNodeLanguageById($scope.selectLanguage.id).then(function(data) {
-	        	  $log.info("Data received from modules ajax ...");        	 
+	          return  NodeLanguageService.getNodeLanguageById($scope.selectLanguage.id).then(function(response) {
+	        	  $log.info("Data received from modules ajax ...");  
+	        	  var data = response.data;
 	        	  vm.originalData = angular.copy(data);
 	        	  vm.tableParams.settings().dataset = data;
 	        	  vm.tableParams.shouldGetData = true;
@@ -87,7 +88,46 @@
 	          
 	      });
 		vm.tableParams.shouldGetData = true;
-	    
+		
+		vm.add = function() {
+			if(!$scope.selectLanguage){
+				alert("No language available.");
+				return;
+			}
+			
+	        vm.isEditing = true;
+	        vm.isAdding = true;
+	        
+	        vm.tableParams.settings().dataset.unshift({
+	        	word: "English Question/Answer",
+	        	translation: "Traslated Version"
+	        });
+	        vm.originalData = angular.copy(vm.tableParams.settings().dataset);
+	        vm.tableParams.sorting({});
+	        vm.tableParams.page(1);
+	        vm.tableParams.shouldGetData = false;
+	        vm.tableParams.reload();
+	        vm.isAdding = false;
+	    }
+		
+		vm.save = function(row, rowForm) {
+			vm.isEditing = false;
+			$scope.row = row;
+			$scope.rowForm = rowForm;
+			row.languageId = $scope.selectLanguage.id;
+			NodeLanguageService.save(row).then(function(response){
+				if(response.status === 200){
+					vm.tableParams.shouldGetData = true;
+					alert("save was successful");
+					vm.tableParams.reload();
+				}
+			});
+
+
+		}
+		
 	}
+	
+	
 })();
 

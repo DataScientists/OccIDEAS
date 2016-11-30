@@ -14,23 +14,53 @@
 		<table ng-table="vm.tableParams" ng-cloak
 		class="table table-bordered table-hover 
   			table-condensed editable-table"
-			show-filter="true">     
+  			ng-form="tableForm"
+			demo-tracked-table="vm.tableTracker"
+			disable-filter="vm.isAdding">     
         <tbody>
-<!--         <tr> -->
-<!--             <td colspan="3"> -->
-<!--                 <div class="brn-group pull-right"> -->
-<!--        				 <button class="btn btn-default" ng-click="vm.add(group.value)"> -->
-<!--           					<span class="glyphicon glyphicon-plus"></span> -->
-<!--        				 </button> -->
-<!--        				 <button class="btn btn-default" ng-click="vm.toggleIsDeleting()"> -->
-<!--           					<span class="glyphicon glyphicon-trash"></span> -->
-<!--        				 </button> -->
-<!--      			 </div> -->
-<!--             </td> -->
-<!--         </tr> -->
-        <tr ng-repeat="data in $data">          
-			<td filter="{key: 'text'}" title="'key'">{{data.key}}</td>
-			<td filter="{value: 'text'}" title="'value'">{{data.value}}</td>
+        <tr>
+            <td colspan="3">
+                <div class="brn-group pull-right">
+       				 <button class="btn btn-default" ng-click="vm.add()">
+          					<span class="glyphicon glyphicon-plus"></span>
+       				 </button>
+       				 <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+          					<span class="glyphicon glyphicon-trash"></span>
+       				 </button>
+     			 </div>
+            </td>
+        </tr>
+        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">  
+			<td filter="{word: 'text'}"
+				ng-switch="row.isEditing" ng-class="word.$dirty ? 'bg-warning' : ''"
+				ng-form="word" demo-tracked-table-cell>
+				<div ng-click="row.isEditing = true">
+					<span ng-switch-default class="editable-text">
+						{{row.word}}
+					</span>
+					<div class="controls"
+						ng-class="word.$invalid && word.$dirty ? 'has-error' : ''"
+						ng-switch-when="true">
+						<input type="text" name="word" ng-model="row.word"
+							class="editable-input form-control input-sm" required />
+					</div>
+				</div>		
+			</td>
+			<td filter="{translation: 'text'}"
+				ng-switch="row.isEditing" ng-class="translation.$dirty ? 'bg-warning' : ''"
+				ng-form="translation" demo-tracked-table-cell>
+				<div ng-click="row.isEditing = true">
+					<span ng-switch-default class="editable-text">
+						{{row.translation}}
+					</span>
+					<div class="controls"
+						ng-class="translation.$invalid && translation.$dirty ? 'has-error' : ''"
+						ng-switch-when="true">
+						<input type="text" name="translation" ng-model="row.translation"
+							class="editable-input form-control input-sm" required />
+					</div>
+				</div>		
+			</td>
 			<td>
 				<button class="btn btn-primary btn-sm"
 					ng-click="vm.save(row, rowForm)"

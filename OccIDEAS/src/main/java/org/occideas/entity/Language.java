@@ -4,11 +4,19 @@ import java.io.Serializable;
 import java.sql.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 @Entity
 @Table(name = "Language")
+@DynamicUpdate(value = true)
+@DynamicInsert(value = true)
+@SelectBeforeUpdate(value = true)
 public class Language implements Serializable {
 
 	/**
@@ -17,6 +25,7 @@ public class Language implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue
 	private long id;
 	private String language;
 	private String description;

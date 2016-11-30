@@ -5,14 +5,22 @@ import java.sql.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+
 @Entity
 @Table(name = "Node_Language")
+@DynamicUpdate(value = true)
+@DynamicInsert(value = true)
+@SelectBeforeUpdate(value = true)
 public class NodeLanguage implements Serializable {
 
 	/**
@@ -21,15 +29,15 @@ public class NodeLanguage implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue
 	private long id;
 	private long languageId;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns({
 			@JoinColumn(name = "languageId", referencedColumnName = "id", insertable = false, updatable = false) })
 	private Language language;
-	private boolean isDefault;
-	private String key;
-	private String value;
+	private String word;
+	private String translation;
 	private Date lastUpdated;
 
 	public long getId() {
@@ -48,28 +56,20 @@ public class NodeLanguage implements Serializable {
 		this.language = language;
 	}
 
-	public boolean isDefault() {
-		return isDefault;
+	public String getWord() {
+		return word;
 	}
 
-	public void setDefault(boolean isDefault) {
-		this.isDefault = isDefault;
+	public void setWord(String word) {
+		this.word = word;
 	}
 
-	public String getKey() {
-		return key;
+	public String getTranslation() {
+		return translation;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
+	public void setTranslation(String translation) {
+		this.translation = translation;
 	}
 
 	public Date getLastUpdated() {

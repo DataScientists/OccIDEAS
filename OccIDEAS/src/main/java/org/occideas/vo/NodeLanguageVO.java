@@ -7,18 +7,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NodeLanguageVO {
 
-	private long id;
+	private Long id;
+	private long languageId;
 	private LanguageVO language;
-	private boolean isDefault;
-	private String key;
-	private String value;
+	private String word;
+	private String translation;
 	private Date lastUpdated;
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -30,28 +30,20 @@ public class NodeLanguageVO {
 		this.language = language;
 	}
 
-	public boolean isDefault() {
-		return isDefault;
+	public String getWord() {
+		return word;
 	}
 
-	public void setDefault(boolean isDefault) {
-		this.isDefault = isDefault;
+	public void setWord(String word) {
+		this.word = word;
 	}
 
-	public String getKey() {
-		return key;
+	public String getTranslation() {
+		return translation;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
+	public void setTranslation(String translation) {
+		this.translation = translation;
 	}
 
 	public Date getLastUpdated() {
@@ -60,6 +52,14 @@ public class NodeLanguageVO {
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+
+	public long getLanguageId() {
+		return languageId;
+	}
+
+	public void setLanguageId(long languageId) {
+		this.languageId = languageId;
 	}
 
 }
