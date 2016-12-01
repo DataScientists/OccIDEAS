@@ -46,8 +46,8 @@ angular
 	  $rootScopeProvider.digestTtl(100);
   })
   .constant('_', window._)
-  .config(['$urlRouterProvider', '$stateProvider','$httpProvider','$translateProvider',
-           function($urlRouterProvider, $stateProvider,$httpProvider,$translateProvider) {
+  .config(['$urlRouterProvider', '$stateProvider','$httpProvider',
+           function($urlRouterProvider, $stateProvider,$httpProvider) {
 	$httpProvider.interceptors.push('ErrorHandler');
 	$httpProvider.interceptors.push('TokenRefreshInterceptor');
     $urlRouterProvider.otherwise('/');
@@ -92,8 +92,8 @@ angular
     return $delegate;
   });	
 
-   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService','dataBeanService','$window','$sessionStorage'];
-   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService,dataBeanService,$window,$sessionStorage) {
+   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService','dataBeanService','$window','$sessionStorage','$translate'];
+   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService,dataBeanService,$window,$sessionStorage,$translate) {
 	   	$rootScope._ = window._; 
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
@@ -132,6 +132,11 @@ angular
                 }
             }
           });
+        
+        $rootScope.changeNodeLanguage = function(data) {
+        	$translate.refresh();
+       		$translate.use(data.language);
+        };
         
    }
    
