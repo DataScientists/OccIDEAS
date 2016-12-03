@@ -17,4 +17,7 @@ public interface NodeLanguageService {
 
 	List<NodeLanguageVO> getNodeLanguageById(String id);
 	
+	public NodeLanguageVO getNodesByLanguageAndWord(Long getLanguageId, String word);
+	
+	public void delete(NodeLanguageVO vo);
 }

@@ -126,6 +126,21 @@
 
 		}
 		
+		vm.del = function(row){
+	    	var data =  NodeLanguageService.deleteNodeLanguage(row).then(function(response) {
+	    		if(response.status === 200){
+					console.log('translation was deleted!');
+					vm.tableParams.shouldGetData = true;
+					vm.tableParams.reload().then(function (data) {
+			            if (data.length === 0 && vm.tableParams.total() > 0) {
+			            	vm.tableParams.page(vm.tableParams.page() - 1);
+			            	vm.tableParams.reload();
+			            }
+			        });
+				}
+	        });
+		}
+		
 	}
 	
 	

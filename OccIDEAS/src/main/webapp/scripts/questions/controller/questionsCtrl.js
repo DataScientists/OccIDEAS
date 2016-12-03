@@ -8,14 +8,73 @@
 	                          'AgentsService','RulesService','$compile',
 	                          '$rootScope','ModuleRuleService','$log','$timeout', 
 	                          'AuthenticationService','$document','InterviewsService',
-	                          'SystemPropertyService','ngToast'];
+	                          'SystemPropertyService','ngToast','$translate',
+	                          'NodeLanguageService','$sessionStorage'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
 			ModuleRuleService,$log,$timeout, auth,$document,InterviewsService,
-			SystemPropertyService,ngToast) {
+			SystemPropertyService,ngToast,$translate,
+			NodeLanguageService,$sessionStorage) {
 		var self = this;
+		
+		$scope.languages = undefined;
+		$scope.selectedLanguage = undefined;
+		$scope.getAllLanguage = function(){
+			NodeLanguageService.getAllLanguage().then(function(response){
+				if(response.status == '200'){
+					$scope.languages = response.data;
+					$scope.languages.unshift({
+						id:-1,
+						language:'EN'
+					});
+					$scope.selectedLanguage = $scope.languages[0];
+					$sessionStorage.languages = $scope.languages; 
+				}
+			})
+		};
+		$scope.getAllLanguage();
+		
+		self.changeNodeLanguage = function(data) {
+        	$translate.refresh();
+       		$translate.use(data.language);
+       		if(data.language == 'EN'){
+       			self.translateNode = false;
+       		}else{
+       			self.translateNode = true;
+       		}
+       		$scope.selectedLanguage = data;
+        };
+        $scope.saveLanguage = function(word,$event){
+        	var translation = $event.target.value;
+        	// search translation if exist if yes, update that record
+        	// else insert new one
+        	var request = {
+        			languageId:$scope.selectedLanguage.id,
+        			language:null,
+        			word:word
+        	}
+        	NodeLanguageService.getNodesByLanguageAndWord(request).then(function(response){
+        		var data = {
+        				languageId:$scope.selectedLanguage.id,
+        				word:word,
+        				translation:translation
+        		};
+        		if(response.status == '200' && response.data){
+        			data.id = response.data.id;
+        		}
+        		
+        		if(response.status == '200'){
+        			NodeLanguageService.save(data).then(function(response){
+            			if(response.status == '200'){
+            			}
+            		});
+        		}
+        	});
+        }
+        
+		
 		$scope.data = data;	
 		//saveModuleWithoutReload();
 		var moduleIdNode = $scope.data[0].idNode;

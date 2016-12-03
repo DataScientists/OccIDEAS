@@ -30,6 +30,17 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getNodesByLanguageAndWord(data){
+			var restUrl = url+'/getNodesByLanguageAndWord';
+			var request =  $http({
+				  method: 'POST',
+				  url: restUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function save(data){
 			var restSaveUrl = url+'/save';
 			var request =  $http({
@@ -39,6 +50,17 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function deleteNodeLanguage(data){
+			var restSaveUrl = url+'/delete';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -59,7 +81,9 @@
 			getNodeLanguageById:getNodeLanguageById,
 			save:save,
 			getAllLanguage:getAllLanguage,
-			addLanguage:addLanguage
+			addLanguage:addLanguage,
+			getNodesByLanguageAndWord:getNodesByLanguageAndWord,
+			deleteNodeLanguage:deleteNodeLanguage
 		};
 	}
 })();

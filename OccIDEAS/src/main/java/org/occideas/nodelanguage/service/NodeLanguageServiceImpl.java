@@ -45,5 +45,13 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 		return mapper.convertToNodeLanguageVOList(dao.getNodeLanguageById(Long.valueOf(id)));
 	}
 	
+	@Override
+	public NodeLanguageVO getNodesByLanguageAndWord(Long languageId, String word){
+		return mapper.convertToNodeLanguageVO(dao.getNodesByLanguageAndWord(languageId, word));
+	}
 
+	@Override
+	public void delete(NodeLanguageVO vo) {
+		dao.delete(mapper.convertToNodeLanguage(vo));
+	}
 }
