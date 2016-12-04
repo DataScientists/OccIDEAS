@@ -2,10 +2,31 @@ package org.occideas.utilities;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.DecimalFormat;
+
 import org.junit.Test;
 
 public class CommonUtilTest {
 
+	
+	@Test
+	public void test(){
+		
+		DecimalFormat df = new DecimalFormat("#.0");
+		System.out.println(df.format(100.0));
+		System.out.println(df.format(100.49212));
+		
+		int questionSize = 2500; //60 mins
+		long elapsedTime = 30000; //half minute
+		int count = 100; // 100 qs in 30 secs
+		
+		float msPerInterview = (float) (elapsedTime/count);
+		System.out.println("msPerInterview " + msPerInterview);
+		double estDuration = questionSize * msPerInterview;
+		System.out.println("estDuration " + estDuration/60/1000);
+		System.out.println("% " + (float) 1200/questionSize * 100);		
+		
+	}
 	@Test
 	public void getNextQuestionByCurrentNumberTest(){
 		assertTrue("2".equals(CommonUtil.getNextQuestionByCurrentNumber("1")));

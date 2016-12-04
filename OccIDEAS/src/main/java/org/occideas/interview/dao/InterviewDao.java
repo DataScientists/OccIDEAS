@@ -103,6 +103,7 @@ public class InterviewDao {
       return retValue;
     }
 
+	@SuppressWarnings("unchecked")
 	public List<Interview> getInterview(Long interviewId) {
 		final Session session = sessionFactory.getCurrentSession();
         final Criteria crit = session.createCriteria(Interview.class);
@@ -112,6 +113,7 @@ public class InterviewDao {
         return crit.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Interview> getInterviewIdList() {
 		 final Session session = sessionFactory.getCurrentSession();
 	     final Criteria crit = session.createCriteria(Interview.class)
@@ -122,6 +124,7 @@ public class InterviewDao {
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Interview> getAllInterviewsWithoutAnswers() {
 		final Session session = sessionFactory.getCurrentSession();
 	      final Criteria crit = session.createCriteria(Interview.class)		  						
@@ -135,5 +138,15 @@ public class InterviewDao {
 	      List<Interview> temp = crit.list();
 	      return temp;
 	}
+	
 
+	public Long getAllCount() {
+		Criteria critCount = sessionFactory.getCurrentSession().createCriteria(Interview.class)
+				.setProjection(Projections.projectionList().add(Projections.rowCount()));
+
+		Long count = (Long) critCount.uniqueResult();
+
+		return count;
+	}
 }
+

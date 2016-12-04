@@ -13,16 +13,25 @@
 		
 	<table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped" show-filter="true">
 		<tr ng-repeat="reports in $data">
-			<td title="'Id'" filter="{ id: 'text'}" sortable="'id'">
+			<td title="'Id'" filter="{id: 'text'}" sortable="'id'">  
 				{{reports.id}}</td>
-			<td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
+			<td title="'Name'" filter="{name: 'text'}" sortable="'name'">
 				{{reports.name}}</td>
-			<td title="'Type'" filter="{ type: 'text'}" sortable="'type'">
+			<td title="'Type'" filter="{type: 'text'}" sortable="'type'">
 				{{reports.type}}</td>
-			<td title="'Requestor'" filter="{ requestor: 'text'}"
+			<td title="'Requestor'" filter="{requestor: 'text'}"
 				sortable="'requestor'">{{reports.requestor}}</td>
-			<td title="'Progress'" >{{reports.progress}}</td>
-			<td title="'Status'" filter="{ status: 'text'}" sortable="'status'">
+			<!-- <td title="'Progress'"> Hide for now		
+			<span ng-if="reports.progress != 100 && reports.estDuration !=0">~ {{reports.estDuration}}m </span>			
+			<span ng-if="reports.progress != 100 && reports.estDuration == 0">Estimating... </span>
+			<uib-progressbar value="reports.progress" max="100"> {{reports.progress}} % </uib-progressbar> </td> -->
+			<td title="'Start Date'" filter="{startDt: 'text'}" sortable="'startDt'">
+				{{reports.startDt | date:'MM/dd/yy HH:mm'}}</td>
+			<td title="'End Date'" filter="{endDt: 'text'}" sortable="'endDt'">
+				{{reports.endDt | date:'MM/dd/yy HH:mm'}}</td>
+			<td title="'Rec Count'" filter="{recordCount: 'text'}" sortable="'recordCount'">
+				{{reports.recordCount}}</td>
+			<td title="'Status'" filter="{status: 'text'}" sortable="'status'">
 				{{reports.status}}</td>
 			<td title="'Download'">
 				<button type="button"
