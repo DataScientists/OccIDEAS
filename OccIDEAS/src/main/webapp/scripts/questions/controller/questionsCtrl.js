@@ -38,11 +38,11 @@
 		
 		self.changeNodeLanguage = function(data) {
         	$translate.refresh();
-       		$translate.use(data.language);
        		if(data.language == 'EN'){
        			self.translateNode = false;
        		}else{
        			self.translateNode = true;
+       			$translate.use(data.language);
        		}
        		$scope.selectedLanguage = data;
         };
@@ -90,6 +90,23 @@
     	$rootScope.studyAjsmLinks = [];
     	$rootScope.studyAjsmLinksCount=0;
     	$rootScope.studyModuleLinksCount=0;
+    	
+    	
+    	$rootScope.$on('$translateChangeSuccess',function () {
+            translateNodes($scope.data[0]);
+        });
+    	
+    	function translateNodes(node){
+    		node.translated = $translate.instant(node.name);
+    		if(node.translated == node.name){
+    			node.translated = 'No available translation';
+    		}
+    		if(node.nodes){
+    			_.each(node.nodes,function(childNode){
+    				return translateNodes(childNode);
+    			});
+    		}
+    	}
     	
     	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
     		$scope.scrollWithTimeout(elId);

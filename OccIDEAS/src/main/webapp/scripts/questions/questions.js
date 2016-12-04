@@ -11,7 +11,6 @@
 				});
 			};
 		}).factory('QuestionsCache',QuestionsCache)
-	  
 	  .directive('eventFocusq', function(focusq) {
 		    return function(scope, elem, attr) {
 			elem.on(attr.eventFocusq, function() {
