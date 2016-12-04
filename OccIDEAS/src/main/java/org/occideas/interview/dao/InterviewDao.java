@@ -39,20 +39,9 @@ public class InterviewDao {
     public void saveOrUpdate(Interview interview){
       sessionFactory.getCurrentSession().saveOrUpdate(interview);
     }
-    
-    
-	public Long getAllCount() {
-		Criteria critCount = sessionFactory.getCurrentSession().createCriteria(Interview.class)
-				.setProjection(Projections.projectionList().add(Projections.rowCount()));
-
-		Long count = (Long) critCount.uniqueResult();
-
-		return count;
-	}
 
     @SuppressWarnings("unchecked")
 	public List<Interview> getAll() {
-    	
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(Interview.class)		  						
     		  						.setProjection(Projections.projectionList()
@@ -68,7 +57,6 @@ public class InterviewDao {
     	  interview = this.get(interview.getIdinterview()); //Todo fix this workaround and ask discuss with Jed about why hibernate is not populating firedRules
     	  retValue.add(interview);
       }
-      
       return retValue;
     }
     @SuppressWarnings("unchecked")
