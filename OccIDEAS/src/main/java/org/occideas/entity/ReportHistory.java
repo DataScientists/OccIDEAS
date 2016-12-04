@@ -29,6 +29,10 @@ public class ReportHistory implements Serializable {
 	private Date updatedDt;
 	private String updatedBy;
 	private String jsonData;
+	private Date startDt;
+	private Date endDt;
+	private float duration;
+	private long recordCount;
 
 	public long getId() {
 		return id;
@@ -110,4 +114,39 @@ public class ReportHistory implements Serializable {
 		this.jsonData = jsonData;
 	}
 
+	public Date getStartDt() {
+		return startDt;
+	}
+
+	public void setStartDt(Date startDt) {
+		this.startDt = startDt;
+	}
+
+	public Date getEndDt() {
+		return endDt;
+	}
+
+	public void setEndDt(Date endDt) {
+		this.endDt = endDt;
+	}
+
+	/**
+	 * Get duration in minutes
+	 * @return
+	 */
+	public float getDuration() {
+		return duration;
+	}
+
+	public void setDuration(float duration) {
+		this.duration = duration;
+	}
+
+	public long getRecordCount() {
+		return recordCount;
+	}
+
+	public void setRecordCount(long recordCount) {
+		this.recordCount = recordCount;
+	}
 }
