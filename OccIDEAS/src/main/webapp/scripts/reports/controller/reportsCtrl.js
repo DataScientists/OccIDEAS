@@ -32,9 +32,13 @@
 			ReportsService.downloadReport(reportHistoryVO).then(function(response){
 				var data = response.data;
 				if(response.status == '200'){
-					 var anchor = angular.element('<a/>');
+					
+					csvData = new Blob([data], { type: 'text/csv' }); 
+					var csvUrl = URL.createObjectURL(csvData);
+					
+					var anchor = angular.element('<a/>');
 				     anchor.attr({
-				         href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data),
+				         href: csvUrl,
 				         target: '_blank',
 				         download: reportHistoryVO.name
 				     })[0].click();
@@ -164,7 +168,9 @@
 				    	 });
 						 var filterModule = [];
 						 _.each($scope.checkboxes.items,function(value, key){
-							 filterModule.push(key);
+							 if(value){
+								 filterModule.push(key);
+							 }
 						 });
 						 if($scope.exportType=="ASSESSMENT"){
 							 InterviewsService.exportAssessmentsCSV(filterModule,fileName).then(function(response){});
