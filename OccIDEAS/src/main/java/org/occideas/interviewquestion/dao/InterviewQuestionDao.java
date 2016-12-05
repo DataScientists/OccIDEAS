@@ -12,6 +12,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.question.service.QuestionService;
 import org.occideas.vo.QuestionVO;
@@ -33,8 +34,9 @@ public class InterviewQuestionDao {
 			+ "a.modCount,a.parentAnswerId,a.link, a.deleted,a.isProcessed,"
 			+ "a.description,a.number,a.intQuestionSequence,a.lastUpdated "
 			+ "from Interview_Question a, Interview_Question b "
-			+ "where a.question_id>0 and a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) ";
-	
+			+ "where a.question_id>0 and a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) "
+			+ "and b.topNodeId = a.topNodeId";
+		
 	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){
 		System.out.println("Start getUniqueInterviewQuestions:"+new Date());
 		final Session session = sessionFactory.getCurrentSession();
@@ -161,4 +163,5 @@ public class InterviewQuestionDao {
 						.add(Projections.property("intQuestionSequence"),"intQuestionSequence"));
 		return (Long)crit.uniqueResult();
 	}
+
 }
