@@ -18,6 +18,15 @@
 			SystemPropertyService,ngToast,$translate,
 			NodeLanguageService,$sessionStorage) {
 		var self = this;
+		self.editTranslateNode = false;
+		self.editTranslation = function(){
+			self.editTranslateNode = true;
+		}
+		
+		self.saveTranslation = function(){
+			
+			self.editTranslateNode = false;
+		}
 		
 		$scope.languages = undefined;
 		$scope.selectedLanguage = undefined;

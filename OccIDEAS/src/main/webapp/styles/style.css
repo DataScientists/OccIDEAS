@@ -1257,3 +1257,9 @@ li.borderless {
 .incl_expjson{
 	background-color:yellow !important;
 }
+
+.numberPosRight{
+	position: absolute;
+    right: 10px;
+    top: 2px;
+}
