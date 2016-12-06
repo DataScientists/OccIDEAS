@@ -25,7 +25,7 @@
 		
 		self.saveTranslation = function(){
 			
-			self.editTranslateNode = false;
+			self.editTranslateNode = true;
 		}
 		
 		$scope.languages = undefined;

@@ -19,6 +19,12 @@
         vm.hasErrMsg = false;
         vm.errMsg = '';
         vm.isAuthenticated = $sessionStorage.isAuthenticated;
+        vm.language = 'en';
+        
+        vm.changeLanguage = function(){
+        	 $translate.use(vm.language);
+        }
+        
         vm.passwordVO = {};
         
         if(!(angular.isUndefinedOrNull(vm.isAuthenticated))){

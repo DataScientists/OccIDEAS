@@ -53,17 +53,4 @@ public class NodeLanguageDao {
         return crit.list();
 	}
 	
-	public NodeLanguage getNodesByLanguageAndWord(Long languageId,String word) {
-        final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(NodeLanguage.class)
-      		  						.add(Restrictions.eq("languageId",languageId))
-      		  						.add(Restrictions.eq("word",word));
-        List list = crit.list();
-        if(!list.isEmpty()){
-        	return (NodeLanguage)list.get(0);
-        }
-        
-        return null;
-	}
-	
 }

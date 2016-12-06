@@ -40,6 +40,18 @@ public class SystemPropertyDao {
 		final Criteria crit = session.createCriteria(SystemProperty.class);
 		return crit.list();
 	}
+	
+	/**
+	 * Get all that matches the key
+	 * @param key
+	 * @return
+	 */
+	public List<SystemProperty> getAll(String key) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(SystemProperty.class);
+		crit.add(Restrictions.eq("id", key));
+		return crit.list();
+	}
 
 	public void delete(SystemProperty entity) {
 		sessionFactory.getCurrentSession().delete(entity);

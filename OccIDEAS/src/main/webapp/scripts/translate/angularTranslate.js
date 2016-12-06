@@ -31,9 +31,9 @@
  		         }
  		     });
  		     }
- 		     $timeout(function () {
+// 		     $timeout(function () {
  		       deferred.resolve(translations);
- 		     }, 2000);
+// 		     }, 2000);
  		  
  		     return deferred.promise;
  		   };

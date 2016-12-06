@@ -162,6 +162,3 @@ CREATE TABLE `REPORT_HISTORY` (
 
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-ALTER TABLE `occideas`.`Interview` 
-ADD COLUMN `assessmentStatus` VARCHAR(45) NULL AFTER `parentId`;

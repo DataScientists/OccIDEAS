@@ -37,7 +37,7 @@ public class Interview implements java.io.Serializable {
 	@Id
 	@GeneratedValue
 	private long idinterview;
-	private String assessmentStatus;
+
 	private long parentId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -239,14 +239,6 @@ public class Interview implements java.io.Serializable {
 
 	public void setQuestionQueueUnprocessed(List<InterviewQuestion> questionQueueUnprocessed) {
 		this.questionQueueUnprocessed = questionQueueUnprocessed;
-	}
-
-	public String getAssessmentStatus() {
-		return assessmentStatus;
-	}
-
-	public void setAssessmentStatus(String assessmentStatus) {
-		this.assessmentStatus = assessmentStatus;
 	}
 
 }

@@ -7,35 +7,18 @@
 			'InterviewsService', 'ParticipantsService', 'AssessmentsService',
 			'$anchorScroll', '$location', '$mdMedia', '$window', '$state',
 			'$rootScope', '$compile', '$timeout', '$log', 'updateData',
-			'startWithReferenceNumber','$filter','NodeLanguageService','$sessionStorage'];
+			'startWithReferenceNumber','$filter','$translate'];
 	function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
 			QuestionsService, ModulesService, InterviewsService,
 			ParticipantsService, AssessmentsService, $anchorScroll, $location,
 			$mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
-			updateData,startWithReferenceNumber,$filter,NodeLanguageService,$sessionStorage) {
+			updateData,startWithReferenceNumber,$filter,$translate) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.multiSelected = [];
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
-		
-		$scope.languages = undefined;
-		$scope.selectedLanguage = undefined;
-		$scope.getAllLanguage = function(){
-			NodeLanguageService.getAllLanguage().then(function(response){
-				if(response.status == '200'){
-					$scope.languages = response.data;
-					$scope.languages.unshift({
-						id:-1,
-						language:'EN'
-					});
-					$scope.selectedLanguage = $scope.languages[0];
-					$sessionStorage.languages = $scope.languages; 
-				}
-			})
-		};
-		$scope.getAllLanguage();
 		
 		
 		function add(type) {
@@ -1062,6 +1045,10 @@
 			});
 		}
 
+		function translateNode(node){
+			return $translate.instant(node.name);
+		}
+		
 		function createParticipant(data) {
 			var participant = {
 				reference : $scope.referenceNumber,

@@ -28,6 +28,12 @@ public class ReportHistoryMapperImpl implements ReportHistoryMapper{
 		}
 		entity.setUpdatedDt(vo.getUpdatedDt());
 		entity.setUpdatedBy(vo.getUpdatedBy());
+		
+		entity.setEndDt(vo.getEndDt());
+		entity.setStartDt(vo.getStartDt());
+		entity.setDuration(vo.getDuration());		
+		entity.setRecordCount(vo.getRecordCount());
+		
 		return entity;
 	}
 
@@ -53,12 +59,19 @@ public class ReportHistoryMapperImpl implements ReportHistoryMapper{
 		vo.setName(entity.getName());
 		vo.setPath(entity.getPath());
 		vo.setRequestor(entity.getRequestor());
-		vo.setStatus(entity.getStatus());
-		vo.setProgress(entity.getProgress());
+		vo.setStatus(entity.getStatus());		
+		String num = entity.getProgress().substring(0, entity.getProgress().length()-1);
+		vo.setProgress(num);
 		vo.setType(entity.getType());
 		vo.setUpdatedBy(entity.getUpdatedBy());
 		vo.setUpdatedDt(entity.getUpdatedDt());
 		vo.setJsonData(entity.getJsonData());
+		
+		vo.setEndDt(entity.getEndDt());
+		vo.setStartDt(entity.getStartDt());
+		vo.setDuration(entity.getDuration());
+		vo.setRecordCount(entity.getRecordCount());
+		
 		return vo;
 	}
 

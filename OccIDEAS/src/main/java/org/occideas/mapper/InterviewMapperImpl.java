@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.occideas.entity.Interview;
-import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Note;
 import org.occideas.entity.Rule;
@@ -51,31 +50,14 @@ public class InterviewMapperImpl implements InterviewMapper {
 		InterviewVO interviewVO = new InterviewVO();
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
-		//interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
-		//interviewVO.setModules(modMapper.convertToInterviewModuleVOList(interview.getModules()));
-		//interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
-		//List<InterviewQuestion> questionsAsked = interview.getActualQuestion();
-		//interviewVO.setActualQuestion(qsMapper.convertToInterviewQuestionVOList(questionsAsked));
 		
-		List<InterviewQuestion> questionHistory = interview.getQuestionHistory();
-		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(questionHistory));
+		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(interview.getQuestionHistory()));
 
-		List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
-		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerVOList(answerHistory));
+		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerVOList(interview.getAnswerHistory()));
 
-		//List<Rule> firedRules = interview.getFiredRules();
-		//interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
-		//List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
-		//interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
-		//List<Rule> manualAssessedRules = interview.getManualAssessedRules();
-		//interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
-
-		//interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
 		interviewVO.setParentId(interview.getParentId());
-//		List<Interview> childInterviews = interview.getInterviews();
-//		interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
-		List<Note> notes = interview.getNotes();
-		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
+
+		interviewVO.setNotes(noteMapper.convertToNoteVOList(interview.getNotes()));
 
 		return interviewVO;
 	}
@@ -88,26 +70,25 @@ public class InterviewMapperImpl implements InterviewMapper {
 		InterviewVO interviewVO = new InterviewVO();
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
-		//interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
-		//interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
+		
 		System.out.println("1.1:convertToInterviewWithRulesVO:"+new Date());
-		List<InterviewQuestion> questionHistory = interview.getQuestionHistory();
-		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(questionHistory));
+		
+		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(interview.getQuestionHistory()));
 		System.out.println("1.2:convertToInterviewWithRulesVO:"+new Date());
-		List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
-		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerWithRulesVOList(answerHistory));
+		
+		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerWithRulesVOList(interview.getAnswerHistory()));
 		System.out.println("1.3:convertToInterviewWithRulesVO:"+new Date());
-		List<Rule> firedRules = interview.getFiredRules();
-		interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
-		List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
-		interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
-		List<Rule> manualAssessedRules = interview.getManualAssessedRules();
-		interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
+		
+		interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(interview.getFiredRules()));
+		
+		interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(interview.getAutoAssessedRules()));
+		
+		interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(interview.getAutoAssessedRules()));
 		System.out.println("1.4:convertToInterviewWithRulesVO:"+new Date());
 		interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
 		interviewVO.setParentId(interview.getParentId());
-		List<Note> notes = interview.getNotes();
-		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
+		
+		interviewVO.setNotes(noteMapper.convertToNoteVOList(interview.getNotes()));
 
 		return interviewVO;
 	}
@@ -122,23 +103,18 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
 		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
 		
-		List<InterviewQuestion> questionHistory = interview.getQuestionHistory();
-		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionNoAnswersVOList(questionHistory));
+		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionNoAnswersVOList(interview.getQuestionHistory()));
 
-		List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
-		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerWithRulesVOList(answerHistory));
+		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerWithRulesVOList(interview.getAnswerHistory()));
 
-		List<Rule> firedRules = interview.getFiredRules();
-		interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
-		List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
-		interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
-		List<Rule> manualAssessedRules = interview.getManualAssessedRules();
-		interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
+		interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList( interview.getFiredRules()));
+		
+		interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(interview.getAutoAssessedRules()));
+		interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(interview.getManualAssessedRules()));
 
 		interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
 		interviewVO.setParentId(interview.getParentId());
-		List<Note> notes = interview.getNotes();
-		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
+		interviewVO.setNotes(noteMapper.convertToNoteVOList(interview.getNotes()));
 
 		return interviewVO;
 	}
@@ -153,14 +129,6 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
 		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
 		
-		//List<InterviewQuestion> questionHistory = interview.getQuestionHistory();
-		//interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(questionHistory));
-
-		//List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
-		//interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerWithRulesVOList(answerHistory));
-
-		//List<Rule> firedRules = interview.getFiredRules();
-		//interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
 		List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
 		interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
 		List<Rule> manualAssessedRules = interview.getManualAssessedRules();
@@ -210,7 +178,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		int iSize = interviewEntity.size();
 		for (Interview interview : interviewEntity) {
 			list.add(convertToInterviewWithRulesNoAnswersVO(interview));
-			System.out.println((iCount++)+" of "+iSize+" convertToInterviewWithRulesVOList:"+new Date());
+			System.out.println((iCount++)+" of "+iSize+" convertToInterviewWithRulesNoAnswersVOList:"+new Date());
 		}
 		return list;
 	}
@@ -223,7 +191,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		int iCount = 0;
 		for (Interview interview : interviewEntity) {
 			list.add(convertToInterviewWithAssessmentsVO(interview));
-			System.out.println((iCount++)+"convertToInterviewWithRulesVOList:"+new Date());
+			System.out.println((iCount++)+"convertToInterviewWithAssessmentsVOList:"+new Date());
 		}
 		return list;
 	}
@@ -322,9 +290,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		InterviewVO interviewVO = new InterviewVO();
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
-//		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
-//		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
-//		interviewVO.setModules(modMapper.convertToInterviewModuleVOList(interview.getModules()));
+
 		interviewVO.setParentId(interview.getParentId());
 		List<Note> notes = interview.getNotes();
 		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
@@ -404,32 +370,10 @@ public class InterviewMapperImpl implements InterviewMapper {
 		InterviewVO interviewVO = new InterviewVO();
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
-		//interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
-		//interviewVO.setModules(modMapper.convertToInterviewModuleVOList(interview.getModules()));
-		//interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
-		//List<InterviewQuestion> questionsAsked = interview.getActualQuestion();
-		//interviewVO.setActualQuestion(qsMapper.convertToInterviewQuestionVOList(questionsAsked));
 		
 		List<InterviewQuestion> questionQueueUnprocessed = interview.getQuestionQueueUnprocessed();
 		interviewVO.setQuestionQueueUnprocessed(qsMapper.convertToInterviewQuestionUnprocessedVOList(questionQueueUnprocessed));
-
-		//List<InterviewAnswer> answerHistory = interview.getAnswerHistory();
-		//interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerVOList(answerHistory));
-
-		//List<Rule> firedRules = interview.getFiredRules();
-		//interviewVO.setFiredRules(ruleMapper.convertToRuleVOExcPaList(firedRules));
-		//List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
-		//interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(autoAssessedRules));
-		//List<Rule> manualAssessedRules = interview.getManualAssessedRules();
-		//interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(manualAssessedRules));
-
-		//interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
-		//interviewVO.setParentId(interview.getParentId());
-//		List<Interview> childInterviews = interview.getInterviews();
-//		interviewVO.setInterviews(this.convertToInterviewVOList(childInterviews));
-//		List<Note> notes = interview.getNotes();
-//		interviewVO.setNotes(noteMapper.convertToNoteVOList(notes));
-
+		
 		return interviewVO;
 	}
 	

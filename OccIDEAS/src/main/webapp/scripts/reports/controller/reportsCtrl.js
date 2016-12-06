@@ -4,13 +4,14 @@
 	
 	ReportsCtrl.$inject = ['ReportsService','NgTableParams','$state','data','$scope',
 	                       '$filter','$resource','$mdDialog','InterviewsService',
-	                       'SystemPropertyService','ngToast'];
+	                       'SystemPropertyService','ngToast', '$timeout', '$interval'];
 	function ReportsCtrl(ReportsService,NgTableParams,$state,data,$scope,
 			$filter,$resource,$mdDialog,InterviewsService,
-			SystemPropertyService,ngToast){
+			SystemPropertyService,ngToast, $timeout, $interval){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
+		$scope.interval = null;
 		
 		$scope.del = function(reportHistoryVO){
 			ReportsService.deleteReport(reportHistoryVO).then(function(response) {
@@ -31,9 +32,13 @@
 			ReportsService.downloadReport(reportHistoryVO).then(function(response){
 				var data = response.data;
 				if(response.status == '200'){
-					 var anchor = angular.element('<a/>');
+					
+					csvData = new Blob([data], { type: 'text/csv' }); 
+					var csvUrl = URL.createObjectURL(csvData);
+					
+					var anchor = angular.element('<a/>');
 				     anchor.attr({
-				         href: 'data:attachment/csv;charset=utf-8,' + encodeURI(data),
+				         href: csvUrl,
 				         target: '_blank',
 				         download: reportHistoryVO.name
 				     })[0].click();
@@ -52,14 +57,27 @@
             }, {	
             
 			getData: function(params) {
-	          if ((params.sorting().reference)||(params.sorting().idParticipant)||(params.sorting().statusDescription)){
+	          if ((params.sorting().id)
+        		  || (params.sorting().name)
+        		  || (params.sorting().type)
+        		  || (params.sorting().requestor) 
+        		  || (params.sorting().status)
+        		  || (params.sorting().startDt)
+        		  || (params.sorting().endDt) 
+        		  || (params.sorting().recordCount)){
 				return $filter('orderBy')(self.tableParams.settings().dataset, params.orderBy());
 		      }
-	        	
-	          if(params.filter().reference || params.filter().idParticipant){
-	        	  if(awesIdIsValid(params.filter().reference)){
-	        		  return $filter('filter')(self.tableParams.settings().dataset, params.filter()); 
-	        	  }     	  
+	          
+	          if(params.filter().id 
+        		  || params.filter().name 
+        		  || params.filter().type
+        		  || params.filter().requestor
+        		  || params.filter().status
+        		  || params.filter().startDt
+        		  || params.filter().endDt 
+        		  || params.filter().recordCount){
+	        	  
+	        	  return $filter('filter')(self.tableParams.settings().dataset, params.filter());
 		      }
 	          if(!self.tableParams.shouldGetData){
 	        	  var last = params.page() * params.count();
@@ -137,6 +155,8 @@
 			$event.cancelBubble = true;
 			$event.returnValue = false;
 		};
+		
+		
 		$scope.exportCSVInterviews = function(fileName){
 			SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response){
 				if(response.status == '200'){
@@ -144,11 +164,13 @@
 						$scope.cancel();
 						 ngToast.create({
 				    		  className: 'success',
-				    		  content: 'Your report is now running .... Kindly check the reports tab for details.'
+				    		  content: 'Your report is now running... Kindly check the reports tab for details.'
 				    	 });
 						 var filterModule = [];
 						 _.each($scope.checkboxes.items,function(value, key){
-							 filterModule.push(key);
+							 if(value){
+								 filterModule.push(key);
+							 }
 						 });
 						 if($scope.exportType=="ASSESSMENT"){
 							 InterviewsService.exportAssessmentsCSV(filterModule,fileName).then(function(response){});
@@ -159,6 +181,34 @@
 						 }else{
 							 InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){}); 
 						 }
+						 
+						 //Reflect new row
+						 $timeout(function() {
+							 self.tableParams.shouldGetData = true;
+						        self.tableParams.reload().then(function (data) {						           
+						        	allCompleted = false;
+						            self.tableParams.reload();						           
+						        });							 
+						 }, 500); 	
+						 
+						 //Check if everything is completed
+						 $scope.interval = $interval(function() {
+							 self.tableParams.shouldGetData = true;
+						        self.tableParams.reload().then(function (data) {
+						            	self.tableParams.reload();
+						            
+						                allCompleted = true;				                
+						                _.each(data,function(value, key){											
+											 if(value.status !== 'Completed'){
+												 allCompleted = false;
+											 }
+										 });
+						                
+						                if(allCompleted){
+						                	$scope.cancelInterval();
+						                }						                
+						        });							 
+						 }, 1000);
 						
 					}else{
 						ngToast.create({
@@ -172,6 +222,15 @@
 				}
 			});
 		}
+		
+		//Cancel refresh
+		$scope.cancelInterval = function() {
+			if (angular.isDefined($scope.interval)) {
+				$interval.cancel($scope.interval);
+				$scope.interval = undefined;
+			}
+		};
+	        
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};

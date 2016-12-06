@@ -139,6 +139,19 @@
 			        });
 				}
 	        });
+	    	_.remove(vm.tableParams.settings().dataset, function (item) {
+	            return row === item;
+	        });
+	        self.tableParams.shouldGetData = false;
+	        self.tableParams.reload().then(function (data) {
+	            if (data.length === 0 && self.tableParams.total() > 0) {
+	                self.tableParams.page(self.tableParams.page() - 1);
+	                self.tableParams.reload();
+	                if(isValidationFilterEnabled == true){
+	                	$scope.validateBtn(true);
+	                }
+	            }
+	        });
 		}
 		
 	}
