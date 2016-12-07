@@ -13,4 +13,6 @@ public interface AgentService extends BaseService<AgentVO>{
 	List<SystemPropertyVO> loadStudyAgents();
 
 	void deleteStudyAgents(SystemPropertyVO vo);
+
+	List<AgentVO> getStudyAgents();
 }

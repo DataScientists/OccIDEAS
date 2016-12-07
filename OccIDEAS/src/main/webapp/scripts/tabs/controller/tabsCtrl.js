@@ -376,6 +376,7 @@
         $scope.addFiredRulesTab = function(interview) {
             var tabTitle = "Assessment " + interview.referenceNumber;
             var state = "tabs.firedrules";
+            $stickyState.reset(state);
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
                 tabs.push({
                     title: tabTitle,

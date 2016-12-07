@@ -127,6 +127,20 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 		}
 		return Response.ok(list).build();
 	}
+	
+	@Path(value="/getstudyagents")
+	@GET
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getStudyAgents() {
+		List<AgentVO> list = null;
+		try{
+			list = service.getStudyAgents();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
 
 	@Path(value="/delete")
 	@POST

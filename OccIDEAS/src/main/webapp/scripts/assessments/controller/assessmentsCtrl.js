@@ -65,6 +65,7 @@
 					referenceNumber:reference
 			};
 	    	$scope.addFiredRulesTab(interview);
+	    	console.log('FiredRulesTab Opened');
 	    }
 		
 		

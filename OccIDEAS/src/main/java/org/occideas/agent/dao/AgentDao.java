@@ -3,6 +3,7 @@ package org.occideas.agent.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -10,6 +11,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Agent;
+import org.occideas.entity.PossibleAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -65,5 +67,15 @@ public class AgentDao {
        		  						.setResultTransformer(Transformers.aliasToBean(Agent.class));
          return crit.list();
        }
+    private final String STUDY_AGENTS_SQL = "SELECT * FROM AgentInfo "
+    		+ " WHERE idAgent in (SELECT value from SYS_CONFIG WHERE type='studyagent')";
+    @SuppressWarnings("unchecked")
+	public List<Agent> getStudyAgents() {
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(STUDY_AGENTS_SQL).addEntity(Agent.class);
+		
+		List<Agent> list = sqlQuery.list();
+		return list;
+	}
 
 }

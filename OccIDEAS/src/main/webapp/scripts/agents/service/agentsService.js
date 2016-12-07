@@ -14,6 +14,12 @@
 		    return data;
 		  });
 		};
+		var getStudyAgents = function() {
+			  return $http.get(agentEndpoint+'/getstudyagents',{ cache: false}).then(function(response) {
+			    var data = response.data;
+			    return data;
+			  });
+			};
         var findAgent = function(agentId) {
             var request = $http({
                 method:'GET',
@@ -99,7 +105,8 @@
 	        }
 
 		return {
-		      get: getAgents,
+			  get: getAgents,
+			  getStudyAgents: getStudyAgents,
 		      save: save, 
 		      post: postNewAgent, 
 		      deleteAgent: deleteAgent,

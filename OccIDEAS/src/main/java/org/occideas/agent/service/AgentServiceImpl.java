@@ -33,6 +33,12 @@ public class AgentServiceImpl implements AgentService {
 		
 		return mapper.convertToAgentVOList(dao.getAllActive(),false);
 	}
+	
+	@Override
+	public List<AgentVO> getStudyAgents() {
+		
+		return mapper.convertToAgentVOList(dao.getStudyAgents(),false);
+	}
 
 	@Override
 	public List<AgentVO> findById(Long id) {

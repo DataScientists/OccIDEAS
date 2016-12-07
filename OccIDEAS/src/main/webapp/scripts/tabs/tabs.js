@@ -513,7 +513,7 @@
         }).state( {
             name:'tabs.firedrules',
 			url: '/firedrules/:interviewId',
-            sticky: false,
+            sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
             views:{
@@ -523,6 +523,8 @@
                     params:{interviewId:null},
                     resolve:{
                         data: function($stateParams,InterviewsService) {
+                        	
+                        	
                             return $stateParams.interviewId;
                         }
                     }
