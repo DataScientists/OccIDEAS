@@ -53,6 +53,11 @@
 			NodeLanguageService.getAllLanguage().then(function(response){
 				if(response.status == '200'){
 					$scope.languages = response.data;
+					var english = {
+						id: -1,
+						language: 'EN'
+					}
+					$scope.languages.unshift(english);
 					$scope.selectLanguage = $scope.languages[0];
 					safeDigest($scope.selectLanguage);
 				}

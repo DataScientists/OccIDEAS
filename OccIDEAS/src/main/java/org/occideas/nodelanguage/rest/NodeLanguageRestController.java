@@ -101,6 +101,21 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		return Response.ok(list).build();
 	}
 	
+	@Path(value = "/getNodesByLanguageAndWord")
+	@POST
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getNodesByLanguageAndWord(NodeLanguageVO vo){
+		NodeLanguageVO nodeLanguage = null;
+		try{
+			nodeLanguage = service.getNodesByLanguageAndWord(vo.getLanguageId(), vo.getWord());
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(nodeLanguage).build();
+	}
+	
 
 	@Override
 	public Response update(NodeLanguageVO json) {
@@ -108,10 +123,16 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		return null;
 	}
 
-	@Override
-	public Response delete(NodeLanguageVO json) {
-		// TODO Auto-generated method stub
-		return null;
+	@Path(value = "/delete")
+	@POST
+	public Response delete(NodeLanguageVO vo) {
+		try {
+			service.delete(vo);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
 	}
 
 	@Override

@@ -23,11 +23,6 @@
 			self.editTranslateNode = true;
 		}
 		
-		self.saveTranslation = function(){
-			
-			self.editTranslateNode = true;
-		}
-		
 		$scope.languages = undefined;
 		$scope.selectedLanguage = undefined;
 		$scope.getAllLanguage = function(){
@@ -55,35 +50,42 @@
        		}
        		$scope.selectedLanguage = data;
         };
-        $scope.saveLanguage = function(word,$event){
-        	var translation = $event.target.value;
-        	// search translation if exist if yes, update that record
-        	// else insert new one
-        	var request = {
-        			languageId:$scope.selectedLanguage.id,
-        			language:null,
-        			word:word
+        
+        $scope.saveAllLanguage = function(){
+        	saveNodeTranslation(data[0]);
+        	self.editTranslateNode = false;
+        }
+        
+        function saveNodeTranslation(node){
+        	if(node.translated != 'No available translation'){
+        		var request = {
+            			languageId:$scope.selectedLanguage.id,
+            			language:null,
+            			word:node.name
+            	}
+            	NodeLanguageService.getNodesByLanguageAndWord(request).then(function(response){
+            		var data = {
+            				languageId:$scope.selectedLanguage.id,
+            				word:node.name,
+            				translation:node.translated
+            		};
+            		if(response.status == '200' && response.data){
+            			data.id = response.data.id;
+            		}
+            		
+            		if(response.status == '200'){
+            			NodeLanguageService.save(data).then(function(response){
+                			if(response.status == '200'){
+                			}
+                		});
+            		}
+            	});
         	}
-        	NodeLanguageService.getNodesByLanguageAndWord(request).then(function(response){
-        		var data = {
-        				languageId:$scope.selectedLanguage.id,
-        				word:word,
-        				translation:translation
-        		};
-        		if(response.status == '200' && response.data){
-        			data.id = response.data.id;
-        		}
-        		
-        		if(response.status == '200'){
-        			NodeLanguageService.save(data).then(function(response){
-            			if(response.status == '200'){
-            			}
-            		});
-        		}
+        	_.each(node.nodes,function(n){
+        		saveNodeTranslation(n);
         	});
         }
         
-		
 		$scope.data = data;	
 		//saveModuleWithoutReload();
 		var moduleIdNode = $scope.data[0].idNode;

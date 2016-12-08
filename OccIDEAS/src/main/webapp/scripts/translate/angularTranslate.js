@@ -28,11 +28,14 @@
  		        	       [o.word]: o.translation
  		        	    };
  		        	});
+ 		        	return deferred.resolve(translations);
+ 		         }else{
+ 		        	return deferred.reject(id);
  		         }
  		     });
  		     }
 // 		     $timeout(function () {
- 		       deferred.resolve(translations);
+// 		       deferred.resolve(translations);
 // 		     }, 2000);
  		  
  		     return deferred.promise;

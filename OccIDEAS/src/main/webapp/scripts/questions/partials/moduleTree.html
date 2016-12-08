@@ -5,8 +5,8 @@
 	<select ng-change="vm.changeNodeLanguage(selectedLanguage)" ng-model="selectedLanguage"
 			ng-options="option.language for option in languages track by option.id">
    </select>
-   <input type="button" value="Edit" ng-if="!vm.editTranslateNode" ng-click="vm.editTranslation()">
-   <input type="button" value="Save" ng-if="vm.editTranslateNode" ng-click="vm.saveTranslation()">
+   <input type="button" value="Edit" ng-if="!vm.editTranslateNode && vm.translateNode" ng-click="vm.editTranslation()">
+   <input type="button" value="Save" ng-if="vm.editTranslateNode" ng-click="saveAllLanguage()">
  	 <div class="panel-body">
   	<div ui-tree="moduleTreeOptions" id="tree-root" >
 		<ol ui-tree-nodes ng-model="data">
@@ -64,7 +64,7 @@
 			  >
       		<input type="text"  value="{{node.translated}}" 
 				class="form-control-edit form-control"
-				 ng-keypress="(($event.which === 13))?saveLanguage(node.name,$event):0"  
+				 ng-model="node.translated"
              	data-nodrag	style="width:400px !important;"
 				>
      	  </div>	
