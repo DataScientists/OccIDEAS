@@ -14,12 +14,58 @@
 		$scope.interviewId = data;
 		$scope.displayHistoryNew = undefined;
 		
-		
+		$scope.leftNav = "slideFragLeft";
+		$scope.toggleLeft = function(){
+		    if ($scope.leftNav === "slideFragLeft"){
+		      $scope.leftNav = "";
+		    }
+		    else{
+		      $scope.leftNav = "slideFragLeft";
+		    }
+		    if((angular.isUndefined($scope.agentsData))||($scope.agentsData == null)){
+		    	//$scope.agentsLoading = true;
+				initAgentData();
+			}
+		};
 		
 		if(!$scope.displayHistoryNew){
 			refreshInterviewDisplay();
 		}
-		
+		function setOrder (obj) {
+    	    var out = [];
+    	    _.forEach(obj,function(value,key) {
+    	      out.push({ key: key, value: value ,total: value.total});
+    	    });
+    	    return out;
+    	}
+		function initAgentData(){
+			AgentsService.getStudyAgents().then(function(agent) {
+	    		var group = _.groupBy(agent, function(b) { 
+	    			return b.agentGroup.name;
+	    		});
+	    		
+        		_.forOwn(group, function(x, key) { 
+	        		var totalVal = 0; 
+	        		_.forEach(x,function(v,k) {
+	        			  var ruleArray =_.filter($scope.data.firedRules, function(r){
+	        					return v.idAgent === r.agentId; 
+	        			  });
+	        			  var uniqueArray = _.map(_.groupBy(ruleArray,function(rule){
+	        				  return rule.idRule;
+	        				}),function(grouped){
+	        				  return grouped[0];
+	        				});
+	        			  v.total = uniqueArray.length;
+	        			  totalVal = totalVal + v.total;
+	        			});
+	        		x.total = totalVal;
+        		} );
+        		group = setOrder(group);
+	    		$scope.agentsData = group;
+	    		safeDigest($scope.agentsData);
+	    		
+	    	});
+		}
 		function refreshInterviewDisplay(){
 			
 			if(!$scope.displayHistoryNew){
@@ -45,32 +91,7 @@
 								  node.header = linkNode.name.substr(0,4);
 							  } 
 						});	
-						AgentsService.getStudyAgents().then(function(agent) {
-				    		var group = _.groupBy(agent, function(b) { 
-				    			return b.agentGroup.name;
-				    		});
-				    		
-			        		_.forOwn(group, function(x, key) { 
-				        		var totalVal = 0; 
-				        		_.forEach(x,function(v,k) {
-				        			  var ruleArray =_.filter($scope.data.firedRules, function(r){
-				        					return v.idAgent === r.agentId; 
-				        			  });
-				        			  var uniqueArray = _.map(_.groupBy(ruleArray,function(rule){
-				        				  return rule.idRule;
-				        				}),function(grouped){
-				        				  return grouped[0];
-				        				});
-				        			  v.total = uniqueArray.length;
-				        			  totalVal = totalVal + v.total;
-				        			});
-				        		x.total = totalVal;
-			        		} );
-			        		group = setOrder(group);
-				    		$scope.agentsData = group;
-				    		safeDigest($scope.agentsData);
-				    		
-				    	});
+						
 					}
                 });
 				
@@ -93,13 +114,7 @@
 				
 			});
 			
-			function setOrder (obj) {
-	    	    var out = [];
-	    	    _.forEach(obj,function(value,key) {
-	    	      out.push({ key: key, value: value ,total: value.total});
-	    	    });
-	    	    return out;
-	    	}
+			
 			InterviewsService.findModulesByInterviewId($scope.interviewId).then(function(response){
 				if(response.status == '200'){
 					if(response.data.length > 0){								
