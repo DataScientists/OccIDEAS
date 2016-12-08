@@ -32,33 +32,29 @@ public class InterviewServiceImpl implements InterviewService {
     public List<InterviewVO> listAll() {
         return mapper.convertToInterviewVOList(interviewDao.getAll());
     }
+    
     @Override
     public List<InterviewVO> listAllWithRules() {
-    	//System.out.println("1:listAllWithRules:"+new Date());
-    	//List<Interview> debug = interviewDao.getAll();
-		//List<Interview> debug1 = new ArrayList<Interview>();
-		/*for(int i=0;i<debug.size();i++){
-			if(i<10){
-				debug1.add(debug.get(i));
-			}		
-		}*/
-		System.out.println("2:listAllWithRules:"+new Date());
+    	System.out.println("2:listAllWithRules:"+new Date());
 		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(interviewDao.getAll());
+		System.out.println("3:listAllWithRules:"+new Date());
+		
+		return retValue;
+    }
+    
+    @Override
+    public List<InterviewVO> listAllWithRules(String[] modules) {
+    	
+		System.out.println("2:listAllWithRules:"+new Date());
+		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(interviewDao.getAll(modules));
 		System.out.println("3:listAllWithRules:"+new Date());
         return retValue;
     }
     @Override
-    public List<InterviewVO> listAllWithAssessments() {
-    	//System.out.println("1:listAllWithRules:"+new Date());
-    	/*List<Interview> debug = interviewDao.getAll();
-		List<Interview> debug1 = new ArrayList<Interview>();
-		for(int i=0;i<debug.size();i++){
-			if(i<2){
-				debug1.add(debug.get(i));
-			}		
-		}*/
+    public List<InterviewVO> listAllWithAssessments(String[] modules) {
+    	
 		System.out.println("2:listAllWithRules:"+new Date());
-		List<InterviewVO> retValue = mapper.convertToInterviewWithAssessmentsVOList(interviewDao.getAll());
+		List<InterviewVO> retValue = mapper.convertToInterviewWithAssessmentsVOList(interviewDao.getAll(modules));
 		System.out.println("3:listAllWithRules:"+new Date());
         return retValue;
     }

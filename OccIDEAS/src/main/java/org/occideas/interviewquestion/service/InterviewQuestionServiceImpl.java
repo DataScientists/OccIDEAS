@@ -139,4 +139,10 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 		return filterModule;
 	}
 
+	@Override
+	public Long getUniqueInterviewQuestionCount(String[] filterModule) {
+		
+		return dao.getUniqueInterviewQuestionCount(filterModule);
+	}
+
 }
