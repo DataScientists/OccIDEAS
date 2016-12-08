@@ -14,7 +14,7 @@
      	 <uib-accordion-group>
      	 	<uib-accordion-heading >
      	 	{{agentGroup.key}}
-     	 		 <span class="badge pull-right">{{agentGroup.total || 0}}</span> 
+     	 		 <span class="badge pull-right" ng-click="toggleAgentView(agentGroup)">{{agentGroup.total || 0}}</span> 
      	 	</uib-accordion-heading>
      	 		<div>
 					<ul class="list-group">
