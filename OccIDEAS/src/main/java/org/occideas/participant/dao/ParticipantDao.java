@@ -95,7 +95,7 @@ public class ParticipantDao {
     }
     
     private final String paginatedParticipantWithModSQL 
-    = "select p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview,im.idModule"
+    = "select p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview,i.assessedStatus,im.idModule"
     		+",im.interviewModuleName from Participant p " 
     		+" join Interview i join InterviewIntroModule_Module im "
     		+" where p.idParticipant = i.idParticipant " 

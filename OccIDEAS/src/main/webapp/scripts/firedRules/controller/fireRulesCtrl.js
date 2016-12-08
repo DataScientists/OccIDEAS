@@ -14,12 +14,90 @@
 		$scope.interviewId = data;
 		$scope.displayHistoryNew = undefined;
 		
+		$scope.statuses = ['Incomplete','Needs Review','Complete'];
+		$scope.assessmentStatus = 'Not Assessed';
 		
+		
+		$scope.onChangeSaveStatus = function (){
+			var interview = $scope.interview;
+			interview.assessedStatus = $scope.assessmentStatus;
+			if (!(interview.notes)) {
+				interview.notes = [];
+			}
+			interview.notes.push({
+				interviewId : interview.interviewId,
+				text : "Updated Status",
+				type : 'System'
+			});
+			saveInterview(interview);
+		};
+		
+		$scope.toggleAgentView = function (agent){		
+			var agentShown = _.find($scope.agents,function(a){
+				return agent.idAgent == a.idAgent;
+			  });
+			if(agentShown){
+				_.remove($scope.agents, function(a) {
+					  return agent.idAgent == a.idAgent;
+					});
+			} else{
+				var showAgent = {name:agent.name,idAgent:agent.idAgent};
+				$scope.agents.push(showAgent);
+			}			
+		};
+		
+		$scope.leftNav = "slideFragLeft";
+		$scope.toggleLeft = function(){
+		    if ($scope.leftNav === "slideFragLeft"){
+		      $scope.leftNav = "";
+		    }
+		    else{
+		      $scope.leftNav = "slideFragLeft";
+		    }
+		    if((angular.isUndefined($scope.agentsData))||($scope.agentsData == null)){
+		    	//$scope.agentsLoading = true;
+				initAgentData();
+			}
+		};
 		
 		if(!$scope.displayHistoryNew){
 			refreshInterviewDisplay();
 		}
-		
+		function setOrder (obj) {
+    	    var out = [];
+    	    _.forEach(obj,function(value,key) {
+    	      out.push({ key: key, value: value ,total: value.total});
+    	    });
+    	    return out;
+    	}
+		function initAgentData(){
+			AgentsService.getStudyAgents().then(function(agent) {
+	    		var group = _.groupBy(agent, function(b) { 
+	    			return b.agentGroup.name;
+	    		});
+	    		
+        		_.forOwn(group, function(x, key) { 
+	        		var totalVal = 0; 
+	        		_.forEach(x,function(v,k) {
+	        			  var ruleArray =_.filter($scope.data.firedRules, function(r){
+	        					return v.idAgent === r.agentId; 
+	        			  });
+	        			  var uniqueArray = _.map(_.groupBy(ruleArray,function(rule){
+	        				  return rule.idRule;
+	        				}),function(grouped){
+	        				  return grouped[0];
+	        				});
+	        			  v.total = uniqueArray.length;
+	        			  totalVal = totalVal + v.total;
+	        			});
+	        		x.total = totalVal;
+        		} );
+        		group = setOrder(group);
+	    		$scope.agentsData = group;
+	    		safeDigest($scope.agentsData);
+	    		
+	    	});
+		}
 		function refreshInterviewDisplay(){
 			
 			if(!$scope.displayHistoryNew){
@@ -45,32 +123,7 @@
 								  node.header = linkNode.name.substr(0,4);
 							  } 
 						});	
-						AgentsService.getStudyAgents().then(function(agent) {
-				    		var group = _.groupBy(agent, function(b) { 
-				    			return b.agentGroup.name;
-				    		});
-				    		
-			        		_.forOwn(group, function(x, key) { 
-				        		var totalVal = 0; 
-				        		_.forEach(x,function(v,k) {
-				        			  var ruleArray =_.filter($scope.data.firedRules, function(r){
-				        					return v.idAgent === r.agentId; 
-				        			  });
-				        			  var uniqueArray = _.map(_.groupBy(ruleArray,function(rule){
-				        				  return rule.idRule;
-				        				}),function(grouped){
-				        				  return grouped[0];
-				        				});
-				        			  v.total = uniqueArray.length;
-				        			  totalVal = totalVal + v.total;
-				        			});
-				        		x.total = totalVal;
-			        		} );
-			        		group = setOrder(group);
-				    		$scope.agentsData = group;
-				    		safeDigest($scope.agentsData);
-				    		
-				    	});
+						
 					}
                 });
 				
@@ -93,13 +146,7 @@
 				
 			});
 			
-			function setOrder (obj) {
-	    	    var out = [];
-	    	    _.forEach(obj,function(value,key) {
-	    	      out.push({ key: key, value: value ,total: value.total});
-	    	    });
-	    	    return out;
-	    	}
+			
 			InterviewsService.findModulesByInterviewId($scope.interviewId).then(function(response){
 				if(response.status == '200'){
 					if(response.data.length > 0){								
@@ -604,28 +651,28 @@
 			  	}			  
 			  ],
 			  [ 'Use Auto', function($itemScope, $event, model) {
-                    if(model.manualAssessedRules.length==0){
-                      model.manualAssessedRules = [];
-                  	  var assessments = angular.copy(model.autoAssessedRules);
-                  	  for(var i=0;i<assessments.length;i++){
-  						  var assessment = assessments[i];
-  						  assessment.idRule = '';
-  						  assessment.conditions = [];
-  						  model.manualAssessedRules.push(assessment);
-  					  }
-      				  InterviewsService.save(model).then(function (response) {
-      		                if (response.status === 200) {
-      		                	$log.info("Interview saved with manual assessments");
-      		                	refreshAssessmentDisplay();
-      		                }
-      				  });
+                    if(model.manualAssessedRules.length>0){
+                    	for(var i=0;i<$scope.data.manualAssessedRules.length;i++){
+                			var rule = $scope.data.manualAssessedRules[i];
+                			rule.deleted=1;
+                		}
+ 
                     }else{
-                    	$ngToast.create({
-          	    		  className: 'warning',
-          	    		  content: 'Auto Assessments already applied. Please update assessments manually.',
-          	    		  animation:'slide'
-          	    	 });
-                    }	  
+                    	model.manualAssessedRules = [];
+                    }	
+                    var assessments = angular.copy(model.autoAssessedRules);
+                    for(var i=0;i<assessments.length;i++){
+					  var assessment = assessments[i];
+					  var manualAssessment = {agentId:assessment.agentId,level:assessment.level,levelValue:assessment.levelValue};
+					  
+					  model.manualAssessedRules.push(manualAssessment);
+                    }
+                    InterviewsService.save(model).then(function (response) {
+		                if (response.status === 200) {
+		                	$log.info("Interview saved with manual assessments");
+		                	refreshAssessmentDisplay();
+		                }
+                    });
 			  	}
 			  ]
 			];

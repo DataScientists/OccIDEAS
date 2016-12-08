@@ -213,13 +213,6 @@ public class InterviewVO {
 	}
 
 	public String getAssessedStatus() {
-		if (this.getManualAssessedRules() != null) {
-			if (this.getManualAssessedRules().size() > 0) {
-				assessedStatus = "Complete";
-			} else {
-				assessedStatus = "Incomplete";
-			}
-		}
 		return assessedStatus;
 	}
 

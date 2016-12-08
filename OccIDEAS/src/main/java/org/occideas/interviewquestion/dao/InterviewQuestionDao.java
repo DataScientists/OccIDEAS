@@ -12,7 +12,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.question.service.QuestionService;
 import org.occideas.vo.QuestionVO;
@@ -162,6 +161,16 @@ public class InterviewQuestionDao {
 				.setProjection(Projections.projectionList()
 						.add(Projections.property("intQuestionSequence"),"intQuestionSequence"));
 		return (Long)crit.uniqueResult();
+	}	
+
+	public Long getUniqueInterviewQuestionCount(String[] filterModule) {
+			
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(UNIQUE_INT_QUESTION_SQL).
+				addEntity(InterviewQuestion.class);
+		sqlQuery.setParameterList("param", filterModule);
+
+		return (Long) sqlQuery.uniqueResult();
 	}
 
 }

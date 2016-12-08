@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -57,7 +58,7 @@ import com.opencsv.CSVWriter;
 @Path("/assessment")
 public class AssessmentRestController {
 
-	//Default duration
+	//Default duration in minutes
 	private static final float INITIAL_DURATION_MIN = 60;
 
 	private Logger log = Logger.getLogger(this.getClass());
@@ -102,17 +103,18 @@ public class AssessmentRestController {
 		// filename saved on the report would be different from the one saved in dir
 		// this is to avoid overwritten reports
 		String fullPath = csvDir.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
-		reportHistoryVO = 	insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue());
+		reportHistoryVO = insertToReportHistory(exportFileCSV, 
+					fullPath, reportHistoryVO.getId(),0, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue());
 		
 		updateProgress(reportHistoryVO, 
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
-				0.11, new Date(), INITIAL_DURATION_MIN);		
+				0.11, new Date(), INITIAL_DURATION_MIN);	
 		
 		log.info("[Report] before getting unique interview questions ");
 		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
 		log.info("[Report] after getting unique interview questions ");
 		
-		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO);
+		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO,filterModuleVO.getFilterModule());
 		
 		writeReport(fullPath, reportHistoryVO, csvVO);
 		
@@ -171,8 +173,14 @@ public class AssessmentRestController {
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
 				0.11, new Date(), INITIAL_DURATION_MIN);
 		
-		List<InterviewVO> uniqueInterviews = interviewService.listAllWithAssessments();
-		ExportCSVVO csvVO = populateAssessmentCSV(uniqueInterviews,reportHistoryVO);
+		Long count = interviewService.getAllWithRulesCount();
+		
+		long msPerInterview = getMsPerInterview(count.intValue(), 
+				reportHistoryVO, ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);		
+		
+		List<InterviewVO> uniqueInterviews = interviewService.listAllWithAssessments(filterModuleVO.getFilterModule());
+		
+		ExportCSVVO csvVO = populateAssessmentCSV(uniqueInterviews,reportHistoryVO, msPerInterview);
 		writeReport(fullPath, reportHistoryVO, csvVO);
 		return Response.ok().build();
     }
@@ -194,15 +202,16 @@ public class AssessmentRestController {
 		
 		updateProgress(reportHistoryVO, 
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
-				0.11, new Date(), INITIAL_DURATION_MIN);
+				0.11, new Date(), INITIAL_DURATION_MIN);		
 		
-		//Supposed to dynamically calculate the progress - Disable for now
-		//Long count = interviewService.getAllWithRulesCount();
-		//estimateDuration(count.intValue(), reportHistoryVO, 1, (long) 60 * 10000);
+		Long count = interviewService.getAllWithRulesCount();
 		
-		List<InterviewVO> uniqueInterviews = interviewService.listAllWithRules();
+		long msPerInterview = getMsPerInterview(count.intValue(), 
+				reportHistoryVO, ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);	
+						
+		List<InterviewVO> uniqueInterviews = interviewService.listAllWithRules(filterModuleVO.getFilterModule());
 		
-		ExportCSVVO csvVO = populateAssessmentNoiseCSV(uniqueInterviews,reportHistoryVO);
+		ExportCSVVO csvVO = populateAssessmentNoiseCSV(uniqueInterviews,reportHistoryVO, msPerInterview);
 		writeReport(fullPath, reportHistoryVO, csvVO);
 		return Response.ok().build();
     }
@@ -224,10 +233,15 @@ public class AssessmentRestController {
 		
 		updateProgress(reportHistoryVO, 
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
-				0.11, new Date(), INITIAL_DURATION_MIN);		
+				0.11, new Date(), INITIAL_DURATION_MIN);
 		
-		List<InterviewVO> uniqueInterviews = interviewService.listAllWithRules();
-		ExportCSVVO csvVO = populateAssessmentVibrationCSV(uniqueInterviews,reportHistoryVO);
+		Long count = interviewService.getAllWithRulesCount();
+				
+		long msPerInterview = getMsPerInterview(count.intValue(), 
+				reportHistoryVO, ReportsEnum.REPORT_VIBRATION_ASSESSMENT_EXPORT.getValue(), 0.2);
+		
+		List<InterviewVO> uniqueInterviews = interviewService.listAllWithRules(filterModuleVO.getFilterModule());
+		ExportCSVVO csvVO = populateAssessmentVibrationCSV(uniqueInterviews,reportHistoryVO, msPerInterview);
 		writeReport(fullPath, reportHistoryVO, csvVO);
 		return Response.ok().build();
     }
@@ -236,6 +250,7 @@ public class AssessmentRestController {
 			Long id,
 			int progress,
 			String type) {
+		
 		ReportHistoryVO reportHistoryVO = new ReportHistoryVO();
 		if(id !=null){
 			reportHistoryVO.setId(id);
@@ -253,6 +268,7 @@ public class AssessmentRestController {
 	
 	private ReportHistoryVO updateProgress(ReportHistoryVO reportHistoryVO, 
 			String status,double progress, Date startDate, float duration) {
+		
 		reportHistoryVO.setStatus(status);
 		
 		if(progress != 0){
@@ -296,35 +312,37 @@ public class AssessmentRestController {
 		return filename+".csv";
 	}
 
-	private ExportCSVVO populateCSV(List<InterviewQuestionVO> uniqueInterviewQuestions,ReportHistoryVO reportHistoryVO) {
+	private ExportCSVVO populateCSV(List<InterviewQuestionVO> uniqueInterviewQuestions,ReportHistoryVO reportHistoryVO, String[] modules) {
 		ExportCSVVO vo = new ExportCSVVO();
-		Set<String> headers = populateHeadersAndAnswers(uniqueInterviewQuestions,vo,reportHistoryVO);
+		Set<String> headers = populateHeadersAndAnswers(uniqueInterviewQuestions,vo,reportHistoryVO,modules);
 		vo.setHeaders(headers);
 		return vo;
 	}
-	private ExportCSVVO populateAssessmentCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO) {
+	private ExportCSVVO populateAssessmentCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO, long msPerInterview) {
 		ExportCSVVO vo = new ExportCSVVO();
-		Set<String> headers = populateHeadersAndAnswersAssessment(uniqueInterviews,vo,reportHistoryVO);
+		Set<String> headers = populateHeadersAndAnswersAssessment(uniqueInterviews,vo,reportHistoryVO, msPerInterview);
 		vo.setHeaders(headers);
 		return vo;
 	}
-	private ExportCSVVO populateAssessmentNoiseCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO) {
+	private ExportCSVVO populateAssessmentNoiseCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO,
+			long msPerInterview) {
 		ExportCSVVO vo = new ExportCSVVO();
-		Set<String> headers = populateHeadersAndAnswersAssessmentNoise(uniqueInterviews,vo,reportHistoryVO);
+		Set<String> headers = populateHeadersAndAnswersAssessmentNoise(uniqueInterviews,vo,reportHistoryVO, msPerInterview);
 		vo.setHeaders(headers);
 		return vo;
 	}
-	private ExportCSVVO populateAssessmentVibrationCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO) {
+	private ExportCSVVO populateAssessmentVibrationCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO,
+			long msPerInterview) {
 		ExportCSVVO vo = new ExportCSVVO();
-		Set<String> headers = populateHeadersAndAnswersAssessmentVibration(uniqueInterviews,vo,reportHistoryVO);
+		Set<String> headers = populateHeadersAndAnswersAssessmentVibration(uniqueInterviews,vo,reportHistoryVO,msPerInterview);
 		vo.setHeaders(headers);
 		return vo;
 	}
 	private Set<String> populateHeadersAndAnswersAssessmentVibration(List<InterviewVO> uniqueInterviews,
-			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
 		
 		reportHistoryVO.setRecordCount(uniqueInterviews.size());
-		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.3);
 		
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
@@ -333,17 +351,22 @@ public class AssessmentRestController {
 		headers.add("Shift Length");
 		headers.add("Daily Vibration");
 		
-		//long startTime = System.currentTimeMillis();
-		//long elapsedTime = 0; 
-		//int count = 0;
+		long startTime = System.currentTimeMillis();
+		long elapsedTime = 0; 
+		int currentCount = 0;
 		
 		AgentVO vibrationAgent = getAgent("VIBRATIONAGENT");
 		
 		for (InterviewVO interviewVO : uniqueInterviews) {
 			
-			//count++;
-			//Supposed to dynamically calculate the progress - Disable for now
-			//estimateDuration(uniqueInterviews.size(), reportHistoryVO, count, elapsedTime);
+			currentCount++;
+			
+			estimateDuration(uniqueInterviews.size(), 
+					reportHistoryVO, 
+					currentCount, 
+					elapsedTime, 
+					0, 
+					msPerInterview);
 			
 			boolean bFoundVibrationRules = false;
 			List<RuleVO> vibrationRules = new ArrayList<RuleVO>();
@@ -408,16 +431,16 @@ public class AssessmentRestController {
 			
 			exportCSVVO.getAnswers().put(interviewVO, answers);
 			
-			//elapsedTime = System.currentTimeMillis() - startTime;
+			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
 	}
 	private Set<String> populateHeadersAndAnswersAssessmentNoise(List<InterviewVO> uniqueInterviews,
-			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
 		
 		reportHistoryVO.setRecordCount(uniqueInterviews.size());
-		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.2);
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
@@ -428,18 +451,23 @@ public class AssessmentRestController {
 		headers.add("Peak Noise");
 		headers.add("Ratio");
 
-		//long startTime = System.currentTimeMillis();
-		//long elapsedTime = 0; 
-		//int count = 0;
+		long startTime = System.currentTimeMillis();
+		long elapsedTime = 0; 
+		int currentCount = 0;
 		
 		AgentVO noiseAgent = getAgent("NOISEAGENT");		
 		
 		for (InterviewVO interviewVO : uniqueInterviews) {
 			
-			//count++;
-			//Supposed to dynamically calculate the progress - Disable for now
-			//estimateDuration(uniqueInterviews.size(), reportHistoryVO, count, elapsedTime);		
-				
+			currentCount++;
+			
+			estimateDuration(uniqueInterviews.size(), 
+					reportHistoryVO, 
+					currentCount, 
+					elapsedTime, 
+					0, 
+					msPerInterview);
+			
 			boolean bFoundNoiseRules = false;
 			List<RuleVO> noiseRules = new ArrayList<RuleVO>();
 			List<String> answers = new ArrayList<>();
@@ -574,7 +602,7 @@ public class AssessmentRestController {
 			answers.add(strRatio.toString());
 			exportCSVVO.getAnswers().put(interviewVO, answers);
 			
-			//elapsedTime = System.currentTimeMillis() - startTime;
+			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
@@ -621,10 +649,10 @@ public class AssessmentRestController {
 		return retValue;
 	}
 	private Set<String> populateHeadersAndAnswersAssessment(List<InterviewVO> uniqueInterviews,
-			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO) {
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
 		
 		reportHistoryVO.setRecordCount(uniqueInterviews.size());
-		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.1);
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
@@ -632,23 +660,31 @@ public class AssessmentRestController {
 		
 		List<SystemPropertyVO> properties = systemPropertyService.getByType("STUDYAGENT");
 		List<AgentVO> agents = new ArrayList<AgentVO>();
+		
 		for (SystemPropertyVO prop : properties) {			
 			AgentVO agent = new AgentVO();
 			agent.setIdAgent(Long.valueOf(prop.getValue()));
 			agent.setName(prop.getName());
 			agents.add(agent);
-		}
-		for(AgentVO agent:agents){
+			
 			headers.add(agent.getName()+"_MANUAL");
 			headers.add(agent.getName()+"_AUTO");
 		}
-		//long startTime = System.currentTimeMillis();
-		//long elapsedTime = 0; 
-		//int count = 0;
+		
+		long startTime = System.currentTimeMillis();
+		long elapsedTime = 0; 
+		int currentCount = 0;
+		
 		for (InterviewVO interviewVO : uniqueInterviews) {
-			//count++;
-			//Supposed to dynamically calculate the progress - Disable for now
-			//estimateDuration(uniqueInterviews.size(), reportHistoryVO, count, elapsedTime);
+			
+			currentCount++;
+			
+			estimateDuration(uniqueInterviews.size(), 
+					reportHistoryVO, 
+					currentCount, 
+					elapsedTime, 
+					0, 
+					msPerInterview);
 			
 			List<String> answers = new ArrayList<>();
 			answers.add(String.valueOf(interviewVO.getInterviewId()));
@@ -680,65 +716,77 @@ public class AssessmentRestController {
 			}
 			exportCSVVO.getAnswers().put(interviewVO, answers);
 			
-			//elapsedTime = System.currentTimeMillis() - startTime;
+			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
 	}
 	private Set<String> populateHeadersAndAnswers(List<InterviewQuestionVO> uniqueInterviewQuestions
-				,ExportCSVVO exportCSVVO,ReportHistoryVO reportHistoryVO) {
+				,ExportCSVVO exportCSVVO,ReportHistoryVO reportHistoryVO, String[] modules) {
 		
-		reportHistoryVO.setRecordCount(uniqueInterviewQuestions.size());
-		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 1.11);
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.2);
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
 		headers.add("Status");
 		ArrayList<Long> uniqueInterviews = new ArrayList<Long>();
+				
+		long msPerInterview = getMsPerInterview(uniqueInterviewQuestions.size(), 
+					reportHistoryVO, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), 0.3);				
 		
-		int iSize = uniqueInterviewQuestions.size();
-		if(iSize > 0){
+		if(uniqueInterviewQuestions.size() > 0){
 			//sort interview question
 			uniqueInterviewQuestions = sortInterviewQuestions(uniqueInterviewQuestions);
 		}
 		
+		Map<Long, NodeVO> nodeVoList = new HashMap<>();
+		//Initialize map to prevent multiple re-queries
+		for(String module : modules){
+			nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));
+		}		
+		
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-			addHeaders(headers, interviewQuestionVO,exportCSVVO);
+						
+			addHeaders(headers, interviewQuestionVO, exportCSVVO, 
+					nodeVoList.get(Long.valueOf(interviewQuestionVO.getTopNodeId())));
 		
 			if(!uniqueInterviews.contains(interviewQuestionVO.getIdInterview())){
 				uniqueInterviews.add(interviewQuestionVO.getIdInterview());
 			}
 		}
+		
+		reportHistoryVO.setRecordCount(uniqueInterviews.size());
 				
-		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(),2.22);
-		//int count = 0;	
-		int interviewCount = 0;
-		int interviewSize = uniqueInterviews.size();
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(),0.4);
+		int currentCount = 0;	
 		List<InterviewVO> interviewQuestionAnswer = null;
 		List<InterviewVO> runningInterviews = new ArrayList<>();
 		
-		//long startTime = System.currentTimeMillis();
-		//long elapsedTime = 0; 
+		long startTime = System.currentTimeMillis();
+		long elapsedTime = 0; 
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-			//count++;
-			//Supposed to dynamically calculate the progress - Disable for now
-			//estimateDuration(uniqueInterviewQuestions.size(), reportHistoryVO, count, elapsedTime);
+			
+			currentCount++;			
+			estimateDuration(uniqueInterviewQuestions.size(), 
+					reportHistoryVO, 
+					currentCount, 
+					elapsedTime, 
+					0, 
+					msPerInterview);
 			
 			long interviewId = interviewQuestionVO.getIdInterview();
 			InterviewVO interview = new InterviewVO();
 			interview.setInterviewId(interviewId);
 			if(!runningInterviews.contains(interview)){
-				System.out.println("loop 2 start "+ new Date());
+				
 				interviewQuestionAnswer = interviewService.getInterviewQuestionAnswer(interviewId);
 				runningInterviews.addAll(interviewQuestionAnswer);
-				interviewCount++;
-				System.out.println("[Report] New interview "+interviewCount+" of "+interviewSize+" at "+new Date());
-				double progress = (Float.valueOf(interviewCount)/Float.valueOf(interviewSize))*100;
-				updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(),progress);
+				
 			}else{
+				
 				interviewQuestionAnswer = new ArrayList<InterviewVO>();
 				for(InterviewVO interviewVO:runningInterviews){
-					if(interviewVO.getInterviewId()==interviewId){
+					if(interviewVO.getInterviewId()==interviewId){								
 						interviewQuestionAnswer.add(interviewVO);
 					}
 				}
@@ -811,41 +859,53 @@ public class AssessmentRestController {
 				exportCSVVO.getAnswers().put(interviewVO, answers);
 			}
 			
-			//elapsedTime = System.currentTimeMillis() - startTime;
+			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
 	}
 
-	@SuppressWarnings("unused")
-	private void estimateDuration(int interviewSize, ReportHistoryVO reportHistoryVO,
-			int count, long elapsedTime) {
+	/**
+	 * Estimate duration from the past completed report
+	 * @param size
+	 * @param reportHistoryVO
+	 * @param msPerInterview
+	 * @return
+	 */
+	private long getMsPerInterview(int size, ReportHistoryVO reportHistoryVO,
+			String type, double progress) {
 		
-		estimateDuration(interviewSize, reportHistoryVO, count, elapsedTime, 0);
+		long msPerInterview = 0;
+		ReportHistoryVO historicalReport = reportHistoryService.getLatestByType(type);
+		if(historicalReport != null){
+			msPerInterview = (long) ((historicalReport.getDuration() * 60 * 1000)/historicalReport.getRecordCount());									
+			reportHistoryVO.setDuration((size * msPerInterview)/(60*1000));
+			updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), progress);
+		}
+		return msPerInterview;
 	}
 	
 	/**
 	 * This method is supposed to dynamically estimate the duration given the processed record count and elapsed time
 	 * @param interviewSize
 	 * @param reportHistoryVO
-	 * @param count
+	 * @param currentCount
 	 * @param elapsedTime
 	 * @param progress
+	 * @param msPerInterview - Estimate from latest completed record
 	 */
-	//TODO Replace with one time historical data check	
 	private void estimateDuration(int interviewSize, ReportHistoryVO reportHistoryVO,
-			int count, long elapsedTime, double progress) {
+			int currentCount, long elapsedTime, double progress, long msPerInterview) {
 		
 		//Check processed count and estimate duration
-		float msPerInterview = (float) (elapsedTime/count);
-		double estDuration = interviewSize * msPerInterview;
+		if(msPerInterview == 0){
+			msPerInterview = (long) (elapsedTime/currentCount);	
+		}
 		
-		System.out.println("elapsedTime  "+elapsedTime +" "+ count + " "+msPerInterview +" "+interviewSize);
-		System.out.println("progress "+(double) count/interviewSize * 100);
-		System.out.println("duration "+ estDuration +" "+ (float) estDuration/60/1000);
+		double estDuration = interviewSize * msPerInterview;
 				
 		if(progress == 0){
-			progress = (double) count/interviewSize * 100;
+			progress = (double) currentCount/interviewSize * 100;
 		}
 		
 		updateProgress(reportHistoryVO, 
@@ -871,7 +931,7 @@ public class AssessmentRestController {
 			List<InterviewQuestionVO> value = entry.getValue();
 			InterviewQuestionVO firstElement = value.remove(0);
 			Collections.sort(value, new QuestionComparator());
-			value.add(0, firstElement);
+			value.add(0, firstElement);			
 			resultList.addAll(value);
 		}
 		
@@ -879,9 +939,10 @@ public class AssessmentRestController {
 	}
 
 	private void addHeaders(Set<String> headers, 
-			InterviewQuestionVO interviewQuestionVO, ExportCSVVO exportCSVVO) {
+			InterviewQuestionVO interviewQuestionVO, ExportCSVVO exportCSVVO, NodeVO topModule) {
 		if(isModuleOrAjsm(interviewQuestionVO)){
-//				headers.add(interviewQuestionVO.getName().substring(0, 4));
+			//Do nothing?
+			//headers.add(interviewQuestionVO.getName().substring(0, 4));
 		}
 		else if("Q_multiple".equals(interviewQuestionVO.getType())){
 				QuestionVO qVO = findInterviewQuestionInMultipleQuestionsNode
@@ -890,7 +951,7 @@ public class AssessmentRestController {
 					System.out.println("Something wrong with our data");
 					return;
 				}
-				NodeVO topModule = getTopModuleByTopNodeId(qVO.getTopNodeId());
+				
 				for(PossibleAnswerVO pVO:qVO.getChildNodes()){
 					StringBuilder header = new StringBuilder();
 					header.append(topModule.getName().substring(0, 4));
@@ -905,7 +966,7 @@ public class AssessmentRestController {
 				}
 		}
 		else{
-			NodeVO topModule = getTopModuleByTopNodeId(interviewQuestionVO.getTopNodeId());
+			
 			StringBuilder header = new StringBuilder();
 			header.append(topModule.getName().substring(0, 4));
 			header.append("_");

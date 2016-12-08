@@ -17,6 +17,7 @@ public class ParticipantIntMod implements Serializable {
 	@Id
 	private Long idParticipant;
 	private String reference;
+	private String assessedStatus;
 	private Integer status;
 	private Date lastUpdated;
 	private int deleted;
@@ -103,6 +104,14 @@ public class ParticipantIntMod implements Serializable {
 
 	public void setStatusDescription(String statusDescription) {
 		this.statusDescription = statusDescription;
+	}
+
+	public String getAssessedStatus() {
+		return assessedStatus;
+	}
+
+	public void setAssessedStatus(String assessedStatus) {
+		this.assessedStatus = assessedStatus;
 	}
 
 }

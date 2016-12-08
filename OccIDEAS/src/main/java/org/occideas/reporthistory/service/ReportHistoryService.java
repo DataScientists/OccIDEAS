@@ -8,6 +8,7 @@ public interface ReportHistoryService {
 
 	List<ReportHistoryVO> getAll();
 	List<ReportHistoryVO> getByType(String type);
+	ReportHistoryVO getLatestByType(String type);
 	ReportHistoryVO save(ReportHistoryVO entity);
 	void delete(ReportHistoryVO entity);
 	

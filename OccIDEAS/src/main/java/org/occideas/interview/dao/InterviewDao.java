@@ -6,11 +6,14 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Interview;
+import org.occideas.entity.InterviewIntroModuleModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,40 +42,65 @@ public class InterviewDao {
     public void saveOrUpdate(Interview interview){
       sessionFactory.getCurrentSession().saveOrUpdate(interview);
     }
+    
+    public List<Interview> getAll() {
+    	//No filter
+    	return getAll(null);
+    }
 
     @SuppressWarnings("unchecked")
-	public List<Interview> getAll() {
+	public List<Interview> getAll(String[] modules) {
+    	
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(Interview.class)		  						
-    		  						.setProjection(Projections.projectionList()
-    	       		  					.add(Projections.property("fragment"),"fragment")
-    	       		  					.add(Projections.property("module"),"module")
-    	       		  					.add(Projections.property("idinterview"),"idinterview")
-    	       		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
-    		  						.addOrder(Order.asc("referenceNumber"))
-    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
-      List<Interview> retValue = new ArrayList<Interview>();
-      List<Interview> temp = crit.list();
-      for(Interview interview: temp){
-    	  interview = this.get(interview.getIdinterview()); //Todo fix this workaround and ask discuss with Jed about why hibernate is not populating firedRules
-    	  retValue.add(interview);
+      
+      final Criteria crit = session.createCriteria(Interview.class, "interview")		  						
+	  						.setProjection(Projections.projectionList()
+	   		  					.add(Projections.property("fragment"),"fragment")
+	   		  					.add(Projections.property("module"),"module")
+	   		  					.add(Projections.property("idinterview"),"idinterview")
+	   		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
+	  						.addOrder(Order.asc("referenceNumber"))
+	  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
+      
+      if(modules != null){
+    	  DetachedCriteria subquery = DetachedCriteria.forClass(InterviewIntroModuleModule.class, "iimm")
+      		  	.setProjection(Projections.property("interviewId"))
+ 		   		.add(Restrictions.in("iimm.idModule", getModuleList(modules)))
+ 		   		.add(Restrictions.eqProperty("iimm.interviewId","interview.idinterview"));
+    	  
+    	  crit.add(Property.forName("interview.idinterview").in(subquery));
       }
+      
+      List<Interview> retValue = new ArrayList<Interview>();      
+      setFiredRules(retValue, crit.list());
       return retValue;
     }
+
+    /**
+     * Get list of Long moduleId
+     * @param modules
+     * @return
+     */
+    private List<Long> getModuleList(String[] modules) {
+		List<Long> list = new ArrayList<Long>();
+    	for(String module : modules){
+			list.add(Long.valueOf(module));
+		}
+		return list;
+	}
+
+	//TODO Fix this workaround and ask discuss with Jed about why hibernate is not populating firedRules
+	private void setFiredRules(List<Interview> retValue, List<Interview> temp) {
+		for(Interview interview: temp){
+			  interview = this.get(interview.getIdinterview()); 
+			  retValue.add(interview);
+		  }
+	}
     @SuppressWarnings("unchecked")
 	public List<Interview> getAssessments() {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(Interview.class)
-//						    		.setProjection(Projections.projectionList()
-//								  		.add(Projections.property("fragment"),"fragment")
-//								  		.add(Projections.property("module"),"module")
-//								  		.add(Projections.property("idinterview"),"idinterview")
-//								  		.add(Projections.property("referenceNumber"),"referenceNumber")
-//								  		)
-//    		  						.createAlias("firedRules", "firedRules")
-    		  						.addOrder(Order.asc("referenceNumber"))
-//    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class))
-    		  						;
+    		  						.addOrder(Order.asc("referenceNumber"));
       List<Interview> retValue = new ArrayList<Interview>();
       List<Interview> temp = crit.list();
       for(Interview interview: temp){
@@ -96,10 +124,7 @@ public class InterviewDao {
     		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
       List<Interview> retValue = new ArrayList<Interview>();
       List<Interview> temp = crit.list();
-      for(Interview interview: temp){
-    	  interview = this.get(interview.getIdinterview()); //Todo fix this workaround and ask discuss with Jed about why hibernate is not populating firedRules
-    	  retValue.add(interview);
-      }
+      setFiredRules(retValue, temp);
       return retValue;
     }
 

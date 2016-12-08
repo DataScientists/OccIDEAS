@@ -43,4 +43,11 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 		dao.delete(mapper.convertToReportHistory(vo));
 	}
 
+	@Override
+	/**
+	 * Get latest record for the given report type
+	 */
+	public ReportHistoryVO getLatestByType(String type) {
+		return mapper.convertToReportHistoryVO(dao.getLatestByType(type));
+	}
 }

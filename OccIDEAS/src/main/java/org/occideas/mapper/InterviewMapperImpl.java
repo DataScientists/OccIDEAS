@@ -83,7 +83,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		
 		interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOExcPaList(interview.getAutoAssessedRules()));
 		
-		interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(interview.getAutoAssessedRules()));
+		interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOExcPaList(interview.getManualAssessedRules()));
 		System.out.println("1.4:convertToInterviewWithRulesVO:"+new Date());
 		interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
 		interviewVO.setParentId(interview.getParentId());
@@ -205,6 +205,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 
 		interview.setIdinterview(interviewVO.getInterviewId());
 		interview.setReferenceNumber(interviewVO.getReferenceNumber());
+		interview.setAssessedStatus(interviewVO.getAssessedStatus());
 		interview.setModule(moduleMapper.convertToModule(interviewVO.getModule(), true));
 		interview.setFragment(fragmentMapper.convertToFragment(interviewVO.getFragment(), true));
 		List<InterviewQuestionVO> questionsAsked = interviewVO.getActualQuestion();

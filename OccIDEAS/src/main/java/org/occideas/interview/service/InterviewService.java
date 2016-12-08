@@ -12,6 +12,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<InterviewVO> listAllWithAnswers();
 
+	List<InterviewVO> listAllWithRules(String[] module);
+	
 	List<InterviewVO> listAllWithRules();
 	
 	Long getAllWithRulesCount();
@@ -32,6 +34,5 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	InterviewVO findInterviewWithFiredRulesById(Long id);
 
-	List<InterviewVO> listAllWithAssessments();
-
+	List<InterviewVO> listAllWithAssessments(String[] modules);
 }
