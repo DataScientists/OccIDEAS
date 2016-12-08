@@ -12,7 +12,7 @@
 				<td filter="{idinterview: 'text'}" title="'interviewId'">{{participant.idinterview}}</td>
 				<td filter="{reference: 'text'}" title="'referenceNumber'">{{participant.reference}}</td>
 				<td  title="'interview status'">{{participant.statusDescription}}</td>
-				<td  title="'assessment status'">Not Assessed</td>	
+				<td  title="'assessment status'">{{participant.assessedStatus}}</td>	
 				<td filter="{interviewModuleName: 'select' }" filter-data="modules()" sortable="'interviewModuleName'" title="'module'" >{{participant.interviewModuleName}}</td>
 				<td>
 					<button data-toggle="tooltip" title="Open FiredRules" ng-click="vm.openFiredRules(participant.idinterview,participant.reference)" class="btn btn-default btn-sm" >

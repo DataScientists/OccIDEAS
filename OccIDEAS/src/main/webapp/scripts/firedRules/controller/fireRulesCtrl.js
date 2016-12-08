@@ -14,6 +14,38 @@
 		$scope.interviewId = data;
 		$scope.displayHistoryNew = undefined;
 		
+		$scope.statuses = ['Incomplete','Needs Review','Complete'];
+		$scope.assessmentStatus = 'Not Assessed';
+		
+		
+		$scope.onChangeSaveStatus = function (){
+			var interview = $scope.interview;
+			interview.assessedStatus = $scope.assessmentStatus;
+			if (!(interview.notes)) {
+				interview.notes = [];
+			}
+			interview.notes.push({
+				interviewId : interview.interviewId,
+				text : "Updated Status",
+				type : 'System'
+			});
+			saveInterview(interview);
+		};
+		
+		$scope.toggleAgentView = function (agent){		
+			var agentShown = _.find($scope.agents,function(a){
+				return agent.idAgent == a.idAgent;
+			  });
+			if(agentShown){
+				_.remove($scope.agents, function(a) {
+					  return agent.idAgent == a.idAgent;
+					});
+			} else{
+				var showAgent = {name:agent.name,idAgent:agent.idAgent};
+				$scope.agents.push(showAgent);
+			}			
+		};
+		
 		$scope.leftNav = "slideFragLeft";
 		$scope.toggleLeft = function(){
 		    if ($scope.leftNav === "slideFragLeft"){
@@ -619,28 +651,28 @@
 			  	}			  
 			  ],
 			  [ 'Use Auto', function($itemScope, $event, model) {
-                    if(model.manualAssessedRules.length==0){
-                      model.manualAssessedRules = [];
-                  	  var assessments = angular.copy(model.autoAssessedRules);
-                  	  for(var i=0;i<assessments.length;i++){
-  						  var assessment = assessments[i];
-  						  assessment.idRule = '';
-  						  assessment.conditions = [];
-  						  model.manualAssessedRules.push(assessment);
-  					  }
-      				  InterviewsService.save(model).then(function (response) {
-      		                if (response.status === 200) {
-      		                	$log.info("Interview saved with manual assessments");
-      		                	refreshAssessmentDisplay();
-      		                }
-      				  });
+                    if(model.manualAssessedRules.length>0){
+                    	for(var i=0;i<$scope.data.manualAssessedRules.length;i++){
+                			var rule = $scope.data.manualAssessedRules[i];
+                			rule.deleted=1;
+                		}
+ 
                     }else{
-                    	$ngToast.create({
-          	    		  className: 'warning',
-          	    		  content: 'Auto Assessments already applied. Please update assessments manually.',
-          	    		  animation:'slide'
-          	    	 });
-                    }	  
+                    	model.manualAssessedRules = [];
+                    }	
+                    var assessments = angular.copy(model.autoAssessedRules);
+                    for(var i=0;i<assessments.length;i++){
+					  var assessment = assessments[i];
+					  var manualAssessment = {agentId:assessment.agentId,level:assessment.level,levelValue:assessment.levelValue};
+					  
+					  model.manualAssessedRules.push(manualAssessment);
+                    }
+                    InterviewsService.save(model).then(function (response) {
+		                if (response.status === 200) {
+		                	$log.info("Interview saved with manual assessments");
+		                	refreshAssessmentDisplay();
+		                }
+                    });
 			  	}
 			  ]
 			];

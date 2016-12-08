@@ -105,6 +105,8 @@ public class Interview implements java.io.Serializable {
 	@OneToMany(mappedBy = "parentId", targetEntity = Interview.class)
 	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
 	private List<Interview> interviews;
+	
+	private String assessedStatus;
 
 	public Interview() {
 	}
@@ -239,6 +241,14 @@ public class Interview implements java.io.Serializable {
 
 	public void setQuestionQueueUnprocessed(List<InterviewQuestion> questionQueueUnprocessed) {
 		this.questionQueueUnprocessed = questionQueueUnprocessed;
+	}
+
+	public String getAssessedStatus() {
+		return assessedStatus;
+	}
+
+	public void setAssessedStatus(String assessedStatus) {
+		this.assessedStatus = assessedStatus;
 	}
 
 }

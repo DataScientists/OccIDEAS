@@ -10,16 +10,16 @@
   		</div>
   		<div class="panel-body">
   		 
-		<uib-accordion close-others="oneAtATime" ng-repeat="agent in agentsData">
+		<uib-accordion ng-repeat="agentGroup in agentsData">
      	 <uib-accordion-group>
-     	 	<uib-accordion-heading>
-     	 	{{agent.key}}
-     	 		 <span class="badge pull-right">{{agent.total || 0}}</span> 
+     	 	<uib-accordion-heading >
+     	 	{{agentGroup.key}}
+     	 		 <span class="badge pull-right">{{agentGroup.total || 0}}</span> 
      	 	</uib-accordion-heading>
      	 		<div>
 					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="subNode in agent.value " ng-click="toggleAgentView(subNode)">
-							{{subNode.name}}  <span class="badge pull-right">{{subNode.total || 0}}</span> 
+						<li class="list-group-item" ng-repeat="agent in agentGroup.value " ng-click="toggleAgentView(agent)">
+							{{agent.name}}  <span class="badge pull-right">{{agent.total || 0}}</span> 
 						</li>
 					</ul>
 				</div>
