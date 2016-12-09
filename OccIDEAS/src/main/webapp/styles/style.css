@@ -1263,3 +1263,11 @@ li.borderless {
     right: 10px;
     top: 2px;
 }
+
+.nodeModHeight{
+	min-height:112px !important;
+}
+
+.nodeHeight{
+	min-height:60px !important;
+}
