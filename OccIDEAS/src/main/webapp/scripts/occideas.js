@@ -19,6 +19,7 @@ angular
     "pascalprecht.translate",
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
+    "ui.select",
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
     "occIDEASApp.Rules",

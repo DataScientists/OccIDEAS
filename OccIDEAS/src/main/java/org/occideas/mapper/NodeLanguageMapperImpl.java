@@ -90,6 +90,7 @@ public class NodeLanguageMapperImpl implements NodeLanguageMapper {
 		Language entity = new Language();
 		entity.setDescription(vo.getDescription());
 		entity.setLanguage(vo.getLanguage());
+		entity.setFlag(vo.getFlag());
 		return entity;
 	}
 
@@ -114,6 +115,7 @@ public class NodeLanguageMapperImpl implements NodeLanguageMapper {
 		vo.setId(entity.getId());
 		vo.setDescription(entity.getDescription());
 		vo.setLanguage(entity.getLanguage());
+		vo.setFlag(entity.getFlag());
 		return vo;
 	}
 

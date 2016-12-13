@@ -20,6 +20,7 @@ public class LanguageMapperImpl implements LanguageMapper{
 		entity.setId(vo.getId());
 		entity.setLanguage(vo.getLanguage());
 		entity.setLastUpdated(vo.getLastUpdated());
+		entity.setFlag(vo.getFlag());
 		return entity;
 	}
 
@@ -45,6 +46,7 @@ public class LanguageMapperImpl implements LanguageMapper{
 		vo.setId(entity.getId());
 		vo.setLanguage(entity.getLanguage());
 		vo.setLastUpdated(entity.getLastUpdated());
+		vo.setFlag(entity.getFlag());
 		return vo;
 	}
 

@@ -115,6 +115,11 @@
 					ng-if="vm.isDeleting" confirm="Delete module {{row.name}}?">
 					<span class="glyphicon glyphicon-trash"></span>
 				</button>
+				<button class="btn btn-danger btn-sm" 
+					 ng-click="vm.displayNodeLanguage(row)"
+					 ng-if="!row.isEditing">
+					<span class="glyphicon glyphicon-flag"></span>
+				</button>
 			</td>
         </tr>
     </tbody>

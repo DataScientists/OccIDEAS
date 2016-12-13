@@ -30,6 +30,7 @@ public class Language implements Serializable {
 	private String language;
 	private String description;
 	private Date lastUpdated;
+	private String flag;
 
 	public long getId() {
 		return id;
@@ -61,6 +62,14 @@ public class Language implements Serializable {
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
 	}
 
 }

@@ -10,12 +10,15 @@
 	                            '$mdDialog',
 	                            '$timeout',
 	                            '$q',
-	                            'ngToast'];
+	                            'ngToast',
+	                            '$translate'];
 	function NodeLanguageCtrl(NodeLanguageService,NgTableParams,$state,$scope,$filter,
 			$log,$mdDialog,$timeout,$q,
-			$ngToast){
+			$ngToast,$translate){
 		var vm = this;
 		$scope.selectLanguage = undefined;
+		$scope.person = {};
+		   $scope.language_list = [{'name': 'english', 'url': 'https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/gb.png'},{'name': 'italian', 'url': 'https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/it.png'}];
 		
 		vm.showNewLanguageDialog = function(){
 			$mdDialog.show({
@@ -53,18 +56,31 @@
 			NodeLanguageService.getAllLanguage().then(function(response){
 				if(response.status == '200'){
 					$scope.languages = response.data;
-					var english = {
-						id: -1,
-						language: 'EN'
-					}
-					$scope.languages.unshift(english);
+//					var english = {
+//						id: -1,
+//						language: 'EN'
+//					}
+//					$scope.languages.unshift(english);
 					$scope.selectLanguage = $scope.languages[0];
 					safeDigest($scope.selectLanguage);
 				}
 			})
 		};
 		$scope.getAllLanguage();
-
+		
+		vm.changeNodeLanguage = function(data) {
+        	$translate.refresh();
+       		if(data.language == 'EN'){
+       			vm.translateNode = false;
+       		}else{
+       			vm.translateNode = true;
+       			$translate.use(data.language);
+       			vm.tableParams.shouldGetData = true;
+    	        vm.tableParams.reload();
+       		}
+       		$scope.selectLanguage = data;
+        };
+        
 		vm.tableParams = new NgTableParams(
 				{
 				}, 

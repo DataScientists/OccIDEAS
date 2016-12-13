@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `Node_Language`;
 DROP TABLE IF EXISTS `Language`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -6,10 +7,10 @@ CREATE TABLE `Language` (
   `language` varchar(20) NOT NULL,
   `description` varchar(2048) NOT NULL,
   `lastUpdated` datetime DEFAULT NULL,
+  `flag` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `Node_Language`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Node_Language` (
@@ -22,3 +23,9 @@ CREATE TABLE `Node_Language` (
     KEY `FK_Language` (`languageId`),
    CONSTRAINT `FK_Language` FOREIGN KEY (`languageId`) REFERENCES `Language` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+insert into language (language,description,lastUpdated,flag)
+values ('EN','English',now(),'bfh-flag-US')
+insert into language (language,description,lastUpdated,flag)
+values ('MY','Malaysia',now(),'bfh-flag-MY')

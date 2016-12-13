@@ -15,8 +15,14 @@
 		'<ng-include src="\'scripts/questions/partials/fragmentSlider.html\'"></ng-include>'+
 		'<ng-include src="\'scripts/questions/partials/moduleSlider.html\'"></ng-include>'+
 		'<ng-include src="\'scripts/questions/partials/rulesTemplate.html\'"></ng-include>'
-	}
-	});
+	}})
+	.directive("scopeModuleLanguage", function () {
+		return {
+			template: '<ng-include src="\'scripts/translate/view/moduleLanguageTree.html\'"></ng-include>'+
+			'<ng-include src="\'scripts/questions/partials/agentSlider.html\'"></ng-include>'+
+			'<ng-include src="\'scripts/questions/partials/rulesTemplate.html\'"></ng-include>'
+		}
+		});
 	
 	TabsCache.$inject = ['$cacheFactory'];
 	function TabsCache($cacheFactory){
@@ -564,6 +570,37 @@
                     params:{row: null}
                 }
             }
-        });
+        }).state( {
+			name:'tabs.moduleLanguage',
+			url: '/moduleLanguage/:row',
+			sticky: true,
+		    deepStateRedirect: true,
+		    authenticate:true,
+			views:{
+				'moduleLanguage@tabs':{
+					template: '<div scope-module-language></div>',
+			        controller: 'QuestionsCtrl as vm',
+			        params:{row: null,module:null},
+			        resolve:{
+			        	data: function($stateParams,QuestionsService) {
+			        		$log.info("inside moduleLanguage@tabs resolve");
+			        		$log.info("Data getting from questions AJAX ...");
+			        		return QuestionsService.findQuestions($stateParams.row,'M')
+			        				.then(function(response){
+			        					$log.info("Data received from questions AJAX ...");
+			        					if(angular.isUndefined($window.sliderVal)){
+			        					$window.sliderVal = [];
+			        					}
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
+			        							showAgentSlider:true
+			        					};
+			        					return response.data;
+		    				});
+			        }
+			     }
+			}
+			}
+		});
 	}
 })();

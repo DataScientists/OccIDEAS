@@ -82,7 +82,8 @@
 			save:save,
 			getAllLanguage:getAllLanguage,
 			addLanguage:addLanguage,
-			getNodesByLanguageAndWord:getNodesByLanguageAndWord
+			getNodesByLanguageAndWord:getNodesByLanguageAndWord,
+			deleteNodeLanguage:deleteNodeLanguage
 		};
 	}
 })();
