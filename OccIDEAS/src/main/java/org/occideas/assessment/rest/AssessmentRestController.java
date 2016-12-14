@@ -180,7 +180,7 @@ public class AssessmentRestController {
 		
 		List<InterviewVO> uniqueInterviews = interviewService.listAllWithAssessments(filterModuleVO.getFilterModule());
 		
-		ExportCSVVO csvVO = populateAssessmentCSV(uniqueInterviews,reportHistoryVO, msPerInterview);
+		ExportCSVVO csvVO = populateAssessmentCSV(uniqueInterviews,reportHistoryVO, msPerInterview, filterModuleVO.getFilterModule());
 		writeReport(fullPath, reportHistoryVO, csvVO);
 		return Response.ok().build();
     }
@@ -318,9 +318,10 @@ public class AssessmentRestController {
 		vo.setHeaders(headers);
 		return vo;
 	}
-	private ExportCSVVO populateAssessmentCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO, long msPerInterview) {
+	private ExportCSVVO populateAssessmentCSV(List<InterviewVO> uniqueInterviews,ReportHistoryVO reportHistoryVO, 
+			long msPerInterview, String[] modules) {
 		ExportCSVVO vo = new ExportCSVVO();
-		Set<String> headers = populateHeadersAndAnswersAssessment(uniqueInterviews,vo,reportHistoryVO, msPerInterview);
+		Set<String> headers = populateHeadersAndAnswersAssessment(uniqueInterviews,vo,reportHistoryVO, msPerInterview, modules);
 		vo.setHeaders(headers);
 		return vo;
 	}
@@ -649,7 +650,7 @@ public class AssessmentRestController {
 		return retValue;
 	}
 	private Set<String> populateHeadersAndAnswersAssessment(List<InterviewVO> uniqueInterviews,
-			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview, String[] modules) {
 		
 		reportHistoryVO.setRecordCount(uniqueInterviews.size());
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.1);
@@ -674,6 +675,12 @@ public class AssessmentRestController {
 		long startTime = System.currentTimeMillis();
 		long elapsedTime = 0; 
 		int currentCount = 0;
+		
+		Map<Long, NodeVO> nodeVoList = new HashMap<>();
+		//Initialize map to prevent multiple re-queries
+		for(String module : modules){
+			nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));			
+		}
 		
 		for (InterviewVO interviewVO : uniqueInterviews) {
 			
@@ -742,127 +749,127 @@ public class AssessmentRestController {
 		Map<Long, NodeVO> nodeVoList = new HashMap<>();
 		//Initialize map to prevent multiple re-queries
 		for(String module : modules){
-			nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));
+			nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));			
 		}		
 		
-		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-						
-			addHeaders(headers, interviewQuestionVO, exportCSVVO, 
-					nodeVoList.get(Long.valueOf(interviewQuestionVO.getTopNodeId())));
-		
-			if(!uniqueInterviews.contains(interviewQuestionVO.getIdInterview())){
-				uniqueInterviews.add(interviewQuestionVO.getIdInterview());
-			}
-		}
-		
-		reportHistoryVO.setRecordCount(uniqueInterviews.size());
-				
-		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(),0.4);
-		int currentCount = 0;	
-		List<InterviewVO> interviewQuestionAnswer = null;
-		List<InterviewVO> runningInterviews = new ArrayList<>();
-		
+		int currentCount = 0;
 		long startTime = System.currentTimeMillis();
 		long elapsedTime = 0; 
+		List<InterviewVO> interviewQuestionAnswer = null;
+		
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-			
+
 			currentCount++;			
-			estimateDuration(uniqueInterviewQuestions.size(), 
+			estimateDuration(uniqueInterviewQuestions.size()*2, 
 					reportHistoryVO, 
 					currentCount, 
 					elapsedTime, 
 					0, 
-					msPerInterview);
-			
-			long interviewId = interviewQuestionVO.getIdInterview();
-			InterviewVO interview = new InterviewVO();
-			interview.setInterviewId(interviewId);
-			if(!runningInterviews.contains(interview)){
-				
-				interviewQuestionAnswer = interviewService.getInterviewQuestionAnswer(interviewId);
-				runningInterviews.addAll(interviewQuestionAnswer);
-				
-			}else{
-				
-				interviewQuestionAnswer = new ArrayList<InterviewVO>();
-				for(InterviewVO interviewVO:runningInterviews){
-					if(interviewVO.getInterviewId()==interviewId){								
-						interviewQuestionAnswer.add(interviewVO);
-					}
-				}
-			}			
-			for(InterviewVO interviewVO:interviewQuestionAnswer){				
-				
-				List<String> answers = new ArrayList<>();
-				answers.add(String.valueOf(interviewVO.getInterviewId()));
-				answers.add(String.valueOf(interviewVO.getReferenceNumber()));
-				answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
-				Set<String> questionIdList = exportCSVVO.getQuestionIdList();
-				for(String questionId:questionIdList){
-					if(questionId.contains("_")){
-						String[] temp = questionId.split("_");
-						long tempQId = Long.valueOf(temp[0]);
-						String tempNumber = String.valueOf(temp[1]);
-						InterviewQuestionVO questionAsked = null;
-						for(InterviewQuestionVO mIntQuestionVO:interviewVO.getQuestionHistory()){
-							if(mIntQuestionVO.getQuestionId() == tempQId){
-								questionAsked = mIntQuestionVO;
-								break;
-							}
-						}
-						if(questionAsked != null){
-							if(!questionAsked.getAnswers().isEmpty()){
-								boolean numberExist = false;
-								for(InterviewAnswerVO ans:questionAsked.getAnswers()){
-									if(ans.getNumber().equals(tempNumber)
-											&& !numberExist){
-										if(!StringUtils.isEmpty(ans.getAnswerFreetext())){
-											answers.add(ans.getAnswerFreetext());
-											numberExist = true;
-										}else{
-											answers.add(ans.getName());
-											numberExist = true;
-										}
-									}
-								}
-								if(!numberExist){
-									answers.add("-NoA-");
-								}
-							}
-						}else{
-							answers.add("-QNotAsked-");
-						}
-					}else{
-						InterviewQuestionVO questionAsked = null;
-						for(InterviewQuestionVO mIntQuestionVO:interviewVO.getQuestionHistory()){
-							if(mIntQuestionVO.getQuestionId() == Long.valueOf(questionId)){
-								questionAsked = mIntQuestionVO;
-								break;
-							}
-						}
-						if(questionAsked != null){
-							if(!questionAsked.getAnswers().isEmpty()){
-								InterviewAnswerVO questionAskedAns = questionAsked.getAnswers().get(0);
-								if(!StringUtils.isEmpty(questionAskedAns.getAnswerFreetext())){
-									answers.add(questionAskedAns.getAnswerFreetext());
-								}else{
-									answers.add(questionAskedAns.getName());
-								}
-							}else{
-								answers.add("-NoA-");
-							}
-						}else{
-							answers.add("-QNotAsked-");
-						}
-					}				
-				}
-				exportCSVVO.getAnswers().put(interviewVO, answers);
+					msPerInterview);			
+		
+			//Build header and answers
+			addHeadersAndAnswers(headers, interviewQuestionVO, exportCSVVO, 
+					nodeVoList.get(Long.valueOf(interviewQuestionVO.getTopNodeId())));
+		
+			if(!uniqueInterviews.contains(interviewQuestionVO.getIdInterview())){ 
+				uniqueInterviews.add(interviewQuestionVO.getIdInterview());
+				reportHistoryVO.setRecordCount(uniqueInterviews.size());
 			}
+			
+			elapsedTime = System.currentTimeMillis() - startTime;
+		}
+
+		//Consolidate answers for all interviews, fill not answered and not asked questions
+		currentCount = 0;
+		for(Long interviewId : uniqueInterviews){
+						
+			interviewQuestionAnswer = interviewService.getInterviewQuestionAnswer(interviewId);			
+			
+			InterviewVO interviewVO = interviewQuestionAnswer.get(0);
+				
+			List<String> answers = new ArrayList<>();
+			answers.add(String.valueOf(interviewVO.getInterviewId()));
+			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+			answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
+			
+			Set<String> questionIdList = exportCSVVO.getQuestionIdList();
+			
+			for(String questionId:questionIdList){
+				
+				if(questionId.contains("_")){
+					
+					handleMultiQuestion(interviewVO, answers, questionId);
+					
+				}else{					
+					handleSimpleQuestion(interviewVO, answers, questionId);
+				}				
+			}
+			
+			exportCSVVO.getAnswers().put(interviewVO, answers);			
 			
 			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
+	}
+
+	private void handleSimpleQuestion(InterviewVO interviewVO, List<String> answers, String questionId) {
+		InterviewQuestionVO questionAsked = null;
+		for(InterviewQuestionVO mIntQuestionVO:interviewVO.getQuestionHistory()){
+			if(mIntQuestionVO.getQuestionId() == Long.valueOf(questionId)){
+				questionAsked = mIntQuestionVO;
+				break;
+			}
+		}
+		if(questionAsked != null){
+			if(!questionAsked.getAnswers().isEmpty()){
+				InterviewAnswerVO questionAskedAns = questionAsked.getAnswers().get(0);
+				if(!StringUtils.isEmpty(questionAskedAns.getAnswerFreetext())){
+					answers.add(questionAskedAns.getAnswerFreetext());
+				}else{
+					answers.add(questionAskedAns.getName());
+				}
+			}else{
+				answers.add("-NoA-");
+			}
+		}else{							
+			answers.add("-QNotAsked-");
+		}
+	}
+
+	private void handleMultiQuestion(InterviewVO interviewVO, List<String> answers, String questionId) {
+		String[] temp = questionId.split("_");
+		long tempQId = Long.valueOf(temp[0]);
+		String tempNumber = String.valueOf(temp[1]);
+		InterviewQuestionVO questionAsked = null;
+		for(InterviewQuestionVO mIntQuestionVO:interviewVO.getQuestionHistory()){
+			if(mIntQuestionVO.getQuestionId() == tempQId){
+				questionAsked = mIntQuestionVO;
+				break;
+			}
+		}
+		if(questionAsked != null){
+			if(!questionAsked.getAnswers().isEmpty()){
+				boolean numberExist = false;
+				for(InterviewAnswerVO ans:questionAsked.getAnswers()){
+					if(ans.getNumber().equals(tempNumber)
+							&& !numberExist){
+						if(!StringUtils.isEmpty(ans.getAnswerFreetext())){
+							answers.add(ans.getAnswerFreetext());
+							numberExist = true;
+						}else{
+							answers.add(ans.getName());
+							numberExist = true;
+						}
+					}
+				}
+				if(!numberExist){
+					answers.add("-NoA-");
+				}
+			}
+		}else{							
+			answers.add("-QNotAsked-");
+		}
 	}
 
 	/**
@@ -938,8 +945,9 @@ public class AssessmentRestController {
 		return resultList;
 	}
 
-	private void addHeaders(Set<String> headers, 
+	private void addHeadersAndAnswers(Set<String> headers, 
 			InterviewQuestionVO interviewQuestionVO, ExportCSVVO exportCSVVO, NodeVO topModule) {
+
 		if(isModuleOrAjsm(interviewQuestionVO)){
 			//Do nothing?
 			//headers.add(interviewQuestionVO.getName().substring(0, 4));
