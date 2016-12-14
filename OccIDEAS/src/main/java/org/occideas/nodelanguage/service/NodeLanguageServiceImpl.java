@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.occideas.entity.Language;
 import org.occideas.mapper.NodeLanguageMapper;
 import org.occideas.nodelanguage.dao.NodeLanguageDao;
 import org.occideas.vo.LanguageVO;
@@ -53,5 +54,12 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public NodeLanguageVO getNodesByLanguageAndWord(long getLanguageId, String word) {
 		return mapper.convertToNodeLanguageVO(dao.getNodesByLanguageAndWord(getLanguageId, word));
+	}
+
+	@Override
+	public List<LanguageVO> getDistinctLanguage() {
+		List<Long> distinctNodeLanguageId = dao.getDistinctNodeLanguageId();
+		List<Language> distinctLanguage = dao.getDistinctLanguage(distinctNodeLanguageId);
+		return mapper.convertToListLanguageVO(distinctLanguage);
 	}
 }

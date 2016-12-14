@@ -21,6 +21,16 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getDistinctLanguage(){
+			var restUrl = url+'/getDistinctLanguage';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function addLanguage(data){
 			var restUrl = url+'/addLanguage';
 			var request =  $http({
@@ -83,7 +93,8 @@
 			getAllLanguage:getAllLanguage,
 			addLanguage:addLanguage,
 			getNodesByLanguageAndWord:getNodesByLanguageAndWord,
-			deleteNodeLanguage:deleteNodeLanguage
+			deleteNodeLanguage:deleteNodeLanguage,
+			getDistinctLanguage:getDistinctLanguage
 		};
 	}
 })();

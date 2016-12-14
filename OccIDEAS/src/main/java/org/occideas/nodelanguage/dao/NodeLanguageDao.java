@@ -5,7 +5,10 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
+import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.Language;
 import org.occideas.entity.NodeLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +67,30 @@ public class NodeLanguageDao {
         }
         
         return null;
+	}
+	
+	public List<Long> getDistinctNodeLanguageId(){
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(NodeLanguage.class)
+				.setProjection(
+			    Projections.distinct(Projections.projectionList()
+			    .add(Projections.property("languageId"), "languageId"))); 
+		List list = crit.list();
+		if(list != null){
+			return list;
+		}
+		return null;
+	}
+	
+	public List<Language> getDistinctLanguage(List<Long> ids){
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Language.class)
+				.add(Restrictions.in("id",ids)); 
+		List list = crit.list();
+		if(list != null){
+			return list;
+		}
+		return null;
 	}
 	
 }

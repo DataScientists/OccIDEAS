@@ -20,4 +20,6 @@ public interface NodeLanguageService {
 	public NodeLanguageVO getNodesByLanguageAndWord(long getLanguageId, String word);
 	
 	public void delete(NodeLanguageVO vo);
+	
+	public List<LanguageVO> getDistinctLanguage();
 }

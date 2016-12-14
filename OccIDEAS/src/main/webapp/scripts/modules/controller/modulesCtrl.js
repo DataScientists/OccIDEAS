@@ -3,15 +3,21 @@
 		   .controller('ModuleCtrl',ModuleCtrl);
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
                           '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout','InterviewsService'
-                          ,'$q','ngToast','ModuleRuleService'];
+                          ,'$q','ngToast','ModuleRuleService','NodeLanguageService'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
 			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q,
-			$ngToast,ModuleRuleService){
+			$ngToast,ModuleRuleService,NodeLanguageService){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    
+	    NodeLanguageService.getDistinctLanguage().then(function(response){
+	    	if(response.status == '200'){
+	    		$scope.flags = response.data;
+	    	}
+	    });
 	    
 	    $scope.showRuleCount = function(row,$event){
 	    	ModuleRuleService.getRuleCountById(row.idNode).then(function(response){
