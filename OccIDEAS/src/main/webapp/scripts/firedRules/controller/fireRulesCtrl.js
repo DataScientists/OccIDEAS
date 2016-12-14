@@ -14,10 +14,25 @@
 		$scope.interviewId = data;
 		$scope.displayHistoryNew = undefined;
 		
-		$scope.statuses = ['Incomplete','Needs Review','Complete'];
-		
-		
-		
+		$(window).scroll(function () {
+            if ($(this).scrollTop() > 50) {
+                $('#back-to-top').fadeIn();
+            } else {
+                $('#back-to-top').fadeOut();
+            }
+        });
+        // scroll body to 0px on click
+        $('#back-to-top').click(function () {
+            $('#back-to-top').tooltip('hide');
+            $('body,html').animate({
+                scrollTop: 0
+            }, 800);
+            return false;
+        });
+        
+        $('#back-to-top').tooltip('show');
+        
+		$scope.statuses = ['Incomplete','Needs Review','Complete'];				
 		$scope.onChangeSaveStatus = function (){
 			if($scope.interview){
 				var interview = $scope.interview;
@@ -126,7 +141,7 @@
 								  node.header = linkNode.name.substr(0,4);
 							  } 
 						});	
-						
+						$('#back-to-top').fadeOut();
 					}
                 });
 				
