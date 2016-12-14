@@ -147,7 +147,7 @@
     	</li>
   		</ul>
   		<md-input-container style="margin-right: 10px;">
-        <label>Assessment Status</label>
+        <label>Status:{{assessmentStatus}}</label>
         <md-select ng-model="assessmentStatus" ng-change="onChangeSaveStatus()" >
           <md-option ng-repeat="status in statuses" value="{{status}}" >{{status}}</md-option>
         </md-select>

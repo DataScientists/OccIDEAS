@@ -966,6 +966,9 @@ a:focus {
 .highlight-interview{
     background: #DDDFE8;
 }
+.highlight-rulenode{
+    background: #e7ce83;
+}
 
 /** UI Tree*/
 .angular-ui-tree .btn {

@@ -15,21 +15,23 @@
 		$scope.displayHistoryNew = undefined;
 		
 		$scope.statuses = ['Incomplete','Needs Review','Complete'];
-		$scope.assessmentStatus = 'Not Assessed';
+		
 		
 		
 		$scope.onChangeSaveStatus = function (){
-			var interview = $scope.interview;
-			interview.assessedStatus = $scope.assessmentStatus;
-			if (!(interview.notes)) {
-				interview.notes = [];
-			}
-			interview.notes.push({
-				interviewId : interview.interviewId,
-				text : "Updated Status",
-				type : 'System'
-			});
-			saveInterview(interview);
+			if($scope.interview){
+				var interview = $scope.interview;
+				interview.assessedStatus = $scope.assessmentStatus;
+				if (!(interview.notes)) {
+					interview.notes = [];
+				}
+				interview.notes.push({
+					interviewId : interview.interviewId,
+					text : "Updated Status",
+					type : 'System'
+				});
+				saveInterview(interview);
+			}		
 		};
 		
 		$scope.toggleAgentView = function (agent){		
@@ -104,6 +106,7 @@
 				AssessmentsService.updateFiredRules($scope.interviewId).then(function(response){
 					if(response.status == '200'){	
 						$scope.interview = response.data[0];
+						$scope.assessmentStatus = $scope.interview.assessedStatus;
 						$scope.data = response.data[0];
 						$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
 						_.remove($scope.displayHistoryNew, function(node) {
@@ -275,6 +278,7 @@
         };
 
 		$scope.highlightNode = function(idNode){
+			$(".tree-node-content span").removeClass("highlight-rulenode");
 			var elementId = 'IntResult'+idNode;
 			if ($('#' + elementId).length == 0) {
 				$ngToast.create({
@@ -285,10 +289,11 @@
 				return false;
 			}
 			$scope.scrollTo(elementId);
-			$('#'+elementId).toggleClass('highlight');
-			setTimeout(function(){
-				$('#'+elementId).toggleClass('highlight');
-			},5500);
+			
+			$('#'+elementId).addClass('highlight-rulenode');
+			//setTimeout(function(){
+			//	$('#'+elementId).toggleClass('highlight');
+			//},5500);
 		}
 
 		$scope.scrollTo = function( target){
@@ -304,12 +309,11 @@
 				_.remove(menu, {
 				    0: 'Run Noise Assessment'
 				});
-			}else if(scope.agent.idAgent!=157){
+			}
+			if(scope.agent.idAgent!=157){
 				_.remove(menu, {
 				    0: 'Run Vibration Assessment'
 				});
-			}else{
-				
 			}
 			return menu;
 		}
