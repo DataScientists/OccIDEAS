@@ -49,12 +49,6 @@
         		data:""
         	});
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
-            $scope.tabOptions.push({
-                state: "tabs.language",
-                data: ""
-            });
-        }
         $scope.$watch('selectedIndex', function(current, old) {
             var state = null;
             var data = null;
@@ -138,12 +132,6 @@
                 viewName: 'reports@tabs'
             });
         }
-        if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
-            tabs.push({
-                title: 'Language',
-                viewName: 'language@tabs'
-            });
-        }
         $scope.tabs = tabs;
         $scope.selectedIndex = 0;
 
@@ -153,6 +141,25 @@
             $scope.tabOptions.splice(index, 1);
             $scope.selectedIndex = 3;
         }
+        
+        $rootScope.addLanguageTab = function() {
+            var tabTitle = "Language ";
+            var state = "tabs.language";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'language@tabs',
+                    canClose: true,
+                    disabled: false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                    }
+                });
+            }
+        };
 
         
         $scope.addImportJsonValidationTab = function(report) {

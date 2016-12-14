@@ -10,6 +10,12 @@
         <span class="glyphicon glyphicon-user"></span>
       </md-button>
       <md-menu-content width="4">
+         <md-menu-item permission="['ROLE_ADMIN','ROLE_CONTDEV']">
+          <md-button ng-click="addLanguageTab()">
+           <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+            Languages
+          </md-button>
+        </md-menu-item>
         <md-menu-item>
           <md-button ng-click="vm.showChangePasswordDialog()">
            <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
