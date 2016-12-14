@@ -55,9 +55,6 @@ public class InterviewModule implements java.io.Serializable {
 	@Column(name = "idinterview")
 	private long idinterview;
 
-	@Column(name = "linkNum")
-	private String linkNum;
-
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = InterviewQuestion.class)
 	@Where(clause = "deleted = 0")
 	@JoinColumns({
@@ -152,14 +149,6 @@ public class InterviewModule implements java.io.Serializable {
 
 	public void setIdInterview(long idinterview) {
 		this.idinterview = idinterview;
-	}
-
-	public String getLinkNum() {
-		return linkNum;
-	}
-
-	public void setLinkNum(String linkNum) {
-		this.linkNum = linkNum;
 	}
 
 	public List<InterviewQuestion> getQuestionsAsked() {

@@ -11,6 +11,7 @@ public class AssessmentFilterVO extends GenericFilterVO {
 	private Long idParticipant;
 	private Long interviewId;
 	private String reference;
+	private String assessedStatus;
 	private Integer status;
 	private String interviewModuleName;
 
@@ -73,6 +74,11 @@ public class AssessmentFilterVO extends GenericFilterVO {
 			}else{
 				sqlQuery.setParameter("status", "%%");
 			}
+			if (assessmentFilter.getAssessedStatus() != null) {
+				sqlQuery.setParameter("assessedStatus", "%"+assessmentFilter.getAssessedStatus()+"%");
+			}else{
+				sqlQuery.setParameter("assessedStatus", "%%");
+			}
 			if (assessmentFilter.getInterviewId() != null) {
 				sqlQuery.setParameter("idinterview", "%"+assessmentFilter.getInterviewId()+"%");
 			}else{
@@ -84,6 +90,14 @@ public class AssessmentFilterVO extends GenericFilterVO {
 				sqlQuery.setParameter("interviewModuleName", "%%");
 			}
 		}
+	}
+
+	public String getAssessedStatus() {
+		return assessedStatus;
+	}
+
+	public void setAssessedStatus(String assessedStatus) {
+		this.assessedStatus = assessedStatus;
 	}
 
 }

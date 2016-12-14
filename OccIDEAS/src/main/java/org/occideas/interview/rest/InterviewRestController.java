@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
@@ -44,6 +45,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     
     @Autowired
     private InterviewModuleService modService;
+    
+    @Autowired
+    private AgentService agentService;
 
     @GET
     @Path(value = "/getlist")
@@ -200,8 +204,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 					existingRule.setDeleted(1);
 					autoAssessedRules.add(existingRule);
 				}
-				
-				for(AgentVO agent:interviewVO.getAgents()){
+				List<AgentVO> listAgents = agentService.getStudyAgents();
+				for(AgentVO agent:listAgents){
 					RuleVO rule = new RuleVO();
 					rule.setLevel("noExposure");
 					rule.setLevelValue(5);
@@ -218,6 +222,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 					}
 					autoAssessedRules.add(rule);
 				}
+				interviewVO.setAssessedStatus("Auto Assessed");
 				interviewVO.setAutoAssessedRules(autoAssessedRules);
 				service.update(interviewVO);
          	}

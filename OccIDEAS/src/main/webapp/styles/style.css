@@ -966,6 +966,9 @@ a:focus {
 .highlight-interview{
     background: #DDDFE8;
 }
+.highlight-rulenode{
+    background: #e7ce83;
+}
 
 /** UI Tree*/
 .angular-ui-tree .btn {
@@ -1270,4 +1273,12 @@ li.borderless {
 
 .nodeHeight{
 	min-height:60px !important;
+}
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #7D89B7 !important;
+    border-color: #7D89B7 !important;
+    z-index: 1999;
 }

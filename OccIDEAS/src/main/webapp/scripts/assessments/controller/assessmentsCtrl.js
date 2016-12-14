@@ -695,6 +695,7 @@
 						$scope.assessmentFilter.interviewId=lengthGreaterThan2(params.filter().idinterview);
 						$scope.assessmentFilter.reference=lengthGreaterThan2(params.filter().reference);
 						$scope.assessmentFilter.status=lengthGreaterThan2(params.filter().status);
+						$scope.assessmentFilter.assessedStatus=lengthGreaterThan2(params.filter().assessedStatus);
 						$scope.assessmentFilter.interviewModuleName=lengthGreaterThan2(params.filter().interviewModuleName);
 						$scope.assessmentFilter.pageNumber=params.page();
 						$scope.assessmentFilter.size=params.count();

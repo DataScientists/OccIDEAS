@@ -70,6 +70,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		InterviewVO interviewVO = new InterviewVO();
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
+		interviewVO.setAssessedStatus(interview.getAssessedStatus());
 		
 		System.out.println("1.1:convertToInterviewWithRulesVO:"+new Date());
 		
