@@ -25,7 +25,7 @@ CREATE TABLE `Node_Language` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-insert into language (language,description,lastUpdated,flag)
-values ('EN','English',now(),'bfh-flag-US')
-insert into language (language,description,lastUpdated,flag)
-values ('MY','Malaysia',now(),'bfh-flag-MY')
+insert into `Language` (language,description,lastUpdated,flag)
+values ('EN','English',now(),'bfh-flag-US');
+insert into `Language` (language,description,lastUpdated,flag)
+values ('MY','Malaysia',now(),'bfh-flag-MY');
