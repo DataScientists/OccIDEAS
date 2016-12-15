@@ -164,4 +164,4 @@ PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `occideas`.`Interview` 
-ADD COLUMN `assessedStatus` VARCHAR(255) NULL;
+ADD COLUMN `assessedStatus` VARCHAR(255) DEFAULT '';
