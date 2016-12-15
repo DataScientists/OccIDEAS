@@ -1,5 +1,6 @@
 package org.occideas.nodelanguage.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -59,6 +60,9 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public List<LanguageVO> getDistinctLanguage() {
 		List<Long> distinctNodeLanguageId = dao.getDistinctNodeLanguageId();
+		if(distinctNodeLanguageId.isEmpty()){
+			return new ArrayList<>();
+		}
 		List<Language> distinctLanguage = dao.getDistinctLanguage(distinctNodeLanguageId);
 		return mapper.convertToListLanguageVO(distinctLanguage);
 	}
