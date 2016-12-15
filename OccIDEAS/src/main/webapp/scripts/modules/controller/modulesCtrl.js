@@ -13,6 +13,10 @@
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
 	    
+	    self.displayNodeLanguage = function(){
+	    	
+	    }
+	    
 	    NodeLanguageService.getDistinctLanguage().then(function(response){
 	    	if(response.status == '200'){
 	    		$scope.flags = response.data;
