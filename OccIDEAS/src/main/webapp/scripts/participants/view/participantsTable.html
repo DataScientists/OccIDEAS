@@ -1,14 +1,14 @@
 <div ng-cloak>
 	<div>
 		<div style="width: 500px;">
-			<md-input-container> <label id="awesidlabel">AWES
-				ID</label> <input id="awesid" type="text" class="form-control"
-				placeholder="H______" required
-				ng-model="vm.tableParams.filter().reference"
-				ng-keyup="filterAndValidate($event,this)" />
-			<div id="awesidcounter" class="md-errors-spacer">
-				<div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
-			</div>
+			<md-input-container> <label id="awesidlabel">Study ID</label> 
+				<input id="awesid" type="text" class="form-control"
+					placeholder="H______" required
+					ng-model="vm.tableParams.filter().reference"
+					ng-keyup="filterAndValidate($event,this)" />
+				<div id="awesidcounter" class="md-errors-spacer">
+					<div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
+				</div>
 			</md-input-container>
 			<div class="brn-group pull-right">
 				<button class="btn btn-default" ng-click="vm.add()">
@@ -16,22 +16,20 @@
 				</button>
 			</div>
 		</div>
-		<!-- <pre>debug{{vm.tableParams.data| json}}</pre>   -->
 		<table ng-table="vm.tableParams"
-			class="table table-bordered table-hover 
-  table-condensed editable-table"
+			class="table table-bordered table-hover table-condensed editable-table"
 			show-filter="true" template-pagination="templatePagination.html">
 			<tr ng-repeat="participant in $data">
-				<td filter="{idParticipant: 'text'}" title="'idParticipant'">{{participant.idParticipant}}</td>
-				<td filter="{idinterview: 'text'}" title="'interviewId'">{{participant.idinterview}}</td>
-				<td filter="{reference: 'text'}" title="'referenceNumber'">{{participant.reference}}</td>
-				<td title="'interview status'">{{participant.statusDescription}}</td>
+				<td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
+				<td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
+				<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
+				<td title="'Interview Status'">{{participant.statusDescription}}</td>
 				<td title="'Notes'" style="max-width: 200px;">
 					 <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
           					<span class="glyphicon glyphicon-comment"></span>
        				 </button>
 				</td>
-				<td>
+				<td title="'Resume'" >
 					<button ng-if="participant.statusDescription=='Running'"
 						class="btn btn-default btn-sm"
 						ng-click="addInterviewTabInterviewersEdit(participant)">
@@ -47,8 +45,6 @@
 						ng-click="addInterviewTabInterviewersEdit(participant)">
 						<span class="glyphicon glyphicon-stop"></span>
 					</button>
-
-
 				</td>
 			</tr>
 		</table>
