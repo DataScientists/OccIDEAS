@@ -753,12 +753,26 @@
 			if (!(interview.notes)) {
 				interview.notes = [];
 			}
-			interview.notes.push({
-				interviewId : interview.interviewId,
-				text : noteText,
-				type : 'Assessor'
-			});
-			saveInterview(interview);
+			var newNote = {
+					interviewId : interview.interviewId,
+					text : noteText,
+					type : 'Assessor'
+				}
+			
+			interview.notes.push(newNote);
+			
+			InterviewsService.saveNote(newNote).then(function(response) {
+				if (response.status === 200) {					
+
+					//Get new note list with idNote reflected
+					InterviewsService.getListNote(interview.interviewId).then(function(response) {
+						if (response.status === 200) {					
+							interview.notes = response.data;
+						}
+					});
+				}
+			});			
+			
 			$mdDialog.cancel();
 		}
 		$scope.cancel = function() {
@@ -773,6 +787,39 @@
 				}
 			});
 		}
+		
+		$scope.deleteNote = function(note, model, $event) {
+			
+			$scope.noteToDelete = note;
+			$mdDialog.show({
+				scope : $scope.$new(),
+				templateUrl : 'scripts/interviews/view/deleteNoteDialog.html',
+				clickOutsideToClose:true
+			});
+		};
+		
+		$scope.deleteNoteButton = function(){
+			
+			if($scope.noteToDelete){
+				//Mark as deleted
+				$scope.noteToDelete.deleted = 1;			
+				InterviewsService.saveNote($scope.noteToDelete);
+				$scope.noteToDelete = null;
+				
+				if($scope.interview && $scope.interview.notes){
+					
+					//Remove manually from list
+					var i = $scope.interview.notes.length;
+					while (i--){
+					    if ($scope.interview.notes[i].deleted == 1){
+					        $scope.interview.notes.splice(i, 1);
+					    }
+					}
+				}	
+			}				
+			
+			$mdDialog.cancel();
+		}		
 	}
 
 })();
