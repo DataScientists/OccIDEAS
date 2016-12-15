@@ -4,13 +4,14 @@
 	
 	ReportsCtrl.$inject = ['ReportsService','NgTableParams','$state','data','$scope',
 	                       '$filter','$resource','$mdDialog','InterviewsService',
-	                       'SystemPropertyService','ngToast', '$timeout'];
+	                       'SystemPropertyService','ngToast', '$timeout', '$interval'];
 	function ReportsCtrl(ReportsService,NgTableParams,$state,data,$scope,
 			$filter,$resource,$mdDialog,InterviewsService,
-			SystemPropertyService,ngToast, $timeout){
+			SystemPropertyService,ngToast, $timeout, $interval){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
+		$scope.interval = null;
 		
 		$scope.del = function(reportHistoryVO){
 			ReportsService.deleteReport(reportHistoryVO).then(function(response) {
@@ -163,7 +164,7 @@
 						$scope.cancel();
 						 ngToast.create({
 				    		  className: 'success',
-				    		  content: 'Your report is now running... Kindly check the reports tab for details.'
+				    		  content: "Your report is now running... Kindly wait until it is completed."
 				    	 });
 						 var filterModule = [];
 						 _.each($scope.checkboxes.items,function(value, key){
@@ -188,7 +189,26 @@
 						        	allCompleted = false;
 						            self.tableParams.reload();						           
 						        });							 
-						 }, 500); 							 
+						 }, 500); 	
+						 
+						 //Check if everything is completed
+						 $scope.interval = $interval(function() {
+							 self.tableParams.shouldGetData = true;
+						        self.tableParams.reload().then(function (data) {
+						            	self.tableParams.reload();
+						            
+						                allCompleted = true;				                
+						                _.each(data,function(value, key){											
+											 if(value.status !== 'Completed'){
+												 allCompleted = false;
+											 }
+										 });
+						                
+						                if(allCompleted){
+						                	$scope.cancelInterval();
+						                }						                
+						        });							 
+						 }, 1000 * 30); //Update every 30 seconds, just to know if it's completed already
 						
 					}else{
 						ngToast.create({
@@ -202,6 +222,14 @@
 				}
 			});
 		}
+		
+		//Cancel refresh
+		$scope.cancelInterval = function() {
+			if (angular.isDefined($scope.interval)) {
+				$interval.cancel($scope.interval);
+				$scope.interval = undefined;
+			}
+		};
 	        
 		$scope.cancel = function() {
 			$mdDialog.cancel();
