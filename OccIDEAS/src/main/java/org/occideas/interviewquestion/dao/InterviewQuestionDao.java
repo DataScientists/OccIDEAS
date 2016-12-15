@@ -14,6 +14,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.question.service.QuestionService;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -36,6 +37,7 @@ public class InterviewQuestionDao {
 			+ "where a.question_id>0 and a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) "
 			+ "and b.topNodeId = a.topNodeId";
 		
+	@SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){
 		System.out.println("Start getUniqueInterviewQuestions:"+new Date());
 		final Session session = sessionFactory.getCurrentSession();
@@ -140,6 +142,7 @@ public class InterviewQuestionDao {
         return crit.list();
     }
 
+	@SuppressWarnings("unchecked")
 	public InterviewQuestion findIntQuestion(long idInterview, long questionId) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(InterviewQuestion.class);
@@ -164,13 +167,15 @@ public class InterviewQuestionDao {
 	}	
 
 	public Long getUniqueInterviewQuestionCount(String[] filterModule) {
-			
+		
 		final Session session = sessionFactory.getCurrentSession();
-		SQLQuery sqlQuery = session.createSQLQuery(UNIQUE_INT_QUESTION_SQL).
-				addEntity(InterviewQuestion.class);
-		sqlQuery.setParameterList("param", filterModule);
-
-		return (Long) sqlQuery.uniqueResult();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class)
+				.add(Restrictions.eq("deleted", 0))
+				.add(Restrictions.in("topNodeId", CommonUtil.convertToLongList(filterModule)))
+				.add(Restrictions.gt("questionId", 0L))
+				.setProjection(Projections.countDistinct("idInterview"));
+				
+		return (Long) crit.uniqueResult();
 	}
 
 }

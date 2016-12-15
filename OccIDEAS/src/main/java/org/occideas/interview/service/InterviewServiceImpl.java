@@ -170,8 +170,8 @@ public class InterviewServiceImpl implements InterviewService {
 		return mapper.convertToInterviewVOWithFiredRules(interview);
 	}
 	@Override
-	public Long getAllWithRulesCount() {
+	public Long getAllWithRulesCount(String[] modules) {
 		
-		return interviewDao.getAllCount();
+		return interviewDao.getCountForModules(modules);
 	}
 }

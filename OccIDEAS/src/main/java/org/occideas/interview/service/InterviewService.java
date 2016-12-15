@@ -12,11 +12,11 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<InterviewVO> listAllWithAnswers();
 
-	List<InterviewVO> listAllWithRules(String[] module);
+	List<InterviewVO> listAllWithRules(String[] modules);
 	
 	List<InterviewVO> listAllWithRules();
 	
-	Long getAllWithRulesCount();
+	Long getAllWithRulesCount(String[] modules);
 
 	List<InterviewVO> findByIdWithRules(Long id);
 	

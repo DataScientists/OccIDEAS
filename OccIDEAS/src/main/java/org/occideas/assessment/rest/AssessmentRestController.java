@@ -107,6 +107,10 @@ public class AssessmentRestController {
 		reportHistoryVO = insertToReportHistory(exportFileCSV, 
 					fullPath, reportHistoryVO.getId(),0, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue());
 		
+		Long count = interviewQuestionService.getUniqueInterviewQuestionCount(filterModuleVO.getFilterModule());
+		
+		reportHistoryVO.setRecordCount(count);
+		
 		updateProgress(reportHistoryVO, 
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
 				0.11, new Date(), INITIAL_DURATION_MIN);	
@@ -170,11 +174,13 @@ public class AssessmentRestController {
 		String fullPath = csvDir.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
 		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0, ReportsEnum.REPORT_ASSESSMENT_EXPORT.getValue());
 		
+		Long count = interviewService.getAllWithRulesCount(filterModuleVO.getFilterModule());
+		
+		reportHistoryVO.setRecordCount(count);
+		
 		updateProgress(reportHistoryVO, 
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
 				0.11, new Date(), INITIAL_DURATION_MIN);
-		
-		Long count = interviewService.getAllWithRulesCount();
 		
 		long msPerInterview = getMsPerInterview(count.intValue(), 
 				reportHistoryVO, ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);		
@@ -201,11 +207,13 @@ public class AssessmentRestController {
 		String fullPath = csvDir.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
 		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0, ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
 		
+		Long count = interviewService.getAllWithRulesCount(filterModuleVO.getFilterModule());
+		
+		reportHistoryVO.setRecordCount(count);
+		
 		updateProgress(reportHistoryVO, 
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
 				0.11, new Date(), INITIAL_DURATION_MIN);		
-		
-		Long count = interviewService.getAllWithRulesCount();
 		
 		long msPerInterview = getMsPerInterview(count.intValue(), 
 				reportHistoryVO, ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);	
@@ -232,11 +240,13 @@ public class AssessmentRestController {
 		String fullPath = csvDir.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
 		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath,reportHistoryVO.getId(),0, ReportsEnum.REPORT_VIBRATION_ASSESSMENT_EXPORT.getValue());
 		
+		Long count = interviewService.getAllWithRulesCount(filterModuleVO.getFilterModule());
+		
+		reportHistoryVO.setRecordCount(count);
+		
 		updateProgress(reportHistoryVO, 
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
 				0.11, new Date(), INITIAL_DURATION_MIN);
-		
-		Long count = interviewService.getAllWithRulesCount();
 				
 		long msPerInterview = getMsPerInterview(count.intValue(), 
 				reportHistoryVO, ReportsEnum.REPORT_VIBRATION_ASSESSMENT_EXPORT.getValue(), 0.2);
@@ -343,7 +353,6 @@ public class AssessmentRestController {
 	private Set<String> populateHeadersAndAnswersAssessmentVibration(List<InterviewVO> uniqueInterviews,
 			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
 		
-		reportHistoryVO.setRecordCount(uniqueInterviews.size());
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.3);
 		
 		Set<String> headers = new LinkedHashSet<>();
@@ -355,22 +364,9 @@ public class AssessmentRestController {
 		headers.add("Shift Length");
 		headers.add("Daily Vibration");
 		
-		long startTime = System.currentTimeMillis();
-		long elapsedTime = 0; 
-		int currentCount = 0;
-		
 		AgentVO vibrationAgent = getAgent("VIBRATIONAGENT");
 		
 		for (InterviewVO interviewVO : uniqueInterviews) {
-			
-			currentCount++;
-			
-			estimateDuration(uniqueInterviews.size(), 
-					reportHistoryVO, 
-					currentCount, 
-					elapsedTime, 
-					0, 
-					msPerInterview);
 			
 			boolean bFoundVibrationRules = false;
 			List<RuleVO> vibrationRules = new ArrayList<RuleVO>();
@@ -437,8 +433,6 @@ public class AssessmentRestController {
 			answers.add(dailyvibration);
 			
 			exportCSVVO.getAnswers().put(interviewVO, answers);
-			
-			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
@@ -453,8 +447,7 @@ public class AssessmentRestController {
 	}
 	private Set<String> populateHeadersAndAnswersAssessmentNoise(List<InterviewVO> uniqueInterviews,
 			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
-		
-		reportHistoryVO.setRecordCount(uniqueInterviews.size());
+	
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.2);
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
@@ -467,23 +460,10 @@ public class AssessmentRestController {
 		headers.add("LAEQ8");
 		headers.add("Peak Noise");
 		headers.add("Ratio");
-
-		long startTime = System.currentTimeMillis();
-		long elapsedTime = 0; 
-		int currentCount = 0;
 		
 		AgentVO noiseAgent = getAgent("NOISEAGENT");		
 		
 		for (InterviewVO interviewVO : uniqueInterviews) {
-			
-			currentCount++;
-			
-			estimateDuration(uniqueInterviews.size(), 
-					reportHistoryVO, 
-					currentCount, 
-					elapsedTime, 
-					0, 
-					msPerInterview);
 			
 			boolean bFoundNoiseRules = false;
 			List<RuleVO> noiseRules = new ArrayList<RuleVO>();
@@ -621,8 +601,6 @@ public class AssessmentRestController {
 			answers.add(peakNoise);
 			answers.add(strRatio.toString());
 			exportCSVVO.getAnswers().put(interviewVO, answers);
-			
-			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
@@ -670,8 +648,7 @@ public class AssessmentRestController {
 	}
 	private Set<String> populateHeadersAndAnswersAssessment(List<InterviewVO> uniqueInterviews,
 			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview, String[] modules) {
-		
-		reportHistoryVO.setRecordCount(uniqueInterviews.size());
+	
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.1);
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
@@ -693,26 +670,13 @@ public class AssessmentRestController {
 			headers.add(agent.getName()+"_AUTO");
 		}
 		
-		long startTime = System.currentTimeMillis();
-		long elapsedTime = 0; 
-		int currentCount = 0;
-		
 		Map<Long, NodeVO> nodeVoList = new HashMap<>();
 		//Initialize map to prevent multiple re-queries
 		for(String module : modules){
 			nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));			
 		}
 		
-		for (InterviewVO interviewVO : uniqueInterviews) {
-			
-			currentCount++;
-			
-			estimateDuration(uniqueInterviews.size(), 
-					reportHistoryVO, 
-					currentCount, 
-					elapsedTime, 
-					0, 
-					msPerInterview);
+		for (InterviewVO interviewVO : uniqueInterviews) {			
 			
 			List<String> answers = new ArrayList<>();
 			answers.add(String.valueOf(interviewVO.getInterviewId()));
@@ -746,8 +710,6 @@ public class AssessmentRestController {
 				}
 			}
 			exportCSVVO.getAnswers().put(interviewVO, answers);
-			
-			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
@@ -778,10 +740,7 @@ public class AssessmentRestController {
 		headers.add("Interview Id");
 		headers.add("AWES ID");
 		headers.add("Status");
-		ArrayList<Long> uniqueInterviews = new ArrayList<Long>();
-				
-		long msPerInterview = getMsPerInterview(uniqueInterviewQuestions.size(), 
-					reportHistoryVO, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), 0.3);				
+		ArrayList<Long> uniqueInterviews = new ArrayList<Long>();			
 		
 		if(uniqueInterviewQuestions.size() > 0){
 			//sort interview question
@@ -792,22 +751,10 @@ public class AssessmentRestController {
 		//Initialize map to prevent multiple re-queries
 		for(String module : modules){
 			nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));			
-		}		
-		
-		int currentCount = 0;
-		long startTime = System.currentTimeMillis();
-		long elapsedTime = 0; 
+		}	
 		List<InterviewVO> interviewQuestionAnswer = null;
 		
 		for(InterviewQuestionVO interviewQuestionVO:uniqueInterviewQuestions){
-
-			currentCount++;			
-			estimateDuration(uniqueInterviewQuestions.size()*2, 
-					reportHistoryVO, 
-					currentCount, 
-					elapsedTime, 
-					0, 
-					msPerInterview);			
 		
 			//Build header and answers
 			addHeadersAndAnswers(headers, interviewQuestionVO, exportCSVVO, 
@@ -817,12 +764,9 @@ public class AssessmentRestController {
 				uniqueInterviews.add(interviewQuestionVO.getIdInterview());
 				reportHistoryVO.setRecordCount(uniqueInterviews.size());
 			}
-			
-			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 
 		//Consolidate answers for all interviews, fill not answered and not asked questions
-		currentCount = 0;
 		for(Long interviewId : uniqueInterviews){
 						
 			interviewQuestionAnswer = interviewService.getInterviewQuestionAnswer(interviewId);			
@@ -848,8 +792,6 @@ public class AssessmentRestController {
 			}
 			
 			exportCSVVO.getAnswers().put(interviewVO, answers);			
-			
-			elapsedTime = System.currentTimeMillis() - startTime;
 		}
 		
 		return headers;
@@ -932,37 +874,7 @@ public class AssessmentRestController {
 			updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), progress);
 		}
 		return msPerInterview;
-	}
-	
-	/**
-	 * This method is supposed to dynamically estimate the duration given the processed record count and elapsed time
-	 * @param interviewSize
-	 * @param reportHistoryVO
-	 * @param currentCount
-	 * @param elapsedTime
-	 * @param progress
-	 * @param msPerInterview - Estimate from latest completed record
-	 */
-	private void estimateDuration(int interviewSize, ReportHistoryVO reportHistoryVO,
-			int currentCount, long elapsedTime, double progress, long msPerInterview) {
-		
-		//Check processed count and estimate duration
-		if(msPerInterview == 0){
-			msPerInterview = (long) (elapsedTime/currentCount);	
-		}
-		
-		double estDuration = interviewSize * msPerInterview;
-				
-		if(progress == 0){
-			progress = (double) currentCount/interviewSize * 100;
-		}
-		
-		updateProgress(reportHistoryVO, 
-				reportHistoryVO.getStatus(), 
-				progress, 
-				reportHistoryVO.getStartDt(), 
-				(float) estDuration/60/1000);
-	}
+	}	
 
 	private List<InterviewQuestionVO> sortInterviewQuestions(List<InterviewQuestionVO> uniqueInterviewQuestions) {
 		Map<String,List<InterviewQuestionVO>> map = new LinkedHashMap<>();

@@ -14,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewIntroModuleModule;
+import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -64,12 +65,7 @@ public class InterviewDao {
 	  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
       
       if(modules != null){
-    	  DetachedCriteria subquery = DetachedCriteria.forClass(InterviewIntroModuleModule.class, "iimm")
-      		  	.setProjection(Projections.property("interviewId"))
- 		   		.add(Restrictions.in("iimm.idModule", getModuleList(modules)))
- 		   		.add(Restrictions.eqProperty("iimm.interviewId","interview.idinterview"));
-    	  
-    	  crit.add(Property.forName("interview.idinterview").in(subquery));
+    	  getSubQuery(modules, crit);
       }
       
       List<Interview> retValue = new ArrayList<Interview>();      
@@ -77,18 +73,6 @@ public class InterviewDao {
       return retValue;
     }
 
-    /**
-     * Get list of Long moduleId
-     * @param modules
-     * @return
-     */
-    private List<Long> getModuleList(String[] modules) {
-		List<Long> list = new ArrayList<Long>();
-    	for(String module : modules){
-			list.add(Long.valueOf(module));
-		}
-		return list;
-	}
 
 	//TODO Fix this workaround and ask discuss with Jed about why hibernate is not populating firedRules
 	private void setFiredRules(List<Interview> retValue, List<Interview> temp) {
@@ -163,16 +147,31 @@ public class InterviewDao {
 	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
 	      List<Interview> temp = crit.list();
 	      return temp;
+	}	
+
+	public Long getCountForModules(String[] modules) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Criteria crit = session.createCriteria(Interview.class, "interview")
+				.setProjection((Projections.rowCount()));
+
+		if (modules != null) {
+			
+			getSubQuery(modules, crit);
+		}
+
+		return (Long) crit.uniqueResult();
 	}
-	
 
-	public Long getAllCount() {
-		Criteria critCount = sessionFactory.getCurrentSession().createCriteria(Interview.class)
-				.setProjection(Projections.projectionList().add(Projections.rowCount()));
+	private void getSubQuery(String[] modules, final Criteria crit) {
+		
+		DetachedCriteria subquery = DetachedCriteria.forClass(InterviewIntroModuleModule.class, "iimm")
+				.setProjection(Projections.property("interviewId"))
+				.add(Restrictions.in("iimm.idModule", CommonUtil.convertToLongList(modules)))
+				.add(Restrictions.eqProperty("iimm.interviewId", "interview.idinterview"));
 
-		Long count = (Long) critCount.uniqueResult();
-
-		return count;
+		crit.add(Property.forName("interview.idinterview").in(subquery));
 	}
 }
 
