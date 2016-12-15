@@ -2,7 +2,9 @@ package org.occideas.mapper;
 
 import java.util.List;
 
+import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.Module;
+import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.occideas.vo.ModuleVO;
 
 //@Mapper(componentModel = "spring",uses=NodeMapper.class)
@@ -12,6 +14,8 @@ public interface ModuleMapper {
 	ModuleVO convertToModuleVO(Module moduleEntity,boolean includeChild);
 	
 	ModuleVO convertToInterviewModuleVO(Module moduleEntity);
+	
+	List<InterviewIntroModuleModuleVO> convertToInterviewModuleListVO(List<InterviewIntroModuleModule> moduleList);
 	
 //	@Mapping(target = "notes", ignore=true)
 	List<ModuleVO> convertToModuleVOList(List<Module> moduleEntity,boolean includeChild);

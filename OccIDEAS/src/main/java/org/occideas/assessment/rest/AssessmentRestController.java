@@ -41,6 +41,7 @@ import org.occideas.vo.AgentVO;
 import org.occideas.vo.ExportCSVVO;
 import org.occideas.vo.FilterModuleVO;
 import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.NodeVO;
@@ -73,7 +74,7 @@ public class AssessmentRestController {
 	private QuestionService questionService;
 	@Autowired
 	private ReportHistoryService reportHistoryService;
-	
+		
 	private DecimalFormat df = new DecimalFormat("#.0");
 	
 	@POST
@@ -348,7 +349,9 @@ public class AssessmentRestController {
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
-		headers.add("Status");		
+		headers.add("Status");
+		headers.add("Intro Module Name");		
+		headers.add("Job Module Name");		
 		headers.add("Shift Length");
 		headers.add("Daily Vibration");
 		
@@ -375,6 +378,9 @@ public class AssessmentRestController {
 			answers.add(String.valueOf(interviewVO.getInterviewId()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 			answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
+			
+			addModuleNames(interviewVO, answers);
+			
 			for (RuleVO rule : interviewVO.getFiredRules()) {
 				if (vibrationAgent.getIdAgent() == rule.getAgentId()) {
 					vibrationRules.add(rule);
@@ -437,6 +443,14 @@ public class AssessmentRestController {
 		
 		return headers;
 	}
+
+	private void addModuleNames(InterviewVO interviewVO, List<String> answers) {
+		
+		if(interviewVO.getModuleList() != null){
+			answers.add(getIntroModuleName(interviewVO.getModuleList().get(0)));
+			answers.add(getModuleName((interviewVO.getModuleList().size() > 1) ? interviewVO.getModuleList().get(1) : null));	
+		}		
+	}
 	private Set<String> populateHeadersAndAnswersAssessmentNoise(List<InterviewVO> uniqueInterviews,
 			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
 		
@@ -446,6 +460,8 @@ public class AssessmentRestController {
 		headers.add("Interview Id");
 		headers.add("AWES ID");
 		headers.add("Status");		
+		headers.add("Module");
+		headers.add("Job Module Name");
 		headers.add("Shiftlength");
 		headers.add("Total Exposure");
 		headers.add("LAEQ8");
@@ -475,6 +491,9 @@ public class AssessmentRestController {
 			answers.add(String.valueOf(interviewVO.getInterviewId()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 			answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
+			
+			addModuleNames(interviewVO, answers);
+			
 			for (RuleVO rule : interviewVO.getFiredRules()) {
 				if (noiseAgent.getIdAgent() == rule.getAgentId()) {
 					noiseRules.add(rule);
@@ -657,7 +676,9 @@ public class AssessmentRestController {
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
-		headers.add("Status");		
+		headers.add("Status");
+		headers.add("Intro Module Name");
+		headers.add("Job Module Name");
 		
 		List<SystemPropertyVO> properties = systemPropertyService.getByType("STUDYAGENT");
 		List<AgentVO> agents = new ArrayList<AgentVO>();
@@ -697,6 +718,9 @@ public class AssessmentRestController {
 			answers.add(String.valueOf(interviewVO.getInterviewId()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 			answers.add(String.valueOf(interviewVO.getParticipant().getStatusDescription()));
+						
+			addModuleNames(interviewVO, answers);
+			
 			for(AgentVO agent:agents){
 				boolean aAgentFound = false;
 				for(RuleVO rule:interviewVO.getManualAssessedRules()){
@@ -728,6 +752,24 @@ public class AssessmentRestController {
 		
 		return headers;
 	}
+	private String getModuleName(InterviewIntroModuleModuleVO interviewIntroModuleModuleVO) {
+		
+		return (interviewIntroModuleModuleVO == null) ? 
+				"" : 
+				(interviewIntroModuleModuleVO.getInterviewModuleName() == null)
+					? " "
+					: interviewIntroModuleModuleVO.getInterviewModuleName().substring(0, 4);
+	}
+
+	private String getIntroModuleName(InterviewIntroModuleModuleVO interviewIntroModuleModuleVO) {
+		
+		return (interviewIntroModuleModuleVO == null) ? 
+				"" : 
+				(interviewIntroModuleModuleVO.getIntroModuleNodeName() == null)
+					? " "
+					: interviewIntroModuleModuleVO.getIntroModuleNodeName().substring(0, 4);
+	}
+
 	private Set<String> populateHeadersAndAnswers(List<InterviewQuestionVO> uniqueInterviewQuestions
 				,ExportCSVVO exportCSVVO,ReportHistoryVO reportHistoryVO, String[] modules) {
 		

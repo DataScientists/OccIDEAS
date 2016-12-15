@@ -38,6 +38,8 @@ public class InterviewVO {
 	private List<InterviewAnswerVO> answerHistory = new ArrayList<>();
 
 	private List<InterviewModuleVO> modules = new ArrayList<>();
+	
+	private List<InterviewIntroModuleModuleVO> moduleList = new ArrayList<>();
 
 	private List<RuleVO> firedRules;
 
@@ -318,6 +320,14 @@ public class InterviewVO {
 		} else if (!referenceNumber.equals(other.referenceNumber))
 			return false;
 		return true;
+	}
+
+	public List<InterviewIntroModuleModuleVO> getModuleList() {
+		return moduleList;
+	}
+
+	public void setModuleList(List<InterviewIntroModuleModuleVO> moduleList) {
+		this.moduleList = moduleList;
 	}
 
 }

@@ -3,10 +3,12 @@ package org.occideas.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.Module;
 import org.occideas.entity.ModuleRule;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +136,33 @@ public class ModuleMapperImpl implements ModuleMapper {
 
         return list;
     }
+	@Override
+	public List<InterviewIntroModuleModuleVO>  convertToInterviewModuleListVO(List<InterviewIntroModuleModule> moduleList) {
+		
+		if ( moduleList == null ) {
+            return null;
+        }
+
+        List<InterviewIntroModuleModuleVO> list = new ArrayList<InterviewIntroModuleModuleVO>();
+        for ( InterviewIntroModuleModule module : moduleList ) {
+            list.add( convertToModuleVO( module) );
+        }
+
+        return list;
+	}
+	private InterviewIntroModuleModuleVO convertToModuleVO(InterviewIntroModuleModule module) {
+		
+		if ( module == null ) {
+            return null;
+        }
+
+		InterviewIntroModuleModuleVO moduleVO = new InterviewIntroModuleModuleVO();
+		moduleVO.setInterviewModuleName(module.getInterviewModuleName());
+		moduleVO.setIntroModuleNodeName(module.getIntroModuleNodeName());
+		moduleVO.setInterviewId(module.getInterviewId());
+		
+        return moduleVO;
+	}
     
 }
 

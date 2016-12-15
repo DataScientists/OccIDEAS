@@ -52,6 +52,10 @@ public class Interview implements java.io.Serializable {
 	@JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
 	@Where(clause = "deleted = 0")
 	private List<InterviewModule> modules;
+	
+	@OneToMany
+	@JoinColumn(name="interviewId",referencedColumnName="idinterview", insertable = false, updatable = false)
+	private List<InterviewIntroModuleModule> moduleList;
 
 	@OneToMany(mappedBy = "interviewId", targetEntity = Note.class)
 	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
@@ -249,6 +253,14 @@ public class Interview implements java.io.Serializable {
 
 	public void setAssessedStatus(String assessedStatus) {
 		this.assessedStatus = assessedStatus;
+	}
+	
+	public List<InterviewIntroModuleModule> getModuleList() {
+		return moduleList;
+	}
+
+	public void setModuleList(List<InterviewIntroModuleModule> moduleList) {
+		this.moduleList = moduleList;
 	}
 
 }

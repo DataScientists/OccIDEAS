@@ -102,6 +102,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
 		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
+		interviewVO.setModuleList(moduleMapper.convertToInterviewModuleListVO(interview.getModuleList()));
 		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
 		
 		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionNoAnswersVOList(interview.getQuestionHistory()));
@@ -128,6 +129,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
 		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
+		interviewVO.setModuleList(moduleMapper.convertToInterviewModuleListVO(interview.getModuleList()));
 		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
 		
 		List<Rule> autoAssessedRules = interview.getAutoAssessedRules();
@@ -247,6 +249,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
 		interviewVO.setModule(moduleMapper.convertToInterviewModuleVO(interview.getModule()));
+		interviewVO.setModuleList(moduleMapper.convertToInterviewModuleListVO(interview.getModuleList()));
 		interviewVO.setFragment(fragmentMapper.convertToInterviewFragmentVO(interview.getFragment()));
 		interviewVO.setModules(modMapper.convertToInterviewModuleVOList(interview.getModules()));
 		List<InterviewQuestion> questionsAsked = interview.getActualQuestion();

@@ -57,6 +57,7 @@ public class InterviewDao {
 	  						.setProjection(Projections.projectionList()
 	   		  					.add(Projections.property("fragment"),"fragment")
 	   		  					.add(Projections.property("module"),"module")
+	   		  					.add(Projections.property("moduleList"),"moduleList")
 	   		  					.add(Projections.property("idinterview"),"idinterview")
 	   		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
 	  						.addOrder(Order.asc("referenceNumber"))
