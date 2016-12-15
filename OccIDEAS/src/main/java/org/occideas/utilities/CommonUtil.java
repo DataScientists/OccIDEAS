@@ -1,5 +1,6 @@
 package org.occideas.utilities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommonUtil {
@@ -46,6 +47,19 @@ public class CommonUtil {
 		} catch (NumberFormatException exception) {
 			return false;
 		}
+	}	
+
+    /**
+     * Get list of Long objects
+     * @param str
+     * @return
+     */
+    public static List<Long> convertToLongList(String[] str) {
+		List<Long> list = new ArrayList<Long>();
+    	for(String module : str){
+			list.add(Long.valueOf(module));
+		}
+		return list;
 	}
 
 }
