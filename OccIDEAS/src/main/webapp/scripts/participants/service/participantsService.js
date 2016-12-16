@@ -8,6 +8,7 @@
 		var modulesUrl = apiUrl + 'participant';
 		var apiKey = '';
 		
+		//Unused
 		var getParticipants = function() {
 			 var request =  $http({
                  method: 'GET',
@@ -25,6 +26,7 @@
 			return request.then(handleSuccess1,handleError);
 		}
 		
+		//Unused
 		var getPaginatedParticipantList = function(participantFilter){
 			var request = $http({
 				method:'POST',
@@ -60,6 +62,7 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+		//Unused
 		function checkExists(reference) {
 			var restUrl = 'web/rest/participant/checkexists?reference=' + reference;
 			var request =  $http({
@@ -69,6 +72,7 @@
 			return request.then(handleSuccess,handleError);
 		}
 
+		//Unused
 		var deleteParticipant = function(p) {
 			var request = $http({
 				method:'POST',
@@ -86,6 +90,8 @@
 				})
 		    return request.then(handleSuccess1,handleError);
 		};
+		
+		//Unused
 		function getNextQuestion(data) {
             var nextQ = 'web/rest/participant/nextquestion';
             var request = $http({
@@ -116,6 +122,7 @@
             return( $q.reject( response.data.message ) );
         }
 
+		//Unused
 		function handleSuccess( response ) {
             return( response.data );
         }

@@ -39,7 +39,6 @@ public class AgentGroup extends AgentInfo{
 		this.getAgents().add(agent);
 	}
 	
-	
 	public List<Agent> getAgents() {
 		return agents;
 	}

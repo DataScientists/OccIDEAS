@@ -42,6 +42,18 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function saveAgentGroup(data){
+			var restSaveUrl = 'web/rest/agent/saveAgentGroup';
+			console.log(data);
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		var deleteAgent = function(agentObj) {
             var request = $http({
                 method:'POST',
@@ -115,7 +127,8 @@
               getRules:getRules,
               loadStudyAgents:loadStudyAgents,
               updateStudyAgents:updateStudyAgents,
-              deleteStudyAgents:deleteStudyAgents
+              deleteStudyAgents:deleteStudyAgents,
+              saveAgentGroup:saveAgentGroup
 		};
 	}
 	

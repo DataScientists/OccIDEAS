@@ -5,7 +5,9 @@
   table-condensed editable-table moduleTable"
 			ng-form="tableForm" disable-filter="vm.isAdding"
 			demo-tracked-table="vm.tableTracker">
-
+			<div class="pull-left" style="padding:2px 2px 2px 2px;">
+				<button type="button" ng-click='vm.addGroup()' class="btn btn-default"> Add Agent Group</button>
+			</div>
 			<tbody ng-repeat="group in $groups">
 				<tr class="ng-table-group">
 					<td colspan="{{$columns.length}}"><a href=""

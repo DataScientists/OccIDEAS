@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.rule.service.RuleService;
+import org.occideas.vo.AgentGroupVO;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.RuleVO;
 import org.occideas.vo.SystemPropertyVO;
@@ -79,6 +80,20 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 	public Response update(AgentVO json) {
 		try{
 			service.update(json);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
+	
+	@Path(value="/saveAgentGroup")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response updateAgentGroup(AgentGroupVO json) {
+		try{
+			service.saveAgentGroup(json);
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

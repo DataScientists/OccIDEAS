@@ -4,6 +4,7 @@
 
     AssessmentsService.$inject = ['$http', '$q'];
     function AssessmentsService($http, $q) {
+    	//Unused
     	function listByInterview(idInterview) {
 			var restUrl = 'web/rest/interviewquestionanswer/getbyinterview?id=' + idInterview;
 			var request =  $http({
@@ -47,6 +48,7 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+    	//Unused
     	function getAssessments() {
 			var restUrl = 'web/rest/interview/getassessments';
 			var request =  $http({
@@ -56,6 +58,7 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+    	//Unused
     	function getAssessments() {
 			var restUrl = 'web/rest/interview/getassessments';
 			var request =  $http({

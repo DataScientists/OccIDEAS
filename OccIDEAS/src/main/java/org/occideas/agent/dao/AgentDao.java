@@ -11,7 +11,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Agent;
-import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.AgentGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -78,4 +78,7 @@ public class AgentDao {
 		return list;
 	}
 
+	public Long saveAgentGroup(AgentGroup group) {
+		return (Long)sessionFactory.getCurrentSession().save(group);		
+	}
 }
