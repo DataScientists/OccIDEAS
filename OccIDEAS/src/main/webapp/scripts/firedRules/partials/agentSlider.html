@@ -11,9 +11,9 @@
   		<div class="panel-body">
   		 
 		<uib-accordion ng-repeat="agentGroup in agentsData">
-     	 <uib-accordion-group>
+     	 <uib-accordion-group is-open="agentGroup.isOpened">
      	 	<uib-accordion-heading >
-     	 	{{agentGroup.key}}
+     	 	<span ng-click="openedAgentGroup(agentGroup)" >{{agentGroup.key}}</span>
      	 		 <span class="badge pull-right" ng-click="toggleAgentView(agentGroup)">{{agentGroup.total || 0}}</span> 
      	 	</uib-accordion-heading>
      	 		<div>
