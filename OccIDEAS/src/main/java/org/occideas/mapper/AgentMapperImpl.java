@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.occideas.entity.Agent;
+import org.occideas.entity.AgentGroup;
+import org.occideas.vo.AgentGroupVO;
 import org.occideas.vo.AgentVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -87,6 +89,19 @@ public class AgentMapperImpl implements AgentMapper {
 
         return list;
     }
-    
+
+	@Override
+	public AgentGroup convertToAgentGroup(AgentGroupVO vo) {
+		if ( vo == null ) {
+            return null;
+        }
+
+       AgentGroup group = new AgentGroup();
+       group.setDeleted(vo.getDeleted());
+       group.setDescription(vo.getDescription());
+       group.setName(vo.getName());
+       
+       return group;       
+	}    
 }
 

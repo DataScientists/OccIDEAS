@@ -16,6 +16,7 @@
 			return request.then(handleSuccess, handleError);
 		}
 
+		//Unused
 		function findNonIntroById(moduleId) {
 			var restUrl = 'web/rest/interviewintromodule/findNonIntroById?id='
 					+ moduleId;
@@ -131,6 +132,7 @@
 			return request.then(handleSuccess, handleError);
 		}
 
+		//Unused
 		function getNextQuestionOld(data) {
 			var saveAndNextQ = 'web/rest/interview/saveAndNextQ';
 			var request = $http({
@@ -140,6 +142,8 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		
+		//Unused
 		function getNextQuestion(lookupNode) {
 			var nextQ = 'web/rest/interview/nextquestion';
 			var request = $http({
@@ -339,6 +343,7 @@
 			return request.then(handleSuccess, handleError);
 		}
 
+		//Unused
 		function getIntQuestion(idInterview, questionId, modCount) {
 			var restURL = 'web/rest/interviewquestionanswer/getIntQuestion?idInterview='
 					+ idInterview

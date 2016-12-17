@@ -62,6 +62,28 @@
 				$scope.agents.push(showAgent);
 			}			
 		};
+		$scope.openedAgentGroup = function (agentGroup){
+			for(var i=0;i<agentGroup.value.length;i++){
+				var agent = agentGroup.value[i];
+				var agentShown = _.find($scope.agents,function(a){
+					return agent.idAgent == a.idAgent;
+				  });
+				if(agentShown){
+					if(agentGroup.isOpened){
+						_.remove($scope.agents, function(a) {
+							  return agent.idAgent == a.idAgent;
+							});
+					}
+					
+				} else{
+					if(!agentGroup.isOpened){
+						var showAgent = {name:agent.name,idAgent:agent.idAgent};
+						$scope.agents.push(showAgent);
+					}					
+				}	
+			}
+					
+		};
 		
 		$scope.leftNav = "slideFragLeft";
 		$scope.toggleLeft = function(){

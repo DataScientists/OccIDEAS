@@ -20,6 +20,7 @@ angular
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
     "ui.select",
+    'ngMessages',
     "occIDEASApp.Tabs",
     "occIDEASApp.Questions",
     "occIDEASApp.Rules",

@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Agents')
 		   .controller('AgentCtrl',AgentCtrl);
 	
-	AgentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter','$rootScope'];
-	function AgentCtrl(AgentsService,NgTableParams,$state,$scope,$filter,$rootScope){
+	AgentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter','$rootScope','$mdDialog'];
+	function AgentCtrl(AgentsService,NgTableParams,$state,$scope,$filter,$rootScope,$mdDialog){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -46,6 +46,7 @@
 	    self.del = del;
 	    self.save = save;
 	    self.add = add;
+	    self.addGroup = addGroup;
 	    self.checkAndAddAgentRulesTab = checkAndAddAgentRulesTab;
 	    self.toggleIsDeleting = toggleIsDeleting;
 	    
@@ -212,6 +213,40 @@
 		    angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
 		    
 		  }, true);
+		
+		function addGroup(group) {
+			//Show prompt
+			$mdDialog.show({
+				scope : $scope.$new(),
+				templateUrl : 'scripts/agents/view/addGroupDialog.html',
+				clickOutsideToClose:true
+			});
+		}
+		
+		$scope.cancel = function() {
+			$mdDialog.cancel();
+		};
+		
+		$scope.saveNewGroupButton = function(groupName, groupDesc, agentName, agentDesc)
+		{			
+			var agentgroup = {
+					name : groupName,
+					description : groupDesc,
+					agents: [{
+						name : agentName,
+						description : agentDesc
+					}]
+				};
+			
+			AgentsService.saveAgentGroup(agentgroup).then(function(resp) {
+				if(resp.status === 200){
+					//Reload
+					self.tableParams.reload();
+				}
+			});
+			
+			$scope.cancel();			
+		}
 	}
 })();
 

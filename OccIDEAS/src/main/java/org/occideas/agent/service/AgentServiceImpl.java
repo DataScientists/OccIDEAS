@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.entity.Agent;
+import org.occideas.entity.AgentGroup;
 import org.occideas.entity.Constant;
 import org.occideas.mapper.AgentMapper;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.vo.AgentGroupVO;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,5 +86,17 @@ public class AgentServiceImpl implements AgentService {
 	@Override
 	public void deleteStudyAgents(SystemPropertyVO vo) {
 		sysPropService.delete(vo);
+	}
+
+	@Override
+	public void saveAgentGroup(AgentGroupVO vo) {
+		
+		AgentGroup group = mapper.convertToAgentGroup(vo);
+		Long id = dao.saveAgentGroup(group);		
+		group.setIdAgent(id);
+		for(Agent agent : vo.getAgents()){
+			agent.setGroup(group);
+			dao.saveOrUpdate(agent);
+		}
 	}
 }
