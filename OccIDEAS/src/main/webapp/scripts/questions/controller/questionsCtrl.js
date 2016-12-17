@@ -9,14 +9,14 @@
 	                          '$rootScope','ModuleRuleService','$log','$timeout', 
 	                          'AuthenticationService','$document','InterviewsService',
 	                          'SystemPropertyService','ngToast','$translate',
-	                          'NodeLanguageService','$sessionStorage'];
+	                          'NodeLanguageService','$sessionStorage','lang'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
 			ModuleRuleService,$log,$timeout, auth,$document,InterviewsService,
 			SystemPropertyService,ngToast,$translate,
-			NodeLanguageService,$sessionStorage) {
+			NodeLanguageService,$sessionStorage,lang) {
 		var self = this;
 		self.editTranslateNode = false;
 		self.editTranslation = function(){

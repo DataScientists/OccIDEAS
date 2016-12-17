@@ -199,7 +199,7 @@
 			}
 		}).state( {
 			name:'tabs.questions',
-			url: '/questions/:row',
+			url: '/questions/:row/:lang',
 			sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
@@ -207,7 +207,7 @@
 				'questions@tabs':{
 					template: '<div scope-question></div>',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null,module:null},
+			        params:{row: null,lang:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions@tabs resolve");
@@ -237,20 +237,23 @@
 			        					}
 			        					return response.data;
 		    				});
+			        },
+			        lang: function($stateParams) {
+			        	return '';
 			        }
 			     }
 			}
 			}
 		}).state( {
 			name:'tabs.intro',
-			url: '/intro/:row',
+			url: '/intro/:row/:lang',
 			sticky: true,
 			authenticate:true,
 			views:{
 				'intro@tabs':{
 					template: '<div scope-question></div>',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null,module:null},
+			        params:{row: null,lang:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside intro@tabs resolve");
@@ -276,13 +279,16 @@
 			        					}
 			        					return response.data;
 		    				});
+			        },
+			        lang:function($stateParams) {
+			        	return '';
 			        }
-			     }
+			        }
 			}
 			}
 		}).state( {
 			name:'tabs.fragment',
-			url: '/fragment/:row',
+			url: '/fragment/:row/:lang',
 			sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
@@ -290,7 +296,7 @@
 				'fragment@tabs':{
 					template: '<div scope-question></div>',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null},
+			        params:{row: null,lang: null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions1@tabs resolve");
@@ -320,6 +326,9 @@
 			        					}
 			        					return response.data;
 		    				});
+			        },
+			        lang: function($stateParams) {
+			        	return '';
 			        }
 				}
 				}
@@ -572,7 +581,7 @@
             }
         }).state( {
 			name:'tabs.moduleLanguage',
-			url: '/moduleLanguage/:row',
+			url: '/moduleLanguage/:row/:lang',
 			sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
@@ -580,7 +589,7 @@
 				'moduleLanguage@tabs':{
 					template: '<div scope-module-language></div>',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null,module:null},
+			        params:{row: null,lang:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside moduleLanguage@tabs resolve");
@@ -597,7 +606,10 @@
 			        					};
 			        					return response.data;
 		    				});
-			        }
+			        	},
+			        	lang: function($stateParams) {
+			        		return $stateParams.lang;
+			        	}
 			     }
 			}
 			}

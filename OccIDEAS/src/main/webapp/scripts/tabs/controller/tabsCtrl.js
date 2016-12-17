@@ -142,6 +142,28 @@
             $scope.selectedIndex = 3;
         }
         
+        $scope.openModuleLanguageTab = function(lang,row) {
+        	var tabTitle = "Module Language ";
+            var state = "tabs.moduleLanguage";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'moduleLanguage@tabs',
+                    canClose: true,
+                    disabled: false
+                }); 
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                        row: row.idNode,
+                        lang:lang
+                    }
+                });
+            }
+            
+        };
+        
         $rootScope.addLanguageTab = function() {
             var tabTitle = "Language ";
             var state = "tabs.language";
@@ -225,7 +247,8 @@
                 $scope.tabOptions.push({
                     state: state,
                     data: {
-                        row: row.idNode
+                        row: row.idNode,
+                        lang:null
                     }
                 });
             }

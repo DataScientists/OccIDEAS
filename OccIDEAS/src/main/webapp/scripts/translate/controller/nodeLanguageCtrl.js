@@ -17,9 +17,7 @@
 			$ngToast,$translate){
 		var vm = this;
 		$scope.selectLanguage = undefined;
-		$scope.person = {};
-		   $scope.language_list = [{'name': 'english', 'url': 'https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/gb.png'},{'name': 'italian', 'url': 'https://raw.githubusercontent.com/stevenrskelton/flag-icon/master/png/16/country-4x3/it.png'}];
-		
+
 		vm.showNewLanguageDialog = function(){
 			$mdDialog.show({
 				scope: $scope, 
