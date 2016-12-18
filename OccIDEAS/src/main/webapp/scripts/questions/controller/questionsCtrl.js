@@ -23,40 +23,13 @@
 			$translate.use(self.lang.language);
 			self.translateNode = true;
 			self.editTranslateNode = true;
+			$scope.selectedLanguage = self.lang;
 		}
 		
-		self.editTranslateNode = false;
 		self.editTranslation = function(){
 			self.editTranslateNode = true;
 		}
 		
-		$scope.languages = undefined;
-		$scope.selectedLanguage = undefined;
-		$scope.getAllLanguage = function(){
-			NodeLanguageService.getAllLanguage().then(function(response){
-				if(response.status == '200'){
-					$scope.languages = response.data;
-					$scope.languages.unshift({
-						id:-1,
-						language:'EN'
-					});
-					$scope.selectedLanguage = $scope.languages[0];
-					$sessionStorage.languages = $scope.languages; 
-				}
-			})
-		};
-		$scope.getAllLanguage();
-		
-		self.changeNodeLanguage = function(data) {
-        	$translate.refresh();
-       		if(data.language == 'EN'){
-       			self.translateNode = false;
-       		}else{
-       			self.translateNode = true;
-       			$translate.use(data.language);
-       		}
-       		$scope.selectedLanguage = data;
-        };
         
         $scope.saveAllLanguage = function(){
         	saveNodeTranslation(data[0]);

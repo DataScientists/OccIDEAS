@@ -1,8 +1,6 @@
 <div class="row " prog_tree>
 	<div class="col-sm-12">
 	<div class="panel panel-default">
-   <input type="button" value="Edit" ng-if="!vm.editTranslateNode && vm.translateNode" ng-click="vm.editTranslation()">
-   <input type="button" value="Save" ng-if="vm.editTranslateNode" ng-click="saveAllLanguage()">
  	 <div class="panel-body">
   	<div ui-tree="moduleTreeOptions" id="tree-root" >
 		<ol ui-tree-nodes ng-model="data">
@@ -15,14 +13,13 @@
 	</div>
 </div>
 <script type="text/ng-template" id="nodes_renderer.html">
-  <div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}" ng-attr-data-nodrag="{{isReadOnly}}">
+  <div id="module-tree" class="angular-ui-tree" data-clone-enabled="false" ng-attr-data-nodrag="{{isReadOnly}}">
      <div class="tree-node" id="{{node.anchorId}}">
-        <div class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="" 
-			ng-mousedown="copy($event,$treeScope)">
+        <div data-nodrag class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" ui-tree-handle="">
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}" context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
+        <div data-nodrag style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}" context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
 		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,
@@ -30,9 +27,7 @@
               }">
             </span>
           </a>
-          <span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}:{{node.link}}</span>
 	      <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
-	      <span ng-if="!node.idNode || node.idNode===0" class="badge-multi">Unsaved</span>
 	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
           <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
 
@@ -40,17 +35,10 @@
 			event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
 				{{node.name}} 
 		  <i ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" class="glyphicon {{vm.lang.flag}}"></i>
-	</div>
+		<input type="button" value="Edit" ng-if="!vm.editTranslateNode" ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" ng-click="vm.editTranslation()">
+   		<input type="button" value="Save" ng-if="vm.editTranslateNode" ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" ng-click="saveAllLanguage()">	
+		</div>
 		  </span>
-          <div ng-if="node.editEnabled" class="editBox">
-      		<input type="text" 
-             ng-model="node.name" 
-             id="editId_{{node.idNode}}" 
-             ng-blur="saveEdit(this)" 
-             class="form-control-edit form-control"  
-             data-nodrag 
-			 ng-keypress="(($event.which === 13))?saveEdit(this):0" placeholder="{{node.placeholder}}">
-     	  </div>
 		   <div class="editBox">
 		  <span class="treeNodeText" ng-if="vm.translateNode && !vm.editTranslateNode && 
 				node.type != 'P_freetext' && !node.type.match('frequency')" 
@@ -66,12 +54,6 @@
              	data-nodrag	style="width:400px !important;"
 				>
      	  </div>	
-			 <button type="button" 
-              class="btn btn-default btn-lg btn-save" 
-              ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && undoEnable" 
-              ng-click="undo()">
-              Undo	
-             </button>
 			<div class="numberPosRight">
 			<div style="position:relative;">
 			<div class="agentheader expanded pull-right"
@@ -101,35 +83,6 @@
     		<span class="badge">{{node.number}}</span>
 		  </div>
 		  </div>
-<!-- start fab menu for changing type of module --> 
-          <div ng-if="isModuleHeaderNode(node) && rulesObj.length < 1" class="typesetting">
-     		<md-fab-speed-dial md-open="vm.isOpen" md-direction="{{selectedDirection}}"
-                         ng-class="selectedMode">
-        	<md-fab-trigger>
-          	<md-button aria-label="menu" >
-                <span class="badge" ng-if="node.type == 'M_IntroModule'">Type:Intro</span>
-                <span class="badge" ng-if="node.type == 'M_Module_'">Type:Development</span>
-                <span class="badge" ng-if="node.type == 'M_Module'">Type:Production</span>
-                <span class="badge" ng-if="node.type == 'M_Module__'">Type:Tests</span>
-          	</md-button>
-        	</md-fab-trigger>
-        	<md-fab-actions>
-          	<md-button ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')" class="md-fab md-raised md-mini">
-            	<span>Prod</span>
-          	</md-button>
-          	<md-button ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')" class="md-fab md-raised md-mini">
-            <span >Dev</span>
-          	</md-button>
-          	<md-button ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')" class="md-fab md-raised md-mini">
-           	<span >Test</span>
-          	</md-button>
-		  	<md-button ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')" class="md-fab md-raised md-mini">
-           	<span >Intro</span>
-          	</md-button>
-        	</md-fab-actions>
-      		</md-fab-speed-dial>
-		  </div>
-<!-- end fab menu for changing type of module --> 
        </div> 
 <!-- end content -->
      </div>
