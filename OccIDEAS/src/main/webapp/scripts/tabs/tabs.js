@@ -283,8 +283,8 @@
 			        lang:function($stateParams) {
 			        	return '';
 			        }
-			        }
-			}
+			       }
+			    }
 			}
 		}).state( {
 			name:'tabs.fragment',
