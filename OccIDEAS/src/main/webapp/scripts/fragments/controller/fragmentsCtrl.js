@@ -3,14 +3,54 @@
 		   .controller('FragmentCtrl',FragmentCtrl);
 	
 	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter','$mdDialog','$q',
-	                        'InterviewsService','$timeout','QuestionsService','ModuleRuleService'];
+	                        'InterviewsService','$timeout','QuestionsService','ModuleRuleService','NodeLanguageService'];
 	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter,$mdDialog,$q,
-			InterviewsService,$timeout,QuestionsService,ModuleRuleService){
+			InterviewsService,$timeout,QuestionsService,ModuleRuleService,NodeLanguageService){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
+	    $scope.selectLanguage = undefined;
+		$scope.languages = undefined;
+		$scope.openModuleLanguage = function(row){
+	    	$mdDialog.cancel();
+	    	$scope.openFragmentLanguageTab($scope.selectLanguage.id,row);
+	    }
+	    
+	    self.displayNodeLanguage = function(row){
+	    	NodeLanguageService.getAllLanguage().then(function(response){
+				if(response.status == '200'){
+					$scope.languages = response.data;
+//					var english = {
+//						id: -1,
+//						language: 'EN'
+//					}
+//					$scope.languages.unshift(english);
+					$scope.selectLanguage = $scope.languages[0];
+					safeDigest($scope.selectLanguage);
+					var newScope = $scope.$new();
+					newScope.row = row;
+					$mdDialog.show({
+						  scope: newScope,
+					      templateUrl: 'scripts/modules/partials/translateDialog.html',
+					      parent: angular.element(document.body),
+					      clickOutsideToClose:true
+					    })
+					    .then(function(answer) {
+					      $scope.status = 'You said the information was "' + answer + '".';
+					    }, function() {
+					      $scope.status = 'You cancelled the dialog.';
+					    });
+				}
+			})
+	    }
+	    
+	    NodeLanguageService.getDistinctLanguage().then(function(response){
+	    	if(response.status == '200'){
+	    		$scope.flags = response.data;
+	    	}
+	    });
 	    
 	    $scope.showRuleCount = function(row,$event){
 	    	ModuleRuleService.getRuleCountById(row.idNode).then(function(response){

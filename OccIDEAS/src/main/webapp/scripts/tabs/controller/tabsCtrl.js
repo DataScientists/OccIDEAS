@@ -164,6 +164,28 @@
             
         };
         
+        $scope.openFragmentLanguageTab = function(lang,row) {
+        	var tabTitle = "Fragment Language ";
+            var state = "tabs.fragmentLanguage";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'fragmentLanguage@tabs',
+                    canClose: true,
+                    disabled: false
+                }); 
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                        row: row.idNode,
+                        lang:lang
+                    }
+                });
+            }
+            
+        };
+        
         $rootScope.addLanguageTab = function() {
             var tabTitle = "Language ";
             var state = "tabs.language";

@@ -61,6 +61,9 @@
 					</span>
 				</div>
 			</td>
+			<td permission="['ROLE_ADMIN','ROLE_CONTDEV']">
+				<i ng-repeat="lang in flags" class="glyphicon {{lang.flag}}"></i>
+			</td>
 			<td>
 				<button class="btn btn-primary btn-sm"
 					ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
@@ -78,6 +81,11 @@
 				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
 					ng-if="vm.isDeleting" confirm="Delete fragment {{row.name}}?">
 					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+				<button class="btn btn-danger btn-sm" 
+					 ng-click="vm.displayNodeLanguage(row)"
+					 ng-if="!row.isEditing">
+					 <span class="glyphicon glyphicon-flag"></span>
 				</button>
 			</td>
         </tr>

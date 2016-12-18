@@ -619,6 +619,46 @@
 			     }
 			}
 			}
+		}).state( {
+			name:'tabs.fragmentLanguage',
+			url: '/fragmentLanguage/:row/:lang',
+			sticky: true,
+		    deepStateRedirect: true,
+		    authenticate:true,
+			views:{
+				'fragmentLanguage@tabs':{
+					template: '<div scope-module-language></div>',
+			        controller: 'QuestionsCtrl as vm',
+			        params:{row: null,lang:null},
+			        resolve:{
+			        	data: function($stateParams,QuestionsService) {
+			        		$log.info("inside fragmentLanguage@tabs resolve");
+			        		$log.info("Data getting from questions AJAX ...");
+			        		return QuestionsService.findQuestions($stateParams.row,'F')
+			        				.then(function(response){
+			        					$log.info("Data received from questions AJAX ...");
+			        					if(angular.isUndefined($window.sliderVal)){
+			        					$window.sliderVal = [];
+			        					}
+			        					var idNode = 'Node'+response.data[0].idNode;
+			        					$window.sliderVal.idNode = {
+			        							showAgentSlider:true
+			        					};
+			        					return response.data;
+		    				});
+			        	},
+			        	lang: function($stateParams,NodeLanguageService) {
+			        		return NodeLanguageService.getLanguageById($stateParams.lang)
+			        								.then(function(response){
+			        			if(response.status == '200'){
+			        				return response.data;
+			        			}
+			        			return '';
+			        		});
+			        	}
+			     }
+			}
+			}
 		});
 	}
 })();
