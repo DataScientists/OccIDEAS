@@ -93,4 +93,15 @@ public class NodeLanguageDao {
 		return null;
 	}
 	
+	public Language getLanguageById(Long id){
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Language.class)
+				.add(Restrictions.eq("id",id)); 
+		Object uniqueResult = crit.uniqueResult();
+		if(uniqueResult != null){
+			return (Language)uniqueResult;
+		}
+		return null;
+	}
+	
 }

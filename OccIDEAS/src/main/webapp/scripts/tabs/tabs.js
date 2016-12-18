@@ -607,8 +607,14 @@
 			        					return response.data;
 		    				});
 			        	},
-			        	lang: function($stateParams) {
-			        		return $stateParams.lang;
+			        	lang: function($stateParams,NodeLanguageService) {
+			        		return NodeLanguageService.getLanguageById($stateParams.lang)
+			        								.then(function(response){
+			        			if(response.status == '200'){
+			        				return response.data;
+			        			}
+			        			return '';
+			        		});
 			        	}
 			     }
 			}

@@ -16,7 +16,7 @@
 		$scope.languages = undefined;
 		$scope.openModuleLanguage = function(row){
 	    	$mdDialog.cancel();
-	    	$scope.openModuleLanguageTab( $scope.selectLanguage.languageId,row);
+	    	$scope.openModuleLanguageTab($scope.selectLanguage.id,row);
 	    }
 	    
 	    self.displayNodeLanguage = function(row){

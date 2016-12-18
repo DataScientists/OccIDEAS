@@ -71,6 +71,15 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getLanguageById(id){
+			var restUrl = url+'/getLanguageById?id=' + id;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -94,7 +103,8 @@
 			addLanguage:addLanguage,
 			getNodesByLanguageAndWord:getNodesByLanguageAndWord,
 			deleteNodeLanguage:deleteNodeLanguage,
-			getDistinctLanguage:getDistinctLanguage
+			getDistinctLanguage:getDistinctLanguage,
+			getLanguageById:getLanguageById
 		};
 	}
 })();

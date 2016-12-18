@@ -66,4 +66,9 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 		List<Language> distinctLanguage = dao.getDistinctLanguage(distinctNodeLanguageId);
 		return mapper.convertToListLanguageVO(distinctLanguage);
 	}
+
+	@Override
+	public LanguageVO getLanguageById(Long id) {
+		return mapper.convertToLanguageVO(dao.getLanguageById(id));
+	}
 }

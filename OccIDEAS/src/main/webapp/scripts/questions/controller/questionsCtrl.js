@@ -18,6 +18,13 @@
 			SystemPropertyService,ngToast,$translate,
 			NodeLanguageService,$sessionStorage,lang) {
 		var self = this;
+		self.lang = lang;
+		if(self.lang){
+			$translate.use(self.lang.language);
+			self.translateNode = true;
+			self.editTranslateNode = true;
+		}
+		
 		self.editTranslateNode = false;
 		self.editTranslation = function(){
 			self.editTranslateNode = true;

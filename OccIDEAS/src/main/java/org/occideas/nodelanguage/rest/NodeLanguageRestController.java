@@ -155,4 +155,18 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		return null;
 	}
 	
+	@GET
+	@Path(value="/getLanguageById")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getLanguageById(@QueryParam("id") String id) {
+		LanguageVO vo = null;
+		try{
+			vo = service.getLanguageById(Long.valueOf(id));
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(vo).build();
+	}
+	
 }

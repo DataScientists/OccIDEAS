@@ -1,10 +1,6 @@
 <div class="row " prog_tree>
 	<div class="col-sm-12">
 	<div class="panel panel-default">
-	<label>Language</label>
-	<select ng-change="vm.changeNodeLanguage(selectedLanguage)" ng-model="selectedLanguage"
-			ng-options="option.language for option in languages track by option.id">
-   </select>
    <input type="button" value="Edit" ng-if="!vm.editTranslateNode && vm.translateNode" ng-click="vm.editTranslation()">
    <input type="button" value="Save" ng-if="vm.editTranslateNode" ng-click="saveAllLanguage()">
  	 <div class="panel-body">
@@ -42,7 +38,9 @@
 
           <span class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(node)" 
 			event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
-				{{node.name}}
+				{{node.name}} 
+		  <i ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" class="glyphicon {{vm.lang.flag}}"></i>
+	</div>
 		  </span>
           <div ng-if="node.editEnabled" class="editBox">
       		<input type="text" 
