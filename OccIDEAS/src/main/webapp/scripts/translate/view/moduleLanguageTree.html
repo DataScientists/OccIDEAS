@@ -35,8 +35,8 @@
 			event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
 				{{node.name}} 
 		  <i ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" class="glyphicon {{vm.lang.flag}}"></i>
-		<input type="button" value="Edit" ng-if="!vm.editTranslateNode" ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" ng-click="vm.editTranslation()">
-   		<input type="button" value="Save" ng-if="vm.editTranslateNode" ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" ng-click="saveAllLanguage()">	
+		<input type="button" class="btn btn-default btn-lg btn-save" value="Edit" ng-if="!vm.editTranslateNode && node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" ng-click="vm.editTranslation()">
+   		<input type="button" class="btn btn-default btn-lg btn-save" value="Save" ng-if="vm.editTranslateNode && node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" ng-click="saveAllLanguage()">	
 		</div>
 		  </span>
 		   <div class="editBox">
