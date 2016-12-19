@@ -12,10 +12,11 @@
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
 	    $scope.selectLanguage = undefined;
+	    $scope.selectedLanguage = { language: '' };
 		$scope.languages = undefined;
 		$scope.openModuleLanguage = function(row){
 	    	$mdDialog.cancel();
-	    	$scope.openFragmentLanguageTab($scope.selectLanguage.id,row);
+	    	$scope.openFragmentLanguageTab($scope.selectedLanguage.language.id,row);
 	    }
 	    
 	    self.displayNodeLanguage = function(row){
@@ -28,6 +29,7 @@
 //					}
 //					$scope.languages.unshift(english);
 					$scope.selectLanguage = $scope.languages[0];
+					$scope.selectedLanguage.language = $scope.languages[0];
 					safeDigest($scope.selectLanguage);
 					var newScope = $scope.$new();
 					newScope.row = row;
