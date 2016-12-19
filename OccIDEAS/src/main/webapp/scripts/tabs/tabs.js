@@ -582,8 +582,8 @@
         }).state( {
 			name:'tabs.moduleLanguage',
 			url: '/moduleLanguage/:row/:lang',
-			sticky: true,
-		    deepStateRedirect: true,
+			sticky: false,
+		    deepStateRedirect: false,
 		    authenticate:true,
 			views:{
 				'moduleLanguage@tabs':{
@@ -622,8 +622,8 @@
 		}).state( {
 			name:'tabs.fragmentLanguage',
 			url: '/fragmentLanguage/:row/:lang',
-			sticky: true,
-		    deepStateRedirect: true,
+			sticky: false,
+		    deepStateRedirect: false,
 		    authenticate:true,
 			views:{
 				'fragmentLanguage@tabs':{

@@ -17,11 +17,11 @@
  		    	 return translations;
  		     }
  		     
- 		     var id = _.findKey($sessionStorage.languages, function(o) { 
+ 		     var lang = _.find($sessionStorage.languages, function(o) { 
  		    	 return o.language == options.key; 
  		     });
- 		     if(id){
- 		     NodeLanguageService.getNodeLanguageById(id).then(function(response) {
+ 		     if(lang.id){
+ 		     NodeLanguageService.getNodeLanguageById(lang.id).then(function(response) {
  		         if(response.status == '200'){
  		        	translations = _.map(response.data, function(o){
  		        	    return {
@@ -30,7 +30,7 @@
  		        	});
  		        	return deferred.resolve(translations);
  		         }else{
- 		        	return deferred.reject(id);
+ 		        	return deferred.reject(lang.id);
  		         }
  		     });
  		     }

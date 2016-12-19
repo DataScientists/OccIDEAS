@@ -89,7 +89,7 @@
     	
     	function translateNodes(node){
     		node.translated = $translate.instant(node.name);
-    		if(node.translated == node.name){
+    		if(node.translated.trim() == node.name.trim()){
     			node.translated = 'No available translation';
     		}
     		if(node.nodes){
