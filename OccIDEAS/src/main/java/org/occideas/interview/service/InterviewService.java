@@ -3,6 +3,7 @@ package org.occideas.interview.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.Interview;
 import org.occideas.vo.InterviewVO;
 
 public interface InterviewService extends BaseService<InterviewVO> {
@@ -12,7 +13,7 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<InterviewVO> listAllWithAnswers();
 
-	List<InterviewVO> listAllWithRules(String[] modules);
+	List<Interview> listAllWithRules(String[] modules);
 	
 	List<InterviewVO> listAllWithRules();
 	
@@ -28,11 +29,13 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<InterviewVO> listAllInterviewsWithoutAnswers();
 
-	List<InterviewVO> getInterviewQuestionAnswer(long idinterview);
+	List<Interview> getInterviewQuestionAnswer(long idinterview);
+	
+	List<InterviewVO> getInterviewQuestionAnswerVO(long idinterview);
 
 	List<InterviewVO> getUnprocessedQuestions(Long id);
 
 	InterviewVO findInterviewWithFiredRulesById(Long id);
 
-	List<InterviewVO> listAllWithAssessments(String[] modules);
+	List<Interview> listAllWithAssessments(String[] modules);
 }

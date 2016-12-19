@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.occideas.entity.Interview;
+
 public class ExportCSVVO {
 
 	private Set<String> headers = new LinkedHashSet<>();
 	private Set<String> questionIdList = new LinkedHashSet<>();
-	private Map<InterviewVO, List<String>> answers = new LinkedHashMap<>();
+	private Map<Interview, List<String>> answers = new LinkedHashMap<>();
 
 	public Set<String> getHeaders() {
 		return headers;
@@ -20,11 +22,11 @@ public class ExportCSVVO {
 		this.headers = headers;
 	}
 
-	public Map<InterviewVO, List<String>> getAnswers() {
+	public Map<Interview, List<String>> getAnswers() {
 		return answers;
 	}
 
-	public void setAnswers(Map<InterviewVO, List<String>> answers) {
+	public void setAnswers(Map<Interview, List<String>> answers) {
 		this.answers = answers;
 	}
 
@@ -35,5 +37,4 @@ public class ExportCSVVO {
 	public void setQuestionIdList(Set<String> questionIdList) {
 		this.questionIdList = questionIdList;
 	}
-
 }

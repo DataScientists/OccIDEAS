@@ -177,11 +177,9 @@ public class InterviewMapperImpl implements InterviewMapper {
 			return null;
 		}
 		List<InterviewVO> list = new ArrayList<InterviewVO>();
-		int iCount = 0;
-		int iSize = interviewEntity.size();
+		
 		for (Interview interview : interviewEntity) {
-			list.add(convertToInterviewWithRulesNoAnswersVO(interview));
-			System.out.println((iCount++)+" of "+iSize+" convertToInterviewWithRulesNoAnswersVOList:"+new Date());
+			list.add(convertToInterviewWithRulesNoAnswersVO(interview));			
 		}
 		return list;
 	}

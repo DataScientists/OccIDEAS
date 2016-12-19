@@ -21,16 +21,17 @@
 				{{reports.type}}</td>
 			<td title="'Requestor'" filter="{requestor: 'text'}"
 				sortable="'requestor'">{{reports.requestor}}</td>
-			<!-- <td title="'Progress'"> Hide for now		
-			<span ng-if="reports.progress != 100 && reports.estDuration !=0">~ {{reports.estDuration}}m </span>			
-			<span ng-if="reports.progress != 100 && reports.estDuration == 0">Estimating... </span>
-			<uib-progressbar value="reports.progress" max="100"> {{reports.progress}} % </uib-progressbar> </td> -->
 			<td title="'Start Date'" filter="{startDt: 'text'}" sortable="'startDt'">
 				{{reports.startDt | date:'MM/dd/yy HH:mm'}}</td>
 			<td title="'End Date'" filter="{endDt: 'text'}" sortable="'endDt'">
 				{{reports.endDt | date:'MM/dd/yy HH:mm'}}</td>
 			<td title="'Rec Count'" filter="{recordCount: 'text'}" sortable="'recordCount'">
 				{{reports.recordCount}}</td>
+			<td title="'Progress'">		
+				<span ng-if="reports.progress != 100 && reports.estDuration !=0">~ {{reports.duration}}m </span>			
+				<span ng-if="reports.progress != 100 && reports.estDuration == 0">Estimating... </span>
+				<uib-progressbar value="reports.progress" max="100"> {{reports.progress}} % </uib-progressbar> 
+			</td>
 			<td title="'Status'" filter="{status: 'text'}" sortable="'status'">
 				{{reports.status}}</td>
 			<td title="'Download'">

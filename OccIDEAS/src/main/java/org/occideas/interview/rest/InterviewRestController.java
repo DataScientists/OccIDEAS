@@ -17,7 +17,6 @@ import org.occideas.base.rest.BaseRestController;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.question.service.QuestionService;
-import org.occideas.rule.service.RuleService;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewModuleVO;
@@ -39,9 +38,6 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
     @Autowired
     private QuestionService questionService;
-
-    @Autowired
-    private RuleService ruleService;
     
     @Autowired
     private InterviewModuleService modService;
@@ -365,7 +361,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getInterviewQuestionAnswer(@QueryParam("interviewId") long idinterview) {
         try {
-        	 List<InterviewVO> vo = service.getInterviewQuestionAnswer(idinterview);
+        	 List<InterviewVO> vo = service.getInterviewQuestionAnswerVO(idinterview);
         	 if(vo!=null){
              	return Response.ok(vo).build();
              }else{

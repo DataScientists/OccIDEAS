@@ -182,7 +182,7 @@ public class RuleMapperImpl implements RuleMapper {
 	        return list;
 	}
 	
-	private String getDescriptionByValue(int value){
+	public static String getDescriptionByValue(int value){
 		for(RuleLevelEnum x: RuleLevelEnum.values()){
 			if(x.getValue() == value){
 				return x.getDescription();

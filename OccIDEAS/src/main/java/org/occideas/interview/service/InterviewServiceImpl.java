@@ -43,20 +43,19 @@ public class InterviewServiceImpl implements InterviewService {
     }
     
     @Override
-    public List<InterviewVO> listAllWithRules(String[] modules) {
+    public List<Interview> listAllWithRules(String[] modules) {
     	
-		System.out.println("2:listAllWithRules:"+new Date());
-		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(interviewDao.getAll(modules));
-		System.out.println("3:listAllWithRules:"+new Date());
-        return retValue;
+		//Disable slow mapping
+		//List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(interviewDao.getAll(modules));		
+        return interviewDao.getAll(modules);
     }
     @Override
-    public List<InterviewVO> listAllWithAssessments(String[] modules) {
+    public List<Interview> listAllWithAssessments(String[] modules) {
     	
-		System.out.println("2:listAllWithRules:"+new Date());
-		List<InterviewVO> retValue = mapper.convertToInterviewWithAssessmentsVOList(interviewDao.getAll(modules));
-		System.out.println("3:listAllWithRules:"+new Date());
-        return retValue;
+    	//Disable slow mapping
+		//List<InterviewVO> retValue = mapper.convertToInterviewWithAssessmentsVOList(interviewDao.getAll(modules));
+		
+		return interviewDao.getAll(modules);
     }
     @Override
     public List<InterviewVO> listAllWithAnswers() {
@@ -153,8 +152,12 @@ public class InterviewServiceImpl implements InterviewService {
 		return mapper.convertToInterviewWithoutAnswersList(debug1);
 	}
 	@Override
-	public List<InterviewVO> getInterviewQuestionAnswer(long idinterview) {
-		return mapper.convertToInterviewWithQuestionAnswerList(interviewDao.getInterview(idinterview));
+	public List<InterviewVO> getInterviewQuestionAnswerVO(long idinterview) {
+		return mapper.convertToInterviewWithQuestionAnswerList(interviewDao.getInterview(idinterview));		
+	}
+	@Override
+	public List<Interview> getInterviewQuestionAnswer(long idinterview) {
+		return interviewDao.getInterview(idinterview);
 	}
 	@Override
 	public List<InterviewVO> getUnprocessedQuestions(Long id) {
