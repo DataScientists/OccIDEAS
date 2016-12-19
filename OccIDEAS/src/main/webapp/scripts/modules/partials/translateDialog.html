@@ -16,7 +16,7 @@
       <div class="md-dialog-content" style="height:300px;" >
       	<div layout="column" ng-cloak class="md-inline-form">
   		<md-content> 
-  			<ui-select ng-model="selectLanguage"
+  			<ui-select ng-model="selectedLanguage.language"
 				ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2"
 				ng-disabled="disabled" style="min-width: 300px;"> <ui-select-match>
 			<i class="glyphicon {{$select.selected.flag}}"></i>
@@ -33,7 +33,7 @@
     </md-dialog-content>
     <md-dialog-actions layout="row">
        <span flex></span>
-      <md-button ng-click="openModuleLanguage(row)">
+      <md-button ng-click="openModuleLanguage(row,$select.selected)">
         Submit
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">

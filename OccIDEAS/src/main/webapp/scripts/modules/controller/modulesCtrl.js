@@ -13,16 +13,18 @@
 	    var invalidCellsByRow = [];
 	    $scope.$root.tabsLoading = false;
 	    $scope.selectLanguage = undefined;
+	    $scope.selectedLanguage = { language: '' };
 		$scope.languages = undefined;
 		$scope.openModuleLanguage = function(row){
 	    	$mdDialog.cancel();
-	    	$scope.openModuleLanguageTab($scope.selectLanguage.id,row);
+	    	$scope.openModuleLanguageTab($scope.selectedLanguage.language.id,row);
 	    }
 	    
 	    self.displayNodeLanguage = function(row){
 	    	NodeLanguageService.getAllLanguage().then(function(response){
 				if(response.status == '200'){
 					$scope.languages = response.data;
+					$scope.selectedLanguage.language = $scope.languages[0];
 //					var english = {
 //						id: -1,
 //						language: 'EN'

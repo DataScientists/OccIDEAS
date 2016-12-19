@@ -19,7 +19,7 @@
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div data-nodrag style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}" context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
+        <div data-nodrag style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
 		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
             <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,
@@ -35,10 +35,26 @@
 			event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
 				{{node.name}} 
 		  <i ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" class="glyphicon {{vm.lang.flag}}"></i>
-   		<input type="button" class="btn btn-default btn-lg btn-save" value="Save" ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F' && vm.translateNode" ng-click="saveAllLanguage()">	
+<input type="button" class="btn btn-default btn-lg btn-save" value="Edit" 
+				ng-if="(node.nodeclass === 'M'||node.nodeclass === 'F') 
+				&& !vm.editTranslateNode" ng-click="vm.editTranslation()">
+   		<input type="button" class="btn btn-default btn-lg btn-save" 
+				value="Save" 
+				ng-if="(node.nodeclass === 'M'|| node.nodeclass === 'F') 
+				&& vm.editTranslateNode" ng-click="saveAllLanguage()">	
 		</div>
 		  </span>
-          <div ng-if="node.type != 'P_freetext' && !node.type.match('frequency')" 
+		   <div class="editBox">
+		  <span class="treeNodeText" ng-if="!vm.editTranslateNode && 
+				node.type != 'P_freetext' && !node.type.match('frequency')
+				&& node.link == 0" 
+				data-nodrag>
+				<i>{{node.translated}}</i>
+		  </span>
+		  </div>
+          <div ng-if="vm.editTranslateNode && node.type != 'P_freetext' 
+					&& !node.type.match('frequency') 
+					&& node.link == 0" 
 			  >
       		<input type="text"  value="{{node.translated}}" 
 				class="form-control-edit form-control"
