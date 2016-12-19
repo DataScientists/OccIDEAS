@@ -31,8 +31,8 @@
 	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
           <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
 
-          <span class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(node)" 
-			event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
+          <span class="treeNodeText" ng-if="!node.editEnabled"
+				event-focusq-id="editId_{{node.idNode}}" data-nodrag>
 				{{node.name}} 
 		  <i ng-if="node.nodeclass === 'M'||node.nodeclass === 'F' && vm.translateNode" class="glyphicon {{vm.lang.flag}}"></i>
 <input type="button" class="btn btn-default btn-lg btn-save" value="Edit" 
@@ -42,10 +42,8 @@
 				value="Save" 
 				ng-if="(node.nodeclass === 'M'|| node.nodeclass === 'F') 
 				&& vm.editTranslateNode" ng-click="saveAllLanguage()">	
-		<span> Translated Nodes: {{currentLangCount}}/{{totalLangCount}}</span>
-		</div>
-		  </span>
-		   <div class="editBox">
+		<span ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F'"> Translated Nodes: {{currentLangCount}}/{{totalLangCount}}</span>
+<div class="editBox">
 		  <span class="treeNodeText" ng-if="!vm.editTranslateNode && 
 				node.type != 'P_freetext' && !node.type.match('frequency')
 				&& node.link == 0" 
@@ -62,7 +60,10 @@
 				 ng-model="node.translated"
              	data-nodrag	style="width:400px !important;"
 				>
-     	  </div>	
+     	  </div>
+		</div>
+		  </span>
+		   	
 			<div class="numberPosRight">
 			<div style="position:relative;">
 			<div class="agentheader expanded pull-right"
@@ -77,7 +78,7 @@
 						style="height:40px;width: 27px;border-right: solid aliceblue 1px;position:relative;" ng-repeat="obj in rulesObj | orderBy:'':true">
 						<div class="verticalrules">
 							<div class="rulescontainer">
-								<div class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}" ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
+								<div class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}" id="{{obj.idAgent}}">
 									<span class="cell-lable" ng-repeat="mrule in node.moduleRule" >
 										<div ng-class="mrule.rule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
 									</span>
