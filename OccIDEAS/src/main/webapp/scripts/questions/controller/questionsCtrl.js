@@ -34,6 +34,9 @@
         $scope.saveAllLanguage = function(){
         	saveNodeTranslation(data[0]);
         	self.editTranslateNode = false;
+        	$scope.currentLangCount = 0;
+        	$scope.totalLangCount = 0;
+        	refreshNodeLanguageCount(data[0]);
         }
         
         function saveNodeTranslation(node){
@@ -85,6 +88,7 @@
     	
     	$rootScope.$on('$translateChangeSuccess',function () {
             translateNodes($scope.data[0]);
+            refreshNodeLanguageCount($scope.data[0]);
         });
     	
     	function translateNodes(node){
@@ -95,6 +99,19 @@
     		if(node.nodes){
     			_.each(node.nodes,function(childNode){
     				return translateNodes(childNode);
+    			});
+    		}
+    	}
+    	$scope.currentLangCount = 0;
+    	$scope.totalLangCount = 0;
+    	function refreshNodeLanguageCount(node){
+    		if(node.translated.trim() != 'No available translation'){
+    			$scope.currentLangCount++;
+    		}
+    		$scope.totalLangCount++;
+    		if(node.nodes){
+    			_.each(node.nodes,function(childNode){
+    				return refreshNodeLanguageCount(childNode);
     			});
     		}
     	}
