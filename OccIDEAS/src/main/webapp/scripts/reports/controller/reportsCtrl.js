@@ -101,6 +101,7 @@
 	    
 	    $scope.newExportCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
+			$scope.exportType = "INTERVIEW";
 			$scope.fileName = "interviewsExport";
 			$mdDialog.show({
 				scope: $scope.$new(),  
