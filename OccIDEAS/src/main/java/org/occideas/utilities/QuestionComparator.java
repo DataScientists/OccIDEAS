@@ -3,12 +3,12 @@ package org.occideas.utilities;
 import java.math.BigInteger;
 import java.util.Comparator;
 
-import org.occideas.vo.InterviewQuestionVO;
+import org.occideas.entity.InterviewQuestion;
 
-public class QuestionComparator implements Comparator<InterviewQuestionVO> {
+public class QuestionComparator implements Comparator<InterviewQuestion> {
 
 	@Override
-	public int compare(InterviewQuestionVO o1, InterviewQuestionVO o2) {
+	public int compare(InterviewQuestion o1, InterviewQuestion o2) {
 		StringBuilder sbO1 = new StringBuilder();
 		for (char c : o1.getNumber().toCharArray()) {
 			sbO1.append((int) c);

@@ -117,8 +117,8 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	@Override
-	public QuestionVO findMultipleQuestion(long questionId) {
-		return mapper.convertToQuestionVO(qdao.findMultipleQuestion(questionId));
+	public Question findMultipleQuestion(long questionId) {
+		return qdao.findMultipleQuestion(questionId);
 	}
 
 	@Override

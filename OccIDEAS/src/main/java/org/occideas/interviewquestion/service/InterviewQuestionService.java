@@ -3,6 +3,7 @@ package org.occideas.interviewquestion.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.InterviewQuestion;
 import org.occideas.vo.InterviewQuestionVO;
 
 public interface InterviewQuestionService extends BaseService<InterviewQuestionVO> {
@@ -21,7 +22,7 @@ public interface InterviewQuestionService extends BaseService<InterviewQuestionV
 	
 	Long getMaxIntQuestionSequence(long idInterview);
 	
-	List<InterviewQuestionVO> getUniqueInterviewQuestions(String[] filterModule);
+	List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule);
 	
 	Long getUniqueInterviewQuestionCount(String[] filterModule);
 }

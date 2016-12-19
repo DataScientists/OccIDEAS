@@ -122,6 +122,16 @@ public class InterviewDao {
         }
         return crit.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Interview> getInterviews(Long[] interviewIds) {
+		final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(Interview.class);
+        if (interviewIds != null) {
+            crit.add(Restrictions.in("idinterview", interviewIds));
+        }
+        return crit.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<Interview> getInterviewIdList() {

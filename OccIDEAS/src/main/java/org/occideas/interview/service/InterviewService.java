@@ -31,6 +31,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<Interview> getInterviewQuestionAnswer(long idinterview);
 	
+	List<Interview> getInterviewsQuestionAnswer(Long[] ids);
+	
 	List<InterviewVO> getInterviewQuestionAnswerVO(long idinterview);
 
 	List<InterviewVO> getUnprocessedQuestions(Long id);

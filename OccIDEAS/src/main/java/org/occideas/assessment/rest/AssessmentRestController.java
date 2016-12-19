@@ -32,6 +32,7 @@ import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
 import org.occideas.entity.Rule;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
@@ -47,10 +48,7 @@ import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.ExportCSVVO;
 import org.occideas.vo.FilterModuleVO;
-import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.NodeVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
 import org.occideas.vo.ReportHistoryVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +119,7 @@ public class AssessmentRestController {
 				0.11, new Date(), INITIAL_DURATION_MIN);	
 		
 		log.info("[Report] before getting unique interview questions ");
-		List<InterviewQuestionVO> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
+		List<InterviewQuestion> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
 		log.info("[Report] after getting unique interview questions ");
 		
 		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO,filterModuleVO.getFilterModule(), count);
@@ -328,7 +326,7 @@ public class AssessmentRestController {
 		return filename+".csv";
 	}
 
-	private ExportCSVVO populateCSV(List<InterviewQuestionVO> uniqueInterviewQuestions,ReportHistoryVO reportHistoryVO, String[] modules, 
+	private ExportCSVVO populateCSV(List<InterviewQuestion> uniqueInterviewQuestions,ReportHistoryVO reportHistoryVO, String[] modules, 
 			Long count) {
 		ExportCSVVO vo = new ExportCSVVO();
 		Set<String> headers = populateHeadersAndAnswers(uniqueInterviewQuestions,vo,reportHistoryVO,modules, count);
@@ -780,7 +778,7 @@ public class AssessmentRestController {
 					: interviewIntroModuleModuleVO.getIntroModuleNodeName().substring(0, 4);
 	}
 
-	private Set<String> populateHeadersAndAnswers(List<InterviewQuestionVO> uniqueInterviewQuestions
+	private Set<String> populateHeadersAndAnswers(List<InterviewQuestion> uniqueInterviewQuestions
 				,ExportCSVVO exportCSVVO,ReportHistoryVO reportHistoryVO, String[] modules, Long uniqueInterviewSize) {
 		
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.2);
@@ -814,7 +812,7 @@ public class AssessmentRestController {
 		}		
 		
 		int size = uniqueInterviewQuestions.size()*2;
-		for(InterviewQuestionVO interviewQuestionVO : uniqueInterviewQuestions){
+		for(InterviewQuestion interviewQuestionVO : uniqueInterviewQuestions){
 
 			currentCount++;			
 			updateProgress(size, 
@@ -980,21 +978,21 @@ public class AssessmentRestController {
 				reportHistoryVO.getDuration());
 	}
 
-	private List<InterviewQuestionVO> sortInterviewQuestions(List<InterviewQuestionVO> uniqueInterviewQuestions) {
-		Map<String,List<InterviewQuestionVO>> map = new LinkedHashMap<>();
+	private List<InterviewQuestion> sortInterviewQuestions(List<InterviewQuestion> uniqueInterviewQuestions) {
+		Map<String,List<InterviewQuestion>> map = new LinkedHashMap<>();
 		// Consolidate the questions by its top node id
-		for(InterviewQuestionVO iqv:uniqueInterviewQuestions){
+		for(InterviewQuestion iqv:uniqueInterviewQuestions){
 			if(!map.containsKey(String.valueOf(iqv.getTopNodeId()))){
 				map.put(String.valueOf(iqv.getTopNodeId()), 
-						new LinkedList<InterviewQuestionVO>());
+						new LinkedList<InterviewQuestion>());
 			}
 			map.get(String.valueOf(iqv.getTopNodeId())).add(iqv);
 		}
 		// Sort and merge by number
-		List<InterviewQuestionVO> resultList = new LinkedList<>();
-		for (Map.Entry<String,List<InterviewQuestionVO>> entry : map.entrySet()) {
-			List<InterviewQuestionVO> value = entry.getValue();
-			InterviewQuestionVO firstElement = value.remove(0);
+		List<InterviewQuestion> resultList = new LinkedList<>();
+		for (Map.Entry<String,List<InterviewQuestion>> entry : map.entrySet()) {
+			List<InterviewQuestion> value = entry.getValue();
+			InterviewQuestion firstElement = value.remove(0);
 			Collections.sort(value, new QuestionComparator());
 			value.add(0, firstElement);			
 			resultList.addAll(value);
@@ -1004,21 +1002,21 @@ public class AssessmentRestController {
 	}
 
 	private void addHeadersAndAnswers(Set<String> headers, 
-			InterviewQuestionVO interviewQuestionVO, ExportCSVVO exportCSVVO, NodeVO topModule) {
+			InterviewQuestion interviewQuestionVO, ExportCSVVO exportCSVVO, NodeVO topModule) {
 
 		if(isModuleOrAjsm(interviewQuestionVO)){
 			//Do nothing?
 			//headers.add(interviewQuestionVO.getName().substring(0, 4));
 		}
 		else if("Q_multiple".equals(interviewQuestionVO.getType())){
-				QuestionVO qVO = findInterviewQuestionInMultipleQuestionsNode
+				Question qVO = findInterviewQuestionInMultipleQuestionsNode
 						(interviewQuestionVO.getQuestionId());
 				if(qVO == null){
 					System.out.println("Something wrong with our data");
 					return;
 				}
 				
-				for(PossibleAnswerVO pVO:qVO.getChildNodes()){
+				for(PossibleAnswer pVO:qVO.getChildNodes()){
 					StringBuilder header = new StringBuilder();
 					header.append(topModule.getName().substring(0, 4));
 					header.append("_");
@@ -1046,12 +1044,12 @@ public class AssessmentRestController {
 		return questionService.getTopModuleByTopNodeId(topNodeId);
 	}
 
-	private QuestionVO findInterviewQuestionInMultipleQuestionsNode(
+	private Question findInterviewQuestionInMultipleQuestionsNode(
 			long questionId) {
 		return questionService.findMultipleQuestion(questionId);
 	}
 
-	private boolean isModuleOrAjsm(InterviewQuestionVO interviewQuestionVO) {
+	private boolean isModuleOrAjsm(InterviewQuestion interviewQuestionVO) {
 		return "M".equals(interviewQuestionVO.getNodeClass())
 				|| "M_IntroModule".equals(interviewQuestionVO.getType())
 				|| "Q_linkedajsm".equals(interviewQuestionVO.getType())

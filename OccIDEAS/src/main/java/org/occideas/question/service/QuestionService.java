@@ -3,6 +3,7 @@ package org.occideas.question.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.Question;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
@@ -21,7 +22,7 @@ public interface QuestionService extends BaseService<QuestionVO> {
 	
 	void updateWithIndependentTransaction(QuestionVO o);
 
-	QuestionVO findMultipleQuestion(long questionId);
+	Question findMultipleQuestion(long questionId);
 
 	NodeVO getTopModuleByTopNodeId(long topNodeId);
 }

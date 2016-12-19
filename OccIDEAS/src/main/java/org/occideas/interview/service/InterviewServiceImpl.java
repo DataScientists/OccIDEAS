@@ -159,6 +159,11 @@ public class InterviewServiceImpl implements InterviewService {
 	public List<Interview> getInterviewQuestionAnswer(long idinterview) {
 		return interviewDao.getInterview(idinterview);
 	}
+	
+	@Override
+	public List<Interview> getInterviewsQuestionAnswer(Long[] ids) {
+		return interviewDao.getInterviews(ids);
+	}
 	@Override
 	public List<InterviewVO> getUnprocessedQuestions(Long id) {
 		 Interview interview = interviewDao.get(id);
