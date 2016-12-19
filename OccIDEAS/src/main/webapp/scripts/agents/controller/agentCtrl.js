@@ -76,7 +76,22 @@
 	     }
 	    function cancel(row, rowForm) {
 	        var originalRow = resetRow(row, rowForm);
-	        angular.extend(row, originalRow);
+	       	        
+	        if(row.idAgent){
+	        	//Undo existing
+	    		angular.extend(row, originalRow);
+	    	}else{
+	    		_.remove(self.tableParams.settings().dataset, function (item) {
+		            return row === item;
+		        });
+	    		self.tableParams.shouldGetData = false;
+		        self.tableParams.reload().then(function (data) {
+		            if (data.length === 0 && self.tableParams.total() > 0) {
+		                self.tableParams.page(self.tableParams.page() - 1);
+		                self.tableParams.reload();
+		            }
+		        });
+	    	} 
 	    }
 	    function del(row) {
             AgentsService.hasRules(row.idAgent).then(function(response){
@@ -123,7 +138,7 @@
 	        row.isEditing = false;
 	        rowForm.$setPristine();
 	        self.tableTracker.untrack(row);
-	        return window._.find(self.originalData,{idNode:row.idNode});
+	        return window._.find(self.originalData,{idAgent:row.idAgent});
 	    }
 	    function save(row, rowForm) {
 	    	row.isEditing = false;
