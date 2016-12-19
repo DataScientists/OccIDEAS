@@ -1,9 +1,9 @@
 <div ng-cloak>
 	<div>
 		<div style="width: 500px;">
-			<md-input-container> <label id="awesidlabel">Study ID</label> 
+			<md-input-container> <label id="awesidlabel">Study ID</label>
 				<input id="awesid" type="text" class="form-control"
-					placeholder="H______" required
+					placeholder="{{awesIdPrefix}}______" required
 					ng-model="vm.tableParams.filter().reference"
 					ng-keyup="filterAndValidate($event,this)" />
 				<div id="awesidcounter" class="md-errors-spacer">

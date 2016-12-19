@@ -55,6 +55,8 @@
                     	$sessionStorage.token = data.token;
                     	$sessionStorage.roles = data.userInfo.roles;
                         vm.isAuthenticated = true;
+                        
+                        //Get config
                         SystemPropertyService.getByName("activeIntro").then(function(response){
                 			if(response.status == '200'){
                 				if(response.data){
@@ -67,6 +69,28 @@
           			      	    	  dismissOnClick:false,
           			      	    	  animation:'slide'
                 					});
+                				}
+                			}
+                        });
+                        
+                        SystemPropertyService.getByName("studyidprefix").then(function(response){
+                			if(response.status == '200'){
+                				if(response.data){
+                					$sessionStorage.awesIdPrefix = response.data.value; 
+                				}else{
+                					//Set default
+                					$sessionStorage.awesIdPrefix = 'H';
+                				}
+                			}
+                        });
+                        
+                        SystemPropertyService.getByName("studyidlength").then(function(response){
+                			if(response.status == '200'){
+                				if(response.data){
+                					$sessionStorage.awesIdLength = response.data.value; 
+                				}else{
+                					//Set default
+                					$sessionStorage.awesIdLength = 7;
                 				}
                 			}
                         });

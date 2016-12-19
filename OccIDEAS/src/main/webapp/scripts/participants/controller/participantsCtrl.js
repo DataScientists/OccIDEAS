@@ -4,16 +4,17 @@
 
 	ParticipantsCtrl.$inject = [ 'ParticipantsService', 'NgTableParams',
 			'$state', '$scope', '$filter', 'data', 'InterviewsService',
-			'$resource','NotesService','$mdDialog'];
+			'$resource','NotesService','$mdDialog', '$sessionStorage'];
 	function ParticipantsCtrl(ParticipantsService, NgTableParams, $state,
-			$scope, $filter, data, InterviewsService, $resource,NotesService,$mdDialog) {
+			$scope, $filter, data, InterviewsService, $resource,NotesService,$mdDialog, $sessionStorage) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.setSelectedInterview = function(interview) {
 			$scope.selectedInterview = interview;
 		}
-		$scope.awesIdMaxSize = 7;
+		$scope.awesIdMaxSize = $sessionStorage.awesIdLength;
+		$scope.awesIdPrefix = $sessionStorage.awesIdPrefix;
 		$scope.awesIdSize = 0;
 		$scope.participantFilter = {
 			idParticipant : null,
@@ -52,7 +53,7 @@
 			var retValue = false;
 			$scope.awesIdSize = awesId.length;
 			if ($scope.awesIdSize == $scope.awesIdMaxSize) {
-				if (_.startsWith(awesId, 'H')) {
+				if (_.startsWith(awesId, $scope.awesIdPrefix)) {
 					retValue = true;
 					$scope.searchAWESID = awesId;
 				}
