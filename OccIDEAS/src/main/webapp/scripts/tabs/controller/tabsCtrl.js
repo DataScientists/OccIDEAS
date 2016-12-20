@@ -145,6 +145,7 @@
         $scope.openModuleLanguageTab = function(lang,row) {
         	var tabTitle = "Module Language ";
             var state = "tabs.moduleLanguage";
+            $stickyState.reset(state);
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
                 tabs.push({
                     title: tabTitle,
@@ -166,6 +167,7 @@
         $scope.openFragmentLanguageTab = function(lang,row) {
         	var tabTitle = "Fragment Language ";
             var state = "tabs.fragmentLanguage";
+            $stickyState.reset(state);
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
                 tabs.push({
                     title: tabTitle,
