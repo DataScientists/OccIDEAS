@@ -52,14 +52,36 @@
 		$scope.toggleAgentView = function (agent){		
 			var agentShown = _.find($scope.agents,function(a){
 				return agent.idAgent == a.idAgent;
-			  });
-			if(agentShown){
+			});
+			
+			if(agent.agentGroup){
+				agentGroup = _.find($scope.agentsData,function(value){				
+					return agent.agentGroup.name === value.key;				
+				});
+				
+				agentData = _.find(agentGroup.value,function(value){
+					return value.idAgent === agent.idAgent;
+				});	
+			}
+			
+			if(agentShown && agent.idAgent){
+				//Hide the agent
 				_.remove($scope.agents, function(a) {
+					  //Remove from agents table
 					  return agent.idAgent == a.idAgent;
-					});
-			} else{
+				});
+				
+				if(agentData){
+					agentData.style = "";	
+				}				
+				
+			} else if(agent.idAgent){
+				//Show the agent
 				var showAgent = {name:agent.name,idAgent:agent.idAgent};
+				//Push to agents table
 				$scope.agents.push(showAgent);
+				
+				agentData.style = "agent-shown";
 			}			
 		};
 		$scope.openedAgentGroup = function (agentGroup){
@@ -110,7 +132,13 @@
     	    return out;
     	}
 		function initAgentData(){
-			AgentsService.getStudyAgents().then(function(agent) {
+			AgentsService.getStudyAgents().then(function(agent) {				
+				
+				//Mark all as shown
+				_.forEach(agent,function(item,key) {					
+					item.style = "agent-shown";			
+				});				
+				
 	    		var group = _.groupBy(agent, function(b) { 
 	    			return b.agentGroup.name;
 	    		});

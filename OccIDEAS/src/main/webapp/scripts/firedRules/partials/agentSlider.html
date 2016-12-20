@@ -19,7 +19,7 @@
      	 		<div>
 					<ul class="list-group">
 						<li class="list-group-item" ng-repeat="agent in agentGroup.value " ng-click="toggleAgentView(agent)">
-							{{agent.name}}  <span class="badge pull-right">{{agent.total || 0}}</span> 
+							<span class="{{agent.style}}">{{agent.name}}</span> <span class="badge pull-right">{{agent.total || 0}}</span> 
 						</li>
 					</ul>
 				</div>

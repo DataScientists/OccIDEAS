@@ -1282,3 +1282,8 @@ li.borderless {
     border-color: #7D89B7 !important;
     z-index: 1999;
 }
+
+.agent-shown{
+	/* font-weight: bold; */
+	color:green;
+}
