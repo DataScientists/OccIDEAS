@@ -20,6 +20,14 @@
 			    return data;
 			  });
 			};
+		
+		var getStudyAgentsWithRules = function(interviewId) {
+			  return $http.post(agentEndpoint+'/getstudyagentswithrules?interviewId=' + interviewId,{ 
+				  cache: false}).then(function(response) {
+			    var data = response.data;
+			    return data;
+			  });
+			};	
         var findAgent = function(agentId) {
             var request = $http({
                 method:'GET',
@@ -128,7 +136,8 @@
               loadStudyAgents:loadStudyAgents,
               updateStudyAgents:updateStudyAgents,
               deleteStudyAgents:deleteStudyAgents,
-              saveAgentGroup:saveAgentGroup
+              saveAgentGroup:saveAgentGroup,
+              getStudyAgentsWithRules:getStudyAgentsWithRules
 		};
 	}
 	

@@ -82,7 +82,7 @@
 				$scope.agents.push(showAgent);
 				
 				agentData.style = "agent-shown";
-			}			
+			}
 		};
 		$scope.openedAgentGroup = function (agentGroup){
 			for(var i=0;i<agentGroup.value.length;i++){
@@ -92,6 +92,7 @@
 				  });
 				if(agentShown){
 					if(agentGroup.isOpened){
+						agent.style = "";
 						_.remove($scope.agents, function(a) {
 							  return agent.idAgent == a.idAgent;
 							});
@@ -99,6 +100,7 @@
 					
 				} else{
 					if(!agentGroup.isOpened){
+						agent.style = "agent-shown";						
 						var showAgent = {name:agent.name,idAgent:agent.idAgent};
 						$scope.agents.push(showAgent);
 					}					
@@ -134,11 +136,6 @@
 		function initAgentData(){
 			AgentsService.getStudyAgents().then(function(agent) {				
 				
-				//Mark all as shown
-				_.forEach(agent,function(item,key) {					
-					item.style = "agent-shown";			
-				});				
-				
 	    		var group = _.groupBy(agent, function(b) { 
 	    			return b.agentGroup.name;
 	    		});
@@ -159,7 +156,31 @@
 	        			});
 	        		x.total = totalVal;
         		} );
+        		
+				_.forEach(group,function(item,key) {					
+					_.forEach(item,function(i,k) {
+						//Mark on-zero as shown
+						if(i.total > 0){
+							i.style = "agent-shown";	
+						}					
+					});					
+				});	
+				
+				//Group
         		group = setOrder(group);
+        		
+        		//Sort by group count
+        		group = _.sortBy(group, function(item){
+        		    return item.total * -1;
+        		});
+        		
+        		//Sort inner group
+        		_.forEach(group,function(item,key) {
+        			item.value = _.sortBy(item.value, function(inner){
+            		    return inner.total * -1;
+            		});	
+        		});
+        		
 	    		$scope.agentsData = group;
 	    		safeDigest($scope.agentsData);
 	    		
@@ -194,26 +215,19 @@
 						$('#back-to-top').fadeOut();
 					}
                 });
-				
-				
 			}
 			
-			SystemPropertyService.getAll().then(function(response){
-				var sysprops = response.data;
-				var ssagents = _.filter(sysprops, function(sysprop) {
-					return sysprop.type=='studyagent';
-				});
+			AgentsService.getStudyAgentsWithRules($scope.interviewId).then(function(response) {
 				$scope.agents = [];
-				_.each(ssagents, function(ssagent) {
-					var agent = {name:ssagent.name,idAgent:ssagent.value};
+				
+				_.each(response, function(agent) {
 					$scope.agents.push(agent);
 				});
-				if($scope.agents.length==0){
+				
+				if($scope.agents.length==0 && $scope.interview){
 					$scope.agents = $scope.interview.agents;
 				}
-				
 			});
-			
 			
 			InterviewsService.findModulesByInterviewId($scope.interviewId).then(function(response){
 				if(response.status == '200'){
@@ -256,8 +270,6 @@
 							}
 						}
 					});
-					
-					
 					
 					//loop to each fired rules and construct object to be used by the
 					//view

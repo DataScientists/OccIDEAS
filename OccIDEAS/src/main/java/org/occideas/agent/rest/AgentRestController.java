@@ -1,7 +1,9 @@
 package org.occideas.agent.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,9 +16,12 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.interview.service.InterviewService;
 import org.occideas.rule.service.RuleService;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.AgentGroupVO;
 import org.occideas.vo.AgentVO;
+import org.occideas.vo.InterviewVO;
 import org.occideas.vo.RuleVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +35,13 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 
     @Autowired
     private RuleService ruleService;
+    
+    @Autowired
+    private InterviewService interviewService;
+    
+    @Autowired
+    private SystemPropertyService propService;
+    
 
 	@GET
 	@Path(value="/getlist")
@@ -155,6 +167,46 @@ public class AgentRestController implements BaseRestController<AgentVO>{
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
+	}
+	
+	@Path(value="/getstudyagentswithrules")
+	@POST
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	/**
+	 * For displaying initial agents table
+	 * @param interviewId
+	 * @return
+	 */
+	public Response getStudyAgentsWithRules(@QueryParam("interviewId") Long interviewId) {
+		
+		Map<Long, AgentVO> agentMap = new HashMap<>();
+		
+		try{
+			List<SystemPropertyVO> agents = propService.getByType("studyagent");
+			
+			InterviewVO vo = interviewService.findInterviewWithFiredRulesById(interviewId);
+			
+			for(SystemPropertyVO agent : agents){
+				for(RuleVO rule : vo.getFiredRules()){
+					if(Long.valueOf(agent.getValue()) == rule.getAgentId()){	
+						if(agentMap.containsKey(rule.getAgentId())){
+							agentMap.get(rule.getAgentId()).setTotal(agentMap.get(rule.getAgentId()).getTotal() + 1);
+						}
+						else{
+							AgentVO agentVo = new AgentVO();
+							agentVo.setIdAgent(rule.getAgentId());
+							agentVo.setName(agent.getName());
+							agentMap.put(rule.getAgentId(), agentVo);
+						}						
+					}	
+				}
+			}
+			
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(agentMap.values()).build();
 	}
 
 	@Path(value="/delete")
