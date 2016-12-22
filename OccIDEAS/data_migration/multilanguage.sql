@@ -263,24 +263,22 @@ insert into `Language` (language,description,lastUpdated,flag) values ('TO','TO'
 insert into `Language` (language,description,lastUpdated,flag) values ('VA','VA',now(),'bfh-flag-VA');
 insert into `Language` (language,description,lastUpdated,flag) values ('ZW','ZW',now(),'bfh-flag-ZW');
 
-DROP VIEW IF EXISTS NodeNodeLanguage;
-CREATE VIEW NodeNodeLanguage AS 
 
 DROP VIEW IF EXISTS NodeNodeLanguage;
 CREATE VIEW NodeNodeLanguage AS 
 select concat(n.idNode, ':',l.flag)  as primaryKey,
 n.idNode,n.topNodeId,l.flag,count(nl.id) as current,
 (select count(1) from 
-node n1 left join 
-node_language nl1 on n1.name = nl1.word
+Node n1 left join 
+Node_Language nl1 on n1.name = nl1.word
 where n1.link = 0
 and n1.type not like '%frequency%'
 and n1.type != 'P_freetext'
 and n1.topNodeId = n.topNodeId 
 group by n1.topNodeId)+1 as total from 
-node n left join 
-node_language nl on n.name = nl.word
-left join language l on nl.languageId = l.id 
+Node n left join 
+Node_Language nl on n.name = nl.word
+left join Language l on nl.languageId = l.id 
 where n.link = 0
 and n.type not like '%frequency%'
 and n.type != 'P_freetext' 
