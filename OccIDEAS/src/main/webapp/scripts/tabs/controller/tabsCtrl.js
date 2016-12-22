@@ -143,7 +143,7 @@
         }
         
         $scope.openModuleLanguageTab = function(lang,row) {
-        	var tabTitle = "Module Language ";
+        	var tabTitle = "Module Language-"+row.idNode+"-"+lang;
             var state = "tabs.moduleLanguage";
             $stickyState.reset(state);
             if (!checkIfTabIsOpen(tabs, tabTitle)) {

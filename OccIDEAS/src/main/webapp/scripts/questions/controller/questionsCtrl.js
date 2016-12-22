@@ -20,6 +20,7 @@
 		var self = this;
 		self.lang = lang;
 		if(self.lang){
+			$translate.refresh();
 			$translate.use(self.lang.language);
 			self.translateNode = true;
 			self.editTranslateNode = true;

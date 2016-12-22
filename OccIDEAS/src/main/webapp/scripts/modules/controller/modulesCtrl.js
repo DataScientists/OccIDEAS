@@ -19,6 +19,14 @@
 	    	$mdDialog.cancel();
 	    	$scope.openModuleLanguageTab($scope.selectedLanguage.language.id,row);
 	    }
+		
+		$scope.openModuleLanguageByFlagIcon = function(language){
+			var cloneLanguage = _.cloneDeep(language);
+			if(language.topNodeId != 0){
+				cloneLanguage.idNode = language.topNodeId;
+			}
+			$scope.openModuleLanguageTab(cloneLanguage.languageId,cloneLanguage);
+		}
 	    
 		
 		

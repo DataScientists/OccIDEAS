@@ -95,7 +95,7 @@
 			</td>
 			<td permission="['ROLE_ADMIN','ROLE_CONTDEV']" style="width:100px;">
 				<span ng-repeat="lang in row.flags" class="{{lang.current == lang.total?'greenBorder':'redBorder'}}">
-				<i  class="glyphicon {{lang.flag}}"></i>
+				<i  class="glyphicon {{lang.flag}}" ng-click="openModuleLanguageByFlagIcon(lang)"></i>
 				</span>
 			</td>
 			<td>

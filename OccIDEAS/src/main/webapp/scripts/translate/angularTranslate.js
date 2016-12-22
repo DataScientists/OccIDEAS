@@ -60,9 +60,9 @@
     				});
     			}
     		}
-//  		$timeout(function () {
-//  		deferred.resolve(translations);
-//  		}, 2000);
+  		$timeout(function () {
+  			deferred.resolve(translations);
+  		}, 2000);
 
     		return deferred.promise;
     	};

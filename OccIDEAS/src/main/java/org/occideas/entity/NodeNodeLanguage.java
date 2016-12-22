@@ -18,8 +18,17 @@ public class NodeNodeLanguage implements java.io.Serializable {
 	private long idNode;
 	private long topNodeId;
 	private String flag;
+	private long languageId;
 	private int current;
 	private int total;
+
+	public long getLanguageId() {
+		return languageId;
+	}
+
+	public void setLanguageId(long languageId) {
+		this.languageId = languageId;
+	}
 
 	public String getPrimaryKey() {
 		return primaryKey;

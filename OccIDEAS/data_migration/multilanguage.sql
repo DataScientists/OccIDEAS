@@ -267,7 +267,7 @@ insert into `Language` (language,description,lastUpdated,flag) values ('ZW','ZW'
 DROP VIEW IF EXISTS NodeNodeLanguage;
 CREATE VIEW NodeNodeLanguage AS 
 select concat(n.idNode, ':',l.flag)  as primaryKey,
-n.idNode,n.topNodeId,l.flag,count(nl.id) as current,
+n.idNode,n.topNodeId,l.flag,nl.languageId,count(nl.id) as current,
 (select count(1) from 
 Node n1 left join 
 Node_Language nl1 on n1.name = nl1.word
