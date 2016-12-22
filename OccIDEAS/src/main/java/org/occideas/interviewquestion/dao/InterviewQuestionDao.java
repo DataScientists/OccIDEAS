@@ -34,8 +34,7 @@ public class InterviewQuestionDao {
 			+ "a.modCount,a.parentAnswerId,a.link, a.deleted,a.isProcessed,"
 			+ "a.description,a.number,a.intQuestionSequence,a.lastUpdated "
 			+ "from Interview_Question a, Interview_Question b "
-			+ "where a.question_id>0 and a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) "
-			+ "and b.topNodeId = a.topNodeId";
+			+ "where a.question_id>0 and a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) ";
 		
 	@SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){

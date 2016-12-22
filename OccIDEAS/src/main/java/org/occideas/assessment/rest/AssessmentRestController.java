@@ -823,7 +823,7 @@ public class AssessmentRestController {
 		
 			//Build header and answers
 			addHeadersAndAnswers(headers, interviewQuestionVO, exportCSVVO, 
-					nodeVoList.get(Long.valueOf(interviewQuestionVO.getTopNodeId())));
+					nodeVoList);
 		
 			if(!uniqueInterviews.contains(interviewQuestionVO.getIdInterview())){ 
 				uniqueInterviews.add(interviewQuestionVO.getIdInterview());
@@ -1002,8 +1002,15 @@ public class AssessmentRestController {
 	}
 
 	private void addHeadersAndAnswers(Set<String> headers, 
-			InterviewQuestion interviewQuestionVO, ExportCSVVO exportCSVVO, NodeVO topModule) {
-
+			InterviewQuestion interviewQuestionVO, ExportCSVVO exportCSVVO, Map<Long, NodeVO> nodeVoList) {
+		
+		long topNodeId = Long.valueOf(interviewQuestionVO.getTopNodeId());
+		NodeVO topModule = nodeVoList.get(topNodeId);
+		if(topModule == null){
+			topModule = getTopModuleByTopNodeId(topNodeId);
+			nodeVoList.put(topNodeId, topModule);
+		}
+		
 		if(isModuleOrAjsm(interviewQuestionVO)){
 			//Do nothing?
 			//headers.add(interviewQuestionVO.getName().substring(0, 4));
