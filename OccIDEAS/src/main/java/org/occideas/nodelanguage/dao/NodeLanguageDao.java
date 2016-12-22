@@ -11,6 +11,7 @@ import org.hibernate.transform.Transformers;
 import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.Language;
 import org.occideas.entity.NodeLanguage;
+import org.occideas.entity.NodeNodeLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -100,6 +101,16 @@ public class NodeLanguageDao {
 		Object uniqueResult = crit.uniqueResult();
 		if(uniqueResult != null){
 			return (Language)uniqueResult;
+		}
+		return null;
+	}
+	
+	public List<NodeNodeLanguage> getNodeNodeLanguageList(){
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(NodeNodeLanguage.class); 
+		List list = crit.list();
+		if(list != null){
+			return list;
 		}
 		return null;
 	}

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.occideas.entity.Language;
+import org.occideas.entity.NodeNodeLanguage;
 import org.occideas.mapper.NodeLanguageMapper;
 import org.occideas.nodelanguage.dao.NodeLanguageDao;
 import org.occideas.vo.LanguageVO;
@@ -70,5 +71,10 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public LanguageVO getLanguageById(Long id) {
 		return mapper.convertToLanguageVO(dao.getLanguageById(id));
+	}
+
+	@Override
+	public List<NodeNodeLanguage> getNodeNodeLanguageList() {
+		return dao.getNodeNodeLanguageList();
 	}
 }

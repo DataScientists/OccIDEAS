@@ -20,6 +20,8 @@
 	    	$scope.openModuleLanguageTab($scope.selectedLanguage.language.id,row);
 	    }
 	    
+		
+		
 	    self.displayNodeLanguage = function(row){
 	    	NodeLanguageService.getAllLanguage().then(function(response){
 				if(response.status == '200'){
@@ -49,11 +51,11 @@
 			})
 	    }
 	    
-	    NodeLanguageService.getDistinctLanguage().then(function(response){
-	    	if(response.status == '200'){
-	    		$scope.flags = response.data;
-	    	}
-	    });
+//	    NodeLanguageService.getDistinctLanguage().then(function(response){
+//	    	if(response.status == '200'){
+//	    		$scope.flags = response.data;
+//	    	}
+//	    });
 	    
 	    $scope.showRuleCount = function(row,$event){
 	    	ModuleRuleService.getRuleCountById(row.idNode).then(function(response){
@@ -231,10 +233,31 @@
 	          }
 	          $log.info("Data getting from modules ajax ..."); 
 	          return  ModulesService.get().then(function(data) {
-	        	  $log.info("Data received from modules ajax ...");        	 
-	        	  self.originalData = angular.copy(data);
-	        	  self.tableParams.settings().dataset = data;
-	        	  self.tableParams.shouldGetData = true;
+	        	  $log.info("Data received from modules ajax ...");    
+	        	  if(!data){
+	        		  self.originalData = angular.copy(data);
+	        		  self.tableParams.settings().dataset = data;
+	        		  self.tableParams.shouldGetData = true;
+	        	  }else{
+	        		  NodeLanguageService.getNodeNodeLanguageList().then(function(response){
+	        		    	if(response.status == '200'){
+	        		    		$scope.nodeNodeLanguageMap = response.data;
+	        		    		_.each(data,function(dataTemp){
+	        		    			dataTemp.flags = _.uniqBy(_.filter($scope.nodeNodeLanguageMap,function(nodeNodeLanguageMapTemp){
+	        		    				return dataTemp.idNode == nodeNodeLanguageMapTemp.idNode || 
+	        		    				dataTemp.idNode == nodeNodeLanguageMapTemp.topNodeId;
+	        		    			}),'flag');
+	        		    		});
+	        		    		self.originalData = angular.copy(data);
+	      	        		  	self.tableParams.settings().dataset = data;
+	      	        		  	self.tableParams.shouldGetData = true;
+	        		    	}else{
+	        		    		self.originalData = angular.copy(data);
+	      	        		  	self.tableParams.settings().dataset = data;
+	      	        		  	self.tableParams.shouldGetData = true;
+	        		    	}
+	        		  });
+	        	  }
 	            return data;
 	          });
 	          }

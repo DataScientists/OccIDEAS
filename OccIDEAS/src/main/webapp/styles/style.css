@@ -1287,3 +1287,15 @@ li.borderless {
 	/* font-weight: bold; */
 	color:green;
 }
+
+.greenBorder{
+	border-style: solid;
+    border-width: thin;
+    border-color: green;
+}
+
+.redBorder{
+	border-style: solid;
+    border-width: thin;
+    border-color: red;
+}

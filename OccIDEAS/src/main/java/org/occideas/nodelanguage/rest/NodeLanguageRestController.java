@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.NodeNodeLanguage;
 import org.occideas.nodelanguage.service.NodeLanguageService;
 import org.occideas.vo.LanguageVO;
 import org.occideas.vo.NodeLanguageVO;
@@ -167,6 +168,20 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(vo).build();
+	}
+	
+	@GET
+	@Path(value="/getNodeNodeLanguageList")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getNodeNodeLanguageList(){
+		List<NodeNodeLanguage> list = null;
+		try{
+			list = service.getNodeNodeLanguageList();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
 	}
 	
 }

@@ -80,6 +80,15 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getNodeNodeLanguageList(){
+			var restUrl = url+'/getNodeNodeLanguageList';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -104,7 +113,8 @@
 			getNodesByLanguageAndWord:getNodesByLanguageAndWord,
 			deleteNodeLanguage:deleteNodeLanguage,
 			getDistinctLanguage:getDistinctLanguage,
-			getLanguageById:getLanguageById
+			getLanguageById:getLanguageById,
+			getNodeNodeLanguageList:getNodeNodeLanguageList
 		};
 	}
 })();

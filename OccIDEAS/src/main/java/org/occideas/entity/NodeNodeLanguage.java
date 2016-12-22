@@ -1,0 +1,72 @@
+package org.occideas.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+@Entity
+@DynamicUpdate(value = true)
+@DynamicInsert(value = true)
+public class NodeNodeLanguage implements java.io.Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	private String primaryKey;
+	private long idNode;
+	private long topNodeId;
+	private String flag;
+	private int current;
+	private int total;
+
+	public String getPrimaryKey() {
+		return primaryKey;
+	}
+
+	public void setPrimaryKey(String primaryKey) {
+		this.primaryKey = primaryKey;
+	}
+
+	public long getTopNodeId() {
+		return topNodeId;
+	}
+
+	public void setTopNodeId(long topNodeId) {
+		this.topNodeId = topNodeId;
+	}
+
+	public long getIdNode() {
+		return idNode;
+	}
+
+	public void setIdNode(long idNode) {
+		this.idNode = idNode;
+	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
+	}
+
+	public int getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(int current) {
+		this.current = current;
+	}
+
+	public int getTotal() {
+		return total;
+	}
+
+	public void setTotal(int total) {
+		this.total = total;
+	}
+
+}
