@@ -7,18 +7,47 @@
 			'InterviewsService', 'ParticipantsService', 'AssessmentsService',
 			'$anchorScroll', '$location', '$mdMedia', '$window', '$state',
 			'$rootScope', '$compile', '$timeout', '$log', 'updateData',
-			'startWithReferenceNumber','$filter','$translate'];
+			'startWithReferenceNumber','$filter','$translate','NodeLanguageService'];
 	function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
 			QuestionsService, ModulesService, InterviewsService,
 			ParticipantsService, AssessmentsService, $anchorScroll, $location,
 			$mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
-			updateData,startWithReferenceNumber,$filter,$translate) {
+			updateData,startWithReferenceNumber,$filter,$translate,NodeLanguageService) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.multiSelected = [];
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
+		
+		$scope.selectLanguage = 'US';
+		$scope.getAllLanguage = function(){
+			NodeLanguageService.getAllLanguage().then(function(response){
+				if(response.status == '200'){
+					$scope.languages = response.data;
+//					var english = {
+//						id: -1,
+//						language: 'EN'
+//					}
+//					$scope.languages.unshift(english);
+					$scope.selectLanguage = {};
+					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
+						return lng.language == 'US';
+					});
+					safeDigest($scope.selectLanguage);
+				}
+			})
+		};
+		$scope.getAllLanguage();
+		
+		self.changeNodeLanguage = function(data) {
+        	$translate.refresh();
+       		if(data.selected.language == 'US'){
+       		}else{
+       			$translate.use(data.selected.language);
+       		}
+       		$scope.selectLanguage.select = data.selected;
+        };
 		
 		
 		function add(type) {

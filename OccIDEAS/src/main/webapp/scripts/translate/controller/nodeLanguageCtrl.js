@@ -50,6 +50,7 @@
         });
 		
 		$scope.languages = undefined;
+		
 		$scope.getAllLanguage = function(){
 			NodeLanguageService.getAllLanguage().then(function(response){
 				if(response.status == '200'){
@@ -59,7 +60,10 @@
 //						language: 'EN'
 //					}
 //					$scope.languages.unshift(english);
-					$scope.selectLanguage = $scope.languages[0];
+					$scope.selectLanguage = {};
+					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
+						return lng.language == 'US';
+					});
 					safeDigest($scope.selectLanguage);
 				}
 			})
@@ -92,7 +96,7 @@
 //	          }
 	          $log.info("Data getting from modules ajax ..."); 
 	          if($scope.selectLanguage){
-	          return  NodeLanguageService.getNodeLanguageById($scope.selectLanguage.id).then(function(response) {
+	          return  NodeLanguageService.getNodeLanguageById($scope.selectLanguage.selected.id).then(function(response) {
 	        	  $log.info("Data received from modules ajax ...");  
 	        	  var data = response.data;
 	        	  vm.originalData = angular.copy(data);
