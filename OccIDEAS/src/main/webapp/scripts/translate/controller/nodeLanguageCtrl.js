@@ -87,9 +87,9 @@
 //	          if(params.filter().name || params.filter().description || params.filter().isDuplicate){	
 //	        	return $filter('filter')(vm.tableParams.settings().dataset, params.filter());
 //	          }
-	          if(!vm.tableParams.shouldGetData){
-	        	  return vm.tableParams.settings().dataset;
-	          }
+//	          if(!vm.tableParams.shouldGetData){
+//	        	  return vm.tableParams.settings().dataset;
+//	          }
 	          $log.info("Data getting from modules ajax ..."); 
 	          if($scope.selectLanguage){
 	          return  NodeLanguageService.getNodeLanguageById($scope.selectLanguage.id).then(function(response) {
