@@ -89,7 +89,11 @@
     	
     	$rootScope.$on('$translateChangeSuccess',function () {
             translateNodes($scope.data[0]);
-            refreshNodeLanguageCount($scope.data[0]);
+            $scope.currentLangCount = 0;
+        	$scope.totalLangCount = 0;
+            refreshNodeLanguageCount($scope.data[0],
+            			$scope.currentLangCount,
+            			$scope.totalLangCount);
         });
     	
     	function translateNodes(node){
@@ -103,13 +107,15 @@
     			});
     		}
     	}
-    	$scope.currentLangCount = 0;
-    	$scope.totalLangCount = 0;
     	function refreshNodeLanguageCount(node){
+    		if(node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')){
     		if(node.translated.trim() != 'No available translation'){
     			$scope.currentLangCount++;
     		}
-    		$scope.totalLangCount++;
+    		if(node.translated){
+    			$scope.totalLangCount++;
+    		}
+    		}
     		if(node.nodes){
     			_.each(node.nodes,function(childNode){
     				return refreshNodeLanguageCount(childNode);

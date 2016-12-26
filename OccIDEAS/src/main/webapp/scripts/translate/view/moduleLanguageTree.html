@@ -44,7 +44,7 @@
 				&& vm.editTranslateNode" ng-click="saveAllLanguage()">	
 		<span ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F'"> Translated Nodes: {{currentLangCount}}/{{totalLangCount}}</span>
 <div class="editBox">
-		  <span class="treeNodeText" ng-if="!vm.editTranslateNode && 
+		  <span class="treeNodeText {{node.translated == 'No available translation'?'redBackground':'greenBackground'}}" ng-if="!vm.editTranslateNode && 
 				node.type != 'P_freetext' && !node.type.match('frequency')
 				&& node.link == 0" 
 				data-nodrag>
@@ -56,7 +56,7 @@
 					&& node.link == 0" 
 			  >
       		<input type="text"  value="{{node.translated}}" 
-				class="form-control-edit form-control"
+				class="form-control-edit form-control {{node.translated == 'No available translation'?'redBackground':'greenBackground'}}"
 				 ng-model="node.translated"
              	data-nodrag	style="width:400px !important;"
 				>
