@@ -19,10 +19,25 @@
         vm.hasErrMsg = false;
         vm.errMsg = '';
         vm.isAuthenticated = $sessionStorage.isAuthenticated;
-        vm.language = 'en';
         
-        vm.changeLanguage = function(){
-        	 $translate.use(vm.language);
+        $scope.showLanguageDialog = function(){
+        	$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/translate/view/languageDialog.html',
+				clickOutsideToClose:false
+			});
+        }
+        
+        $scope.$storage = $sessionStorage; 
+        $scope.isEnabled = $sessionStorage.langEnabled;
+        $scope.saveLanguageSettings = function(){
+        	if($scope.isEnabled){
+        		$sessionStorage.langEnabled = true;
+        	}else{
+        		$sessionStorage.langEnabled = false;
+        	}
+        	$mdDialog.cancel();
         }
         
         vm.passwordVO = {};

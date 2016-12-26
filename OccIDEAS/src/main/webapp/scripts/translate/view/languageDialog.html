@@ -1,0 +1,37 @@
+<md-dialog aria-label="Export CSV" 
+			style="margin:0 0 0 0;padding:0 0 0 0;height:500px;"  
+			ng-cloak>
+<!-- <pre>{{data | json}}</pre> -->
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Language Settings</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content" style="height:100px;" >
+  		<md-content>
+  		<md-checkbox
+              ng-model="isEnabled"
+              aria-label="Language Status"
+              class="md-warn md-align-top-left" flex>
+              Enable Language Status In Module Tab
+            </md-checkbox> 
+  		</md-content>
+  		</div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+       <span flex></span>
+      <md-button ng-click="saveLanguageSettings()">
+        Save
+      </md-button>
+      <md-button ng-click="cancel()" style="margin-right:20px;">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

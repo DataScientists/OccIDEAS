@@ -3,10 +3,11 @@
 		   .controller('ModuleCtrl',ModuleCtrl);
 	ModuleCtrl.$inject = ['ModulesService','ngTableParams','$state','$scope','ModulesCache','$filter',
                           '$anchorScroll','$location','$log','$mdDialog','Upload','$timeout','InterviewsService'
-                          ,'$q','ngToast','ModuleRuleService','NodeLanguageService'];
+                          ,'$q','ngToast','ModuleRuleService','NodeLanguageService',
+                          '$sessionStorage'];
 	function ModuleCtrl(ModulesService,NgTableParams,$state,$scope,ModulesCache,$filter,
 			$anchorScroll,$location,$log,$mdDialog,Upload,$timeout,InterviewsService,$q,
-			$ngToast,ModuleRuleService,NodeLanguageService){
+			$ngToast,ModuleRuleService,NodeLanguageService,$sessionStorage){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -15,6 +16,8 @@
 	    $scope.selectLanguage = undefined;
 	    $scope.selectedLanguage = { language: '' };
 		$scope.languages = undefined;
+		$scope.$storage = $sessionStorage;
+		
 		$scope.openModuleLanguage = function(row){
 	    	$mdDialog.cancel();
 	    	$scope.openModuleLanguageTab($scope.selectedLanguage.language.id,row);
@@ -247,7 +250,8 @@
 	        		  self.tableParams.settings().dataset = data;
 	        		  self.tableParams.shouldGetData = true;
 	        	  }else{
-	        		  NodeLanguageService.getNodeNodeLanguageList().then(function(response){
+	        		  if($sessionStorage.langEnabled){
+	        			  NodeLanguageService.getNodeNodeLanguageList().then(function(response){
 	        		    	if(response.status == '200'){
 	        		    		$scope.nodeNodeLanguageMap = response.data;
 	        		    		_.each(data,function(dataTemp){
@@ -265,6 +269,11 @@
 	      	        		  	self.tableParams.shouldGetData = true;
 	        		    	}
 	        		  });
+	        		  }else{
+      		    		self.originalData = angular.copy(data);
+    	        		  	self.tableParams.settings().dataset = data;
+    	        		  	self.tableParams.shouldGetData = true;
+      		    	  }
 	        	  }
 	            return data;
 	          });
