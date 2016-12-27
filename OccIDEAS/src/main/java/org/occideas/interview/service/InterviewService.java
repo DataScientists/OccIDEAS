@@ -40,4 +40,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	InterviewVO findInterviewWithFiredRulesById(Long id);
 
 	List<Interview> listAllWithAssessments(String[] modules);
+
+	List<InterviewVO> findByIdWithRules(Long id, boolean isIncludeAnswer);
+
+	InterviewVO getQuestionHistory(Long id);
 }

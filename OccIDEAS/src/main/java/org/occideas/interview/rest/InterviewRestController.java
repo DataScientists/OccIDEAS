@@ -1,6 +1,7 @@
 package org.occideas.interview.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -228,6 +229,35 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		}
 		return Response.ok(list).build();
     }
+    
+    @GET
+    @Path(value = "/getAnswers")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getAnswers(@QueryParam("id") Long id) {
+    	InterviewVO vo = new InterviewVO();
+		try{			
+			vo = service.getQuestionHistory(id);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(vo).build();
+    }
+    
+    @GET
+    @Path(value = "/getfiredrules")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getfiredrules(@QueryParam("id") Long id) {
+    	List<InterviewVO> list = new ArrayList<InterviewVO>();
+		try{
+			list = service.findByIdWithRules(id, false);			
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+    }
+    
     @GET
     @Path(value = "/updatefiredrules")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)

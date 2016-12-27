@@ -24,7 +24,7 @@ public interface InterviewMapper {
 	
 	InterviewVO convertToInterviewUnprocessQuestion(Interview interview);
 
-	InterviewVO convertToInterviewWithRulesVO(Interview interview);
+	InterviewVO convertToInterviewWithRulesVO(Interview interview, boolean isIncludeAnswer);
 
 	List<InterviewVO> convertToInterviewWithRulesVOList(List<Interview> interviewEntity);
 	

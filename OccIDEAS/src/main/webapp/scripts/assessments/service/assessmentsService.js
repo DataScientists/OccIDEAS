@@ -39,6 +39,23 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+    	function getFiredRules(idInterview) {
+			var restUrl = 'web/rest/interview/getfiredrules?id=' + idInterview;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+    	function showAnswers(idInterview) {
+			var restUrl = 'web/rest/interview/getAnswers?id=' + idInterview;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+    	
     	function updateAutoAssessments() {
 			var restUrl = 'web/rest/interview/updateAutoAssessments';
 			var request =  $http({
@@ -91,7 +108,9 @@
         	listByInterview: listByInterview,
         	getInterview: getInterview,
         	getInterviews: getInterviews,
-        	getAssessments: getAssessments 
+        	getAssessments: getAssessments,
+        	showAnswers:showAnswers,
+        	getFiredRules:getFiredRules
         };
     }
 })();

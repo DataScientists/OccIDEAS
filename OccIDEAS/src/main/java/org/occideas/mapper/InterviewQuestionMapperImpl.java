@@ -15,7 +15,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 	private InterviewAnswerMapper answerMapper;
 
 	@Override
-	public InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question) {
+	public InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question, boolean isIncludeAnswer) {
 		if (question == null) {
 			return null;
 		}
@@ -34,7 +34,9 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		vo.setParentAnswerId(question.getParentAnswerId());
 		vo.setModCount(question.getModCount());
 		vo.setLink(question.getLink());
-		vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));
+		if(isIncludeAnswer){
+			vo.setAnswers(answerMapper.convertToInterviewAnswerVOList(question.getAnswers()));	
+		}
 		vo.setIntQuestionSequence(question.getIntQuestionSequence());
 		vo.setProcessed(question.isProcessed());
 		vo.setLastUpdated(question.getLastUpdated());
@@ -97,14 +99,14 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 	}
 
 	@Override
-	public List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question) {
+	public List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question, boolean isIncludeAnswer) {
 		if (question == null) {
 			return null;
 		}
 		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
 		for (InterviewQuestion iq : question) {
 			// if(iq.getDeleted() == 0){
-			list.add(convertToInterviewQuestionVO(iq));
+			list.add(convertToInterviewQuestionVO(iq, isIncludeAnswer));
 			// }
 		}
 		return list;
@@ -297,6 +299,14 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 			// }
 		}
 		return list;
+	}
+	@Override
+	public InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question) {
+		return convertToInterviewQuestionVO(question, true);
+	}
+	@Override
+	public List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question) {
+		return convertToInterviewQuestionVOList(question, true);
 	}
 
 }

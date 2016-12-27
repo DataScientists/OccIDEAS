@@ -63,7 +63,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 	}
 
 	@Override
-	public InterviewVO convertToInterviewWithRulesVO(Interview interview) {
+	public InterviewVO convertToInterviewWithRulesVO(Interview interview, boolean isIncludeAnswer) {
 		if (interview == null) {
 			return null;
 		}
@@ -74,7 +74,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		
 		System.out.println("1.1:convertToInterviewWithRulesVO:"+new Date());
 		
-		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(interview.getQuestionHistory()));
+		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(interview.getQuestionHistory(), isIncludeAnswer));
 		System.out.println("1.2:convertToInterviewWithRulesVO:"+new Date());
 		
 		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerWithRulesVOList(interview.getAnswerHistory()));
@@ -166,7 +166,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		int iCount = 0;
 		int iSize = interviewEntity.size();
 		for (Interview interview : interviewEntity) {
-			list.add(convertToInterviewWithRulesVO(interview));
+			list.add(convertToInterviewWithRulesVO(interview, true));
 			System.out.println((iCount++)+" of "+iSize+" convertToInterviewWithRulesVOList:"+new Date());
 		}
 		return list;

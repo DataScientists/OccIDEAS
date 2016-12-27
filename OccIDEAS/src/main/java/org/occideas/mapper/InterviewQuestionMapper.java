@@ -8,8 +8,12 @@ import org.occideas.vo.InterviewQuestionVO;
 public interface InterviewQuestionMapper {
 
 	InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question);
+	
+	InterviewQuestionVO convertToInterviewQuestionVO(InterviewQuestion question, boolean isIncludeAnswer);
 
 	List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question);
+	
+	List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question, boolean isIncludeAnswer);
 
 	InterviewQuestionVO convertToInterviewQuestionUnprocessedVO(InterviewQuestion question);
 

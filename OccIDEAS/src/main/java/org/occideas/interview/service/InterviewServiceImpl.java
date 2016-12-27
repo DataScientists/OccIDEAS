@@ -8,6 +8,7 @@ import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Interview;
 import org.occideas.interview.dao.InterviewDao;
 import org.occideas.mapper.InterviewMapper;
+import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.InterviewVO;
@@ -27,6 +28,9 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Autowired
     private InterviewMapper mapper;
+
+    @Autowired
+	private InterviewQuestionMapper qsMapper;
 
     @Override
     public List<InterviewVO> listAll() {
@@ -82,9 +86,13 @@ public class InterviewServiceImpl implements InterviewService {
     }
     @Override
     public List<InterviewVO> findByIdWithRules(Long id) {
+    	return findByIdWithRules(id, true);
+    }
+    @Override
+    public List<InterviewVO> findByIdWithRules(Long id, boolean isIncludeAnswer) {
     	System.out.println("1:findByIdWithRules:"+new Date());
         Interview interview = interviewDao.get( id);
-        InterviewVO InterviewVO = mapper.convertToInterviewWithRulesVO(interview);
+        InterviewVO InterviewVO = mapper.convertToInterviewWithRulesVO(interview, isIncludeAnswer);
         List<InterviewVO> list = new ArrayList<InterviewVO>();
         list.add(InterviewVO);
         System.out.println("2:findByIdWithRules:"+new Date());
@@ -181,5 +189,12 @@ public class InterviewServiceImpl implements InterviewService {
 	public Long getAllWithRulesCount(String[] modules) {
 		
 		return interviewDao.getCountForModules(modules);
+	}
+
+	@Override
+	public InterviewVO getQuestionHistory(Long id) {
+		InterviewVO interview = new InterviewVO(); 
+		interview.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(interviewDao.get(id).getQuestionHistory(), true));
+		return interview;
 	}
 }
