@@ -42,7 +42,7 @@
 				value="Save" 
 				ng-if="(node.nodeclass === 'M'|| node.nodeclass === 'F') 
 				&& vm.editTranslateNode" ng-click="saveAllLanguage()">	
-		<span ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F'"> Translated Nodes: {{currentLangCount}}/{{totalLangCount}}</span>
+		<span ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F'"> Translated {{currentLangCount}}/{{totalLangCount}}</span>
 <div class="editBox">
 		  <span class="treeNodeText {{node.translated == 'No available translation'?'redBackground':'greenBackground'}}" ng-if="!vm.editTranslateNode && 
 				node.type != 'P_freetext' && !node.type.match('frequency')

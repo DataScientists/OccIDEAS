@@ -9,7 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
-public class NodeNodeLanguage implements java.io.Serializable {
+public class NodeNodeLanguageMod implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 

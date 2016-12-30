@@ -263,19 +263,26 @@ insert into `Language` (language,description,lastUpdated,flag) values ('TO','TO'
 insert into `Language` (language,description,lastUpdated,flag) values ('VA','VA',now(),'bfh-flag-VA');
 insert into `Language` (language,description,lastUpdated,flag) values ('ZW','ZW',now(),'bfh-flag-ZW');
 
-
 DROP VIEW IF EXISTS NodeNodeLanguage;
-CREATE VIEW NodeNodeLanguage AS 
+
+DROP VIEW IF EXISTS NodeNodeLanguageMod;
+CREATE VIEW NodeNodeLanguageMod AS 
 select concat(n.idNode, ':',l.flag)  as primaryKey,
-n.idNode,n.topNodeId,l.flag,nl.languageId,count(nl.id) as current,
-(select count(1) from 
+n.idNode,n.topNodeId,l.flag,nl.languageId,(select count(distinct nl1.word) from 
 Node n1 left join 
 Node_Language nl1 on n1.name = nl1.word
 where n1.link = 0
 and n1.type not like '%frequency%'
 and n1.type != 'P_freetext'
-and n1.topNodeId = n.topNodeId 
-group by n1.topNodeId)+1 as total from 
+and nl1.translation is not null
+and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end 
+and nl1.languageId = nl.languageId)+1 as current,
+(select count(distinct n1.name) from
+Node n1 
+where n1.link = 0
+and n1.type not like '%frequency%'
+and n1.type != 'P_freetext'
+and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end)+1 as total from 
 Node n left join 
 Node_Language nl on n.name = nl.word
 left join Language l on nl.languageId = l.id 
@@ -283,4 +290,33 @@ where n.link = 0
 and n.type not like '%frequency%'
 and n.type != 'P_freetext' 
 and l.flag is not null
-group by n.idNode,nl.languageId;
+and n.node_discriminator = 'M'
+group by n.idNode,nl.languageId,l.flag;
+
+DROP VIEW IF EXISTS NodeNodeLanguageFrag;
+CREATE VIEW NodeNodeLanguageFrag AS 
+select concat(n.idNode, ':',l.flag)  as primaryKey,
+n.idNode,n.topNodeId,l.flag,nl.languageId,(select count(distinct nl1.word) from 
+Node n1 left join 
+Node_Language nl1 on n1.name = nl1.word
+where n1.link = 0
+and n1.type not like '%frequency%'
+and n1.type != 'P_freetext'
+and nl1.translation is not null
+and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end 
+and nl1.languageId = nl.languageId)+1 as current,
+(select count(distinct n1.name) from
+Node n1 
+where n1.link = 0
+and n1.type not like '%frequency%'
+and n1.type != 'P_freetext'
+and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end)+1 as total from 
+Node n left join 
+Node_Language nl on n.name = nl.word
+left join Language l on nl.languageId = l.id 
+where n.link = 0
+and n.type not like '%frequency%'
+and n.type != 'P_freetext' 
+and l.flag is not null
+and n.node_discriminator = 'F'
+group by n.idNode,nl.languageId,l.flag;

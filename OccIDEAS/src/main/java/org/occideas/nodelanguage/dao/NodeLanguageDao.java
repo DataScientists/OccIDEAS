@@ -7,11 +7,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.Language;
 import org.occideas.entity.NodeLanguage;
-import org.occideas.entity.NodeNodeLanguage;
+import org.occideas.entity.NodeNodeLanguageMod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -105,9 +103,9 @@ public class NodeLanguageDao {
 		return null;
 	}
 	
-	public List<NodeNodeLanguage> getNodeNodeLanguageList(){
+	public List<NodeNodeLanguageMod> getNodeNodeLanguageListMod(){
 		final Session session = sessionFactory.getCurrentSession();
-		Criteria crit = session.createCriteria(NodeNodeLanguage.class); 
+		Criteria crit = session.createCriteria(NodeNodeLanguageMod.class); 
 		List list = crit.list();
 		if(list != null){
 			return list;
