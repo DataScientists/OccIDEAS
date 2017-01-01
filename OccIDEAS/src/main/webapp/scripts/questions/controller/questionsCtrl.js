@@ -26,7 +26,7 @@
 			self.editTranslateNode = true;
 			$scope.selectedLanguage = self.lang;
 		}
-		
+		$scope.languageNameList = [];
 		self.editTranslation = function(){
 			self.editTranslateNode = true;
 		}
@@ -94,6 +94,7 @@
             refreshNodeLanguageCount($scope.data[0],
             			$scope.currentLangCount,
             			$scope.totalLangCount);
+            console.log($scope.languageNameList.length);
         });
     	
     	function translateNodes(node){
@@ -107,14 +108,18 @@
     			});
     		}
     	}
+    	
     	function refreshNodeLanguageCount(node){
-    		if(node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')){
-    		if(node.translated.trim() != 'No available translation'){
-    			$scope.currentLangCount++;
-    		}
-    		if(node.translated){
-    			$scope.totalLangCount++;
-    		}
+    		
+    		if(node.name && $scope.languageNameList.indexOf(node.name.toLowerCase()) == -1
+    				&& node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')){
+    			if(node.translated.trim() != 'No available translation'){
+    				$scope.currentLangCount++;
+    			}
+    			if(node.translated){
+    				$scope.totalLangCount++;
+    			}
+    			$scope.languageNameList.push(node.name.toLowerCase());
     		}
     		if(node.nodes){
     			_.each(node.nodes,function(childNode){

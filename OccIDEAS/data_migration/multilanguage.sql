@@ -282,6 +282,9 @@ Node n1
 where n1.link = 0
 and n1.type not like '%frequency%'
 and n1.type != 'P_freetext'
+and n1.nodeclass is not null
+and n1.originalId = 0
+and n1.deleted = 0
 and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end)+1 as total from 
 Node n left join 
 Node_Language nl on n.name = nl.word

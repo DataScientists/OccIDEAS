@@ -113,4 +113,16 @@ public class NodeLanguageDao {
 		return null;
 	}
 	
+	public NodeNodeLanguageMod getNodeNodeLanguageMod(long idNode,String flag){
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(NodeNodeLanguageMod.class)
+				.add(Restrictions.eq("idNode",idNode))
+				.add(Restrictions.eq("flag","bfh-flag-"+flag)); 
+		Object uniqueResult = crit.uniqueResult();
+		if(uniqueResult != null){
+			return (NodeNodeLanguageMod)uniqueResult;
+		}
+		return null;
+	}
+	
 }
