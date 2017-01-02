@@ -6,8 +6,10 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.occideas.entity.Language;
+import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.mapper.NodeLanguageMapper;
+import org.occideas.nodelanguage.dao.INodeLanguageDao;
 import org.occideas.nodelanguage.dao.NodeLanguageDao;
 import org.occideas.vo.LanguageVO;
 import org.occideas.vo.NodeLanguageVO;
@@ -19,12 +21,19 @@ import org.springframework.stereotype.Service;
 public class NodeLanguageServiceImpl implements NodeLanguageService{
 
 	@Autowired
-	private NodeLanguageDao dao;
+	private INodeLanguageDao dao;
 	@Autowired
 	private NodeLanguageMapper mapper;
 	
 	@Override
 	public void save(NodeLanguageVO nodeLanguageVO) {
+		NodeLanguage nodeLanguage = dao.getNodeLanguageByWordAndLanguage(nodeLanguageVO.getWord(),nodeLanguageVO.getLanguageId());
+		if(nodeLanguage != null){
+			nodeLanguageVO.setId(nodeLanguage.getId());
+		}
+		if(nodeLanguage != null && nodeLanguage.getTranslation().equals(nodeLanguageVO.getTranslation())){
+			return;
+		}
 		dao.save(mapper.convertToNodeLanguage(nodeLanguageVO));
 	}
 

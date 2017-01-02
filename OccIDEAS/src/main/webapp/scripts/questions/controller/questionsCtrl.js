@@ -33,11 +33,8 @@
 		
         
         $scope.saveAllLanguage = function(){
-        	saveNodeTranslation(data[0]);
+        	saveNodeTranslation(angular.copy(data[0]));
         	self.editTranslateNode = false;
-        	$scope.currentLangCount = 0;
-        	$scope.totalLangCount = 0;
-        	refreshNodeLanguageCount(data[0]);
         }
         
         function saveNodeTranslation(node){
@@ -60,6 +57,8 @@
             		if(response.status == '200'){
             			NodeLanguageService.save(data).then(function(response){
                 			if(response.status == '200'){
+                				$translate.refresh();
+                        		$translate.use(self.lang.language);
                 			}
                 		});
             		}
@@ -91,15 +90,14 @@
             translateNodes($scope.data[0]);
             $scope.currentLangCount = 0;
         	$scope.totalLangCount = 0;
-            refreshNodeLanguageCount($scope.data[0],
-            			$scope.currentLangCount,
-            			$scope.totalLangCount);
+        	$scope.languageNameList.length = 0;
+            refreshNodeLanguageCount($scope.data[0]);
             console.log($scope.languageNameList.length);
         });
     	
     	function translateNodes(node){
-    		node.translated = $translate.instant(node.name);
-    		if(node.translated.trim() == node.name.trim()){
+    		node.translated = $translate.instant(node.name.toLowerCase());
+    		if(node.translated.trim() == node.name.toLowerCase().trim()){
     			node.translated = 'No available translation';
     		}
     		if(node.nodes){
@@ -124,6 +122,23 @@
     		if(node.nodes){
     			_.each(node.nodes,function(childNode){
     				return refreshNodeLanguageCount(childNode);
+    			});
+    		}
+    	}
+    	
+    	$scope.translateSameNodeName = function(node){
+    		checkAndTranslateSameNode($scope.data[0],node.name,node.translated);
+    	}
+    	
+    	function checkAndTranslateSameNode(node,name,translation){
+    		if(node.name.toLowerCase() == name.toLowerCase() && node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')){
+    			if(translation.trim() != 'No available translation'){
+    				node.translated = translation;
+    			}
+    		}
+    		if(node.nodes){
+    			_.each(node.nodes,function(childNode){
+    				return checkAndTranslateSameNode(childNode,name,translation);
     			});
     		}
     	}

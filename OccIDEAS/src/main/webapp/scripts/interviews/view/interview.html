@@ -27,7 +27,7 @@
 							style="margin-top: 5px; margin-left: -15px;">
 							<span class="badge">{{as.number}}</span>
 						</div>
-						<span>{{as.answerFreetext?as.answerFreetext:as.name |
+						<span>{{as.answerFreetext?as.answerFreetext:as.name | lowercase |
 							translate}} </span>
 					</div>
 				</div>
@@ -36,7 +36,7 @@
 		<div ng-if="!inProgress">
 			<ul id="interviewing-{{interview.showedQuestion.idNode}}"
 				ng-if="interviewStarted">
-				<md-toolbar>{{interview.showedQuestion.name |
+				<md-toolbar>{{interview.showedQuestion.name | lowercase |
 				translate}} <md-button id="numId" event-focus> <span
 					class="badge">{{questionheader.name}}</span> <span class="badge">{{interview.showedQuestion.number}}</span>
 
@@ -52,7 +52,7 @@
 								ng-model="node.isSelected"
 								ng-click="multiToggle(node, multiSelected)" class="green"
 								select-free-text-on-click> <span
-								ng-if="node.type!='P_freetext'">{{node.name | translate}}</span>
+								ng-if="node.type!='P_freetext'">{{node.name | lowercase | translate}}</span>
 							<md-input-container ng-if="node.type=='P_freetext'" md-no-float
 								class="md-block"> <label>Free Text</label>
 							<input style="width: 270px;" ng-model="node.name"
@@ -114,7 +114,7 @@
 								<md-radio-button flex ng-value="node"
 									class="md-primary interview-radio-button"
 									select-free-text-on-click> <span
-									ng-if="node.type!='P_freetext'">{{node.name |
+									ng-if="node.type!='P_freetext'">{{node.name | lowercase |
 									translate}}</span> <md-input-container ng-if="node.type=='P_freetext'"
 									md-no-float class="md-block"> <label>Free
 									Text</label> <input style="width: 270px;" ng-model="node.name">
@@ -214,7 +214,7 @@
 						style="margin-top: 5px; margin-left: 2px;" aria-hidden="true"></span>
 					<span id="{{'IntResult'+element.idNode}}" data-toggle="tooltip"
 						data-placement="bottom" title="{{ element.name }}">{{
-						element.name | translate}}</span>
+						element.name | lowercase | translate}}</span>
 				</div>
 				<!-- 			show answers -->
 				<div class="tree-node-content P_interviewresult"
@@ -229,7 +229,7 @@
 					</div>
 					<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip"
 						data-placement="bottom"
-						title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext
+						title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext | lowercase
 						| translate}} </span>
 				</div>
 			</div>
