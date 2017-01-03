@@ -62,8 +62,8 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Auditable(actionType = AuditingActionType.DELETE_PARTICIPANT)
     @Override
     public void delete(ParticipantVO o) {
-    	o.setDeleted(1);
-    	participantDao.saveOrUpdate(mapper.convertToParticipant(o,false));
+    	
+    	participantDao.delete(mapper.convertToParticipant(o,false));
     }
 
     @Auditable(actionType = AuditingActionType.ADD_PARTICIPANT)

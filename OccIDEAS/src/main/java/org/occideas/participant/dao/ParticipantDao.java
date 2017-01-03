@@ -29,8 +29,8 @@ public class ParticipantDao {
       }
 
     public void delete(Participant participant){
-    	participant.setDeleted(1);
-    	sessionFactory.getCurrentSession().saveOrUpdate(participant);
+    	
+    	sessionFactory.getCurrentSession().delete(participant);
     }
 
 	public Participant get(Long id){

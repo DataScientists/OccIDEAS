@@ -1,0 +1,35 @@
+<md-dialog aria-label="Note" style="margin:0 0 0 0;padding:0 0 0 0;"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Delete Participant</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="vm.cancelDelete()">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+      	<div layout="column" ng-cloak class="md-inline-form">
+  		<md-content layout-gt-sm="row" layout-padding>
+    		<div>    		
+      		<md-input-container>
+        		Are you sure you want to delete this participant?
+        	</md-input-container>
+    		</div>  		
+  		</md-content>
+  		</div>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="vm.deleteRow()">
+       OK
+      </md-button>
+      <md-button ng-click="vm.cancelDelete()" style="margin-right:20px;">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
