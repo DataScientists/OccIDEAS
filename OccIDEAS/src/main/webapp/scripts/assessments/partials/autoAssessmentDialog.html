@@ -1,0 +1,31 @@
+<md-dialog aria-label="Export CSV" style="margin:0 0 0 0;padding:0 0 0 0;"  ng-cloak>
+<!-- <pre>{{data | json}}</pre> -->
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Auto Assessment</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+      	<div layout="column" ng-cloak class="md-inline-form">
+  		<md-content>
+  		<div>
+  		Please select the assessment status to be updated:
+  		</div>  		
+  			<button  class="btn btn-default" 
+				ng-click="updateButton('All')">All ({{totalAssessmentSize}})</button>
+			<button  class="btn btn-default" 
+				ng-click="updateButton('Auto Assessed')">Assessed ({{assessedSize}}/{{totalAssessmentSize}})</button>
+			<button  class="btn btn-default" 
+				ng-click="updateButton('Not Assessed')">Not Assessed ({{notAssessedSize}}/{{totalAssessmentSize}})</button>
+  		</md-content>
+  		</div>
+      </div>
+    </md-dialog-content>
+  </form>
+</md-dialog>

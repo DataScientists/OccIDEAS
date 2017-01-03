@@ -117,6 +117,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setParticipant(participantMapper.convertToParticipantVO(interview.getParticipant(), false));
 		interviewVO.setParentId(interview.getParentId());
 		interviewVO.setNotes(noteMapper.convertToNoteVOList(interview.getNotes()));
+		interviewVO.setAssessedStatus(interview.getAssessedStatus());
 
 		return interviewVO;
 	}

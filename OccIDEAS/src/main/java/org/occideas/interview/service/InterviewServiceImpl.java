@@ -1,5 +1,6 @@
 package org.occideas.interview.service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,9 +39,9 @@ public class InterviewServiceImpl implements InterviewService {
     }
     
     @Override
-    public List<InterviewVO> listAllWithRules() {
+    public List<InterviewVO> listAllWithRulesVO(String type) {
     	System.out.println("2:listAllWithRules:"+new Date());
-		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(interviewDao.getAll());
+		List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(interviewDao.getAll(type));
 		System.out.println("3:listAllWithRules:"+new Date());
 		
 		return retValue;
@@ -51,7 +52,7 @@ public class InterviewServiceImpl implements InterviewService {
     	
 		//Disable slow mapping
 		//List<InterviewVO> retValue = mapper.convertToInterviewWithRulesNoAnswersVOList(interviewDao.getAll(modules));		
-        return interviewDao.getAll(modules);
+        return interviewDao.getAllWithModules(modules);
     }
     @Override
     public List<Interview> listAllWithAssessments(String[] modules) {
@@ -59,7 +60,7 @@ public class InterviewServiceImpl implements InterviewService {
     	//Disable slow mapping
 		//List<InterviewVO> retValue = mapper.convertToInterviewWithAssessmentsVOList(interviewDao.getAll(modules));
 		
-		return interviewDao.getAll(modules);
+		return interviewDao.getAllWithModules(modules);
     }
     @Override
     public List<InterviewVO> listAllWithAnswers() {
@@ -196,5 +197,11 @@ public class InterviewServiceImpl implements InterviewService {
 		InterviewVO interview = new InterviewVO(); 
 		interview.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(interviewDao.get(id).getQuestionHistory(), true));
 		return interview;
+	}
+
+	@Override
+	public BigInteger listAllWithRuleCount(String assessmentStatus) {
+		
+		return interviewDao.getAssessmentCount(assessmentStatus);
 	}
 }

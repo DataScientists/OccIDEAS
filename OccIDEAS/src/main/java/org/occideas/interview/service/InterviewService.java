@@ -1,5 +1,6 @@
 package org.occideas.interview.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
@@ -15,7 +16,7 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<Interview> listAllWithRules(String[] modules);
 	
-	List<InterviewVO> listAllWithRules();
+	List<InterviewVO> listAllWithRulesVO(String type);
 	
 	Long getAllWithRulesCount(String[] modules);
 
@@ -44,4 +45,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	List<InterviewVO> findByIdWithRules(Long id, boolean isIncludeAnswer);
 
 	InterviewVO getQuestionHistory(Long id);
+
+	BigInteger listAllWithRuleCount(String assessmentStatus);
 }

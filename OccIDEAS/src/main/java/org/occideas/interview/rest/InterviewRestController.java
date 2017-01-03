@@ -1,5 +1,6 @@
 package org.occideas.interview.rest;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.Constant;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.question.service.QuestionService;
@@ -147,7 +149,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     public Response getInterviewsWithRules() {
     	List<InterviewVO> list = new ArrayList<InterviewVO>();
 		try{
-			list = service.listAllWithRules();
+			list = service.listAllWithRulesVO(null);
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -190,10 +192,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @GET
     @Path(value = "/updateAutoAssessments")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response updateAutoAssessments() {
+    public Response updateAutoAssessments(@QueryParam("type") String type) {
     	List<InterviewVO> list = new ArrayList<InterviewVO>();
 		try{
-			list = service.listAllWithRules();
+			list = service.listAllWithRulesVO(type);
+			List<AgentVO> listAgents = agentService.getStudyAgents();
+			
 			for(InterviewVO interviewVO:list){
 				interviewVO = this.determineFiredRules(interviewVO);
 				ArrayList<RuleVO> autoAssessedRules = new ArrayList<RuleVO>();
@@ -201,7 +205,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 					existingRule.setDeleted(1);
 					autoAssessedRules.add(existingRule);
 				}
-				List<AgentVO> listAgents = agentService.getStudyAgents();
+				
 				for(AgentVO agent:listAgents){
 					RuleVO rule = new RuleVO();
 					rule.setLevel("noExposure");
@@ -218,11 +222,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 						}
 					}
 					autoAssessedRules.add(rule);
-				}
-				interviewVO.setAssessedStatus("Auto Assessed");
+				}				
+				interviewVO.setAssessedStatus(Constant.AUTO_ASSESSED);
 				interviewVO.setAutoAssessedRules(autoAssessedRules);
 				service.update(interviewVO);
          	}
+			System.out.println("updateAutoAssessments Done "+new Date());
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -474,4 +479,17 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	}
     	return retValue;
     }
+	
+	@GET
+	@Path(value = "/getAssessmentSize")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getAutoAssessedSize(@QueryParam("status") String status) {
+		try {
+			BigInteger count = service.listAllWithRuleCount(status);
+			return Response.ok(count).build();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}		
+	}
 }
