@@ -2,20 +2,6 @@
 
 	<div class="col-md-4">
 		<div>
-		<label>Language</label>
-		<!-- 	<select ng-change="vm.changeLanguage()" ng-model="selectLanguage" -->
-		<!-- 		ng-options="option.language for option in languages track by option.id"> -->
-		<!--    </select> -->
-		<ui-select ng-model="selectLanguage.selected" ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2" ng-disabled="disabled" style="min-width: 100px;">
-    <ui-select-match><i class="glyphicon {{$select.selected.flag}}"></i> {{$select.selected.description}}</ui-select-match>
-    <ui-select-choices repeat="lang in languages | propsFilter: {language: $select.search}">
-<!--       <img ng-src="{{ lang.url }}" /> -->
-      <i class="glyphicon {{lang.flag}}"></i>
-      <div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
-    </ui-select-choices>
-  </ui-select>
-		</div>
-		<div>
 			<div>
 				<md-progress-linear ng-if="inProgress" md-mode="indeterminate"></md-progress-linear>
 

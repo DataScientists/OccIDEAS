@@ -293,7 +293,6 @@ where n.link = 0
 and n.type not like '%frequency%'
 and n.type != 'P_freetext' 
 and l.flag is not null
-and n.node_discriminator = 'M'
 group by n.idNode,nl.languageId,l.flag;
 
 DROP VIEW IF EXISTS NodeNodeLanguageFrag;

@@ -17,6 +17,14 @@
 	    $scope.selectedLanguage = { language: '' };
 		$scope.languages = undefined;
 		$scope.$storage = $sessionStorage;
+		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
+		
+		$scope.$watch('$storage.langEnabled', function(value) {	    	
+			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
+				self.tableParams.shouldGetData = true;
+		        self.tableParams.reload();
+			}
+		});
 		
 		$scope.openModuleLanguage = function(row){
 	    	$mdDialog.cancel();

@@ -673,6 +673,12 @@
 			return self.editAssessmentsMenuOptions;
 		}
 		
+		$scope.goToPageNumber = 1;
+		
+		$scope.asdasd = function(){
+			page.param($scope.goToPageNumber);
+		}
+		
 		$scope.assessmentFilter = {
 				idParticipant:null,
 				interviewId:null,

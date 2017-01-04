@@ -4,12 +4,65 @@
 
 	ParticipantsCtrl.$inject = [ 'ParticipantsService', 'NgTableParams',
 			'$state', '$scope', '$filter', 'data', 'InterviewsService',
-			'$resource','NotesService','$mdDialog', '$sessionStorage'];
+			'$resource','NotesService','$mdDialog', '$sessionStorage'
+			,'$translate','NodeLanguageService'];
 	function ParticipantsCtrl(ParticipantsService, NgTableParams, $state,
-			$scope, $filter, data, InterviewsService, $resource,NotesService,$mdDialog, $sessionStorage) {
+			$scope, $filter, data, InterviewsService, $resource,NotesService,
+			$mdDialog, $sessionStorage,$translate,NodeLanguageService) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
+		$scope.$storage = $sessionStorage;
+		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
+		
+		$scope.$watch('$storage.langEnabled', function(value) {	    	
+			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
+				$translate.refresh();
+				$translate.use('US');
+				$scope.selectLanguage = 'US';
+				$scope.getAllLanguage();
+			}else if(!$scope.$storage.langEnabled){
+				$translate.refresh();
+				$translate.use('US');
+			}
+		});
+		
+		
+		$scope.getAllLanguage = function(){
+			NodeLanguageService.getAllLanguage().then(function(response){
+				if(response.status == '200'){
+					$scope.languages = response.data;
+//					var english = {
+//						id: -1,
+//						language: 'EN'
+//					}
+//					$scope.languages.unshift(english);
+					$scope.selectLanguage = {};
+					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
+						return lng.language == 'US';
+					});
+					safeDigest($scope.selectLanguage);
+				}
+			})
+		};
+		
+		if($scope.$storage.langEnabled){
+			$translate.refresh();
+			$translate.use('US');
+			$scope.selectLanguage = 'US';
+			$scope.getAllLanguage();
+		}
+		
+		self.changeNodeLanguage = function(data) {
+        	$translate.refresh();
+       		if(data.selected.language == 'US'){
+       		}else{
+       			$translate.use(data.selected.language);
+       		}
+       		$scope.selectLanguage.select = data.selected;
+        };
+		
+		
 		$scope.setSelectedInterview = function(interview) {
 			$scope.selectedInterview = interview;
 		}

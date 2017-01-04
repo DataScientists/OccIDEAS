@@ -22,9 +22,11 @@
 			</tr>
 		</table>
 	</div>
+<!-- 	<li><span style="height: 33px;">&nbsp; Go To Page: <input type="text" ng-model="goToPageNumber" ng-keypress="asdasd()" style="width:30px;margin-top: -2px;"/></span></li> -->
 	<script type="text/ng-template" id="templatePagination.html">
     <div>
 		<ul class="pagination ng-table-pagination pull-right">
+		
         <li ng-class="{'disabled': !page.active && !page.current, 'active': page.current}" ng-repeat="page in pages" ng-switch="page.type">
           <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
           <a ng-switch-when="first" ng-click="params.page(page.number)" href="">
