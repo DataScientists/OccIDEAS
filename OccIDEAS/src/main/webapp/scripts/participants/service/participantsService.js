@@ -72,14 +72,13 @@
 			return request.then(handleSuccess,handleError);
 		}
 
-		//Unused
 		var deleteParticipant = function(p) {
 			var request = $http({
 				method:'POST',
 				url: modulesUrl+'/delete',
 				data:p
 			  });
-			  return request.then(handleSuccess,handleError);
+			  return request.then(handleSuccess1,handleError);
 		}
 			
 		var createParticipant = function(p){

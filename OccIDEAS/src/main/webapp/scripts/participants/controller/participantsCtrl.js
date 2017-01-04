@@ -5,10 +5,10 @@
 	ParticipantsCtrl.$inject = [ 'ParticipantsService', 'NgTableParams',
 			'$state', '$scope', '$filter', 'data', 'InterviewsService',
 			'$resource','NotesService','$mdDialog', '$sessionStorage'
-			,'$translate','NodeLanguageService'];
+			,'$translate','NodeLanguageService','AuthenticationService'];
 	function ParticipantsCtrl(ParticipantsService, NgTableParams, $state,
 			$scope, $filter, data, InterviewsService, $resource,NotesService,
-			$mdDialog, $sessionStorage,$translate,NodeLanguageService) {
+			$mdDialog, $sessionStorage,$translate,NodeLanguageService,auth) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -77,6 +77,8 @@
 			pageNumber : null,
 			size : null
 		};
+		
+		self.showDelColumn = false;
 
 		$scope.filterAndValidate = function(event) {
 			var elem = angular.element(document.querySelector('#awesid'));
@@ -116,6 +118,12 @@
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
 		var invalidCellsByRow = [];
+		
+		if(auth.userHasPermission(['ROLE_ADMIN'])){
+			//Show the delete column for admin only
+			self.showDelColumn = true;	
+		}
+		
 		self.tableParams = new NgTableParams(
 				{
 					page : 1,
@@ -165,9 +173,11 @@
 				});
 		self.tableParams.shouldGetData = true;
 		self.cancel = cancel;
-		self.del = del;
+		self.deletePrompt = deletePrompt;
+		self.deleteRow = deleteRow;
 		self.save = save;
 		self.add = add;
+		self.cancelDelete = cancelDelete;
 
 		self.toggleIsDeleting = toggleIsDeleting;
 		function toggleIsDeleting() {
@@ -216,7 +226,23 @@
 				});
 			}
 		}
-		function del(row) {
+		
+		function deletePrompt(participant) {
+			
+			$scope.participantToDelete = participant;
+			$mdDialog.show({
+				scope : $scope.$new(),
+				templateUrl : 'scripts/participants/view/deleteParticipantDialog.html',
+				clickOutsideToClose:true
+			});
+		};
+		
+		function cancelDelete() {
+			$mdDialog.cancel();
+		};
+		
+		function deleteRow() {
+			row = $scope.participantToDelete;
 			row.deleted = 1;
 			var data = ParticipantsService
 					.deleteParticipant(row)
@@ -251,6 +277,8 @@
 					self.tableParams.reload();
 				}
 			});
+			
+			$mdDialog.cancel();
 		}
 		function resetRow(row, rowForm) {
 			row.isEditing = false;

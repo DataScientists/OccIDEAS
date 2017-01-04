@@ -101,9 +101,11 @@
 					
 				} else{
 					if(!agentGroup.isOpened){
-						agent.style = "agent-shown";						
-						var showAgent = {name:agent.name,idAgent:agent.idAgent};
-						$scope.agents.push(showAgent);
+						if(agent.total > 0){
+							agent.style = "agent-shown";
+							var showAgent = {name:agent.name,idAgent:agent.idAgent};
+							$scope.agents.push(showAgent);
+						}
 					}					
 				}	
 			}
@@ -175,11 +177,16 @@
         		    return item.total * -1;
         		});
         		
-        		//Sort inner group
         		_.forEach(group,function(item,key) {
+        			//Sort inner group
         			item.value = _.sortBy(item.value, function(inner){
             		    return inner.total * -1;
-            		});	
+            		});
+        			
+        			//Open non-zero group by default
+        			if(item.total > 0){
+        				item.isOpened = true;
+        			}
         		});
         		
 	    		$scope.agentsData = group;

@@ -10,6 +10,7 @@
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
+		$scope.updateButtonDisabled = false;
 		
 		$scope.modules = function(column) {
 			  var def = $q.defer();
@@ -77,16 +78,80 @@
 			return $scope.csv;
 		}
 		
-		
 		$scope.updateAutoAssessmentsButton = function() {
-			AssessmentsService.updateAutoAssessments().then(function(response){
+			
+			$scope.assessedSize = 0;
+			$scope.notAssessedSize = 0;
+			$scope.totalAssessmentSize = 0;
+			
+			AssessmentsService.getAssessmentSize('Auto Assessed').then(function(response){				
 				if(response.status == '200'){
-					console.log('Assessments Updated');
+					$scope.assessedSize = response.data;
 				}
+			});
+			
+			AssessmentsService.getAssessmentSize('Not Assessed').then(function(response){				
+				if(response.status == '200'){
+					$scope.notAssessedSize = response.data;
+				}
+			});
+			
+			AssessmentsService.getAssessmentSize('All').then(function(response){				
+				if(response.status == '200'){
+					$scope.totalAssessmentSize = response.data;
+				}
+			});
+						
+			$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/autoAssessmentDialog.html',
+				clickOutsideToClose:true
 			});
 		}
 				
+		$scope.updateButton = function(status) {
+			$scope.updateButtonDisabled = true;
+			AssessmentsService.updateAutoAssessments(status).then(function(response){
+				if(response){
+					$scope.updateButtonDisabled = false;
+					
+					ngToast.create({
+			    		  className: 'success',
+			    		  content: "Auto assessment is completed."
+			    	});
+					
+					console.log('Assessments Updated: '+status);
+				}
+			});	  
+			
+			$mdDialog.show(
+				$mdDialog.alert()
+		        .clickOutsideToClose(true)
+		        .textContent('Estimated duration: '+ getEstimatedDuration(status) + ' minutes. ' 
+		        		+ '\n You will be prompted once auto assessment is completed.')				        
+		        .ok('Ok')				      
+		    );
+		}
 		
+		//Make a guesstimate, 3 seconds per assessment
+		function getEstimatedDuration(status){
+			
+			var estimateInMin = 0;
+			var defaultDurationInSec = 3; //Slow			
+			
+			if(status === 'All'){
+				estimateInMin = defaultDurationInSec * $scope.totalAssessmentSize;
+			}
+			else if(status === 'Auto Assessed'){
+				estimateInMin = defaultDurationInSec *  $scope.assessedSize;
+			}
+			else{
+				estimateInMin = defaultDurationInSec * $scope.notAssessedSize;
+			}
+			
+			return estimateInMin/60;
+		}
 		
 		$scope.showExportCSVButton = function() {
 		//get list of interview id

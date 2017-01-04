@@ -1,6 +1,6 @@
 <div ng-cloak>
 	<div>
-		<button permission="['ROLE_ADMIN']" class="btn btn-default" 
+		<button ng-disabled="updateButtonDisabled" permission="['ROLE_ADMIN']" class="btn btn-default" 
 			ng-click="updateAutoAssessmentsButton()">Update Auto Assessments</button>
 		Size : {{vm.tableParams.total()}}
 		<table ng-table="vm.tableParams" 

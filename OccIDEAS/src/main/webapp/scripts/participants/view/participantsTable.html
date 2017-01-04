@@ -60,6 +60,11 @@
 						<span class="glyphicon glyphicon-stop"></span>
 					</button>
 				</td>
+				<td title="'Del'" ng-if="vm.showDelColumn">				
+					<button class="btn btn-default" ng-click="vm.deletePrompt(participant)">
+						<span class="glyphicon glyphicon-trash"></span>
+					</button>
+				</td>
 			</tr>
 		</table>
 	</div>

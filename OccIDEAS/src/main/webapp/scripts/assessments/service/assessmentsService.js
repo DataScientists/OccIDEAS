@@ -56,8 +56,10 @@
 			return request.then(handleSuccess,handleError);
 		}
     	
-    	function updateAutoAssessments() {
-			var restUrl = 'web/rest/interview/updateAutoAssessments';
+    	function updateAutoAssessments(type) {
+    		
+			var restUrl = 'web/rest/interview/updateAutoAssessments?type=' 
+				+ type;
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl,
@@ -85,7 +87,17 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
-
+    	
+    	function getAssessmentSize(status) {
+			var restUrl = 'web/rest/interview/getAssessmentSize?status=' +status;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl,
+				  ignoreLoadingBar: true
+				})
+			return request.then(handleSuccess,handleError);
+		}
+    	
         function handleError(response) {
             if (
                 !angular.isObject(response.data) || !response.data.message
@@ -110,7 +122,9 @@
         	getInterviews: getInterviews,
         	getAssessments: getAssessments,
         	showAnswers:showAnswers,
-        	getFiredRules:getFiredRules
+        	getFiredRules:getFiredRules,
+        	getAssessmentSize:getAssessmentSize
+        	
         };
     }
 })();

@@ -1,9 +1,11 @@
 package org.occideas.interview.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -12,14 +14,32 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Constant;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewIntroModuleModule;
+import org.occideas.entity.SystemProperty;
 import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class InterviewDao {
+	
+	private final String ASSESSMENT_BASE_COUNT = 
+		" select count(*) from Participant p"  
+	  	+ " join Interview i join InterviewIntroModule_Module im" 
+	  	+ " where p.idParticipant = i.idParticipant"  
+	  	+ " and i.idinterview = im.interviewId"
+	  	+ " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
+	  	+ " and p.deleted = 0";
+	
+	private final String NOT_ASSESSED_COUNT = 
+			ASSESSMENT_BASE_COUNT 
+		  	+ " and (i.assessedStatus like '' or i.assessedStatus is null)";
+	
+	private final String ASSESSED_COUNT = 
+			ASSESSMENT_BASE_COUNT  
+		  	+ " and i.assessedStatus like '"+ Constant.AUTO_ASSESSED +"'";
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -46,24 +66,61 @@ public class InterviewDao {
     
     public List<Interview> getAll() {
     	//No filter
-    	return getAll(null);
+    	return getAllWithModules(null);
     }
 
     @SuppressWarnings("unchecked")
-	public List<Interview> getAll(String[] modules) {
+	public List<Interview> getAll(String assessmentStatus) {
+    	
+		final Session session = sessionFactory.getCurrentSession();
+
+		final Criteria crit = getInterviewCriteria(session);
+		
+		DetachedCriteria activeIntroQuery = DetachedCriteria.forClass(SystemProperty.class)
+				.setProjection(Projections.property("value"))
+				.add(Restrictions.eq("name", "activeIntro"));
+		activeIntroQuery.getExecutableCriteria(session).setMaxResults(1);
+		
+		DetachedCriteria subquery = DetachedCriteria.forClass(InterviewIntroModuleModule.class, "iimm")
+				.setProjection(Projections.property("interviewId"));		
+		subquery.add(Property.forName("iimm.idModule").ne(activeIntroQuery));
+
+		crit.add(Property.forName("interview.idinterview").in(subquery));		
+
+		if (assessmentStatus != null) {
+			if (Constant.NOT_ASSESSED.equals(assessmentStatus)) {
+				crit.add(Restrictions.or(Restrictions.isNull("assessedStatus"), 
+						Restrictions.eq("assessedStatus", "")));
+			} else if (Constant.AUTO_ASSESSED.equals(assessmentStatus)){
+				crit.add(Restrictions.eq("assessedStatus", assessmentStatus));
+			}
+		}
+
+		List<Interview> retValue = new ArrayList<Interview>();
+		setFiredRules(retValue, crit.list());
+		return retValue;
+    }
+
+	private Criteria getInterviewCriteria(final Session session) {
+		final Criteria crit = session.createCriteria(Interview.class, "interview")		  						
+		  						.setProjection(Projections.projectionList()
+		   		  					.add(Projections.property("fragment"),"fragment")
+		   		  					.add(Projections.property("module"),"module")
+		   		  					.add(Projections.property("moduleList"),"moduleList")
+		   		  					.add(Projections.property("idinterview"),"idinterview")
+		   		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
+		  						.addOrder(Order.asc("referenceNumber"))
+		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
+		return crit;
+	}
+    
+    @SuppressWarnings("unchecked")
+	public List<Interview> getAllWithModules(String[] modules) {
     	
       final Session session = sessionFactory.getCurrentSession();
       
-      final Criteria crit = session.createCriteria(Interview.class, "interview")		  						
-	  						.setProjection(Projections.projectionList()
-	   		  					.add(Projections.property("fragment"),"fragment")
-	   		  					.add(Projections.property("module"),"module")
-	   		  					.add(Projections.property("moduleList"),"moduleList")
-	   		  					.add(Projections.property("idinterview"),"idinterview")
-	   		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
-	  						.addOrder(Order.asc("referenceNumber"))
-	  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
-      
+      final Criteria crit = getInterviewCriteria(session);
+
       if(modules != null){
     	  getSubQuery(modules, crit);
       }
@@ -182,6 +239,25 @@ public class InterviewDao {
 				.add(Restrictions.eqProperty("iimm.interviewId", "interview.idinterview"));
 
 		crit.add(Property.forName("interview.idinterview").in(subquery));
+	}
+	
+	public BigInteger getAssessmentCount(String assessmentStatus) {
+		
+		final Session session = sessionFactory.getCurrentSession();
+		
+		String query = ASSESSMENT_BASE_COUNT;
+		
+		if(Constant.AUTO_ASSESSED.equals(assessmentStatus)){
+			query = ASSESSED_COUNT;
+		}
+		else if(Constant.NOT_ASSESSED.equals(assessmentStatus)){
+			query = NOT_ASSESSED_COUNT;
+		}
+		
+		SQLQuery sqlQuery = session.createSQLQuery(query);
+		sqlQuery.setMaxResults(1);		
+		
+		return (BigInteger) sqlQuery.uniqueResult();
 	}
 }
 
