@@ -103,7 +103,7 @@ public class ParticipantDao {
     		+ " and p.idParticipant like :idParticipant"
     		+ " and p.reference like :reference"
     		+ " and p.status like :status"
-    		+ " and i.assessedStatus like :assessedStatus"
+    		+ " and coalesce(i.assessedStatus, '%%') like coalesce(:assessedStatus, '%%')"
     		+ " and i.idinterview like :idinterview"
     		+ " and im.interviewModuleName like :interviewModuleName"
     		+ " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
@@ -130,7 +130,7 @@ public class ParticipantDao {
     	    		+ " and p.reference like :reference"
     	    		+ " and p.status like :status"
     	    		+ " and i.idinterview like :idinterview"
-    	    		+ " and i.assessedStatus like :assessedStatus"
+    	    		+ " and coalesce(i.assessedStatus, '%%') like coalesce(:assessedStatus, '%%')"
     	    		+ " and im.interviewModuleName like :interviewModuleName"
     	    		+ " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
     	    		+ " and p.deleted = 0";
