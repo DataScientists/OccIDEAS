@@ -1,6 +1,7 @@
 package org.occideas.participant.dao;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -126,12 +127,12 @@ public class ParticipantDao {
     	    		+" join Interview i join InterviewIntroModule_Module im "
     	    		+" where p.idParticipant = i.idParticipant " 
     	    		+ " and i.idinterview = im.interviewId "
-    	    		+ " and p.idParticipant like :idParticipant"
-    	    		+ " and p.reference like :reference"
-    	    		+ " and p.status like :status"
-    	    		+ " and i.idinterview like :idinterview"
+					+ " and coalesce(p.idParticipant, '%%') like coalesce(:idParticipant, '%%')"
+					+ " and coalesce(p.reference, '%%') like coalesce(:reference, '%%')"
+					+ " and coalesce(p.status, '%%') like coalesce(:status, '%%')"
+					+ " and coalesce(i.idinterview, '%%') like coalesce(:idinterview, '%%')"    	    		
     	    		+ " and coalesce(i.assessedStatus, '%%') like coalesce(:assessedStatus, '%%')"
-    	    		+ " and im.interviewModuleName like :interviewModuleName"
+    	    		+ " and coalesce(im.interviewModuleName, '%%') like coalesce(:interviewModuleName, '%%')"
     	    		+ " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
     	    		+ " and p.deleted = 0";
     
