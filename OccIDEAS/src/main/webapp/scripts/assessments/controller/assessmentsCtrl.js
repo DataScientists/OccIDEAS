@@ -12,6 +12,15 @@
 		$scope.$root.tabsLoading = false;
 		$scope.updateButtonDisabled = false;
 		
+		$scope.xxxx = 1;
+		
+		$scope.xxx = function(event,pagenum){
+			alert("test");
+	        if(event.keyCode == 13){
+	          	page.param(pagenum);
+	        }
+	    };
+		
 		$scope.modules = function(column) {
 			  var def = $q.defer();
 			 
@@ -736,12 +745,6 @@
 		}
 		self.showEditAssessmentMenu = function(scope){
 			return self.editAssessmentsMenuOptions;
-		}
-		
-		$scope.goToPageNumber = 1;
-		
-		$scope.asdasd = function(){
-			page.param($scope.goToPageNumber);
 		}
 		
 		$scope.assessmentFilter = {

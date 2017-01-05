@@ -97,7 +97,11 @@
     	
     	function translateNodes(node){
     		node.translated = $translate.instant(node.name.toLowerCase());
-    		if(node.translated.trim() == node.name.toLowerCase().trim()){
+    		if(node.idNode == $scope.data[0].idNode){
+    			node.translated = node.name; 
+    		}
+    		
+    		if(node.translated.trim() == node.name.toLowerCase().trim() && node.idNode != $scope.data[0].idNode){
     			node.translated = 'No available translation';
     		}
     		if(node.nodes){

@@ -26,7 +26,7 @@
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://localhost:3306/occideas" />
 		<property name="username" value="root" />
-		<property name="password" value="P@ssw0rd" />
+		<property name="password" value="password" />
 	</bean>
 
 	<bean id="sessionFactory"
