@@ -1,37 +1,63 @@
-<md-dialog aria-label="Export CSV" 
-			style="margin:0 0 0 0;padding:0 0 0 0;height:500px;"  
-			ng-cloak>
+<md-dialog aria-label="Export CSV"
+	style="margin:0 0 0 0;padding:0 0 0 0;height:800px;" ng-cloak>
 <!-- <pre>{{data | json}}</pre> -->
-  <form>
-    <md-toolbar>
-      <div class="md-toolbar-tools">
-        <h2>Language Settings</h2>
-        <span flex></span>
-        <md-button class="md-icon-button" ng-click="cancel()">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-        </md-button>
-      </div>
-    </md-toolbar>
-    <md-dialog-content>
-      <div class="md-dialog-content" style="height:100px;" >
-  		<md-content>
-  		<md-checkbox
-              ng-model="isEnabled"
-              aria-label="Language Status"
-              class="md-warn md-align-top-left" flex>
-              Enable Language Status In Module Tab
-            </md-checkbox> 
-  		</md-content>
-  		</div>
-    </md-dialog-content>
-    <md-dialog-actions layout="row">
-       <span flex></span>
-      <md-button ng-click="saveLanguageSettings()">
-        Save
-      </md-button>
-      <md-button ng-click="cancel()" style="margin-right:20px;">
-        Cancel
-      </md-button>
-    </md-dialog-actions>
-  </form>
+<form>
+	<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>Language Settings</h2>
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancel()"> <span
+			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
+	</div>
+	</md-toolbar>
+	<md-dialog-content>
+	<div class="md-dialog-content" style="height: 400px;padding-top: 0px;padding-bottom: 0px;">
+		<md-content>
+		<div>
+			<md-checkbox ng-model="isEnabled" aria-label="Language Status"
+				class="md-warn md-align-top-left" flex> Enable
+			Language Status In Module Tab </md-checkbox>
+		</div>
+		<div>
+			<div ng-if="$storage.langEnabled">
+				<label>Language</label>
+				<!-- 	<select ng-change="vm.changeLanguage()" ng-model="selectLanguage" -->
+				<!-- 		ng-options="option.language for option in languages track by option.id"> -->
+				<!--    </select> -->
+				<ui-select ng-model="selectLanguage.selected"
+					ng-change="vm.changeLanguage(selectLanguage)" theme="select2"
+					ng-disabled="disabled" style="min-width: 100px;"> <ui-select-match>
+				<i class="glyphicon {{$select.selected.flag}}"></i>
+				{{$select.selected.description}}</ui-select-match> <ui-select-choices
+					repeat="lang in flags"> <!--       <img ng-src="{{ lang.url }}" /> -->
+				<i class="glyphicon {{lang.flag}}"></i>
+				<div ng-bind-html="lang.description | highlight: $select.search"
+					style="display: inline"></div>
+				</ui-select-choices> </ui-select>
+				<table ng-table="vm.languageTableParams" ng-if="selectLanguage.selected"
+					class="table table-condensed table-bordered table-striped">
+					<tr>
+						<td colspan="2">Total {{totalCurrent}} of {{grandTotal}}</td>
+						<td>Modules without translation {{untranslatedModules.length}}</td>
+					</tr>
+					<tr>
+						<td>Id Node</td>
+						<td>Name</td>
+						<td>Count</td>
+					</tr>
+					<tr ng-repeat="nl in vm.languageTableParams.settings().dataset">
+						<td title="'Id Node'">{{nl.idNode}}</td>
+						<td title="'Name'">{{nl.name}}</td>
+						<td title="'Translated Nodes'">{{nl.current}} of {{nl.total}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		</md-content>
+	</div>
+	</md-dialog-content>
+	<md-dialog-actions layout="row"> <span flex></span>
+	 <md-button
+		ng-click="cancel()" style="margin-right:20px;"> Cancel </md-button> </md-dialog-actions>
+</form>
 </md-dialog>

@@ -3,6 +3,7 @@ package org.occideas.nodelanguage.dao;
 import java.util.List;
 
 import org.occideas.entity.Language;
+import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageMod;
 
@@ -35,5 +36,9 @@ public interface INodeLanguageDao {
 	List<Language> getAllLanguage();
 
 	void addLanguage(Language entity);
+
+	List<Module> getUntranslatedModules(String flag);
+
+	Integer getTotalUntranslatedModule();
 
 }

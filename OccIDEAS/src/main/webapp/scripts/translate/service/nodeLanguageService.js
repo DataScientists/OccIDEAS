@@ -5,6 +5,25 @@
 	NodeLanguageService.$inject = ['$http','$q'];
 	function NodeLanguageService($http,$q){
 		var url = 'web/rest/nodelanguage';
+		
+		function getUntranslatedModules(flag) {
+			var restUrl = url+'/getUntranslatedModules?flag='+flag;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getTotalUntranslatedModule() {
+			var restUrl = url+'/getTotalUntranslatedModule';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function getNodeLanguageById(id) {
 			var restUrl = url+'/getNodeLanguageById?id=' + id;
 			var request =  $http({
@@ -114,7 +133,9 @@
 			deleteNodeLanguage:deleteNodeLanguage,
 			getDistinctLanguage:getDistinctLanguage,
 			getLanguageById:getLanguageById,
-			getNodeNodeLanguageList:getNodeNodeLanguageList
+			getNodeNodeLanguageList:getNodeNodeLanguageList,
+			getUntranslatedModules:getUntranslatedModules,
+			getTotalUntranslatedModule:getTotalUntranslatedModule
 		};
 	}
 })();

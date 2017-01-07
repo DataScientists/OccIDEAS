@@ -6,12 +6,14 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.occideas.entity.Language;
+import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageMod;
+import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeLanguageMapper;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
-import org.occideas.nodelanguage.dao.NodeLanguageDao;
 import org.occideas.vo.LanguageVO;
+import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeLanguageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	private INodeLanguageDao dao;
 	@Autowired
 	private NodeLanguageMapper mapper;
+	@Autowired
+	private ModuleMapper modMapper;
 	
 	@Override
 	public void save(NodeLanguageVO nodeLanguageVO) {
@@ -85,5 +89,16 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public List<NodeNodeLanguageMod> getNodeNodeLanguageListMod() {
 		return dao.getNodeNodeLanguageListMod();
+	}
+
+	@Override
+	public List<ModuleVO> getUntranslatedModules(String flag) {
+		List<Module> untranslatedModules = dao.getUntranslatedModules(flag);
+		return modMapper.convertToModuleVOList(untranslatedModules, false);
+	}
+
+	@Override
+	public Integer getTotalUntranslatedModule() {
+		return dao.getTotalUntranslatedModule();
 	}
 }

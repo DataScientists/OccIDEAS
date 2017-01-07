@@ -47,14 +47,14 @@
 <div class="editBox">
 		  <span class="treeNodeText" ng-if="!vm.editTranslateNode && 
 				node.type != 'P_freetext' && !node.type.match('frequency')
-				&& node.link == 0" 
+				&& node.link == 0 && node.nodeclass != 'M'" 
 				data-nodrag>
 				<i>{{node.translated}}</i>
 		  </span>
 		  </div>
           <div ng-if="vm.editTranslateNode && node.type != 'P_freetext' 
 					&& !node.type.match('frequency') 
-					&& node.link == 0" 
+					&& node.link == 0 && node.nodeclass != 'M'" 
 			  >
       		<input type="text"  value="{{node.translated}}" 
 				class="form-control-edit form-control "

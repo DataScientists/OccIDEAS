@@ -17,7 +17,9 @@ public class NodeNodeLanguageMod implements java.io.Serializable {
 	private String primaryKey;
 	private long idNode;
 	private long topNodeId;
+	private String name;
 	private String flag;
+	private String description;
 	private long languageId;
 	private int current;
 	private int total;
@@ -76,6 +78,22 @@ public class NodeNodeLanguageMod implements java.io.Serializable {
 
 	public void setTotal(int total) {
 		this.total = total;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

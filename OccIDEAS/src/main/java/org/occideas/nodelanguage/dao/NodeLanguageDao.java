@@ -1,16 +1,21 @@
 package org.occideas.nodelanguage.dao;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.entity.Agent;
 import org.occideas.entity.Language;
+import org.occideas.entity.Module;
+import org.occideas.entity.Node;
 import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,6 +158,41 @@ public class NodeLanguageDao implements INodeLanguageDao{
 			return (NodeLanguage)uniqueResult;
 		}
 		return null;
+	}
+	
+	String getTotalUntranslatedModuleSQL = "select count(distinct n1.name) from "+
+							"Node n1 where n1.link = 0 "+
+							"and n1.type not like '%frequency%' "+
+							"and n1.type != 'P_freetext' "+
+							"and n1.deleted = 0 "+
+							"and n1.topNodeId in (select idNode from Node "+ 
+							"where node_discriminator = 'M' "+
+							"and deleted = 0 "+
+							"order by name) ";
+
+	@Override
+	public Integer getTotalUntranslatedModule() {
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(getTotalUntranslatedModuleSQL);
+		
+		BigInteger total = (BigInteger)sqlQuery.uniqueResult();
+		return total.intValue();
+	}
+	
+	String getUntranslatedModulesSQL = "select * from Node where "+
+										"node_discriminator = 'M' "+
+										"and deleted = 0 "+
+										"and idNode not in "+
+										"(select idNode from NodeNodeLanguageMod where flag = :param)";
+	
+	@Override
+	public List<Module> getUntranslatedModules(String flag) {
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(getUntranslatedModulesSQL)
+				.addEntity(Module.class);
+		sqlQuery.setParameter("param", flag);
+		List<Module> list = sqlQuery.list();
+		return list;
 	}
 	
 }

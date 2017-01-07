@@ -92,6 +92,7 @@
         	$scope.totalLangCount = 0;
         	$scope.languageNameList.length = 0;
             refreshNodeLanguageCount($scope.data[0]);
+            console.log(testArray.join(','));
             console.log($scope.languageNameList.length);
         });
     	
@@ -110,15 +111,17 @@
     			});
     		}
     	}
-    	
+    	var testArray = [];
     	function refreshNodeLanguageCount(node){
     		
     		if(node.name && $scope.languageNameList.indexOf(node.name.toLowerCase()) == -1
-    				&& node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')){
+    				&& node.link == 0 && node.type != 'P_freetext' && 
+    				!node.type.match('frequency') && node.nodeclass != 'M'){
     			if(node.translated.trim() != 'No available translation'){
     				$scope.currentLangCount++;
     			}
     			if(node.translated){
+    				testArray.push(node.idNode);
     				$scope.totalLangCount++;
     			}
     			$scope.languageNameList.push(node.name.toLowerCase());
