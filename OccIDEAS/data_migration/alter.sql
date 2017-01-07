@@ -165,3 +165,5 @@ PRIMARY KEY (`id`)
 
 ALTER TABLE `occideas`.`Interview` 
 ADD COLUMN `assessedStatus` VARCHAR(255) DEFAULT '';
+
+DELETE FROM occideas.AUDIT_LOG WHERE id>0;
