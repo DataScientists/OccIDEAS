@@ -94,7 +94,7 @@
                 					$sessionStorage.awesIdPrefix = response.data.value; 
                 				}else{
                 					//Set default
-                					$sessionStorage.awesIdPrefix = 'H';
+                					$sessionStorage.awesIdPrefix = 'A';
                 				}
                 			}
                         });
