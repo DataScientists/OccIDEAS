@@ -62,7 +62,7 @@
 //					$scope.languages.unshift(english);
 					$scope.selectLanguage = {};
 					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
-						return lng.language == 'US';
+						return lng.language == 'GB';
 					});
 					safeDigest($scope.selectLanguage);
 				}

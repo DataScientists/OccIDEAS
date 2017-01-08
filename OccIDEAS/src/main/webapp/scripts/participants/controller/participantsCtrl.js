@@ -18,12 +18,12 @@
 		$scope.$watch('$storage.langEnabled', function(value) {	    	
 			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
 				$translate.refresh();
-				$translate.use('US');
-				$scope.selectLanguage = 'US';
+				$translate.use('GB');
+				$scope.selectLanguage = 'GB';
 				$scope.getAllLanguage();
 			}else if(!$scope.$storage.langEnabled){
 				$translate.refresh();
-				$translate.use('US');
+				$translate.use('GB');
 			}
 		});
 		
@@ -39,7 +39,7 @@
 //					$scope.languages.unshift(english);
 					$scope.selectLanguage = {};
 					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
-						return lng.language == 'US';
+						return lng.language == 'GB';
 					});
 					safeDigest($scope.selectLanguage);
 				}
@@ -48,14 +48,14 @@
 		
 		if($scope.$storage.langEnabled){
 			$translate.refresh();
-			$translate.use('US');
-			$scope.selectLanguage = 'US';
+			$translate.use('GB');
+			$scope.selectLanguage = 'GB';
 			$scope.getAllLanguage();
 		}
 		
 		self.changeNodeLanguage = function(data) {
         	$translate.refresh();
-       		if(data.selected.language == 'US'){
+       		if(data.selected.language == 'GB'){
        		}else{
        			$translate.use(data.selected.language);
        		}
