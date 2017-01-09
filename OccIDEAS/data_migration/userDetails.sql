@@ -53,15 +53,15 @@ VALUES ('ADMIN');
 
 /* Interviewer */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
-VALUES ('interviewer','$2a$10$62LNfdU4F3HZgD7/dWX7r.i6XqledTrv/Rc9bi3gmNIL3JZxFpHRi', 'interviewer','interviewer','int@yahoo.com', 'Active');
+VALUES ('interviewer','$2a$10$atfmQmuvGaogmp0CISDh.uYNcyjP0B88i8ersmcZ3Xn2nplvmZWsa', 'interviewer','interviewer','int@yahoo.com', 'Active');
 
 /* Assessor */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
-VALUES ('assessor','$2a$10$NUhG9fZhLSsxaY6YJrAQcucM3XOJuh4vaw/uCSJ3lxC4meUwQCoMq', 'assessor','assessor','int@yahoo.com', 'Active');
+VALUES ('assessor','$2a$10$qx0VVOOfTWbElRv5Hc.H.e0ehlh9k0U3TVyKzITA4rezjrzZuT2Hi', 'assessor','assessor','int@yahoo.com', 'Active');
 
 /* Content Developer */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
-VALUES ('contdev','$2a$10$r2yh1rcLaF9DQnY2OTtqsOMqfijen6XvnBB8yvz/nEm/fyy1Vc.E.', 'contdev','contdev','int@yahoo.com', 'Active');
+VALUES ('contdev','$2a$10$fKuJmQxyUQ4wCrcbUsK6xOWKAzacjOzXljz32zLPzAv63g4j9qHey', 'contdev','contdev','int@yahoo.com', 'Active');
 
 /* Read Only Account */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
@@ -69,7 +69,7 @@ VALUES ('readonly','$2a$10$0.2nTVeqCm0WAzy3g.cw0.W9qT/GiCJOKYaWciW3kBVd6WZ/2JHWC
 
 /* Admin */
 INSERT INTO APP_USER(sso_id, password, first_name, last_name, email, state)
-VALUES ('admin','$2a$10$lT0RYDaULC.WR3cJNT5JVOs0VQHr/Jdb.gFBydPfuCozGaxL1bL2a', 'admin','admin','int@yahoo.com', 'Active');
+VALUES ('admin','$2a$10$DvrQhzYrmVIUa2c8dQtSdOsmiE861DKiJ6VMMy4jDHbwUJXard3L6', 'admin','admin','int@yahoo.com', 'Active');
 
 INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('1', '1');
 INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('2', '2');
