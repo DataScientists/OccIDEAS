@@ -92,9 +92,12 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	}
 
 	@Override
-	public List<ModuleVO> getUntranslatedModules(String flag) {
+	public Integer getUntranslatedModules(String flag) {
 		List<Module> untranslatedModules = dao.getUntranslatedModules(flag);
-		return modMapper.convertToModuleVOList(untranslatedModules, false);
+		if(untranslatedModules == null){
+			return 0;
+		}
+		return untranslatedModules.size();
 	}
 
 	@Override

@@ -1,9 +1,10 @@
 (function() {
     angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
-    TabsCtrl.$inject = ['$scope', '$state', '$rootScope', '$log', '$stickyState', 'AuthenticationService'];
+    TabsCtrl.$inject = ['$scope', '$state', '$rootScope', '$log', '$stickyState', 
+                        'AuthenticationService','$sessionStorage'];
 
-    function TabsCtrl($scope, $state, $rootScope, $log, $stickyState, auth) {
+    function TabsCtrl($scope, $state, $rootScope, $log, $stickyState, auth,$sessionStorage) {
         $scope.loading = false;
         $scope.tabOptions = [];
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
@@ -49,6 +50,13 @@
         		data:""
         	});
         }
+        if($sessionStorage.langEnabled){
+        	$scope.tabOptions.push({
+        		state: "tabs.languageSummary",
+        		data:""
+        	});
+		}
+        
         $scope.$watch('selectedIndex', function(current, old) {
             var state = null;
             var data = null;
@@ -132,6 +140,12 @@
                 viewName: 'reports@tabs'
             });
         }
+        if(auth.isLoggedIn() && $sessionStorage.langEnabled){
+        	tabs.push({
+                title: 'Language Summary',
+                viewName: 'languageSummary@tabs'
+            });
+		}
         $scope.tabs = tabs;
         $scope.selectedIndex = 0;
 
@@ -187,13 +201,13 @@
         };
         
         $rootScope.addLanguageTab = function() {
-            var tabTitle = "Language ";
-            var state = "tabs.language";
+            var tabTitle = "Language Summary";
+            var state = "tabs.languageSummary";
             $stickyState.reset(state);
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
                 tabs.push({
                     title: tabTitle,
-                    viewName: 'language@tabs',
+                    viewName: 'languageSummary@tabs',
                     canClose: true,
                     disabled: false
                 });
@@ -202,6 +216,21 @@
                     data: {
                     }
                 });
+            }
+        };
+        
+        $rootScope.closeLanguageTab = function() {
+            var tabTitle = "Language Summary";
+            var state = "tabs.languageSummary";
+            $stickyState.reset(state);
+            var index = undefined;
+            _.find(tabs, function(el, ind) {
+                if (el.title === tabTitle) {
+                    index = ind;
+                }
+            });
+            if(index) {
+            	 $scope.removeTab(index);
             }
         };
 

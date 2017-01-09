@@ -30,7 +30,7 @@ public interface NodeLanguageService {
 	
 	public List<NodeNodeLanguageMod> getNodeNodeLanguageListMod();
 
-	List<ModuleVO> getUntranslatedModules(String flag);
+	Integer getUntranslatedModules(String flag);
 
 	Integer getTotalUntranslatedModule();
 }

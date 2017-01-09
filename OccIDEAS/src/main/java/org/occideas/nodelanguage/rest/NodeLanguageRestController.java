@@ -189,14 +189,14 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 	@Path(value="/getUntranslatedModules")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getUntranslatedModules(@QueryParam("flag") String flag){
-		List<ModuleVO> list = null;
+		Integer result = null;
 		try{
-			list = service.getUntranslatedModules(flag);
+			result = service.getUntranslatedModules(flag);
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
-		return Response.ok(list).build();
+		return Response.ok(result).build();
 	}
 
 	@GET

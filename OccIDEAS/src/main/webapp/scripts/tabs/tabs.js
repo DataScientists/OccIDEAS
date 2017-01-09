@@ -580,6 +580,19 @@
                 }
             }
         }).state( {
+            name:'tabs.languageSummary',
+        	url: '/languageSummary/:row',
+            sticky: false,
+		    deepStateRedirect: false,
+		    authenticate:true,
+            views:{
+                'languageSummary@tabs':{
+                    templateUrl: 'scripts/translate/view/languageSummaryTab.html',
+                    controller: 'LanguageSummaryCtrl as vm',
+                    params:{row: null}
+                }
+            }
+        }).state( {
 			name:'tabs.moduleLanguage',
 			url: '/moduleLanguage/:row/:lang',
 			sticky: false,
