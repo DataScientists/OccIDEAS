@@ -3,7 +3,9 @@ package org.occideas.interview.rest;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -17,19 +19,26 @@ import javax.ws.rs.core.Response.Status;
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.Constant;
+import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
+import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.AgentVO;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleRuleVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.NoteVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RuleVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -48,6 +57,15 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Autowired
     private AgentService agentService;
 
+    @Autowired
+	private SystemPropertyService sysPropService;
+    
+    @Autowired
+	private ModuleService moduleService;
+    
+    @Autowired
+	private FragmentService fragmentService;
+    
     @GET
     @Path(value = "/getlist")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -242,6 +260,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	InterviewVO vo = new InterviewVO();
 		try{			
 			vo = service.getQuestionHistory(id);
+			vo.setQuestionHistory(sort(vo.getQuestionHistory()));
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -252,10 +271,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @GET
     @Path(value = "/getfiredrules")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response getfiredrules(@QueryParam("id") Long id) {
-    	List<InterviewVO> list = new ArrayList<InterviewVO>();
-		try{
-			list = service.findByIdWithRules(id, false);			
+	public Response getfiredrules(@QueryParam("id") Long id) {
+		List<InterviewVO> list = new ArrayList<InterviewVO>();		
+		try {
+			list = service.findByIdWithRules(id, false);
+			list.get(0).setQuestionHistory(sort(list.get(0).getQuestionHistory()));
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -492,4 +512,111 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}		
 	}
+	
+	private List<InterviewQuestionVO> sort(List<InterviewQuestionVO> inputQuestionHistory) {
+		System.out.print("Sort start "+new Date());
+		List<InterviewQuestionVO> sortedQuestionHistory = new ArrayList<InterviewQuestionVO>();
+
+		// Get sorted intro module
+		SystemPropertyVO intro = sysPropService.getByName(Constant.STUDY_INTRO);
+		List<ModuleVO> sortedQuestion = moduleService.findById(Long.valueOf(intro.getValue()));
+		List<NodeVO> sortedQuestions = new ArrayList<NodeVO>();
+		sortedQuestions.addAll(sortedQuestion);
+
+		List<Long> moduleList = new ArrayList<Long>();
+		// Make a map of the question history, populate the module list
+		Map<Long, InterviewQuestionVO> questionMap = getMap(inputQuestionHistory, 
+									moduleList, 
+									intro, 
+									sortedQuestionHistory);
+
+		//Get linked module
+		for(Long id : moduleList){			
+			List<ModuleVO> sortedLinkQuestion = moduleService.findById(Long.valueOf(id));			
+			linkQuestion(sortedLinkQuestion.get(0).getChildNodes(), sortedQuestions);			
+		}
+		
+		//Sort
+		for (NodeVO module : sortedQuestions) {
+			if (module instanceof ModuleVO) {
+				findQuestion(((ModuleVO) module).getChildNodes(), 
+						sortedQuestionHistory, 
+						questionMap);
+			} else if (module instanceof QuestionVO){
+				findQuestion(sortedQuestionHistory, questionMap, (QuestionVO)module);				
+			}
+		}
+
+		System.out.print("Sort end "+new Date());
+		return sortedQuestionHistory;
+	}
+
+	private void linkQuestion(List<QuestionVO> childNodes, List<NodeVO> sortedQuestions) {
+		
+		for(QuestionVO vo : childNodes){			
+			if(vo.getLink() != 0){
+				//Get linked module
+				List<ModuleVO> sortedLinkQuestion = moduleService.findById(Long.valueOf(vo.getLink()));
+				
+				if(sortedLinkQuestion != null && sortedLinkQuestion.get(0) != null){					
+					sortedQuestions.addAll(sortedLinkQuestion);					
+					linkQuestion(sortedLinkQuestion.get(0).getChildNodes(), sortedQuestions);	
+				}
+				else{
+					List<FragmentVO> sortedLinkFragment = fragmentService.findById(Long.valueOf(vo.getLink()));					
+					if(sortedLinkFragment != null && sortedLinkFragment.get(0) != null){						
+						linkQuestion(sortedLinkFragment.get(0).getChildNodes(), sortedQuestions);	
+					}					
+				}				
+			}
+			else{
+				sortedQuestions.add(vo);
+				linkAnswer(vo.getChildNodes(), sortedQuestions);
+			}
+		}		
+	}
+
+	private void linkAnswer(List<PossibleAnswerVO> childNodes, List<NodeVO> sortedQuestions) {
+		for(PossibleAnswerVO vo : childNodes){
+			linkQuestion(vo.getChildNodes(), sortedQuestions);
+		}		
+	}
+	
+	private Map<Long, InterviewQuestionVO> getMap(List<InterviewQuestionVO> questionHistory, List<Long> moduleList,
+			SystemPropertyVO intro, List<InterviewQuestionVO> sortedQuestionHistory) {
+
+		//Map of the actual unsorted question history 
+		Map<Long, InterviewQuestionVO> map = new HashMap<Long, InterviewQuestionVO>();
+
+		for (InterviewQuestionVO vo : questionHistory) {
+
+			if (vo.getQuestionId() == 0) {
+				if("Q_linkedmodule".equalsIgnoreCase(vo.getType() )){
+					moduleList.add(vo.getTopNodeId());
+				}
+				//sortedQuestionHistory will contain modules at this point
+				sortedQuestionHistory.add(vo);				
+			} else {				
+				map.put(vo.getQuestionId(), vo);
+			}
+		}
+		return map;
+	}
+	
+	private void findQuestion(List<QuestionVO> childNodes, List<InterviewQuestionVO> sortedQuestionHistory,
+			Map<Long, InterviewQuestionVO> questionMap) {
+
+		for (QuestionVO vo : childNodes) {
+			findQuestion(sortedQuestionHistory, questionMap, vo);			
+		}
+	}
+
+	private void findQuestion(List<InterviewQuestionVO> sortedQuestionHistory, Map<Long, InterviewQuestionVO> questionMap,
+			QuestionVO vo) {
+		
+		if (questionMap.containsKey(vo.getIdNode())) {
+			sortedQuestionHistory.add(questionMap.get(vo.getIdNode()));			
+		}
+	}	
+
 }

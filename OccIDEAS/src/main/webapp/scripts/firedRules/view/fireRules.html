@@ -172,7 +172,7 @@
   <div class="col-md-8" id="interview-question-list">
   <button ng-if="!vm.answersDisplayed" class="btn btn-default" 
 			ng-click="showAnswers()">Show Answers</button>
-  	<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in displayHistoryNew | orderBy:'lastUpdated':false">
+  	<div ui-tree="" id="tree-root1_{{$index}}" ng-repeat="element in displayHistoryNew">
 			<div class="angular-ui-tree">
 				<div class="tree-node">
 					<div id="questionlist-{{element.questionId}}" class="tree-node-content Q_interviewresult {{element.link ? 'Q_link':''}} {{element.processed ? 'Q_processed':''}}">
