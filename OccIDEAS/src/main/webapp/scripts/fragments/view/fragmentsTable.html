@@ -61,8 +61,10 @@
 					</span>
 				</div>
 			</td>
-			<td permission="['ROLE_ADMIN','ROLE_CONTDEV']" style="width:100px;">
-				<i ng-repeat="lang in flags" class="glyphicon {{lang.flag}}"></i>
+			<td permission="['ROLE_ADMIN','ROLE_CONTDEV']" style="width:100px;" ng-if="$storage.langEnabled">
+				<span ng-repeat="lang in row.flags" class="{{lang.current == lang.total?'greenBorder':'redBorder'}}">
+				<i class="glyphicon {{lang.flag}}" ng-click="openModuleLanguageByFlagIcon(lang)"></i>
+				</span>
 			</td>
 			<td>
 				<button class="btn btn-primary btn-sm"
@@ -84,7 +86,7 @@
 				</button>
 				<button class="btn btn-danger btn-sm" 
 					 ng-click="vm.displayNodeLanguage(row)"
-					 ng-if="!row.isEditing">
+					 ng-if="!row.isEditing && $storage.langEnabled">
 					 <span class="glyphicon glyphicon-flag"></span>
 				</button>
 			</td>
