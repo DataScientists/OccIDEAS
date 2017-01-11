@@ -41,4 +41,6 @@ public interface INodeLanguageDao {
 
 	Integer getTotalUntranslatedModule();
 
+	Integer getTotalModuleCount();
+
 }

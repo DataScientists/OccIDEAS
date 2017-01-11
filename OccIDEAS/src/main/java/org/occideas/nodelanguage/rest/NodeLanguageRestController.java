@@ -213,4 +213,18 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		return Response.ok(result).build();
 	}
 	
+	@GET
+	@Path(value="/getTotalModuleCount")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getTotalModuleCount(){
+		Integer result = 0;
+		try{
+			result = service.getTotalModuleCount();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+	
 }

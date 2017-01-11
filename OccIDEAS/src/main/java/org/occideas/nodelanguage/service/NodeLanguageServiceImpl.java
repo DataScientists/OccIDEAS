@@ -104,4 +104,9 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	public Integer getTotalUntranslatedModule() {
 		return dao.getTotalUntranslatedModule();
 	}
+
+	@Override
+	public Integer getTotalModuleCount() {
+		return dao.getTotalModuleCount();
+	}
 }
