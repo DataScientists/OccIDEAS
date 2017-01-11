@@ -151,7 +151,7 @@
 								|| participantFilter.status
 								|| ifEmptyFilter(params.filter())) {
 							return ParticipantsService
-									.getPaginatedParticipantWithModList(
+									.getPaginatedParticipantList(
 											participantFilter)
 									.then(
 											function(response) {

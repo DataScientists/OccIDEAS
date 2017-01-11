@@ -25,8 +25,7 @@
 			});
 			return request.then(handleSuccess1,handleError);
 		}
-		
-		//Unused
+				
 		var getPaginatedParticipantList = function(participantFilter){
 			var request = $http({
 				method:'POST',
@@ -109,7 +108,8 @@
 		    findParticipant: findParticipant,
 		    deleteParticipant: deleteParticipant,
 		    createParticipant:createParticipant,
-		    getPaginatedParticipantWithModList:getPaginatedParticipantWithModList
+		    getPaginatedParticipantWithModList:getPaginatedParticipantWithModList,
+		    getPaginatedParticipantList:getPaginatedParticipantList
 		};
 		function handleError( response ) {
             if (

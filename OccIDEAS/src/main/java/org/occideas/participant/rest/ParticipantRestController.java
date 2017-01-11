@@ -79,7 +79,7 @@ public class ParticipantRestController implements BaseRestController<Participant
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getPaginatedParticipant(ParticipantFilterVO filterVO) {
-    	PageVO<ParticipantVO> page = null;
+    	PageVO<ParticipantIntMod> page = null;
 		try{
 			page = service.getPaginatedParticipantList(filterVO.getPageNumber(), filterVO.getSize(),filterVO);
 		}catch(Throwable e){

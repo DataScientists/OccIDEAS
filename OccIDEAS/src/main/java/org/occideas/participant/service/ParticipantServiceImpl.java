@@ -90,11 +90,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 	}
 
 	@Override
-	public PageVO<ParticipantVO> getPaginatedParticipantList(int pageNumber, int size, GenericFilterVO filterVO) {
-		List<ParticipantVO> list = mapper.convertToParticipantVOList(
-				participantDao.getPaginatedParticipantList(pageNumber, size, filterVO),
-				false);
-		PageVO<ParticipantVO> page = pageUtil.populatePage(list, pageNumber, size);
+	public PageVO<ParticipantIntMod> getPaginatedParticipantList(int pageNumber, int size, GenericFilterVO filterVO) {
+		List<ParticipantIntMod> list = participantDao.getPaginatedParticipantList(pageNumber, size,filterVO);
+		PageVO<ParticipantIntMod> page = pageUtilIntMod.populatePage(list, pageNumber, size);
 		page.setTotalSize(participantDao.getPaginatedParticipantTotalCount(filterVO).intValue());
 		page.setFilterVO(filterVO);
 		return page;
