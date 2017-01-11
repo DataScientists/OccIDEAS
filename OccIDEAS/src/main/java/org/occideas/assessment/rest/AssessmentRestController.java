@@ -928,6 +928,9 @@ public class AssessmentRestController {
 					answers.add("-NoA-");
 				}
 			}
+			else {
+				answers.add("-QNotAsked-");
+			}
 		}else{							
 			answers.add("-QNotAsked-");
 		}
