@@ -44,7 +44,7 @@
 				<div class="rulescontainer">
 					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)" model="data">
 						<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
-							<div ng-class="mrule.level" ng-if="(mrule.agentId == agent.idAgent)"></div>
+							<div class="{{mrule.level}} {{mrule.type}} " ng-if="(mrule.agentId == agent.idAgent)"></div>
 						</span>
 					</div>
 				</div>
