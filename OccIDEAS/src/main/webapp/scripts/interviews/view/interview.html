@@ -177,7 +177,7 @@
 
 
 	<div ui-tree="" id="tree-root1_{{$index}}"
-		ng-repeat="element in displayHistoryNew">
+		ng-repeat="element in displayHistoryNew | orderBy:'-'">
 		<div class="angular-ui-tree">
 			<div class="tree-node">
 				<div id="questionlist-{{element.questionId}}"

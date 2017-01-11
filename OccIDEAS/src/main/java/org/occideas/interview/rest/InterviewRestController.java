@@ -141,6 +141,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	List<InterviewVO> list = new ArrayList<InterviewVO>();
 		try{
 			list = service.findById(id);
+			list.get(0).setActualQuestion(sort(list.get(0).getQuestionHistory()));
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

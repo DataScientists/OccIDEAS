@@ -1445,7 +1445,7 @@
 		}
 		function refreshDisplayNew(question){
 			if(!$scope.displayHistoryNew){
-				$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
+				$scope.displayHistoryNew = angular.copy($scope.interview.actualQuestion);
 				_.remove($scope.displayHistoryNew, function(node) {
 					  return node.link || node.deleted || !node.processed;
 					});
