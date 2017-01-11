@@ -500,6 +500,9 @@ label.fraglabel {
     border-radius: 2px;
     float: left;
 }
+.BACKGROUND{
+	border: 3px solid #1ace04;
+}
 .assessment.probUnknown{
 	width: 23px;
     height: 23px;
@@ -707,7 +710,7 @@ a:focus {
 	display: block;
 	position: absolute;
 	top:0px;
-	left:530px;
+	right:230px;
 	padding: 0 0 0 0;
 	width: 190px;
 	min-height: 130px;

@@ -69,7 +69,7 @@
 							<div class="rulescontainer">
 								<div class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}" ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
 									<span class="cell-lable" ng-repeat="mrule in node.moduleRule" >
-										<div ng-class="mrule.rule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
+										<div class="{{mrule.rule.level}} {{mrule.rule.type}}" ng-if="(mrule.idAgent == obj.idAgent)"></div>
 									</span>
 								</div>
 							</div>
