@@ -55,7 +55,7 @@ public class ParticipantDao {
     }
     
     private final String paginatedParticipantSQL 
-    = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview"+
+    = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview, i.assessedStatus,NULL AS idModule, '' AS interviewModuleName"+
 			"  from Participant p "+ 
     		"  join Interview i "+  
     		" where p.idParticipant = i.idParticipant"+ 
@@ -66,14 +66,14 @@ public class ParticipantDao {
     		" and p.deleted = 0";
     
     @SuppressWarnings("unchecked")
-	public List<Participant> getPaginatedParticipantList(int pageNumber,int size,GenericFilterVO filter) {
+	public List<ParticipantIntMod> getPaginatedParticipantList(int pageNumber,int size,GenericFilterVO filter) {
     	final Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery(paginatedParticipantSQL).
 				addEntity(ParticipantIntMod.class);
 		sqlQuery.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
 		sqlQuery.setMaxResults(size);
 		filter.applyFilter(filter, sqlQuery);
-		List<Participant> list = sqlQuery.list();
+		List<ParticipantIntMod> list = sqlQuery.list();
 		return list;
     }
     
