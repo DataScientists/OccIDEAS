@@ -142,6 +142,7 @@
 								.filter().status);
 						$scope.participantFilter.pageNumber = params.page();
 						$scope.participantFilter.size = params.count();
+						params.goToPageNumber = null;
 						var participantFilter = $scope.participantFilter;
 						if (!self.tableParams.settings().dataset
 								|| (participantFilter.pageNumber != currentPage)
@@ -358,5 +359,14 @@
 			}
 			});
 		}
+		
+		self.tableParams.goTo = function(event){
+	        if(event.keyCode == 13 
+	        		&& self.tableParams.goToPageNumber != null
+	        		&& !isNaN(self.tableParams.goToPageNumber)){
+	        	self.tableParams.page(self.tableParams.goToPageNumber);
+	        	self.tableParams.reload();
+	        }
+	    };
 	}
 })();

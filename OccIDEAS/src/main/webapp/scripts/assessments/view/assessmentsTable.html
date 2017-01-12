@@ -22,10 +22,11 @@
 			</tr>
 		</table>
 	</div>
+	
 	<script type="text/ng-template" id="templatePagination.html">
     <div>
 		<ul class="pagination ng-table-pagination pull-right">
-		<li ><span style="height: 33px;">&nbsp; Go To Page: <input type="text" ng-click="vm.test()"  style="width:30px;margin-top: -2px;"/></span></li>
+		<li ><span style="height: 33px;">&nbsp; Go To Page: <input type="text" ng-keyup="params.goTo($event); $event.stopPropagation();"  ng-model="params.goToPageNumber" style="width:30px;margin-top: -2px;"/></span></li>
         <li ng-class="{'disabled': !page.active && !page.current, 'active': page.current}" ng-repeat="page in pages" ng-switch="page.type">
           <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
           <a ng-switch-when="first" ng-click="params.page(page.number)" href="">

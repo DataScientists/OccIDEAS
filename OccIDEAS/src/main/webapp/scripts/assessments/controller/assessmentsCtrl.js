@@ -11,16 +11,7 @@
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.updateButtonDisabled = false;
-		
-		$scope.xxxx = 1;
-		
-		$scope.xxx = function(event,pagenum){
-			alert("test");
-	        if(event.keyCode == 13){
-	          	page.param(pagenum);
-	        }
-	    };
-		
+				
 		$scope.modules = function(column) {
 			  var def = $q.defer();
 			 
@@ -773,6 +764,7 @@
 						$scope.assessmentFilter.interviewModuleName=lengthGreaterThan2(params.filter().interviewModuleName);
 						$scope.assessmentFilter.pageNumber=params.page();
 						$scope.assessmentFilter.size=params.count();
+						params.goToPageNumber = null;
 						var assessmentFilter = $scope.assessmentFilter;
 						if(!self.tableParams.settings().dataset || (assessmentFilter.pageNumber != currentPage)  
 								|| assessmentFilter.idParticipant
@@ -1195,6 +1187,16 @@
 						 
 			});
 		}
+        
+		self.tableParams.goTo = function(event){
+	        if(event.keyCode == 13 
+	        		&& self.tableParams.goToPageNumber != null
+	        		&& !isNaN(self.tableParams.goToPageNumber)){
+	        	self.tableParams.page(self.tableParams.goToPageNumber);
+	        	self.tableParams.reload();
+	        }
+	    };
+        
 	}
 })();
 
