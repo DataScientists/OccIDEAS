@@ -24,6 +24,15 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getTotalModuleCount(){
+			var restUrl = url+'/getTotalModuleCount';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function getNodeLanguageById(id) {
 			var restUrl = url+'/getNodeLanguageById?id=' + id;
 			var request =  $http({
@@ -135,7 +144,8 @@
 			getLanguageById:getLanguageById,
 			getNodeNodeLanguageList:getNodeNodeLanguageList,
 			getUntranslatedModules:getUntranslatedModules,
-			getTotalUntranslatedModule:getTotalUntranslatedModule
+			getTotalUntranslatedModule:getTotalUntranslatedModule,
+			getTotalModuleCount:getTotalModuleCount
 		};
 	}
 })();

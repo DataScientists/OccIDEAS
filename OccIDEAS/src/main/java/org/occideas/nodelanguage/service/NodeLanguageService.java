@@ -33,4 +33,6 @@ public interface NodeLanguageService {
 	Integer getUntranslatedModules(String flag);
 
 	Integer getTotalUntranslatedModule();
+	
+	Integer getTotalModuleCount();
 }

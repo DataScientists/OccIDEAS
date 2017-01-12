@@ -182,7 +182,7 @@ public class NodeLanguageDao implements INodeLanguageDao{
 	String getUntranslatedModulesSQL = "select * from Node where "+
 										"node_discriminator = 'M' "+
 										"and deleted = 0 "+
-										"and idNode not in "+
+										"and idNode in "+
 										"(select idNode from NodeNodeLanguageMod where flag = :param)";
 	
 	@Override
@@ -195,4 +195,16 @@ public class NodeLanguageDao implements INodeLanguageDao{
 		return list;
 	}
 	
+	String getTotalModuleCountSQL = "select count(1) from Node where "+
+										"node_discriminator = 'M' "+ 
+										"and deleted = 0 ";
+	
+	@Override
+	public Integer getTotalModuleCount() {
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(getTotalModuleCountSQL);
+		
+		BigInteger total = (BigInteger)sqlQuery.uniqueResult();
+		return total.intValue();
+	}
 }

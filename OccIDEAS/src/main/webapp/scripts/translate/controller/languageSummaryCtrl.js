@@ -6,11 +6,11 @@
     LanguageSummaryCtrl.$inject = ['$state','ngToast','$timeout',
                          '$scope','$http','$rootScope','$window','$sessionStorage',
                          '$mdDialog','$translate','NodeLanguageService',
-                         'NgTableParams'];
+                         'NgTableParams','$q'];
     function LanguageSummaryCtrl($state, ngToast, $timeout, 
     		$scope, $http, $rootScope,$window, 
     		$sessionStorage,$mdDialog,
-    		$translate,NodeLanguageService,NgTableParams) {
+    		$translate,NodeLanguageService,NgTableParams,$q) {
         var vm = this;
 
         $scope.$storage = $sessionStorage; 
@@ -47,19 +47,52 @@
 	      });
 		vm.languageTableParams.shouldGetData = true;
         
-		NodeLanguageService.getTotalUntranslatedModule().then(function(response){
-		    	if(response.status == '200'){
-		    		$scope.grandTotal = response.data;
-				}
-			  });
+		vm.languageSummaryTableParams = new NgTableParams(
+				{
+				}, 
+			{	
+	        getData: function() {
+	        	return NodeLanguageService.getAllLanguage().then(function(response){
+	        		if(response.status == '200'){
+	        			var promises = [];
+	        			$scope.lang = response.data;
+	        			_.each($scope.lang,function(l){
+	        				promises.push(NodeLanguageService.getUntranslatedModules(l.flag)
+	        						.then(function(resp){
+	        							if(resp.status == '200'){
+	        								var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
+	        					        		  return nodeMap.languageId == l.id;
+	        					        	});
+	        					        	l.totalCurrent =_.sumBy(data, function(o) { return o.current; });
+	        								l.translatedModuleCount = resp.data;
+	        							}
+	        						}));
+	        			});
+	        			$q.all(promises).then(function () {
+	        				vm.languageSummaryTableParams.settings().dataset = $scope.lang;
+	        				return $scope.lang;
+	        			});
+	        		}
+	        	});  
+	        }
+	      });
 		
-		vm.changeLanguage = function(){
-			NodeLanguageService.getUntranslatedModules($scope.selectLanguage.selected.flag).then(function(response){
-	   		    if(response.status == '200'){
-	   		    	$scope.untranslatedModules = response.data;
-	  			}
-	  		});
-			vm.languageTableParams.reload();
-		}
+		
+		// get all untranslated nodes
+		NodeLanguageService.getTotalUntranslatedModule().then(function(response){
+			if(response.status == '200'){
+				$scope.grandTotal = response.data;
+			}
+		});
+		
+		// get total module count
+		$scope.totalModuleCount = 0;
+		NodeLanguageService.getTotalModuleCount().then(function(response){
+			if(response.status == '200'){
+				$scope.totalModuleCount = response.data;
+			}
+		});
+		
+			
     }
 })();
