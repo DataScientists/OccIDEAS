@@ -30,7 +30,7 @@
     							if(response.status == '200'){
     								translations = _.map(response.data, function(o){
     									return {
-    										[o.word]: o.translation
+    										[o.word.toLowerCase().trim()]: o.translation
     									};
     								});
     								return deferred.resolve(translations);
@@ -50,7 +50,7 @@
     					if(response.status == '200'){
     						translations = _.map(response.data, function(o){
     							return {
-    								[o.word.toLowerCase()]: o.translation
+    								[o.word.toLowerCase().trim()]: o.translation
     							};
     						});
     						return deferred.resolve(translations);

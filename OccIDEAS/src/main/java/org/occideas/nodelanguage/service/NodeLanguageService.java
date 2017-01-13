@@ -3,6 +3,7 @@ package org.occideas.nodelanguage.service;
 import java.util.List;
 
 import org.occideas.entity.Module;
+import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.vo.LanguageVO;
 import org.occideas.vo.ModuleVO;
@@ -35,4 +36,6 @@ public interface NodeLanguageService {
 	Integer getTotalUntranslatedModule();
 	
 	Integer getTotalModuleCount();
+
+	List<NodeNodeLanguageFrag> getNodeNodeLanguageFragList();
 }

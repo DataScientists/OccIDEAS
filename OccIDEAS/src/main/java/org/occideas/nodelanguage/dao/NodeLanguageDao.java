@@ -17,6 +17,7 @@ import org.occideas.entity.Language;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.NodeLanguage;
+import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -135,6 +136,17 @@ public class NodeLanguageDao implements INodeLanguageDao{
 	}
 	
 	@Override
+	public List<NodeNodeLanguageFrag> getNodeNodeLanguageListFrag() {
+		final Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(NodeNodeLanguageFrag.class); 
+		List list = crit.list();
+		if(list != null){
+			return list;
+		}
+		return null;
+	}
+	
+	@Override
 	public NodeNodeLanguageMod getNodeNodeLanguageMod(long idNode,String flag){
 		final Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(NodeNodeLanguageMod.class)
@@ -207,4 +219,5 @@ public class NodeLanguageDao implements INodeLanguageDao{
 		BigInteger total = (BigInteger)sqlQuery.uniqueResult();
 		return total.intValue();
 	}
+
 }

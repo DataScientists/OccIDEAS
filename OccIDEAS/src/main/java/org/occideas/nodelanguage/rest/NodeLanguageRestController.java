@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.nodelanguage.service.NodeLanguageService;
 import org.occideas.vo.LanguageVO;
@@ -175,9 +176,23 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 	@Path(value="/getNodeNodeLanguageList")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getNodeNodeLanguageList(){
-		List<NodeNodeLanguageMod> list = null;
+		List<NodeNodeLanguageFrag> list = null;
 		try{
-			list = service.getNodeNodeLanguageListMod();
+			list = service.getNodeNodeLanguageFragList();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
+	@GET
+	@Path(value="/getNodeNodeLanguageFragmentList")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getNodeNodeLanguageFragmentList(){
+		List<NodeNodeLanguageFrag> list = null;
+		try{
+			list = service.getNodeNodeLanguageFragList();
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

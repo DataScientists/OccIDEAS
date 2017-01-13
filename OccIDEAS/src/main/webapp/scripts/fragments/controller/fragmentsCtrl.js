@@ -3,9 +3,9 @@
 		   .controller('FragmentCtrl',FragmentCtrl);
 	
 	FragmentCtrl.$inject = ['FragmentsService','NgTableParams','$state','$scope','$filter','$mdDialog','$q',
-	                        'InterviewsService','$timeout','QuestionsService','ModuleRuleService','NodeLanguageService'];
+	                        'InterviewsService','$timeout','QuestionsService','ModuleRuleService','NodeLanguageService', '$sessionStorage'];
 	function FragmentCtrl(FragmentsService,NgTableParams,$state,$scope,$filter,$mdDialog,$q,
-			InterviewsService,$timeout,QuestionsService,ModuleRuleService,NodeLanguageService){
+			InterviewsService,$timeout,QuestionsService,ModuleRuleService,NodeLanguageService,$sessionStorage){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -14,10 +14,28 @@
 	    $scope.selectLanguage = undefined;
 	    $scope.selectedLanguage = { language: '' };
 		$scope.languages = undefined;
+		$scope.$storage = $sessionStorage;
+		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
+		
+		$scope.$watch('$storage.langEnabled', function(value) {	    	
+			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
+				self.tableParams.shouldGetData = true;
+		        self.tableParams.reload();
+			}
+		});
+		
 		$scope.openModuleLanguage = function(row){
 	    	$mdDialog.cancel();
 	    	$scope.openFragmentLanguageTab($scope.selectedLanguage.language.id,row);
 	    }
+		
+		$scope.openModuleLanguageByFlagIcon = function(language){
+			var cloneLanguage = _.cloneDeep(language);
+			if(language.topNodeId != 0){
+				cloneLanguage.idNode = language.topNodeId;
+			}
+			$scope.openFragmentLanguageTab(cloneLanguage.languageId,cloneLanguage);
+		}
 	    
 	    self.displayNodeLanguage = function(row){
 	    	NodeLanguageService.getAllLanguage().then(function(response){
@@ -48,11 +66,6 @@
 			})
 	    }
 	    
-	    NodeLanguageService.getDistinctLanguage().then(function(response){
-	    	if(response.status == '200'){
-	    		$scope.flags = response.data;
-	    	}
-	    });
 	    
 	    $scope.showRuleCount = function(row,$event){
 	    	ModuleRuleService.getRuleCountById(row.idNode).then(function(response){
@@ -209,9 +222,36 @@
 	          }
 	          return  FragmentsService.get().then(function(data) {
 	        	  console.log("Data get list from fragments ajax ...");        	 
-	        	  self.originalData = angular.copy(data);
-	        	  self.tableParams.settings().dataset = data;
-	        	  self.tableParams.shouldGetData = true;
+	        	  if(!data){
+	        		  self.originalData = angular.copy(data);
+	        		  self.tableParams.settings().dataset = data;
+	        		  self.tableParams.shouldGetData = true;
+	        	  }else{
+	        		  if($sessionStorage.langEnabled){
+	        			  NodeLanguageService.getNodeNodeLanguageFragmentList().then(function(response){
+	        		    	if(response.status == '200'){
+	        		    		$scope.nodeNodeLanguageMap = response.data;
+	        		    		_.each(data,function(dataTemp){
+	        		    			dataTemp.flags = _.uniqBy(_.filter($scope.nodeNodeLanguageMap,function(nodeNodeLanguageMapTemp){
+	        		    				return dataTemp.idNode == nodeNodeLanguageMapTemp.idNode || 
+	        		    				dataTemp.idNode == nodeNodeLanguageMapTemp.topNodeId;
+	        		    			}),'flag');
+	        		    		});
+	        		    		self.originalData = angular.copy(data);
+	      	        		  	self.tableParams.settings().dataset = data;
+	      	        		  	self.tableParams.shouldGetData = true;
+	        		    	}else{
+	        		    		self.originalData = angular.copy(data);
+	      	        		  	self.tableParams.settings().dataset = data;
+	      	        		  	self.tableParams.shouldGetData = true;
+	        		    	}
+	        		  });
+	        		  }else{
+      		    		self.originalData = angular.copy(data);
+    	        		  	self.tableParams.settings().dataset = data;
+    	        		  	self.tableParams.shouldGetData = true;
+      		    	  }
+	        	  }
 	            return data;
 	          });
 	        },

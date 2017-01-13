@@ -92,8 +92,6 @@
         	$scope.totalLangCount = 0;
         	$scope.languageNameList.length = 0;
             refreshNodeLanguageCount($scope.data[0]);
-            console.log(testArray.join(','));
-            console.log($scope.languageNameList.length);
         });
     	
     	function translateNodes(node){

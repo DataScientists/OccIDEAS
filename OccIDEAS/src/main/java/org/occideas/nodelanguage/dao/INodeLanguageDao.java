@@ -5,6 +5,7 @@ import java.util.List;
 import org.occideas.entity.Language;
 import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
+import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
 
 public interface INodeLanguageDao {
@@ -42,5 +43,7 @@ public interface INodeLanguageDao {
 	Integer getTotalUntranslatedModule();
 
 	Integer getTotalModuleCount();
+
+	List<NodeNodeLanguageFrag> getNodeNodeLanguageListFrag();
 
 }

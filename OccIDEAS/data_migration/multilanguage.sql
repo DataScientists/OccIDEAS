@@ -85,7 +85,7 @@ group by n.idNode,nl.languageId,l.flag;
 DROP VIEW IF EXISTS NodeNodeLanguageFrag;
 CREATE VIEW NodeNodeLanguageFrag AS 
 select concat(n.idNode, ':',l.flag)  as primaryKey,
-n.idNode,n.topNodeId,l.flag,nl.languageId,(select count(distinct nl1.word) from 
+n.idNode,n.name,n.topNodeId,l.flag,l.description,nl.languageId,(select count(distinct nl1.word) from 
 Node n1 left join 
 Node_Language nl1 on n1.name = nl1.word
 where n1.link = 0
@@ -93,13 +93,14 @@ and n1.type not like '%frequency%'
 and n1.type != 'P_freetext'
 and nl1.translation is not null
 and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end 
-and nl1.languageId = nl.languageId)+1 as current,
+and nl1.languageId = nl.languageId) as current,
 (select count(distinct n1.name) from
 Node n1 
 where n1.link = 0
 and n1.type not like '%frequency%'
 and n1.type != 'P_freetext'
-and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end)+1 as total from 
+and n1.deleted = 0
+and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from 
 Node n left join 
 Node_Language nl on n.name = nl.word
 left join Language l on nl.languageId = l.id 

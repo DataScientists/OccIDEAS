@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.occideas.entity.Language;
 import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
+import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeLanguageMapper;
@@ -92,6 +93,11 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	}
 
 	@Override
+	public List<NodeNodeLanguageFrag> getNodeNodeLanguageFragList() {
+		return dao.getNodeNodeLanguageListFrag();
+	}
+	
+	@Override
 	public Integer getUntranslatedModules(String flag) {
 		List<Module> untranslatedModules = dao.getUntranslatedModules(flag);
 		if(untranslatedModules == null){
@@ -109,4 +115,5 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	public Integer getTotalModuleCount() {
 		return dao.getTotalModuleCount();
 	}
+
 }

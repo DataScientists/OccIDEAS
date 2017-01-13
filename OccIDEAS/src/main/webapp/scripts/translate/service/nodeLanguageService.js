@@ -117,6 +117,15 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getNodeNodeLanguageFragmentList(){
+			var restUrl = url+'/getNodeNodeLanguageFragmentList';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -145,7 +154,8 @@
 			getNodeNodeLanguageList:getNodeNodeLanguageList,
 			getUntranslatedModules:getUntranslatedModules,
 			getTotalUntranslatedModule:getTotalUntranslatedModule,
-			getTotalModuleCount:getTotalModuleCount
+			getTotalModuleCount:getTotalModuleCount,
+			getNodeNodeLanguageFragmentList:getNodeNodeLanguageFragmentList
 		};
 	}
 })();
