@@ -555,10 +555,12 @@
 							if(hoursbg<0){
 								hoursbg = 0;
 							}
+							level = noiseRule.ruleAdditionalfields[0].value;
+							hoursbg = hoursbg.toFixed(4);
 							var partialExposure = 4*hoursbg*(Math.pow(10,(level-100)/10));
 							partialExposure = partialExposure.toFixed(4);
-							hoursbg = hoursbg.toFixed(4);
-							level = noiseRule.ruleAdditionalfields[0].value;
+							
+							
 							var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
 							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
 											idNode:noiseRule.conditions[0].idNode,
