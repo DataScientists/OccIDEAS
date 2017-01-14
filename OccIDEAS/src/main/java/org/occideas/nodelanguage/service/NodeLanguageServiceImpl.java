@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.occideas.entity.Fragment;
 import org.occideas.entity.Language;
 import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
@@ -13,6 +14,7 @@ import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeLanguageMapper;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.LanguageVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeLanguageVO;
@@ -114,6 +116,25 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public Integer getTotalModuleCount() {
 		return dao.getTotalModuleCount();
+	}
+
+	@Override
+	public Integer getTotalFragmentCount() {
+		return dao.getTotalFragmentCount();
+	}
+
+	@Override
+	public Integer getUntranslatedFragments(String flag) {
+		List<Fragment> untranslatedFragments = dao.getUntranslatedFragments(flag);
+		if(untranslatedFragments == null){
+			return 0;
+		}
+		return untranslatedFragments.size();
+	}
+
+	@Override
+	public Integer getTotalUntranslatedFragment() {
+		return dao.getTotalUntranslatedFragment();
 	}
 
 }

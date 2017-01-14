@@ -5,12 +5,11 @@
 			disable-filter="true">
 			<tbody>
 			<tr>
-			<td colspan="3">Module Summary</td>
-			</tr>
-			<tr>
 				<td>Language</td>
 				<td>Modules</td>
-				<td>Nodes</td>
+				<td>Module Nodes</td>
+				<td>Fragments</td>
+				<td>Fragment Nodes</td>
 			</tr>
 			<tr
 				ng-repeat="nl in vm.languageSummaryTableParams.settings().dataset">
@@ -18,6 +17,8 @@
 					{{nl.description}}</td>
 				<td>{{nl.translatedModuleCount}}/{{totalModuleCount}}</td>
 				<td>{{nl.totalCurrent}}/{{grandTotal}}</td>
+				<td>{{nl.translatedFragCount}}/{{totalFragCount}}</td>
+				<td>{{nl.totalFragCurrent}}/{{grandFragTotal}}</td>
 			</tr>
 			</tbody>
 		</table>

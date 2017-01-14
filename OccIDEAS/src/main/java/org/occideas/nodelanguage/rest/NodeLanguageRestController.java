@@ -176,9 +176,9 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 	@Path(value="/getNodeNodeLanguageList")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getNodeNodeLanguageList(){
-		List<NodeNodeLanguageFrag> list = null;
+		List<NodeNodeLanguageMod> list = null;
 		try{
-			list = service.getNodeNodeLanguageFragList();
+			list = service.getNodeNodeLanguageListMod();
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -235,6 +235,48 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		Integer result = 0;
 		try{
 			result = service.getTotalModuleCount();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+	
+	@GET
+	@Path(value="/getUntranslatedFragments")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getUntranslatedFragments(@QueryParam("flag") String flag){
+		Integer result = null;
+		try{
+			result = service.getUntranslatedFragments(flag);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+
+	@GET
+	@Path(value="/getTotalUntranslatedFragment")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getTotalUntranslatedFragment(){
+		Integer result = 0;
+		try{
+			result = service.getTotalUntranslatedFragment();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+	
+	@GET
+	@Path(value="/getTotalFragmentCount")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getTotalFragmentCount(){
+		Integer result = 0;
+		try{
+			result = service.getTotalFragmentCount();
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

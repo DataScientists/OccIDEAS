@@ -126,6 +126,33 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getUntranslatedFragments(flag){
+			var restUrl = url+'/getUntranslatedFragments?flag='+flag;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getTotalUntranslatedFragment(){
+			var restUrl = url+'/getTotalUntranslatedFragment';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getTotalFragmentCount(){
+			var restUrl = url+'/getTotalFragmentCount';
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -155,7 +182,10 @@
 			getUntranslatedModules:getUntranslatedModules,
 			getTotalUntranslatedModule:getTotalUntranslatedModule,
 			getTotalModuleCount:getTotalModuleCount,
-			getNodeNodeLanguageFragmentList:getNodeNodeLanguageFragmentList
+			getNodeNodeLanguageFragmentList:getNodeNodeLanguageFragmentList,
+			getUntranslatedFragments:getUntranslatedFragments,
+			getTotalUntranslatedFragment:getTotalUntranslatedFragment,
+			getTotalFragmentCount:getTotalFragmentCount
 		};
 	}
 })();

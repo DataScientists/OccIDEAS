@@ -16,6 +16,7 @@
         $scope.$storage = $sessionStorage; 
         $scope.isEnabled = $sessionStorage.langEnabled;
         
+        // For Modules
         $scope.getAllLanguage = function(){
         	 NodeLanguageService.getNodeNodeLanguageList().then(function(response){
  		    	if(response.status == '200'){
@@ -26,6 +27,17 @@
 		};
 		$scope.getAllLanguage();
 		
+		// For Fragments
+		$scope.getAllFragmentLanguage = function(){
+        	 NodeLanguageService.getNodeNodeLanguageFragmentList().then(function(response){
+ 		    	if(response.status == '200'){
+ 		    		$scope.nodeNodeLanguageFragmentMap = response.data;
+ 		    		$scope.flags = _.uniqBy($scope.nodeNodeLanguageFragmentMap,'flag');
+				}
+			})
+		};
+		$scope.getAllFragmentLanguage();
+		
 		$scope.selectLanguage = {};
 		$scope.selectLanguage.selected ='';
 		vm.languageTableParams =  new NgTableParams(
@@ -33,10 +45,17 @@
 				}, 
 			{	
 	        getData: function() {
+	        	  // For Modules
 	        	  var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
 	        		  return nodeMap.languageId == $scope.selectLanguage.selected.languageId;
 	        	  });
 	        	  $scope.totalCurrent =_.sumBy(data, function(o) { return o.current; }); 
+	        	  
+	        	  // For Fragments
+	        	  var dataFrag = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
+	        		  return nodeMap.languageId == $scope.selectLanguage.selected.languageId;
+	        	  });
+	        	  $scope.totalFragCurrent =_.sumBy(dataFrag, function(o) { return o.current; });
 	        	  
 	        	  vm.originalData = angular.copy(data);
 	        	  vm.languageTableParams.settings().dataset = data;
@@ -67,6 +86,16 @@
 	        								l.translatedModuleCount = resp.data;
 	        							}
 	        						}));
+	        						promises.push(NodeLanguageService.getUntranslatedFragments(l.flag)
+	        						.then(function(resp){
+	        							if(resp.status == '200'){
+	        								var data = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
+	        					        		  return nodeMap.languageId == l.id;
+	        					        	});
+	        					        	l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
+	        								l.translatedFragCount = resp.data;
+	        							}
+	        						}));
 	        			});
 	        			$q.all(promises).then(function () {
 	        				vm.languageSummaryTableParams.settings().dataset = $scope.lang;
@@ -90,6 +119,21 @@
 		NodeLanguageService.getTotalModuleCount().then(function(response){
 			if(response.status == '200'){
 				$scope.totalModuleCount = response.data;
+			}
+		});
+		
+		// get all untranslated fragment nodes
+		NodeLanguageService.getTotalUntranslatedFragment().then(function(response){
+			if(response.status == '200'){
+				$scope.grandFragTotal = response.data;
+			}
+		});
+		
+		// get total fragment count
+		$scope.totalFragCount = 0;
+		NodeLanguageService.getTotalFragmentCount().then(function(response){
+			if(response.status == '200'){
+				$scope.totalFragCount = response.data;
 			}
 		});
 		
