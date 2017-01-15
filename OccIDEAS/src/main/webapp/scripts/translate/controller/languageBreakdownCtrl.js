@@ -12,7 +12,13 @@
     		$sessionStorage,$mdDialog,
     		$translate,NodeLanguageService,NgTableParams,$q,$filter,flag,type) {
         var vm = this;
-
+        $scope.flagUsed = 'flag-icon-'+flag.split(/[- ]+/).pop().toLowerCase();
+        if($sessionStorage.languages){
+        	var lang = _.find($sessionStorage.languages, function(o) { 
+				return o.flag == flag; 
+			});
+        	$scope.flagDescription = lang.description; 
+        }
         $scope.$storage = $sessionStorage; 
         $scope.isEnabled = $sessionStorage.langEnabled;
         

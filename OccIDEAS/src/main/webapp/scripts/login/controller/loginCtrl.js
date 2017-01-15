@@ -36,6 +36,13 @@
         $scope.saveLanguageSettings = function(){
         	if($scope.isEnabled){
         		$sessionStorage.langEnabled = true;
+        		if(!$sessionStorage.languages){
+        			NodeLanguageService.getAllLanguage().then(function(response){
+        				if(response.status == '200'){
+        					$sessionStorage.languages = response.data;
+        				}
+        			})
+        		}
         		$rootScope.addLanguageTab();
         	}else{
         		$sessionStorage.langEnabled = false;

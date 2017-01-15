@@ -13,11 +13,11 @@
 			</tr>
 			<tr
 				ng-repeat="nl in vm.languageSummaryTableParams.settings().dataset">
-				<td><i class="glyphicon {{nl.flag}}" ng-click="test()"></i>
+				<td><i class="glyphicon {{nl.flag}}"></i>
 					{{nl.description}}</td>
-				<td><a href="#" ng-click="openModuleBreakdown(nl.flag)">{{nl.translatedModuleCount}}/{{totalModuleCount}}</a></td>
+				<td><a href="#" class="hoverBlue" ng-click="openModuleBreakdown(nl.flag)">{{nl.translatedModuleCount}}/{{totalModuleCount}}</a></td>
 				<td>{{nl.totalCurrent}}/{{grandTotal}}</td>
-				<td><a href="#" ng-click="openFragmentBreakdown(nl.flag)">{{nl.translatedFragCount}}/{{totalFragCount}}</a></td>
+				<td><a href="#" class="hoverBlue" ng-click="openFragmentBreakdown(nl.flag)">{{nl.translatedFragCount}}/{{totalFragCount}}</a></td>
 				<td>{{nl.totalFragCurrent}}/{{grandFragTotal}}</td>
 			</tr>
 			</tbody>
