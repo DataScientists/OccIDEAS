@@ -9,7 +9,7 @@ CREATE TABLE `Language` (
   `lastUpdated` datetime DEFAULT NULL,
   `flag` varchar(2048) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -22,7 +22,7 @@ CREATE TABLE `Node_Language` (
   PRIMARY KEY (`id`),
     KEY `FK_Language` (`languageId`),
    CONSTRAINT `FK_Language` FOREIGN KEY (`languageId`) REFERENCES `Language` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 insert into `Language` (language,description,lastUpdated,flag) values ('GB','English',now(),'bfh-flag-GB');
 insert into `Language` (language,description,lastUpdated,flag) values ('ES','Spanish',now(),'bfh-flag-ES');
