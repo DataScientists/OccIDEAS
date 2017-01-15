@@ -14,6 +14,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Language;
+import org.occideas.entity.LanguageFragBreakdown;
+import org.occideas.entity.LanguageModBreakdown;
 import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageFrag;
@@ -235,5 +237,49 @@ public class NodeLanguageDao implements INodeLanguageDao {
 
 		BigInteger total = (BigInteger) sqlQuery.uniqueResult();
 		return total.intValue();
+	}
+	
+	String getLanguageModBreakdownSQL = " select idNode,name,"+
+			" (select nf.current from NodeNodeLanguageMod nf"+
+			" where nf.idNode = n.idNode and nf.flag = :param) as current,"+
+			" (select count(distinct n1.name) from"+
+			" Node n1 "+
+			" where n1.link = 0"+
+			" and n1.type not like '%frequency%'"+
+			" and n1.type != 'P_freetext'"+
+			" and n1.deleted = 0"+
+			" and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from node n"+
+			" where  node_discriminator = 'M'";
+	
+	@Override
+	public List<LanguageModBreakdown> getLanguageModBreakdown(String flag) {
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(getLanguageModBreakdownSQL)
+				.addEntity(LanguageModBreakdown.class);
+		sqlQuery.setParameter("param", flag);
+		List<LanguageModBreakdown> list = sqlQuery.list();
+		return list;
+	}
+	
+	String getLanguageFragBreakdownSQL = " select idNode,name,"+
+			" (select nf.current from NodeNodeLanguageFrag nf"+
+			" where nf.idNode = n.idNode and nf.flag = :param) as current,"+
+			" (select count(distinct n1.name) from"+
+			" Node n1 "+
+			" where n1.link = 0"+
+			" and n1.type not like '%frequency%'"+
+			" and n1.type != 'P_freetext'"+
+			" and n1.deleted = 0"+
+			" and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from node n"+
+			" where  node_discriminator = 'F'";
+	
+	@Override
+	public List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag) {
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(getLanguageFragBreakdownSQL)
+				.addEntity(LanguageFragBreakdown.class);
+		sqlQuery.setParameter("param", flag);
+		List<LanguageFragBreakdown> list = sqlQuery.list();
+		return list;
 	}
 }

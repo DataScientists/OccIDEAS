@@ -593,6 +593,27 @@
                 }
             }
         }).state( {
+            name:'tabs.languageBreakdown',
+        	url: '/languageBreakdown/:flag/:type',
+            sticky: false,
+		    deepStateRedirect: false,
+		    authenticate:true,
+            views:{
+                'languageBreakdown@tabs':{
+                    templateUrl: 'scripts/translate/view/languageBreakdownTab.html',
+                    controller: 'LanguageBreakdownCtrl as vm',
+                    params:{flag: null,type:null},
+                    resolve:{
+			        	flag: function($stateParams) {
+                            return $stateParams.flag;
+                        },
+			        	type: function($stateParams) {
+                            return $stateParams.type;
+                        }
+			     }
+                }
+            }
+        }).state( {
 			name:'tabs.moduleLanguage',
 			url: '/moduleLanguage/:row/:lang',
 			sticky: false,

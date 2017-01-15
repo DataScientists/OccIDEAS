@@ -153,6 +153,24 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getLanguageModBreakdown(flag){
+			var restUrl = url+'/getLanguageModBreakdown?flag='+flag;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getLanguageFragBreakdown(flag){
+			var restUrl = url+'/getLanguageFragBreakdown?flag='+flag;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function handleError( response ) {
             if (
                 ! angular.isObject( response.data ) ||
@@ -185,7 +203,9 @@
 			getNodeNodeLanguageFragmentList:getNodeNodeLanguageFragmentList,
 			getUntranslatedFragments:getUntranslatedFragments,
 			getTotalUntranslatedFragment:getTotalUntranslatedFragment,
-			getTotalFragmentCount:getTotalFragmentCount
+			getTotalFragmentCount:getTotalFragmentCount,
+			getLanguageModBreakdown:getLanguageModBreakdown,
+			getLanguageFragBreakdown:getLanguageFragBreakdown
 		};
 	}
 })();

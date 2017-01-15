@@ -219,6 +219,27 @@
             }
         };
         
+        $rootScope.addLanguageBreakdownTab = function(flag,type) {
+            var tabTitle = "Language Breakdown";
+            var state = "tabs.languageBreakdown";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'languageBreakdown@tabs',
+                    canClose: true,
+                    disabled: false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                    	flag: flag,
+                    	type: type
+                    }
+                });
+            }
+        };
+        
         $rootScope.closeLanguageTab = function() {
             var tabTitle = "Language Summary";
             var state = "tabs.languageSummary";

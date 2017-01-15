@@ -1,0 +1,15 @@
+<div ng-cloak>
+	<div>
+			<table ng-table="vm.languageSummaryTableParams"
+				class="table table-condensed table-bordered table-striped">
+				<tbody>
+					<tr
+						ng-repeat="nl in $data">
+						<td title="'idNode'" filter="{idNode: 'text'}">{{nl.idNode}}</td>
+						<td title="'Name'" filter="{name: 'text'}">{{nl.name}}</td>
+						<td title="'Count'">{{nl.current?nl.current:0}}/{{nl.total}}</td>
+					</tr>
+				</tbody>
+			</table>
+	</div>
+</div>

@@ -15,9 +15,9 @@
 				ng-repeat="nl in vm.languageSummaryTableParams.settings().dataset">
 				<td><i class="glyphicon {{nl.flag}}" ng-click="test()"></i>
 					{{nl.description}}</td>
-				<td>{{nl.translatedModuleCount}}/{{totalModuleCount}}</td>
+				<td><a href="#" ng-click="openModuleBreakdown(nl.flag)">{{nl.translatedModuleCount}}/{{totalModuleCount}}</a></td>
 				<td>{{nl.totalCurrent}}/{{grandTotal}}</td>
-				<td>{{nl.translatedFragCount}}/{{totalFragCount}}</td>
+				<td><a href="#" ng-click="openFragmentBreakdown(nl.flag)">{{nl.translatedFragCount}}/{{totalFragCount}}</a></td>
 				<td>{{nl.totalFragCurrent}}/{{grandFragTotal}}</td>
 			</tr>
 			</tbody>

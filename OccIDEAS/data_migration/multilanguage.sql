@@ -110,3 +110,4 @@ and n.type != 'P_freetext'
 and l.flag is not null
 and n.node_discriminator = 'F'
 group by n.idNode,nl.languageId,l.flag;
+

@@ -7,6 +7,8 @@ import javax.transaction.Transactional;
 
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Language;
+import org.occideas.entity.LanguageFragBreakdown;
+import org.occideas.entity.LanguageModBreakdown;
 import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageFrag;
@@ -135,6 +137,16 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public Integer getTotalUntranslatedFragment() {
 		return dao.getTotalUntranslatedFragment();
+	}
+
+	@Override
+	public List<LanguageModBreakdown> getLanguageModBreakdown(String flag) {
+		return dao.getLanguageModBreakdown(flag);
+	}
+
+	@Override
+	public List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag) {
+		return dao.getLanguageFragBreakdown(flag);
 	}
 
 }

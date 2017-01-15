@@ -16,6 +16,14 @@
         $scope.$storage = $sessionStorage; 
         $scope.isEnabled = $sessionStorage.langEnabled;
         
+        $scope.openModuleBreakdown = function(flag){
+        	$rootScope.addLanguageBreakdownTab(flag,'M');
+        }
+        
+        $scope.openFragmentBreakdown = function(flag){
+        	$rootScope.addLanguageBreakdownTab(flag,'F');
+        }
+        
         // For Modules
         $scope.getAllLanguage = function(){
         	 NodeLanguageService.getNodeNodeLanguageList().then(function(response){
