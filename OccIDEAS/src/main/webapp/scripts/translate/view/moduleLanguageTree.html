@@ -15,19 +15,11 @@
 <script type="text/ng-template" id="nodes_renderer.html">
   <div id="module-tree" class="angular-ui-tree" data-clone-enabled="false" ng-attr-data-nodrag="{{isReadOnly}}">
      <div class="tree-node" id="{{node.anchorId}}">
-        <div data-nodrag class="pull-left tree-handle angular-ui-tree-handle {{node.type}}" 
-			 ui-tree-handle="" ng-if="node.link != 0">
+        <div data-nodrag class="pull-left {{node.type}}" ng-if="node.link != 0">
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
         <div data-nodrag style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}} {{node.translated == 'No available translation' && node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')?'redBorder':'greenBorder'}}" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
-		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
-            <span ng-if="isCollapsableNode(node)" class="glyphicon glyphicon-chevron-down" ng-class="{
-              'glyphicon-chevron-right': collapsed,
-              'glyphicon-chevron-down': !collapsed
-              }">
-            </span>
-          </a>
 	      <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
 	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
           <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
