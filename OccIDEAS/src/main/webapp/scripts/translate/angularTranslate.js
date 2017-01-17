@@ -25,6 +25,7 @@
     					var lang = _.find($sessionStorage.languages, function(o) { 
     						return o.language == key; 
     					});
+    					$sessionStorage.chosenLang = lang;
     					if(lang.id){
     						NodeLanguageService.getNodeLanguageById(lang.id).then(function(response) {
     							if(response.status == '200'){
@@ -45,6 +46,7 @@
     			var lang = _.find($sessionStorage.languages, function(o) { 
     				return o.language == key; 
     			});
+    			$sessionStorage.chosenLang = lang;
     			if(lang.id){
     				NodeLanguageService.getNodeLanguageById(lang.id).then(function(response) {
     					if(response.status == '200'){

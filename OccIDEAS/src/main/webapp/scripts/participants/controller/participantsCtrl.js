@@ -16,15 +16,8 @@
 		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
 		
 		$scope.$watch('$storage.langEnabled', function(value) {	    	
-			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
-				$translate.refresh();
-				$translate.use('GB');
-				$scope.selectLanguage = 'GB';
-				$scope.getAllLanguage();
-			}else if(!$scope.$storage.langEnabled){
-				$translate.refresh();
-				$translate.use('GB');
-			}
+			$translate.refresh();
+			$scope.getAllLanguage();
 		});
 		
 		$scope.getAllLanguage = function(){
@@ -56,17 +49,12 @@
 		
 		if($scope.$storage.langEnabled){
 			$translate.refresh();
-			$translate.use('GB');
-			$scope.selectLanguage = 'GB';
 			$scope.getAllLanguage();
 		}
 		
 		self.changeNodeLanguage = function(data) {
         	$translate.refresh();
-       		if(data.selected.language == 'GB'){
-       		}else{
-       			$translate.use(data.selected.language);
-       		}
+      		$translate.use(data.selected.language);
        		$scope.selectLanguage.select = data.selected;
         };
 		

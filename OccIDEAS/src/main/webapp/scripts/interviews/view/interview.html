@@ -11,6 +11,9 @@
 						ng-repeat="as in displayq.answers">
 						<div class="form-group pull-left"
 							style="margin-top: 5px; margin-left: -15px;">
+							
+							<i class="glyphicon {{as.answerFreetext?as.answerFreetext:as.name | lowercase |
+							translate | displayFlag:as:storage}}"></i>
 							<span class="badge">{{as.number}}</span>
 						</div>
 						<span>{{as.answerFreetext?as.answerFreetext:as.name | lowercase |
@@ -22,9 +25,14 @@
 		<div ng-if="!inProgress">
 			<ul id="interviewing-{{interview.showedQuestion.idNode}}"
 				ng-if="interviewStarted">
-				<md-toolbar>{{interview.showedQuestion.name | lowercase |
-				translate}} <md-button id="numId" event-focus> <span
-					class="badge">{{questionheader.name}}</span> <span class="badge">{{interview.showedQuestion.number}}</span>
+				<md-toolbar>
+					<span>{{interview.showedQuestion.name | lowercase | translate}}</span> 
+					<md-button id="numId" event-focus> 
+					<i class="glyphicon {{interview.showedQuestion.name | lowercase |
+							translate | displayFlag:interview.showedQuestion:storage}}"></i>
+					<span
+					class="badge">{{questionheader.name}}</span> 
+					<span class="badge">{{interview.showedQuestion.number}}</span>
 
 				</md-button> </md-toolbar>
 				<div ng-if="interview.showedQuestion.nodes.length == 0">
@@ -38,7 +46,9 @@
 								ng-model="node.isSelected"
 								ng-click="multiToggle(node, multiSelected)" class="green"
 								select-free-text-on-click> <span
-								ng-if="node.type!='P_freetext'">{{node.name | lowercase | translate}}</span>
+								ng-if="node.type!='P_freetext'"><i ng-if="node.type!='P_freetext'" 
+							class="glyphicon {{node.name | lowercase | translate 
+							| displayFlag:node:storage}}"></i>{{node.name | lowercase | translate}}</span>
 							<md-input-container ng-if="node.type=='P_freetext'" md-no-float
 								class="md-block"> <label>Free Text</label>
 							<input style="width: 270px;" ng-model="node.name"
@@ -99,9 +109,11 @@
 							<div flex layout-align="start center">
 								<md-radio-button flex ng-value="node"
 									class="md-primary interview-radio-button"
-									select-free-text-on-click> <span
+									select-free-text-on-click> <i style="margin-right:2px;" ng-if="node.type!='P_freetext'" 
+							class="glyphicon {{node.name | lowercase |
+							translate | displayFlag:node:storage}}"></i><span
 									ng-if="node.type!='P_freetext'">{{node.name | lowercase |
-									translate}}</span> <md-input-container ng-if="node.type=='P_freetext'"
+									translate}}</span><md-input-container ng-if="node.type=='P_freetext'"
 									md-no-float class="md-block"> <label>Free
 									Text</label> <input style="width: 270px;" ng-model="node.name">
 								</md-input-container> </md-radio-button>
@@ -187,6 +199,8 @@
 						<!-- 							<span ng-if="!element.processed" class="badge-unprocessed " title="scheduled"> -->
 						<!-- 								&nbsp; -->
 						<!-- 							</span> -->
+						<i class="glyphicon {{element.name | lowercase |
+							translate | displayFlag:element:storage}}"></i>
 						<span ng-if="element.deleted" class="badge-deleted"
 							title="deleted"> &nbsp; </span> <span class="badge">
 							{{element.header}} </span> <span class="badge"
@@ -209,6 +223,8 @@
 						&nbsp; </span>
 					<div class="form-group pull-left"
 						style="margin-top: 5px; margin-left: -15px;">
+						<i ng-if="as.type!='P_freetext'" class="glyphicon {{as.name | lowercase |
+							translate | displayFlag:as:storage}}"></i>
 						<span class="badge">{{as.number}}</span> <span
 							permission="['ROLE_ADMIN']" class="badge">
 							{{as.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}} </span>
