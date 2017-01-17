@@ -250,7 +250,7 @@
                     index = ind;
                 }
             });
-            if(index) {
+            if(index > 0) {
             	 $scope.removeTab(index);
             }
         };

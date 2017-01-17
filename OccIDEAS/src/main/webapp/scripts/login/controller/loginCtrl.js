@@ -47,6 +47,8 @@
         	}else{
         		$sessionStorage.langEnabled = false;
         		$rootScope.closeLanguageTab();
+        		$translate.use('GB');
+        		$translate.refresh();
         	}
         	$mdDialog.cancel();
         }

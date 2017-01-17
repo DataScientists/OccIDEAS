@@ -12,7 +12,7 @@
 						<div class="form-group pull-left"
 							style="margin-top: 5px; margin-left: -15px;">
 							
-							<i class="glyphicon {{as.answerFreetext?as.answerFreetext:as.name | lowercase |
+							<i ng-if="storage.langEnabled" class="glyphicon {{as.answerFreetext?as.answerFreetext:as.name | lowercase |
 							translate | displayFlag:as:storage}}"></i>
 							<span class="badge">{{as.number}}</span>
 						</div>
@@ -28,7 +28,7 @@
 				<md-toolbar>
 					<span>{{interview.showedQuestion.name | lowercase | translate}}</span> 
 					<md-button id="numId" event-focus> 
-					<i class="glyphicon {{interview.showedQuestion.name | lowercase |
+					<i ng-if="storage.langEnabled" class="glyphicon {{interview.showedQuestion.name | lowercase |
 							translate | displayFlag:interview.showedQuestion:storage}}"></i>
 					<span
 					class="badge">{{questionheader.name}}</span> 
@@ -46,7 +46,7 @@
 								ng-model="node.isSelected"
 								ng-click="multiToggle(node, multiSelected)" class="green"
 								select-free-text-on-click> <span
-								ng-if="node.type!='P_freetext'"><i ng-if="node.type!='P_freetext'" 
+								ng-if="node.type!='P_freetext'"><i ng-if="node.type!='P_freetext' && storage.langEnabled" 
 							class="glyphicon {{node.name | lowercase | translate 
 							| displayFlag:node:storage}}"></i>{{node.name | lowercase | translate}}</span>
 							<md-input-container ng-if="node.type=='P_freetext'" md-no-float
@@ -109,7 +109,8 @@
 							<div flex layout-align="start center">
 								<md-radio-button flex ng-value="node"
 									class="md-primary interview-radio-button"
-									select-free-text-on-click> <i style="margin-right:2px;" ng-if="node.type!='P_freetext'" 
+									select-free-text-on-click> 
+									<i style="margin-right:2px;" ng-if="node.type!='P_freetext' && storage.langEnabled" 
 							class="glyphicon {{node.name | lowercase |
 							translate | displayFlag:node:storage}}"></i><span
 									ng-if="node.type!='P_freetext'">{{node.name | lowercase |
@@ -200,7 +201,7 @@
 						<!-- 								&nbsp; -->
 						<!-- 							</span> -->
 						<i class="glyphicon {{element.name | lowercase |
-							translate | displayFlag:element:storage}}"></i>
+							translate | displayFlag:element:storage}}" ng-if="storage.langEnabled"></i>
 						<span ng-if="element.deleted" class="badge-deleted"
 							title="deleted"> &nbsp; </span> <span class="badge">
 							{{element.header}} </span> <span class="badge"
@@ -223,7 +224,7 @@
 						&nbsp; </span>
 					<div class="form-group pull-left"
 						style="margin-top: 5px; margin-left: -15px;">
-						<i ng-if="as.type!='P_freetext'" class="glyphicon {{as.name | lowercase |
+						<i ng-if="as.type!='P_freetext' && storage.langEnabled" class="glyphicon {{as.name | lowercase |
 							translate | displayFlag:as:storage}}"></i>
 						<span class="badge">{{as.number}}</span> <span
 							permission="['ROLE_ADMIN']" class="badge">
