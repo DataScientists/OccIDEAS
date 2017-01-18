@@ -19,6 +19,9 @@ import javax.ws.rs.core.Response.Status;
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.Constant;
+import org.occideas.entity.Interview;
+import org.occideas.entity.InterviewAnswer;
+import org.occideas.entity.InterviewQuestion;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
@@ -255,28 +258,13 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     }
     
     @GET
-    @Path(value = "/getAnswers")
-    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response getAnswers(@QueryParam("id") Long id) {
-    	InterviewVO vo = new InterviewVO();
-		try{			
-			vo = service.getQuestionHistory(id);
-			vo.setQuestionHistory(sort(vo.getQuestionHistory()));
-		}catch(Throwable e){
-			e.printStackTrace();
-			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-		}
-		return Response.ok(vo).build();
-    }
-    
-    @GET
     @Path(value = "/getfiredrules")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response getfiredrules(@QueryParam("id") Long id) {
+    	
 		List<InterviewVO> list = new ArrayList<InterviewVO>();		
 		try {
 			list = service.findByIdWithRules(id, false);
-			list.get(0).setQuestionHistory(sort(list.get(0).getQuestionHistory()));
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -619,5 +607,208 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			sortedQuestionHistory.add(questionMap.get(vo.getIdNode()));			
 		}
 	}	
+	
+	/**
+	 * Make a module object out of the interview question list
+	 * @param interviewId
+	 * @return
+	 */
+	@GET
+	@Path(value = "/getModuleForInterview")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getModuleForInterview(@QueryParam("id") Long  interviewId) {
+		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		SystemPropertyVO vo = null;
+		Long moduleId = null;
+		vo = sysPropService.getByName(Constant.STUDY_INTRO);
+		moduleId = Long.valueOf(vo.getValue());
+		
+		try {
+			
+			//Will return the intro module
+			list = moduleService.findById(moduleId);		
+			if(list.get(0) != null){
+				list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, false, moduleId));
+			}
+			
+		} catch (Throwable e) {
+			
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
 
+	private ModuleVO mapToModule(List<QuestionVO> childNodes, Long interviewId, boolean isSubModule, long linkId) {
+		
+		//Get the interview
+		List<Interview> interview = service.getInterviewQuestionAnswer(interviewId);
+		
+		Map<Long, InterviewQuestion> questionMap = new HashMap<Long, InterviewQuestion>();
+		Map<Long, InterviewAnswer> answerMap = new HashMap<Long, InterviewAnswer>();
+		
+		//Create a map of the questions and answers
+		getMap(interview.get(0).getQuestionHistory(), questionMap, answerMap, linkId);
+		
+		//Create a new ModuleVO
+		ModuleVO moduleVo = new ModuleVO();		
+		mapQuestionNodes(childNodes, moduleVo, questionMap, answerMap, isSubModule);		
+		
+		return moduleVo;
+	}
+
+	/**
+	 * Map first level child nodes
+	 * @param nodes
+	 * @param moduleVo
+	 * @param questionMap
+	 * @param answerMap
+	 * @param isSubModule
+	 */
+	private void mapQuestionNodes(List<QuestionVO> nodes, 
+			ModuleVO moduleVo,
+			Map<Long, InterviewQuestion> questionMap, 
+			Map<Long, InterviewAnswer> answerMap, boolean isSubModule) {
+		
+		List<QuestionVO> newNodes = new ArrayList<QuestionVO>();
+		
+		for(QuestionVO vo : nodes){
+			
+			if(questionMap.containsKey(Long.valueOf(vo.getIdNode()))){
+				
+				if(vo.getChildNodes() != null){
+					mapAnswerNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);
+				}
+				newNodes.add(vo);
+			}
+		}
+		
+		moduleVo.setChildNodes(newNodes);		
+	}
+	
+	private void mapQuestionNodes(List<QuestionVO> nodes, 
+			ModuleVO moduleVo,
+			Map<Long, InterviewQuestion> questionMap, 
+			Map<Long, InterviewAnswer> answerMap, 
+			PossibleAnswerVO newPossibleAnswerVo, boolean isSubModule) {
+		
+		List<QuestionVO> newNodes = new ArrayList<QuestionVO>();
+		
+		for(QuestionVO vo : nodes){
+			
+			if(vo.getLink() != 0){
+				if(questionMap.containsKey(Long.valueOf(vo.getTopNodeId()))){									
+					if(isSubModule && vo.getChildNodes() != null){
+						mapAnswerNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);	
+					}			
+					newNodes.add(vo);
+				}
+			}
+			else if(questionMap.containsKey(Long.valueOf(vo.getIdNode()))){
+								
+				if(vo.getChildNodes() != null){
+					mapAnswerNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);	
+				}				
+				newNodes.add(vo);
+			}
+		}
+		
+		newPossibleAnswerVo.setChildNodes(newNodes);	
+		
+	}
+
+	private void mapAnswerNodes(List<PossibleAnswerVO> nodes, 
+			ModuleVO moduleVo,
+			Map<Long, InterviewQuestion> questionMap, 
+			Map<Long, InterviewAnswer> answerMap, 
+			QuestionVO newQuestionVO,
+			boolean isSubModule) {
+		
+		List<PossibleAnswerVO> newNodes = new ArrayList<PossibleAnswerVO>();
+		
+		for(PossibleAnswerVO vo : nodes){
+			
+			if(answerMap.containsKey(Long.valueOf(vo.getIdNode()))){
+								
+				if(vo.getChildNodes() != null){
+					mapQuestionNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);	
+				}
+				vo.setName(answerMap.get(Long.valueOf(vo.getIdNode())).getName());
+				newNodes.add(vo);
+			}
+		}
+		newQuestionVO.setChildNodes(newNodes);
+		
+	}
+
+	/**
+	 * Create a map of the questions and answers
+	 * @param questionHistory
+	 * @param questionMap
+	 * @param answerMap
+	 * @param linkId
+	 */
+	private void getMap(List<InterviewQuestion> questionHistory, 
+			Map<Long, InterviewQuestion> questionMap,
+			Map<Long, InterviewAnswer> answerMap, long linkId) {
+		
+		for (InterviewQuestion vo : questionHistory) {
+
+			if(linkId !=0 && vo.getTopNodeId() != linkId){
+				continue;
+			}
+			if (vo.getQuestionId() == 0) {				
+				questionMap.put(Long.valueOf(vo.getTopNodeId()), vo);
+			} else {				
+				if(linkId == vo.getTopNodeId() && vo.isProcessed()){					
+					questionMap.put(Long.valueOf(vo.getQuestionId()), vo);
+				}				
+			}
+			
+			for(InterviewAnswer answer : vo.getAnswers()){
+				if(vo.isProcessed()){					
+					answerMap.put(Long.valueOf(answer.getAnswerId()), answer);
+				}	
+			}
+		}
+	}
+
+	/**
+	 * Get nested module or fragment
+	 * @param interviewId
+	 * @param linkId
+	 * @return
+	 */
+	@GET
+	@Path(value = "/getModuleForSubModule")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getModuleForSubModule(
+			@QueryParam("id") Long  interviewId, 
+			@QueryParam("linkId") Long  linkId) {
+		
+		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		
+		try {
+			
+			list = moduleService.findById(linkId);
+			
+			if(list !=null ){
+				if(!list.isEmpty() && list.get(0) != null){
+					//Get module
+					list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, true, linkId));		
+				}
+				else{
+					//Get fragment
+					List<FragmentVO> fragmentVoList = fragmentService.findById(linkId);
+					if(!fragmentVoList.isEmpty() && fragmentVoList.get(0) != null){
+						list.add(0, mapToModule(fragmentVoList.remove(0).getChildNodes(), interviewId, true, linkId));
+					}
+				}				
+			}
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();	
+	}
 }

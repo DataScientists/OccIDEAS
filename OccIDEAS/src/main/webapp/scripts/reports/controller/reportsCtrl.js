@@ -57,29 +57,41 @@
             }, {	
             
 			getData: function(params) {
-	          if ((params.sorting().id)
-        		  || (params.sorting().name)
-        		  || (params.sorting().type)
-        		  || (params.sorting().requestor) 
-        		  || (params.sorting().status)
-        		  || (params.sorting().startDt)
-        		  || (params.sorting().endDt) 
-        		  || (params.sorting().recordCount)){
-				return $filter('orderBy')(self.tableParams.settings().dataset, params.orderBy());
-		      }
-	          
-	          if(params.filter().id 
-        		  || params.filter().name 
-        		  || params.filter().type
-        		  || params.filter().requestor
-        		  || params.filter().status
-        		  || params.filter().startDt
-        		  || params.filter().endDt 
-        		  || params.filter().recordCount){
-	        	  
-	        	  return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-		      }
+				
+			  if(!self.originalData){
+				  self.tableParams.shouldGetData = true;					
+			  }
+			  else{
+				  var orderedFilteredData = self.originalData;
+				  
+		          if ((params.sorting().id)
+	        		  || (params.sorting().name)
+	        		  || (params.sorting().type)
+	        		  || (params.sorting().requestor)
+	        		  || (params.sorting().status)
+	        		  || (params.sorting().startDt)
+	        		  || (params.sorting().endDt)
+	        		  || (params.sorting().recordCount)){
+		        	  self.tableParams.shouldGetData = false;
+		        	  orderedFilteredData = $filter('orderBy')(self.originalData, params.orderBy());
+			      }
+		          
+		          if(params.filter().id
+	        		  || params.filter().name
+	        		  || params.filter().type
+	        		  || params.filter().requestor
+	        		  || params.filter().status
+	        		  || params.filter().startDt
+	        		  || params.filter().endDt
+	        		  || params.filter().recordCount){
+		        	  self.tableParams.shouldGetData = false;
+		        	  orderedFilteredData = $filter('filter')(orderedFilteredData, params.filter());
+			      }
+		          
+		          self.tableParams.settings().dataset = orderedFilteredData;
+			  }
 	          if(!self.tableParams.shouldGetData){
+	        	  params.total(orderedFilteredData.length);
 	        	  var last = params.page() * params.count();
 		          return _.slice(self.tableParams.settings().dataset,last - params.count(),last);
 	          }

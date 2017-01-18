@@ -426,6 +426,27 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		
+		function getModuleForInterview(idModule){
+			var restUrl = 'web/rest/interview/getModuleForInterview?id=' + idModule;
+			console.log(restUrl);
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getModuleForSubModule(idInterview, idLink){
+			var restUrl = 'web/rest/interview/getModuleForSubModule?id=' + idInterview
+			 	+'&linkId='+idLink;
+			console.log(restUrl);
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}		
 
 		function handleError(response) {
 			if (!angular.isObject(response.data) || !response.data.message) {
@@ -477,7 +498,9 @@
 			exportAssessmentsVibrationCSV : exportAssessmentsVibrationCSV,
 			getDistinctModules : getDistinctModules,
 			findInterviewIdByModuleId : findInterviewIdByModuleId,
-			findNonIntroById:findNonIntroById
+			findNonIntroById:findNonIntroById,
+			getModuleForInterview:getModuleForInterview,
+			getModuleForSubModule:getModuleForSubModule
 		};
 	}
 })();
