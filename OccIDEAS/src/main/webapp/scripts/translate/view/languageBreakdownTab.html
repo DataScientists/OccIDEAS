@@ -16,7 +16,7 @@
 				<tr ng-if="discriminatorType == 'F'" ng-repeat="nl in $data" ng-click="openFragmentLanguageByFlagIcon(nl.idNode)">
 					<td title="'idNode'" filter="{idNode: 'text'}">{{nl.idNode}}</td>
 					<td title="'Name'" filter="{name: 'text'}">{{nl.name}}</td>
-					<td title="'Count'"><span class="{{nl.current == nl.total?'greenBorder':'redBorder'}}>{{nl.current?nl.current:0}}/{{nl.total}}</span></td>
+					<td title="'Count'"><span class="{{nl.current == nl.total?'greenBorder':'redBorder'}}">{{nl.current?nl.current:0}}/{{nl.total}}</span></td>
 				</tr>
 			</tbody>
 		</table>

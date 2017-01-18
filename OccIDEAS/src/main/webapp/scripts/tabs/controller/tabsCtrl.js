@@ -220,7 +220,8 @@
         };
         
         $rootScope.addLanguageBreakdownTab = function(flag,type) {
-            var tabTitle = "Language Breakdown";
+        	var suffix = type == 'M'?'Modules':'Fragments';
+            var tabTitle = "Language "+suffix;
             var state = "tabs.languageBreakdown";
             $stickyState.reset(state);
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
