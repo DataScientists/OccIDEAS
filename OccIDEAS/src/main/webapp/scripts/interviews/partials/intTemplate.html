@@ -4,7 +4,10 @@
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
 	<span ng-if="rule.deleted" class="badge-deleted" title="deleted">	&nbsp;</span>
-	<div class="title" id="rule-dialog-{{interviewId}}-{{rule.idRule}}">{{interviewId}}:{{rule.idRule}} {{agentName}}</div>
+	<div class="title" id="rule-dialog-{{interviewId}}-{{rule.idRule}}">
+		<div class="{{rule.level}} {{rule.type}} "></div>
+		{{agentName}}
+	</div>
 	<ul class="list-group" style="margin: 0 0 0 0;">
     			<li class="list-group-item nodeNumber" 
 					ng-repeat="node in rule.conditions" 
