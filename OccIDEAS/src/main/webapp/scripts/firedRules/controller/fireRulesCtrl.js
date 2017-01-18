@@ -563,6 +563,14 @@
 							if(hoursbg<0){
 								hoursbg = 0;
 							}
+							if(noiseRule.ruleAdditionalfields[0]==undefined){
+								$ngToast.create({
+				    	    		  className: 'danger',
+				    	    		  content: 'The background rule ' + noiseRule.idRule + ' has no dB value.',
+				    	    		  dismissButton:true,
+				    	    		  animation:'slide'
+				    	    	 });
+							}
 							level = noiseRule.ruleAdditionalfields[0].value;
 							hoursbg = hoursbg.toFixed(4);
 							var partialExposure = 4*hoursbg*(Math.pow(10,(level-100)/10));
