@@ -78,6 +78,7 @@ left join Language l on nl.languageId = l.id
 where n.link = 0
 and n.type not like '%frequency%'
 and n.type != 'P_freetext' 
+and n.type in ('M_Module','M_IntroModule')
 and l.flag is not null
 and n.node_discriminator = 'M'
 group by n.idNode,nl.languageId,l.flag;

@@ -166,7 +166,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 
 	String getTotalUntranslatedModuleSQL = "select count(distinct n1.name) from " + "Node n1 where n1.link = 0 "
 			+ "and n1.type not like '%frequency%' " + "and n1.type != 'P_freetext' " + "and n1.deleted = 0 "
-			+ "and n1.topNodeId in (select idNode from Node " + "where node_discriminator = 'M' " + "and deleted = 0 "
+			+ "and n1.topNodeId in (select idNode from Node " + "where node_discriminator = 'M' and type in ('M_Module','M_IntroModule') and deleted = 0 "
 			+ "order by name) ";
 
 	@Override
@@ -178,7 +178,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 		return total.intValue();
 	}
 
-	String getUntranslatedModulesSQL = "select * from Node where " + "node_discriminator = 'M' " + "and deleted = 0 "
+	String getUntranslatedModulesSQL = "select * from Node where " + "node_discriminator = 'M' and type in ('M_Module','M_IntroModule') and deleted = 0 "
 			+ "and idNode in " + "(select idNode from NodeNodeLanguageMod where flag = :param)";
 
 	@Override
@@ -191,7 +191,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 	}
 
 	String getTotalModuleCountSQL = "select count(1) from Node where " + "node_discriminator = 'M' "
-			+ "and deleted = 0 ";
+			+ "and type in ('M_Module','M_IntroModule') and deleted = 0 ";
 
 	@Override
 	public Integer getTotalModuleCount() {
@@ -249,7 +249,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 			" and n1.type != 'P_freetext'"+
 			" and n1.deleted = 0"+
 			" and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from node n"+
-			" where  node_discriminator = 'M'";
+			" where node_discriminator = 'M' and type in ('M_Module','M_IntroModule')";
 	
 	@Override
 	public List<LanguageModBreakdown> getLanguageModBreakdown(String flag) {
