@@ -1,22 +1,29 @@
 <div ng-cloak>
 	<div ng-if="$storage.langEnabled">
-		<table ng-table="vm.languageSummaryTableParams"
-				class="table table-condensed table-bordered table-striped">
-				<tr>
-					<td>Language</td>
-					<td>Modules</td>
-					<td>Nodes</td>
-				</tr>
-				<tr ng-repeat="nl in vm.languageSummaryTableParams.settings().dataset">
-					<td><i class="glyphicon {{nl.flag}}" ng-click="test()"></i>
-					{{nl.description}}
-					</td>
-					<td>{{nl.translatedModuleCount}}/{{totalModuleCount}}</td>
-					<td>{{nl.totalCurrent}}/{{grandTotal}}</td>
-				</tr>
+		<table ng-table="vm.languageSummaryTableParams" show-filter="false"
+			class="table table-condensed table-bordered table-striped"
+			disable-filter="true">
+			<tbody>
+			<tr>
+				<td>Language</td>
+				<td>Modules</td>
+				<td>Module Nodes</td>
+				<td>Fragments</td>
+				<td>Fragment Nodes</td>
+			</tr>
+			<tr
+				ng-repeat="nl in vm.languageSummaryTableParams.settings().dataset">
+				<td><i class="glyphicon {{nl.flag}}"></i>
+					{{nl.description}}</td>
+				<td><a href="#" class="hoverBlue" ng-click="openModuleBreakdown(nl.flag)">{{nl.translatedModuleCount}}/{{totalModuleCount}}</a></td>
+				<td>{{nl.totalCurrent}}/{{grandTotal}}</td>
+				<td><a href="#" class="hoverBlue" ng-click="openFragmentBreakdown(nl.flag)">{{nl.translatedFragCount}}/{{totalFragCount}}</a></td>
+				<td>{{nl.totalFragCurrent}}/{{grandFragTotal}}</td>
+			</tr>
+			</tbody>
 		</table>
 	</div>
-	
+
 	<div>
 		<div ng-if="$storage.langEnabled">
 			<table ng-table="vm.languageTableParams"

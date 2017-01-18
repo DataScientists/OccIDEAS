@@ -13,10 +13,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.LanguageFragBreakdown;
+import org.occideas.entity.LanguageModBreakdown;
+import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.nodelanguage.service.NodeLanguageService;
 import org.occideas.vo.LanguageVO;
-import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeLanguageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -186,6 +188,20 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 	}
 	
 	@GET
+	@Path(value="/getNodeNodeLanguageFragmentList")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getNodeNodeLanguageFragmentList(){
+		List<NodeNodeLanguageFrag> list = null;
+		try{
+			list = service.getNodeNodeLanguageFragList();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
+	@GET
 	@Path(value="/getUntranslatedModules")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
 	public Response getUntranslatedModules(@QueryParam("flag") String flag){
@@ -226,5 +242,76 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		}
 		return Response.ok(result).build();
 	}
+	
+	@GET
+	@Path(value="/getUntranslatedFragments")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getUntranslatedFragments(@QueryParam("flag") String flag){
+		Integer result = null;
+		try{
+			result = service.getUntranslatedFragments(flag);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+
+	@GET
+	@Path(value="/getTotalUntranslatedFragment")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getTotalUntranslatedFragment(){
+		Integer result = 0;
+		try{
+			result = service.getTotalUntranslatedFragment();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+	
+	@GET
+	@Path(value="/getTotalFragmentCount")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getTotalFragmentCount(){
+		Integer result = 0;
+		try{
+			result = service.getTotalFragmentCount();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+	
+	@GET
+	@Path(value="/getLanguageModBreakdown")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getLanguageModBreakdown(@QueryParam("flag") String flag){
+		List<LanguageModBreakdown> result = new ArrayList<>();
+		try{
+			result = service.getLanguageModBreakdown(flag);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+	
+	@GET
+	@Path(value="/getLanguageFragBreakdown")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getLanguageFragBreakdown(@QueryParam("flag") String flag){
+		List<LanguageFragBreakdown> result = new ArrayList<>();
+		try{
+			result = service.getLanguageFragBreakdown(flag);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
+	
 	
 }

@@ -26,6 +26,17 @@
 			self.editTranslateNode = true;
 			$scope.selectedLanguage = self.lang;
 		}
+		
+		if(self.lang){
+			$scope.flagUsed = 'flag-icon-'+self.lang.flag.split(/[- ]+/).pop().toLowerCase();
+	        if($sessionStorage.languages){
+	        	var lang = _.find($sessionStorage.languages, function(o) { 
+					return o.flag == self.lang.flag; 
+				});
+	        	$scope.flagDescription = lang.description; 
+	        }
+		}
+		
 		$scope.languageNameList = [];
 		self.editTranslation = function(){
 			self.editTranslateNode = true;
@@ -92,8 +103,6 @@
         	$scope.totalLangCount = 0;
         	$scope.languageNameList.length = 0;
             refreshNodeLanguageCount($scope.data[0]);
-            console.log(testArray.join(','));
-            console.log($scope.languageNameList.length);
         });
     	
     	function translateNodes(node){

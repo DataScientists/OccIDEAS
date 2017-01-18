@@ -16,31 +16,32 @@
 		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
 		
 		$scope.$watch('$storage.langEnabled', function(value) {	    	
-			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
-				$translate.refresh();
-				$translate.use('GB');
-				$scope.selectLanguage = 'GB';
-				$scope.getAllLanguage();
-			}else if(!$scope.$storage.langEnabled){
-				$translate.refresh();
-				$translate.use('GB');
-			}
+			$translate.refresh();
+			$scope.getAllLanguage();
 		});
 		
-		
 		$scope.getAllLanguage = function(){
-			NodeLanguageService.getAllLanguage().then(function(response){
+			NodeLanguageService.getNodeNodeLanguageList().then(function(response){
 				if(response.status == '200'){
-					$scope.languages = response.data;
+					$scope.languages = [];
+					$scope.nodeLanguage = response.data;
+					if($sessionStorage.languages){
+			        	_.each($scope.nodeLanguage,function(nl){
+			        		var langToPush = _.find($sessionStorage.languages, function(o) { 
+								return o.flag == nl.flag; 
+							});
+			        		$scope.languages.push(langToPush);
+			        	});
+			        }
 //					var english = {
 //						id: -1,
 //						language: 'EN'
 //					}
 //					$scope.languages.unshift(english);
 					$scope.selectLanguage = {};
-					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
-						return lng.language == 'GB';
-					});
+//					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
+//						return lng.language == 'GB';
+//					});
 					safeDigest($scope.selectLanguage);
 				}
 			})
@@ -48,17 +49,12 @@
 		
 		if($scope.$storage.langEnabled){
 			$translate.refresh();
-			$translate.use('GB');
-			$scope.selectLanguage = 'GB';
 			$scope.getAllLanguage();
 		}
 		
 		self.changeNodeLanguage = function(data) {
         	$translate.refresh();
-       		if(data.selected.language == 'GB'){
-       		}else{
-       			$translate.use(data.selected.language);
-       		}
+      		$translate.use(data.selected.language);
        		$scope.selectLanguage.select = data.selected;
         };
 		

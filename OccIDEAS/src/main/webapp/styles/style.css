@@ -1310,3 +1310,12 @@ li.borderless {
 .greenBackground{
 	background-color : rgba(0, 128, 0, 0.25) !important; 
 }
+
+.hoverBlue:hover{
+	color: blue;
+    text-decoration: underline;
+}
+
+.hoverBlue{
+	color: blue;
+}

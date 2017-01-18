@@ -1,0 +1,24 @@
+<div ng-cloak>
+	<div>
+		<span class="flag-icon {{flagUsed}} flag-icon-squared"
+				style="font-size: 50px;
+    margin-bottom: 3px;
+    margin-top: 3px;"></span>
+    <span style="font-size: 50px;">{{flagDescription}}</span>
+		<table ng-table="vm.languageSummaryTableParams"
+			class="table table-hover table-condensed table-bordered table-striped">
+			<tbody>
+				<tr ng-if="discriminatorType == 'M'" ng-repeat="nl in $data" ng-click="openModuleLanguageByFlagIcon(nl.idNode)">
+					<td title="'idNode'" filter="{idNode: 'text'}">{{nl.idNode}}</td>
+					<td title="'Name'" filter="{name: 'text'}">{{nl.name}}</td>
+					<td title="'Count'">{{nl.current?nl.current:0}}/{{nl.total}}</td>
+				</tr>
+				<tr ng-if="discriminatorType == 'F'" ng-repeat="nl in $data" ng-click="openFragmentLanguageByFlagIcon(nl.idNode)">
+					<td title="'idNode'" filter="{idNode: 'text'}">{{nl.idNode}}</td>
+					<td title="'Name'" filter="{name: 'text'}">{{nl.name}}</td>
+					<td title="'Count'">{{nl.current?nl.current:0}}/{{nl.total}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

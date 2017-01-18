@@ -1,25 +1,37 @@
 (function() {
 	angular.module('occIDEASApp.Interviews').controller('InterviewsCtrl',
-			InterviewsCtrl);
+			InterviewsCtrl).filter('displayFlag',function(){
+				return function(translated,node,storage){
+					if(translated){
+					if(translated == node.name.toLowerCase()){
+						return 'bfh-flag-GB';
+					}else{
+						return storage.chosenLang.flag;
+					}
+					}
+				}
+			});
 
 	InterviewsCtrl.$inject = [ 'data', '$scope', '$mdDialog',
 			'FragmentsService', '$q', 'QuestionsService', 'ModulesService',
 			'InterviewsService', 'ParticipantsService', 'AssessmentsService',
 			'$anchorScroll', '$location', '$mdMedia', '$window', '$state',
 			'$rootScope', '$compile', '$timeout', '$log', 'updateData',
-			'startWithReferenceNumber','$filter','$translate','NodeLanguageService'];
+			'startWithReferenceNumber','$filter','$translate','NodeLanguageService',
+			'$sessionStorage'];
 	function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
 			QuestionsService, ModulesService, InterviewsService,
 			ParticipantsService, AssessmentsService, $anchorScroll, $location,
 			$mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
-			updateData,startWithReferenceNumber,$filter,$translate,NodeLanguageService) {
+			updateData,startWithReferenceNumber,$filter,$translate,NodeLanguageService,
+			$sessionStorage) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.multiSelected = [];
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
-		
+		$scope.storage = $sessionStorage;
 		function add(type) {
 	    	$scope.addInterviewTabInterviewers();
 	    }
