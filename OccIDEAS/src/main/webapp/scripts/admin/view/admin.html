@@ -22,7 +22,8 @@
 					sortable="'email'">{{user.email}}</td>
 				<td width="10%" title="'State'" filter="{ state:'text'}"
 					sortable="'state'">{{user.state}}</td>
-				<td width="25%" title="'Role'" filter="{ roles:'text'}">{{user.rolesStr}}</td>
+				<td width="25%" title="'Role'" filter="{ rolesStr:'text'}" 
+					sortable="'rolesStr'">{{user.rolesStr}}</td>
 				<td width="20%">
 					<button type="button" class="btn btn-default" aria-label="Edit"
 						ng-click="vm.showEditUserDialog(user)">

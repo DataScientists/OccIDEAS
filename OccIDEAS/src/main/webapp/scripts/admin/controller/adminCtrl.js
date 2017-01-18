@@ -339,11 +339,37 @@
 				}, 
 				{	
 	        getData: function(params) {
-	          if(params.filter().ssoId || params.filter().firstName || 
-	        		  params.filter().lastName || params.filter().email
-	        		  || params.filter().state || params.filter().roles){	
-	        	return $filter('filter')(self.tableParams.settings().dataset, params.filter());
-	          }
+	        	
+	        	if(!$scope.data){
+	        		self.tableParams.shouldGetData = true;
+	        	}
+	        	else{
+	        		var orderedFilteredDataset = $scope.data;
+	        		if (params.sorting().ssoId
+		           		  || params.sorting().firstName
+		          		  || params.sorting().lastName
+		          		  || params.sorting().email
+		          		  || params.sorting().state
+	        			  || params.sorting().rolesStr){
+	        			
+		        		self.tableParams.shouldGetData = false;
+		        		orderedFilteredDataset = $filter('orderBy')($scope.data, params.orderBy());			  				
+			  		}
+	        		
+			        if(params.filter().ssoId 
+	        		  || params.filter().firstName 
+	        		  || params.filter().lastName 
+	        		  || params.filter().email
+	        		  || params.filter().state 
+	        		  || params.filter().rolesStr){	
+			        	
+			        	self.tableParams.shouldGetData = false;
+			        	orderedFilteredDataset = $filter('filter')(orderedFilteredDataset, params.filter());			        	
+			        }
+			        
+			        self.tableParams.settings().dataset = orderedFilteredDataset;	        		
+	        	}
+
 	          if(!self.tableParams.shouldGetData){
 	        	  return self.tableParams.settings().dataset;
 	          }
@@ -353,6 +379,7 @@
 	        	  _.each(data,function(user){
 	        		  user.rolesStr = _.map(user.userProfiles, 'type').join(', ');
 	        	  })
+	        	  $scope.data = data;
 	        	  self.tableParams.settings().dataset = data;
 	        	  self.tableParams.shouldGetData = true;
                   return data;
