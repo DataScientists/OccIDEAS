@@ -12,7 +12,7 @@
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
 		$scope.interviewId = data;
-		$scope.displayHistoryNew = undefined;
+		$scope.linkedModule = undefined;
 		vm.answersDisplayed = false;
 		
 		$(window).scroll(function () {
@@ -126,7 +126,7 @@
 			}
 		};
 		
-		if(!$scope.displayHistoryNew){
+		if(!$scope.linkedModule){
 			refreshInterviewDisplay();
 		}
 		function setOrder (obj) {
@@ -194,20 +194,10 @@
 	    		
 	    	});
 		}
-		$scope.showAnswers = function(){
-			AssessmentsService.showAnswers($scope.interviewId).then(function(response){
-				if(response.status == '200'){	
-					$scope.interview.questionHistory = response.data.questionHistory;
-					$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
-					processQuestionHistory();
-					vm.answersDisplayed = true;
-				}
-			});
-		}
 		
 		function refreshInterviewDisplay(){
 			
-			if(!$scope.displayHistoryNew){			
+			if(!$scope.linkedModule){
 				
 				AssessmentsService.getFiredRules($scope.interviewId).then(function(response){
 					if(response.status == '200'){	
@@ -253,11 +243,25 @@
 		}
 		
 		function processQuestionHistory(){
-			$scope.displayHistoryNew = angular.copy($scope.interview.questionHistory);
-			_.remove($scope.displayHistoryNew, function(node) {
-				  return node.link || node.deleted || !node.processed;
-				});
-			_.each($scope.displayHistoryNew, function(node) {
+			
+			InterviewsService.getModuleForInterview($scope.interviewId).then(function(response){
+				if(response.status == '200' && response.data && response.data[0]){
+					$scope.linkedModule = response.data[0];
+					
+					_.remove($scope.linkedModule, function(node) {
+						console.log("node.deleted || !node.processed "+node.deleted || !node.processed)
+						return node.deleted || !node.processed;
+					});
+					
+					addHeader($scope.linkedModule.nodes);
+					
+				}				
+			});
+		}
+		
+		function addHeader(nodes){
+			
+			_.each(nodes, function(node) {
 				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
 					  var retValue = false;
 					  if(qnode.link){
@@ -269,7 +273,11 @@
 				  });
 				  if(linkNode){
 					  node.header = linkNode.name.substr(0,4);
-				  } 
+				  }
+				  
+				  if(node.nodes){
+					  addHeader(node.nodes);
+				  }
 			});
 		}
 		function refreshAssessmentDisplay(){
@@ -908,7 +916,21 @@
 			}				
 			
 			$mdDialog.cancel();
-		}		
+		}
+		
+		//Show sub module/fragmet
+		$scope.toggleNode = function(node){
+			if(!node.nodes || node.nodes.length == 0){				
+				InterviewsService.getModuleForSubModule($scope.interviewId, node.link).then(function(response){
+					if(response.status == '200' && response.data && response.data[0]){
+						subNode = response.data[0];
+						addHeader(subNode.nodes);
+						node.nodes = subNode.nodes;
+						node.link = 0;
+					}
+				});	
+			}
+		}
 	}
 
 })();

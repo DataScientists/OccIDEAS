@@ -1,0 +1,14 @@
+<div class="row " prog_tree>
+	<div class="col-sm-12">
+	<div class="panel panel-default">
+ 	 <div class="panel-body">
+  	<div ui-tree="moduleTreeOptions" id="tree-root" >
+		<ol ui-tree-nodes ng-model="linkedModule.nodes">
+			<li ng-repeat="node in linkedModule.nodes" ui-tree-node
+				ng-include="'scripts/assessments/partials/nodes_renderer.html'" id="moduleTreeBody"></li>
+		</ol>
+	</div>
+  </div>
+</div>
+	</div>
+</div>
