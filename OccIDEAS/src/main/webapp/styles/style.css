@@ -1303,6 +1303,18 @@ li.borderless {
     border-color: red;
 }
 
+.greenBorderMed{
+	border-style: solid;
+    border-width: medium;
+    border-color: green;
+}
+
+.redBorderMed{
+	border-style: solid;
+    border-width: medium;
+    border-color: red;
+}
+
 .redBackground{
 	background-color : rgba(255, 0, 0, 0.18) !important; 
 }
