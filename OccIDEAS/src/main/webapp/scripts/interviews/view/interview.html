@@ -1,5 +1,11 @@
 <div id="interview-wrapper">
-
+	<div ng-if="storage.langEnabled">
+		<span class="flag-icon {{flagUsed}} flag-icon-squared"
+				style="font-size: 30px;
+    margin-bottom: 3px;
+    margin-top: 3px;"></span>
+    <span style="font-size: 30px;">{{storage.chosenLang.description}}</span>
+	</div>
 	<div class="col-md-4">
 		<div>
 			<div>

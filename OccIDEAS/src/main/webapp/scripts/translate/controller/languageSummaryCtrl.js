@@ -83,6 +83,9 @@
 	        		if(response.status == '200'){
 	        			var promises = [];
 	        			$scope.lang = response.data;
+	        			_.remove($scope.lang, function (l) {
+	        				  return l.language == 'GB'; 
+	        			});
 	        			_.each($scope.lang,function(l){
 	        				promises.push(NodeLanguageService.getUntranslatedModules(l.flag)
 	        						.then(function(resp){

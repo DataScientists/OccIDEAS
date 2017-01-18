@@ -32,6 +32,8 @@
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
 		$scope.storage = $sessionStorage;
+		$scope.flagUsed = 'flag-icon-'+$scope.storage.chosenLang.flag
+						.split(/[- ]+/).pop().toLowerCase();
 		function add(type) {
 	    	$scope.addInterviewTabInterviewers();
 	    }
