@@ -248,7 +248,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 			" and n1.type not like '%frequency%'"+
 			" and n1.type != 'P_freetext'"+
 			" and n1.deleted = 0"+
-			" and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from node n"+
+			" and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from Node n"+
 			" where node_discriminator = 'M' and type in ('M_Module','M_IntroModule')";
 	
 	@Override
@@ -270,7 +270,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 			" and n1.type not like '%frequency%'"+
 			" and n1.type != 'P_freetext'"+
 			" and n1.deleted = 0"+
-			" and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from node n"+
+			" and case n.topNodeId when 0 then n1.topNodeId = n.idNode else n1.topNodeId = n.topNodeId end) as total from Node n"+
 			" where  node_discriminator = 'F'";
 	
 	@Override
