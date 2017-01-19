@@ -44,21 +44,24 @@
 		
         
         $scope.saveAllLanguage = function(){
-        	saveNodeTranslation(angular.copy(data[0]));
+        	var listOfTranslatedNodes = [];
+        	saveNodeTranslation(angular.copy(data[0]),listOfTranslatedNodes);
         	self.editTranslateNode = false;
         }
         
-        function saveNodeTranslation(node){
-        	if(node.translated != 'No available translation'){
+        function saveNodeTranslation(node,listOfTranslatedNodes){
+        	if(node.translated != 'No available translation'
+        		&& !listOfTranslatedNodes.indexOf(node.name.toLowerCase().trim()) > -1){
+        		listOfTranslatedNodes.push(node.name.toLowerCase().trim());
         		var request = {
             			languageId:$scope.selectedLanguage.id,
             			language:null,
-            			word:node.name
+            			word:node.name.toLowerCase().trim()
             	}
             	NodeLanguageService.getNodesByLanguageAndWord(request).then(function(response){
             		var data = {
             				languageId:$scope.selectedLanguage.id,
-            				word:node.name,
+            				word:node.name.toLowerCase().trim(),
             				translation:node.translated
             		};
             		if(response.status == '200' && response.data){
@@ -76,7 +79,7 @@
             	});
         	}
         	_.each(node.nodes,function(n){
-        		saveNodeTranslation(n);
+        		saveNodeTranslation(n,listOfTranslatedNodes);
         	});
         }
         

@@ -46,6 +46,10 @@ public class NodeLanguageDao implements INodeLanguageDao {
 	public void save(NodeLanguage entity) {
 		sessionFactory.getCurrentSession().saveOrUpdate(entity);
 	}
+	
+	public void saveByWordAndLanguage(){
+		
+	}
 
 	@Override
 	public void delete(NodeLanguage entity) {
