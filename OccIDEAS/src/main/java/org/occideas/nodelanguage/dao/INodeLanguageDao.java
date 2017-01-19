@@ -59,4 +59,6 @@ public interface INodeLanguageDao {
 
 	List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag);
 
+	void batchSave(List<NodeLanguage> entityList);
+
 }

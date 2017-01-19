@@ -1,6 +1,7 @@
 package org.occideas.nodelanguage.dao;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,6 +11,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Fragment;
@@ -47,8 +49,16 @@ public class NodeLanguageDao implements INodeLanguageDao {
 		sessionFactory.getCurrentSession().saveOrUpdate(entity);
 	}
 	
-	public void saveByWordAndLanguage(){
-		
+	
+	@Override
+	public void batchSave(List<NodeLanguage> entityList){
+		for(NodeLanguage nl:entityList){
+			NodeLanguage nodeLanguageByWordAndLanguage = getNodeLanguageByWordAndLanguage(nl.getWord(), nl.getLanguageId());
+			if(nodeLanguageByWordAndLanguage != null){
+				nl.setId(nodeLanguageByWordAndLanguage.getId());
+			}
+			sessionFactory.getCurrentSession().saveOrUpdate(nl);
+		}
 	}
 
 	@Override
@@ -160,10 +170,11 @@ public class NodeLanguageDao implements INodeLanguageDao {
 	public NodeLanguage getNodeLanguageByWordAndLanguage(String word, long languageId) {
 		final Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(NodeLanguage.class).add(Restrictions.eq("word", word))
-				.add(Restrictions.eq("languageId", languageId));
-		Object uniqueResult = crit.uniqueResult();
-		if (uniqueResult != null) {
-			return (NodeLanguage) uniqueResult;
+				.add(Restrictions.eq("languageId", languageId))
+				.addOrder(Order.desc("lastUpdated"));
+		List<NodeLanguage> list = crit.list();
+		if (list != null && !list.isEmpty()) {
+			return (NodeLanguage) list.get(0);
 		}
 		return null;
 	}

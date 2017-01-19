@@ -53,30 +53,17 @@
         	if(node.translated != 'No available translation'
         		&& !listOfTranslatedNodes.indexOf(node.name.toLowerCase().trim()) > -1){
         		listOfTranslatedNodes.push(node.name.toLowerCase().trim());
-        		var request = {
-            			languageId:$scope.selectedLanguage.id,
-            			language:null,
-            			word:node.name.toLowerCase().trim()
-            	}
-            	NodeLanguageService.getNodesByLanguageAndWord(request).then(function(response){
-            		var data = {
-            				languageId:$scope.selectedLanguage.id,
-            				word:node.name.toLowerCase().trim(),
-            				translation:node.translated
-            		};
-            		if(response.status == '200' && response.data){
-            			data.id = response.data.id;
-            		}
-            		
-            		if(response.status == '200'){
-            			NodeLanguageService.save(data).then(function(response){
-                			if(response.status == '200'){
-                				$translate.refresh();
-                        		$translate.use(self.lang.language);
-                			}
-                		});
-            		}
-            	});
+        		var data = {
+        				languageId:$scope.selectedLanguage.id,
+        				word:node.name.toLowerCase().trim(),
+        				translation:node.translated
+        		};
+        		NodeLanguageService.save(data).then(function(response){
+        			if(response.status == '200'){
+        				$translate.refresh();
+        				$translate.use(self.lang.language);
+        			}
+        		});
         	}
         	_.each(node.nodes,function(n){
         		saveNodeTranslation(n,listOfTranslatedNodes);
