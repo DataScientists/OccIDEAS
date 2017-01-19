@@ -115,7 +115,7 @@
     		
     		if(node.name && $scope.languageNameList.indexOf(node.name.toLowerCase()) == -1
     				&& node.link == 0 && node.type != 'P_freetext' && 
-    				!node.type.match('frequency') && node.nodeclass != 'M'){
+    				!node.type.match('frequency') && node.nodeclass != 'M' && node.nodeclass != 'F'){
     			if(node.translated.trim() != 'No available translation'){
     				$scope.currentLangCount++;
     			}
