@@ -42,32 +42,27 @@
 		
 		
 	    self.displayNodeLanguage = function(row){
-	    	NodeLanguageService.getAllLanguage().then(function(response){
-				if(response.status == '200'){
-					$scope.languages = response.data;
-					$scope.selectedLanguage.language = $scope.languages[0];
-//					var english = {
-//						id: -1,
-//						language: 'EN'
-//					}
-//					$scope.languages.unshift(english);
-					$scope.selectLanguage = $scope.languages[0];
-					safeDigest($scope.selectLanguage);
-					var newScope = $scope.$new();
-					newScope.row = row;
-					$mdDialog.show({
-						  scope: newScope,
-					      templateUrl: 'scripts/modules/partials/translateDialog.html',
-					      parent: angular.element(document.body),
-					      clickOutsideToClose:true
-					    })
-					    .then(function(answer) {
-					      $scope.status = 'You said the information was "' + answer + '".';
-					    }, function() {
-					      $scope.status = 'You cancelled the dialog.';
-					    });
-				}
-			})
+	    	if($sessionStorage.languages){
+	    		$scope.languages = angular.copy($sessionStorage.languages);
+	    		_.remove($scope.languages, function(o) { 
+	    			return o.language == 'GB'; 
+	    		});
+	    		$scope.selectedLanguage.language = $scope.languages[0];
+	    	}
+	    	var newScope = $scope.$new();
+	    	newScope.row = row;
+	    	newScope.languages = $scope.languages;
+	    	$mdDialog.show({
+	    		scope: newScope,
+	    		templateUrl: 'scripts/modules/partials/translateDialog.html',
+	    		parent: angular.element(document.body),
+	    		clickOutsideToClose:true
+	    	})
+	    	.then(function(answer) {
+	    		$scope.status = 'You said the information was "' + answer + '".';
+	    	}, function() {
+	    		$scope.status = 'You cancelled the dialog.';
+	    	});
 	    }
 	    
 //	    NodeLanguageService.getDistinctLanguage().then(function(response){
