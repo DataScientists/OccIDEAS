@@ -25,20 +25,16 @@
 				if(response.status == '200'){
 					$scope.languages = [];
 					$scope.nodeLanguage = response.data;
-//					var nodeLanguageCopy = angular.copy($scope.nodeLanguage);
-//					if(nodeLanguageCopy){
-//						nodeLanguageCopy = _.filter(nodeLanguageCopy,function(nlc){
-//							return 
-//						});
-//					}
+					var nodeLanguageCopy = angular.copy($scope.nodeLanguage);
+					if(nodeLanguageCopy){
+						nodeLanguageCopy = _.uniqBy(nodeLanguageCopy, 'flag');
+					}
 					if($sessionStorage.languages){
-			        	_.each($scope.nodeLanguage,function(nl){
+			        	_.each(nodeLanguageCopy,function(nl){
 			        		var langToPush = _.find($sessionStorage.languages, function(o) { 
 								return o.flag == nl.flag; 
 							});
-			        		if(!$scope.languages.indexOf(langToPush) > -1){
-			        			$scope.languages.push(langToPush);
-			        		}
+		        			$scope.languages.push(langToPush);
 			        	});
 			        }
 //					var english = {
