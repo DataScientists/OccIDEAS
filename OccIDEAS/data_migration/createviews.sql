@@ -81,8 +81,8 @@ SELECT concat(p.idParticipant, ':',p.reference, ':',i.idinterview, ':',ia.answer
 as primaryKey,
 p.idParticipant,p.reference,i.idinterview,ia.answerId,ia.name
 ,ia.answerFreetext,ia.type
-from interview i,participant p,
-interview_answer ia
+from Interview i,Participant p,
+Interview_Answer ia
 where i.idinterview = ia.idinterview
 and i.idParticipant = p.idParticipant 
 and ia.isProcessed = 1
