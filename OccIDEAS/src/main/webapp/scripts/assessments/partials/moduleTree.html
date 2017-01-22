@@ -5,7 +5,8 @@
   	<div ui-tree="moduleTreeOptions" id="tree-root" >
 		<ol ui-tree-nodes ng-model="linkedModule.nodes">
 			<li ng-repeat="node in linkedModule.nodes" ui-tree-node
-				ng-include="'scripts/assessments/partials/nodes_renderer.html'" id="moduleTreeBody"></li>
+				ng-include="'scripts/assessments/partials/nodes_renderer.html'" 
+				id="moduleTreeBody" collapsed="true"></li>
 		</ol>
 	</div>
   </div>
