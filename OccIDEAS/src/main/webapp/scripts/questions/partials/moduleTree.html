@@ -63,6 +63,13 @@
 						</div>
 				</div>
 			</div>
+			</div>
+		  </div>
+		  <div style="position: absolute;top: 20px;right: 0px;">
+			<div style="margin-right: 10px;">
+			<div class="form-group" style="position: absolute;right: 2px;top: -20px;">
+    		<span class="badge">{{node.number}}</span>
+		    </div>
 			<div class="pull-right" ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this)" model="node"
 						style="height:40px;width: 27px;border-right: solid aliceblue 1px;position:relative;" ng-repeat="obj in rulesObj | orderBy:'':true">
 						<div class="verticalrules">
@@ -76,11 +83,6 @@
 						</div>
 			</div>
 			</div>
-				
-
-		  <div class="form-group" ng-if="rulesObj.length < 1">
-    		<span class="badge">{{node.number}}</span>
-		  </div>
 		  </div>
 <!-- start fab menu for changing type of module --> 
           <div ng-if="isModuleHeaderNode(node) && rulesObj.length < 1" class="typesetting">
