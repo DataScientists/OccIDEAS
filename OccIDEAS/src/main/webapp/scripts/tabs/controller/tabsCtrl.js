@@ -56,7 +56,7 @@
         		data:""
         	});
 		}
-        
+        var shouldPassHiddenParam = false;
         $scope.$watch('selectedIndex', function(current, old) {
             var state = null;
             var data = null;
@@ -91,8 +91,12 @@
                 }
             }
             $log.info("going to state " + state);
-            $state.go(state, data);
-
+            if(shouldPassHiddenParam || $scope.tabOptions[current].state == 'tabs.answerSummary'){
+            	$state.go(state, {data:data});	
+            }else{
+              $state.go(state, data);
+            }
+            shouldPassHiddenParam = false;
         });
 
         var tabs = [];
@@ -155,6 +159,29 @@
             $scope.tabOptions.splice(index, 1);
             $scope.selectedIndex = 3;
         }
+        
+        $scope.openAnswerSummaryTab = function(node) {
+        	var tabTitle = "Answer Summary-"+node.idNode;
+            var state = "tabs.answerSummary";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'answerSummary@tabs',
+                    canClose: true,
+                    disabled: false
+                }); 
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                    	answerId: node.idNode,
+                        name:node.name
+                    }
+                });
+                shouldPassHiddenParam = true;
+            }
+            
+        };
         
         $scope.openModuleLanguageTab = function(lang,row) {
         	var tabTitle = "Module Language-"+row.idNode+"-"+lang;

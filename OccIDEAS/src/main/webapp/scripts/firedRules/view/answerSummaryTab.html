@@ -1,0 +1,29 @@
+<div ng-cloak>
+	<div class="panel panel-default" style="width: 300px;">
+		<div class="panel-heading">Summary</div>
+		<div class="panel-body" style="width: 250px;">
+			<table class="table table-bordered">
+				<tr>
+					<td><strong>Answer</strong></td>
+					<td>{{answerDesc}}</td>
+				</tr>
+				<tr>
+					<td><strong>Count</strong></td>
+					<td>{{count}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div>
+		<table ng-table="vm.answerSummaryTableParams"
+			class="table table-condensed table-bordered table-striped">
+			<tbody>
+				<tr ng-repeat="data in $data">
+					<td title="'Participant Id'" filter="{idParticipant: 'text'}">{{data.idParticipant}}</td>
+					<td title="'Reference Number'" filter="{reference: 'text'}">{{data.reference}}</td>
+					<td title="'Interview Id'" filter="{idinterview: 'text'}">{{data.idinterview}}</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

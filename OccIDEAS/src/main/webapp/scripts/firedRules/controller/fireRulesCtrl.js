@@ -15,6 +15,10 @@
 		$scope.linkedModule = undefined;
 		vm.answersDisplayed = false;
 		
+		$scope.openAnswerSummary = function(node){
+			$scope.openAnswerSummaryTab(node);
+		}
+		
 		$(window).scroll(function () {
             if ($(this).scrollTop() > 50) {
                 $('#back-to-top').fadeIn();

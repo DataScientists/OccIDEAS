@@ -693,6 +693,28 @@
 			     }
 			}
 			}
-		});
+		}).state( {
+            name:'tabs.answerSummary',
+        	url: '/answerSummary',
+            sticky: false,
+		    deepStateRedirect: false,
+		    authenticate:true,
+		    params:{data:null},
+            views:{
+                'answerSummary@tabs':{
+                    templateUrl: 'scripts/firedRules/view/answerSummaryTab.html',
+                    controller: 'AnswerSummaryCtrl as vm',
+                    params:{data: null},
+                    resolve:{
+                        data: function($stateParams,AssessmentsService) {
+			        		return AssessmentsService.getAnswerSummaryByName($stateParams.data.name,$stateParams.data.answerId)
+			        				.then(function(response){
+			        					return response;
+		    				});
+			        	}
+			     }
+                }
+            }
+        });
 	}
 })();

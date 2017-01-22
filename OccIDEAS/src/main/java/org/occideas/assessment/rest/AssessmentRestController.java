@@ -18,19 +18,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.occideas.assessment.service.AssessmentService;
+import org.occideas.entity.AssessmentAnswerSummary;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.entity.Rule;
@@ -77,6 +82,8 @@ public class AssessmentRestController {
 	private QuestionService questionService;
 	@Autowired
 	private ReportHistoryService reportHistoryService;
+	@Autowired
+	private AssessmentService assessmentService;
 		
 	private DecimalFormat df = new DecimalFormat("#.0");
 	
@@ -1076,4 +1083,20 @@ public class AssessmentRestController {
 		}
 		return "Running";
 	}
+	
+	@POST
+	@Path(value="/getAnswerSummaryByName")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getAnswerSummaryByName(AssessmentAnswerSummary answerSummary){
+		List<AssessmentAnswerSummary> list = null;
+		try{
+			list = assessmentService.getAnswerSummaryByName(answerSummary.getAnswerId(), 
+					answerSummary.getName());
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
 }

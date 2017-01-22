@@ -75,3 +75,16 @@ INNER JOIN Node n ON n.topNodeId = m.idNode
 WHERE n.type = 'Q_linkedmodule'
 AND n.deleted=0;
 
+DROP VIEW IF EXISTS AssessmentAnswerSummary;
+CREATE VIEW AssessmentAnswerSummary AS
+SELECT concat(p.idParticipant, ':',p.reference, ':',i.idinterview, ':',ia.answerId)  
+as primaryKey,
+p.idParticipant,p.reference,i.idinterview,ia.answerId,ia.name
+,ia.answerFreetext,ia.type
+from interview i,participant p,
+interview_answer ia
+where i.idinterview = ia.idinterview
+and i.idParticipant = p.idParticipant 
+and ia.isProcessed = 1
+and p.deleted = 0
+and ia.deleted = 0;

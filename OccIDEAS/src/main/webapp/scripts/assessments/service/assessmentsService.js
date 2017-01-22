@@ -14,6 +14,19 @@
 			return request.then(handleSuccess1,handleError);
 		}
     	
+    	function getAnswerSummaryByName(name,answerId) {
+			var restUrl = 'web/rest/assessment/getAnswerSummaryByName?name=' + name+"&answerId="+answerId;
+			var request =  $http({
+				  method: 'POST',
+				  url: restUrl,
+				  data:{
+					  name:name,
+					  answerId:answerId
+				  }
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+    	
     	function getInterviews() {
 			var restUrl = 'web/rest/interview/getlist';
 			var request =  $http({
@@ -123,7 +136,8 @@
         	getAssessments: getAssessments,
         	showAnswers:showAnswers,
         	getFiredRules:getFiredRules,
-        	getAssessmentSize:getAssessmentSize
+        	getAssessmentSize:getAssessmentSize,
+        	getAnswerSummaryByName:getAnswerSummaryByName
         	
         };
     }
