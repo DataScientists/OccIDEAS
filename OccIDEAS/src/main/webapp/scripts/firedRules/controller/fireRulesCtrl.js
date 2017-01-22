@@ -4,10 +4,10 @@
 
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
 	                           'InterviewsService','AssessmentsService','$log','$compile',
-	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService'];
+	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', '$q','$sessionStorage'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
-			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService) {
+			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService,$q, $sessionStorage) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -251,14 +251,7 @@
 			InterviewsService.getModuleForInterview($scope.interviewId).then(function(response){
 				if(response.status == '200' && response.data && response.data[0]){
 					$scope.linkedModule = response.data[0];
-					
-					_.remove($scope.linkedModule, function(node) {
-						console.log("node.deleted || !node.processed "+node.deleted || !node.processed)
-						return node.deleted || !node.processed;
-					});
-					
-					addHeader($scope.linkedModule.nodes);
-					
+					addHeader($scope.linkedModule.nodes);					
 				}				
 			});
 		}
@@ -390,31 +383,152 @@
         	safeDigest($scope.activeIntRuleCell);
         	noteIntZindex = 1050;
         };
-
-		$scope.highlightNode = function(idNode){
-			$(".tree-node-content span").removeClass("highlight-rulenode");
-			var elementId = 'IntResult'+idNode;
-			if ($('#' + elementId).length == 0) {
-				$ngToast.create({
-    	    		  className: 'warning',
-    	    		  content: 'The node ' + idNode + ' does not exist.',
-    	    		  animation:'slide'
-    	    	 });
-				return false;
-			}
-			$scope.scrollTo(elementId);
-			
-			$('#'+elementId).addClass('highlight-rulenode');
-			//setTimeout(function(){
-			//	$('#'+elementId).toggleClass('highlight');
-			//},5500);
-		}
-
+        
+        $scope.highlightNode = function(idNode, node){
+        	
+        	$(".tree-node-content span").removeClass("highlight-rulenode");
+        	var elementId = 'node-' + idNode;		
+        	
+        	var moduleDefer = $q.defer();
+        	var defer = $q.defer();
+        	var expandDefer = $q.defer();
+        	
+        	if ($('#' + idNode).length === 0) {        	
+        		//Not loaded yet
+        	
+        		if($scope.linkedModule){
+        			loadChildNode($scope.linkedModule.nodes, idNode, node, moduleDefer);
+        		}        		
+        		
+        		moduleDefer.promise.then(function(){
+        			if(node.topNodeId != $sessionStorage.activeIntro.value){
+        				//Must be a fragment
+        				loadChildNode($scope.linkedModule.nodes, idNode, node, defer);
+        			}
+        			else{
+        				//Should be a module
+        				expandDefer.resolve();
+        			}
+        		});
+        		
+        		$scope.$watch(function() {
+					return document.getElementById(idNode) != null;
+				}, function() {
+					if(angular.element(document.getElementById(idNode)).scope()){	    					
+    					expandNode(angular.element(document.getElementById(idNode)).scope());
+        				expandDefer.resolve();		
+    				}   						    					
+				});
+        		
+        	}        	
+        	else{
+        		//Might be collapsed
+        		var elementScope = angular.element(document.getElementById(idNode)).scope();
+        		expandNode(elementScope);
+        		expandDefer.resolve();
+        	}
+        	
+        	expandDefer.promise.then(function(){
+    			if ($('#node-' + idNode).length == 0) {
+    				$ngToast.create({
+        	    		  className: 'warning',
+        	    		  content: 'The node ' + idNode + ' does not exist.',
+        	    		  animation:'slide'
+        	    	 });
+    				return false;
+        		}
+        		else{        			
+        			$scope.scrollTo(elementId);			
+        			$('#'+elementId).addClass('highlight-rulenode');        			
+        			//FIXME Hack to re-calculate correct offset().top value for the new element
+        			$scope.scrollTo(elementId);
+        		}
+        	});
+        }
+        
+        function loadChildNode(parentNode, idNode, sourceNode, defer){
+        	
+        	for(var i = 0; i < parentNode.length; i++) {
+        		node = parentNode[i];        		
+        		
+        		if ( node.type == "Q_linkedmodule" 
+        		|| ((node.type == "Q_linkedajsm" && node.link == sourceNode.topNodeId))){
+        			//Check if loaded 
+        			
+        			if(node.nodes == null || node.nodes.length == 0){
+        				//Load module
+        				loadModule(node, sourceNode, idNode, defer);        				
+        			}
+        			else{
+        				
+        				if ((node.type == "Q_linkedmodule" && node.idNode == idNode)
+        				|| node.type == "Q_linkedajsm" && node.link == sourceNode.topNodeId){
+        					defer.resolve();	    							
+							return true;
+        				}        				
+        			}
+        		}
+	        	
+        		if(node.nodes != null && node.nodes.length > 0){        			
+        			loadChildNode(node.nodes, idNode, sourceNode, defer);	
+        		}	        	
+        	}
+        }
+        
+        function loadModule(node, sourceNode, idNode, defer){
+        	
+        	InterviewsService.getModuleForSubModule($scope.interviewId, 
+					node.link).then(function(response){
+						
+				if(response.status == '200' && response.data && response.data[0]){
+					subNode = response.data[0];
+					addHeader(subNode.nodes);
+					
+					$scope.safeApply(function(){
+						node.nodes = subNode.nodes;
+					});
+					
+					safeDigest($scope.linkedModule);
+					
+					if(sourceNode.topNodeId != $sessionStorage.activeIntro.value 
+						|| node.idNode == idNode 
+						|| node.link == sourceNode.topNodeId){
+						
+						defer.resolve();	    							
+						return true;	
+					}
+				}	
+			});        	
+        }
+        
+        function expandNode(node){
+        	
+        	if(!angular.isUndefined(node) || node != null){
+        		if(typeof node.expand === 'function'){
+            		node.expand();
+            	}
+            	else if(typeof node.$nodesScope.expand === 'function'){
+            		node.expand();
+            	}
+            	
+            	if(node.$parentNodesScope){
+            		expandNode(node.$parentNodesScope);
+            	}
+        	}      	
+        }        
+        
 		$scope.scrollTo = function( target){
 			var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
-			var scrollY = scrollTarget.offset().top - 150;
-			scrollPane.animate({scrollTop : scrollY }, 1000, 'swing');
+			var scrollY = scrollTarget.offset().top - 150;			
+			scrollPane.animate({scrollTop : scrollY }, 500, 'swing' , function(){
+				
+				if(scrollY < 0){
+					//When scrollTarget.offset().top = 0
+					console.log("Re-scroll");
+					$scope.scrollTo(target);
+				}
+			});
 		};
 
 		vm.showRulesMenu = function(scope){
@@ -930,9 +1044,9 @@
 			$mdDialog.cancel();
 		}
 		
-		//Show sub module/fragmet
-		$scope.toggleNode = function(node){
-			if(!node.nodes || node.nodes.length == 0){				
+		//Show sub module/fragment
+		$scope.toggleNode = function(node, scope){
+			if(!node.nodes || node.nodes.length == 0){
 				InterviewsService.getModuleForSubModule($scope.interviewId, node.link).then(function(response){
 					if(response.status == '200' && response.data && response.data[0]){
 						subNode = response.data[0];
@@ -940,9 +1054,21 @@
 						node.nodes = subNode.nodes;
 						node.link = 0;
 					}
-				});	
+				});
 			}
+			scope.toggle();	
 		}
+		
+		$scope.safeApply = function(fn) {
+			var phase = this.$root.$$phase;
+			if (phase == '$apply' || phase == '$digest') {
+				if (fn && (typeof (fn) === 'function')) {
+					fn();
+				}
+			} else {
+				this.$apply(fn);
+			}
+		};
 	}
 
 })();

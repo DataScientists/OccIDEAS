@@ -429,7 +429,7 @@
 		
 		function getModuleForInterview(idModule){
 			var restUrl = 'web/rest/interview/getModuleForInterview?id=' + idModule;
-			console.log(restUrl);
+			
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
@@ -440,7 +440,7 @@
 		function getModuleForSubModule(idInterview, idLink){
 			var restUrl = 'web/rest/interview/getModuleForSubModule?id=' + idInterview
 			 	+'&linkId='+idLink;
-			console.log(restUrl);
+			
 			var request =  $http({
 				  method: 'GET',
 				  url: restUrl
