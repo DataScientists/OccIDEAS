@@ -18,7 +18,7 @@
      	 	</uib-accordion-heading>
      	 		<div>
 					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="subNode in agent.value | orderBy:'-total' track by $index " ng-click="toggleRulesObj(subNode)">
+						<li class="list-group-item {{subNode.style}}" ng-repeat="subNode in agent.value | orderBy:'-total' track by $index " ng-click="toggleRulesObj(subNode)">
 							{{subNode.name}} <span class="badge pull-right">{{subNode.total || 0}}</span></li>
 					</ul>
 				</div>

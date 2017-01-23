@@ -272,8 +272,10 @@
 		              $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) { 
 		            	  return o.idAgent === agents.idAgent; }), 1)[0];
 		        });
+				agents.style = "";
 			}else{
 				$scope.rulesObj.push(agents);
+				agents.style = "agent-shown";
 			}
 			
 		};
