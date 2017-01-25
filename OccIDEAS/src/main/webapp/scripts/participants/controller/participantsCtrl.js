@@ -15,9 +15,12 @@
 		$scope.$storage = $sessionStorage;
 		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
 		
-		$scope.$watch('$storage.langEnabled', function(value) {	    	
-			$translate.refresh();
-			$scope.getAllLanguage();
+		$scope.$watch('$storage.langEnabled', function(value) {	   
+			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
+				$translate.refresh();
+				$scope.getAllLanguage();
+			}
+			
 		});
 		
 		$scope.getAllLanguage = function(){
