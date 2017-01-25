@@ -388,47 +388,69 @@
         
         $scope.highlightNode = function(idNode, node){
         	
-        	$(".tree-node-content span").removeClass("highlight-rulenode");
-        	var elementId = 'node-' + idNode;		
-        	
-        	var moduleDefer = $q.defer();
-        	var defer = $q.defer();
         	var expandDefer = $q.defer();
+        	var defer = $q.defer();
         	
-        	if ($('#' + idNode).length === 0) {        	
-        		//Not loaded yet
-        	
-        		if($scope.linkedModule){
-        			loadChildNode($scope.linkedModule.nodes, idNode, node, moduleDefer);
-        		}        		
-        		
-        		moduleDefer.promise.then(function(){
-        			if(node.topNodeId != $sessionStorage.activeIntro.value){
-        				//Must be a fragment
-        				loadChildNode($scope.linkedModule.nodes, idNode, node, defer);
-        			}
-        			else{
-        				//Should be a module
+        	//Initial check if node exists
+        	InterviewsService.checkQuestionAnswered(idNode, $scope.interviewId).then(function(response){
+        		if(response.status == '200'){
+        			var answered = response.data;
+        			
+        			if(answered == 0){
+        				console.log(idNode +" not answered");
         				expandDefer.resolve();
+        			}   
+        			else{
+        				console.log(idNode +" answered");
+        				defer.resolve();
         			}
-        		});
-        		
-        		$scope.$watch(function() {
-					return document.getElementById(idNode) != null;
-				}, function() {
-					if(angular.element(document.getElementById(idNode)).scope()){	    					
-    					expandNode(angular.element(document.getElementById(idNode)).scope());
-        				expandDefer.resolve();		
-    				}   						    					
-				});
-        		
-        	}        	
-        	else{
-        		//Might be collapsed
-        		var elementScope = angular.element(document.getElementById(idNode)).scope();
-        		expandNode(elementScope);
-        		expandDefer.resolve();
-        	}
+        		}        		
+        	});        	
+        	
+        	$(".tree-node-content span").removeClass("highlight-rulenode");
+        	var elementId = 'node-' + idNode;	
+        	
+        	defer.promise.then(function(){
+        	
+	        	var moduleDefer = $q.defer();        
+	        	var tempDefer = $q.defer(); 
+	        	
+	        	if ($('#' + idNode).length === 0) {        	
+	        		//Not loaded yet
+	        	
+	        		if($scope.linkedModule){
+	        			loadChildNode($scope.linkedModule.nodes, idNode, node, moduleDefer);
+	        		}        		
+	        		
+	        		moduleDefer.promise.then(function(){
+	        			if(node.topNodeId != $sessionStorage.activeIntro.value){
+	        				//Must be a fragment
+	        				loadChildNode($scope.linkedModule.nodes, idNode, node, tempDefer);
+	        			}
+	        			else{
+	        				//Should be a module
+	        				expandDefer.resolve();
+	        			}
+	        		});
+	        		
+	        		$scope.$watch(function() {
+	        			
+	        			return document.getElementById(idNode) != null;
+					}, function() {
+						if(angular.element(document.getElementById(idNode)).scope()){	    					
+	    					expandNode(angular.element(document.getElementById(idNode)).scope());
+	        				expandDefer.resolve();		
+	    				}   						    					
+					});
+	        		
+	        	}        	
+	        	else{
+	        		//Might be collapsed
+	        		var elementScope = angular.element(document.getElementById(idNode)).scope();
+	        		expandNode(elementScope);
+	        		expandDefer.resolve();
+	        	}        	
+        	});
         	
         	expandDefer.promise.then(function(){
     			if ($('#node-' + idNode).length == 0) {

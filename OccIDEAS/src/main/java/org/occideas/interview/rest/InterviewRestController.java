@@ -647,7 +647,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		Map<Long, InterviewAnswer> answerMap = new HashMap<Long, InterviewAnswer>();
 		
 		//Create a map of the questions and answers
-		getMap(interview.get(0).getQuestionHistory(), questionMap, answerMap, linkId);
+		getMap(interview.get(0).getQuestionHistory(), questionMap, answerMap, linkId, isSubModule);
 		
 		//Create a new ModuleVO
 		ModuleVO moduleVo = new ModuleVO();		
@@ -673,7 +673,13 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		
 		for(QuestionVO vo : nodes){
 			
-			if(questionMap.containsKey(Long.valueOf(vo.getIdNode()))){
+			if(vo.getLink() != 0){
+				if(questionMap.containsKey(Long.valueOf(vo.getLink()))){
+					
+					newNodes.add(vo);
+				}
+			}
+			else if(questionMap.containsKey(Long.valueOf(vo.getIdNode()))){
 				
 				if(vo.getChildNodes() != null){
 					mapAnswerNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);
@@ -746,26 +752,28 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	 * @param questionMap
 	 * @param answerMap
 	 * @param linkId
+	 * @param isSubModule 
 	 */
 	private void getMap(List<InterviewQuestion> questionHistory, 
 			Map<Long, InterviewQuestion> questionMap,
-			Map<Long, InterviewAnswer> answerMap, long linkId) {
+			Map<Long, InterviewAnswer> answerMap, long linkId, boolean isSubModule) {
 		
 		for (InterviewQuestion vo : questionHistory) {
-
-			if(linkId !=0 && vo.getTopNodeId() != linkId){
-				continue;
+			
+			if(linkId != 0){
+				if(vo.getTopNodeId() != linkId && !"Q_linkedajsm".equals(vo.getType())){
+					continue;
+				}
 			}
-			if (vo.getQuestionId() == 0) {				
+			
+			if (vo.getQuestionId() == 0) {
 				questionMap.put(Long.valueOf(vo.getTopNodeId()), vo);
 			} else {				
-				if(linkId == vo.getTopNodeId() && vo.isProcessed()){					
-					questionMap.put(Long.valueOf(vo.getQuestionId()), vo);
-				}				
+				questionMap.put(Long.valueOf(vo.getQuestionId()), vo);
 			}
 			
 			for(InterviewAnswer answer : vo.getAnswers()){
-				if(vo.isProcessed()){					
+				if(vo.isProcessed()){
 					answerMap.put(Long.valueOf(answer.getAnswerId()), answer);
 				}	
 			}
@@ -800,7 +808,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 					//Get fragment
 					List<FragmentVO> fragmentVoList = fragmentService.findById(linkId);
 					if(!fragmentVoList.isEmpty() && fragmentVoList.get(0) != null){
-						list.add(0, mapToModule(fragmentVoList.remove(0).getChildNodes(), interviewId, true, linkId));
+						list.add(0, mapToModule(fragmentVoList.remove(0).getChildNodes(), interviewId, false, linkId));
 					}
 				}				
 			}
@@ -810,5 +818,21 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();	
+	}
+	
+	@GET
+	@Path(value = "/checkQuestionAnswered")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response checkQuestionAnswered(
+			@QueryParam("idInterview") Long interviewId, 
+			@QueryParam("nodeId") Long nodeId) {
+		
+		boolean result = false;
+		try {
+			result = service.isQuestionAnswered(interviewId, nodeId);
+		} catch (Throwable e) {
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
 	}
 }

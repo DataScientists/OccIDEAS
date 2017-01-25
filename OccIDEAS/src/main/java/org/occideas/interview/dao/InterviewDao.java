@@ -40,6 +40,13 @@ public class InterviewDao {
 	private final String ASSESSED_COUNT = 
 			ASSESSMENT_BASE_COUNT  
 		  	+ " and i.assessedStatus like '"+ Constant.AUTO_ASSESSED +"'";
+	
+	private final String ANSWER_COUNT_QUERY = "select count(1)" 
+			+ " from interview_answer a,"
+			+ " interview_question q"
+			+ " where a.answerId = :answerId and a.idinterview  = :idInterview"
+			+ " and a.idinterview = q.idinterview"
+			+ " and q.id = a.interviewQuestionId";
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -256,6 +263,16 @@ public class InterviewDao {
 		
 		SQLQuery sqlQuery = session.createSQLQuery(query);
 		sqlQuery.setMaxResults(1);		
+		
+		return (BigInteger) sqlQuery.uniqueResult();
+	}
+	
+	public BigInteger getAnswerCount(Long interviewId, Long nodeId) {
+		
+		SQLQuery sqlQuery = sessionFactory.getCurrentSession().createSQLQuery(ANSWER_COUNT_QUERY);
+		sqlQuery.setMaxResults(1);
+		sqlQuery.setParameter("idInterview", interviewId);
+		sqlQuery.setParameter("answerId", nodeId);
 		
 		return (BigInteger) sqlQuery.uniqueResult();
 	}
