@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.NodesAgent;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.vo.QuestionVO;
@@ -136,5 +137,19 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok().build();
+	}
+	
+	@GET
+	@Path(value="/getNodesWithAgent")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getNodesWithAgent(@QueryParam("agentId") Long agentId) {
+		List<NodesAgent> list = new ArrayList<>();
+		try{
+			list = service.getNodesWithAgent(agentId);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
 	}
 }

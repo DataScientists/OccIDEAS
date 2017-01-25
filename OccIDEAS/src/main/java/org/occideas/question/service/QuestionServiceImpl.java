@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Node;
+import org.occideas.entity.NodesAgent;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.mapper.ModuleMapper;
@@ -146,6 +147,11 @@ public class QuestionServiceImpl implements QuestionService {
 			fragmentVO.setTopNodeId(node.getTopNodeId());
 			return fragmentVO;
 		}
+	}
+
+	@Override
+	public List<NodesAgent> getNodesWithAgent(long agentId) {
+		return qdao.getNodesWithAgent(agentId);
 	}
 
 }

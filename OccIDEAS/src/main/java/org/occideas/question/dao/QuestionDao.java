@@ -3,12 +3,14 @@ package org.occideas.question.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
+import org.occideas.entity.NodesAgent;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -86,6 +88,23 @@ public class QuestionDao{
 			return (Node)list.get(0);
 		}
 		return null;
+	}
+	
+	private String getNodesWithAgentSQL = " select concat(r.idRule, ':',n.idNode, ':',a.idAgent)"+ 
+			" as primaryKey, r.idRule,n.idNode,a.idAgent from Node_Rule n,AgentInfo a, Rule r" +
+			" where n.idRule = r.idRule" +
+			" and a.idAgent = r.agentId" +
+			" and r.deleted = 0" +
+			" and a.deleted = 0" +
+			" and a.idAgent = :param";
+	
+	public List<NodesAgent> getNodesWithAgent(long agentId){
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(getNodesWithAgentSQL).
+				addEntity(NodesAgent.class);
+		sqlQuery.setParameter("param", agentId);
+		List<NodesAgent> list = sqlQuery.list();
+		return list;
 	}
 	
 }

@@ -2613,5 +2613,100 @@
 				}
 			}
         }
+        
+       $scope.currentToggledNodeWithAgent =  undefined;
+       $scope.toggleNodesWithAgent = function (agent,$event){
+    	   $event.stopPropagation();
+    	   if($scope.currentToggledNodeWithAgent == agent.idAgent){
+    		   agent.active = false;
+    		   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
+    		   angular.element(document).find('.activeNodeAgentEnabled').removeClass('activeNodeAgentEnabled');
+    		   $scope.currentToggledNodeWithAgent = undefined;
+    		   return;
+    	   }
+    	   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
+    	   agent.active = true;
+    	   QuestionsService.getNodesWithAgent(agent.idAgent).then(function(response){
+       		if(response.status == '200'){
+       			if(response.data[0] == null){
+       				alert("Warning: No nodes with agent exist.");
+       				return;
+       			}
+       			var nodeAgentData = response.data;
+       			highlightNodesWithAgent(nodeAgentData);
+       			$scope.currentToggledNodeWithAgent = agent.idAgent;
+       		}
+       	});
+       }
+       
+       function highlightNodesWithAgent(nodeAgentData){
+       		for(var i=0;i<nodeAgentData.length;i++){
+       			var node = nodeAgentData[i];
+    			angular.element("#node-"+node.idNode).addClass("nodeAgentEnabled");
+    			var nodeResult = findNodeById(node.idNode,$scope.data[0]);
+    			if(nodeResult){
+    				highlightParentNodeWithAgent(nodeResult.parentId);
+    			}
+			}
+       }
+       
+       function highlightParentNodeWithAgent(idNode){
+    	   var nodeResult = findNodeById(idNode,$scope.data[0]);
+			if(nodeResult){
+				if(nodeResult.idNode == $scope.data[0].idNode){
+					return;
+				}
+				angular.element("#node-"+idNode).addClass("nodeAgentEnabled");
+				highlightParentNodeWithAgent(nodeResult.parentId);
+			}
+       }
+       
+       function higlightNodesWithAgentAjsms(fragmentIdNode,childNodes){
+           _.each(childNodes,function(item){
+   			if(item.link == fragmentIdNode){
+   				angular.element("#node-"+item.idNode).addClass("nodeAgentEnabled");
+   			}
+   			if(item.nodes.length > 0){
+   				higlightNodesWithAgentAjsms(fragmentIdNode,item.nodes);
+   			}
+   		});
+   		}
+       
+       function findNodeById(idNode,node){
+    	  var result = undefined;
+    		  if(node.idNode == idNode){
+    			  result = node;
+    		  }
+    	  
+    	  if(result){
+    		  return result;
+    	  }else{
+    		  if(node.nodes){
+    			  for(var i=0;i<node.nodes.length;i++){
+    				  result = findNodeById(idNode,node.nodes[i]);
+    				  if(result){
+    					  return result;
+    				  }
+    			  }
+    		  }
+    	  }
+       }
+       
+       function fn(obj, key) {
+    	    if (_.has(obj, key)) // or just (key in obj)
+    	        return [obj];
+    	    // elegant:
+    	    return _.flatten(_.map(obj, function(v) {
+    	        return v instanceof Array ? fn(v, key) : [];
+    	    }), true);
+
+    	    // or efficient:
+//    	    var res = [];
+//    	    _.forEach(obj, function(v) {
+//    	        if (typeof instanceof Array && (v = fn(v, key)).length)
+//    	            res.push.apply(res, v);
+//    	    });
+//    	    return res;
+    	}
 	}
 })();

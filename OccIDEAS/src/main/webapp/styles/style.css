@@ -1331,3 +1331,25 @@ li.borderless {
 .hoverBlue{
 	color: blue;
 }
+
+.filterAgent{
+	color: #00ff7d;
+	font-size: 15px;
+	margin-right: 5px;
+}
+
+.filterAgent:hover{
+	color: blue;
+	font-size: 15px;
+	margin-right: 5px;
+}
+
+.nodeAgentEnabled{
+	background-color:#088000 !important;
+}
+
+.activeNodeAgentEnabled{
+	color: blue;
+	font-size: 15px;
+	margin-right: 5px;
+}

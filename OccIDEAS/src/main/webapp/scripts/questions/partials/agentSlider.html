@@ -19,7 +19,9 @@
      	 		<div>
 					<ul class="list-group">
 						<li class="list-group-item {{subNode.style}}" ng-repeat="subNode in agent.value | orderBy:'-total' track by $index " ng-click="toggleRulesObj(subNode)">
-							{{subNode.name}} <span class="badge pull-right">{{subNode.total || 0}}</span></li>
+							<span ng-if="subNode.total" title="view nodes with agent" class="glyphicon glyphicon-paperclip filterAgent {{subNode.active?'activeNodeAgentEnabled':''}}" ng-click="toggleNodesWithAgent(subNode,$event)"></span>
+							{{subNode.name}} 
+							<span class="badge pull-right">{{subNode.total || 0}}</span></li>
 					</ul>
 				</div>
      	 </uib-accordion-group>

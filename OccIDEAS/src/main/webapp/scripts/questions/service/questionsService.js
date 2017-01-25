@@ -115,6 +115,16 @@
             })
             return request.then(handleSuccess,handleError);
         }
+        
+        function getNodesWithAgent(agentId) {
+			var restUrl = 'web/rest/question/getNodesWithAgent?agentId=' + agentId;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 
 		function handleError( response ) {
             if (
@@ -139,7 +149,8 @@
 			saveNode:saveNode,
 			getMaxId:getMaxId,
             getNextQuestion:getNextQuestion,
-            getAllMultipleQuestion:getAllMultipleQuestion
+            getAllMultipleQuestion:getAllMultipleQuestion,
+            getNodesWithAgent:getNodesWithAgent
 		};
 	}
 })();
