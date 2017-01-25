@@ -85,6 +85,5 @@ from Interview i,Participant p,
 Interview_Answer ia
 where i.idinterview = ia.idinterview
 and i.idParticipant = p.idParticipant 
-and ia.isProcessed = 1
 and p.deleted = 0
 and ia.deleted = 0;
