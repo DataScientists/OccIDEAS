@@ -60,10 +60,11 @@
 		];
 		
 		
-		self.openFiredRules = function(interviewId,reference) {
+		self.openFiredRules = function(interviewId,reference,interviewModuleName) {
 			var interview = {
 					interviewId:interviewId,
-					referenceNumber:reference
+					referenceNumber:reference,
+					moduleName:interviewModuleName
 			};
 	    	$scope.addFiredRulesTab(interview);
 	    	console.log('FiredRulesTab Opened');

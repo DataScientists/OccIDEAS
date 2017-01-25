@@ -4,6 +4,10 @@
 		<div class="panel-body" style="width: 250px;">
 			<table class="table table-bordered">
 				<tr>
+					<td><strong>Module</strong></td>
+					<td>{{moduleName}}</td>
+				</tr>
+				<tr>
 					<td><strong>Answer</strong></td>
 					<td>{{answerDesc}}</td>
 				</tr>
@@ -18,10 +22,16 @@
 		<table ng-table="vm.answerSummaryTableParams"
 			class="table table-condensed table-bordered table-striped">
 			<tbody>
-				<tr ng-repeat="data in $data">
+				<tr ng-repeat="data in $data" class="{{data.strong?'fontBold':''}}">
 					<td title="'Participant Id'" filter="{idParticipant: 'text'}">{{data.idParticipant}}</td>
 					<td title="'Reference Number'" filter="{reference: 'text'}">{{data.reference}}</td>
 					<td title="'Interview Id'" filter="{idinterview: 'text'}">{{data.idinterview}}</a></td>
+					<td title="'Status'" filter="{assessedStatus: 'text'}">{{data.statusDescription}}</a></td>
+					<td>
+					<button data-toggle="tooltip" title="Open FiredRules" ng-if="!data.hide" ng-click="vm.openFiredRules(data.idinterview,data.reference)" class="btn btn-default btn-sm" >
+						<span class="glyphicon glyphicon-fire"></span>
+					</button>
+					</td>
 				</tr>
 			</tbody>
 		</table>

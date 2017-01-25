@@ -28,6 +28,8 @@ public class AssessmentAnswerSummary implements Serializable {
 	private String name;
 	private String answerFreetext;
 	private String type;
+	private int status;
+	private transient String statusDescription;
 
 	public String getPrimaryKey() {
 		return primaryKey;
@@ -91,6 +93,30 @@ public class AssessmentAnswerSummary implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getStatusDescription() {
+
+		if (status == 0) {
+			statusDescription = "Running";
+		} else if (status == 1) {
+			statusDescription = "Partial";
+		} else if (status == 2) {
+			statusDescription = "Completed";
+		}
+		return statusDescription;
+	}
+
+	public void setStatusDescription(String statusDescription) {
+		this.statusDescription = statusDescription;
 	}
 
 }

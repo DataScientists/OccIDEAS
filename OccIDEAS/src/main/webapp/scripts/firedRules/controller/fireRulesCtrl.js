@@ -4,19 +4,21 @@
 
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
 	                           'InterviewsService','AssessmentsService','$log','$compile',
-	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', '$q','$sessionStorage'];
+	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
+	                           '$q','$sessionStorage','moduleName'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
-			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService,$q, $sessionStorage) {
+			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService,$q, $sessionStorage,moduleName) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
 		$scope.interviewId = data;
 		$scope.linkedModule = undefined;
 		vm.answersDisplayed = false;
-		
+		$scope.data = data;
+		$scope.moduleName = moduleName;
 		$scope.openAnswerSummary = function(node){
-			$scope.openAnswerSummaryTab(node);
+			$scope.openAnswerSummaryTab(node,$scope.moduleName);
 		}
 		
 		$(window).scroll(function () {

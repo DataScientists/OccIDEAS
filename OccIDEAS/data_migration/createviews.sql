@@ -80,7 +80,7 @@ CREATE VIEW AssessmentAnswerSummary AS
 SELECT concat(p.idParticipant, ':',p.reference, ':',i.idinterview, ':',ia.answerId)  
 as primaryKey,
 p.idParticipant,p.reference,i.idinterview,ia.answerId,ia.name
-,ia.answerFreetext,ia.type
+,ia.answerFreetext,ia.type,p.status
 from Interview i,Participant p,
 Interview_Answer ia
 where i.idinterview = ia.idinterview

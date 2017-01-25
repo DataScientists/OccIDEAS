@@ -531,16 +531,18 @@
             sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
+		    params:{data:null},
             views:{
                 'firedrules@tabs':{
                     templateUrl: 'scripts/firedRules/view/fireRules.html',
                     controller: 'FiredRulesCtrl as vm',
-                    params:{interviewId:null},
+                    params:{data:null},
                     resolve:{
                         data: function($stateParams,InterviewsService) {
-                        	
-                        	
-                            return $stateParams.interviewId;
+                            return $stateParams.data.interviewId;
+                        },
+                        moduleName: function($stateParams,InterviewsService) {
+                            return $stateParams.data.moduleName;
                         }
                     }
                 }
@@ -711,6 +713,9 @@
 			        				.then(function(response){
 			        					return response;
 		    				});
+			        	},
+			        	name: function($stateParams){
+			        		return $stateParams.data.moduleName;
 			        	}
 			     }
                 }

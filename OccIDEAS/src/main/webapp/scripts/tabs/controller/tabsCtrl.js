@@ -91,7 +91,7 @@
                 }
             }
             $log.info("going to state " + state);
-            if(shouldPassHiddenParam || $scope.tabOptions[current].state == 'tabs.answerSummary'){
+            if(shouldPassHiddenParam){
             	$state.go(state, {data:data});	
             }else{
               $state.go(state, data);
@@ -160,7 +160,7 @@
             $scope.selectedIndex = 3;
         }
         
-        $scope.openAnswerSummaryTab = function(node) {
+        $scope.openAnswerSummaryTab = function(node,moduleName) {
         	var tabTitle = "Answer Summary-"+node.idNode;
             var state = "tabs.answerSummary";
             $stickyState.reset(state);
@@ -175,7 +175,8 @@
                     state: state,
                     data: {
                     	answerId: node.idNode,
-                        name:node.name
+                        name:node.name,
+                        moduleName:moduleName
                     }
                 });
                 shouldPassHiddenParam = true;
@@ -517,10 +518,12 @@
                 $scope.tabOptions.push({
                     state: state,
                     data: {
-                    	interviewId: interview.interviewId
+                    	interviewId: interview.interviewId,
+                    	moduleName: interview.moduleName
                     }
                 });
             }
+            shouldPassHiddenParam = true;
         };
         $rootScope.addErrorTab = function(error) {
         	var tabTitle = "Error!";

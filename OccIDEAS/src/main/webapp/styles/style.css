@@ -1353,3 +1353,7 @@ li.borderless {
 	font-size: 15px;
 	margin-right: 5px;
 }
+
+.fontBold{
+	font-weight:bold
+}
