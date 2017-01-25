@@ -447,6 +447,18 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}		
+		
+		function checkQuestionAnswered(nodeId, idInterview) {
+			var restUrl = 'web/rest/interview/checkQuestionAnswered?idInterview='
+					+ idInterview
+					+'&nodeId='+nodeId;
+					
+			var request = $http({
+				method : 'GET',
+				url : restUrl
+			})
+			return request.then(handleSuccess, handleError);
+		}
 
 		function handleError(response) {
 			if (!angular.isObject(response.data) || !response.data.message) {
@@ -500,7 +512,8 @@
 			findInterviewIdByModuleId : findInterviewIdByModuleId,
 			findNonIntroById:findNonIntroById,
 			getModuleForInterview:getModuleForInterview,
-			getModuleForSubModule:getModuleForSubModule
+			getModuleForSubModule:getModuleForSubModule,
+			checkQuestionAnswered:checkQuestionAnswered
 		};
 	}
 })();

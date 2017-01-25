@@ -204,4 +204,10 @@ public class InterviewServiceImpl implements InterviewService {
 		
 		return interviewDao.getAssessmentCount(assessmentStatus);
 	}
+
+	@Override
+	public boolean isQuestionAnswered(Long interviewId, Long nodeId) {
+		BigInteger count = interviewDao.getAnswerCount(interviewId, nodeId);
+		return count.intValue() == 0 ? false : true;
+	}
 }

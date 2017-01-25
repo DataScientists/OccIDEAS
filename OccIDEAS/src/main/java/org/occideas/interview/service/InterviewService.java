@@ -47,4 +47,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	InterviewVO getQuestionHistory(Long id);
 
 	BigInteger listAllWithRuleCount(String assessmentStatus);
+
+	boolean isQuestionAnswered(Long interviewId, Long nodeId);
 }
