@@ -91,7 +91,9 @@
                 }
             }
             $log.info("going to state " + state);
-            if(shouldPassHiddenParam){
+            if(shouldPassHiddenParam || 
+            		$scope.tabOptions[current].state == 'tabs.firedrules' || 
+            		$scope.tabOptions[current].state == 'tabs.answerSummary'){
             	$state.go(state, {data:data});	
             }else{
               $state.go(state, data);
@@ -675,9 +677,5 @@
             }
         }
         
-        $scope.$watch('$stateChangeError', function(current, old) {
-        	
-
-        });
     }
 })();
