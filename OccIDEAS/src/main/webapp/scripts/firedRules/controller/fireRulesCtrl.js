@@ -18,7 +18,7 @@
 		$scope.data = data;
 		$scope.moduleName = moduleName;
 		$scope.openAnswerSummary = function(node){
-			$scope.openAnswerSummaryTab(node,$scope.moduleName);
+			$scope.openAnswerSummaryTab(node,$scope.moduleName,$scope.interviewId);
 		}
 		
 		$(window).scroll(function () {

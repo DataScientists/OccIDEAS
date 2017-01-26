@@ -160,7 +160,7 @@
             $scope.selectedIndex = 3;
         }
         
-        $scope.openAnswerSummaryTab = function(node,moduleName) {
+        $scope.openAnswerSummaryTab = function(node,moduleName,interviewId) {
         	var tabTitle = "Answer Summary-"+node.idNode;
             var state = "tabs.answerSummary";
             $stickyState.reset(state);
@@ -176,7 +176,8 @@
                     data: {
                     	answerId: node.idNode,
                         name:node.name,
-                        moduleName:moduleName
+                        moduleName:moduleName,
+                        interviewId:interviewId
                     }
                 });
                 shouldPassHiddenParam = true;

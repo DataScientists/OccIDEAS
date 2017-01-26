@@ -716,6 +716,9 @@
 			        	},
 			        	name: function($stateParams){
 			        		return $stateParams.data.moduleName;
+			        	},
+			        	interviewId: function($stateParams){
+			        		return $stateParams.data.interviewId;
 			        	}
 			     }
                 }

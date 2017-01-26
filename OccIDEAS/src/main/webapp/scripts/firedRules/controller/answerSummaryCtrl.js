@@ -4,17 +4,24 @@
 
 	AnswerSummaryCtrl.$inject = [ '$scope', 'data','$timeout',
 	                           'AssessmentsService','$log','$compile',
-	                           'ngToast', '$mdDialog','NgTableParams','name'];
+	                           'ngToast', '$mdDialog','NgTableParams','name','interviewId'];
 	function AnswerSummaryCtrl($scope, data,$timeout,
 			AssessmentsService,$log,$compile,
-			$ngToast, $mdDialog,NgTableParams,name) {
+			$ngToast, $mdDialog,NgTableParams,name,interviewId) {
 		var vm = this;
 		$scope.answerDesc = data[0].answerFreetext?data[0].answerFreetext:data[0].name;
 		$scope.count = data.length;
 		$scope.moduleName = name;
 		if(data.length > 0){
-			data[0].hide = true;
-			data[0].strong = true;
+			var removedData = _.remove(data,function(d){
+				return d.idinterview == interviewId;
+			});
+			data.unshift(removedData[0]);
+			var resultData = _.find(data,function(d){
+				return d.idinterview == interviewId;
+			});
+			resultData.hide = true;
+			resultData.strong = true;
 		}
 		vm.answerSummaryTableParams = new NgTableParams(
 				{
