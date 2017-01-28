@@ -585,7 +585,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 				}
 				//sortedQuestionHistory will contain modules at this point
 				sortedQuestionHistory.add(vo);				
-			} else {				
+			} else {	
 				map.put(vo.getQuestionId(), vo);
 			}
 		}
@@ -596,7 +596,25 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			Map<Long, InterviewQuestionVO> questionMap) {
 
 		for (QuestionVO vo : childNodes) {
-			findQuestion(sortedQuestionHistory, questionMap, vo);			
+			findQuestion(sortedQuestionHistory, questionMap, vo);	
+			if(vo.getChildNodes() != null){
+				findAnswer(sortedQuestionHistory, questionMap, vo.getChildNodes());
+			}
+		}
+	}
+
+	private void findAnswer(List<InterviewQuestionVO> sortedQuestionHistory, Map<Long, InterviewQuestionVO> questionMap,
+			List<PossibleAnswerVO> childNodes) {
+		
+		for (PossibleAnswerVO vo : childNodes) {
+			
+			if (questionMap.containsKey(vo.getIdNode())) {
+				sortedQuestionHistory.add(questionMap.get(vo.getIdNode()));			
+			}
+			
+			if(vo.getChildNodes() != null){
+				findQuestion(vo.getChildNodes(), sortedQuestionHistory, questionMap);
+			}
 		}
 	}
 
@@ -628,7 +646,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			//Will return the intro module
 			list = moduleService.findById(moduleId);		
 			if(list.get(0) != null){
-				list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, false, moduleId));
+				list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, false, moduleId, false));
 			}
 			
 		} catch (Throwable e) {
@@ -638,7 +656,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		return Response.ok(list).build();
 	}
 
-	private ModuleVO mapToModule(List<QuestionVO> childNodes, Long interviewId, boolean isSubModule, long linkId) {
+	private ModuleVO mapToModule(List<QuestionVO> childNodes, 
+			Long interviewId, 
+			boolean isSubModule, 
+			long linkId,
+			boolean isExpanded) {
 		
 		//Get the interview
 		List<Interview> interview = service.getInterviewQuestionAnswer(interviewId);
@@ -647,13 +669,124 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		Map<Long, InterviewAnswer> answerMap = new HashMap<Long, InterviewAnswer>();
 		
 		//Create a map of the questions and answers
-		getMap(interview.get(0).getQuestionHistory(), questionMap, answerMap, linkId, isSubModule);
+		getMap(interview.get(0).getQuestionHistory(), questionMap, answerMap, linkId, isSubModule, isExpanded);
 		
 		//Create a new ModuleVO
 		ModuleVO moduleVo = new ModuleVO();		
-		mapQuestionNodes(childNodes, moduleVo, questionMap, answerMap, isSubModule);		
+		
+		if(isExpanded){
+			mapExpandedQuestionNodes(childNodes, moduleVo, questionMap, answerMap, isSubModule, 0l);					
+		}
+		else{
+			mapQuestionNodes(childNodes, moduleVo, questionMap, answerMap, isSubModule);	
+		}
 		
 		return moduleVo;
+	}
+	
+	private void mapExpandedQuestionNodes(List<QuestionVO> nodes, 
+			ModuleVO moduleVo,
+			Map<Long, InterviewQuestion> questionMap, 
+			Map<Long, InterviewAnswer> answerMap, boolean isSubModule,
+			long subLinkId) {
+		
+		List<QuestionVO> newNodes = new ArrayList<QuestionVO>();
+		
+		for(QuestionVO vo : nodes){
+			
+			if(questionMap.containsKey(Long.valueOf(vo.getIdNode()))){
+				
+				if(vo.getChildNodes() != null){
+					mapExpandedAnswerNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule, subLinkId);
+				}
+				newNodes.add(vo);
+			}			
+		}
+		
+		moduleVo.setChildNodes(newNodes);		
+	}
+	
+	private void mapExpandedAnswerNodes(List<PossibleAnswerVO> nodes, 
+			ModuleVO moduleVo,
+			Map<Long, InterviewQuestion> questionMap, 
+			Map<Long, InterviewAnswer> answerMap, 
+			QuestionVO newQuestionVO,
+			boolean isSubModule,
+			long subLinkId) {
+		
+		List<PossibleAnswerVO> newNodes = new ArrayList<PossibleAnswerVO>();
+		
+		for(PossibleAnswerVO vo : nodes){
+			if(vo.getIdNode() == 0l && vo.getChildNodes() != null){				
+				mapExpandedQuestionNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap,vo, isSubModule);	
+				vo.setName("Ignore");
+				newNodes.add(vo);
+			}
+			else 
+				if(answerMap.containsKey(Long.valueOf(vo.getIdNode()))){
+				
+				if(vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()){
+					
+					mapExpandedQuestionNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);
+				}
+				
+					vo.setName(answerMap.get(Long.valueOf(vo.getIdNode())).getName());
+					vo.setDeleted(answerMap.get(Long.valueOf(vo.getIdNode())).getDeleted());
+					newNodes.add(vo);
+			}
+		}
+		newQuestionVO.setChildNodes(newNodes);
+		
+	}
+
+	private void mapExpandedQuestionNodes(List<QuestionVO> nodes, ModuleVO moduleVo,
+			Map<Long, InterviewQuestion> questionMap, Map<Long, InterviewAnswer> answerMap, 
+			PossibleAnswerVO newPossibleAnswerVo,
+			boolean isSubModule) {
+		
+		List<QuestionVO> newNodes = new ArrayList<QuestionVO>();
+		PossibleAnswerVO element = new PossibleAnswerVO();
+		List<PossibleAnswerVO> pChildNodes = new ArrayList<PossibleAnswerVO>();
+		
+		for(QuestionVO vo : nodes){
+			
+			if(vo.getLink() != 0){
+				if(questionMap.containsKey(Long.valueOf(vo.getLink())) || answerMap.containsKey(Long.valueOf(vo.getLink()))){
+					//Expand
+					if("Q_linkedmodule".equals(vo.getType())){
+						
+						List<ModuleVO> list = moduleService.findById(vo.getLink());
+						if(!list.isEmpty() && list.get(0) != null){					
+							element.setChildNodes(list.get(0).getChildNodes());
+							pChildNodes.add(element);					
+							vo.setChildNodes(pChildNodes);
+						}
+					}
+					else if("Q_linkedajsm".equals(vo.getType())){
+						List<FragmentVO> list = fragmentService.findById(vo.getLink());
+						
+						if(!list.isEmpty() && list.get(0) != null){		
+							element.setChildNodes(list.get(0).getChildNodes());
+							pChildNodes.add(element);					
+							vo.setChildNodes(pChildNodes);
+						}
+					}
+					
+					if(vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()){
+						mapExpandedAnswerNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule, 0l);	
+					}			
+					newNodes.add(vo);									
+				}
+			}
+			else if(questionMap.containsKey(Long.valueOf(vo.getIdNode()))){
+				if(vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()){
+					mapExpandedAnswerNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule, 0l);
+				}
+				newNodes.add(vo);
+			}
+		}
+		
+		newPossibleAnswerVo.setChildNodes(newNodes);	
 	}
 
 	/**
@@ -756,11 +889,14 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	 */
 	private void getMap(List<InterviewQuestion> questionHistory, 
 			Map<Long, InterviewQuestion> questionMap,
-			Map<Long, InterviewAnswer> answerMap, long linkId, boolean isSubModule) {
+			Map<Long, InterviewAnswer> answerMap, long linkId, boolean isSubModule, boolean isExpanded) {
 		
 		for (InterviewQuestion vo : questionHistory) {
+			if(!vo.isProcessed()){
+				continue;
+			}
 			
-			if(linkId != 0){
+			if(!isExpanded && linkId != 0){
 				if(vo.getTopNodeId() != linkId && !"Q_linkedajsm".equals(vo.getType())){
 					continue;
 				}
@@ -768,7 +904,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			
 			if (vo.getQuestionId() == 0) {
 				questionMap.put(Long.valueOf(vo.getTopNodeId()), vo);
-			} else {				
+			} else {
 				questionMap.put(Long.valueOf(vo.getQuestionId()), vo);
 			}
 			
@@ -802,13 +938,13 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			if(list !=null ){
 				if(!list.isEmpty() && list.get(0) != null){
 					//Get module
-					list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, true, linkId));		
+					list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, true, linkId, false));		
 				}
 				else{
 					//Get fragment
 					List<FragmentVO> fragmentVoList = fragmentService.findById(linkId);
 					if(!fragmentVoList.isEmpty() && fragmentVoList.get(0) != null){
-						list.add(0, mapToModule(fragmentVoList.remove(0).getChildNodes(), interviewId, false, linkId));
+						list.add(0, mapToModule(fragmentVoList.remove(0).getChildNodes(), interviewId, false, linkId, false));
 					}
 				}				
 			}
@@ -834,5 +970,35 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(result).build();
+	}
+	
+	/**
+	 * Make a module object out of the interview question list
+	 * @param interviewId
+	 * @return
+	 */
+	@GET
+	@Path(value = "/getExpandedModule")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getExpandedModule(@QueryParam("id") Long  interviewId) {
+		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		SystemPropertyVO vo = null;
+		Long moduleId = null;
+		vo = sysPropService.getByName(Constant.STUDY_INTRO);
+		moduleId = Long.valueOf(vo.getValue());
+		
+		try {
+			
+			//Will return the intro module
+			list = moduleService.findById(moduleId);		
+			if(list.get(0) != null){
+				list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, false, moduleId, true));
+			}
+			
+		} catch (Throwable e) {
+			
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
 	}
 }

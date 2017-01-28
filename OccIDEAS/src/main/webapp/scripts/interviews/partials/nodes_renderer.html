@@ -1,0 +1,89 @@
+<div id="module-tree" class="angular-ui-tree"
+	data-clone-enabled="{{isClonable}}">
+	<div class="tree-node" id="{{node.anchorId}}">
+
+		<div
+			class="pull-left tree-handle angular-ui-tree-handle {{node.type}}">
+			<span class="glyphicon glyphicon-list"></span>
+		</div>
+
+		<!-- start content -->
+		<div style="height: auto !important"
+			class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}"
+			ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"
+			scroll-body="'#moduleTreeBody'" scroll-stop='0'
+			id="node-{{node.idNode}}">
+			
+			<span ng-if="node.deleted == 1" class="badge-deleted" title="deleted">	&nbsp;</span>
+			<a ng-if="node.nodes != null && node.nodes.length > 0 && node.deleted == 0"
+				class="btn btn-success btn-xs {{node.type}}" ng-click="toggleNode(node, this)">
+				<span class="glyphicon glyphicon-chevron-right"  
+				ng-class="{
+	              'glyphicon-chevron-right': collapsed,
+	              'glyphicon-chevron-down': !collapsed
+	              }">
+				</span>
+			</a>
+			
+			<span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+			
+			<span ng-if="!node.deleted && node.nodeclass == 'Q' && !node.link"
+				ng-click="showEditQuestionPromptModule($event,node)"
+				class="glyphicon glyphicon-edit"
+				style="margin-top: 5px; margin-left: 2px;" aria-hidden="true"></span>
+						
+			<span class="treeNodeText" ng-if="!node.editEnabled"
+				event-focusq="click" event-focusq-id="editId_{{node.idNode}}">
+				{{node.name | lowercase | translate}} </span>
+							
+			<div class="numberPosRight">
+				<div style="position: relative;">
+					<div class="agentheader expanded pull-right"
+						ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)"
+						context-menu="showRulesMenu(this,node)">
+						<div class="verticalagents">
+							<div class="agentcontainer" ng-repeat="agent in rulesObj ">
+								<span class="rotatedagenttext">{{agent.name}}</span>
+							</div>
+						</div>
+					</div>
+					<div class="pull-right"
+						ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)"
+						context-menu="showRulesMenu(this)" model="node"
+						style="height: 40px; width: 27px; border-right: solid aliceblue 1px; position: relative;"
+						ng-repeat="obj in rulesObj | orderBy:'':true">
+						<div class="verticalrules">
+							<div class="rulescontainer">
+								<div
+									class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}"
+									ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
+									<span class="cell-lable" ng-repeat="mrule in node.moduleRule">
+										<div class="{{mrule.rule.level}} {{mrule.rule.type}}"
+											ng-if="(mrule.idAgent == obj.idAgent)"></div>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+				    <i ng-if="node.type!='P_freetext' && storage.langEnabled" class="glyphicon {{node.name | lowercase |
+							translate | displayFlag:node:storage}}"></i>
+					<span class="badge">{{node.header}} {{node.number}}</span> 
+					<!--span permission="['ROLE_ADMIN']" class="badge">
+						{{node.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}} 
+					</span-->
+				</div>
+			</div>			
+		</div>
+		<!-- end content -->
+	</div>
+</div>
+
+<div ui-tree-nodes="" ng-model="node.nodes"
+	ng-class="{hidden: collapsed}">
+	<div ng-repeat="node in node.nodes | orderBy:'sequence'" ui-tree-node
+		ng-include="'scripts/interviews/partials/nodes_renderer.html'"
+		class="angular-ui-tree-node" collapsed="false"></div>
+</div>

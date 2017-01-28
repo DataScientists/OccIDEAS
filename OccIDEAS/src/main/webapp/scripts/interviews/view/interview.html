@@ -191,10 +191,18 @@
 	</div>
 </div>
 
+<div ng-if="treeViewEnabled" class="col-md-8 moduleInterview">
+<button class="btn btn-default" 
+	ng-click="toggleView()">Switch to List View</button>
+		
+<ng-include src="'scripts/interviews/partials/intModuleTree.html'"></ng-include>
+</div>
 <!-- Interview History list starts here -->
-<div class="col-md-8 moduleInterview" id="interview-question-list">
-
-
+<div ng-if="!treeViewEnabled" class="col-md-8 moduleInterview" id="interview-question-list">
+	
+	<button class="btn btn-default" 
+	ng-click="toggleView()">Switch to Tree View</button>
+	
 	<div ui-tree="" id="tree-root1_{{$index}}"
 		ng-repeat="element in displayHistoryNew | orderBy:'-'">
 		<div class="angular-ui-tree">
