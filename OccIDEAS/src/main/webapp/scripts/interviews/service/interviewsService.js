@@ -406,6 +406,18 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		
+		function getInterviewQuestionByQuestionId(questionId, interviewId, parentAnswerId) {
+			var restURL = 'web/rest/interviewquestionanswer/getInterviewQuestionByQId?'
+					+'questionId='+ questionId 
+					+"&interviewId="+interviewId;
+			
+			var request = $http({
+				method : 'GET',
+				url : restURL
+			})
+			return request.then(handleSuccess, handleError);
+		}
 
 		function saveNote(data) {
 			var restURL = 'web/rest/note/update';
@@ -436,6 +448,16 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getExpandedModule(id){
+			var restUrl = 'web/rest/interview/getExpandedModule?id=' + id;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}		
 		
 		function getModuleForSubModule(idInterview, idLink){
 			var restUrl = 'web/rest/interview/getModuleForSubModule?id=' + idInterview
@@ -513,7 +535,9 @@
 			findNonIntroById:findNonIntroById,
 			getModuleForInterview:getModuleForInterview,
 			getModuleForSubModule:getModuleForSubModule,
-			checkQuestionAnswered:checkQuestionAnswered
+			checkQuestionAnswered:checkQuestionAnswered,
+			getExpandedModule:getExpandedModule,
+			getInterviewQuestionByQuestionId:getInterviewQuestionByQuestionId
 		};
 	}
 })();

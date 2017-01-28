@@ -93,6 +93,25 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 		}
 		return Response.ok(interviewQuestion).build();
 	}
+	
+	/**
+	 * Used for edit question popup
+	 */
+	@GET
+	@Path(value = "/getInterviewQuestionByQId")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getInterviewQuestionByQuestionId(
+			@QueryParam("questionId") Long questionId,
+			@QueryParam("interviewId") Long interviewId,
+			@QueryParam("parentId") Long parentQuestionId) {
+		
+		List<InterviewQuestionVO> list = service.findById(questionId, interviewId);
+		InterviewQuestionVO interviewQuestion = null;
+		for (InterviewQuestionVO iq : list) {
+			interviewQuestion = iq;
+		}
+		return Response.ok(interviewQuestion).build();
+	}
 
 	@Override
 	public Response get(Long id) {

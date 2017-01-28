@@ -177,4 +177,15 @@ public class InterviewQuestionDao {
 		return (Long) crit.uniqueResult();
 	}
 
+	public InterviewQuestion getByQuestionId(Long questionId, 
+			Long interviewId) {
+		
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class)
+				.add(Restrictions.eq("questionId", questionId))
+				.add(Restrictions.eq("idInterview", interviewId));
+		
+		return (InterviewQuestion) crit.uniqueResult();
+	}
+
 }

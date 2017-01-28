@@ -40,6 +40,15 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
         list.add(InterviewQuestionVO);
         return list;
     }
+    
+    @Override
+    public List<InterviewQuestionVO> findById(Long questionId, Long interviewId) {
+        InterviewQuestion interview = dao.getByQuestionId(questionId, interviewId);
+        InterviewQuestionVO InterviewQuestionVO = mapper.convertToInterviewQuestionVO(interview);
+        List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
+        list.add(InterviewQuestionVO);
+        return list;
+    }
 
     @Auditable(actionType = AuditingActionType.ADD_INTERVIEW_QUESTION)
     @Override

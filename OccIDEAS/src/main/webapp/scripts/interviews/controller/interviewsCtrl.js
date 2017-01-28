@@ -32,6 +32,7 @@
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
 		$scope.storage = $sessionStorage;
+		$scope.treeViewEnabled = false;
 		if($sessionStorage.langEnabled){
 			$scope.flagUsed = 'flag-icon-'+$scope.storage.chosenLang.flag.split(/[- ]+/).pop().toLowerCase();
 		}
@@ -1466,6 +1467,15 @@
 					  return node.link || node.deleted || !node.processed;
 					});
 			}
+			if($scope.treeViewEnabled){
+
+				InterviewsService.getExpandedModule($scope.interview.interviewId).then(function(response){
+						if(response.status == '200' && response.data && response.data[0]){
+							$scope.linkedModule = response.data[0];
+							addHeader($scope.linkedModule.nodes);					
+						}				
+					});	
+			}
 			_.each($scope.displayHistoryNew, function(node) {
 				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
 					  var retValue = false;
@@ -1512,8 +1522,38 @@
 						});	
 					}
 				});
-			}	
-								
+			}
+		}
+		
+		function addHeader(nodes){			
+			_.each(nodes, function(node) {				
+				 if(node.nodes){
+					  var temp = node.nodes[0];
+					  
+					  if (temp && temp.name == "Ignore")
+					  {
+						  node.nodes = temp.nodes;
+					  }
+				  }
+				  
+				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
+					  var retValue = false;
+					  if(qnode.link){
+						  if(qnode.link == node.topNodeId){
+							  retValue = true;
+						  }
+					  }
+					  return retValue;
+				  });
+				  
+				  if(linkNode){
+					  node.header = linkNode.name.substr(0,4);
+				  }
+				  
+				  if(node.nodes){
+					  addHeader(node.nodes);
+				  }
+			});
 		}
 		
 		function showNextQuestionNew(lookupNode, parentNode) {			
@@ -1737,6 +1777,59 @@
 				clickOutsideToClose:true
 			});
 		};
+		
+		//FIXME Duplicate of showEditQuestionPrompt
+		$scope.showEditQuestionPromptModule = function(ev,node) {
+			$scope.participant.status = 0;//running
+			$scope.interviewStarted = true;
+			
+			InterviewsService.getInterviewQuestionByQuestionId(node.idNode, 
+					$scope.interview.interviewId).then(function(response){
+				if(response.status === 200){
+					var iq = response.data;
+					QuestionsService.findQuestionSingleChildLevel(iq.questionId).then(function(response){
+						if(response.status === 200){
+							$log.info('Question Found');
+							var fullQuestion = response.data[0];
+							_.each(iq.answers,function(actualAnswer) {
+								if(actualAnswer.deleted==0){
+									_.find(fullQuestion.nodes,function(possibleAnswer) {
+										if (actualAnswer.answerId == possibleAnswer.idNode) {
+											possibleAnswer.isSelected = true;
+											fullQuestion.selectedAnswer = possibleAnswer;
+											if(actualAnswer.type == 'P_freetext'){
+												fullQuestion.selectedAnswer.name = actualAnswer.name;
+												fullQuestion.selectedAnswer.answerFreetext = actualAnswer.answerFreetext;
+											}else if(actualAnswer.type.startsWith('P_frequency')){
+												$scope.currentFrequencyValue = actualAnswer.answerFreetext;
+											}
+										}
+									});
+								}	
+							});
+							$scope.questionBeingEdited = fullQuestion;
+							$scope.questionBeingEditedCopy = angular.copy(fullQuestion);
+							if(fullQuestion.type == 'Q_frequency'){
+								$scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+								$scope.hoursArray = $scope.getShiftHoursArray();
+								$scope.minutesArray = $scope.getShiftMinutesArray();
+								$scope.weeks = $scope.getWeeksArray();
+								$scope.seconds = $scope.getSecondsArray();
+								
+							}					
+							$mdDialog.show({
+								scope : $scope.$new(),
+								templateUrl : 'scripts/interviews/view/editQuestionDialog.html',
+								clickOutsideToClose:true
+							});
+						}else{
+							$log.error('ERROR on findQuestions in showEditQuestionPrompt!');
+							throw response;
+						}
+					});
+				}
+			});			
+		}
 		$scope.showEditQuestionPrompt = function(ev,node) {
 			$scope.participant.status = 0;//running
 			$scope.interviewStarted = true;
@@ -1822,5 +1915,22 @@
         		node.isSelected = true;
         	}
         };
+        
+        $scope.toggleNode = function(node, scope){
+			scope.toggle();	
+		}
+        
+        $scope.toggleView = function(){
+        	
+        	if(!$scope.linkedModule){
+        		InterviewsService.getExpandedModule($scope.interview.interviewId).then(function(response){
+					if(response.status == '200' && response.data && response.data[0]){
+						$scope.linkedModule = response.data[0];
+						addHeader($scope.linkedModule.nodes);					
+					}				
+				});	
+        	}
+        	$scope.treeViewEnabled = !$scope.treeViewEnabled;
+        } 
 	}
 })();
