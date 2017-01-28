@@ -2622,17 +2622,21 @@
     		   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
     		   angular.element(document).find('.activeNodeAgentEnabled').removeClass('activeNodeAgentEnabled');
     		   $scope.currentToggledNodeWithAgent = undefined;
-    		   $scope.safeApply(function () {
- 	              $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) { 
- 	            	  return o.idAgent === agent.idAgent; }), 1)[0];
-    		   });
-    		   agent.style = "";
+    		   if(agent.style == "agent-shown"){   
+    			   $scope.safeApply(function () {
+    				   $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) { 
+    					   return o.idAgent === agent.idAgent; }), 1)[0];
+    			   });
+    			   agent.style = "";
+    		   }
     		   return;
     	   }
     	   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
     	   agent.active = true;
-			$scope.rulesObj.push(agent);
-			agent.style = "agent-shown";
+    	   if(agent.style != "agent-shown"){
+    		   $scope.rulesObj.push(agent);
+    		   agent.style = "agent-shown";
+    	   }
     	   QuestionsService.getNodesWithAgent(agent.idAgent).then(function(response){
        		if(response.status == '200'){
        			if(response.data[0] == null){
