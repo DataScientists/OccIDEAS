@@ -33,7 +33,7 @@
 		$scope.referenceNumber = null;
 		$scope.storage = $sessionStorage;
 		$scope.treeViewEnabled = false;
-		if($sessionStorage.langEnabled){
+		if($sessionStorage.langEnabled && $scope.storage.chosenLang){
 			$scope.flagUsed = 'flag-icon-'+$scope.storage.chosenLang.flag.split(/[- ]+/).pop().toLowerCase();
 		}
 		
