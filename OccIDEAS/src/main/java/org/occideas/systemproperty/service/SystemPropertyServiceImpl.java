@@ -46,6 +46,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	@Autowired
 	private ModuleFragmentService moduleFragmentService;
 	
+	//used to check if answer has already been processed
+	private List<Long> possAnswerCheckList = new ArrayList<>();
+	
 	@Override
 	public SystemPropertyVO save(SystemPropertyVO sysProp) {
 		SystemProperty systemProperty = dao.save(mapper.convertSytemPropertyVOtoSystemProperty(sysProp));
@@ -135,6 +138,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	@Override
 	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO vo) {
 		vo.getChildNodes().clear();
+		possAnswerCheckList.clear();
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
 		// check child links if we have study agents
 		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
@@ -271,10 +275,17 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			PossibleAnswerVO possibleAnswerVO = 
 					posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer)node, true);
 			for(int i=0;i<possibleAnswerVO.getChildNodes().size();i++){
-				QuestionVO qVO = possibleAnswerVO.getChildNodes().get(i);
-				if(qVO.getIdNode() == nodeVO.getIdNode()){
-					possibleAnswerVO.getChildNodes().set(i,(QuestionVO)nodeVO);
+				if(!possAnswerCheckList.contains(possibleAnswerVO.getIdNode())){
+					possAnswerCheckList.add(possibleAnswerVO.getIdNode());
+					possibleAnswerVO.getChildNodes().clear();
 				}
+				if(!possibleAnswerVO.getChildNodes().contains(nodeVO)){
+					possibleAnswerVO.getChildNodes().add((QuestionVO)nodeVO);
+				}
+//				QuestionVO qVO = possibleAnswerVO.getChildNodes().get(i);
+//				if(qVO.getIdNode() == nodeVO.getIdNode()){
+//					possibleAnswerVO.getChildNodes().set(i,(QuestionVO)nodeVO);
+//				}
 			}
 			return getQuestionUntilRootModule(possibleAnswerVO.getParentId(),possibleAnswerVO);
 		}else if("Q".equals(node.getNodeclass())){
@@ -305,6 +316,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 
 	@Override
 	public FragmentVO filterFragmentNodesWithStudyAgents(FragmentVO vo) {
+		possAnswerCheckList.clear();
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
 		// check child links if we have study agents
 		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
