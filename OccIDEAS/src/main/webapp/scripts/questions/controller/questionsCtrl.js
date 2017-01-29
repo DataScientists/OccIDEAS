@@ -2617,12 +2617,15 @@
        $scope.currentToggledNodeWithAgent =  undefined;
        $scope.toggleNodesWithAgent = function (agent,$event){
     	   $event.stopPropagation();
+    	   var resultRuleObj = _.find($scope.rulesObj,function(ro){
+    		   return ro.idAgent == agent.idAgent;
+    	   })
     	   if($scope.currentToggledNodeWithAgent == agent.idAgent){
     		   agent.active = false;
     		   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
     		   angular.element(document).find('.activeNodeAgentEnabled').removeClass('activeNodeAgentEnabled');
     		   $scope.currentToggledNodeWithAgent = undefined;
-    		   if(agent.style == "agent-shown"){   
+    		   if(agent.style == "agent-shown" && resultRuleObj){   
     			   $scope.safeApply(function () {
     				   $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) { 
     					   return o.idAgent === agent.idAgent; }), 1)[0];
@@ -2633,7 +2636,7 @@
     	   }
     	   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
     	   agent.active = true;
-    	   if(agent.style != "agent-shown"){
+    	   if(!resultRuleObj){
     		   $scope.rulesObj.push(agent);
     		   agent.style = "agent-shown";
     	   }
