@@ -48,6 +48,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	
 	//used to check if answer has already been processed
 	private List<Long> possAnswerCheckList = new ArrayList<>();
+	private List<Long> qIdCheckList = new ArrayList<>();
 	
 	@Override
 	public SystemPropertyVO save(SystemPropertyVO sysProp) {
@@ -139,6 +140,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO vo) {
 		vo.getChildNodes().clear();
 		possAnswerCheckList.clear();
+		qIdCheckList.clear();
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
 		// check child links if we have study agents
 		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
@@ -205,7 +207,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	private List<QuestionVO> buildChildNodesWithStudyAgents(List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
 		List<QuestionVO> nodeVOList = new ArrayList<>();
 		List<String> parentIdList = new ArrayList<>();
+		int index = 0;
 		for(PossibleAnswerVO ans:posAnsWithStudyAgentsList){
+			index++;
 			if(parentIdList.contains(ans.getParentId())){
 				continue;
 			}
@@ -222,15 +226,20 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 						posAns.getChildNodes().addAll(ans.getChildNodes());
 					}
 				}
-				nodeVOList.add(getQuestionUntilRootModule(questionVO.getParentId(),questionVO));
+				if(index==3){
+					System.out.println("debug");
+				}
+				QuestionVO questionUntilRootModule = getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
+				nodeVOList.add(questionUntilRootModule);
 			}else if("F".equals(node.getNodeclass())){
 				//parent is a link
-				
+				System.out.println("inside F");
 			}
 		}
 		return nodeVOList;
 	}
 	
+
 	public List<QuestionVO> getChildFrequencyNodes(String idNode, PossibleAnswerVO answerVO){
 		System.out.println(answerVO.getName());
 		List<Question> childQuestions = moduleDao.getChildFrequencyNodes(String.valueOf(answerVO.getIdNode()));
@@ -256,6 +265,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		
 		if("Q".equals(nodeVO.getNodeclass())){
 		QuestionVO questionVO1 = (QuestionVO)nodeVO;
+		
 		for(PossibleAnswerVO answer:questionVO1.getChildNodes()){
 			// get all frequency question under study filtered answer
 			List<QuestionVO> childFrequencyNodes = getChildFrequencyNodes(String.valueOf(answer.getIdNode()),answer);
@@ -274,7 +284,11 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			//parent is a answer
 			PossibleAnswerVO possibleAnswerVO = 
 					posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer)node, true);
+			
 			for(int i=0;i<possibleAnswerVO.getChildNodes().size();i++){
+				if(possibleAnswerVO.getIdNode() ==43562 ){
+					System.out.println("debug");
+				}
 				if(!possAnswerCheckList.contains(possibleAnswerVO.getIdNode())){
 					possAnswerCheckList.add(possibleAnswerVO.getIdNode());
 					possibleAnswerVO.getChildNodes().clear();
@@ -292,12 +306,17 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			//parent is a question
 			QuestionVO questionVO = 
 					questionMapper.convertToQuestionVOReducedDetails((Question)node);
+			if(questionVO.getIdNode() ==43562 ){
+				System.out.println("debug");
+			}
+			
 			for(int i=0;i<questionVO.getChildNodes().size();i++){
 				PossibleAnswerVO aVO = questionVO.getChildNodes().get(i);
 				if(aVO.getIdNode() == nodeVO.getIdNode()){
 					questionVO.getChildNodes().set(i,(PossibleAnswerVO)nodeVO);
 				}
 			}
+			
 			return getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
 		}else if("M".equals(node.getNodeclass())){
 			return (QuestionVO)nodeVO;

@@ -196,8 +196,17 @@
   		        	x.info["Node"+x.idNode+idRule].nodePopover.isOpen = false;
   		        }
     	};
-    	
+    	$scope.studyAgent = [];
+    	function initStudyAgent(){
+			AgentsService.getStudyAgents().then(function(agent) {
+				if(agent){
+					$scope.studyAgent = _.map(agent,'idAgent');
+					console.log("debug");
+				}
+			});
+		}
     	function initAgentData(){
+    		initStudyAgent();
     		AgentsService.get().then(function(agent) {
     		var group = _.groupBy(agent, function(b) { 
     			return b.agentGroup.name;
@@ -2670,9 +2679,19 @@
 				if(nodeResult.idNode == $scope.data[0].idNode){
 					return;
 				}
+				if(nodeResult.type.match('Q_')){
+					//highlight all child
+					_.each(nodeResult.nodes,function(n){
+						highlightChildNodeWithAgent(n.idNode);
+					});
+				}
 				angular.element("#node-"+idNode).addClass("nodeAgentEnabled");
 				highlightParentNodeWithAgent(nodeResult.parentId);
 			}
+       }
+       
+       function highlightChildNodeWithAgent(idNode){
+			angular.element("#node-"+idNode).addClass("nodeAgentEnabled");
        }
        
        function higlightNodesWithAgentAjsms(fragmentIdNode,childNodes){
