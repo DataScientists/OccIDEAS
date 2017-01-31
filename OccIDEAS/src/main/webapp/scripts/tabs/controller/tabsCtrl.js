@@ -478,7 +478,8 @@
                 $scope.tabOptions.push({
                     state: state,
                     data: {
-                        row: participant.idParticipant
+                        row: participant.idParticipant,
+                        interviewId: participant.idinterview
                     }
                 });
             }
