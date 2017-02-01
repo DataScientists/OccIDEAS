@@ -394,6 +394,21 @@ public class ModuleServiceImpl implements ModuleService {
 		}
 		return null;
 	}
+	
+	@Override
+	public NodeVO getModuleFilterAgent(Long id,Long idAgent) {
+		Node node = dao.getNodeById(id);
+		if("M".equals(node.getNodeclass())){
+			ModuleVO moduleVO = mapper.convertToModuleVO((Module)node, true);
+			ModuleVO newModuleVO = sysPropService.filterModulesNodesWithAgents(moduleVO,idAgent);
+			return newModuleVO;
+		}else if("F".equals(node.getNodeclass())){
+			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment)node, true);
+			FragmentVO newFragmentVO =  sysPropService.filterFragmentNodesWithAgents(fragmentVO,idAgent);
+			return newFragmentVO;
+		}
+		return null;
+	}
 
 
 }

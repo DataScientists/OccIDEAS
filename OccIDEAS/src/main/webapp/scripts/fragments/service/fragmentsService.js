@@ -88,6 +88,17 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function getFilterAgents(idNode,idAgent){
+			var restUrl = 'web/rest/fragment/getFilterAgents?id=' + idNode+'&idAgent='+idAgent;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		
+		
 		function checkExists(idNode) {
 			var restUrl = 'web/rest/fragment/checkexists?id=' + idNode;
 			var request =  $http({
@@ -136,7 +147,8 @@
 		    findInterviewByFragmentId:findInterviewByFragmentId,
 		    copyModule:copyModule,
 		    getLinkingNodes:getLinkingNodes,
-		    getFilterStudyAgents:getFilterStudyAgents
+		    getFilterStudyAgents:getFilterStudyAgents,
+		    getFilterAgents:getFilterAgents
 		};
 		function handleError( response ) {
             if (

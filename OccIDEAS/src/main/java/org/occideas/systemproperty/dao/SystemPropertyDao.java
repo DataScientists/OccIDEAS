@@ -103,4 +103,20 @@ public class SystemPropertyDao {
 		List<PossibleAnswer> list = sqlQuery.list();
 		return list;
 	}
+	
+	private final String POS_ANS_WITH_AGENT_SQL = "SELECT * FROM Node where idNode in" 
+			+" (SELECT idNode FROM ModuleRule where idModule=:idModule "
+			+" and idAgent = :idAgent)";
+	
+	public List<PossibleAnswer> getPosAnsWithAgentAndIdMod(long idModule,long idAgent){
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(POS_ANS_WITH_AGENT_SQL).
+				addEntity(PossibleAnswer.class);
+		sqlQuery.setParameter("idModule", String.valueOf(idModule));
+		sqlQuery.setParameter("idAgent", String.valueOf(idAgent));
+		List<PossibleAnswer> list = sqlQuery.list();
+		return list;
+	}
+	
+	
 }

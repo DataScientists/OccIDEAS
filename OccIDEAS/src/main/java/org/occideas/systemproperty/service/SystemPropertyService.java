@@ -17,4 +17,7 @@ public interface SystemPropertyService {
 	public FragmentVO getFragmentNodesWithStudyAgents(FragmentVO vo);
 	public ModuleVO filterModulesNodesWithStudyAgents(ModuleVO moduleVO);
 	public FragmentVO filterFragmentNodesWithStudyAgents(FragmentVO fragmentVO);
+	public ModuleVO filterModulesNodesWithAgents(ModuleVO vo, long idAgent);
+	public FragmentVO filterFragmentNodesWithAgents(FragmentVO vo, Long idAgent);
+	public FragmentVO getFragmentNodesWithAgents(FragmentVO fragmentVO, Long idAgent);
 }

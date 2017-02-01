@@ -26,4 +26,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
 			NodeRuleHolder idNodeRuleHolder);
 	public void setActiveIntroModule(ModuleVO vo);
 	public NodeVO getModuleFilterStudyAgent(Long id);
+	public NodeVO getModuleFilterAgent(Long id, Long idAgent);
 }

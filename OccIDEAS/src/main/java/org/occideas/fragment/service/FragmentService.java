@@ -28,4 +28,6 @@ public interface FragmentService extends BaseService<FragmentVO> {
 	List<QuestionVO> getLinkingNodes(Long id);
 
 	List<FragmentVO> getFilterStudyAgents(Long id);
+
+	List<FragmentVO> getFilterStudyAgents(Long id, Long idAgent);
 }

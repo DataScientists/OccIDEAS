@@ -161,4 +161,14 @@ public class FragmentServiceImpl implements FragmentService {
 		list.add(filteredFragmentVO);
 		return list;
 	}
+
+	@Override
+	public List<FragmentVO> getFilterStudyAgents(Long id, Long idAgent) {
+		Fragment fragment = dao.get(id);
+		FragmentVO fragmentVO = mapper.convertToFragmentVO(fragment,true);
+		FragmentVO filteredFragmentVO = systemPropertyService.getFragmentNodesWithAgents(fragmentVO,idAgent);
+		List<FragmentVO> list = new ArrayList<FragmentVO>();
+		list.add(filteredFragmentVO);
+		return list;
+	}
 }

@@ -2398,6 +2398,18 @@
 			});
         }
         
+        function populateChildNodesOfFragmentFilterAgents(data,fragments,idAgent){
+        	// todo filtering by study agent
+        	return FragmentsService.getFilterAgents(data.fragmentId,idAgent).then(function(response){
+				if(response[0] == null){
+					return;
+				}
+        		if(response.length > 0){
+					fragments.push(response[0]);
+				}
+			});
+        }
+        
         function exportJsonForModule(copyData,name,includeLinks){
         	var fragments = [];
         	var	promises = [];
@@ -2649,29 +2661,64 @@
     		   $scope.rulesObj.push(agent);
     		   agent.style = "agent-shown";
     	   }
-    	   QuestionsService.getNodesWithAgent(agent.idAgent).then(function(response){
+    	   highlightNodesWithAgent(agent.idAgent);
+       	   $scope.currentToggledNodeWithAgent = agent.idAgent;
+       }
+       
+//       function highlightNodesWithAgent(nodeAgentData){
+//       		for(var i=0;i<nodeAgentData.length;i++){
+//       			var node = nodeAgentData[i];
+//    			angular.element("#node-"+node.idNode).addClass("nodeAgentEnabled");
+//    			var nodeResult = findNodeById(node.idNode,$scope.data[0]);
+//    			if(nodeResult){
+//    				highlightParentNodeWithAgent(nodeResult.parentId);
+//    			}
+//			}
+//       }
+       
+       function highlightNodesWithAgent(idAgent){
+       	angular.element(document).find('.incl_expjson').removeClass('incl_expjson');
+       	var fragments = [];
+       	var	promises = [];
+       	ModulesService.getModuleFilterAgent(moduleIdNode,idAgent).then(function(response){
        		if(response.status == '200'){
        			if(response.data[0] == null){
-       				alert("Warning: No nodes with agent exist.");
+       				alert("Warning: No agent rule exist for this module.");
        				return;
        			}
-       			var nodeAgentData = response.data;
-       			highlightNodesWithAgent(nodeAgentData);
-       			$scope.currentToggledNodeWithAgent = agent.idAgent;
+       			var agentData = response.data;
+       			highlightAgentSpecificNode(agentData[0].nodes);
+       			ModulesService.getModuleFragmentByModuleId(agentData[0].idNode).then(function (response) {
+       				if(response.status == '200'){
+       					// loop each fragment get details for each, filter agents
+       					_.each(response.data,function(data){
+       						promises.push(populateChildNodesOfFragmentFilterAgents(data,fragments));
+       					});
+       					$q.all(promises).then(function () {
+       						if(agentData[0].nodes.length < 1 && fragments.length < 1){
+       	        				alert("There is no study specific node for this tree, check the link ajsm.");
+       	        				return;
+       	        			}
+       						for(var i=0;i<fragments.length;i++){
+       							higlightAgentAjsms(fragments[i].idNode,$scope.data[0].nodes);
+       						}
+       					});
+       				}
+       			});
        		}
        	});
        }
        
-       function highlightNodesWithAgent(nodeAgentData){
-       		for(var i=0;i<nodeAgentData.length;i++){
-       			var node = nodeAgentData[i];
-    			angular.element("#node-"+node.idNode).addClass("nodeAgentEnabled");
-    			var nodeResult = findNodeById(node.idNode,$scope.data[0]);
-    			if(nodeResult){
-    				highlightParentNodeWithAgent(nodeResult.parentId);
-    			}
-			}
-       }
+       function higlightAgentAjsms(fragmentIdNode,childNodes){
+           _.each(childNodes,function(item){
+   			if(item.link == fragmentIdNode){
+   				angular.element("#node-"+item.idNode).addClass("nodeAgentEnabled");
+   			}
+   			if(item.nodes.length > 0){
+   				higlightAgentAjsms(fragmentIdNode,item.nodes);
+   			}
+   		});
+   		}
        
        function highlightParentNodeWithAgent(idNode){
     	   var nodeResult = findNodeById(idNode,$scope.data[0]);
@@ -2692,6 +2739,16 @@
        
        function highlightChildNodeWithAgent(idNode){
 			angular.element("#node-"+idNode).addClass("nodeAgentEnabled");
+       }
+       
+       function highlightAgentSpecificNode(childNodes){
+       	for(var i=0;i<childNodes.length;i++){
+       		var node = childNodes[i];
+				angular.element("#node-"+node.idNode).addClass("nodeAgentEnabled");
+				if(node.nodes){
+					highlightAgentSpecificNode(node.nodes);
+				}
+			}
        }
        
        function higlightNodesWithAgentAjsms(fragmentIdNode,childNodes){

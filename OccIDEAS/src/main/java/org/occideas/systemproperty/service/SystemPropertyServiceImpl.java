@@ -152,6 +152,23 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		}
 		return vo;
 	}
+	
+	@Override
+	public ModuleVO filterModulesNodesWithAgents(ModuleVO vo,long idAgent) {
+		vo.getChildNodes().clear();
+		possAnswerCheckList.clear();
+		qIdCheckList.clear();
+		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithAgents(vo,idAgent);
+		// check child links if we have study agents
+		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
+			return null;
+		}else{
+			vo.getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+			vo.getChildNodes().removeAll(Collections.singleton(null));
+		}
+		return vo;
+	}
 
 	private boolean addAnsDependencyFromLinkAjsm(NodeVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
 		boolean shouldReturnNull = true;
@@ -332,6 +349,14 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		List<PossibleAnswerVO> newPosAnsWithStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList(posAnsWithStudyAgentsList);
 		return newPosAnsWithStudyAgentsList;
 	}
+	
+	private List<PossibleAnswerVO> getAnswersWithAgents(NodeVO vo,long idAgent) {
+		List<PossibleAnswer> posAnsWithStudyAgentsList = 
+				dao.getPosAnsWithAgentAndIdMod(vo.getIdNode(), idAgent);
+		List<PossibleAnswerVO> newPosAnsWithStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList(posAnsWithStudyAgentsList);
+		return newPosAnsWithStudyAgentsList;
+	}
+
 
 	@Override
 	public FragmentVO filterFragmentNodesWithStudyAgents(FragmentVO vo) {
@@ -344,6 +369,31 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		}else{
 			vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
 			vo.getChildNodes().removeAll(Collections.singleton(null));
+		}
+		return vo;
+	}
+	
+	@Override
+	public FragmentVO filterFragmentNodesWithAgents(FragmentVO vo,Long idAgent) {
+		possAnswerCheckList.clear();
+		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithAgents(vo,idAgent);
+		// check child links if we have study agents
+		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
+			return null;
+		}else{
+			vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+			vo.getChildNodes().removeAll(Collections.singleton(null));
+		}
+		return vo;
+	}
+
+	@Override
+	public FragmentVO getFragmentNodesWithAgents(FragmentVO vo, Long idAgent) {
+		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithAgents(vo,idAgent);
+		vo.setChildNodes(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+		if(vo.getChildNodes().isEmpty()){
+			return null;
 		}
 		return vo;
 	}
