@@ -768,13 +768,77 @@
 		
 		$scope.toggleMultipleChoice = function(scope) {
 			recordAction($scope.data);
-			if(scope.$modelValue.type=='Q_multiple'){
-				scope.$modelValue.type = 'Q_single';
-			}else{
-				scope.$modelValue.type = 'Q_multiple';
+			 
+			var nodeExists = false;
+			$scope.interviewExist = false;
+	    	$scope.validationInProgress = true;
+	    	
+			if(scope.$modelValue){
+				
+	    		$mdDialog.show({
+					scope: $scope,  
+					preserveScope: true,
+					templateUrl : 'scripts/questions/partials/validateChangeDialog.html',
+					clickOutsideToClose:false
+				});
+				//Check if node exists in interview
+				InterviewsService.findQuestionsByNodeId(scope.$modelValue.idNode).then(function(response){
+					if(response.status == 200){
+						$scope.validationInProgress = false;
+						if(response.data.length > 0){
+							$scope.interviewExist = true;
+							$scope.nodesForUpdate = response.data;
+							$scope.nodeScope = scope;
+						}else{
+							
+							//Proceed, no interviews to be updated
+							updateScope(scope);
+						}
+					}
+				});
 			}
-			saveModuleWithoutReload();
 		};
+		
+		 $scope.cancelChanges = function(){
+			 $mdDialog.cancel();
+		 }
+		    
+	     $scope.updateInterviewNodes = function(){
+	    	 
+	    	 if($scope.nodesForUpdate){
+	    		 
+	    		 //Update the type
+	    		 _.forEach($scope.nodesForUpdate, function(node) {
+	         		if(node.type=='Q_multiple'){
+	         			node.type = 'Q_single';
+					}else{
+						node.type = 'Q_multiple';
+					}
+	             });
+	    		 
+	    		 InterviewsService.saveQuestions($scope.nodesForUpdate)
+	    		 	.then(function(response){
+	    		 		if(response.status == 200){
+	    		 			console.log("Node type update done.");	
+	    		 		}
+	    		 });
+	    		 
+	    		 if($scope.nodeScope){
+	    			 updateScope($scope.nodeScope);
+	    		 }
+	    	 }	    	 
+	     }
+		
+	     function updateScope(scope){
+	    	 if(scope.$modelValue.type=='Q_multiple'){
+				scope.$modelValue.type = 'Q_single';
+			  }else{
+					scope.$modelValue.type = 'Q_multiple';
+			  }
+			  saveModuleWithoutReload();
+			  $mdDialog.cancel();
+	     }
+
 		$scope.deleteNode = function(scope) {
 			recordAction($scope.data);
 			if(scope.$modelValue.deleted){

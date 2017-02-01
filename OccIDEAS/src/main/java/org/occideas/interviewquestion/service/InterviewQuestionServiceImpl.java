@@ -129,5 +129,11 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 		
 		return dao.getUniqueInterviewQuestionCount(filterModule);
 	}
-
+	
+	@Override
+	public List<InterviewQuestionVO> findQuestionsByNodeId(Long questionId) {	
+		
+		return mapper.convertToInterviewQuestionVOList(
+				dao.getQuestionsByNodeId(questionId));
+	}
 }

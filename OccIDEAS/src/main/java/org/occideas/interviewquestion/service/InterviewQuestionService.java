@@ -27,4 +27,6 @@ public interface InterviewQuestionService extends BaseService<InterviewQuestionV
 	Long getUniqueInterviewQuestionCount(String[] filterModule);
 
 	List<InterviewQuestionVO> findById(Long questionId, Long interviewId);
+
+	List<InterviewQuestionVO> findQuestionsByNodeId(Long questionId);
 }
