@@ -18,21 +18,29 @@
 			'$anchorScroll', '$location', '$mdMedia', '$window', '$state',
 			'$rootScope', '$compile', '$timeout', '$log', 'updateData',
 			'startWithReferenceNumber','$filter','$translate','NodeLanguageService',
-			'$sessionStorage'];
+			'$sessionStorage','treeView'];
 	function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
 			QuestionsService, ModulesService, InterviewsService,
 			ParticipantsService, AssessmentsService, $anchorScroll, $location,
 			$mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
 			updateData,startWithReferenceNumber,$filter,$translate,NodeLanguageService,
-			$sessionStorage) {
+			$sessionStorage,treeView) {
 		var self = this;
+		
+		if(updateData){
+			updateData.participant = data;
+		}
+		
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.multiSelected = [];
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
 		$scope.storage = $sessionStorage;
-		$scope.treeViewEnabled = false;
+		$scope.latestNodeId = null;
+		$scope.treeViewEnabled = true;
+		var newlyLoaded = true;
+
 		if($sessionStorage.langEnabled && $scope.storage.chosenLang){
 			$scope.flagUsed = 'flag-icon-'+$scope.storage.chosenLang.flag.split(/[- ]+/).pop().toLowerCase();
 		}
@@ -60,6 +68,7 @@
 					var interview = response.data[0];  
 					$scope.interview = interview;
 					$scope.displayHistoryNew = undefined;
+					newlyLoaded = false;
 					resumeInterview();
 					refreshDisplayNew();
 					showNextQuestionNew();	
@@ -117,6 +126,7 @@
 			$scope.startInterview(data);
 		} else if (updateData) {
 			$log.info("updateData is not null... interview continuation initializing...");
+			//updateData.participant = $scope.data;
 			$scope.interview = updateData;
 			$rootScope.participant = updateData.participant;
 			resumeInterview();	
@@ -1155,26 +1165,8 @@
 			});
 		}
 		$scope.scrollTo = function(target) {
-			var scrollPane = $('#interview-question-list');
-
-			var scrollTarget = $('#questionlist-' + target);
-			if (scrollTarget) {
-				if (scrollTarget.offset()) {
-					var currentScroll = 0;
-					if (scrollPane.scrollTop()) {
-						currentScroll = scrollPane.scrollTop();
-					}
-					var offset = 150;
-					var top = scrollTarget.offset().top;
-					// alert(top);
-					var currentScroll = scrollPane.scrollTop();
-					// alert(currentScroll);
-					var scrollY = top - offset + currentScroll;
-					scrollPane.animate({
-						scrollTop : scrollY
-					}, 1000, 'swing');
-				}
-			}
+			
+			scrollToTarget('interview-question-list', 'questionlist-' + target);
 		};
 
 		$scope.multiToggle = function(item, list) {
@@ -1468,13 +1460,37 @@
 					});
 			}
 			if($scope.treeViewEnabled){
-
-				InterviewsService.getExpandedModule($scope.interview.interviewId).then(function(response){
+				
+				if(!newlyLoaded || !updateData){
+					InterviewsService.getExpandedModule($scope.interview.interviewId).then(function(response){
 						if(response.status == '200' && response.data && response.data[0]){
 							$scope.linkedModule = response.data[0];
-							addHeader($scope.linkedModule.nodes);					
+							addHeader($scope.linkedModule.nodes);
+							
+							var scrollTarget = $('#interview-question-tree');
+							if(scrollTarget && scrollTarget[0]){													
+								scrollTarget.animate({scrollTop : scrollTarget[0].scrollHeight }, 500, 'swing');
+							} 
 						}				
-					});	
+					});
+				}	
+				else{
+					$scope.linkedModule = treeView;
+					addHeader($scope.linkedModule.nodes);
+					newlyLoaded = false;
+				}
+				
+				$scope.$watch(function() {
+        			return $('#interview-question-tree') 
+        			&& $('#interview-question-tree')[0]
+        			&& $('#interview-question-tree')[0].scrollHeight != 0;
+				}, function() {
+					
+					var scrollTarget = $('#interview-question-tree');
+					if(scrollTarget && scrollTarget[0]){													
+						scrollTarget.animate({scrollTop : scrollTarget[0].scrollHeight }, 500, 'swing');
+					}   						    					
+				});				
 			}
 			_.each($scope.displayHistoryNew, function(node) {
 				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
@@ -1524,7 +1540,29 @@
 				});
 			}
 		}
-		
+		function scrollToTarget(scrollPaneId, scrollTargetId){
+			
+			var scrollPane = $('#' +scrollPaneId);
+
+			var scrollTarget = $('#' + scrollTargetId);
+			if (scrollTarget) {
+				if (scrollTarget.offset()) {
+					var currentScroll = 0;
+					if (scrollPane.scrollTop()) {
+						currentScroll = scrollPane.scrollTop();
+					}
+					var offset = 150;
+					var top = scrollTarget.offset().top;
+					// alert(top);
+					var currentScroll = scrollPane.scrollTop();
+					// alert(currentScroll);
+					var scrollY = top - offset + currentScroll;
+					scrollPane.animate({
+						scrollTop : scrollY
+					}, 1000, 'swing');
+				}
+			}
+		}
 		function addHeader(nodes){			
 			_.each(nodes, function(node) {				
 				 if(node.nodes){
@@ -1545,6 +1583,8 @@
 					  }
 					  return retValue;
 				  });
+
+				  $scope.latestNodeId = node.idNode;
 				  
 				  if(linkNode){
 					  node.header = linkNode.name.substr(0,4);

@@ -174,5 +174,19 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	@GET
+    @Path(value = "/findQuestionsByNodeId")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response findQuestionsByNodeId(@QueryParam("id") Long questionId) {
+		List<InterviewQuestionVO> result = null;
+		
+    	try{
+			result = service.findQuestionsByNodeId(questionId);			
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+    }
 }

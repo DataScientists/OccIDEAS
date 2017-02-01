@@ -361,13 +361,16 @@
                         },
                         startWithReferenceNumber: function($stateParams,InterviewsService){
                         	return $stateParams.startWithReferenceNumber;
+                        },
+                        treeView: function($stateParams,InterviewsService){
+                        	return undefined;
                         }
                     }
                 }
             }
         }).state( {
             name:'tabs.interviewresume',
-			url: '/interview/:row',
+			url: '/interview/:row/:interviewId',
             sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
@@ -378,7 +381,7 @@
                     params:{row: null,module:null,interviewId:null,startWithReferenceNumber:null},
                     resolve:{
                     	data: function($stateParams,ParticipantsService) {
-                    		ParticipantsService.findParticipant($stateParams.row).then(function(response){
+                    		return ParticipantsService.findParticipant($stateParams.row).then(function(response){
                     			if (response.status === 200) {
                     				var participant = response.data[0];
     	        					return participant;
@@ -389,36 +392,32 @@
 	        					
 	        				});
                         },
-                    	updateData: function($stateParams,ParticipantsService,InterviewsService){    
-                    		return ParticipantsService.findParticipant($stateParams.row).then(function(response){
-                    			if (response.status === 200) {
-                    				var participant = response.data[0];
-    	        					$log.info("Found Participant :"+participant.idParticipant);
-    	        					//show last interview
-    	        					var idInterview = 0;
-    	        					for(var i=0;i<participant.interviews.length;i++){
-    	        						idInterview = participant.interviews[i].interviewId;
-    	        					}
-    	        					return InterviewsService.get(idInterview).then(function(response) {
-        								if (response.status === 200) {
-        									var interview = response.data[0];  
-        									interview.participant = participant;
-        									return interview;   				    				     									
-        								} else if (response.status === 401) {
-        									$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
-        									return;
-        								}
-        							});
-                    			}else if (response.status === 401) {
-									$log.error("Inside updateData of tabs.interviewresume tabs.js could not findParticipant with "+$stateParams.row);
+                    	updateData: function($stateParams,ParticipantsService,InterviewsService){   
+                    		
+                    		return InterviewsService.get($stateParams.interviewId).then(function(response) {
+								if (response.status === 200) {
+									var interview = response.data[0];  									
+									return interview;   				    				     									
+								} else if (response.status === 401) {
+									$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
 									return;
 								}
-	        					
-	        				});
-                        	
+                    		});
+                    		      	
                         },
                         startWithReferenceNumber: function($stateParams,InterviewsService){
                         	return $stateParams.startWithReferenceNumber;
+                        },
+                        treeView : function($stateParams,InterviewsService){
+                        	return InterviewsService.getExpandedModule($stateParams.interviewId).then(function(response){
+        						if(response.status == '200' && response.data && response.data[0]){
+        							return response.data[0];
+        						}	
+        						else if (response.status === 401) {
+									$log.error("Inside treeView of tabs.interviewresume tabs.js could not find expanded interview with "+$stateParams.interviewId);
+									return;
+								}
+        					});	
                         }
                     }
                 }

@@ -188,4 +188,16 @@ public class InterviewQuestionDao {
 		return (InterviewQuestion) crit.uniqueResult();
 	}
 
+	public List<InterviewQuestion> getQuestionsByNodeId(Long questionId) {
+		
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class);
+		crit.add(Restrictions.eq("questionId",questionId));
+		List<InterviewQuestion> list = crit.list();
+		if(list.isEmpty()){
+			return null;
+		}
+		return list;
+	}
+
 }
