@@ -1467,8 +1467,10 @@
 							$scope.linkedModule = response.data[0];
 							addHeader($scope.linkedModule.nodes);
 							
-							var div = document.getElementById("interview-question-tree");							
-							div.scrollTop = div.scrollHeight + 120;							
+							var scrollTarget = $('#interview-question-tree');
+							if(scrollTarget && scrollTarget[0]){													
+								scrollTarget.animate({scrollTop : scrollTarget[0].scrollHeight }, 500, 'swing');
+							} 
 						}				
 					});
 				}	
@@ -1479,14 +1481,14 @@
 				}
 				
 				$scope.$watch(function() {
-					var div = document.getElementById("interview-question-tree");
-        			return div != null && div.scrollHeight != 0;
+        			return $('#interview-question-tree') 
+        			&& $('#interview-question-tree')[0]
+        			&& $('#interview-question-tree')[0].scrollHeight != 0;
 				}, function() {
 					
-					var div = document.getElementById("interview-question-tree");
-					
-					if(div){
-						div.scrollTop = div.scrollHeight + 120;
+					var scrollTarget = $('#interview-question-tree');
+					if(scrollTarget && scrollTarget[0]){													
+						scrollTarget.animate({scrollTop : scrollTarget[0].scrollHeight }, 500, 'swing');
 					}   						    					
 				});				
 			}
