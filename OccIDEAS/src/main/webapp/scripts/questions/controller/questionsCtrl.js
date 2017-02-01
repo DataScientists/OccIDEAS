@@ -2474,6 +2474,18 @@
 			});
         }
         
+        function populateChildNodesOfModuleFilterAgents(data,fragments,idAgent){
+        	// todo filtering by study agent
+        	return ModulesService.getModuleFilterAgent(data.moduleLinkId,idAgent).then(function(response){
+				if(response[0] == null){
+					return;
+				}
+        		if(response.length > 0){
+					fragments.push(response[0]);
+				}
+			});
+        }
+        
         function exportJsonForModule(copyData,name,includeLinks){
         	var fragments = [];
         	var	promises = [];
@@ -2743,6 +2755,7 @@
        function highlightNodesWithAgent(idAgent){
        	angular.element(document).find('.incl_expjson').removeClass('incl_expjson');
        	var fragments = [];
+    	var modules = [];
        	var	promises = [];
        	ModulesService.getModuleFilterAgent(moduleIdNode,idAgent).then(function(response){
        		if(response.status == '200'){
@@ -2752,11 +2765,31 @@
        			}
        			var agentData = response.data;
        			highlightAgentSpecificNode(agentData[0].nodes);
+//       			if($sessionStorage.activeIntro && $sessionStorage.activeIntro.value == moduleIdNode){
+//    				//its an intro module
+//       				ModulesService.getModuleIntroModuleByModuleId(agentData[0].idNode).then(function (response) {
+//       					if(response.status == '200'){
+//       						// loop each fragment get details for each, filter agents
+//       						_.each(response.data,function(data){
+//       							promises.push(populateChildNodesOfModuleFilterAgents(data,modules,idAgent));
+//       						});
+//       						$q.all(promises).then(function () {
+//       							if(agentData[0].nodes.length < 1 && modules.length < 1){
+//       								alert("There is no study specific node for this tree, check the link ajsm.");
+//       								return;
+//       							}
+//       							for(var i=0;i<modules.length;i++){
+//       								higlightAgentAjsms(modules[i].idNode,$scope.data[0].nodes);
+//       							}
+//       						});
+//       					}
+//       				});
+//    			}else{
        			ModulesService.getModuleFragmentByModuleId(agentData[0].idNode).then(function (response) {
        				if(response.status == '200'){
        					// loop each fragment get details for each, filter agents
        					_.each(response.data,function(data){
-       						promises.push(populateChildNodesOfFragmentFilterAgents(data,fragments));
+       						promises.push(populateChildNodesOfFragmentFilterAgents(data,fragments,idAgent));
        					});
        					$q.all(promises).then(function () {
        						if(agentData[0].nodes.length < 1 && fragments.length < 1){
@@ -2769,6 +2802,7 @@
        					});
        				}
        			});
+//    			}
        		}
        	});
        }
