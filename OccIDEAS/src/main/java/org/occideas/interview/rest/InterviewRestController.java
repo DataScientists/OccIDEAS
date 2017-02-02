@@ -726,7 +726,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 					mapExpandedQuestionNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);
 				}
 				
-				vo.setName(answerMap.get(Long.valueOf(vo.getIdNode())).getName());
+				vo.setName(answerMap.get(Long.valueOf(vo.getIdNode())).getAnswerFreetext());
 				vo.setDeleted(answerMap.get(Long.valueOf(vo.getIdNode())).getDeleted());
 				newNodes.add(vo);
 			}
