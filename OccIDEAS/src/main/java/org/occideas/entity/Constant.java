@@ -28,7 +28,8 @@ public class Constant {
     public static final String IS_READ_ONLY = "readonly";
     public static final String STUDY_INTRO = "activeIntro";
     public static final String REPORT_EXPORT_CSV_DIR = "REPORT_EXPORT_CSV_DIR";
-
+    public static final String FILTER_STUDY_AGENTS = "filterStudyAgent";
+    
     public static final String STUDY_AGENT_SYS_PROP = "studyagent";
     
     public static final String NOT_ASSESSED  = "Not Assessed";    

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -12,21 +13,36 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.entity.Constant;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.module.dao.IModuleDao;
+import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class InterviewQuestionDao {
+	
+	private Logger log = Logger.getLogger(this.getClass());
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Autowired
     private QuestionService questionService;
+	
+	@Autowired
+	private SystemPropertyService systemPropertyService;
+	
+    @Autowired
+	private ModuleService moduleService;
 	
 	private final String UNIQUE_INT_QUESTION_SQL = 	
 			"select distinct(a.question_id) as question_id,a.id,a.idinterview,"
@@ -92,7 +108,21 @@ public class InterviewQuestionDao {
     	sessionFactory.getCurrentSession().saveOrUpdate(iq);
     	int intQuestionSequence = iq.getIntQuestionSequence();
     	long parentModuleId = iq.getLink();
-        List<QuestionVO> queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
+        List<QuestionVO> queueQuestions = new ArrayList<>();
+        SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+        if(filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue()
+        		.toLowerCase().trim())){
+        	// get intro id
+        	SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+        	if(introModule == null){
+        		log.error(Constant.STUDY_INTRO+" is not set in config , report to admin.");
+        	}else{
+        		ModuleVO moduleFilterStudyAgent = (ModuleVO)moduleService.getModuleFilterStudyAgent(Long.valueOf(introModule.getValue()));
+        		queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        	}
+        }else{
+        	queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
+        }
         Collections.sort(queueQuestions); 
         for(QuestionVO question :queueQuestions){
         	InterviewQuestion iqQueue = new InterviewQuestion();
