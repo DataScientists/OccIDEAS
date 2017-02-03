@@ -22,6 +22,10 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.Constant;
+import org.occideas.entity.Module;
+import org.occideas.entity.ModuleRule;
+import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
 import org.occideas.module.service.ModuleService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentVO;
@@ -282,5 +286,68 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 
 		return Response.ok(report).build();
 	}
+	
+	@GET
+	@Path(value = "/getAllModulesReport")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getAllModulesReport(){
+		List<ModuleReportVO> report = new ArrayList<>();
+		
+		List<Module> modules;
+		try {
+			 modules = service.getAllModules();
+			 report = generateReport(modules);
+			
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(report).build();
+	}
 
+	private List<ModuleReportVO> generateReport(List<Module> modules) {
+		List<ModuleReportVO> reports = new ArrayList();
+		
+		for(Module module : modules){
+			
+			ModuleReportVO report = new ModuleReportVO();
+			ModuleVO vo = new ModuleVO();
+			vo.setName(module.getName());
+			vo.setIdNode(module.getIdNode());
+			report.setVo(vo);;
+			populateQuestions(module.getChildNodes(), report);
+			reports.add(report);			
+		}		
+		
+		return reports;
+	}
+
+	private void populateQuestions(List<Question> childNodes,
+			ModuleReportVO report) {
+		
+		for (Question vo : childNodes) {
+			report.setTotalQuestions(report.getTotalQuestions() + 1);
+			if (!vo.getChildNodes().isEmpty()) {
+				populateAnswers(vo.getChildNodes(), report);
+			}
+		}
+	}
+	
+	private void populateAnswers(List<PossibleAnswer> childNodes,
+			ModuleReportVO report) {
+		
+		for (PossibleAnswer vo : childNodes) {
+			report.setTotalAnswers(report.getTotalAnswers()+1);
+			if (!vo.getModuleRule().isEmpty()) {
+				populateRules(vo.getModuleRule(), report);
+			}
+			if (!vo.getChildNodes().isEmpty()) {
+				populateQuestions(vo.getChildNodes(), report);
+			}
+		}
+	}
+
+	private void populateRules(List<ModuleRule> moduleRule, ModuleReportVO report) {
+		report.setTotalRules(moduleRule.size() + report.getTotalRules());
+	}
 }

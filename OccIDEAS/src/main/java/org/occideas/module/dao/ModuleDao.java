@@ -63,14 +63,20 @@ public class ModuleDao implements IModuleDao{
     }
 
     @SuppressWarnings("unchecked")
-	public List<Module> getAll() {
+	public List<Module> getAll(boolean isIncludeChild) {
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(Module.class)
-    		  						.setProjection(Projections.projectionList()
-    		  						.add(Projections.property("idNode"),"idNode")
-    		  						.add(Projections.property("name"),"name")
-    		  						.add(Projections.property("description"),"description"))
-    		  						.setResultTransformer(Transformers.aliasToBean(Module.class));
+      final Criteria crit = session.createCriteria(Module.class);
+      
+      if(!isIncludeChild){
+    	  crit.setProjection(Projections.projectionList()
+			.add(Projections.property("idNode"),"idNode")
+			.add(Projections.property("name"),"name")
+			.add(Projections.property("description"),"description"));
+      
+      }    		
+      crit.add(Restrictions.eq("deleted", 0));
+      crit.addOrder(Order.asc("name"));
+      
       return crit.list();
     }
     @SuppressWarnings("unchecked")

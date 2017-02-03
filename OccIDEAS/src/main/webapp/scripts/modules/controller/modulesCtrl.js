@@ -183,6 +183,32 @@
 	    		});
 	    		return;
 	    	}
+	    	
+	    	//Show validation popup
+	    	$scope.validationAllModuleInProgress = true;
+	    	$mdDialog.show({
+				  scope: $scope.$new(),
+			      templateUrl: 'scripts/modules/partials/validateAllModuleDialog.html',
+			      parent: angular.element(document.body),
+			      clickOutsideToClose:true
+			 });
+	    	
+	    	ModulesService.getAllModulesReport().then(function(response){
+				if(response.status == 200){
+					$scope.validationAllModuleInProgress = false;
+					if(response.data.length > 0){
+						
+						$scope.allModuleData = response.data;						
+						//Open tab
+						$scope.addAllModuleValidationTab(response.data);
+						$mdDialog.cancel();
+					}else{
+						console.log("No data to validate");
+						$mdDialog.cancel();
+					}
+				}
+			});
+	    	
 	    }
 	    
 	    $scope.uploadFiles = function(file, errFiles) {

@@ -17,7 +17,6 @@ import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeRuleMapper;
 import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
-import org.occideas.module.dao.ModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.RuleDao;
@@ -411,5 +410,8 @@ public class ModuleServiceImpl implements ModuleService {
 		return null;
 	}
 
-
+	@Override
+	public List<Module> getAllModules() {
+		return dao.getAll(true);
+	}
 }

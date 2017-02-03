@@ -1569,7 +1569,7 @@
 				  if(activeModule.type == 'M_IntroModule'){
 					  ngToast.create({
 			    		  className: 'warning',
-			    		  content: 'Cannot export an Intro modules.'
+			    		  content: 'Cannot export an Intro module.'
 			    	 });
 				  }else{
 					//need to display pop up first
