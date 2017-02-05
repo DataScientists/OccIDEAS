@@ -90,7 +90,7 @@
 		
 		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
 			<td>{{noiseRow.moduleName}}</td>
-			<td ng-click="highlightNode(noiseRow.idNode)">{{noiseRow.nodeNumber}}</td>
+			<td ng-click="highlightNode(noiseRow.idNode,noiseRow)">{{noiseRow.nodeNumber}}</td>
 			<td>{{noiseRow.nodeText}}</td>
 			<td>{{noiseRow.dB}}</td>
 			<td>{{noiseRow.backgroundhours}}</td>
@@ -119,7 +119,7 @@
 		
 		<tr ng-repeat="noiseRow in vibrationRows" class={{noiseRow.type}}>	
 			<td>{{noiseRow.moduleName}}</td>
-			<td ng-click="highlightNode(noiseRow.idNode)">{{noiseRow.nodeNumber}}</td>
+			<td ng-click="highlightNode(noiseRow.idNode,noiseRow)">{{noiseRow.nodeNumber}}</td>
 			<td>{{noiseRow.nodeText}}</td>
 			<td>{{noiseRow.vibMag}}</td>
 			<td>{{noiseRow.frequencyhours}}</td>

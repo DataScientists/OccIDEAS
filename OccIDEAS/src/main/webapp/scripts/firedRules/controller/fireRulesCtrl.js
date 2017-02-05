@@ -727,7 +727,8 @@
 											backgroundhours: hoursbg,
 											partialExposure:partialExposure,
 											type:'backgroundNoise',
-											moduleName: moduleName}
+											moduleName: moduleName,
+											topNodeId:noiseRule.conditions[0].topNodeId}
 							
 							$scope.noiseRows.push(noiseRow);
 							if(partialExposure>maxBackgroundPartialExposure){
@@ -773,7 +774,8 @@
 									dB:level,
 									backgroundhours: modHours,
 									partialExposure:partialExposure,
-									moduleName:moduleName}
+									moduleName:moduleName,
+									topNodeId:noiseRule.conditions[0].topNodeId}
 					
 							$scope.noiseRows.push(noiseRow);	
 							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
@@ -850,17 +852,18 @@
 									frequencyhours:frequencyhours,
 									partialExposure:particalVibration,
 									type:'vibration',
-									moduleName:moduleName}
+									moduleName:moduleName,
+									topNodeId:vibrationRule.conditions[0].topNodeId}
 						  
 						  $scope.vibrationRows.push(vibrationRow);
 						  totalFrequency += Number(frequencyhours);
 						  totalExposure += Number(level);
-						  
+						  dailyVibration += Number(particalVibration);
 						  
 					  }
 					  
 					 
-					  dailyVibration = Math.sqrt(Number(totalFrequency)*Number(totalFrequency)*Number(totalExposure)/8);
+					  //dailyVibration = Math.sqrt(Number(totalFrequency)*Number(totalFrequency)*Number(totalExposure)/8);
 
 					  $scope.dailyVibration = dailyVibration.toFixed(4);
 				  }
