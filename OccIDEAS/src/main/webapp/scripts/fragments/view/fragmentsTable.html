@@ -1,5 +1,10 @@
 <div ng-cloak>
 <div >
+
+	<div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
+	<button type="button" permission="['ROLE_ADMIN']"  ng-click='validateAllBtn(true)' class="btn btn-default"> Validate Fragments</button>
+	</div>
+	
 	<table ng-table="vm.tableParams"
 		class="table table-bordered table-hover 
   table-condensed editable-table moduleTable"

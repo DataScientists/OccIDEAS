@@ -64,6 +64,18 @@
 				}
 			}
 		}).state({
+			name:'tabs.allFragmentValidation',
+			url: '/allFragmentValidation/',
+			sticky: true,
+		    deepStateRedirect: true,
+		    authenticate:true,
+			views:{
+				'allFragmentValidation@tabs':{
+					templateUrl : "scripts/fragments/partials/validateAllFragmentTable.html",
+					controller: 'FragmentCtrl as vm'
+				}
+			}
+		}).state({
 			name:'tabs.modules',
 			url: '/modules/',
 			sticky: false,

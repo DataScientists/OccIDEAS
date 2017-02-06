@@ -83,5 +83,19 @@ public class FragmentDao {
        		  						.setResultTransformer(Transformers.aliasToBean(Fragment.class));
          return crit.list();
        }
+    
+    /**
+     * Get all with children nodes
+     * @param isIncludeChild
+     * @return
+     */
+	@SuppressWarnings("unchecked")
+	public List<Fragment> getAll(boolean isIncludeChild) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Fragment.class);
+		crit.add(Restrictions.eq("deleted", 0));
+		crit.addOrder(Order.asc("name"));
+		return crit.list();
+	}
 
 }

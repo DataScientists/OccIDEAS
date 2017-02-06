@@ -1,6 +1,7 @@
 package org.occideas.fragment.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -13,6 +14,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.Fragment;
+import org.occideas.entity.ModuleRule;
+import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.vo.FragmentCopyVO;
@@ -173,5 +178,66 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		return Response.ok(idNodeHolder.getIdNode()).build();
 	}
 	
+	@GET
+	@Path(value = "/getAllFragmentsReport")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getAllFragmentsReport(){
+		List<FragmentReportVO> report = new ArrayList<>();
+		
+		List<Fragment> fragments;
+		try {
+			fragments = service.getAllFragments();
+			report = generateReport(fragments);			
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(report).build();
+	}
 
+	private List<FragmentReportVO> generateReport(List<Fragment> fragments) {
+		List<FragmentReportVO> reports = new ArrayList();
+		
+		for(Fragment fragment : fragments){
+			
+			FragmentReportVO report = new FragmentReportVO();
+			FragmentVO vo = new FragmentVO();
+			vo.setName(fragment.getName());
+			vo.setIdNode(fragment.getIdNode());
+			report.setVo(vo);;
+			populateQuestions(fragment.getChildNodes(), report);
+			reports.add(report);			
+		}		
+		
+		return reports;
+	}
+
+	private void populateQuestions(List<Question> childNodes,
+			FragmentReportVO report) {
+		
+		for (Question vo : childNodes) {
+			report.setTotalQuestions(report.getTotalQuestions() + 1);
+			if (!vo.getChildNodes().isEmpty()) {
+				populateAnswers(vo.getChildNodes(), report);
+			}
+		}
+	}
+	
+	private void populateAnswers(List<PossibleAnswer> childNodes,
+			FragmentReportVO report) {
+		
+		for (PossibleAnswer vo : childNodes) {
+			report.setTotalAnswers(report.getTotalAnswers()+1);
+			if (!vo.getModuleRule().isEmpty()) {
+				populateRules(vo.getModuleRule(), report);
+			}
+			if (!vo.getChildNodes().isEmpty()) {
+				populateQuestions(vo.getChildNodes(), report);
+			}
+		}
+	}
+
+	private void populateRules(List<ModuleRule> moduleRule, FragmentReportVO report) {
+		report.setTotalRules(moduleRule.size() + report.getTotalRules());
+	}
 }

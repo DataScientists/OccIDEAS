@@ -305,6 +305,24 @@
             safeDigest($rootScope.tabsLoading);
         };
         
+        $scope.addAllFragmentValidationTab = function(response) {
+            tabs.push({
+                title: "Validation Report - All Fragments",
+                viewName: 'allFragmentValidation@tabs',
+                canClose: true,
+                disabled: false
+            });
+            $scope.tabOptions.push({
+                state: "tabs.allFragmentValidation",
+                data: {
+                	row:response
+                }
+            });
+            $scope.allFragmentValidationReport = response;
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
+        };
+        
         $scope.addImportJsonValidationTab = function(report) {
             tabs.push({
                 title: "Validation Report (Import JSON)",

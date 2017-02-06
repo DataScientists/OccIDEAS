@@ -423,7 +423,32 @@
 	          return item.row === row;
 	        });
 	        setInvalid(invalidCellsByRow.length > 0);
-	      }
+	    }
+	    
+	    $scope.validateAllBtn = function(shouldFilter){
+	    	//Show validation popup
+	    	$scope.validationAllModuleInProgress = true;
+	    	$mdDialog.show({
+				  scope: $scope.$new(),
+			      templateUrl: 'scripts/modules/partials/validateAllModuleDialog.html',
+			      parent: angular.element(document.body),
+			      clickOutsideToClose:true
+			 });
+	    	
+	    	FragmentsService.getAllFragmentsReport().then(function(response){
+				if(response.status == 200){
+					$scope.validationAllModuleInProgress = false;
+					if(response.data.length > 0){				
+						//Open tab
+						$scope.addAllFragmentValidationTab(response.data);
+						$mdDialog.cancel();
+					}else{
+						console.log("No data to validate");
+						$mdDialog.cancel();
+					}
+				}
+			});
+	    }
 	}
 })();
 
