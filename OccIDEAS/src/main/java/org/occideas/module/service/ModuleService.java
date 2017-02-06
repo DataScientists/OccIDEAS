@@ -3,6 +3,7 @@ package org.occideas.module.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.Module;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeVO;
@@ -27,4 +28,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public void setActiveIntroModule(ModuleVO vo);
 	public NodeVO getModuleFilterStudyAgent(Long id);
 	public NodeVO getModuleFilterAgent(Long id, Long idAgent);
+	public List<Module> getAllModules();
 }

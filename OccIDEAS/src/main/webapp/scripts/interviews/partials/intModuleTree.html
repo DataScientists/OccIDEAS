@@ -1,7 +1,7 @@
 <div class="row " prog_tree>
-	<div class="col-sm-12">
+	<div class="col-sm-12" id="tree-panel">
 		<div class="panel panel-default">
-			<div class="panel-body">
+			<div class="panel-body" id="tree-panel-body">
 				<div ui-tree="moduleTreeOptions" id="tree-root">
 					<div ui-tree-nodes="" ng-model="linkedModule.nodes"
 						ng-class="{hidden: collapsed}">
@@ -14,4 +14,6 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div style="height:400px;">
 </div>

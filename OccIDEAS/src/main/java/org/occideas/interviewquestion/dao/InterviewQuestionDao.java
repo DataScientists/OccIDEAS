@@ -15,13 +15,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
 import org.occideas.entity.InterviewQuestion;
-import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,15 +109,24 @@ public class InterviewQuestionDao {
     	long parentModuleId = iq.getLink();
         List<QuestionVO> queueQuestions = new ArrayList<>();
         SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
-        if(filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue()
-        		.toLowerCase().trim())){
+        if(filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())){
         	// get intro id
         	SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
         	if(introModule == null){
         		log.error(Constant.STUDY_INTRO+" is not set in config , report to admin.");
         	}else{
-        		ModuleVO moduleFilterStudyAgent = (ModuleVO)moduleService.getModuleFilterStudyAgent(Long.valueOf(introModule.getValue()));
-        		queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        		if(introModule.getValue().equalsIgnoreCase(String.valueOf(parentModuleId))){
+        			queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
+        		}else{
+        			if(iq.getType().equalsIgnoreCase("Q_linkedajsm")){
+        				FragmentVO moduleFilterStudyAgent = (FragmentVO)moduleService.getModuleFilterStudyAgent(parentModuleId);
+                		queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        			}else{
+        				ModuleVO moduleFilterStudyAgent = (ModuleVO)moduleService.getModuleFilterStudyAgent(parentModuleId);
+                		queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        			}
+        			
+        		}       		
         	}
         }else{
         	queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));

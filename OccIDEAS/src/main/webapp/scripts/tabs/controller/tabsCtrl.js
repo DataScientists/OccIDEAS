@@ -287,6 +287,23 @@
             }
         };
 
+        $scope.addAllModuleValidationTab = function(response) {
+            tabs.push({
+                title: "Validation Report - All Modules",
+                viewName: 'allModuleValidation@tabs',
+                canClose: true,
+                disabled: false
+            });
+            $scope.tabOptions.push({
+                state: "tabs.allModuleValidation",
+                data: {
+                	row:response
+                }
+            });
+            $scope.allModuleValidationReport = response;
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
+        };
         
         $scope.addImportJsonValidationTab = function(report) {
             tabs.push({

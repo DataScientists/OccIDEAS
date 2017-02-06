@@ -42,8 +42,8 @@ public class InterviewDao {
 		  	+ " and i.assessedStatus like '"+ Constant.AUTO_ASSESSED +"'";
 	
 	private final String ANSWER_COUNT_QUERY = "select count(1)" 
-			+ " from interview_answer a,"
-			+ " interview_question q"
+			+ " from Interview_Answer a,"
+			+ " Interview_Question q"
 			+ " where a.answerId = :answerId and a.idinterview  = :idInterview"
 			+ " and a.idinterview = q.idinterview"
 			+ " and q.id = a.interviewQuestionId";

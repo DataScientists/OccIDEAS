@@ -52,6 +52,18 @@
 				}
 			}
 		}).state({
+			name:'tabs.allModuleValidation',
+			url: '/allModuleValidation/',
+			sticky: true,
+		    deepStateRedirect: true,
+		    authenticate:true,
+			views:{
+				'allModuleValidation@tabs':{
+					templateUrl : "scripts/modules/partials/validateAllModuleTable.html",
+					controller: 'ModuleCtrl as vm'
+				}
+			}
+		}).state({
 			name:'tabs.modules',
 			url: '/modules/',
 			sticky: false,

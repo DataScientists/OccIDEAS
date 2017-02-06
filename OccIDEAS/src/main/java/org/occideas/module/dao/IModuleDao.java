@@ -2,15 +2,9 @@ package org.occideas.module.dao;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
-import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
-import org.occideas.vo.QuestionVO;
 
 public interface IModuleDao {
 
@@ -28,7 +22,7 @@ public interface IModuleDao {
 
 	public void saveOrUpdate(Module module);
 
-	public List<Module> getAll();
+	public List<Module> getAll(boolean b);
 
 	public List<Module> getAllActive();
 

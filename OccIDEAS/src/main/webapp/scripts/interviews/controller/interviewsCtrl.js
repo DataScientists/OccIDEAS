@@ -37,7 +37,7 @@
 		$scope.questionHistory = [];
 		$scope.referenceNumber = null;
 		$scope.storage = $sessionStorage;
-		$scope.latestNodeId = null;
+		$scope.lastQNodeId = null;
 		$scope.treeViewEnabled = true;
 		var newlyLoaded = true;
 
@@ -1481,16 +1481,31 @@
 				}
 				
 				$scope.$watch(function() {
-        			return $('#interview-question-tree') 
-        			&& $('#interview-question-tree')[0]
-        			&& $('#interview-question-tree')[0].scrollHeight != 0;
+        			return $('#node-'+$scope.lastQNodeId) 
+        				&& $('#node-'+$scope.lastQNodeId)[0] 
+        			    && $('#node-'+$scope.lastQNodeId)[0].scrollWidth != 0;
 				}, function() {
 					
 					var scrollTarget = $('#interview-question-tree');
 					if(scrollTarget && scrollTarget[0]){													
 						scrollTarget.animate({scrollTop : scrollTarget[0].scrollHeight }, 500, 'swing');
-					}   						    					
-				});				
+					}			
+					
+					var node = $('#node-'+$scope.lastQNodeId);
+					
+					if(node && node[0]){
+						
+						var treePanel = $('#tree-panel');
+					
+						if(node[0].scrollWidth < (treePanel[0].scrollWidth *.5)){												
+							
+							$('#tree-panel-body').width($('#tree-panel-body')[0].scrollWidth * 1.25);
+							treePanel.width($('#tree-panel-body').width() + 30);
+						}
+						
+						scrollTarget.animate({scrollLeft : node[0].scrollWidth }, 500, 'swing');
+					}
+				});
 			}
 			_.each($scope.displayHistoryNew, function(node) {
 				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
@@ -1584,7 +1599,9 @@
 					  return retValue;
 				  });
 
-				  $scope.latestNodeId = node.idNode;
+				  if(node.type && node.type.indexOf('Q_') > -1){
+					  $scope.lastQNodeId = node.idNode;
+				  }
 				  
 				  if(linkNode){
 					  node.header = linkNode.name.substr(0,4);

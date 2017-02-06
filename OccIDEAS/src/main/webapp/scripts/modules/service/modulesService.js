@@ -150,6 +150,16 @@
 			  });
 			  return request.then(handleSuccess,handleError);
 		}
+		
+		function getAllModulesReport(){
+			var restUrl = 'web/rest/module/getAllModulesReport';
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 
 		function handleError( response ) {
             if (
@@ -179,7 +189,8 @@
             getWithFragments:getWithFragments,
             setActiveIntroModule:setActiveIntroModule,
             getModuleFilterStudyAgent:getModuleFilterStudyAgent,
-            getModuleFilterAgent:getModuleFilterAgent
+            getModuleFilterAgent:getModuleFilterAgent,
+            getAllModulesReport:getAllModulesReport
 		};
 	}
 	
