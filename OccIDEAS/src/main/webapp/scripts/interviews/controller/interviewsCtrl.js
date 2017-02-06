@@ -1497,7 +1497,7 @@
 						
 						var treePanel = $('#tree-panel');
 					
-						if(node[0].scrollWidth < (treePanel[0].scrollWidth *.5)){												
+						if(treePanel[0] && node[0].scrollWidth < (treePanel[0].scrollWidth *.5)){												
 							
 							$('#tree-panel-body').width($('#tree-panel-body')[0].scrollWidth * 1.25);
 							treePanel.width($('#tree-panel-body').width() + 30);

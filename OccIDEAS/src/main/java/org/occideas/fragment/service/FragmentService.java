@@ -3,6 +3,7 @@ package org.occideas.fragment.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.Fragment;
 import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
@@ -30,4 +31,6 @@ public interface FragmentService extends BaseService<FragmentVO> {
 	List<FragmentVO> getFilterStudyAgents(Long id);
 
 	List<FragmentVO> getFilterStudyAgents(Long id, Long idAgent);
+
+	List<Fragment> getAllFragments();
 }

@@ -2,20 +2,20 @@
 	<table class="table table-sm">
 		<tbody>
 			<tr>
-				<td colspan="2"><h3>Modules Summary</h3></td>
+				<td colspan="2"><h3>Fragments Summary</h3></td>
 			</tr>
 			<table class="table table-sm">
 				<thead>
 					<tr>
-						<th>Module Id</th>
-						<th>Module Name</th>
+						<th>Fragment Id</th>
+						<th>Fragment Name</th>
 						<th>Questions</th>
 						<th>Answers</th>
 						<th>Rules</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="item in allModuleValidationReport">
+					<tr ng-repeat="item in allFragmentValidationReport">
 						<td>{{item.vo.idNode}}</td>
 						<td>{{item.vo.name}}</td>						
 						<td>{{item.totalQuestions}}</td>						

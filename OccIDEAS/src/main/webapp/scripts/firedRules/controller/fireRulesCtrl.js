@@ -681,7 +681,9 @@
 								 var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);
 									
 								 if(frequencyHoursNode){
-									 answeredValue = frequencyHoursNode.answerFreetext;
+									 if(frequencyHoursNode.type!='P_frequencyseconds'){
+										 answeredValue = frequencyHoursNode.answerFreetext;
+									 }									 
 								 }								
 								 $scope.foundNode=null;
 							  }
@@ -739,6 +741,7 @@
 							var hours = 0.0;
 							var frequencyhours = 0;
 							var parentNode = noiseRule.conditions[0];
+							var isSecondsTimeFrequency = false;
 							//if(model.module){
 								  cascadeFindNode(model.answerHistory,parentNode);
 							//  }else{
@@ -748,10 +751,14 @@
 								  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
 								  if(frequencyHoursNode){
 									  frequencyhours = frequencyHoursNode.answerFreetext;
+									  if(frequencyHoursNode.type=='P_frequencyseconds'){
+										  frequencyhours = parseFloat(frequencyhours)/3600; //convert seconds to hours
+										  isSecondsTimeFrequency = true;
+									  }
 								  }
 								  $scope.foundNode=null;
 							  }
-							if(useRatio){
+							if(useRatio && !isSecondsTimeFrequency){
 								hours = parseFloat(frequencyhours)/ratio;		
 							}else{
 								hours = parseFloat(frequencyhours);		

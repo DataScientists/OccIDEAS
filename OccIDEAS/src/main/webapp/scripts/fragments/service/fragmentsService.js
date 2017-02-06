@@ -134,6 +134,16 @@
 			  });
 			  return request.then(handleSuccess1,handleError);
 		}
+		
+		function getAllFragmentsReport(){
+			var restUrl = 'web/rest/fragment/getAllFragmentsReport';
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
 
 		return {		  
 			checkExists: checkExists,
@@ -148,7 +158,8 @@
 		    copyModule:copyModule,
 		    getLinkingNodes:getLinkingNodes,
 		    getFilterStudyAgents:getFilterStudyAgents,
-		    getFilterAgents:getFilterAgents
+		    getFilterAgents:getFilterAgents,
+		    getAllFragmentsReport:getAllFragmentsReport
 		};
 		function handleError( response ) {
             if (

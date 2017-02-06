@@ -171,4 +171,9 @@ public class FragmentServiceImpl implements FragmentService {
 		list.add(filteredFragmentVO);
 		return list;
 	}
+
+	@Override
+	public List<Fragment> getAllFragments() {
+		return dao.getAll(true);
+	}
 }

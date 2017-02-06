@@ -61,13 +61,33 @@
 		
 		
 		self.openFiredRules = function(interviewId,reference,interviewModuleName) {
-			var interview = {
-					interviewId:interviewId,
-					referenceNumber:reference,
-					moduleName:interviewModuleName
-			};
-	    	$scope.addFiredRulesTab(interview);
-	    	console.log('FiredRulesTab Opened');
+			
+			InterviewsService.findModulesByInterviewId(interviewId).then(function(response){
+				if(response.status == '200'){
+					if(response.data.length > 0){								
+						var modules = response.data;
+
+						var isSameIntroModule = true;
+						var introModule = _.find(modules,function(module){
+							return module.idModule == $sessionStorage.activeIntro.value;
+						});
+						
+						if(!introModule){
+							isSameIntroModule = false;
+						}
+						
+						var interview = {
+								interviewId:interviewId,
+								referenceNumber:reference,
+								moduleName:interviewModuleName,
+								isSameIntroModule:isSameIntroModule
+						};
+				    	$scope.addFiredRulesTab(interview);
+						
+				    	console.log('FiredRulesTab Opened');
+					}
+				}
+			});
 	    }
 		
 		

@@ -55,7 +55,9 @@ public class ParticipantDao {
     }
     
     private final String paginatedParticipantSQL 
-    = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview, i.assessedStatus,NULL AS idModule, '' AS interviewModuleName"+
+    = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview, i.assessedStatus,"
+    		+ "(select link from Interview_Question where idinterview = i.idinterview and nodeClass = 'M') AS idModule, "
+    		+ "'' AS interviewModuleName"+
 			"  from Participant p "+ 
     		"  join Interview i "+  
     		" where p.idParticipant = i.idParticipant"+ 

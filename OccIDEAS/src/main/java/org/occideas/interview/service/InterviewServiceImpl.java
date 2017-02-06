@@ -8,6 +8,7 @@ import java.util.List;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Interview;
 import org.occideas.interview.dao.InterviewDao;
+import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.mapper.InterviewMapper;
 import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.security.audit.Auditable;
@@ -26,6 +27,10 @@ public class InterviewServiceImpl implements InterviewService {
 	
 	@Autowired
     private InterviewDao interviewDao;
+	
+	@Autowired
+    private InterviewQuestionDao interviewQuestionDao;
+
 
     @Autowired
     private InterviewMapper mapper;
@@ -209,5 +214,10 @@ public class InterviewServiceImpl implements InterviewService {
 	public boolean isQuestionAnswered(Long interviewId, Long nodeId) {
 		BigInteger count = interviewDao.getAnswerCount(interviewId, nodeId);
 		return count.intValue() == 0 ? false : true;
+	}
+
+	@Override
+	public Long getIntroModuleId(Long interviewId) {
+		return interviewQuestionDao.getIntroModuleId(interviewId);
 	}
 }
