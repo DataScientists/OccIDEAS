@@ -237,5 +237,18 @@ public class InterviewQuestionDao {
 		}
 		return list;
 	}
+	
+	public Long getIntroModuleId(Long interviewId) {
+		
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class)
+				.add(Restrictions.eq("idInterview", interviewId))
+				.add(Restrictions.eq("nodeClass", "M"))
+				.setMaxResults(1)
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("link"),"link"));
+		
+		return (Long)crit.uniqueResult();
+	}
 
 }

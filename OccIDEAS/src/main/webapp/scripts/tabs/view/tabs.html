@@ -4,6 +4,13 @@
       <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" layout-fill>
       	<md-tab-label>
         <span context-menu="tabMenu(tab)">{{tab.title}}</span>
+                    
+            <span ng-if="(tab.title.indexOf('Resume Interview') > -1 || tab.title.indexOf('Assessment ') > -1) && !tab.isSameIntroModule" 
+            uib-popover="This interview is not using the configured Intro Module"
+            popover-placement="right"  popover-append-to-body="true"
+            popover-trigger="mouseenter" popover-popup-delay="300"
+            class="glyphicon glyphicon-warning-sign" style="color:red;"></span>
+      
           <span ng-click="removeTab(tab)" ng-if="tab.canClose">
               <span class="glyphicon glyphicon-remove" style="margin-left:3px"/>
           </span>

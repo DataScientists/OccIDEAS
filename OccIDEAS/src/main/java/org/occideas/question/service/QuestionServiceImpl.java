@@ -11,7 +11,6 @@ import org.occideas.entity.Question;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
-import org.occideas.module.dao.IModuleDao;
 import org.occideas.question.dao.QuestionDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;

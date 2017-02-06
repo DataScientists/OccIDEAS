@@ -474,6 +474,11 @@
             safeDigest($rootScope.tabsLoading);
         };
         $scope.addInterviewTabInterviewersEdit = function(participant) {
+        	var isSameIntroModule = true;
+        	//participant.idModule is the intro module id
+        	if(participant.idModule != $sessionStorage.activeIntro.value){
+        		isSameIntroModule = false;
+        	}
             //close other interview tabs
             for (var i = tabs.length - 1; i >= 0; i--) {
                 var tab = tabs[i];
@@ -490,7 +495,8 @@
                     title: tabTitle,
                     viewName: 'interviewresume@tabs',
                     canClose: true,
-                    disabled: false
+                    disabled: false,
+                    isSameIntroModule: isSameIntroModule
                 });
                 $scope.tabOptions.push({
                     state: state,
@@ -534,7 +540,8 @@
                     title: tabTitle,
                     viewName: 'firedrules@tabs',
                     canClose: true,
-                    disabled: false
+                    disabled: false,
+                    isSameIntroModule:interview.isSameIntroModule
                 });
                 $scope.tabOptions.push({
                     state: state,
