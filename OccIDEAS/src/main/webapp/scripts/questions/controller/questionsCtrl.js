@@ -1592,20 +1592,10 @@
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
-//                  html2canvas($("div#tree-root")[0], {
-//                      onrendered: function (canvas) {
-//                          var data = canvas.toDataURL();
-//                          var docDefinition = {
-//                              content: [{
-//                                  image: data,
-//                                  width: 500,
-//                              }]
-//                          };
-				  var docDefinition = { content: $("div#tree-root")[0].innerText };    
-                    pdfMake.createPdf(docDefinition)
-                    .download($itemScope.$modelValue.name + '.pdf');
-//                      }
-//                  });
+				  var pdf = new jsPDF('p','mm','a4');
+                  pdf.addHTML($("div#tree-root")[0], {pagesplit: true}, function() {
+                      pdf.save($itemScope.$modelValue.name + '.pdf');
+                  });
               }
 			  ],
 			  ['Set Active Intro Module',function($itemScope){
