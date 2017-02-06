@@ -1592,10 +1592,21 @@
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
-				  var pdf = new jsPDF('p','mm','a4');
-                  pdf.addHTML($("div#tree-root")[0], {pagesplit: true}, function() {
-                      pdf.save($itemScope.$modelValue.name + '.pdf');
-                  });
+//				  var pdf = new jsPDF('p','mm','a4');
+//                  pdf.addHTML($("div#tree-root")[0], {pagesplit: true}, function() {
+//                      pdf.save($itemScope.$modelValue.name + '.pdf');
+//                  });
+//                  pdf.save($itemScope.$modelValue.name + '.pdf');
+//                  
+                  var pdf = new jsPDF('p', 'pt', 'a4');
+//            	  pdf.canvas.height = 72 * 11;
+//            	  pdf.canvas.width = 72 * 8.5;
+            	  var origWidth = $("div#tree-root")[0].style.width;
+            	  $("div#tree-root")[0].style.width = 400 + 'px';
+            	  html2pdf($("div#tree-root")[0], pdf, function(pdf){
+            		  pdf.save($itemScope.$modelValue.name + '.pdf');
+            		  $("div#tree-root")[0].style.width = origWidth;
+            	  });
               }
 			  ],
 			  ['Set Active Intro Module',function($itemScope){
@@ -1699,6 +1710,17 @@
 				} 
 			  ]
 			];
+		
+		function clone(obj) {
+		    if (null == obj || "object" != typeof obj) return obj;
+		    var copy = obj.constructor();
+		    for (var attr in obj) {
+		        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+		    }
+		    return copy;
+		}
+		
+		
 		$scope.linkedModuleMenuOptions =
 			[
 			  [ 'Remove (Toggle)', function($itemScope) {
