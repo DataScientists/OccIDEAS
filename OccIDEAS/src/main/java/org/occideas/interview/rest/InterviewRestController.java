@@ -871,7 +871,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 				if(vo.getChildNodes() != null){
 					mapQuestionNodes(vo.getChildNodes(), moduleVo, questionMap, answerMap, vo, isSubModule);	
 				}
-				vo.setName(answerMap.get(Long.valueOf(vo.getIdNode())).getName());
+				vo.setName(answerMap.get(Long.valueOf(vo.getIdNode())).getAnswerFreetext());
 				newNodes.add(vo);
 			}
 		}
