@@ -181,7 +181,11 @@
     	<ul class="list-group">
         <li class="list-group-item" ng-repeat="mod in vm.fragmentsInInterview">
 			<div>
-				<span class="badge">Fragment</span> {{mod.interviewFragmentName}}
+				<span class="badge">Fragment</span>
+				
+				<a style="cursor: pointer;" href
+					ng-click="highlightFragment(mod)">{{mod.interviewFragmentName}}
+				</a>
 			</div>
 						
     	</li>

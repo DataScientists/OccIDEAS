@@ -10,11 +10,14 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.Node;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
@@ -251,4 +254,23 @@ public class InterviewQuestionDao {
 		return (Long)crit.uniqueResult();
 	}
 
+	public Long checkFragmentProcessed(long link, long id) {
+
+		final Session session = sessionFactory.getCurrentSession();
+
+		DetachedCriteria subQuery = DetachedCriteria.forClass(InterviewQuestion.class)
+				.setProjection(Projections.property("parentModuleId"))
+				.add(Restrictions.eq("id", Long.valueOf(id)))				
+				.add(Restrictions.eq("isProcessed", true));
+		subQuery.getExecutableCriteria(session).setMaxResults(1);		
+		
+		final Criteria crit = session.createCriteria(Node.class, "a")
+				.setProjection(Projections.property("idNode"))
+				.add(Restrictions.eq("link", Long.valueOf(link)))
+				.setMaxResults(1);
+				
+		crit.add(Property.forName("a.topNodeId").eq(subQuery));		
+
+		return (Long) crit.uniqueResult();
+	}
 }

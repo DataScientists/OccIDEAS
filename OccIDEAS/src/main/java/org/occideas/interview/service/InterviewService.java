@@ -51,4 +51,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	boolean isQuestionAnswered(Long interviewId, Long nodeId);
 
 	Long getIntroModuleId(Long interviewId);
+
+	Long checkFragmentProcessed(long idFragment, long primaryKey);
 }

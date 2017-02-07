@@ -31,6 +31,7 @@ import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewModuleFragmentVO;
 import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
@@ -970,6 +971,20 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(result).build();
+	}
+	
+	@POST
+	@Path(value = "/checkFragmentProcessed")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response checkFragmentProcessed(InterviewModuleFragmentVO vo) {
+		
+		Long id;
+		try {
+			id = service.checkFragmentProcessed(vo.getIdFragment(), vo.getInterviewPrimaryKey());
+		} catch (Throwable e) {
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(id).build();
 	}
 	
 	/**

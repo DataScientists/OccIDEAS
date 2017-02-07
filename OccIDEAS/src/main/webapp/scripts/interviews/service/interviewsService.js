@@ -482,6 +482,17 @@
 			return request.then(handleSuccess, handleError);
 		}
 		
+		function checkFragmentProcessed(fragment) {
+			var restUrl = 'web/rest/interview/checkFragmentProcessed'
+					
+			var request = $http({
+				method : 'POST',
+				url : restUrl,
+				data : fragment
+			})
+			return request.then(handleSuccess, handleError);
+		}
+		
 		function findQuestionsByNodeId(nodeId) {
 			var restUrl = 'web/rest/interviewquestionanswer/findQuestionsByNodeId?id='
 					+ nodeId;
@@ -549,7 +560,8 @@
 			checkQuestionAnswered:checkQuestionAnswered,
 			getExpandedModule:getExpandedModule,
 			getInterviewQuestionByQuestionId:getInterviewQuestionByQuestionId,
-			findQuestionsByNodeId:findQuestionsByNodeId
+			findQuestionsByNodeId:findQuestionsByNodeId,
+			checkFragmentProcessed:checkFragmentProcessed
 		};
 	}
 })();

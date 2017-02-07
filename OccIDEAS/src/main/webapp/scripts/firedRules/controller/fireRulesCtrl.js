@@ -386,6 +386,88 @@
         	noteIntZindex = 1050;
         };
         
+        $scope.highlightFragment = function(fragment){        	
+        	
+        	var expandDefer = $q.defer();
+        	var defer = $q.defer();
+        	var idNode = fragment.idFragment;
+        	var elementId = 'node-' + fragment.idFragment;
+        	
+        	//Check if fragment is processed
+        	InterviewsService.checkFragmentProcessed(fragment).then(function(response){
+        		if(response.status == '200'){
+        			
+        			var processedIdNode = response.data;
+        			
+        			if(processedIdNode == 0){
+        				console.log(fragment.idFragment +" not processed");
+        				expandDefer.resolve();
+        			}   
+        			else{
+        				idNode = processedIdNode;
+        				elementId = 'node-'+processedIdNode;
+        				console.log(processedIdNode +" processed");
+        				defer.resolve();
+        			}
+        		}        		
+        	});  
+        	
+        	defer.promise.then(function(){
+            	
+	        	var moduleDefer = $q.defer();        
+	        	var tempDefer = $q.defer(); 
+	        	
+	        	if ($('#' + idNode).length === 0) {        	
+	        		//Not loaded yet
+	        	
+	        		if($scope.linkedModule){
+	        			loadChildNode($scope.linkedModule.nodes, idNode, idNode, moduleDefer);
+	        		}      
+	        		
+	        		$scope.$watch(function() {
+	        			return document.getElementById(idNode) != null;
+					}, function() {
+						if(angular.element(document.getElementById(idNode)).scope()){	 
+							expandNode(angular.element(document.getElementById(idNode)).scope());
+							expandDefer.resolve();							
+	    				}   						    					
+					}); 		
+	        	}        	
+	        	else{
+	        		//Might be collapsed
+	        		var elementScope = angular.element(document.getElementById(idNode)).scope();
+	        		expandNode(elementScope);
+	        		expandDefer.resolve();
+	        	}        	
+        	});
+        	
+        	expandDefer.promise.then(function(){
+        		
+    			if ($('#'+elementId).length == 0) {
+    				$ngToast.create({
+        	    		  className: 'warning',
+        	    		  content: 'The node ' + idNode + ' does not exist.',
+        	    		  animation:'slide'
+        	    	 });
+    				return false;
+        		}
+        		else{        			
+        			$scope.scrollTo(elementId);		
+        			
+        			var temp = angular.element(document.getElementById(elementId)).scope();
+        			if(temp){
+        				
+                		$scope.toggleNode(temp.$modelValue, temp);
+                		temp.toggle();	
+        			}  
+        			
+        			$('#'+elementId).addClass('highlight-rulenode');        			
+        			//FIXME Hack to re-calculate correct offset().top value for the new element
+        			$scope.scrollTo(elementId);        			      			
+        		}
+        	});
+        }        
+        
         $scope.highlightNode = function(idNode, node){
         	
         	var expandDefer = $q.defer();
@@ -419,13 +501,13 @@
 	        		//Not loaded yet
 	        	
 	        		if($scope.linkedModule){
-	        			loadChildNode($scope.linkedModule.nodes, idNode, node, moduleDefer);
+	        			loadChildNode($scope.linkedModule.nodes, idNode, node.topNodeId, moduleDefer);
 	        		}        		
 	        		
 	        		moduleDefer.promise.then(function(){
 	        			if(node.topNodeId != $sessionStorage.activeIntro.value){
 	        				//Must be a fragment
-	        				loadChildNode($scope.linkedModule.nodes, idNode, node, tempDefer);
+	        				loadChildNode($scope.linkedModule.nodes, idNode, node.topNodeId, tempDefer);
 	        			}
 	        			else{
 	        				//Should be a module
@@ -470,23 +552,23 @@
         	});
         }
         
-        function loadChildNode(parentNode, idNode, sourceNode, defer){
+        function loadChildNode(parentNode, idNode, topNodeId, defer){
         	
         	for(var i = 0; i < parentNode.length; i++) {
         		node = parentNode[i];        		
         		
         		if ( node.type == "Q_linkedmodule" 
-        		|| ((node.type == "Q_linkedajsm" && node.link == sourceNode.topNodeId))){
+        		|| ((node.type == "Q_linkedajsm" && node.link == topNodeId))){
         			//Check if loaded 
         			
         			if(node.nodes == null || node.nodes.length == 0){
         				//Load module
-        				loadModule(node, sourceNode, idNode, defer);        				
+        				loadModule(node, topNodeId, idNode, defer);        				
         			}
         			else{
         				
         				if ((node.type == "Q_linkedmodule" && node.idNode == idNode)
-        				|| node.type == "Q_linkedajsm" && node.link == sourceNode.topNodeId){
+        				|| node.type == "Q_linkedajsm" && node.link == topNodeId){
         					defer.resolve();	    							
 							return true;
         				}        				
@@ -494,12 +576,12 @@
         		}
 	        	
         		if(node.nodes != null && node.nodes.length > 0){        			
-        			loadChildNode(node.nodes, idNode, sourceNode, defer);	
+        			loadChildNode(node.nodes, idNode, topNodeId, defer);	
         		}	        	
         	}
         }
         
-        function loadModule(node, sourceNode, idNode, defer){
+        function loadModule(node, topNodeId, idNode, defer){
         	
         	InterviewsService.getModuleForSubModule($scope.interviewId, 
 					node.link).then(function(response){
@@ -514,9 +596,9 @@
 					
 					safeDigest($scope.linkedModule);
 					
-					if(sourceNode.topNodeId != $sessionStorage.activeIntro.value 
+					if(topNodeId != $sessionStorage.activeIntro.value 
 						|| node.idNode == idNode 
-						|| node.link == sourceNode.topNodeId){
+						|| node.link == topNodeId){
 						
 						defer.resolve();	    							
 						return true;	

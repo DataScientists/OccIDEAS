@@ -220,4 +220,9 @@ public class InterviewServiceImpl implements InterviewService {
 	public Long getIntroModuleId(Long interviewId) {
 		return interviewQuestionDao.getIntroModuleId(interviewId);
 	}
+
+	@Override
+	public Long checkFragmentProcessed(long idFragment, long primaryKey) {
+		return interviewQuestionDao.checkFragmentProcessed(idFragment, primaryKey);
+	}
 }
