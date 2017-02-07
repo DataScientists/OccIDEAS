@@ -76,6 +76,18 @@
 				}
 			}
 		}).state({
+			name:'tabs.fragmentLinks',
+			url: '/fragmentLinks/',
+			sticky: true,
+		    deepStateRedirect: true,
+		    authenticate:true,
+			views:{
+				'fragmentLinks@tabs':{
+					templateUrl : "scripts/fragments/partials/fragmentLinkTable.html",
+					controller: 'FragmentCtrl as vm'
+				}
+			}
+		}).state({
 			name:'tabs.modules',
 			url: '/modules/',
 			sticky: false,

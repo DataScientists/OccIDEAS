@@ -449,6 +449,35 @@
 				}
 			});
 	    }
+
+        $scope.showLinkPopup = function(row) {
+        	$scope.fragmentLinkProgress = true;
+        	
+        	$mdDialog.show({
+				  scope: $scope.$new(),
+			      templateUrl: 'scripts/fragments/partials/fragmentLinkDialog.html',
+			      parent: angular.element(document.body),
+			      clickOutsideToClose:true
+			 });   
+        	
+        	FragmentsService.getFragmentParents(row.idNode).then(function(response){
+				if(response.status == 200){
+					$scope.fragmentLinkProgress = true;
+					if(response.data.length > 0){				
+						//Open tab
+						$scope.addFragmentsLinkTab(response.data);
+						$mdDialog.cancel();
+					}else{
+						console.log("No data to validate");
+						$mdDialog.cancel();
+					}
+				}
+				else{
+					$scope.fragmentLinkProgress = true;
+					console.log("getFragmentParents "+response.status);
+				}
+			});
+        };
 	}
 })();
 

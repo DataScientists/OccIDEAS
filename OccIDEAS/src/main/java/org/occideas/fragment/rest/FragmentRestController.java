@@ -1,7 +1,6 @@
 package org.occideas.fragment.rest;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -239,5 +238,26 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 
 	private void populateRules(List<ModuleRule> moduleRule, FragmentReportVO report) {
 		report.setTotalRules(moduleRule.size() + report.getTotalRules());
+	}
+	
+	/**
+	 * Get the fragment's parent link
+	 * @param id
+	 * @return
+	 */
+	@GET
+	@Path(value = "/getFragmentParents")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getFragmentParents(@QueryParam("id") Long id){
+		
+		List<FragmentVO> fragments;
+		try {
+			fragments = service.getFragmentParents(id);
+					
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(fragments).build();
 	}
 }

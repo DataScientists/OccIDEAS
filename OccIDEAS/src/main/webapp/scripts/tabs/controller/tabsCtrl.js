@@ -323,6 +323,23 @@
             safeDigest($rootScope.tabsLoading);
         };
         
+        $scope.addFragmentsLinkTab = function(response) {
+            tabs.push({
+                title: "Fragment Links",
+                viewName: 'fragmentLinks@tabs',
+                canClose: true,
+                disabled: false
+            });
+            $scope.tabOptions.push({
+                state: "tabs.fragmentLinks",
+                data: {
+                	row:response
+                }
+            });
+            $scope.linkData = response;
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
+        };
         $scope.addImportJsonValidationTab = function(report) {
             tabs.push({
                 title: "Validation Report (Import JSON)",

@@ -33,4 +33,6 @@ public interface FragmentService extends BaseService<FragmentVO> {
 	List<FragmentVO> getFilterStudyAgents(Long id, Long idAgent);
 
 	List<Fragment> getAllFragments();
+
+	List<FragmentVO> getFragmentParents(Long id);
 }

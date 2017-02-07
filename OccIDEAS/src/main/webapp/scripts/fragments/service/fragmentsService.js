@@ -144,6 +144,17 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+		
+		function getFragmentParents(idNode){
+			var restUrl = 'web/rest/fragment/getFragmentParents?id=' 
+				+ idNode;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
 
 		return {		  
 			checkExists: checkExists,
@@ -159,7 +170,8 @@
 		    getLinkingNodes:getLinkingNodes,
 		    getFilterStudyAgents:getFilterStudyAgents,
 		    getFilterAgents:getFilterAgents,
-		    getAllFragmentsReport:getAllFragmentsReport
+		    getAllFragmentsReport:getAllFragmentsReport,
+		    getFragmentParents:getFragmentParents
 		};
 		function handleError( response ) {
             if (

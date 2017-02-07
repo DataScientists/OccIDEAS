@@ -94,6 +94,10 @@
 					 ng-if="!row.isEditing && $storage.langEnabled">
 					 <span class="glyphicon glyphicon-flag"></span>
 				</button>
+				<button ng-if="!vm.isDeleting && !row.isEditing" class="btn btn-default btn-sm"
+					ng-click="showLinkPopup(row)" ng-if="!row.isEditing">
+					<span class="glyphicon glyphicon-link"></span>
+				</button>
 			</td>
         </tr>
     </tbody>

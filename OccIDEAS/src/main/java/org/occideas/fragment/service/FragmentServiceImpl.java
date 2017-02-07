@@ -176,4 +176,9 @@ public class FragmentServiceImpl implements FragmentService {
 	public List<Fragment> getAllFragments() {
 		return dao.getAll(true);
 	}
+
+	@Override
+	public List<FragmentVO> getFragmentParents(Long id) {
+		return mapper.convertToFragmentVOList(dao.getFragmentParents(id), false);
+	}
 }
