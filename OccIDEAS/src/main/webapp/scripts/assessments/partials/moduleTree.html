@@ -1,5 +1,8 @@
-<div ng-if="!linkedModule.nodes || linkedModule.nodes.length == 0">
+<div ng-if="(!linkedModule.nodes || linkedModule.nodes.length == 0) && !loadingTree">
 	No questions to be displayed
+</div>
+<div ng-if="!linkedModule.nodes && loadingTree">
+	Loading tree...
 </div>
 <div ng-if="linkedModule.nodes && linkedModule.nodes.length != 0" class="row " prog_tree>
 	<div class="col-sm-12">

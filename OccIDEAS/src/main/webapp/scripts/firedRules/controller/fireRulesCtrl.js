@@ -5,10 +5,10 @@
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
-	                           '$q','$sessionStorage','moduleName'];
+	                           '$q','$sessionStorage','moduleName','$rootScope'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
-			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService,$q, $sessionStorage,moduleName) {
+			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService,$q, $sessionStorage,moduleName,$rootScope) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -17,6 +17,7 @@
 		vm.answersDisplayed = false;
 		$scope.data = data;
 		$scope.moduleName = moduleName;
+		$scope.loadingTree = true;
 		$scope.openAnswerSummary = function(node){
 			$scope.openAnswerSummaryTab(node,$scope.moduleName,$scope.interviewId);
 		}
@@ -252,15 +253,29 @@
 			
 			InterviewsService.getModuleForInterview($scope.interviewId).then(function(response){
 				if(response.status == '200' && response.data && response.data[0]){
+					$scope.loadingTree = false;
 					$scope.linkedModule = response.data[0];
 					addHeader($scope.linkedModule.nodes);					
-				}				
+				}
+				else{
+					$scope.loadingTree = false;
+				}
 			});
 		}
 		
 		function addHeader(nodes){
 			
 			_.each(nodes, function(node) {
+				
+				  if(node.nodes){
+					  var temp = node.nodes[0];
+					  
+					  if (temp && temp.name == "Ignore")
+					  {
+						  node.nodes = temp.nodes;
+					  }
+				  }
+				  
 				  var linkNode = _.find($scope.interview.questionHistory,function(qnode){
 					  var retValue = false;
 					  if(qnode.link){

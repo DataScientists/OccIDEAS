@@ -168,6 +168,9 @@
 <div id="interview-wrapper-{{interviewId}}">
 &nbsp;
 </div>
+<div ng-if="linkedModule.nodes" role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
+	<button type="button" ng-click='expandAll()' class="btn btn-default"> Expand All</button>
+</div>
 <div class="row">
   <div class="col-md-8" id="interview-question-list">
   <ng-include src="'scripts/assessments/partials/moduleTree.html'"></ng-include>
