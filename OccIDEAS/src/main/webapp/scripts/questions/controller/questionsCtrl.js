@@ -1592,21 +1592,35 @@
 				} 
 			  ],
 			  [ 'Export to PDF', function($itemScope) {
-//				  var pdf = new jsPDF('p','mm','a4');
-//                  pdf.addHTML($("div#tree-root")[0], {pagesplit: true}, function() {
-//                      pdf.save($itemScope.$modelValue.name + '.pdf');
-//                  });
-//                  pdf.save($itemScope.$modelValue.name + '.pdf');
-//                  
-                  var pdf = new jsPDF('p', 'pt', 'a4');
+				  
+				  		var doc = new jsPDF('p', 'pt', 'a4');
+				  		var options = {
+						    background: '#fff',
+						    pagesplit: true
+						};
+				  		// get node count
+				  		totalNodeCount = 0
+				  		var count = $(".tree-node").length;
+				  		if(count > 250){
+				  			// shrink nodes
+				  			$(".tree-node").css({'font-size':'8px'});
+				  			$(".tree-node").css({'height':'50px'});
+				  			$(".badge").css({'font-size':'8px'});
+				  		}
+				  		var loc = $("#tree-root").get(0);
+//				  		loc.style.height = '30000px';
+						doc.addHTML(loc, 0, 0, options, function () {
+						        doc.save($itemScope.$modelValue.name + '.pdf');
+						        $(".tree-node").css({'font-size':'14px'});
+					  			$(".tree-node").css({'height':'auto'});
+					  			$(".badge").css({'font-size':'12px'});
+						});
+				  		
+//				  var pdf = new jsPDF('p', 'pt', 'b2');
 //            	  pdf.canvas.height = 72 * 11;
 //            	  pdf.canvas.width = 72 * 8.5;
-            	  var origWidth = $("div#tree-root")[0].style.width;
-            	  $("div#tree-root")[0].style.width = 400 + 'px';
-            	  html2pdf($("div#tree-root")[0], pdf, function(pdf){
-            		  pdf.save($itemScope.$modelValue.name + '.pdf');
-            		  $("div#tree-root")[0].style.width = origWidth;
-            	  });
+//            	  var count = 0;
+//            	  printPdf(data[0],pdf,count,$itemScope.$modelValue.name);
               }
 			  ],
 			  ['Set Active Intro Module',function($itemScope){
@@ -2918,5 +2932,149 @@
 //    	    });
 //    	    return res;
     	}
+       
+       var rootChildNodes = undefined;
+       var rootIndex = 0;
+       var count = 0;
+       function printPdf(node,pdf,count,name){
+    	   var loc = $("#node-"+node.idNode);
+		   count = 0;
+		   rootChildNodes = node.nodes;
+		   rootIndex = 0;
+		   processedPdfNode = [];
+		   var endNode = getLastNode(node);
+           printChildNode(node,pdf,count,endNode.idNode,name);   
+       }
+       
+       var deepChildNode = undefined;
+	   var deepChildNodeIndex = 0;
+	   var processedPdfNode = [];
+       function printChildNode(node,pdf,count,endNode,name,lastChildNode,
+    		   rootChildNodes,rootIndex,deepChildNode,deepChildNodeIndex){
+    	   var loc = $("#node-"+node.idNode).get(0);
+    	   if(node.nodes.length > 0){
+    		   var ln = getLastNode(node);
+    	   }
+    	   var lastChildNode = lastChildNode;
+    	   if(ln){
+    		   lastChildNode = ln.idNode;  
+    	   }
+    	   if(processedPdfNode.indexOf(node.idNode) > -1 && node.parentId){
+    		   	var parentNode = findNodeById(node.parentId,data[0]);
+				var unprocessedFound = false;
+    		   	for(var i = 0;i < parentNode.nodes.length;i++){
+					if(processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1){
+					  unprocessedFound = true;
+					  return printChildNode(parentNode.nodes[i],pdf,
+     						  count,endNode,name,lastChildNode,
+     						  rootChildNodes,rootIndex,
+     						  deepChildNode,deepChildNodeIndex)
+     				  break;
+					 }
+				}
+    		   	if(!unprocessedFound){
+    		   		return printChildNode(parentNode,pdf,
+   						  count,endNode,name,lastChildNode,
+   						  rootChildNodes,rootIndex,
+   						  deepChildNode,deepChildNodeIndex)
+    		   	}
+		   }
+    	   html2pdf(loc, pdf, function(pdf){
+    		  var elementId = 'node-'+node.idNode;
+    		  processedPdfNode.push(node.idNode);
+    		  console.log(processedPdfNode[processedPdfNode.length - 1]);
+    		  count = count + 1;
+//    		  if(endNode == node.idNode){
+//    			  pdf.save(name + '.pdf');
+//    			  return;
+//    		  }
+//    		  if(count % 30 == 0){
+//    			  pdf.addPage();
+//    		  }
+    		  if(count % 35 == 0){
+    			  _.each(processedPdfNode,function(idNode){
+    				  $("#node-"+idNode).hide();
+    			  });
+    			  pdf.addPage();
+    		  }
+    		  if(endNode == node.idNode){
+    			  pdf.save(name + '.pdf');
+    			  return;
+    		  }
+    		  if(node.idNode == data[0].idNode){
+				  if(node.nodes.length > 0){
+					  rootChildNodes = node.nodes;
+					  return printChildNode(node.nodes[0],pdf,
+							  count,endNode,name,lastChildNode,
+							  rootChildNodes,0,
+							  deepChildNode,deepChildNodeIndex);
+				  }
+			  }
+    		  else if(node.idNode == lastChildNode){
+    				  //get parent
+    				  var parentNode = findNodeById(node.parentId,data[0]);
+    				  var unprocessedFound = false;
+    				  for(var i = 0;i < parentNode.nodes.length;i++){
+    					  if(processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1){
+    						  unprocessedFound = true;
+    						  return printChildNode(parentNode.nodes[i],pdf,
+            						  count,endNode,name,lastChildNode,
+            						  rootChildNodes,rootIndex,
+            						  deepChildNode,deepChildNodeIndex)
+            				  break;
+    					  }
+    				  }
+    				  if(!unprocessedFound){
+    	    		   		return printChildNode(parentNode,pdf,
+    	   						  count,endNode,name,lastChildNode,
+    	   						  rootChildNodes,rootIndex,
+    	   						  deepChildNode,deepChildNodeIndex)
+    	    		  }
+    				  
+			  }else if(node.nodes.length > 0){
+    			  //check if node has child nodes
+				  var deepChildNode = node.nodes;
+				  var deepChildNodeIndex = 0;
+				  return printChildNode(node.nodes[0],pdf,
+						  count,endNode,name,lastChildNode,
+						  rootChildNodes,rootIndex,
+						  deepChildNode,deepChildNodeIndex);
+        	  }else{
+        		  var parentNode = findNodeById(node.parentId,data[0]);
+  				var unprocessedFound = false;
+      		   	for(var i = 0;i < parentNode.nodes.length;i++){
+  					if(processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1){
+  					  unprocessedFound = true;
+  					  return printChildNode(parentNode.nodes[i],pdf,
+       						  count,endNode,name,lastChildNode,
+       						  rootChildNodes,rootIndex,
+       						  deepChildNode,deepChildNodeIndex)
+       				  break;
+  					 }
+  				}
+      		   	if(!unprocessedFound){
+      		   		return printChildNode(parentNode,pdf,
+     						  count,endNode,name,lastChildNode,
+     						  rootChildNodes,rootIndex,
+     						  deepChildNode,deepChildNodeIndex)
+      		   	}
+        	  }
+     	   });
+       }
+       
+       function getLastNode(node){
+    	   if(node.nodes){
+    		   //get last child node
+    		   var lastNode = node.nodes[node.nodes.length - 1];
+    		   if(lastNode.nodes.length > 0){
+    			   return getLastNode(lastNode);
+    		   }else{
+    			   return lastNode;
+    		   }
+    	   }else{
+    		   return node;
+    	   }
+       }
+       
 	}
 })();
