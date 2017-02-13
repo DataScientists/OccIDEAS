@@ -1200,6 +1200,42 @@
 				this.$apply(fn);
 			}
 		};
+		
+		$scope.expandAll = function() {
+			
+			if($scope.linkedModule){
+				$scope.loadingTree = true;
+				
+				InterviewsService.getExpandedModule($scope.interviewId).then(function(response){
+					if(response.status == '200' && response.data && response.data[0]){
+						$scope.loadingTree = false;
+						$scope.linkedModule = response.data[0];
+						addHeader($scope.linkedModule.nodes);		
+						
+						if(document.getElementById('tree-root')){	
+							//Expand all
+							console.log("Expand all tree");
+							var scope = angular.element(document.getElementById('tree-root')).scope();
+							
+							$timeout(function(){
+								$scope.$broadcast('angular-ui-tree:expand-all');
+							}, 200);							
+						}
+						
+						$scope.cancel();
+					}	
+					else{
+						$scope.loadingTree = false;
+					}
+				});	
+			}
+			
+			$mdDialog.show({
+				scope : $scope.$new(),
+				templateUrl : 'scripts/assessments/partials/expandAllDialog.html',
+				clickOutsideToClose:false
+			});
+		}
 	}
 
 })();
