@@ -1,5 +1,6 @@
 package org.occideas.interviewquestion.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -7,17 +8,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
 import org.occideas.entity.InterviewQuestion;
-import org.occideas.entity.Node;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
@@ -54,6 +53,16 @@ public class InterviewQuestionDao {
 			+ "from Interview_Question a, Interview_Question b "
 			+ "where a.question_id>0 and a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) ";
 		
+	private final String PROCESSED_FRAGMENT = 	
+			"select idNode from Node a, "
+		   + " (select if(parentModuleId > 0, parentModuleId, parentAnswerId) as parentModuleId"
+		   + " from Interview_Question where id = :id"
+		   + " and isProcessed = 1"
+		   + " ) b"			  
+		   + " where (a.topNodeId = b.parentModuleId"		   
+		   + " or a.parent_idNode = b.parentModuleId)"
+		   + " and a.link = :link";
+	
 	@SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){
 		System.out.println("Start getUniqueInterviewQuestions:"+new Date());
@@ -255,22 +264,14 @@ public class InterviewQuestionDao {
 	}
 
 	public Long checkFragmentProcessed(long link, long id) {
-
-		final Session session = sessionFactory.getCurrentSession();
-
-		DetachedCriteria subQuery = DetachedCriteria.forClass(InterviewQuestion.class)
-				.setProjection(Projections.property("parentModuleId"))
-				.add(Restrictions.eq("id", Long.valueOf(id)))				
-				.add(Restrictions.eq("isProcessed", true));
-		subQuery.getExecutableCriteria(session).setMaxResults(1);		
 		
-		final Criteria crit = session.createCriteria(Node.class, "a")
-				.setProjection(Projections.property("idNode"))
-				.add(Restrictions.eq("link", Long.valueOf(link)))
-				.setMaxResults(1);
-				
-		crit.add(Property.forName("a.topNodeId").eq(subQuery));		
-
-		return (Long) crit.uniqueResult();
+		final Session session = sessionFactory.getCurrentSession();
+		Query sqlQuery = session.createSQLQuery(PROCESSED_FRAGMENT);
+		sqlQuery.setParameter("id", id);
+		sqlQuery.setParameter("link", link);
+		
+		Object result = sqlQuery.uniqueResult();
+		
+		return (result != null) ? ((BigInteger) result).longValue() : 0l;
 	}
 }
