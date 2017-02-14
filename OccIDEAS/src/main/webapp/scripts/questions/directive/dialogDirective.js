@@ -70,7 +70,7 @@ function firedRuleDialog(element,$itemScope,$compile,interviewId) {
 	angular.element(tpl).zIndex(++noteIntZindex);
 	
 	var maxDialogNum = 5;
-	var leftPoint = 850;
+	var leftPoint = 965;
 	var zFactor = 1050;
 	var topPoint = ((noteIntZindex-zFactor)*100) + 50;
 	var temp = noteIntZindex-zFactor;
