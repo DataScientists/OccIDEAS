@@ -14,17 +14,14 @@
 			return request.then(handleSuccess1,handleError);
 		}
     	
-    	function getAnswerSummaryByName(name,answerId) {
-			var restUrl = 'web/rest/assessment/getAnswerSummaryByName?name=' + name+"&answerId="+answerId;
+    	function getAnswerSummaryByName(answerSummaryFilter) {
+			var restUrl = 'web/rest/assessment/getAnswerSummaryByName';
 			var request =  $http({
 				  method: 'POST',
 				  url: restUrl,
-				  data:{
-					  name:name,
-					  answerId:answerId
-				  }
+				  data:answerSummaryFilter
 				})
-			return request.then(handleSuccess1,handleError);
+			return request.then(handleSuccess,handleError);
 		}
     	
     	function getInterviews() {

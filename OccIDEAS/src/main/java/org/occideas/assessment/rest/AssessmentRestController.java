@@ -18,11 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -35,7 +33,6 @@ import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.InterviewQuestion;
-import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.entity.Rule;
@@ -51,9 +48,11 @@ import org.occideas.utilities.QuestionComparator;
 import org.occideas.utilities.ReportsEnum;
 import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.vo.AgentVO;
+import org.occideas.vo.AssessmentAnswerSummaryFilterVO;
 import org.occideas.vo.ExportCSVVO;
 import org.occideas.vo.FilterModuleVO;
 import org.occideas.vo.NodeVO;
+import org.occideas.vo.PageVO;
 import org.occideas.vo.ReportHistoryVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1087,11 +1086,10 @@ public class AssessmentRestController {
 	@POST
 	@Path(value="/getAnswerSummaryByName")
 	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
-	public Response getAnswerSummaryByName(AssessmentAnswerSummary answerSummary){
-		List<AssessmentAnswerSummary> list = null;
+	public Response getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter){
+		PageVO<AssessmentAnswerSummary> list = null;
 		try{
-			list = assessmentService.getAnswerSummaryByName(answerSummary.getAnswerId(), 
-					answerSummary.getName());
+			list = assessmentService.getAnswerSummaryByName(filter);
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

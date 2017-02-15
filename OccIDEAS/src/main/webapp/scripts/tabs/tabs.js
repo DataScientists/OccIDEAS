@@ -743,17 +743,17 @@
                     controller: 'AnswerSummaryCtrl as vm',
                     params:{data: null},
                     resolve:{
-                        data: function($stateParams,AssessmentsService) {
-			        		return AssessmentsService.getAnswerSummaryByName($stateParams.data.name,$stateParams.data.answerId)
-			        				.then(function(response){
-			        					return response;
-		    				});
-			        	},
 			        	name: function($stateParams){
 			        		return $stateParams.data.moduleName;
 			        	},
 			        	interviewId: function($stateParams){
 			        		return $stateParams.data.interviewId;
+			        	},
+			        	answerId:function($stateParams){
+			        		return $stateParams.data.answerId;
+			        	},
+			        	answerName:function($stateParams){
+			        		return $stateParams.data.name;
 			        	}
 			     }
                 }

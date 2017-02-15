@@ -1,12 +1,12 @@
 package org.occideas.assessment.service;
 
-import java.util.List;
-
 import org.occideas.entity.AssessmentAnswerSummary;
+import org.occideas.vo.AssessmentAnswerSummaryFilterVO;
+import org.occideas.vo.PageVO;
 
 public interface AssessmentService {
 
-	List<AssessmentAnswerSummary> getAnswerSummaryByName(Long answerId, String name);
+	PageVO<AssessmentAnswerSummary> getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter);
 	
 	
 }
