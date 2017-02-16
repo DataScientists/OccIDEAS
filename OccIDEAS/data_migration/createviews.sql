@@ -80,10 +80,12 @@ CREATE VIEW AssessmentAnswerSummary AS
 SELECT concat(p.idParticipant, ':',p.reference, ':',i.idinterview, ':',ia.answerId)  
 as primaryKey,
 p.idParticipant,p.reference,i.idinterview,ia.answerId,ia.name
-,ia.answerFreetext,ia.type,p.status,i.assessedStatus
+,ia.answerFreetext,ia.type,p.status,i.assessedStatus,im.interviewModuleName
 from Interview i,Participant p,
-Interview_Answer ia
+Interview_Answer ia,InterviewIntroModule_Module im
 where i.idinterview = ia.idinterview
+and i.idinterview = im.interviewId
 and i.idParticipant = p.idParticipant 
 and p.deleted = 0
-and ia.deleted = 0;
+and ia.deleted = 0
+and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1);

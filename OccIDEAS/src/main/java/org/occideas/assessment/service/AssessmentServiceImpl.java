@@ -29,5 +29,7 @@ public class AssessmentServiceImpl implements AssessmentService{
 		page.setTotalSize(dao.getAnswerSummaryByNameTotalCount(filter).intValue());
 		return page;
 	}
+	
+	
 
 }

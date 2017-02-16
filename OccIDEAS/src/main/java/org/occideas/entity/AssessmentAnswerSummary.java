@@ -30,6 +30,7 @@ public class AssessmentAnswerSummary implements Serializable {
 	private String type;
 	private int status;
 	private String assessedStatus;
+	private String interviewModuleName;
 	private transient String statusDescription;
 
 	public String getPrimaryKey() {
@@ -126,6 +127,14 @@ public class AssessmentAnswerSummary implements Serializable {
 
 	public void setAssessedStatus(String assessedStatus) {
 		this.assessedStatus = assessedStatus;
+	}
+
+	public String getInterviewModuleName() {
+		return interviewModuleName;
+	}
+
+	public void setInterviewModuleName(String interviewModuleName) {
+		this.interviewModuleName = interviewModuleName;
 	}
 
 }

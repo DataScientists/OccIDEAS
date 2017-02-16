@@ -32,6 +32,9 @@ public class AssessmentDao implements IAssessmentDao{
 		if(filter.getName() != null){
 			crit.add(Restrictions.eq("name", filter.getName()));
 		}
+		if(filter.getModuleName() != null){
+			crit.add(Restrictions.eq("interviewModuleName", filter.getModuleName()));
+		}
 		crit.setFirstResult(pageUtil.calculatePageIndex(filter.getPageNumber(), 
 				filter.getSize()));
 		crit.setMaxResults(filter.getSize());
