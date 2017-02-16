@@ -22,8 +22,9 @@
 							translate | displayFlag:as:storage}}"></i>
 							<span class="badge">{{as.number}}</span>
 						</div>
-						<span>{{as.answerFreetext?as.answerFreetext:as.name |
+						<span ng-if="storage.langEnabled">{{as.answerFreetext?as.answerFreetext:as.name | lowercase |
 							translate}} </span>
+						<span ng-if="!storage.langEnabled">{{as.answerFreetext?as.answerFreetext:as.name}} </span>
 					</div>
 				</div>
 			</div>
@@ -32,7 +33,8 @@
 			<ul id="interviewing-{{interview.showedQuestion.idNode}}"
 				ng-if="interviewStarted">
 				<md-toolbar>
-					<span>{{interview.showedQuestion.name | translate}} </span> 
+					<span ng-if="storage.langEnabled">{{interview.showedQuestion.name | lowercase | translate}}</span>
+					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span> 
 					<md-button id="numId" event-focus> 
 					<i ng-if="storage.langEnabled" class="glyphicon {{interview.showedQuestion.name | lowercase |
 							translate | displayFlag:interview.showedQuestion:storage}}"></i>
@@ -52,9 +54,11 @@
 								ng-model="node.isSelected"
 								ng-click="multiToggle(node, multiSelected)" class="green"
 								select-free-text-on-click> <span
-								ng-if="node.type!='P_freetext'"><i ng-if="node.type!='P_freetext' && storage.langEnabled" 
+								ng-if="node.type!='P_freetext' && storage.langEnabled"><i ng-if="node.type!='P_freetext' && storage.langEnabled" 
 							class="glyphicon {{node.name | lowercase | translate 
-							| displayFlag:node:storage}}"></i>{{node.name | translate}}</span>
+							| displayFlag:node:storage}}"></i>{{node.name | lowercase | translate}}</span>
+							<span
+								ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
 							<md-input-container ng-if="node.type=='P_freetext'" md-no-float
 								class="md-block"> <label>Free Text</label>
 							<input style="width: 270px;" ng-model="node.name"
@@ -119,8 +123,11 @@
 									<i style="margin-right:2px;" ng-if="node.type!='P_freetext' && storage.langEnabled" 
 							class="glyphicon {{node.name | lowercase |
 							translate | displayFlag:node:storage}}"></i><span
-									ng-if="node.type!='P_freetext'">{{node.name |
-									translate}}</span><md-input-container ng-if="node.type=='P_freetext'"
+									ng-if="node.type!='P_freetext' && storage.langEnabled">{{node.name | lowercase |
+									translate}}</span>
+									<span
+									ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
+									<md-input-container ng-if="node.type=='P_freetext'"
 									md-no-float class="md-block"> <label>Free
 									Text</label> <input style="width: 270px;" ng-model="node.name">
 								</md-input-container> </md-radio-button>
@@ -233,9 +240,12 @@
 						ng-click="showEditQuestionPrompt($event,element)"
 						class="glyphicon glyphicon-edit"
 						style="margin-top: 5px; margin-left: 2px;" aria-hidden="true"></span>
-					<span id="{{'IntResult'+element.idNode}}" data-toggle="tooltip"
+					<span ng-if="storage.langEnabled" id="{{'IntResult'+element.idNode}}" data-toggle="tooltip"
 						data-placement="bottom" title="{{ element.name }}">{{
-						element.name | translate}}</span>
+						element.name | lowercase | translate}}</span>
+					<span ng-if="!storage.langEnabled" id="{{'IntResult'+element.idNode}}" data-toggle="tooltip"
+						data-placement="bottom" title="{{ element.name }}">{{
+						element.name}}</span>
 				</div>
 				<!-- 			show answers -->
 				<div class="tree-node-content P_interviewresult"
@@ -251,9 +261,12 @@
 							{{as.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}} </span>
 					</div>
 					<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip"
-						data-placement="bottom"
-						title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext
+						data-placement="bottom" ng-if="storage.langEnabled"
+						title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext | lowercase
 						| translate}} </span>
+					<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip"
+						data-placement="bottom" ng-if="!storage.langEnabled"
+						title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext}} </span>
 				</div>
 			</div>		
 		</div>	
