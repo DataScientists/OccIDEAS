@@ -69,8 +69,14 @@ function firedRuleDialog(element,$itemScope,$compile,interviewId) {
 	var tpl = $compile(angular.element("#interview-template").html())($itemScope);
 	angular.element(tpl).zIndex(++noteIntZindex);
 	
+	var wrapper = document.getElementById("assessmentWrapper");
 	var maxDialogNum = 5;
 	var leftPoint = 965;
+	
+	if(wrapper != null){
+		var position = wrapper.getBoundingClientRect();
+		leftPoint = position.right + 5;
+	}
 	var zFactor = 1050;
 	var topPoint = ((noteIntZindex-zFactor)*100) + 50;
 	var temp = noteIntZindex-zFactor;
