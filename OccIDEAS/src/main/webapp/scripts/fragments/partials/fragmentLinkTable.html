@@ -19,7 +19,9 @@
 							ng-click="addModuleTab(item)">{{item.idNode}}</a>
 						</td>
 						<td>{{item.name}}</td>
-						<td>{{item.number}}</td>
+						<td><a style="cursor: pointer;" href
+							ng-click="addModuleTab(item, item.originalId)">{{item.number}}</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>

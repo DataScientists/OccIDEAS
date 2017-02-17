@@ -391,7 +391,7 @@
             safeDigest($rootScope.tabsLoading);
             $stickyState.reset(state);
         };
-        $scope.addModuleTab = function(row) {
+        $scope.addModuleTab = function(row, scrollTo) {
             var state = "tabs.questions";
             if (!checkIfTabIsOpen(tabs, row.name)) {
                 tabs.push({
@@ -404,7 +404,8 @@
                     state: state,
                     data: {
                         row: row.idNode,
-                        lang:null
+                        lang:null,
+                        scrollTo:scrollTo
                     }
                 });
             }

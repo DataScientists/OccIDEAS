@@ -235,7 +235,7 @@
 			}
 		}).state( {
 			name:'tabs.questions',
-			url: '/questions/:row/:lang',
+			url: '/questions/:row/:lang/:scrollTo',
 			sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
@@ -276,6 +276,10 @@
 			        },
 			        lang: function($stateParams) {
 			        	return '';
+			        },
+			        scrollTo:function($stateParams) {
+			        	console.log($stateParams);
+			        	return $stateParams.scrollTo;
 			        }
 			     }
 			}
@@ -318,6 +322,9 @@
 			        },
 			        lang:function($stateParams) {
 			        	return '';
+			        },
+			        scrollTo:function($stateParams) {
+			        	return 0;
 			        }
 			       }
 			    }
@@ -365,6 +372,9 @@
 			        },
 			        lang: function($stateParams) {
 			        	return '';
+			        },
+			        scrollTo:function($stateParams) {
+			        	return 0;
 			        }
 				}
 				}
@@ -686,7 +696,10 @@
 			        			}
 			        			return '';
 			        		});
-			        	}
+			        	},
+			        	scrollTo:function($stateParams) {
+				        	return 0;
+				        }
 			     }
 			}
 			}
@@ -726,7 +739,10 @@
 			        			}
 			        			return '';
 			        		});
-			        	}
+			        	},
+			        	scrollTo:function($stateParams) {
+				        	return 0;
+				        }
 			     }
 			}
 			}

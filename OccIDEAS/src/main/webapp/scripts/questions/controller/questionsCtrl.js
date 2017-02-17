@@ -9,14 +9,14 @@
 	                          '$rootScope','ModuleRuleService','$log','$timeout', 
 	                          'AuthenticationService','$document','InterviewsService',
 	                          'SystemPropertyService','ngToast','$translate',
-	                          'NodeLanguageService','$sessionStorage','lang'];
+	                          'NodeLanguageService','$sessionStorage','lang', 'scrollTo'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
 			ModuleRuleService,$log,$timeout, auth,$document,InterviewsService,
 			SystemPropertyService,ngToast,$translate,
-			NodeLanguageService,$sessionStorage,lang) {
+			NodeLanguageService,$sessionStorage,lang, scrollTo) {
 		var self = this;
 		self.lang = lang;
 		if(self.lang){
@@ -25,6 +25,20 @@
 			self.translateNode = true;
 			self.editTranslateNode = true;
 			$scope.selectedLanguage = self.lang;
+		}
+		
+		if(scrollTo > 0){
+			$scope.$watch(function() {
+				return $('#node-'+scrollTo).offset() != null 
+					&& $('#node-'+scrollTo).offset().top
+			}, function() {		
+				if(!$('#'+scrollTo).hasClass('highlight-rulenode')
+				&& $('#node-'+scrollTo).offset() != null 
+				&& $('#node-'+scrollTo).offset().top != 0){						
+					$('#'+scrollTo).addClass('highlight-rulenode');  						
+					$scope.scrollTo('node-'+scrollTo);
+				}
+			}); 
 		}
 		
 		if(self.lang){

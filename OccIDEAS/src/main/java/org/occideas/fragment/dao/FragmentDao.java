@@ -24,9 +24,10 @@ public class FragmentDao {
 	private SessionFactory sessionFactory;
 	
 	private final String FRAGMENT_PARENT = 
-			"select a.number, a.parent_idNode as idNode, " +
+			"select a.number, a.parent_idNode, " +
 			" (select name from Node where idNode = a.topNodeId) as name," +
-			" (select topNodeId from Node where idNode = a.parent_IdNode) as topNodeId" +
+			" (select topNodeId from Node where idNode = a.parent_IdNode) as topNodeId," +
+			" idNode" +
 			" from Node a"+
 			" where link = :link order by name";
 	
@@ -128,6 +129,7 @@ public class FragmentDao {
 		    	fragment.setIdNode(((BigInteger)row[1]).longValue());		    
 		    }
 		    fragment.setName((String)row[2]);
+		    fragment.setOriginalId(((BigInteger)row[4]).longValue());
 		    fragments.add(fragment);
 		}		
 		
