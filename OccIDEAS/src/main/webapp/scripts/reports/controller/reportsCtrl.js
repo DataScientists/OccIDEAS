@@ -28,6 +28,30 @@
 	        });
 		}
 		
+		$scope.downloadLookup = function(reportHistoryVO){
+			ReportsService.downloadLookup(reportHistoryVO).then(function(response){
+				var data = response.data;
+				if(response.status == '200'){
+					
+					csvData = new Blob([data], { type: 'text/csv' }); 
+					var csvUrl = URL.createObjectURL(csvData);
+					
+					var anchor = angular.element('<a/>');
+				     anchor.attr({
+				         href: csvUrl,
+				         target: '_blank',
+				         download: reportHistoryVO.name.substring(0, reportHistoryVO.name.length-4)+"-Link.csv"
+				     })[0].click();
+				}
+				else{
+					ngToast.create({
+			    		  className: 'danger',
+			    		  content: "File not available."
+			    	 });
+				}
+			});
+		}
+		
 		$scope.downloadReport = function(reportHistoryVO){
 			ReportsService.downloadReport(reportHistoryVO).then(function(response){
 				var data = response.data;
@@ -42,6 +66,12 @@
 				         target: '_blank',
 				         download: reportHistoryVO.name
 				     })[0].click();
+				}
+				else{
+					ngToast.create({
+			    		  className: 'danger',
+			    		  content: "File not available."
+			    	 });
 				}
 			});
 		};

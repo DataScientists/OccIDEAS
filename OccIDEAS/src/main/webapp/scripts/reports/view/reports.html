@@ -56,6 +56,14 @@
 					ng-click="downloadReport(reports)">
 					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 				</button> 
+				<button type="button"
+				    ng-if="reports.type != 'Module JSON (Export)'" 
+					class="btn btn-default"
+					aria-label="Left Align"
+					ng-disabled="reports.status != 'Completed'"
+					ng-click="downloadLookup(reports)">
+					<span class="glyphicon glyphicon-book" title="Lookup" aria-hidden="true"></span>
+				</button> 
 			</td>
 			<td title="'Delete'">
 				<button class="btn btn-danger btn-sm" ng-click="del(reports)"

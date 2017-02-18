@@ -118,4 +118,23 @@ public class ReportHistoryRestController {
 		return Response.ok().build();
 	}
 	
+	@Path(value="/downloadLookup")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+	@Produces({ "application/csv"})
+	public Response downloadLookup(ReportHistoryVO vo) throws IOException {
+		
+		String pathStr = vo.getPath().substring(0, vo.getPath().length()-4).concat("-Lookup.csv");
+		//String newName = vo.getName().substring(0, vo.getName().length()-4).concat("-Lookup.csv");
+		java.nio.file.Path path = Paths.get(pathStr);
+		if(path.toFile().exists()){
+			return Response.ok(getOut(Files.readAllBytes(path),pathStr), 
+					javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM)
+					.header("content-disposition","attachment; filename = "+vo.getName())
+	                .build();
+		}
+		
+		return Response.status(Status.NO_CONTENT).type("text/plain").build();
+	}
+	
 }

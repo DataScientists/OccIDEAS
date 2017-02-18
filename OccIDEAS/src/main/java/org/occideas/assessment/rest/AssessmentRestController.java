@@ -160,12 +160,52 @@ public class AssessmentRestController {
 				String[] answers = Arrays.copyOf(value.toArray(), value.toArray().length, String[].class);
 				writer.writeNext(answers);
 			}
-			writer.close();			
+			writer.close();
+			
+			if(reportHistoryVO.getType().equals(ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue())){
+				writeLookup(fullPath, csvVO, headers);
+			}
+			
 			updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			updateProgress(reportHistoryVO, ReportsStatusEnum.FAILED.getValue(), 0);
 		}
+	}
+
+	private void writeLookup(String fullPath, ExportCSVVO csvVO, String[] headers)
+			throws IOException {
+		
+		ReportHistoryVO lookupVO = new ReportHistoryVO();
+		lookupVO.setType("Lookup");
+		lookupVO.setStartDt(new Date());
+		
+		//Write lookup file
+		File fileLookup = new File(fullPath.substring(0, fullPath.length() - 4)+"-Lookup.csv");
+		CSVWriter lookupWriter = new CSVWriter(new FileWriter(fileLookup), ',');
+		String[] names = Arrays.copyOf(csvVO.getQuestionList().toArray(), csvVO.getQuestionList().toArray().length,
+				String[].class);	
+		
+		String[] lookupHeader = new String[]{"Id", "Name"};			
+		lookupWriter.writeNext(lookupHeader);
+		for (int i=3,j=0; i< headers.length; i++, j++) {
+			
+			String nameArray[] = names[j].split("\\|");	
+			String[] line = new String[]{headers[i], (nameArray.length == 1) ? names[j]: nameArray[0]};
+			lookupWriter.writeNext(line);
+		}		
+		
+		lookupWriter.close();
+		lookupVO.setRequestor(extractUserFromToken());
+		lookupVO.setName(fileLookup.getName());
+		lookupVO.setPath(fullPath);
+		lookupVO.setEndDt(new Date());
+		lookupVO.setDuration(lookupVO.getEndDt().getTime() - lookupVO.getStartDt().getTime());
+		lookupVO.setStatus(ReportsStatusEnum.COMPLETED.getValue());
+		lookupVO.setProgress("100.0%");
+		
+		reportHistoryService.save(lookupVO);
 	}
 	@POST
     @Path(value = "/exportAssessmentsCSV")
@@ -1040,6 +1080,7 @@ public class AssessmentRestController {
 					header.append("_");
 					header.append(pVO.getNumber());
 					headers.add(header.toString());
+					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName()+"|"+header.toString());
 					exportCSVVO.getQuestionIdList().add(
 							String.valueOf(interviewQuestionVO.getQuestionId()
 									+"_"+pVO.getNumber()));
@@ -1052,6 +1093,7 @@ public class AssessmentRestController {
 			header.append("_");
 			header.append(interviewQuestionVO.getNumber());
 			headers.add(header.toString());
+			exportCSVVO.getQuestionList().add(interviewQuestionVO.getName()+"|"+header.toString());
 			exportCSVVO.getQuestionIdList().add(String.valueOf(interviewQuestionVO.getQuestionId()));
 		}
 	}

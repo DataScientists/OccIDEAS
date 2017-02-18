@@ -35,6 +35,16 @@
 				})
 			return request.then(handleSuccess,handleError);
     	}
+    	
+    	function downloadLookup(reportVo){
+			var restDownloadReportUrl = url+'downloadLookup';
+			var request =  $http({
+				  method: 'POST',
+				  url: restDownloadReportUrl,
+				  data:reportVo
+				})
+			return request.then(handleSuccess,handleError);
+    	}
 		
 		function save(data){
 			var restSaveUrl = url+'save';
@@ -76,7 +86,8 @@
 			getByType: getByType,
 			save: save,
 			deleteReport: deleteReport,
-			downloadReport:downloadReport
+			downloadReport:downloadReport,
+			downloadLookup:downloadLookup
 		};
 	}
 	
