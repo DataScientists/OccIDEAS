@@ -16,6 +16,10 @@
 	    self.toggleIsDeleting = toggleIsDeleting;
 	    self.addNewConfigBtn = addNewConfigBtn;
 		
+	    self.listTranslations = function(){
+	    	$scope.addLanguageTab();
+	    }
+	    
 		self.states = [{
 			name:'Active'	
 		},{name:'Inactive'}];

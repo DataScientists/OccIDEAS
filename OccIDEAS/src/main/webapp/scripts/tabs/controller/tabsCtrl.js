@@ -162,6 +162,25 @@
             $scope.selectedIndex = 3;
         }
         
+        $scope.addLanguageTab = function() {
+            var tabTitle = "Language ";
+            var state = "tabs.language";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'language@tabs',
+                    canClose: true,
+                    disabled: false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                    }
+                });
+            }
+        };
+        
         $scope.openAnswerSummaryTab = function(node,moduleName,interviewId) {
         	var tabTitle = "Answer Summary-"+node.idNode;
             var state = "tabs.answerSummary";

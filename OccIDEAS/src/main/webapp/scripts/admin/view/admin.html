@@ -6,6 +6,10 @@
 			class="btn btn-default" ng-if="vm.originalData.length == 0" 
 			ng-click="vm.addNewConfigBtn()">Add Config <span class="glyphicon glyphicon-plus">
 			</span></button>
+			<button type="button"
+			class="btn btn-default" 
+			ng-click="vm.listTranslations()">List Translations <span class="glyphicon glyphicon-plus">
+			</span></button>
 			<table ng-table="vm.tableConfig" ng-cloak
 				class="table table-bordered table-hover 
   					   table-condensed editable-table"
