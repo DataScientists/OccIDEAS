@@ -11,10 +11,11 @@
 	                            '$timeout',
 	                            '$q',
 	                            'ngToast',
-	                            '$translate'];
+	                            '$translate',
+	                            '$sessionStorage'];
 	function NodeLanguageCtrl(NodeLanguageService,NgTableParams,$state,$scope,$filter,
 			$log,$mdDialog,$timeout,$q,
-			$ngToast,$translate){
+			$ngToast,$translate,$sessionStorage){
 		var vm = this;
 		$scope.selectLanguage = undefined;
 
@@ -54,16 +55,20 @@
 		$scope.getAllLanguage = function(){
 			NodeLanguageService.getAllLanguage().then(function(response){
 				if(response.status == '200'){
-					$scope.languages = response.data;
+					$sessionStorage.languages = response.data;
+					$scope.languages =  response.data;
 //					var english = {
 //						id: -1,
 //						language: 'EN'
 //					}
 //					$scope.languages.unshift(english);
 					$scope.selectLanguage = {};
-					$scope.selectLanguage.selected = _.find($scope.languages,function(lng){
-						return lng.language == 'GB';
-					});
+					_.remove($scope.languages, function(o) { 
+		    			return o.language == 'GB'; 
+		    		});
+					if($scope.languages){
+						$scope.selectLanguage.selected = $scope.languages[0];
+					}
 					safeDigest($scope.selectLanguage);
 				}
 			})

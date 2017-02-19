@@ -1,22 +1,17 @@
 <div ng-cloak style="height:500px;">
 	<div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
 	<label>Language</label>
-<!-- 	<select ng-change="vm.changeLanguage()" ng-model="selectLanguage" -->
-<!-- 		ng-options="option.language for option in languages track by option.id"> -->
-<!--    </select> -->
-  <ui-select ng-model="selectLanguage.selected" ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2" ng-disabled="disabled" style="min-width: 300px;">
-    <ui-select-match><i class="glyphicon {{$select.selected.flag}}"></i> {{$select.selected.description}}</ui-select-match>
-    <ui-select-choices repeat="lang in languages | propsFilter: {language: $select.search}">
-<!--       <img ng-src="{{ lang.url }}" /> -->
-      <i class="glyphicon {{lang.flag}}"></i>
-      <div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
-    </ui-select-choices>
-  </ui-select>
-<!-- 	<button type="button" -->
-<!-- 			class="btn btn-default"  -->
-<!-- 			ng-click="vm.showNewLanguageDialog()">Add Language  -->
-<!-- 			<span class="glyphicon glyphicon-plus"> -->
-<!-- 			</span></button> -->
+  			<ui-select ng-model="selectLanguage.selected"
+				ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2"
+				ng-disabled="disabled" style="min-width: 300px;"> <ui-select-match>
+			<i class="glyphicon {{$select.selected.flag}}"></i>
+			{{$select.selected.description}}</ui-select-match> <ui-select-choices
+				repeat="lang in languages | propsFilter: {language: $select.search}">
+			<!--       <img ng-src="{{ lang.url }}" /> --> <i
+				class="glyphicon {{lang.flag}}"></i>
+			<div ng-bind-html="lang.description | highlight: $select.search"
+				style="display: inline"></div>
+			</ui-select-choices> </ui-select>
 	</div>
 	<div>
 		<table ng-table="vm.tableParams" ng-cloak
