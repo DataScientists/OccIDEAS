@@ -29,4 +29,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public NodeVO getModuleFilterStudyAgent(Long id);
 	public NodeVO getModuleFilterAgent(Long id, Long idAgent);
 	public List<Module> getAllModules();
+	public NodeVO getNodeNameById(Long idNode);
 }

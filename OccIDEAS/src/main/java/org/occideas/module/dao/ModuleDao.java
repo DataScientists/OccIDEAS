@@ -6,6 +6,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -117,6 +118,21 @@ public class ModuleDao implements IModuleDao{
 	@Override
 	public Node getNodeById(Long idNode) {
 		return (Node) sessionFactory.getCurrentSession().get(Node.class, idNode);
+	}
+	
+	@Override
+	public String getNodeNameById(Long idNode) {
+		sessionFactory.getCurrentSession().get(Node.class, idNode);
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Node.class)
+				.add(Restrictions.eq("idNode", idNode))
+		.setProjection(Projections.property("name"));
+		String name = (String)crit.uniqueResult();
+		if(StringUtils.isEmpty(name)){
+			return "";
+		}else{
+			return name;
+		}
 	}
 
 	private final String GET_NODE_BY_LINK_AND_MOD_ID = "SELECT * FROM Node where idNode "+ 

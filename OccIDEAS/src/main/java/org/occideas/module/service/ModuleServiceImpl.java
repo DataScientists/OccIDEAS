@@ -414,4 +414,17 @@ public class ModuleServiceImpl implements ModuleService {
 	public List<Module> getAllModules() {
 		return dao.getAll(true);
 	}
+
+	@Override
+	public NodeVO getNodeNameById(Long idNode) {
+		Node node = dao.getNodeById(idNode);
+		if("M".equals(node.getNodeclass())){
+			ModuleVO moduleVO = mapper.convertToModuleVO((Module)node, false);
+			return moduleVO;
+		}else if("F".equals(node.getNodeclass())){
+			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment)node, false);
+			return fragmentVO;
+		}
+		return null;
+	}
 }

@@ -304,6 +304,20 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		}
 		return Response.ok(report).build();
 	}
+	
+	@GET
+	@Path(value = "/getNodeNameById")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getNodeNameById(@QueryParam("id") Long idNode){
+		NodeVO nodeVO = null;
+		try {
+			nodeVO = service.getNodeNameById(idNode);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(nodeVO).build();
+	}
 
 	private List<ModuleReportVO> generateReport(List<Module> modules) {
 		List<ModuleReportVO> reports = new ArrayList();

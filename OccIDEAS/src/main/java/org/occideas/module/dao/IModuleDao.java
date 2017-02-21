@@ -36,4 +36,6 @@ public interface IModuleDao {
 	
 	public List<Question> getChildFrequencyNodes(String idNode);
 
+	String getNodeNameById(Long idNode);
+
 }

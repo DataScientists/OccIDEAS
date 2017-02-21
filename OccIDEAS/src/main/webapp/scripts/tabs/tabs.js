@@ -759,9 +759,6 @@
                     controller: 'AnswerSummaryCtrl as vm',
                     params:{data: null},
                     resolve:{
-			        	name: function($stateParams){
-			        		return $stateParams.data.moduleName;
-			        	},
 			        	interviewId: function($stateParams){
 			        		return $stateParams.data.interviewId;
 			        	},
@@ -770,6 +767,17 @@
 			        	},
 			        	answerName:function($stateParams){
 			        		return $stateParams.data.name;
+			        	},
+			        	nodeCode:function($stateParams){
+			        		return $stateParams.data.nodeCode;
+			        	},
+			        	nodeVO:function(ModulesService,$stateParams){
+			        			return ModulesService.getNodeNameById($stateParams.data.topNodeId).then(function(response){
+			        				if(response.status == '200'){
+			        					var node = response.data;
+			        					return node;
+			        				}
+			        			});
 			        	}
 			     }
                 }

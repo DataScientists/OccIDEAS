@@ -184,6 +184,7 @@
         $scope.openAnswerSummaryTab = function(node,moduleName,interviewId) {
         	var tabTitle = "Answer Summary-"+node.idNode;
             var state = "tabs.answerSummary";
+            var nodeCode = node.header+" "+node.number;
             $stickyState.reset(state);
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
                 tabs.push({
@@ -198,7 +199,10 @@
                     	answerId: node.idNode,
                         name:node.name,
                         moduleName:moduleName,
-                        interviewId:interviewId
+                        interviewId:interviewId,
+                        nodeCode: nodeCode,
+                        topNodeId: node.topNodeId,
+                        type: node.type
                     }
                 });
                 shouldPassHiddenParam = true;

@@ -8,6 +8,16 @@
 		var modulesUrl = apiUrl + 'module';
 		var apiKey = '';
 		
+		function getNodeNameById(idNode) {
+			var restUrl = 'web/rest/module/getNodeNameById?id=' + idNode;
+			
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function findInterviewByModuleId(idModule) {
 			var restUrl = 'web/rest/interviewintromodule/findInterviewByModuleId?id=' + idModule;
 			
@@ -190,7 +200,8 @@
             setActiveIntroModule:setActiveIntroModule,
             getModuleFilterStudyAgent:getModuleFilterStudyAgent,
             getModuleFilterAgent:getModuleFilterAgent,
-            getAllModulesReport:getAllModulesReport
+            getAllModulesReport:getAllModulesReport,
+            getNodeNameById:getNodeNameById
 		};
 	}
 	
