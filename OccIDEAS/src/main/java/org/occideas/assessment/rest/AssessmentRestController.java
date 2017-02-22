@@ -1080,7 +1080,7 @@ public class AssessmentRestController {
 					header.append("_");
 					header.append(pVO.getNumber());
 					headers.add(header.toString());
-					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName()+"|"+header.toString());
+					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName() + " " + pVO.getName());
 					exportCSVVO.getQuestionIdList().add(
 							String.valueOf(interviewQuestionVO.getQuestionId()
 									+"_"+pVO.getNumber()));
