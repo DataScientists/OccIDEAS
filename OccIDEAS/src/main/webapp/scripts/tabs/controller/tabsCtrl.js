@@ -427,8 +427,7 @@
                     state: state,
                     data: {
                         row: row.idNode,
-                        lang:null,
-                        scrollTo:scrollTo
+                        lang:null
                     }
                 });
             }

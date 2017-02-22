@@ -19,6 +19,41 @@
 		var vm = this;
 		$scope.selectLanguage = undefined;
 
+//		NodeLanguageService.getAllLanguage().then(function(response){
+//    		if(response.status == '200'){
+//    			var promises = [];
+//    			$scope.lang = response.data;
+//    			_.remove($scope.lang, function (l) {
+//    				  return l.language == 'GB'; 
+//    			});
+//    			_.each($scope.lang,function(l){
+//    				promises.push(NodeLanguageService.getUntranslatedModules(l.flag)
+//    						.then(function(resp){
+//    							if(resp.status == '200'){
+//    								var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
+//    					        		  return nodeMap.languageId == l.id;
+//    					        	});
+//    					        	l.totalCurrent =_.sumBy(data, function(o) { return o.current; });
+//    								l.translatedModuleCount = resp.data;
+//    							}
+//    						}));
+//    						promises.push(NodeLanguageService.getUntranslatedFragments(l.flag)
+//    						.then(function(resp){
+//    							if(resp.status == '200'){
+//    								var data = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
+//    					        		  return nodeMap.languageId == l.id;
+//    					        	});
+//    					        	l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
+//    								l.translatedFragCount = resp.data;
+//    							}
+//    						}));
+//    			});
+//    			$q.all(promises).then(function () {
+//    				vm.languageSummaryTableParams.settings().dataset = $scope.lang;
+//    				return $scope.lang;
+//    			});
+//    		}
+		
 		vm.showNewLanguageDialog = function(){
 			$mdDialog.show({
 				scope: $scope, 

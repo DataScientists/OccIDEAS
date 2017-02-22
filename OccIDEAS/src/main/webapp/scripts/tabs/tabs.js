@@ -235,7 +235,7 @@
 			}
 		}).state( {
 			name:'tabs.questions',
-			url: '/questions/:row/:lang/:scrollTo',
+			url: '/questions/:row',
 			sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
@@ -243,7 +243,7 @@
 				'questions@tabs':{
 					template: '<div scope-question></div>',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null,lang:null},
+			        params:{row: null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions@tabs resolve");
@@ -278,22 +278,21 @@
 			        	return '';
 			        },
 			        scrollTo:function($stateParams) {
-			        	console.log($stateParams);
-			        	return $stateParams.scrollTo;
+			        	return 0;
 			        }
 			     }
 			}
 			}
 		}).state( {
 			name:'tabs.intro',
-			url: '/intro/:row/:lang',
+			url: '/intro/:row',
 			sticky: true,
 			authenticate:true,
 			views:{
 				'intro@tabs':{
 					template: '<div scope-question></div>',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null,lang:null},
+			        params:{row: null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside intro@tabs resolve");
@@ -331,7 +330,7 @@
 			}
 		}).state( {
 			name:'tabs.fragment',
-			url: '/fragment/:row/:lang',
+			url: '/fragment/:row',
 			sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
@@ -339,7 +338,7 @@
 				'fragment@tabs':{
 					template: '<div scope-question></div>',
 			        controller: 'QuestionsCtrl as vm',
-			        params:{row: null,lang: null},
+			        params:{row: null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {
 			        		$log.info("inside questions1@tabs resolve");
