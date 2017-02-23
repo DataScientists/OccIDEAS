@@ -13,14 +13,15 @@
 		<uib-accordion close-others="oneAtATime" ng-if="!agentsLoading" ng-repeat="agent in agentsData | orderBy:'-total' track by $index">
      	 <uib-accordion-group>
      	 	<uib-accordion-heading>
-     	 	{{agent.key}}
+     	 		<span ng-if="checkIfStudyAgent(agent.key)" title="This group has study agents" class="glyphicon glyphicon-tag" style="color: red;font-size: 15px;margin-right: 5px;"></span>							
+     	 		{{agent.key}}
      	 		<span class="badge pull-right">{{agent.total || 0}}</span>
      	 	</uib-accordion-heading>
      	 		<div>
 					<ul class="list-group">
 						<li class="list-group-item {{subNode.style}}" ng-repeat="subNode in agent.value | orderBy:'-total' track by $index " ng-click="toggleRulesObj(subNode)">
-							<span ng-if="subNode.total" title="view nodes with agent" class="glyphicon glyphicon-paperclip filterAgent {{subNode.active?'activeNodeAgentEnabled':''}}" ng-click="toggleNodesWithAgent(subNode,$event)"></span>
-							<span ng-if="studyAgent.indexOf(subNode.idAgent) == 0?'true':undefined" class="glyphicon glyphicon-book" style="color: red;font-size: 15px;margin-right: 5px;"></span>
+							<span ng-if="subNode.total" title="This module is tagged, click view questions tagged with this agent" class="glyphicon glyphicon-tags filterAgent {{subNode.active?'activeNodeAgentEnabled':''}}" ng-click="toggleNodesWithAgent(subNode,$event)"></span>
+							<span ng-if="checkIfStudyAgent(subNode.idAgent)" title="This agent is configured as a study agent" class="glyphicon glyphicon-tag" style="color: red;font-size: 15px;margin-right: 5px;"></span>
 							{{subNode.name}}
 							<span class="badge pull-right">{{subNode.total || 0}}</span></li>
 					</ul>

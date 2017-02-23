@@ -214,11 +214,24 @@
     	function initStudyAgent(){
 			AgentsService.getStudyAgents().then(function(agent) {
 				if(agent){
-					$scope.studyAgent = _.map(agent,'idAgent');
-					console.log("debug");
+					$scope.studyAgent = agent;					
 				}
 			});
 		}
+    	$scope.checkIfStudyAgent = function(idAgent){
+    		var retValue = false;
+    		for(var i=0;i<$scope.studyAgent.length;i++){
+    			var agent = $scope.studyAgent[i];
+    			if(agent.idAgent==idAgent || agent.agentGroup.name == idAgent){
+        			retValue = true;
+        			break;
+        		}
+    		}
+    		
+    		
+    		return retValue;
+    	}
+    	
     	function initAgentData(){
     		initStudyAgent();
     		AgentsService.get().then(function(agent) {
@@ -2769,7 +2782,9 @@
     	   })
     	   if($scope.currentToggledNodeWithAgent == agent.idAgent){
     		   agent.active = false;
-    		   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
+    		   angular.element(document).find('.nodeAgentEnabledBase').removeClass('nodeAgentEnabledBase');
+    		   angular.element(document).find('.nodeAgentEnabledLinked').removeClass('nodeAgentEnabledLinked');
+    		   angular.element(document).find('.nodeAgentEnabledDerived').removeClass('nodeAgentEnabledDerived');
     		   angular.element(document).find('.activeNodeAgentEnabled').removeClass('activeNodeAgentEnabled');
     		   $scope.currentToggledNodeWithAgent = undefined;
     		   if(agent.style == "agent-shown" && resultRuleObj){   
@@ -2781,7 +2796,9 @@
     		   }
     		   return;
     	   }
-    	   angular.element(document).find('.nodeAgentEnabled').removeClass('nodeAgentEnabled');
+    	   angular.element(document).find('.nodeAgentEnabledBase').removeClass('nodeAgentEnabledBase');
+    	   angular.element(document).find('.nodeAgentEnabledLinked').removeClass('nodeAgentEnabledLinked');
+    	   angular.element(document).find('.nodeAgentEnabledDerived').removeClass('nodeAgentEnabledDerived');
     	   agent.active = true;
     	   if(!resultRuleObj){
     		   $scope.rulesObj.push(agent);
@@ -2860,7 +2877,7 @@
        function higlightAgentAjsms(fragmentIdNode,childNodes){
            _.each(childNodes,function(item){
    			if(item.link == fragmentIdNode){
-   				angular.element("#node-"+item.idNode).addClass("nodeAgentEnabled");
+   				angular.element("#node-"+item.idNode).addClass("nodeAgentEnabledLinked");
    			}
    			if(item.nodes.length > 0){
    				higlightAgentAjsms(fragmentIdNode,item.nodes);
@@ -2880,29 +2897,31 @@
 						highlightChildNodeWithAgent(n.idNode);
 					});
 				}
-				angular.element("#node-"+idNode).addClass("nodeAgentEnabled");
+				angular.element("#node-"+idNode).addClass("nodeAgentEnabledDerived");
 				highlightParentNodeWithAgent(nodeResult.parentId);
 			}
        }
        
        function highlightChildNodeWithAgent(idNode){
-			angular.element("#node-"+idNode).addClass("nodeAgentEnabled");
+			angular.element("#node-"+idNode).addClass("nodeAgentEnabledBase");
        }
        
        function highlightAgentSpecificNode(childNodes){
-       	for(var i=0;i<childNodes.length;i++){
-       		var node = childNodes[i];
-				angular.element("#node-"+node.idNode).addClass("nodeAgentEnabled");
-				if(node.nodes){
-					highlightAgentSpecificNode(node.nodes);
-				}
+	       	for(var i=0;i<childNodes.length;i++){
+	       		var node = childNodes[i];
+	       		if(!node.link){
+					angular.element("#node-"+node.idNode).addClass("nodeAgentEnabledBase");
+					if(node.nodes){
+						highlightAgentSpecificNode(node.nodes);
+					}
+	       		}
 			}
        }
        
        function higlightNodesWithAgentAjsms(fragmentIdNode,childNodes){
            _.each(childNodes,function(item){
    			if(item.link == fragmentIdNode){
-   				angular.element("#node-"+item.idNode).addClass("nodeAgentEnabled");
+   				angular.element("#node-"+item.idNode).addClass("nodeAgentEnabledLinked");
    			}
    			if(item.nodes.length > 0){
    				higlightNodesWithAgentAjsms(fragmentIdNode,item.nodes);

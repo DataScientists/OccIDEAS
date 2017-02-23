@@ -1344,8 +1344,16 @@ li.borderless {
 	margin-right: 5px;
 }
 
-.nodeAgentEnabled{
-	background-color:#088000 !important;
+.nodeAgentEnabledDerived{
+	background-color:rgba(8, 128, 0, 0.10) !important;
+}
+
+.nodeAgentEnabledBase{
+	background-color:rgba(8, 128, 0, 0.17) !important;
+}
+
+.nodeAgentEnabledLinked{
+	background-color:rgba(8, 128, 0, 0.12) !important;
 }
 
 .activeNodeAgentEnabled{
