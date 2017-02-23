@@ -1895,6 +1895,7 @@
 			  ]
 			];
 		
+		
 		$scope.possibleAnswerMenuOptions =
 			[ [ 'Add Question', function($itemScope) {
 						$scope.newSubItem($itemScope);

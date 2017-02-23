@@ -5,10 +5,11 @@
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
-	                           '$q','$sessionStorage','moduleName','$rootScope'];
+	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
-			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService,$q, $sessionStorage,moduleName,$rootScope) {
+			RulesService,$ngToast,SystemPropertyService, $mdDialog,
+			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -997,26 +998,29 @@
 		                			var rule = $scope.data.autoAssessedRules[i];
 		                			rule.deleted=1;
 		                		}
-		                	}		  
-			  				for(var i=0;i<$scope.agents.length;i++){
-			  					var agentAssessing = $scope.agents[i]
-			  					var rule = {agentId:agentAssessing.idAgent,level:'noExposure',levelValue:5};
-			  					for(var j=0;j<$scope.data.firedRules.length;j++){
-			  						var firedRule = $scope.data.firedRules[j];
-			  						if(agentAssessing.idAgent == firedRule.agent.idAgent){
-			  							if(firedRule.levelValue<rule.levelValue){
-			  								//rule = firedRule;
-			  								rule = {agentId:agentAssessing.idAgent,level:firedRule.level,levelValue:firedRule.levelValue}					
-			  							}
-			  						}	  
-			  					}
-			  					$scope.data.autoAssessedRules.push(rule);
-			  				 }
-			  				 InterviewsService.save($scope.data).then(function (response) {
-		  		                if (response.status === 200) {
-		  		                	$log.info("Interview saved with auto assessments");
-		  		                }
-			  				 });
+		                	}
+		                	AgentsService.getStudyAgents().then(function(agents) {
+		                		for(var i=0;i<agents.length;i++){
+				  					var agentAssessing = agents[i]
+				  					var rule = {agentId:agentAssessing.idAgent,level:'noExposure',levelValue:5};
+				  					for(var j=0;j<$scope.data.firedRules.length;j++){
+				  						var firedRule = $scope.data.firedRules[j];
+				  						if(agentAssessing.idAgent == firedRule.agent.idAgent){
+				  							if(firedRule.levelValue<rule.levelValue){
+				  								//rule = firedRule;
+				  								rule = {agentId:agentAssessing.idAgent,level:firedRule.level,levelValue:firedRule.levelValue}					
+				  							}
+				  						}	  
+				  					}
+				  					$scope.data.autoAssessedRules.push(rule);
+				  				 }
+				  				 InterviewsService.save($scope.data).then(function (response) {
+			  		                if (response.status === 200) {
+			  		                	$log.info("Interview saved with auto assessments");
+			  		                }
+				  				 });
+		                	});
+			  				
 		                }
 				  });
 				  
@@ -1034,18 +1038,30 @@
                     	model.manualAssessedRules = [];
                     }	
                     var assessments = angular.copy(model.autoAssessedRules);
+                    var interviewManualAssessments = [];
                     for(var i=0;i<assessments.length;i++){
 					  var assessment = assessments[i];
 					  var manualAssessment = {agentId:assessment.agentId,level:assessment.level,levelValue:assessment.levelValue};
 					  
-					  model.manualAssessedRules.push(manualAssessment);
+					  //model.manualAssessedRules.push(manualAssessment);
+					  
+		    					var interviewManualAssessment = {idInterview:$scope.interviewId,
+		    							rule:manualAssessment};
+		    					interviewManualAssessments.push(interviewManualAssessment);		
+		    					
+		    				
+					  
                     }
-                    InterviewsService.save(model).then(function (response) {
+                    ManualAssessmentService.saveManualAssessments(interviewManualAssessments).then(function (response) {
 		                if (response.status === 200) {
-		                	$log.info("Interview saved with manual assessments");
-		                	refreshAssessmentDisplay();
+		                	$log.info("manual assessment saved");
+		                	for(var i=0;i<response.data.length;i++){
+		                		model.manualAssessedRules.push(response.data[i].rule);
+		                	}               	
 		                }
                     });
+                    
+                    
 			  	}
 			  ]
 			];
