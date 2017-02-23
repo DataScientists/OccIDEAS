@@ -18,41 +18,6 @@
 			$ngToast,$translate,$sessionStorage){
 		var vm = this;
 		$scope.selectLanguage = undefined;
-
-//		NodeLanguageService.getAllLanguage().then(function(response){
-//    		if(response.status == '200'){
-//    			var promises = [];
-//    			$scope.lang = response.data;
-//    			_.remove($scope.lang, function (l) {
-//    				  return l.language == 'GB'; 
-//    			});
-//    			_.each($scope.lang,function(l){
-//    				promises.push(NodeLanguageService.getUntranslatedModules(l.flag)
-//    						.then(function(resp){
-//    							if(resp.status == '200'){
-//    								var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
-//    					        		  return nodeMap.languageId == l.id;
-//    					        	});
-//    					        	l.totalCurrent =_.sumBy(data, function(o) { return o.current; });
-//    								l.translatedModuleCount = resp.data;
-//    							}
-//    						}));
-//    						promises.push(NodeLanguageService.getUntranslatedFragments(l.flag)
-//    						.then(function(resp){
-//    							if(resp.status == '200'){
-//    								var data = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
-//    					        		  return nodeMap.languageId == l.id;
-//    					        	});
-//    					        	l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
-//    								l.translatedFragCount = resp.data;
-//    							}
-//    						}));
-//    			});
-//    			$q.all(promises).then(function () {
-//    				vm.languageSummaryTableParams.settings().dataset = $scope.lang;
-//    				return $scope.lang;
-//    			});
-//    		}
 		
 		vm.showNewLanguageDialog = function(){
 			$mdDialog.show({
@@ -89,26 +54,37 @@
 		
 		$scope.getAllLanguage = function(){
 			NodeLanguageService.getAllLanguage().then(function(response){
-				if(response.status == '200'){
-					$sessionStorage.languages = response.data;
-					$scope.languages =  response.data;
-//					var english = {
-//						id: -1,
-//						language: 'EN'
-//					}
-//					$scope.languages.unshift(english);
-					$scope.selectLanguage = {};
-					_.remove($scope.languages, function(o) { 
-		    			return o.language == 'GB'; 
-		    		});
-					if($scope.languages){
-						$scope.selectLanguage.selected = $scope.languages[0];
-					}
-					safeDigest($scope.selectLanguage);
-				}
-			})
+	    		if(response.status == '200'){
+	    			var promises = [];
+	    			$scope.languages = response.data;
+	    			_.remove($scope.languages, function (l) {
+	    				  return l.language == 'GB'; 
+	    			});
+	    			
+	    			_.each($scope.languages,function(l){
+	    						promises.push(
+	    						NodeLanguageService.getNodeLanguageById(l.id)
+	    						.then(function(response) {
+	    							if(response.status == '200'){
+	    				        	  var data = response.data;
+	    				        	  l.count = data.length;
+	    							}
+	    						}));
+	    			});
+	    			$q.all(promises).then(function () {
+	    				$scope.selectLanguage = {};
+	    				if($scope.languages){
+							$scope.selectLanguage.selected = $scope.languages[0];
+						}
+						safeDigest($scope.selectLanguage);
+	    				return $scope.lang;
+	    			});
+	    		}
+			});
 		};
+		
 		$scope.getAllLanguage();
+//		$scope.getAllLanguage();
 		
 		vm.changeNodeLanguage = function(data) {
         	$translate.refresh();

@@ -1131,6 +1131,7 @@ public class AssessmentRestController {
 	public Response getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter){
 		PageVO<AssessmentAnswerSummary> list = null;
 		try{
+			filter.setStatus();
 			list = assessmentService.getAnswerSummaryByName(filter);
 		}catch(Throwable e){
 			e.printStackTrace();

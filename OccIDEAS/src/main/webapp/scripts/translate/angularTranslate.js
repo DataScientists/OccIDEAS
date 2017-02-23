@@ -26,7 +26,7 @@
     						return o.language == key; 
     					});
     					$sessionStorage.chosenLang = lang;
-    					if(lang.id){
+    					if(lang && lang.id){
     						NodeLanguageService.getNodeLanguageById(lang.id).then(function(response) {
     							if(response.status == '200'){
     								translations = _.map(response.data, function(o){
@@ -47,7 +47,7 @@
     				return o.language == key; 
     			});
     			$sessionStorage.chosenLang = lang;
-    			if(lang.id){
+    			if(lang && lang.id){
     				NodeLanguageService.getNodeLanguageById(lang.id).then(function(response) {
     					if(response.status == '200'){
     						translations = _.map(response.data, function(o){

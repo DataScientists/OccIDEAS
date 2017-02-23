@@ -19,7 +19,12 @@
 		$scope.answerSummaryFilter = {
 				answerId:$scope.answerId,
 				name:$scope.answerName,
+				idParticipant:null,
+				reference:null,
+				idinterview:null,
 				moduleName:null,
+				assessedStatus:null,
+				statusDescription:null,
 				pageNumber:null,
 				size:null
 		};
@@ -48,10 +53,47 @@
 			    def.resolve(module);
 
 			  });
-
 			  return def;
 			};
-		
+
+			$scope.statusDescriptions = function(column) {
+				var arr = [];
+				arr.push({
+			          'id': '',
+			          'title': ''
+			        });
+				arr.push({
+			          'id': 'Running',
+			          'title': 'Running'
+			        });
+				arr.push({
+			          'id': 'Partial',
+			          'title': 'Partial'
+			        });
+				arr.push({
+			          'id': 'Completed',
+			          'title': 'Completed'
+			        });
+				return arr;
+			};
+			
+			$scope.assessedStatusList = function(column) {
+				var arr = [];
+				arr.push({
+			          'id': '',
+			          'title': ''
+			        });
+				arr.push({
+			          'id': 'Not Assessed',
+			          'title': 'Not Assessed'
+			        });
+				arr.push({
+			          'id': 'Auto Assessed',
+			          'title': 'Auto Assessed'
+			        });
+				return arr;
+			};
+			
 		var firstLoad = true;	
 		vm.answerSummaryTableParams = new NgTableParams(
 				{
@@ -63,7 +105,12 @@
 	        	var currentPage = $scope.answerSummaryFilter.pageNumber;
 	        	$scope.answerSummaryFilter.answerId=$scope.answerId;
 	        	$scope.answerSummaryFilter.name=$scope.answerName;
+	        	$scope.answerSummaryFilter.idParticipant=lengthGreaterThan2(params.filter().idParticipant);
+	        	$scope.answerSummaryFilter.reference=lengthGreaterThan2(params.filter().reference);
+	        	$scope.answerSummaryFilter.idinterview=lengthGreaterThan2(params.filter().idinterview);
 	        	$scope.answerSummaryFilter.moduleName=lengthGreaterThan2(params.filter().interviewModuleName);
+	        	$scope.answerSummaryFilter.assessedStatus=lengthGreaterThan2(params.filter().assessedStatus);
+	        	$scope.answerSummaryFilter.statusDescription=lengthGreaterThan2(params.filter().statusDescription);
 	        	$scope.answerSummaryFilter.pageNumber=params.page();
 	        	$scope.answerSummaryFilter.size=params.count();
 	        	return AssessmentsService.getAnswerSummaryByName($scope.answerSummaryFilter)
@@ -112,14 +159,33 @@
 			}
 		}
 		
-		vm.openFiredRules = function(interviewId,reference) {
-			var interview = {
-					interviewId:interviewId,
-					referenceNumber:reference,
-					moduleName:$scope.moduleName
-			};
-	    	$scope.addFiredRulesTab(interview);
-	    	console.log('FiredRulesTab Opened');
+		vm.openFiredRules = function(interviewId,reference,interviewModuleName) {
+			InterviewsService.findModulesByInterviewId(interviewId).then(function(response){
+				if(response.status == '200'){
+					if(response.data.length > 0){								
+						var modules = response.data;
+
+						var isSameIntroModule = true;
+						var introModule = _.find(modules,function(module){
+							return module.idModule == $sessionStorage.activeIntro.value;
+						});
+						
+						if(!introModule){
+							isSameIntroModule = false;
+						}
+						
+						var interview = {
+								interviewId:interviewId,
+								referenceNumber:reference,
+								moduleName:$scope.moduleName,
+								isSameIntroModule:isSameIntroModule
+						};
+				    	$scope.addFiredRulesTab(interview);
+						
+				    	console.log('FiredRulesTab Opened');
+					}
+				}
+			});
 	    }
 	}
 

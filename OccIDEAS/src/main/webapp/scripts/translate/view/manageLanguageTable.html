@@ -5,12 +5,17 @@
 				ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2"
 				ng-disabled="disabled" style="min-width: 300px;"> <ui-select-match>
 			<i class="glyphicon {{$select.selected.flag}}"></i>
-			{{$select.selected.description}}</ui-select-match> <ui-select-choices
+			{{$select.selected.description}}
+			<i ng-if="$select.selected.count > 0" class="glyphicon glyphicon-ok-circle " style="color:green;"></i>
+			<i ng-if="$select.selected.count == 0" class="glyphicon glyphicon-exclamation-sign " style="color:red;"></i>
+			</ui-select-match> <ui-select-choices
 				repeat="lang in languages | propsFilter: {language: $select.search}">
 			<!--       <img ng-src="{{ lang.url }}" /> --> <i
 				class="glyphicon {{lang.flag}}"></i>
 			<div ng-bind-html="lang.description | highlight: $select.search"
 				style="display: inline"></div>
+			<i ng-if="lang.count > 0" class="glyphicon glyphicon-ok-circle " style="color:green;"></i>
+			<i ng-if="lang.count == 0" class="glyphicon glyphicon-exclamation-sign " style="color:red;"></i>
 			</ui-select-choices> </ui-select>
 	</div>
 	<div>
