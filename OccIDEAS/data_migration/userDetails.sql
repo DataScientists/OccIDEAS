@@ -76,4 +76,5 @@ INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('2', 
 INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('3', '3');
 INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('4', '4');
 INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('5', '5');
+INSERT INTO `APP_USER_USER_PROFILE` (`user_id`, `user_profile_id`) VALUES ('4', '3');
 
