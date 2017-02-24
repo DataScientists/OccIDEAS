@@ -88,6 +88,10 @@
 			          'title': 'Not Assessed'
 			        });
 				arr.push({
+			          'id': 'Complete',
+			          'title': 'Complete'
+			        });
+				arr.push({
 			          'id': 'Auto Assessed',
 			          'title': 'Auto Assessed'
 			        });
