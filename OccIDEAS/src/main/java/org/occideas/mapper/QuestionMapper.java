@@ -30,5 +30,10 @@ public interface QuestionMapper {
 	QuestionVO convertToQuestionVOExcludeChilds(Question question);
 	
 	QuestionVO convertToQuestionWithModRulesReduced(Question question);
+
+	List<QuestionVO> convertToQuestionWithFlagsVOList(List<Question> questionEntity, boolean includeChildNodes,
+			boolean includeRules);
+
+	QuestionVO convertToQuestionWithFlagsVO(Question question, boolean includeChildnodes, boolean includeRules);
 	
 }

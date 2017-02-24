@@ -25,4 +25,6 @@ public interface ModuleMapper {
 	
 //	@Mapping(target = "notes", ignore=true)
 	List<Module> convertToModuleList(List<ModuleVO> moduleVO,boolean includeChild);
+
+	ModuleVO convertToModuleWithFlagsVO(Module moduleEntity, boolean includeChildNodes, boolean includeRules);
 }

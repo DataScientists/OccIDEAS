@@ -97,6 +97,16 @@ public class ModuleServiceImpl implements ModuleService {
 		list.add(moduleVO);
 		return list;
 	}
+	@Override
+	public List<ModuleVO> findByIdNoRules(Long id) {
+		Module module = dao.get(id);
+		boolean includeChildNodes = true;
+		boolean includeRules = false;
+		ModuleVO moduleVO = mapper.convertToModuleWithFlagsVO(module,includeChildNodes,includeRules);
+		List<ModuleVO> list = new ArrayList<ModuleVO>();
+		list.add(moduleVO);
+		return list;
+	}
 
 	@Override
 	public ModuleVO create(ModuleVO module) {
