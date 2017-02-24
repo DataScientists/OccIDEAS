@@ -131,21 +131,23 @@
 		<div>Daily Vibration: {{dailyVibration}}</div>
 		
 	</div>
+	<div id="interview-wrapper-{{interviewId}}">
+  		&nbsp;
+  	</div>
+  	<div ng-if="linkedModule.nodes" role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
+		<button type="button" ng-click='expandAll()' class="btn btn-default">Expand All</button>
+  	</div>
+  	<div  id="interview-question-list">
+  		<ng-include src="'scripts/assessments/partials/moduleTree.html'"></ng-include>
+  	</div>
+  
 </div>
 <div class="col-md-4">
   <div class="panel panel-default">
   <!-- Default panel contents -->
-  <div id="modulesWrapper" class="panel-heading">Modules</div> 
+  <div id="modulesWrapper" class="panel-heading">Status and Notes</div> 
   <div class="panel-body">
     <div >
-    	<ul class="list-group">
-        <li class="list-group-item" ng-repeat="mod in vm.modulesInInterview">
-			<div>
-				<span class="badge">Module</span> {{mod.interviewModuleName}}
-			</div>
-						
-    	</li>
-  		</ul>
   		<md-input-container style="margin-right: 10px;">
         <label>Status:{{assessmentStatus}}</label>
         <md-select ng-model="assessmentStatus" ng-change="onChangeSaveStatus()" >
@@ -164,19 +166,23 @@
     </div>
    </div>
    </div>
-</div>
-<div id="interview-wrapper-{{interviewId}}">
-&nbsp;
-</div>
-<div ng-if="linkedModule.nodes" role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
-	<button type="button" ng-click='expandAll()' class="btn btn-default"> Expand All</button>
-</div>
-<div class="row">
-  <div class="col-md-8" id="interview-question-list">
-  <ng-include src="'scripts/assessments/partials/moduleTree.html'"></ng-include>
-  </div>
-  <div class="col-md-4">
   <div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div id="modulesWrapper" class="panel-heading">Modules</div> 
+  <div class="panel-body">
+    <div >
+    	<ul class="list-group">
+        <li class="list-group-item" ng-repeat="mod in vm.modulesInInterview">
+			<div>
+				<span class="badge">Module</span> {{mod.interviewModuleName}}
+			</div>					
+    	</li>
+  		</ul> 		
+    </div>
+   </div>
+   </div>
+   
+   <div class="panel panel-default">
   <!-- Default panel contents -->
   <div class="panel-heading">AJSMs</div> 
   <div class="panel-body">
@@ -196,6 +202,10 @@
     </div>
    </div>
    </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+  
 </div>
     </div>
   </div>
