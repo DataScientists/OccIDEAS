@@ -954,8 +954,8 @@
 								  	idNode:vibrationRule.conditions[0].idNode,
 								  	nodeText:vibrationRule.conditions[0].name,
 								  	vibMag:level,								
-									frequencyhours:frequencyhours,
-									partialExposure:particalVibration,
+									frequencyhours:frequencyhours.toFixed(4),
+									partialExposure:particalVibration.toFixed(4),
 									type:'vibration',
 									moduleName:moduleName,
 									topNodeId:vibrationRule.conditions[0].topNodeId}
