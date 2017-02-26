@@ -2,9 +2,9 @@
     angular.module("occIDEASApp.Tabs").controller("TabsCtrl", TabsCtrl);
 
     TabsCtrl.$inject = ['$scope', '$state', '$rootScope', '$log', '$stickyState', 
-                        'AuthenticationService','$sessionStorage'];
+                        'AuthenticationService','$sessionStorage', 'runtimeStates'];
 
-    function TabsCtrl($scope, $state, $rootScope, $log, $stickyState, auth,$sessionStorage) {
+    function TabsCtrl($scope, $state, $rootScope, $log, $stickyState, auth,$sessionStorage, runtimeStates) {
         $scope.loading = false;
         $scope.tabOptions = [];
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
@@ -91,9 +91,11 @@
                 }
             }
             $log.info("going to state " + state);
-            if(shouldPassHiddenParam || 
-            		$scope.tabOptions[current].state == 'tabs.firedrules' || 
-            		$scope.tabOptions[current].state == 'tabs.answerSummary'){
+            if($scope.tabOptions[current].state.startsWith('tabs.firedrules')){
+            	$state.go(state, data);
+            }
+            else if(shouldPassHiddenParam ||
+            	$scope.tabOptions[current].state == 'tabs.answerSummary'){
             	$state.go(state, {data:data});	
             }else{
               $state.go(state, data);
@@ -589,14 +591,46 @@
             $rootScope.tabsLoading = true;
             safeDigest($rootScope.tabsLoading);
         };
+        var firedRulesTabCount = 0;
         $scope.addFiredRulesTab = function(interview) {
             var tabTitle = "Assessment " + interview.referenceNumber;
-            var state = "tabs.firedrules";
-            $stickyState.reset(state);
+            
             if (!checkIfTabIsOpen(tabs, tabTitle)) {
+            	
+            	var count = firedRulesTabCount++;
+                var state = "tabs.firedrules"+count;               
+                var viewName = 'firedrules'+count+'@tabs';
+                
+                var newState = {
+                    name: state,
+        			url: '/firedrules/:interviewId',
+                    sticky: true,
+        		    deepStateRedirect: true,
+        		    authenticate:true,
+                    views:{}
+                };
+                
+                var views = {                	
+                    templateUrl: 'scripts/firedRules/view/fireRules.html',
+                    controller: 'FiredRulesCtrl as vm',
+                    resolve:{
+                        data: function($stateParams,InterviewsService) {
+                            return $stateParams.interviewId;
+                        },
+                        moduleName: function($stateParams,InterviewsService) {
+                            return $stateParams.moduleName;
+                        }
+                    }
+                };
+                
+                //Add dynamic view name
+                newState.views[viewName] = views;   
+                //Add state
+                runtimeStates.addState(state, newState);   
+            	
                 tabs.push({
                     title: tabTitle,
-                    viewName: 'firedrules@tabs',
+                    viewName: viewName,
                     canClose: true,
                     disabled: false,
                     isSameIntroModule:interview.isSameIntroModule
@@ -609,6 +643,7 @@
                     }
                 });
             }
+            $stickyState.reset(state);
             shouldPassHiddenParam = true;
         };
         $rootScope.addErrorTab = function(error) {
