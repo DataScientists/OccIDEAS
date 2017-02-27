@@ -2207,10 +2207,7 @@
         $scope.highlightNode = function(idNode){
         	var elementId = 'node-'+idNode;
         	$scope.scrollTo(elementId);
-        	$('#'+elementId).toggleClass('highlight');  
-        	   setTimeout(function(){
-        	     $('#'+elementId).toggleClass('highlight');  
-        	   },1500);
+        	$('#'+elementId).toggleClass('highlight');       	   
         }
         
         function getObject (array,idNode){
