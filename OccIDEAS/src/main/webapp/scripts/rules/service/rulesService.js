@@ -111,6 +111,7 @@
 			listAllRules: listAllRules,
 			create: create,
 			save: save,
+			saveList: saveList,
 			getRule: getRule,
 			findRules: findRules,
 			update:update,

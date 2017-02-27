@@ -993,12 +993,20 @@
 		                if (response.status === 200) {
 		                	$log.info("Updated Fired Rules");
 		                	$scope.data = response.data[0];
+		                	var rules = [];
 		                	if($scope.data.autoAssessedRules.length>0){
 		                		for(var i=0;i<$scope.data.autoAssessedRules.length;i++){
 		                			var rule = $scope.data.autoAssessedRules[i];
 		                			rule.deleted=1;
+		                			rules.push(rule);
 		                		}
+		                    	RulesService.saveList(rules).then(function(response){
+		                			if(response.status === 200){
+		                				$log.info('Rules SaveList was Successful!'+rule);
+		                			}
+		                		});
 		                	}
+		                	$scope.data.autoAssessedRules = [];
 		                	AgentsService.getStudyAgents().then(function(agents) {
 		                		for(var i=0;i<agents.length;i++){
 				  					var agentAssessing = agents[i]
@@ -1028,29 +1036,33 @@
 			  	}			  
 			  ],
 			  [ 'Use Auto', function($itemScope, $event, model) {
+				  var rules = [];
                     if(model.manualAssessedRules.length>0){
                     	for(var i=0;i<$scope.data.manualAssessedRules.length;i++){
                 			var rule = $scope.data.manualAssessedRules[i];
                 			rule.deleted=1;
+                			rules.push(rule);
                 		}
+                    	RulesService.saveList(rules).then(function(response){
+                			if(response.status === 200){
+                				$log.info('Rules SaveList was Successful!'+rule);
+                			}
+                		});
  
-                    }else{
-                    	model.manualAssessedRules = [];
-                    }	
-                    var assessments = angular.copy(model.autoAssessedRules);
+                    }
+                    model.manualAssessedRules = [];
+  				  
                     var interviewManualAssessments = [];
+                    var assessments = angular.copy(model.autoAssessedRules);
                     for(var i=0;i<assessments.length;i++){
 					  var assessment = assessments[i];
 					  var manualAssessment = {agentId:assessment.agentId,level:assessment.level,levelValue:assessment.levelValue};
 					  
 					  //model.manualAssessedRules.push(manualAssessment);
 					  
-		    					var interviewManualAssessment = {idInterview:$scope.interviewId,
-		    							rule:manualAssessment};
-		    					interviewManualAssessments.push(interviewManualAssessment);		
-		    					
-		    				
-					  
+						var interviewManualAssessment = {idInterview:$scope.interviewId,rule:manualAssessment};
+						interviewManualAssessments.push(interviewManualAssessment);		
+		    										  
                     }
                     ManualAssessmentService.saveManualAssessments(interviewManualAssessments).then(function (response) {
 		                if (response.status === 200) {
@@ -1073,11 +1085,14 @@
 				  	});
 				  	 
 				  	for(var i=0;i<ruleArray.length;i++){
-					  	var scope = $itemScope.$new();
-				  		scope.model = model;
-				  		scope.rule = ruleArray[i];
-				  		scope.agentName = $itemScope.agent.name;
-				  		editAssessmentDialog($event.currentTarget.parentElement,scope,$compile,$scope.interviewId);
+				  		var rule = ruleArray[i];				  	
+				  		if(rule.deleted==0){
+				  			var scope = $itemScope.$new();
+					  		scope.model = model;
+					  		scope.rule = rule;
+					  		scope.agentName = $itemScope.agent.name;
+					  		editAssessmentDialog($event.currentTarget.parentElement,scope,$compile,$scope.interviewId);
+				  		}					  	
 				  	}
 			  	}			  
 			  ]
