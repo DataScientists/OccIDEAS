@@ -177,6 +177,13 @@ public class AssessmentRestController {
 	private void writeLookup(String fullPath, ExportCSVVO csvVO, String[] headers)
 			throws IOException {
 		
+		String[] names = Arrays.copyOf(csvVO.getQuestionList().toArray(), csvVO.getQuestionList().toArray().length,
+				String[].class);	
+		
+		if(names.length != (headers.length -3)){
+			System.out.println("Something wrong with the data: header count: "+headers.length +", answer count: "+names.length);
+		}		
+
 		ReportHistoryVO lookupVO = new ReportHistoryVO();
 		lookupVO.setType("Lookup");
 		lookupVO.setStartDt(new Date());
@@ -184,12 +191,10 @@ public class AssessmentRestController {
 		//Write lookup file
 		File fileLookup = new File(fullPath.substring(0, fullPath.length() - 4)+"-Lookup.csv");
 		CSVWriter lookupWriter = new CSVWriter(new FileWriter(fileLookup), ',');
-		String[] names = Arrays.copyOf(csvVO.getQuestionList().toArray(), csvVO.getQuestionList().toArray().length,
-				String[].class);	
 		
 		String[] lookupHeader = new String[]{"Id", "Name"};			
 		lookupWriter.writeNext(lookupHeader);
-		for (int i=3,j=0; i< headers.length; i++, j++) {
+		for (int i=3,j=0; i < headers.length && j < names.length; i++, j++) {
 			
 			String nameArray[] = names[j].split("\\|");	
 			String[] line = new String[]{headers[i], (nameArray.length == 1) ? names[j]: nameArray[0]};
@@ -1080,7 +1085,7 @@ public class AssessmentRestController {
 					header.append("_");
 					header.append(pVO.getNumber());
 					headers.add(header.toString());
-					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName() + " " + pVO.getName());
+					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName() + " " + pVO.getName()+"|"+header.toString());
 					exportCSVVO.getQuestionIdList().add(
 							String.valueOf(interviewQuestionVO.getQuestionId()
 									+"_"+pVO.getNumber()));
