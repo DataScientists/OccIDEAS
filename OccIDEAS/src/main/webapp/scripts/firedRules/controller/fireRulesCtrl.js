@@ -5,11 +5,11 @@
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
-	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService'];
+	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService','ngToast'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
 			RulesService,$ngToast,SystemPropertyService, $mdDialog,
-			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService) {
+			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService,ngToast) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -18,7 +18,7 @@
 		vm.answersDisplayed = false;
 		$scope.data = data;
 		$scope.moduleName = moduleName;
-		$scope.loadingTree = true;
+		$scope.loadingTree = false;
 		$scope.openAnswerSummary = function(node){
 			$scope.openAnswerSummaryTab(node,$scope.moduleName,$scope.interviewId);
 		}
@@ -214,7 +214,6 @@
 						$scope.assessmentStatus = $scope.interview.assessedStatus;
 						$scope.data = response.data[0];
 						
-						processQuestionHistory()	
 						$('#back-to-top').fadeOut();
 					}
                 });
@@ -403,6 +402,14 @@
         };
         
         $scope.highlightFragment = function(fragment){        	
+        	
+        	if(!$scope.linkedModule){
+        		ngToast.create({
+		    		  className: 'warning',
+		    		  content: "Please click Show Questions button."
+		    	 });
+        		return;
+        	}  
         	
         	var expandDefer = $q.defer();
         	var defer = $q.defer();
@@ -1234,7 +1241,7 @@
 		
 		$scope.expandAll = function() {
 			
-			if($scope.linkedModule){
+			
 				$scope.loadingTree = true;
 				
 				InterviewsService.getExpandedModule($scope.interviewId).then(function(response){
@@ -1259,7 +1266,6 @@
 						$scope.loadingTree = false;
 					}
 				});	
-			}
 			
 			$mdDialog.show({
 				scope : $scope.$new(),
