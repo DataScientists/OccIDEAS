@@ -1250,15 +1250,17 @@
 						$scope.linkedModule = response.data[0];
 						addHeader($scope.linkedModule.nodes);		
 						
-						if(document.getElementById('tree-root')){	
-							//Expand all
-							console.log("Expand all tree");
-							var scope = angular.element(document.getElementById('tree-root')).scope();
-							
-							$timeout(function(){
-								$scope.$broadcast('angular-ui-tree:expand-all');
-							}, 200);							
-						}
+						$timeout(function(){
+							if(document.getElementById('tree-root')){
+								//Expand all
+								console.log("Expand all tree");
+								var scope = angular.element(document.getElementById('tree-root')).scope();
+								
+								$timeout(function(){
+									$scope.$broadcast('angular-ui-tree:expand-all');
+								}, 200);
+							}
+						}, 200);
 						
 						$scope.cancel();
 					}	
