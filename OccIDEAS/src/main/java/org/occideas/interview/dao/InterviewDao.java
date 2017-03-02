@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,6 +18,7 @@ import org.hibernate.transform.Transformers;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewIntroModuleModule;
+import org.occideas.entity.Note;
 import org.occideas.entity.SystemProperty;
 import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,23 @@ public class InterviewDao {
 			+ " where a.answerId = :answerId and a.idinterview  = :idInterview"
 			+ " and a.idinterview = q.idinterview"
 			+ " and q.id = a.interviewQuestionId";
+	
+	private final String NOTES_QUERY_WITH_MODULE = 
+			" SELECT a.interviewId, b.referenceNumber,"
+			 + " GROUP_CONCAT(DISTINCT text SEPARATOR '++') as notes"
+			 + " FROM note a, interview b, interviewintromodule_module c"
+			 + " where a.interviewId = b.idinterview"
+			 + " and a.interviewId = c.interviewId"
+			 + " and (c.idModule in (:modules))"
+			 +  " group by a.interviewId";
+	
+	private final String NOTES_QUERY = 
+			" SELECT a.interviewId, b.referenceNumber,"
+			 + " GROUP_CONCAT(DISTINCT text SEPARATOR '++') as notes"
+			 + " FROM Note a, Interview b, InterviewIntroModule_Module c"
+			 + " where a.interviewId = b.idinterview"
+			 + " and a.interviewId = c.interviewId"
+			 + " group by a.interviewId";
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -275,6 +294,42 @@ public class InterviewDao {
 		sqlQuery.setParameter("answerId", nodeId);
 		
 		return (BigInteger) sqlQuery.uniqueResult();
+	}
+
+	public List<Interview> getAssessmentsForNotes(String[] modules) {
+		
+		final Session session = sessionFactory.getCurrentSession();
+		
+		Query sqlQuery = session.createSQLQuery(modules != null ? NOTES_QUERY_WITH_MODULE : NOTES_QUERY);
+		
+		if(modules != null) {
+			sqlQuery.setParameterList("modules", modules);
+		} 		
+		
+		List<Object[]> rows = sqlQuery.list();
+		
+		List<Interview> result = new ArrayList();
+		
+		//Map manually
+		for (Object[] row : rows) {
+			Interview interview = new Interview();
+		    interview.setIdinterview(((BigInteger)row[0]).longValue());
+		    interview.setReferenceNumber(row[1].toString());
+		    
+		    if(row[2] != null){
+		    	ArrayList<Note> notes = new ArrayList<>();
+		    	for(String s : (row[2].toString().split("\\++"))){
+		    		Note note = new Note();
+				    note.setText(s);
+				    notes.add(note);
+		    	}
+		    	interview.setNotes(notes);
+		    }
+		    
+			result.add(interview);
+		}		
+		
+		return result;
 	}
 }
 

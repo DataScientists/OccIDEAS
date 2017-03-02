@@ -53,4 +53,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	Long getIntroModuleId(Long interviewId);
 
 	Long checkFragmentProcessed(long idFragment, long primaryKey);
+
+	List<Interview> listAssessmentsForNotes(String[] filterModule);
 }

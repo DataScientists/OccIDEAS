@@ -163,6 +163,18 @@
 				clickOutsideToClose:false
 			});
 		}
+	    
+	    $scope.exportNotesCSVButton = function(){
+			$scope.checkboxes = { 'checked': false, items: {} };
+			$scope.fileName = "notesExport";
+			$scope.exportType = "NOTES";
+			$mdDialog.show({
+				scope: $scope.$new(),  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/filterModuleDialog.html',
+				clickOutsideToClose:false
+			});
+		}
 	    $scope.newExportAssessmentNoiseCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
 			$scope.fileName = "assessmentNoiseExport";
@@ -221,7 +233,10 @@
 							 InterviewsService.exportAssessmentsNoiseCSV(filterModule,fileName).then(function(response){});
 						 }else if($scope.exportType=="ASSESSMENTVIBRATION"){
 							 InterviewsService.exportAssessmentsVibrationCSV(filterModule,fileName).then(function(response){});
-						 }else{
+						 }else if($scope.exportType=="NOTES"){
+							 InterviewsService.exportNotesCSV(filterModule,fileName).then(function(response){}); 
+						 }
+						 else{
 							 InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){}); 
 						 }
 						 

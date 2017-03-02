@@ -225,4 +225,9 @@ public class InterviewServiceImpl implements InterviewService {
 	public Long checkFragmentProcessed(long idFragment, long primaryKey) {
 		return interviewQuestionDao.checkFragmentProcessed(idFragment, primaryKey);
 	}
+
+	@Override
+	public List<Interview> listAssessmentsForNotes(String[] modules) {
+		return interviewDao.getAssessmentsForNotes(modules);
+	}
 }
