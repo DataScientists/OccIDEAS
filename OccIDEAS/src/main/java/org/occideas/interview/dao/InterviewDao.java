@@ -21,9 +21,11 @@ import org.occideas.entity.SystemProperty;
 import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class InterviewDao {
+public class InterviewDao implements IInterviewDao{
 	
 	private final String ASSESSMENT_BASE_COUNT = 
 		" select count(*) from Participant p"  
@@ -51,31 +53,44 @@ public class InterviewDao {
     @Autowired
     private SessionFactory sessionFactory;
 
+    @Override
     public void save(Interview interview){
 		sessionFactory.getCurrentSession().persist(interview);
     }
 
+    @Override
     public void delete(Interview interview){
       sessionFactory.getCurrentSession().delete(interview);
     }
 
+    @Override
 	public Interview get(Long id){
       return (Interview) sessionFactory.getCurrentSession().get(Interview.class, id);
     }
 
+    @Override
 	public Interview merge(Interview interview)   {
       return (Interview) sessionFactory.getCurrentSession().merge(interview);
     }
 
+    @Override
     public void saveOrUpdate(Interview interview){
       sessionFactory.getCurrentSession().saveOrUpdate(interview);
     }
     
+    @Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
+    public void saveNewTransaction(Interview interview){
+       sessionFactory.getCurrentSession().saveOrUpdate(interview);
+    }
+    
+    @Override
     public List<Interview> getAll() {
     	//No filter
     	return getAllWithModules(null);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
 	public List<Interview> getAll(String assessmentStatus) {
     	
@@ -121,6 +136,7 @@ public class InterviewDao {
 		return crit;
 	}
     
+	@Override
     @SuppressWarnings("unchecked")
 	public List<Interview> getAllWithModules(String[] modules) {
     	
@@ -145,6 +161,8 @@ public class InterviewDao {
 			  retValue.add(interview);
 		  }
 	}
+	
+	@Override
     @SuppressWarnings("unchecked")
 	public List<Interview> getAssessments() {
       final Session session = sessionFactory.getCurrentSession();
@@ -159,6 +177,8 @@ public class InterviewDao {
       }
       return retValue;
     }
+	
+	@Override
     @SuppressWarnings("unchecked")
 	public List<Interview> findByReferenceNumber(String referenceNumber) {
       final Session session = sessionFactory.getCurrentSession();
@@ -177,6 +197,8 @@ public class InterviewDao {
       return retValue;
     }
 
+	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	@SuppressWarnings("unchecked")
 	public List<Interview> getInterview(Long interviewId) {
 		final Session session = sessionFactory.getCurrentSession();
@@ -187,6 +209,7 @@ public class InterviewDao {
         return crit.list();
 	}
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Interview> getInterviews(Long[] interviewIds) {
 		final Session session = sessionFactory.getCurrentSession();
@@ -197,6 +220,7 @@ public class InterviewDao {
         return crit.list();
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Interview> getInterviewIdList() {
 		 final Session session = sessionFactory.getCurrentSession();
@@ -208,6 +232,7 @@ public class InterviewDao {
 		return list;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Interview> getAllInterviewsWithoutAnswers() {
 		final Session session = sessionFactory.getCurrentSession();
@@ -223,6 +248,7 @@ public class InterviewDao {
 	      return temp;
 	}	
 
+	@Override
 	public Long getCountForModules(String[] modules) {
 
 		final Session session = sessionFactory.getCurrentSession();
@@ -248,6 +274,7 @@ public class InterviewDao {
 		crit.add(Property.forName("interview.idinterview").in(subquery));
 	}
 	
+	@Override
 	public BigInteger getAssessmentCount(String assessmentStatus) {
 		
 		final Session session = sessionFactory.getCurrentSession();
@@ -267,6 +294,7 @@ public class InterviewDao {
 		return (BigInteger) sqlQuery.uniqueResult();
 	}
 	
+	@Override
 	public BigInteger getAnswerCount(Long interviewId, Long nodeId) {
 		
 		SQLQuery sqlQuery = sessionFactory.getCurrentSession().createSQLQuery(ANSWER_COUNT_QUERY);

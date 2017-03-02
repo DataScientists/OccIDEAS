@@ -195,4 +195,5 @@ public class InterviewQuestionVO {
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
+
 }

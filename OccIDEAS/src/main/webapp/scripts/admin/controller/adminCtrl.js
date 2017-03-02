@@ -3,8 +3,8 @@
 	  .module('occIDEASApp.Admin')
 	  .controller('AdminCtrl',AdminCtrl);
 	
-	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService','ngToast'];
-	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService,$ngToast){
+	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService','ngToast','InterviewsService'];
+	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService,$ngToast,InterviewsService){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -16,6 +16,16 @@
 	    self.toggleIsDeleting = toggleIsDeleting;
 	    self.addNewConfigBtn = addNewConfigBtn;
 		
+	    $scope.randomIntCount = 0;
+	    
+	    self.createRandomInterviews = function(){
+	    	InterviewsService.createRandomInterviews($scope.randomIntCount).then(function(response){
+	    		if(response.status == '200'){
+	    			
+	    		}
+	    	});
+	    }
+	    
 	    self.listTranslations = function(){
 	    	$scope.addLanguageTab();
 	    }

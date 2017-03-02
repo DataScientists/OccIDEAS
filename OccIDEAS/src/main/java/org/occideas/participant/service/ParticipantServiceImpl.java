@@ -97,4 +97,14 @@ public class ParticipantServiceImpl implements ParticipantService {
 		page.setFilterVO(filterVO);
 		return page;
 	}
+
+	@Override
+	public Long getMaxParticipantId() {
+		return participantDao.getMaxParticipantId();
+	}
+
+	@Override
+	public String getMaxReferenceNumber() {
+		return participantDao.getMaxReferenceNumber();
+	}
 }

@@ -20,7 +20,7 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 
 	@Autowired
     private InterviewQuestionDao dao;
-
+	
     @Autowired
     private InterviewQuestionMapper mapper;
     
@@ -102,6 +102,7 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 	public InterviewQuestionVO findIntQuestion(long idInterview, long questionId) {
 		return mapper.convertToInterviewQuestionVO(dao.findIntQuestion(idInterview,questionId));
 	}
+	
 	@Override
     public InterviewQuestionVO updateInterviewLinkAndQueueQuestions(InterviewQuestionVO o) {
         return mapper.convertToInterviewQuestionVO(dao.saveInterviewLinkAndQueueQuestions(mapper.convertToInterviewQuestion(o)));

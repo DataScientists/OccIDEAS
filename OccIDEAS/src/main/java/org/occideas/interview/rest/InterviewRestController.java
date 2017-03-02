@@ -1018,4 +1018,19 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	private Long getIntroModuleId(Long interviewId) {
 		return service.getIntroModuleId(interviewId);
 	}
+	
+	@GET
+	@Path(value = "/createRandomInterviews")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response createRandomInterviews(@QueryParam("count") Integer count) {
+		try {
+			service.createRandomInterviews(count);		
+			
+		} catch (Throwable e) {
+			
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
+	
 }

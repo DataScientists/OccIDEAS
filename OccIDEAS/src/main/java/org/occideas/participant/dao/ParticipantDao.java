@@ -7,9 +7,14 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
+import org.occideas.entity.Rule;
 import org.occideas.utilities.PageUtil;
 import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.ParticipantVO;
@@ -143,5 +148,33 @@ public class ParticipantDao {
 		filter.applyFilter(filter, sqlQuery);
 		return (BigInteger) sqlQuery.uniqueResult();
     }
-
+    
+    public Long getMaxParticipantId(){
+    	final Session session = sessionFactory.getCurrentSession();
+    	final Criteria crit = session.createCriteria(Participant.class)
+    			.addOrder(Order.desc("idParticipant"))
+				.setMaxResults(1)
+    			.setProjection(Projections.projectionList()
+    						.add(Projections.property("idParticipant"),"idParticipant"));
+		Long participantId = (Long) crit.uniqueResult();
+		if(participantId == null){
+			return 1L;
+		}
+    	return participantId;
+    }
+    
+    public String getMaxReferenceNumber(){
+    	final Session session = sessionFactory.getCurrentSession();
+    	final Criteria crit = session.createCriteria(Participant.class)
+    			.addOrder(Order.desc("reference"))
+				.setMaxResults(1)
+				.add(Restrictions.like("reference", "auto", MatchMode.START))
+    			.setProjection(Projections.projectionList()
+    						.add(Projections.property("reference"),"reference"));
+		String reference = (String) crit.uniqueResult();
+		if(reference == null){
+			return null;
+		}
+    	return reference;
+    }
 }

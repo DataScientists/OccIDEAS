@@ -6,6 +6,7 @@ import java.util.List;
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Interview;
 import org.occideas.vo.InterviewVO;
+import org.occideas.vo.RandomInterviewReport;
 
 public interface InterviewService extends BaseService<InterviewVO> {
 	void merge(InterviewVO o);
@@ -53,4 +54,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	Long getIntroModuleId(Long interviewId);
 
 	Long checkFragmentProcessed(long idFragment, long primaryKey);
+	
+	List<RandomInterviewReport> createRandomInterviews(int count);
 }

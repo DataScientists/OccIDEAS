@@ -5,6 +5,17 @@
 	InterviewsService.$inject = [ '$http', '$q' ];
 	function InterviewsService($http, $q) {
 
+		function createRandomInterviews(count) {
+			var restUrl = 'web/rest/interview/createRandomInterviews?count='
+					+ count;
+
+			var request = $http({
+				method : 'GET',
+				url : restUrl
+			})
+			return request.then(handleSuccess, handleError);
+		}
+		
 		function findInterviewIdByModuleId(moduleId) {
 			var restUrl = 'web/rest/interviewintromodule/findInterviewIdByModuleId?id='
 					+ moduleId;
@@ -561,7 +572,8 @@
 			getExpandedModule:getExpandedModule,
 			getInterviewQuestionByQuestionId:getInterviewQuestionByQuestionId,
 			findQuestionsByNodeId:findQuestionsByNodeId,
-			checkFragmentProcessed:checkFragmentProcessed
+			checkFragmentProcessed:checkFragmentProcessed,
+			createRandomInterviews:createRandomInterviews
 		};
 	}
 })();

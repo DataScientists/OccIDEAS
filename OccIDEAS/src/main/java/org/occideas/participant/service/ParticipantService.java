@@ -17,5 +17,8 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
 	 public PageVO<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber,int size, GenericFilterVO filterVO);
 	 
 	 public PageVO<ParticipantIntMod> getPaginatedParticipantList(int pageNumber,int size, GenericFilterVO filterVO);
-	
+
+	Long getMaxParticipantId();
+
+	  public String getMaxReferenceNumber();
 }
