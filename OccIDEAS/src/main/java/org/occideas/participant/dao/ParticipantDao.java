@@ -14,42 +14,50 @@ import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
-import org.occideas.entity.Rule;
 import org.occideas.utilities.PageUtil;
 import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class ParticipantDao {
+public class ParticipantDao implements IParticipantDao {
 
     @Autowired
     private SessionFactory sessionFactory;
     @Autowired
     private PageUtil<ParticipantVO> pageUtil;
 
+    @Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
     public Long save(Participant participant){
         return (Long) sessionFactory.getCurrentSession().save(participant);
-      }
+    }
 
+    @Override
     public void delete(Participant participant){
     	
     	sessionFactory.getCurrentSession().delete(participant);
     }
 
+    @Override
 	public Participant get(Long id){
       return (Participant) sessionFactory.getCurrentSession().get(Participant.class, id);
     }
 
+    @Override
 	public Participant merge(Interview participant)   {
       return (Participant) sessionFactory.getCurrentSession().merge(participant);
     }
 
+    @Override
     public void saveOrUpdate(Participant participant){
       sessionFactory.getCurrentSession().saveOrUpdate(participant);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
 	public List<Participant> getAll() {
       final Session session = sessionFactory.getCurrentSession();
@@ -71,6 +79,7 @@ public class ParticipantDao {
     		" and i.idinterview like :idinterview"+
     		" and p.deleted = 0";
     
+    @Override
     @SuppressWarnings("unchecked")
 	public List<ParticipantIntMod> getPaginatedParticipantList(int pageNumber,int size,GenericFilterVO filter) {
     	final Session session = sessionFactory.getCurrentSession();
@@ -94,6 +103,7 @@ public class ParticipantDao {
     		    		" and i.idinterview like :idinterview"+
     		    		" and p.deleted = 0) a";
     
+    @Override
     public BigInteger getPaginatedParticipantTotalCount(GenericFilterVO filter){
     	final Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery(participantCountSQL);
@@ -116,6 +126,7 @@ public class ParticipantDao {
     		+ " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
     		+ " and p.deleted = 0";
     
+    @Override
     @SuppressWarnings("unchecked")
 	public List<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber,int size,GenericFilterVO filter) {
     	final Session session = sessionFactory.getCurrentSession();
@@ -142,6 +153,7 @@ public class ParticipantDao {
     	    		+ " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
     	    		+ " and p.deleted = 0";
     
+    @Override
     public BigInteger getParticipantWithModTotalCount(GenericFilterVO filter){
     	final Session session = sessionFactory.getCurrentSession();
 		SQLQuery sqlQuery = session.createSQLQuery(participantCountWithModule);
@@ -149,6 +161,7 @@ public class ParticipantDao {
 		return (BigInteger) sqlQuery.uniqueResult();
     }
     
+    @Override
     public Long getMaxParticipantId(){
     	final Session session = sessionFactory.getCurrentSession();
     	final Criteria crit = session.createCriteria(Participant.class)
@@ -163,6 +176,7 @@ public class ParticipantDao {
     	return participantId;
     }
     
+    @Override
     public String getMaxReferenceNumber(){
     	final Session session = sessionFactory.getCurrentSession();
     	final Criteria crit = session.createCriteria(Participant.class)

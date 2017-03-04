@@ -27,9 +27,11 @@ import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class InterviewQuestionDao{
+public class InterviewQuestionDao implements IInterviewQuestionDao{
 	
 	private Logger log = Logger.getLogger(this.getClass());
 
@@ -63,6 +65,7 @@ public class InterviewQuestionDao{
 		   + " or a.parent_idNode = b.parentModuleId)"
 		   + " and a.link = :link";
 	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule){
 		System.out.println("Start getUniqueInterviewQuestions:"+new Date());
@@ -75,6 +78,7 @@ public class InterviewQuestionDao{
 		return list;
 	}
 	
+	@Override
 	public void updateModuleNameForInterviewId(long id,String newName){
     	Session session = sessionFactory.getCurrentSession();
     	String hqlUpdate = "update InterviewQuestion iq set iq.name = :newName where iq.id = :id";
@@ -84,27 +88,34 @@ public class InterviewQuestionDao{
     	        .executeUpdate();
     }
 	
+	@Override
 	public InterviewQuestion save(InterviewQuestion iq){
       return (InterviewQuestion) sessionFactory.getCurrentSession().save(iq);
     }
 
+	@Override
     public void delete(InterviewQuestion iq){
       sessionFactory.getCurrentSession().delete(iq);
     }
 
+	@Override
 	public InterviewQuestion get(Long id){
 		return (InterviewQuestion) sessionFactory.getCurrentSession().get(InterviewQuestion.class, id);
     }
 	
+	@Override
 	public InterviewQuestion merge(InterviewQuestion iq)   {
       return (InterviewQuestion) sessionFactory.getCurrentSession().merge(iq);
     }
 
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
     public InterviewQuestion saveOrUpdate(InterviewQuestion iq){
       sessionFactory.getCurrentSession().saveOrUpdate(iq);
       return iq;
     }
     
+	@Override
     public List<InterviewQuestion> saveOrUpdate(List<InterviewQuestion> iqs) {
 		List<InterviewQuestion> list = new ArrayList<>();
 		for(InterviewQuestion iq:iqs){
@@ -114,6 +125,8 @@ public class InterviewQuestionDao{
 		return list;
 	}
     
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
     public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq){
     	iq.setProcessed(true);
     	sessionFactory.getCurrentSession().saveOrUpdate(iq);
@@ -167,12 +180,15 @@ public class InterviewQuestionDao{
         return iq;
       }
 
+	@Override
     @SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getAll() {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(InterviewQuestion.class);
       return crit.list();
     }
+	
+	@Override
     @SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getAllActive() {
 		final Session session = sessionFactory.getCurrentSession();
@@ -181,6 +197,7 @@ public class InterviewQuestionDao{
 		return crit.list();
 	}
     
+	@Override
     @SuppressWarnings("unchecked")
     public List<InterviewQuestion> findByInterviewId(Long interviewId) {
         final Session session = sessionFactory.getCurrentSession();
@@ -191,6 +208,7 @@ public class InterviewQuestionDao{
         return crit.list();
     }
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public InterviewQuestion findIntQuestion(long idInterview, long questionId) {
 		final Session session = sessionFactory.getCurrentSession();
@@ -204,6 +222,7 @@ public class InterviewQuestionDao{
 		return list.get(0);
 	}
     
+	@Override
 	public Long getMaxIntQuestionSequence(long idInterview) {
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(InterviewQuestion.class)
@@ -215,6 +234,7 @@ public class InterviewQuestionDao{
 		return (Long)crit.uniqueResult();
 	}	
 
+	@Override
 	public Long getUniqueInterviewQuestionCount(String[] filterModule) {
 		
 		final Session session = sessionFactory.getCurrentSession();
@@ -227,6 +247,7 @@ public class InterviewQuestionDao{
 		return (Long) crit.uniqueResult();
 	}
 
+	@Override
 	public InterviewQuestion getByQuestionId(Long questionId, 
 			Long interviewId) {
 		
@@ -238,6 +259,7 @@ public class InterviewQuestionDao{
 		return (InterviewQuestion) crit.uniqueResult();
 	}
 
+	@Override
 	public List<InterviewQuestion> getQuestionsByNodeId(Long questionId) {
 		
 		final Session session = sessionFactory.getCurrentSession();
@@ -250,6 +272,7 @@ public class InterviewQuestionDao{
 		return list;
 	}
 	
+	@Override
 	public Long getIntroModuleId(Long interviewId) {
 		
 		final Session session = sessionFactory.getCurrentSession();
@@ -263,6 +286,7 @@ public class InterviewQuestionDao{
 		return (Long)crit.uniqueResult();
 	}
 
+	@Override
 	public Long checkFragmentProcessed(long link, long id) {
 		
 		final Session session = sessionFactory.getCurrentSession();

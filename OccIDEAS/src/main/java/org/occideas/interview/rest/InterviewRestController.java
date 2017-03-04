@@ -41,6 +41,7 @@ import org.occideas.vo.NodeVO;
 import org.occideas.vo.NoteVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.RandomInterviewReport;
 import org.occideas.vo.RuleVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1023,14 +1024,15 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	@Path(value = "/createRandomInterviews")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response createRandomInterviews(@QueryParam("count") Integer count) {
+		List<RandomInterviewReport> results = null;
 		try {
-			service.createRandomInterviews(count);		
+			 results = service.createRandomInterviews(count);		
 			
 		} catch (Throwable e) {
 			
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
-		return Response.ok().build();
+		return Response.ok(results).build();
 	}
 	
 }

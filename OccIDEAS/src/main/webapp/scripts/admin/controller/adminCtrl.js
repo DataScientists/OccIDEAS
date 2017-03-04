@@ -21,7 +21,15 @@
 	    self.createRandomInterviews = function(){
 	    	InterviewsService.createRandomInterviews($scope.randomIntCount).then(function(response){
 	    		if(response.status == '200'){
-	    			
+	    			$scope.randomReport = response.data;
+	    			_.each($scope.randomReport,function(report){
+	    				var i = 0;
+	    				for(i;i < report.listQuestion.length;i++){
+	    					if(i < report.listAnswer.length){
+	    						report.listQuestion[i].answer = report.listAnswer[i];
+	    					}
+	    				}
+	    			});
 	    		}
 	    	});
 	    }
@@ -214,6 +222,15 @@
 				scope: $scope,  
 				preserveScope: true,
 				templateUrl : 'scripts/admin/partials/addNewUser.html',
+				clickOutsideToClose:false
+			});
+		}
+		
+		self.showRandomInterviews = function(){
+			$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/admin/partials/createRandomInterviews.html',
 				clickOutsideToClose:false
 			});
 		}

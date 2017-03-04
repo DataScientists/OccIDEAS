@@ -12,9 +12,11 @@ import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class InterviewAnswerDao {
+public class InterviewAnswerDao implements IInterviewAnswerDao{
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -22,6 +24,7 @@ public class InterviewAnswerDao {
 	@Autowired
     private PossibleAnswerService possibleAnswerService;
 	
+	@Override
 	public List<InterviewAnswer> saveOrUpdate(List<InterviewAnswer> ia) {
 		List<InterviewAnswer> list = new ArrayList<>();
 		for(InterviewAnswer a:ia){
@@ -30,6 +33,9 @@ public class InterviewAnswerDao {
 		}
 		return list;
 	}
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
 	public List<InterviewAnswer> saveAnswerAndQueueQuestions(List<InterviewAnswer> ia) {
 		List<InterviewAnswer> list = new ArrayList<>();
 		for(InterviewAnswer a:ia){

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.security.audit.Auditable;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 
 	@Autowired
-    private InterviewQuestionDao dao;
+    private IInterviewQuestionDao dao;
 	
     @Autowired
     private InterviewQuestionMapper mapper;
@@ -65,7 +66,6 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
         return mapper.convertToInterviewQuestionVO(intervew);
     }
 
-    @Auditable(actionType = AuditingActionType.UPD_INTERVIEW_QUESTION)
     @Override
     public InterviewQuestionVO updateIntQ(InterviewQuestionVO o) {
         return mapper.convertToInterviewQuestionVO(dao.saveOrUpdate(mapper.convertToInterviewQuestion(o)));

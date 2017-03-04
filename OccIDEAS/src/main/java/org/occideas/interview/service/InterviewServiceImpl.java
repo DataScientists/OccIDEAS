@@ -14,21 +14,25 @@ import org.occideas.entity.Interview;
 import org.occideas.entity.Module;
 import org.occideas.entity.SystemProperty;
 import org.occideas.interview.dao.IInterviewDao;
-import org.occideas.interview.dao.InterviewDao;
-import org.occideas.interviewquestion.dao.InterviewQuestionDao;
+import org.occideas.interviewanswer.service.InterviewAnswerService;
+import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.mapper.InterviewMapper;
 import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.participant.service.ParticipantService;
+import org.occideas.question.service.QuestionService;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
+import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.ParticipantVO;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RandomInterviewReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InterviewServiceImpl implements InterviewService {
 
 	private Logger log = Logger.getLogger(this.getClass());
-	
+
 	@Autowired
 	private BaseDao dao;
 
@@ -48,7 +52,7 @@ public class InterviewServiceImpl implements InterviewService {
 	private IInterviewDao interviewDao;
 
 	@Autowired
-	private InterviewQuestionDao interviewQuestionDao;
+	private IInterviewQuestionDao interviewQuestionDao;
 
 	@Autowired
 	private ParticipantService participantService;
@@ -58,20 +62,25 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Autowired
 	private InterviewQuestionMapper qsMapper;
-	
+
 	@Autowired
 	private SystemPropertyDao systemPropertyDao;
-	
+
 	@Autowired
 	private IModuleDao moduleDao;
-	
+
 	@Autowired
 	private ModuleMapper moduleMapper;
-	
+
 	@Autowired
 	private InterviewQuestionService interviewQuestionService;
-	
-	
+
+	@Autowired
+	private InterviewAnswerService interviewAnswerService;
+
+	@Autowired
+	private QuestionService questionService;
+
 	private final String PARTICIPANT_PREFIX = "auto";
 
 	@Override
@@ -281,38 +290,37 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public List<RandomInterviewReport> createRandomInterviews(int count) {
-		//get active intro
+		// get active intro
 		SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
-		if(activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())){
+		if (activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())) {
 			log.error("Active intro is either null or is not numeric");
 			return null;
 		}
-		//get the module
+		// get the module
 		Module mod = moduleDao.get(Long.valueOf(activeIntro.getValue()));
 		ModuleVO modVO = moduleMapper.convertToModuleVO(mod, false);
-		//get latest participant count
+		// get latest participant count
 		String maxReferenceNumber = participantService.getMaxReferenceNumber();
-		if(maxReferenceNumber == null){
-			maxReferenceNumber = PARTICIPANT_PREFIX+"000";
+		if (maxReferenceNumber == null) {
+			maxReferenceNumber = PARTICIPANT_PREFIX + "000";
 		}
 		String referenceNumber = generateReferenceAuto(maxReferenceNumber);
-		
+		List<RandomInterviewReport> results = new ArrayList<>();
 		if (count != 0) {
-			// get the last participantId and later increment by 1
-			Long maxParticipantId = participantService.getMaxParticipantId();
-			
 			// loop the count and generate random interviews based on the count
 			for (int i = 0; i < count; i++) {
+				RandomInterviewReport randomInterviewReport = new RandomInterviewReport();
+				randomInterviewReport.setReferenceNumber(referenceNumber);
 				// create participant
-				Long idParticipant = maxParticipantId + 1;
-				maxParticipantId = idParticipant;
+				// Long idParticipant = maxParticipantId + 1;
+				// maxParticipantId = idParticipant;
 				ParticipantVO partVO = new ParticipantVO();
-				partVO.setIdParticipant(idParticipant);
+				// partVO.setIdParticipant(idParticipant);
 				partVO.setReference(referenceNumber);
 				ParticipantVO participantVO = participantService.create(partVO);
-				//create interview
+				// create interview
 				InterviewVO interviewVO = new InterviewVO();
 				interviewVO.setParticipant(participantVO);
 				interviewVO.setModule(modVO);
@@ -320,8 +328,9 @@ public class InterviewServiceImpl implements InterviewService {
 				Interview interviewEntity = mapper.convertToInterview(interviewVO);
 				interviewDao.saveNewTransaction(interviewEntity);
 				InterviewVO newInterviewVO = mapper.convertToInterviewVO(interviewEntity);
+				randomInterviewReport.setInterviewId(newInterviewVO.getInterviewId());
 				referenceNumber = generateReferenceAuto(referenceNumber);
-				// populate  interview question by module
+				// populate interview question by module
 				InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
 				interviewQuestionVO.setIdInterview(newInterviewVO.getInterviewId());
 				interviewQuestionVO.setTopNodeId(modVO.getIdNode());
@@ -336,41 +345,127 @@ public class InterviewServiceImpl implements InterviewService {
 				interviewQuestionVO.setDeleted(0);
 				interviewQuestionVO.setIntQuestionSequence(0);
 				// save link question and queue
-				InterviewQuestionVO linkAndQueueQuestions = interviewQuestionService.updateInterviewLinkAndQueueQuestions(interviewQuestionVO);
-				
+				InterviewQuestionVO linkAndQueueQuestions = interviewQuestionService
+						.updateInterviewLinkAndQueueQuestions(interviewQuestionVO);
 				// get interview
-				List<InterviewVO> interviewList = 
-				mapper.convertToInterviewWithQuestionAnswerList(interviewDao.getInterview(newInterviewVO.getInterviewId()));
-				
+				List<InterviewVO> interviewList = mapper.convertToInterviewWithQuestionAnswerList(
+						interviewDao.getInterview(newInterviewVO.getInterviewId()));
+
 				InterviewVO randomInterview = interviewList.get(0);
-				// find next question queued
-				List<InterviewQuestionVO> questionList = randomInterview.getQuestionHistory();
-				BeanComparator bc = new BeanComparator("getNumber");
-				Collections.sort(questionList, bc);
-				for(InterviewQuestionVO vo:questionList){
-					if(!vo.isProcessed() && vo.getDeleted() != 1){
-						System.out.println(vo);
-					}	
-				}	
+				processRandomQuestionsAndAnswers(randomInterview,randomInterviewReport);
+				results.add(randomInterviewReport);
 			}
 		}
 
-		return null;
+		return results;
 	}
 
-	private String generateReferenceAuto(String maxReference){
-		String replaceAll = maxReference.replaceAll("\\D+","").replaceFirst("^0+(?!$)", "");
+	private void processRandomQuestionsAndAnswers(InterviewVO randomInterview, RandomInterviewReport randomInterviewReport) {
+		List<InterviewQuestionVO> questionList = randomInterview.getQuestionHistory();
+		InterviewQuestionVO questionAsked = findNextQuestionQueued(questionList);
+		if (questionAsked == null) {
+			log.info("[Randominterview]-No question to ask for interview id " + randomInterview.getInterviewId());
+			return;
+		} else {
+			List<QuestionVO> questionsWithSingleChildLevel = questionService
+					.getQuestionsWithSingleChildLevel(questionAsked.getQuestionId());
+			QuestionVO actualQuestion = questionsWithSingleChildLevel.get(0);
+			List<PossibleAnswerVO> answers = actualQuestion.getChildNodes();
+			if(actualQuestion.getLink() != 0L){
+				// its a linking question
+				InterviewQuestionVO qVO = populateInteviewQuestionJsonByLinkedQuestion(randomInterview,actualQuestion);
+//				interviewQuestionService.updateInterviewLinkAndQueueQuestions(qVO);
+//				randomInterviewReport.getListQuestion().add(qVO);
+				saveQuestion(randomInterview, questionAsked,randomInterviewReport);
+			}else if (answers.isEmpty()) {
+				saveQuestion(randomInterview, questionAsked,randomInterviewReport);
+			} else {
+				saveAnswer(randomInterview, questionAsked, answers,randomInterviewReport);
+				saveQuestion(randomInterview, questionAsked,randomInterviewReport);
+			}
+		}
+	}
+
+	private InterviewQuestionVO populateInteviewQuestionJsonByLinkedQuestion(InterviewVO randomInterview,
+			QuestionVO actualQuestion) {
+		InterviewQuestionVO intQuestionVO = new InterviewQuestionVO();
+		intQuestionVO.setId(actualQuestion.getIdNode());
+		intQuestionVO.setIdInterview(randomInterview.getInterviewId());
+		intQuestionVO.setTopNodeId(actualQuestion.getLink());
+		intQuestionVO.setParentModuleId(Long.valueOf(actualQuestion.getTopNodeId()));
+		intQuestionVO.setParentAnswerId(Long.valueOf(actualQuestion.getParentId()));
+		intQuestionVO.setName(actualQuestion.getName());
+		intQuestionVO.setDescription(actualQuestion.getDescription());
+		intQuestionVO.setNodeClass(actualQuestion.getNodeclass());
+		intQuestionVO.setNumber("1");
+		intQuestionVO.setType(actualQuestion.getType());
+		intQuestionVO.setLink(actualQuestion.getLink());
+		intQuestionVO.setIntQuestionSequence(0);
+		intQuestionVO.setModCount(0);
+		intQuestionVO.setDeleted(0);
+		return intQuestionVO;
+	}
+
+	private void saveQuestion(InterviewVO randomInterview, InterviewQuestionVO questionAsked,RandomInterviewReport randomInterviewReport) {
+		questionAsked.setProcessed(true);
+		interviewQuestionService.updateIntQ(questionAsked);
+		randomInterviewReport.getListQuestion().add(questionAsked);
+		processRandomQuestionsAndAnswers(randomInterview,randomInterviewReport);
+	}
+
+	private void saveAnswer(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
+			List<PossibleAnswerVO> answers,RandomInterviewReport randomInterviewReport) {
+		PossibleAnswerVO selectedAnswer = answers.get(0);
+		InterviewAnswerVO interviewAnswer = populateInterviewAnswer(randomInterview, selectedAnswer);
+		interviewAnswer.setInterviewQuestionId(questionAsked.getId());
+		interviewAnswer.setIsProcessed(true);
+		List<InterviewAnswerVO> listOfAnswers = new ArrayList<>();
+		listOfAnswers.add(interviewAnswer);
+		interviewAnswerService.saveIntervewAnswersAndQueueQuestions(listOfAnswers);
+		randomInterviewReport.getListAnswer().add(interviewAnswer);
+	}
+
+	private InterviewQuestionVO findNextQuestionQueued(List<InterviewQuestionVO> questionList) {
+		InterviewQuestionVO intQuestionVO = null;
+		for (InterviewQuestionVO vo : questionList) {
+			if (!vo.isProcessed() && vo.getDeleted() != 1) {
+				intQuestionVO = vo;
+				break;
+			}
+		}
+		return intQuestionVO;
+	}
+
+	private InterviewAnswerVO populateInterviewAnswer(InterviewVO newInterviewVO, PossibleAnswerVO selectedAnswer) {
+		InterviewAnswerVO answerVO = new InterviewAnswerVO();
+		answerVO.setIdInterview(newInterviewVO.getInterviewId());
+		answerVO.setTopNodeId(selectedAnswer.getTopNodeId());
+		answerVO.setParentQuestionId(Long.valueOf(selectedAnswer.getParentId()));
+		answerVO.setAnswerId(selectedAnswer.getIdNode());
+		answerVO.setName(selectedAnswer.getName());
+		answerVO.setModCount(1);
+		answerVO.setAnswerFreetext(selectedAnswer.getName());
+		answerVO.setNodeClass(selectedAnswer.getNodeclass());
+		answerVO.setNumber(selectedAnswer.getNumber());
+		answerVO.setType(selectedAnswer.getType());
+		answerVO.setDeleted(selectedAnswer.getDeleted());
+		answerVO.setIsProcessed(false);
+		return answerVO;
+	}
+
+	private String generateReferenceAuto(String maxReference) {
+		String replaceAll = maxReference.replaceAll("\\D+", "").replaceFirst("^0+(?!$)", "");
 		Integer autoInt = Integer.valueOf(replaceAll);
-		Integer finalInt = autoInt+1;
+		Integer finalInt = autoInt + 1;
 		String finalIntStr = String.valueOf(finalInt);
 		Integer length = finalIntStr.length();
 		StringBuilder sb = new StringBuilder(finalIntStr);
-		if(length < 3){
-			for(int i=length;i < 3;i++){
-				 sb.insert(0, "0");
+		if (length < 3) {
+			for (int i = length; i < 3; i++) {
+				sb.insert(0, "0");
 			}
 		}
 		System.out.println(sb.toString());
-		return PARTICIPANT_PREFIX+sb.toString();
+		return PARTICIPANT_PREFIX + sb.toString();
 	}
 }

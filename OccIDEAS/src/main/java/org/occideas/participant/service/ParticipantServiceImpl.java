@@ -6,7 +6,7 @@ import java.util.List;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
 import org.occideas.mapper.ParticipantMapper;
-import org.occideas.participant.dao.ParticipantDao;
+import org.occideas.participant.dao.IParticipantDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.utilities.PageUtil;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ParticipantServiceImpl implements ParticipantService {
 
 	@Autowired
-    private ParticipantDao participantDao;
+    private IParticipantDao participantDao;
 
 	@Autowired
     private ParticipantMapper mapper;
