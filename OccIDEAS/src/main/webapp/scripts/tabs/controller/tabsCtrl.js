@@ -492,7 +492,7 @@
                 tabs.push({
                     title: tabTitle,
                     viewName: 'interview@tabs',
-                    canClose: true,
+                    canClose: false,
                     disabled: false
                 });
                 $scope.tabOptions.push({
@@ -519,7 +519,7 @@
                 tabs.push({
                     title: tabTitle,
                     viewName: 'interview@tabs',
-                    canClose: true,
+                    canClose: false,
                     disabled: false
                 });
                 $scope.tabOptions.push({
@@ -554,7 +554,7 @@
                 tabs.push({
                     title: tabTitle,
                     viewName: 'interviewresume@tabs',
-                    canClose: true,
+                    canClose: false,
                     disabled: false,
                     isSameIntroModule: isSameIntroModule
                 });
