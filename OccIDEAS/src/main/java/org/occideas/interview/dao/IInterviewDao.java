@@ -43,4 +43,6 @@ public interface IInterviewDao {
 
 	void save(Interview interview);
 
+	List<Interview> getAssessmentsForNotes(String[] modules);
+
 }

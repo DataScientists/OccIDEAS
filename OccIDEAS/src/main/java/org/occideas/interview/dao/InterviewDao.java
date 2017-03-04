@@ -324,6 +324,7 @@ public class InterviewDao implements IInterviewDao{
 		return (BigInteger) sqlQuery.uniqueResult();
 	}
 
+	@Override
 	public List<Interview> getAssessmentsForNotes(String[] modules) {
 		
 		final Session session = sessionFactory.getCurrentSession();
