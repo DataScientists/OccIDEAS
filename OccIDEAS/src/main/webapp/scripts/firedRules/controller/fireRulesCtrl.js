@@ -5,11 +5,13 @@
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
-	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService','ngToast'];
+	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService',
+	                           'AutoAssessmentService','ngToast'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
 			RulesService,$ngToast,SystemPropertyService, $mdDialog,
-			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService,ngToast) {
+			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService,
+			AutoAssessmentService,ngToast) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -207,7 +209,7 @@
 			
 			if(!$scope.linkedModule){
 				
-				AssessmentsService.getFiredRules($scope.interviewId).then(function(response){
+				InterviewsService.getInterview($scope.interviewId).then(function(response){
 					if(response.status == '200'){	
 						
 						$scope.interview = response.data[0];
@@ -228,6 +230,40 @@
 				
 				if($scope.agents.length==0 && $scope.interview){
 					$scope.agents = $scope.interview.agents;
+				}
+			});
+			
+			FiredRulesService.getByInterviewId($scope.interviewId).then(function(response){
+				if(response.status == '200'){
+					var interviewFiredRules = response.data;
+					vm.interviewFiredRules = interviewFiredRules;
+					$scope.data.firedRules = [];
+					for(var i=0;i<interviewFiredRules.length;i++){
+						var rules = interviewFiredRules[i].rules;
+						for(var j=0;j<rules.length;j++){
+							$scope.data.firedRules.push(rules[j]);
+						}              		
+                	} 
+				}
+			});
+			ManualAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
+				if(response.status == '200'){
+					var interviewManualAssessedRules = response.data;
+					$scope.data.manualAssessedRules = [];
+					for(var i=0;i<interviewManualAssessedRules.length;i++){
+						var rule = interviewManualAssessedRules[i].rule;					
+						$scope.data.manualAssessedRules.push(rule);						             		
+                	} 
+				}
+			});
+			AutoAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
+				if(response.status == '200'){
+					var interviewAutoAssessedRules = response.data;
+					$scope.data.autoAssessedRules = [];
+					for(var i=0;i<interviewAutoAssessedRules.length;i++){
+						var rule = interviewAutoAssessedRules[i].rule;					
+						$scope.data.autoAssessedRules.push(rule);						             		
+                	} 
 				}
 			});
 			
@@ -295,12 +331,17 @@
 			});
 		}
 		function refreshAssessmentDisplay(){
-			AssessmentsService.updateFiredRules($scope.interviewId)
-			.then(function(response){
-				$log.info("refreshAssessmentDisplay");
-				$scope.data = response.data[0];
-			});
+			//AssessmentsService.updateFiredRules($scope.interviewId).then(function(response){
+			//	$log.info("refreshAssessmentDisplay");
+			//	$scope.data = response.data[0];
+		//	});
 			//getFiredRulesByInterviewId($scope.interview.interviewId);
+			FiredRulesService.getByInterviewId($scope.interviewId).then(function(response){
+				if(response.status == '200'){
+					var interviewFiredRules = response.data;
+					vm.interviewFiredRules = interviewFiredRules;
+				}
+			});
 			
 		}
 		vm.interviewFiredRules = null;

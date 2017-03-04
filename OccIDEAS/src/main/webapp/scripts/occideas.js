@@ -39,6 +39,7 @@ angular
     "occIDEASApp.Admin",
     "occIDEASApp.FiredRules",
     "occIDEASApp.ManualAssessment",
+    "occIDEASApp.AutoAssessment",
     "occIDEASApp.SystemProperty",
     "occIDEASApp.Reports",
     "occIDEASApp.angular.translate",

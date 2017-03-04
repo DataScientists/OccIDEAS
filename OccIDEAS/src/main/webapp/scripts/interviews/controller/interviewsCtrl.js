@@ -999,7 +999,6 @@
 				alert("Please select an answer.");
 				return;
 			}
-			//commented out for debugging
 			$scope.inProgress = true;		
 			var interview = $scope.interview;
 			if (interview) {
