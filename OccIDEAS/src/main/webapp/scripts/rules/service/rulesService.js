@@ -53,6 +53,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		function saveList(data){
+			var restSaveUrl = 'web/rest/rule/saveList';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
 		function update(data){
 			var restSaveUrl = 'web/rest/rule/update';
 			var request =  $http({
@@ -102,6 +111,7 @@
 			listAllRules: listAllRules,
 			create: create,
 			save: save,
+			saveList: saveList,
 			getRule: getRule,
 			findRules: findRules,
 			update:update,

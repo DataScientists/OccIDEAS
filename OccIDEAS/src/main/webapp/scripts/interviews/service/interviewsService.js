@@ -243,6 +243,19 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		function exportNotesCSV(filterModule, fileName) {
+			var url = 'web/rest/assessment/exportNotesCSV';
+			var request = $http({
+				method : 'POST',
+				url : url,
+				ignoreLoadingBar : true,
+				data : {
+					fileName : fileName,
+					filterModule : filterModule
+				}
+			})
+			return request.then(handleSuccess, handleError);
+		}
 
 		function getInterviewIdList() {
 			var url = 'web/rest/interview/getAllInterviewId';
@@ -573,7 +586,8 @@
 			getInterviewQuestionByQuestionId:getInterviewQuestionByQuestionId,
 			findQuestionsByNodeId:findQuestionsByNodeId,
 			checkFragmentProcessed:checkFragmentProcessed,
-			createRandomInterviews:createRandomInterviews
+			createRandomInterviews:createRandomInterviews,
+			exportNotesCSV:exportNotesCSV
 		};
 	}
 })();

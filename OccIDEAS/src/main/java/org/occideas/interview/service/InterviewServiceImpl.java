@@ -290,6 +290,7 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	@Override
+<<<<<<< HEAD
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public List<RandomInterviewReport> createRandomInterviews(int count) {
 		// get active intro
@@ -467,5 +468,9 @@ public class InterviewServiceImpl implements InterviewService {
 		}
 		System.out.println(sb.toString());
 		return PARTICIPANT_PREFIX + sb.toString();
+=======
+	public List<Interview> listAssessmentsForNotes(String[] modules) {
+		return interviewDao.getAssessmentsForNotes(modules);
+>>>>>>> 19a68b48123e07269148a305cf46c22381003214
 	}
 }

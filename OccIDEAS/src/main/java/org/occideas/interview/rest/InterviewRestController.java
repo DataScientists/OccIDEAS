@@ -647,7 +647,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		try {
 			
 			//Will return the intro module
-			list = moduleService.findById(moduleId);		
+			list = moduleService.findByIdNoRules(moduleId);		
 			if(list.get(0) != null){
 				list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, false, moduleId, false));
 			}
@@ -892,8 +892,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	private void getMap(List<InterviewQuestion> questionHistory, 
 			Map<Long, InterviewQuestion> questionMap,
 			Map<Long, InterviewAnswer> answerMap, long linkId, boolean isSubModule, boolean isExpanded) {
-		
+		//int iSize = questionHistory.size();
+		//int iCount = 0;
 		for (InterviewQuestion vo : questionHistory) {
+			//iCount++;
+			//System.out.println(iCount+" q of "+iSize+" "+new Date());
 			if(!vo.isProcessed()){
 				continue;
 			}
@@ -909,8 +912,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			} else {
 				questionMap.put(Long.valueOf(vo.getQuestionId()), vo);
 			}
-			
-			for(InterviewAnswer answer : vo.getAnswers()){
+			List<InterviewAnswer> answerHistory = vo.getAnswers();
+			//int iPACount = 0;
+			//int iPASize = answerHistory.size();
+			for(InterviewAnswer answer : answerHistory){
+				//iPACount++;
+				//System.out.println(iPACount+" pa of "+iPASize+" ");
 				if(vo.isProcessed()){
 					answerMap.put(Long.valueOf(answer.getAnswerId()), answer);
 				}	
@@ -1004,7 +1011,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		try {
 			
 			//Will return the intro module
-			list = moduleService.findById(moduleId);		
+			list = moduleService.findByIdNoRules(moduleId);		
 			if(list.get(0) != null){
 				list.add(mapToModule(list.remove(0).getChildNodes(), interviewId, false, moduleId, true));
 			}

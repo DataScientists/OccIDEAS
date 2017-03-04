@@ -65,7 +65,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
-    	
+    	function saveManualAssessments(manualAssessments) {
+			var restURL = 'web/rest/interview/saveManualAssessments';
+			var request = $http({
+				method : 'POST',
+				url : restURL,
+				data : data
+			})
+			return request.then(handleSuccess, handleError);
+		}
     	function updateAutoAssessments(type) {
     		
 			var restUrl = 'web/rest/interview/updateAutoAssessments?type=' 

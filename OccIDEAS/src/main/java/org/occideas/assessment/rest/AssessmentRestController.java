@@ -33,6 +33,7 @@ import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewIntroModuleModule;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.Note;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.entity.Rule;
@@ -177,6 +178,13 @@ public class AssessmentRestController {
 	private void writeLookup(String fullPath, ExportCSVVO csvVO, String[] headers)
 			throws IOException {
 		
+		String[] names = Arrays.copyOf(csvVO.getQuestionList().toArray(), csvVO.getQuestionList().toArray().length,
+				String[].class);	
+		
+		if(names.length != (headers.length -3)){
+			System.out.println("Something wrong with the data: header count: "+headers.length +", answer count: "+names.length);
+		}		
+
 		ReportHistoryVO lookupVO = new ReportHistoryVO();
 		lookupVO.setType("Lookup");
 		lookupVO.setStartDt(new Date());
@@ -184,12 +192,10 @@ public class AssessmentRestController {
 		//Write lookup file
 		File fileLookup = new File(fullPath.substring(0, fullPath.length() - 4)+"-Lookup.csv");
 		CSVWriter lookupWriter = new CSVWriter(new FileWriter(fileLookup), ',');
-		String[] names = Arrays.copyOf(csvVO.getQuestionList().toArray(), csvVO.getQuestionList().toArray().length,
-				String[].class);	
 		
 		String[] lookupHeader = new String[]{"Id", "Name"};			
 		lookupWriter.writeNext(lookupHeader);
-		for (int i=3,j=0; i< headers.length; i++, j++) {
+		for (int i=3,j=0; i < headers.length && j < names.length; i++, j++) {
 			
 			String nameArray[] = names[j].split("\\|");	
 			String[] line = new String[]{headers[i], (nameArray.length == 1) ? names[j]: nameArray[0]};
@@ -1080,7 +1086,7 @@ public class AssessmentRestController {
 					header.append("_");
 					header.append(pVO.getNumber());
 					headers.add(header.toString());
-					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName() + " " + pVO.getName());
+					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName() + " " + pVO.getName()+"|"+header.toString());
 					exportCSVVO.getQuestionIdList().add(
 							String.valueOf(interviewQuestionVO.getQuestionId()
 									+"_"+pVO.getNumber()));
@@ -1140,4 +1146,95 @@ public class AssessmentRestController {
 		return Response.ok(list).build();
 	}
 	
+	@POST
+	@Path(value="/exportNotesCSV")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response exportNotes(FilterModuleVO filterModuleVO){
+		
+		SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
+		
+		//check if we have the directory TreeSet ins sys prop
+		if(csvDir == null){
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
+		}
+		
+		String exportFileCSV = createFileName(filterModuleVO.getFileName() +"-Notes");
+		 	 	
+		ReportHistoryVO reportHistoryVO = 
+				insertToReportHistory(exportFileCSV, "", null, 0, ReportsEnum.NOTES_EXPORT.getValue());
+		
+		String fullPath = csvDir.getValue()+reportHistoryVO.getId()+"_"+exportFileCSV;
+		
+		reportHistoryVO = insertToReportHistory(exportFileCSV, 
+					fullPath, reportHistoryVO.getId(), 0, ReportsEnum.NOTES_EXPORT.getValue());
+		
+		Long count = interviewService.getAllWithRulesCount(filterModuleVO.getFilterModule());		
+		reportHistoryVO.setRecordCount(count);
+		
+		updateProgress(reportHistoryVO, 
+				ReportsStatusEnum.IN_PROGRESS.getValue(), 
+				0.11, new Date(), INITIAL_DURATION_MIN);	
+		
+		List<Interview> uniqueInterviews = interviewService.listAssessmentsForNotes(filterModuleVO.getFilterModule());
+		
+		ExportCSVVO csvVO = populateNotesCSV(uniqueInterviews, reportHistoryVO, filterModuleVO.getFilterModule());
+		
+		writeReport(fullPath, reportHistoryVO, csvVO);
+		
+		return Response.ok().build();	
+	}
+
+	private ExportCSVVO populateNotesCSV(List<Interview> uniqueInterviewQuestions,
+			ReportHistoryVO reportHistoryVO, String[] filterModule) {
+		
+		ExportCSVVO vo = new ExportCSVVO();
+		Set<String> headers = populateNotes(uniqueInterviewQuestions,vo,reportHistoryVO, filterModule);
+		vo.setHeaders(headers);
+		return vo;
+	}
+
+	private Set<String> populateNotes(List<Interview> interviews, ExportCSVVO exportCSVVO,
+			ReportHistoryVO reportHistoryVO, String[] filterModule) {
+		
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.1);
+		Set<String> headers = new LinkedHashSet<>();
+		headers.add("Interview Id");
+		headers.add("AWES ID");
+				
+		long startTime = System.currentTimeMillis();
+		long elapsedTime = 0; 
+		int currentCount = 0;
+		int maxNoteSize = 0;
+		for (Interview interviewVO : interviews) {
+			
+			currentCount++;
+			
+			updateProgress(interviews.size(), 
+					reportHistoryVO, 
+					currentCount, 
+					elapsedTime,
+					0);
+			
+			List<String> answers = new ArrayList<>();
+			answers.add(String.valueOf(interviewVO.getIdinterview()));
+			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+			
+			maxNoteSize = Math.max(maxNoteSize, (interviewVO.getNotes() != null) ? interviewVO.getNotes().size() : 0);
+			
+			for(Note note : interviewVO.getNotes()){
+				if(note.getText() != null){
+					answers.add(note.getText());
+				}				
+			}
+				
+			exportCSVVO.getAnswers().put(interviewVO, answers);
+			
+			elapsedTime = System.currentTimeMillis() - startTime;
+		}
+		for(int i = 0; i < maxNoteSize ; i++){
+			headers.add("Note"+i);
+		}
+		
+		return headers;
+	}	
 }

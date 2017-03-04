@@ -940,9 +940,9 @@ a:focus {
 
 .highlight{
 	-webkit-animation-name: blink; /* Chrome, Safari, Opera */
-    -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
+    -webkit-animation-duration: 10s; /* Chrome, Safari, Opera */
     animation-name: blink;
-    animation-duration: 5s;
+    animation-duration: 10s;
 }
 
 @-webkit-keyframes blink {

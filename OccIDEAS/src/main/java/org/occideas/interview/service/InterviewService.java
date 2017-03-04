@@ -54,6 +54,11 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	Long getIntroModuleId(Long interviewId);
 
 	Long checkFragmentProcessed(long idFragment, long primaryKey);
+<<<<<<< HEAD
 	
 	List<RandomInterviewReport> createRandomInterviews(int count);
+=======
+
+	List<Interview> listAssessmentsForNotes(String[] filterModule);
+>>>>>>> 19a68b48123e07269148a305cf46c22381003214
 }

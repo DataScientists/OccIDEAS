@@ -80,6 +80,21 @@ public class RuleRestController implements BaseRestController<RuleVO>{
 		}
 		return Response.ok().build();
 	}
+	@Path(value="/saveList")
+	@POST
+    @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response saveList(List<RuleVO> json) {
+		try{
+			for(RuleVO rule: json){
+				service.saveOrUpdate(rule);
+			}			
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+	}
 
 	@Path(value="/delete")
 	@POST

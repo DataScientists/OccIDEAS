@@ -38,6 +38,7 @@ angular
     "occIDEASApp.Logout",
     "occIDEASApp.Admin",
     "occIDEASApp.FiredRules",
+    "occIDEASApp.ManualAssessment",
     "occIDEASApp.SystemProperty",
     "occIDEASApp.Reports",
     "occIDEASApp.angular.translate",

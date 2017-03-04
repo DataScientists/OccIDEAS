@@ -22,7 +22,16 @@
 			'<ng-include src="\'scripts/questions/partials/agentSlider.html\'"></ng-include>'+
 			'<ng-include src="\'scripts/questions/partials/rulesTemplate.html\'"></ng-include>'
 		}
-		});
+	}).provider('runtimeStates', function runtimeStates($stateProvider) {
+	   //New service to be able to add state to $stateProvider
+	   this.$get = function($q, $timeout, $state) { 
+	    return { 
+	      addState: function(name, state) { 
+	        $stateProvider.state(name, state);
+	      }
+	    }
+	  }
+	});
 	
 	TabsCache.$inject = ['$cacheFactory'];
 	function TabsCache($cacheFactory){
@@ -575,18 +584,16 @@
             sticky: true,
 		    deepStateRedirect: true,
 		    authenticate:true,
-		    params:{data:null},
             views:{
                 'firedrules@tabs':{
                     templateUrl: 'scripts/firedRules/view/fireRules.html',
                     controller: 'FiredRulesCtrl as vm',
-                    params:{data:null},
                     resolve:{
                         data: function($stateParams,InterviewsService) {
-                            return $stateParams.data.interviewId;
+                            return $stateParams.interviewId;
                         },
                         moduleName: function($stateParams,InterviewsService) {
-                            return $stateParams.data.moduleName;
+                            return $stateParams.moduleName;
                         }
                     }
                 }

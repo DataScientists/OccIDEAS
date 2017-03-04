@@ -4,6 +4,9 @@
 		
 		<button class="btn btn-default"
 			ng-click="newExportAssessmentCSVButton()">Export Assessments</button>
+			
+		<button class="btn btn-default"
+			ng-click="exportNotesCSVButton()">Export Notes</button>	
 		
 		<!-- 
 		<button class="btn btn-default"
@@ -57,7 +60,7 @@
 					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
 				</button> 
 				<button type="button"
-				    ng-if="reports.type != 'Module JSON (Export)'" 
+				    ng-if="reports.type != 'Module JSON (Export)' && reports.type != 'Notes (Export)'" 
 					class="btn btn-default"
 					aria-label="Left Align"
 					ng-disabled="reports.status != 'Completed'"

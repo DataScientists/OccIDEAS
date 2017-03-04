@@ -5,10 +5,11 @@
 	FiredRulesCtrl.$inject = [ '$scope', 'data','FiredRulesService','$timeout',
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
-	                           '$q','$sessionStorage','moduleName','$rootScope'];
+	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService','ngToast'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
-			RulesService,$ngToast,SystemPropertyService, $mdDialog,AgentsService,$q, $sessionStorage,moduleName,$rootScope) {
+			RulesService,$ngToast,SystemPropertyService, $mdDialog,
+			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService,ngToast) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -17,7 +18,7 @@
 		vm.answersDisplayed = false;
 		$scope.data = data;
 		$scope.moduleName = moduleName;
-		$scope.loadingTree = true;
+		$scope.loadingTree = false;
 		$scope.openAnswerSummary = function(node){
 			$scope.openAnswerSummaryTab(node,$scope.moduleName,$scope.interviewId);
 		}
@@ -213,7 +214,6 @@
 						$scope.assessmentStatus = $scope.interview.assessedStatus;
 						$scope.data = response.data[0];
 						
-						processQuestionHistory()	
 						$('#back-to-top').fadeOut();
 					}
                 });
@@ -402,6 +402,14 @@
         };
         
         $scope.highlightFragment = function(fragment){        	
+        	
+        	if(!$scope.linkedModule){
+        		ngToast.create({
+		    		  className: 'warning',
+		    		  content: "Please click Show Questions button."
+		    	 });
+        		return;
+        	}  
         	
         	var expandDefer = $q.defer();
         	var defer = $q.defer();
@@ -953,8 +961,8 @@
 								  	idNode:vibrationRule.conditions[0].idNode,
 								  	nodeText:vibrationRule.conditions[0].name,
 								  	vibMag:level,								
-									frequencyhours:frequencyhours,
-									partialExposure:particalVibration,
+									frequencyhours:frequencyhours.toFixed(4),
+									partialExposure:particalVibration.toFixed(4),
 									type:'vibration',
 									moduleName:moduleName,
 									topNodeId:vibrationRule.conditions[0].topNodeId}
@@ -992,31 +1000,42 @@
 		                if (response.status === 200) {
 		                	$log.info("Updated Fired Rules");
 		                	$scope.data = response.data[0];
+		                	var rules = [];
 		                	if($scope.data.autoAssessedRules.length>0){
 		                		for(var i=0;i<$scope.data.autoAssessedRules.length;i++){
 		                			var rule = $scope.data.autoAssessedRules[i];
 		                			rule.deleted=1;
+		                			rules.push(rule);
 		                		}
-		                	}		  
-			  				for(var i=0;i<$scope.agents.length;i++){
-			  					var agentAssessing = $scope.agents[i]
-			  					var rule = {agentId:agentAssessing.idAgent,level:'noExposure',levelValue:5};
-			  					for(var j=0;j<$scope.data.firedRules.length;j++){
-			  						var firedRule = $scope.data.firedRules[j];
-			  						if(agentAssessing.idAgent == firedRule.agent.idAgent){
-			  							if(firedRule.levelValue<rule.levelValue){
-			  								//rule = firedRule;
-			  								rule = {agentId:agentAssessing.idAgent,level:firedRule.level,levelValue:firedRule.levelValue}					
-			  							}
-			  						}	  
-			  					}
-			  					$scope.data.autoAssessedRules.push(rule);
-			  				 }
-			  				 InterviewsService.save($scope.data).then(function (response) {
-		  		                if (response.status === 200) {
-		  		                	$log.info("Interview saved with auto assessments");
-		  		                }
-			  				 });
+		                    	RulesService.saveList(rules).then(function(response){
+		                			if(response.status === 200){
+		                				$log.info('Rules SaveList was Successful!'+rule);
+		                			}
+		                		});
+		                	}
+		                	$scope.data.autoAssessedRules = [];
+		                	AgentsService.getStudyAgents().then(function(agents) {
+		                		for(var i=0;i<agents.length;i++){
+				  					var agentAssessing = agents[i]
+				  					var rule = {agentId:agentAssessing.idAgent,level:'noExposure',levelValue:5};
+				  					for(var j=0;j<$scope.data.firedRules.length;j++){
+				  						var firedRule = $scope.data.firedRules[j];
+				  						if(agentAssessing.idAgent == firedRule.agent.idAgent){
+				  							if(firedRule.levelValue<rule.levelValue){
+				  								//rule = firedRule;
+				  								rule = {agentId:agentAssessing.idAgent,level:firedRule.level,levelValue:firedRule.levelValue}					
+				  							}
+				  						}	  
+				  					}
+				  					$scope.data.autoAssessedRules.push(rule);
+				  				 }
+				  				 InterviewsService.save($scope.data).then(function (response) {
+			  		                if (response.status === 200) {
+			  		                	$log.info("Interview saved with auto assessments");
+			  		                }
+				  				 });
+		                	});
+			  				
 		                }
 				  });
 				  
@@ -1024,28 +1043,44 @@
 			  	}			  
 			  ],
 			  [ 'Use Auto', function($itemScope, $event, model) {
+				  var rules = [];
                     if(model.manualAssessedRules.length>0){
                     	for(var i=0;i<$scope.data.manualAssessedRules.length;i++){
                 			var rule = $scope.data.manualAssessedRules[i];
                 			rule.deleted=1;
+                			rules.push(rule);
                 		}
+                    	RulesService.saveList(rules).then(function(response){
+                			if(response.status === 200){
+                				$log.info('Rules SaveList was Successful!'+rule);
+                			}
+                		});
  
-                    }else{
-                    	model.manualAssessedRules = [];
-                    }	
+                    }
+                    model.manualAssessedRules = [];
+  				  
+                    var interviewManualAssessments = [];
                     var assessments = angular.copy(model.autoAssessedRules);
                     for(var i=0;i<assessments.length;i++){
 					  var assessment = assessments[i];
 					  var manualAssessment = {agentId:assessment.agentId,level:assessment.level,levelValue:assessment.levelValue};
 					  
-					  model.manualAssessedRules.push(manualAssessment);
+					  //model.manualAssessedRules.push(manualAssessment);
+					  
+						var interviewManualAssessment = {idInterview:$scope.interviewId,rule:manualAssessment};
+						interviewManualAssessments.push(interviewManualAssessment);		
+		    										  
                     }
-                    InterviewsService.save(model).then(function (response) {
+                    ManualAssessmentService.saveManualAssessments(interviewManualAssessments).then(function (response) {
 		                if (response.status === 200) {
-		                	$log.info("Interview saved with manual assessments");
-		                	refreshAssessmentDisplay();
+		                	$log.info("manual assessment saved");
+		                	for(var i=0;i<response.data.length;i++){
+		                		model.manualAssessedRules.push(response.data[i].rule);
+		                	}               	
 		                }
                     });
+                    
+                    
 			  	}
 			  ]
 			];
@@ -1057,11 +1092,14 @@
 				  	});
 				  	 
 				  	for(var i=0;i<ruleArray.length;i++){
-					  	var scope = $itemScope.$new();
-				  		scope.model = model;
-				  		scope.rule = ruleArray[i];
-				  		scope.agentName = $itemScope.agent.name;
-				  		editAssessmentDialog($event.currentTarget.parentElement,scope,$compile,$scope.interviewId);
+				  		var rule = ruleArray[i];				  	
+				  		if(rule.deleted==0){
+				  			var scope = $itemScope.$new();
+					  		scope.model = model;
+					  		scope.rule = rule;
+					  		scope.agentName = $itemScope.agent.name;
+					  		editAssessmentDialog($event.currentTarget.parentElement,scope,$compile,$scope.interviewId);
+				  		}					  	
 				  	}
 			  	}			  
 			  ]
@@ -1203,7 +1241,7 @@
 		
 		$scope.expandAll = function() {
 			
-			if($scope.linkedModule){
+			
 				$scope.loadingTree = true;
 				
 				InterviewsService.getExpandedModule($scope.interviewId).then(function(response){
@@ -1212,15 +1250,17 @@
 						$scope.linkedModule = response.data[0];
 						addHeader($scope.linkedModule.nodes);		
 						
-						if(document.getElementById('tree-root')){	
-							//Expand all
-							console.log("Expand all tree");
-							var scope = angular.element(document.getElementById('tree-root')).scope();
-							
-							$timeout(function(){
-								$scope.$broadcast('angular-ui-tree:expand-all');
-							}, 200);							
-						}
+						$timeout(function(){
+							if(document.getElementById('tree-root')){
+								//Expand all
+								console.log("Expand all tree");
+								var scope = angular.element(document.getElementById('tree-root')).scope();
+								
+								$timeout(function(){
+									$scope.$broadcast('angular-ui-tree:expand-all');
+								}, 200);
+							}
+						}, 200);
 						
 						$scope.cancel();
 					}	
@@ -1228,7 +1268,6 @@
 						$scope.loadingTree = false;
 					}
 				});	
-			}
 			
 			$mdDialog.show({
 				scope : $scope.$new(),

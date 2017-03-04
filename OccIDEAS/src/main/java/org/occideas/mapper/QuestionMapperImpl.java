@@ -126,6 +126,19 @@ public class QuestionMapperImpl implements QuestionMapper {
         return list;
 	}
 	@Override
+	public List<QuestionVO> convertToQuestionWithFlagsVOList(List<Question> questionEntity,boolean includeChildNodes,boolean includeRules) {
+		if ( questionEntity == null ) {
+            return null;
+        }
+
+        List<QuestionVO> list = new ArrayList<QuestionVO>();
+        for ( Question question : questionEntity ) {
+            list.add( convertToQuestionWithFlagsVO( question,includeChildNodes,includeRules) );
+        }
+
+        return list;
+	}
+	@Override
 	public List<QuestionVO> convertToInterviewQuestionVOList(List<Question> questionEntity) {
 		if ( questionEntity == null ) {
             return null;
@@ -262,6 +275,40 @@ public class QuestionMapperImpl implements QuestionMapper {
 		questionVO.setDeleted(question.getDeleted());
 		questionVO.setNodeclass(question.getNodeclass());
 		questionVO.setModuleRule(moduleRuleMapper.convertToModuleRuleVOList(question.getModuleRule()));
+
+		return questionVO;
+	}
+	@Override
+	public QuestionVO convertToQuestionWithFlagsVO(Question question,boolean includeChildnodes,boolean includeRules) {
+		if (question == null) {
+			return null;
+		}
+
+		QuestionVO questionVO = new QuestionVO();
+
+		questionVO.setIdNode(question.getIdNode());
+		questionVO.setName(question.getName());
+		questionVO.setDescription(question.getDescription());
+		questionVO.setType(question.getType());
+		questionVO.setSequence(question.getSequence());
+		questionVO.setNumber(question.getNumber());
+		questionVO.setParentId(question.getParentId());
+		questionVO.setLink(question.getLink());
+		questionVO.setTopNodeId(question.getTopNodeId());
+		questionVO.setLastUpdated(question.getLastUpdated());
+		
+		List<PossibleAnswer> childNodes = question.getChildNodes();
+		if (includeChildnodes && !CommonUtil.isListEmpty(childNodes)) {
+			questionVO.setChildNodes(mapper.convertToPossibleAnswerVOWithFlagList(childNodes,includeChildnodes,includeRules));
+		}
+		
+		questionVO.setOriginalId(question.getOriginalId());
+		questionVO.setDeleted(question.getDeleted());
+		questionVO.setNodeclass(question.getNodeclass());
+		if (includeRules) {
+			questionVO.setModuleRule(moduleRuleMapper.convertToModuleRuleVOList(question.getModuleRule()));
+		}
+		
 
 		return questionVO;
 	}
