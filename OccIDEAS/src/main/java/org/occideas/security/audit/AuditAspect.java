@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.occideas.security.dao.AuditDao;
+import org.occideas.security.dao.IAuditDao;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.AuditLog;
 import org.occideas.security.model.TokenResponse;
@@ -26,7 +26,7 @@ public class AuditAspect {
 	private Logger log = Logger.getLogger(this.getClass()); 
 	
 	@Autowired
-	private AuditDao dao;
+	private IAuditDao dao;
 
 	@Before(value="@annotation(auditable)")
 	@Transactional
