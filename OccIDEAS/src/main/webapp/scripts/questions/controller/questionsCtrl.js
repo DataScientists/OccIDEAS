@@ -867,21 +867,36 @@
 	     }
 
 		$scope.deleteNode = function(scope) {
-			recordAction($scope.data);
-			if(scope.$modelValue.deleted){
-				scope.$modelValue.deleted = 0;
-				cascadeDelete(scope.$modelValue.nodes,0);
+			if(scope.$modelValue.moduleRule.length>0){
+				var rules = scope.$modelValue.moduleRule;
+				var msg = "This node ("+scope.$modelValue.number+") has rules on agents ";
+				for(var i=0;i<rules.length;i++){
+					msg += rules[i].agentName+" ";
+				}
+				msg += "please remove the rules first";
+				ngToast.create({
+		    		  className: 'warning',
+		    		  content: msg,
+		    		  dismissOnTimeout: false,
+		    		  dismissButton: true
+		    	 });
 			}else{
-				scope.$modelValue.deleted = 1;
-				cascadeDelete(scope.$modelValue.nodes,1);
+				recordAction($scope.data);
+				if(scope.$modelValue.deleted){
+					scope.$modelValue.deleted = 0;
+					cascadeDelete(scope.$modelValue.nodes,0);
+				}else{
+					scope.$modelValue.deleted = 1;
+					cascadeDelete(scope.$modelValue.nodes,1);
+				}
+				
+				var deffered = $q.defer();
+				saveModuleWithoutReload('',deffered);
+				deffered.promise.then(function(resolve){
+					saveModuleWithoutReload();
+					searchAndRemoveNode($scope.data,scope);
+				});
 			}
-			
-			var deffered = $q.defer();
-			saveModuleWithoutReload('',deffered);
-			deffered.promise.then(function(resolve){
-				saveModuleWithoutReload();
-				searchAndRemoveNode($scope.data,scope);
-			});
 		};
 		
 		function searchAndRemoveNode(objSearch,scope){

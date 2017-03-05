@@ -10,4 +10,6 @@ public interface IInterviewAnswerDao {
 
 	List<InterviewAnswer> saveAnswerAndQueueQuestions(List<InterviewAnswer> ia);
 
+	List<InterviewAnswer> findByInterviewId(Long id);
+
 }

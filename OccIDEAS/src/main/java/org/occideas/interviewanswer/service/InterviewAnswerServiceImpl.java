@@ -1,11 +1,11 @@
 package org.occideas.interviewanswer.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.InterviewAnswer;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.mapper.InterviewAnswerMapper;
-import org.occideas.security.audit.Auditable;
-import org.occideas.security.audit.AuditingActionType;
 import org.occideas.vo.InterviewAnswerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +58,14 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService{
     @Override
 	public List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions(List<InterviewAnswerVO> o) {
 		return mapper.convertToInterviewAnswerVOList(dao.saveAnswerAndQueueQuestions(mapper.convertToInterviewAnswerList(o)));
+	}
+
+	@Override
+	public List<InterviewAnswerVO> findByInterviewId(Long id) {
+		List<InterviewAnswer> modules = dao.findByInterviewId(id);
+		ArrayList<InterviewAnswerVO> modulesVO = new ArrayList<InterviewAnswerVO>();
+		modulesVO.addAll(mapper.convertToInterviewAnswerVOList(modules));
+		return modulesVO;
 	}
 
 }

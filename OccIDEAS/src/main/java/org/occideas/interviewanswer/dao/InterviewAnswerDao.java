@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
@@ -68,5 +71,15 @@ public class InterviewAnswerDao implements IInterviewAnswerDao{
 			list.add(a);
 		}
 		return list;
+	}
+
+	@Override
+	public List<InterviewAnswer> findByInterviewId(Long interviewId) {
+		final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(InterviewAnswer.class);
+        if (interviewId != null) {
+            crit.add(Restrictions.eq("idInterview", interviewId));
+        }
+        return crit.list();
 	}
 }

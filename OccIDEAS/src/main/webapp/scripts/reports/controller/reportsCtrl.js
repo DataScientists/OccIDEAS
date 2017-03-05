@@ -213,72 +213,88 @@
 		
 		
 		$scope.exportCSVInterviews = function(fileName){
-			SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response){
-				if(response.status == '200'){
-					if(response.data){
-						$scope.cancel();
-						 ngToast.create({
-				    		  className: 'success',
-				    		  content: "Your report is now running... Kindly wait until it is completed."
-				    	 });
-						 var filterModule = [];
-						 _.each($scope.checkboxes.items,function(value, key){
-							 if(value){
-								 filterModule.push(key);
+			var checkedItems = false;
+			_.each($scope.checkboxes.items,function(value, key){
+				 if(value){
+					 checkedItems = true;
+				 }
+			 });
+			
+			if(!checkedItems){
+				ngToast.create({
+		    		  className: 'warning',
+		    		  content: 'Please choose at least one module',
+		    		  dismissOnTimeout: false,
+		    		  dismissButton: true
+		    	 });
+			}else{							
+				SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response){
+					if(response.status == '200'){
+						if(response.data){
+							$scope.cancel();
+							 ngToast.create({
+					    		  className: 'success',
+					    		  content: "Your report is now running... Kindly wait until it is completed."
+					    	 });
+							 var filterModule = [];
+							 _.each($scope.checkboxes.items,function(value, key){
+								 if(value){
+									 filterModule.push(key);
+								 }
+							 });
+							 if($scope.exportType=="ASSESSMENT"){
+								 InterviewsService.exportAssessmentsCSV(filterModule,fileName).then(function(response){});
+							 } else if($scope.exportType=="ASSESSMENTNOISE"){
+								 InterviewsService.exportAssessmentsNoiseCSV(filterModule,fileName).then(function(response){});
+							 }else if($scope.exportType=="ASSESSMENTVIBRATION"){
+								 InterviewsService.exportAssessmentsVibrationCSV(filterModule,fileName).then(function(response){});
+							 }else if($scope.exportType=="NOTES"){
+								 InterviewsService.exportNotesCSV(filterModule,fileName).then(function(response){}); 
 							 }
-						 });
-						 if($scope.exportType=="ASSESSMENT"){
-							 InterviewsService.exportAssessmentsCSV(filterModule,fileName).then(function(response){});
-						 } else if($scope.exportType=="ASSESSMENTNOISE"){
-							 InterviewsService.exportAssessmentsNoiseCSV(filterModule,fileName).then(function(response){});
-						 }else if($scope.exportType=="ASSESSMENTVIBRATION"){
-							 InterviewsService.exportAssessmentsVibrationCSV(filterModule,fileName).then(function(response){});
-						 }else if($scope.exportType=="NOTES"){
-							 InterviewsService.exportNotesCSV(filterModule,fileName).then(function(response){}); 
-						 }
-						 else{
-							 InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){}); 
-						 }
-						 
-						 //Reflect new row
-						 $timeout(function() {
-							 self.tableParams.shouldGetData = true;
-						        self.tableParams.reload().then(function (data) {						           
-						        	allCompleted = false;
-						            self.tableParams.reload();						           
-						        });							 
-						 }, 500); 	
-						 
-						 //Check if everything is completed
-						 $scope.interval = $interval(function() {
-							 self.tableParams.shouldGetData = true;
-						        self.tableParams.reload().then(function (data) {
-						            	self.tableParams.reload();
-						            
-						                allCompleted = true;				                
-						                _.each(data,function(value, key){											
-											 if(value.status !== 'Completed'){
-												 allCompleted = false;
-											 }
-										 });
-						                
-						                if(allCompleted){
-						                	$scope.cancelInterval();
-						                }						                
-						        });							 
-						 }, 1000 * 30); //Update every 30 seconds, just to know if it's completed already
-						
-					}else{
-						ngToast.create({
-				    		  className: 'danger',
-				    		  content: 'Unable to generate report no directory path defined. SystemProperty "REPORT_EXPORT_CSV_DIR" is not defined.',
-				    		  dismissButton: true,
-			      	    	  dismissOnClick:false,
-			      	    	  animation:'slide'
-						});
+							 else{
+								 InterviewsService.exportInterviewsCSV(filterModule,fileName).then(function(response){}); 
+							 }
+							 
+							 //Reflect new row
+							 $timeout(function() {
+								 self.tableParams.shouldGetData = true;
+							        self.tableParams.reload().then(function (data) {						           
+							        	allCompleted = false;
+							            self.tableParams.reload();						           
+							        });							 
+							 }, 500); 	
+							 
+							 //Check if everything is completed
+							 $scope.interval = $interval(function() {
+								 self.tableParams.shouldGetData = true;
+							        self.tableParams.reload().then(function (data) {
+							            	self.tableParams.reload();
+							            
+							                allCompleted = true;				                
+							                _.each(data,function(value, key){											
+												 if(value.status !== 'Completed'){
+													 allCompleted = false;
+												 }
+											 });
+							                
+							                if(allCompleted){
+							                	$scope.cancelInterval();
+							                }						                
+							        });							 
+							 }, 1000 * 30); //Update every 30 seconds, just to know if it's completed already
+							
+						}else{
+							ngToast.create({
+					    		  className: 'danger',
+					    		  content: 'Unable to generate report no directory path defined. SystemProperty "REPORT_EXPORT_CSV_DIR" is not defined.',
+					    		  dismissButton: true,
+				      	    	  dismissOnClick:false,
+				      	    	  animation:'slide'
+							});
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 		
 		//Cancel refresh
