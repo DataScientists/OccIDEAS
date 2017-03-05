@@ -306,7 +306,7 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 	}
 	@Override
 	public List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question) {
-		return convertToInterviewQuestionVOList(question, true);
+		return convertToInterviewQuestionVOList(question, false);
 	}
 
 }

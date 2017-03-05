@@ -55,7 +55,7 @@ public class InterviewDao implements IInterviewDao{
 	private final String NOTES_QUERY_WITH_MODULE = 
 			" SELECT a.interviewId, b.referenceNumber,"
 			 + " GROUP_CONCAT(DISTINCT text SEPARATOR '++') as notes"
-			 + " FROM note a, interview b, interviewintromodule_module c"
+			 + " FROM Note a, Interview b, InterviewIntroModule_Module c"
 			 + " where a.interviewId = b.idinterview"
 			 + " and a.interviewId = c.interviewId"
 			 + " and (c.idModule in (:modules))"

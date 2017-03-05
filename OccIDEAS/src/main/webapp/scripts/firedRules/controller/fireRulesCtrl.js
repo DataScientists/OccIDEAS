@@ -217,6 +217,40 @@
 						$scope.data = response.data[0];
 						
 						$('#back-to-top').fadeOut();
+						FiredRulesService.getByInterviewId($scope.interviewId).then(function(response){
+							if(response.status == '200'){
+								var interviewFiredRules = response.data;
+								vm.interviewFiredRules = interviewFiredRules;
+								$scope.data.firedRules = [];
+								for(var i=0;i<interviewFiredRules.length;i++){
+									var rules = interviewFiredRules[i].rules;
+									for(var j=0;j<rules.length;j++){
+										$scope.data.firedRules.push(rules[j]);
+									}              		
+			                	} 
+							}
+						});
+						ManualAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
+							if(response.status == '200'){
+								var interviewManualAssessedRules = response.data;
+								$scope.data.manualAssessedRules = [];
+								for(var i=0;i<interviewManualAssessedRules.length;i++){
+									var rule = interviewManualAssessedRules[i].rule;					
+									$scope.data.manualAssessedRules.push(rule);						             		
+			                	} 
+							}
+						});
+						AutoAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
+							if(response.status == '200'){
+								var interviewAutoAssessedRules = response.data;
+								$scope.data.autoAssessedRules = [];
+								for(var i=0;i<interviewAutoAssessedRules.length;i++){
+									var rule = interviewAutoAssessedRules[i].rule;					
+									$scope.data.autoAssessedRules.push(rule);						             		
+			                	} 
+							}
+						});
+						
 					}
                 });
 			}
@@ -233,39 +267,6 @@
 				}
 			});
 			
-			FiredRulesService.getByInterviewId($scope.interviewId).then(function(response){
-				if(response.status == '200'){
-					var interviewFiredRules = response.data;
-					vm.interviewFiredRules = interviewFiredRules;
-					$scope.data.firedRules = [];
-					for(var i=0;i<interviewFiredRules.length;i++){
-						var rules = interviewFiredRules[i].rules;
-						for(var j=0;j<rules.length;j++){
-							$scope.data.firedRules.push(rules[j]);
-						}              		
-                	} 
-				}
-			});
-			ManualAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
-				if(response.status == '200'){
-					var interviewManualAssessedRules = response.data;
-					$scope.data.manualAssessedRules = [];
-					for(var i=0;i<interviewManualAssessedRules.length;i++){
-						var rule = interviewManualAssessedRules[i].rule;					
-						$scope.data.manualAssessedRules.push(rule);						             		
-                	} 
-				}
-			});
-			AutoAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
-				if(response.status == '200'){
-					var interviewAutoAssessedRules = response.data;
-					$scope.data.autoAssessedRules = [];
-					for(var i=0;i<interviewAutoAssessedRules.length;i++){
-						var rule = interviewAutoAssessedRules[i].rule;					
-						$scope.data.autoAssessedRules.push(rule);						             		
-                	} 
-				}
-			});
 			
 			InterviewsService.findModulesByInterviewId($scope.interviewId).then(function(response){
 				if(response.status == '200'){
@@ -780,248 +781,269 @@
 			  	}			  
 			  ],
 			  [ 'Run Noise Assessment', function($itemScope, $event, model) {
-				  var bFoundNoiseRules = false;
-				  var noiseRules = [];
-				  for(var i=0;i<model.agents.length;i++){
-					  var agentAssessing = model.agents[i]
-					  var rule = {levelValue:99};
-					  for(var j=0;j<model.firedRules.length;j++){
-						  var firedRule = model.firedRules[j];
-						  if(agentAssessing.idAgent == firedRule.agent.idAgent){
-							  if(firedRule.agent.idAgent==116){
-								  bFoundNoiseRules = true;
-								  noiseRules.push(firedRule);
-							  }
-						  }	  
-					  }  
-				  }
-				  if(bFoundNoiseRules){
-					  var totalPartialExposure = 0;
-					  var totalPartialExposurePerAdj = 0;
-					  var peakNoise = 0;
-					  var maxBackgroundPartialExposure = 0;
-					  var maxBackgroundHours = 0;
-					  
-					  $scope.noiseRows = [];
-					  var totalFrequency = 0;
-					  var backgroundHours = 0;
-					  var shiftHours = 0;
-					  for(var m=0;m<model.answerHistory.length;m++){
-						  var iqa = model.answerHistory[m];
-						  if(iqa.type=='P_frequencyshifthours'){
-							  shiftHours = iqa.answerFreetext;
-							  break;
-						  }
-					  }
-					  for(var k=0;k<noiseRules.length;k++){
-						  var noiseRule = noiseRules[k];
-						  if(noiseRule.type!='BACKGROUND'){
-							  var parentNode = noiseRule.conditions[0];
-							  //if(model.module){
-								//  cascadeFindNode(model.module.nodes,parentNode);
-							  //}else{
-								  cascadeFindNode(model.answerHistory,parentNode); 
-							  //}
-							  var answeredValue = 0;
-							  if($scope.foundNode){
-								 var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);
+				  InterviewsService.getInterviewQuestionList(model.interviewId).then(function(response){
+						if(response.status == '200'){
+							var questions = response.data;								
+						
+							$scope.interview.questionHistory = questions;
+							InterviewsService.getInterviewAnswerList(model.interviewId).then(function(response){
+								if(response.status == '200'){
+									var answers = response.data;								
 									
-								 if(frequencyHoursNode){
-									 if(frequencyHoursNode.type!='P_frequencyseconds'){
-										 answeredValue = frequencyHoursNode.answerFreetext;
-									 }									 
-								 }								
-								 $scope.foundNode=null;
-							  }
-							  
-							  totalFrequency += Number(answeredValue);
-						  }
-					  }
-					  var useRatio = false;
-					  var ratio = 1.0;
-					  if(totalFrequency>shiftHours){
-						  useRatio = true;
-						  ratio = parseFloat(totalFrequency)/parseFloat(shiftHours);
-						  ratio = ratio.toFixed(4);
-					  }				
-					  var level = 0;
-					  var peakNoise = 0;
-					  for(var k=0;k<noiseRules.length;k++){
-						  var noiseRule = noiseRules[k];
-						  if(noiseRule.type=='BACKGROUND'){
-							var hoursbg = shiftHours-totalFrequency;
-							if(hoursbg<0){
-								hoursbg = 0;
-							}
-							if(noiseRule.ruleAdditionalfields[0]==undefined){
-								$ngToast.create({
-				    	    		  className: 'danger',
-				    	    		  content: 'The background rule ' + noiseRule.idRule + ' has no dB value.',
-				    	    		  dismissButton:true,
-				    	    		  animation:'slide'
-				    	    	 });
-							}
-							level = noiseRule.ruleAdditionalfields[0].value;
-							hoursbg = hoursbg.toFixed(4);
-							var partialExposure = 4*hoursbg*(Math.pow(10,(level-100)/10));
-							partialExposure = partialExposure.toFixed(4);
-							
-							
-							var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
-							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
-											idNode:noiseRule.conditions[0].idNode,
-											nodeText:noiseRule.conditions[0].name,
-											dB:level+'B',
-											backgroundhours: hoursbg,
-											partialExposure:partialExposure,
-											type:'backgroundNoise',
-											moduleName: moduleName,
-											topNodeId:noiseRule.conditions[0].topNodeId}
-							
-							$scope.noiseRows.push(noiseRow);
-							if(partialExposure>maxBackgroundPartialExposure){
-								maxBackgroundPartialExposure = partialExposure;
-								maxBackgroundHours = hoursbg;
-							}
-						  }else{
-							var hours = 0.0;
-							var frequencyhours = 0;
-							var parentNode = noiseRule.conditions[0];
-							var isSecondsTimeFrequency = false;
-							//if(model.module){
-								  cascadeFindNode(model.answerHistory,parentNode);
-							//  }else{
-							//	  cascadeFindNode(model.fragment.nodes,parentNode); 
-							 // }
-							  if($scope.foundNode){
-								  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
-								  if(frequencyHoursNode){
-									  frequencyhours = frequencyHoursNode.answerFreetext;
-									  if(frequencyHoursNode.type=='P_frequencyseconds'){
-										  frequencyhours = parseFloat(frequencyhours)/3600; //convert seconds to hours
-										  isSecondsTimeFrequency = true;
+									$scope.interview.answerHistory = answers;
+									var bFoundNoiseRules = false;
+									  var noiseRules = [];
+									  for(var i=0;i<$scope.agents.length;i++){
+										  var agentAssessing = $scope.agents[i]
+										  var rule = {levelValue:99};
+										  for(var j=0;j<model.firedRules.length;j++){
+											  var firedRule = model.firedRules[j];
+											  if(agentAssessing.idAgent == firedRule.agent.idAgent){
+												  if(firedRule.agent.idAgent==116){
+													  bFoundNoiseRules = true;
+													  noiseRules.push(firedRule);
+												  }
+											  }	  
+										  }  
 									  }
-								  }
-								  $scope.foundNode=null;
-							  }
-							if(useRatio && !isSecondsTimeFrequency){
-								hours = parseFloat(frequencyhours)/ratio;		
-							}else{
-								hours = parseFloat(frequencyhours);		
-							}
-							level = noiseRule.ruleAdditionalfields[0].value;
-							var percentage = 100;
-							var partialExposure = 4*hours*(Math.pow(10,(level-100)/10));
-							partialExposure = partialExposure.toFixed(4);				
-							hours = hours.toFixed(4);
-							var modHours = "";
-							if(useRatio){
-								modHours = "*"+hours+"*";
-							}else{
-								modHours = hours;
-							}
-							var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
-							var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
-									idNode:noiseRule.conditions[0].idNode,
-									nodeText:noiseRule.conditions[0].name,
-									dB:level,
-									backgroundhours: modHours,
-									partialExposure:partialExposure,
-									moduleName:moduleName,
-									topNodeId:noiseRule.conditions[0].topNodeId}
-					
-							$scope.noiseRows.push(noiseRow);	
-							totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
-							
-						  }
-						  if(peakNoise<Number(level)){
-							peakNoise = Number(level);
-						  }
-					  }
-					  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
-					  	totalPartialExposure = totalPartialExposure.toFixed(4);
-						totalFrequency += maxBackgroundHours;
+									  if(bFoundNoiseRules){
+										  var totalPartialExposure = 0;
+										  var totalPartialExposurePerAdj = 0;
+										  var peakNoise = 0;
+										  var maxBackgroundPartialExposure = 0;
+										  var maxBackgroundHours = 0;
+										  
+										  $scope.noiseRows = [];
+										  var totalFrequency = 0;
+										  var backgroundHours = 0;
+										  var shiftHours = 0;
+										  for(var m=0;m<$scope.interview.answerHistory.length;m++){
+											  var iqa = $scope.interview.answerHistory[m];
+											  if(iqa.type=='P_frequencyshifthours'){
+												  shiftHours = iqa.answerFreetext;
+												  break;
+											  }
+										  }
+										  for(var k=0;k<noiseRules.length;k++){
+											  var noiseRule = noiseRules[k];
+											  if(noiseRule.type!='BACKGROUND'){
+												  var parentNode = noiseRule.conditions[0];
+												  //if(model.module){
+													//  cascadeFindNode(model.module.nodes,parentNode);
+												  //}else{
+													  cascadeFindNode($scope.interview.answerHistory,parentNode); 
+												  //}
+												  var answeredValue = 0;
+												  if($scope.foundNode){
+													 var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);
+														
+													 if(frequencyHoursNode){
+														 if(frequencyHoursNode.type!='P_frequencyseconds'){
+															 answeredValue = frequencyHoursNode.answerFreetext;
+														 }									 
+													 }								
+													 $scope.foundNode=null;
+												  }
+												  
+												  totalFrequency += Number(answeredValue);
+											  }
+										  }
+										  var useRatio = false;
+										  var ratio = 1.0;
+										  if(totalFrequency>shiftHours){
+											  useRatio = true;
+											  ratio = parseFloat(totalFrequency)/parseFloat(shiftHours);
+											  ratio = ratio.toFixed(4);
+										  }				
+										  var level = 0;
+										  var peakNoise = 0;
+										  for(var k=0;k<noiseRules.length;k++){
+											  var noiseRule = noiseRules[k];
+											  if(noiseRule.type=='BACKGROUND'){
+												var hoursbg = shiftHours-totalFrequency;
+												if(hoursbg<0){
+													hoursbg = 0;
+												}
+												if(noiseRule.ruleAdditionalfields[0]==undefined){
+													$ngToast.create({
+									    	    		  className: 'danger',
+									    	    		  content: 'The background rule ' + noiseRule.idRule + ' has no dB value.',
+									    	    		  dismissButton:true,
+									    	    		  animation:'slide'
+									    	    	 });
+												}
+												level = noiseRule.ruleAdditionalfields[0].value;
+												hoursbg = hoursbg.toFixed(4);
+												var partialExposure = 4*hoursbg*(Math.pow(10,(level-100)/10));
+												partialExposure = partialExposure.toFixed(4);
+												
+												
+												var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
+												var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
+																idNode:noiseRule.conditions[0].idNode,
+																nodeText:noiseRule.conditions[0].name,
+																dB:level+'B',
+																backgroundhours: hoursbg,
+																partialExposure:partialExposure,
+																type:'backgroundNoise',
+																moduleName: moduleName,
+																topNodeId:noiseRule.conditions[0].topNodeId}
+												
+												$scope.noiseRows.push(noiseRow);
+												if(partialExposure>maxBackgroundPartialExposure){
+													maxBackgroundPartialExposure = partialExposure;
+													maxBackgroundHours = hoursbg;
+												}
+											  }else{
+												var hours = 0.0;
+												var frequencyhours = 0;
+												var parentNode = noiseRule.conditions[0];
+												var isSecondsTimeFrequency = false;
+												//if(model.module){
+													  cascadeFindNode(model.answerHistory,parentNode);
+												//  }else{
+												//	  cascadeFindNode(model.fragment.nodes,parentNode); 
+												 // }
+												  if($scope.foundNode){
+													  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
+													  if(frequencyHoursNode){
+														  frequencyhours = frequencyHoursNode.answerFreetext;
+														  if(frequencyHoursNode.type=='P_frequencyseconds'){
+															  frequencyhours = parseFloat(frequencyhours)/3600; //convert seconds to hours
+															  isSecondsTimeFrequency = true;
+														  }
+													  }
+													  $scope.foundNode=null;
+												  }
+												if(useRatio && !isSecondsTimeFrequency){
+													hours = parseFloat(frequencyhours)/ratio;		
+												}else{
+													hours = parseFloat(frequencyhours);		
+												}
+												level = noiseRule.ruleAdditionalfields[0].value;
+												var percentage = 100;
+												var partialExposure = 4*hours*(Math.pow(10,(level-100)/10));
+												partialExposure = partialExposure.toFixed(4);				
+												hours = hours.toFixed(4);
+												var modHours = "";
+												if(useRatio){
+													modHours = "*"+hours+"*";
+												}else{
+													modHours = hours;
+												}
+												var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
+												var noiseRow = {nodeNumber:noiseRule.conditions[0].number,
+														idNode:noiseRule.conditions[0].idNode,
+														nodeText:noiseRule.conditions[0].name,
+														dB:level,
+														backgroundhours: modHours,
+														partialExposure:partialExposure,
+														moduleName:moduleName,
+														topNodeId:noiseRule.conditions[0].topNodeId}
+										
+												$scope.noiseRows.push(noiseRow);	
+												totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(partialExposure));
+												
+											  }
+											  if(peakNoise<Number(level)){
+												peakNoise = Number(level);
+											  }
+										  }
+										  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
+										  	totalPartialExposure = totalPartialExposure.toFixed(4);
+											totalFrequency += maxBackgroundHours;
 
-						var autoExposureLevel = 10*(Math.log10(totalPartialExposure/(3.2*(Math.pow(10,-9)))))
-						autoExposureLevel = autoExposureLevel.toFixed(4);
-						$scope.totalPartialExposure = totalPartialExposure;
-						$scope.autoExposureLevel = autoExposureLevel;
-						$scope.peakNoise = peakNoise;
-						$scope.shiftHours = shiftHours;
-				  }
-			  	}			  
+											var autoExposureLevel = 10*(Math.log10(totalPartialExposure/(3.2*(Math.pow(10,-9)))))
+											autoExposureLevel = autoExposureLevel.toFixed(4);
+											$scope.totalPartialExposure = totalPartialExposure;
+											$scope.autoExposureLevel = autoExposureLevel;
+											$scope.peakNoise = peakNoise;
+											$scope.shiftHours = shiftHours;
+									  }
+								  	
+								}
+							});
+						}
+				  });
+			  }
+				  
+				  
+				  			  
 			  ],
 			  [ 'Run Vibration Assessment', function($itemScope, $event, model) {
-				  var bFoundVibrationRules = false;
-				  var vibrationRules = [];
-				  
-				  for(var i=0;i<model.agents.length;i++){
-					  var agentAssessing = model.agents[i]
-					  var rule = {levelValue:99};
-					  for(var j=0;j<model.firedRules.length;j++){
-						  var firedRule = model.firedRules[j];
-						  if(agentAssessing.idAgent == firedRule.agent.idAgent){
-							  if(firedRule.agent.idAgent==157){
-								  bFoundVibrationRules = true;
-								  vibrationRules.push(firedRule);
-							  }
-						  }	  
-					  }  
-				  }
-				  if(bFoundVibrationRules){
-					  var totalExposure = 0;
-					  var totalFrequency = 0;
-					  var dailyVibration = 0;
-					  var level = 0;					  				  
-					  $scope.vibrationRows = [];
-					  /*for(var m=0;m<model.questionsAsked.length;m++){
-						  var iqa = model.questionsAsked[m];
-						  if(iqa.possibleAnswer.type=='P_frequencyshifthours'){
-							  shiftHours = iqa.interviewQuestionAnswerFreetext;
-							  break;
-						  }
-					  }*/
-					  for(var k=0;k<vibrationRules.length;k++){
-						  var vibrationRule = vibrationRules[k];
-						  
-						  var parentNode = vibrationRule.conditions[0];
-						  cascadeFindNode(model.answerHistory,parentNode); 
-						  var frequencyhours = 0;
-						  if($scope.foundNode){
-							  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
-							  if(frequencyHoursNode){
-								  frequencyhours = frequencyHoursNode.answerFreetext;
-							  }
-							  $scope.foundNode=null;
-						  }
-						  var level = vibrationRule.ruleAdditionalfields[0].value;
-						  var moduleName = getModuleNameOfNode(vibrationRule.conditions[0]);
-						  particalVibration = Math.sqrt(Number(frequencyhours)*Number(frequencyhours)*Number(level)/8);
+				  InterviewsService.getInterviewQuestionList(model.interviewId).then(function(response){
+						if(response.status == '200'){
+							var questions = response.data;								
+						
+							$scope.interview.questionHistory = questions;
+							InterviewsService.getInterviewAnswerList(model.interviewId).then(function(response){
+								if(response.status == '200'){
+									var answers = response.data;								
+									
+									$scope.interview.answerHistory = answers;
+									var bFoundVibrationRules = false;
+									  var vibrationRules = [];
+									  
+									  for(var i=0;i<$scope.agents.length;i++){
+										  var agentAssessing = $scope.agents[i]
+										  var rule = {levelValue:99};
+										  for(var j=0;j<model.firedRules.length;j++){
+											  var firedRule = model.firedRules[j];
+											  if(agentAssessing.idAgent == firedRule.agent.idAgent){
+												  if(firedRule.agent.idAgent==157){
+													  bFoundVibrationRules = true;
+													  vibrationRules.push(firedRule);
+												  }
+											  }	  
+										  }  
+									  }
+									  if(bFoundVibrationRules){
+										  var totalExposure = 0;
+										  var totalFrequency = 0;
+										  var dailyVibration = 0;
+										  var level = 0;					  				  
+										  $scope.vibrationRows = [];
+										  for(var k=0;k<vibrationRules.length;k++){
+											  var vibrationRule = vibrationRules[k];
+											  
+											  var parentNode = vibrationRule.conditions[0];
+											  cascadeFindNode($scope.interview.answerHistory,parentNode); 
+											  var frequencyhours = 0;
+											  if($scope.foundNode){
+												  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
+												  if(frequencyHoursNode){
+													  frequencyhours = Number(frequencyHoursNode.answerFreetext);
+												  }
+												  $scope.foundNode=null;
+											  }
+											  var level = vibrationRule.ruleAdditionalfields[0].value;
+											  var moduleName = getModuleNameOfNode(vibrationRule.conditions[0]);
+											  particalVibration = Math.sqrt(Number(frequencyhours)*Number(frequencyhours)*Number(level)/8);
 
-						  var vibrationRow = {nodeNumber:vibrationRule.conditions[0].number,
-								  	idNode:vibrationRule.conditions[0].idNode,
-								  	nodeText:vibrationRule.conditions[0].name,
-								  	vibMag:level,								
-									frequencyhours:frequencyhours.toFixed(4),
-									partialExposure:particalVibration.toFixed(4),
-									type:'vibration',
-									moduleName:moduleName,
-									topNodeId:vibrationRule.conditions[0].topNodeId}
-						  
-						  $scope.vibrationRows.push(vibrationRow);
-						  totalFrequency += Number(frequencyhours);
-						  totalExposure += Number(level);
-						  dailyVibration += Number(particalVibration);
-						  
-					  }
-					  
-					 
-					  //dailyVibration = Math.sqrt(Number(totalFrequency)*Number(totalFrequency)*Number(totalExposure)/8);
+											  var vibrationRow = {nodeNumber:vibrationRule.conditions[0].number,
+													  	idNode:vibrationRule.conditions[0].idNode,
+													  	nodeText:vibrationRule.conditions[0].name,
+													  	vibMag:level,								
+														frequencyhours:frequencyhours.toFixed(4),
+														partialExposure:particalVibration.toFixed(4),
+														type:'vibration',
+														moduleName:moduleName,
+														topNodeId:vibrationRule.conditions[0].topNodeId}
+											  
+											  $scope.vibrationRows.push(vibrationRow);
+											  totalFrequency += Number(frequencyhours);
+											  totalExposure += Number(level);
+											  dailyVibration += Number(particalVibration);								  
+										  }							  
+										  $scope.dailyVibration = dailyVibration.toFixed(4);
+									  }
 
-					  $scope.dailyVibration = dailyVibration.toFixed(4);
-				  }
-			  	}			  
-			  ]
+								}
+							});
+						}						
+				  });
+			  }
+			 ]
 			];
 		vm.assessmentsMenuOptions =
 			[

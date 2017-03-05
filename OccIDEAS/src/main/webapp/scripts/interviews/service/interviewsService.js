@@ -286,6 +286,15 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		function getInterviewAnswerList(interviewId) {
+			var url = 'web/rest/interviewanswer/getbyinterviewid?id='
+					+ interviewId;
+			var request = $http({
+				method : 'GET',
+				url : url
+			})
+			return request.then(handleSuccess, handleError);
+		}
 
 		function updateModuleNameForInterviewId(id, newName) {
 			var url = 'web/rest/interviewquestionanswer/updateModuleNameForInterviewId';
@@ -560,6 +569,7 @@
 			getIntQuestion : getIntQuestion,
 			getInterviewQuestion : getInterviewQuestion,
 			getInterviewQuestionList : getInterviewQuestionList,
+			getInterviewAnswerList : getInterviewAnswerList,
 			saveNote : saveNote,
 			getListNote : getListNote,
 			getInterviewIdList : getInterviewIdList,

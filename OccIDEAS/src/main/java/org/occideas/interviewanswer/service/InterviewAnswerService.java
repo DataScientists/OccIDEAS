@@ -11,5 +11,7 @@ public interface InterviewAnswerService extends BaseService<InterviewAnswerVO>{
 
 	List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions(List<InterviewAnswerVO> o);
 
+	List<InterviewAnswerVO> findByInterviewId(Long id);
+
 	
 }
