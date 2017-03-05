@@ -672,7 +672,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		Map<Long, InterviewAnswer> answerMap = new HashMap<Long, InterviewAnswer>();
 		
 		//Create a map of the questions and answers
-		getMap(interview.get(0).getQuestionHistory(), questionMap, answerMap, linkId, isSubModule, isExpanded);
+		getMap(interview.get(0).getQuestionHistory(),interview.get(0).getAnswerHistory(),questionMap, answerMap, linkId, isSubModule, isExpanded);
+		
+		
 		
 		//Create a new ModuleVO
 		ModuleVO moduleVo = new ModuleVO();		
@@ -889,7 +891,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	 * @param linkId
 	 * @param isSubModule 
 	 */
-	private void getMap(List<InterviewQuestion> questionHistory, 
+	private void getMap(List<InterviewQuestion> questionHistory,List<InterviewAnswer> answerHistory, 
 			Map<Long, InterviewQuestion> questionMap,
 			Map<Long, InterviewAnswer> answerMap, long linkId, boolean isSubModule, boolean isExpanded) {
 		//int iSize = questionHistory.size();
@@ -912,16 +914,17 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			} else {
 				questionMap.put(Long.valueOf(vo.getQuestionId()), vo);
 			}
-			List<InterviewAnswer> answerHistory = vo.getAnswers();
-			//int iPACount = 0;
-			//int iPASize = answerHistory.size();
-			for(InterviewAnswer answer : answerHistory){
-				//iPACount++;
-				//System.out.println(iPACount+" pa of "+iPASize+" ");
-				if(vo.isProcessed()){
-					answerMap.put(Long.valueOf(answer.getAnswerId()), answer);
-				}	
-			}
+			
+		}
+		//List<InterviewAnswer> answerHistory = vo.getAnswers();
+		//int iPACount = 0;
+		//int iPASize = answerHistory.size();
+		for(InterviewAnswer answer : answerHistory){
+			//iPACount++;
+			//System.out.println(iPACount+" pa of "+iPASize+" ");
+			//if(vo.isProcessed()){
+				answerMap.put(Long.valueOf(answer.getAnswerId()), answer);
+			//}	
 		}
 	}
 
