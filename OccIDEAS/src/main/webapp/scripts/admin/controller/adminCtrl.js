@@ -19,6 +19,7 @@
 	    $scope.randomIntCount = 0;
 	    
 	    self.createRandomInterviews = function(){
+	    	$scope.randomReport = undefined;
 	    	InterviewsService.createRandomInterviews($scope.randomIntCount).then(function(response){
 	    		if(response.status == '200'){
 	    			$scope.randomReport = response.data;

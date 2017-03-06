@@ -148,7 +148,9 @@ public class InterviewQuestionDao implements IInterviewQuestionDao{
                 		queueQuestions = moduleFilterStudyAgent.getChildNodes();
         			}else{
         				ModuleVO moduleFilterStudyAgent = (ModuleVO)moduleService.getModuleFilterStudyAgent(parentModuleId);
+        				if(moduleFilterStudyAgent != null){
                 		queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        				}
         			}
         			
         		}       		

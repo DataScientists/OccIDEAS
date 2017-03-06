@@ -82,6 +82,7 @@ public class InterviewDao implements IInterviewDao{
       sessionFactory.getCurrentSession().delete(interview);
     }
 
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
     @Override
 	public Interview get(Long id){
       return (Interview) sessionFactory.getCurrentSession().get(Interview.class, id);
