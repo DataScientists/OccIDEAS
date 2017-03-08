@@ -45,4 +45,6 @@ public interface IInterviewDao {
 
 	List<Interview> getAssessmentsForNotes(String[] modules);
 
+	List<String> getNoteTypes();
+
 }

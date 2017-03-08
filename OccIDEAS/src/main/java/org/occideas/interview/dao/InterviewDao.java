@@ -2,6 +2,7 @@ package org.occideas.interview.dao;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -69,6 +70,26 @@ public class InterviewDao implements IInterviewDao{
 			 + " and a.interviewId = c.interviewId"
 			 + " group by a.interviewId";
 
+	//Dynamic type column
+	private final String NOTES_TYPE_COLUMN_QUERY = 
+			  " CASE WHEN type = ':type' THEN text END :type";
+		
+	private final String SELECT_NOTES_QUERY = 
+			" SELECT a.interviewId," 
+			+ " referenceNumber,"
+			+ " lastUpdated";
+			
+	private final String SELECT_NOTES_FROM = 		
+              " FROM Note a, Interview b"
+            + " where a.interviewId = b.idinterview and text is not null" 
+            + " order by interviewId, lastUpdated";
+	
+	private final String SELECT_NOTES_WITH_MODULE_FROM = 		
+            " FROM Note a, Interview b, InterviewIntroModule_Module c"
+          + " where a.interviewId = b.idinterview and text is not null and a.interviewId = c.interviewId" 
+          + " and (c.idModule in (:modules))"
+          + " order by interviewId, lastUpdated";
+	
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -329,37 +350,86 @@ public class InterviewDao implements IInterviewDao{
 	public List<Interview> getAssessmentsForNotes(String[] modules) {
 		
 		final Session session = sessionFactory.getCurrentSession();
+		List<String> types = getNoteTypes();
+		String[] typeColumns = getTypeColumns(types);
 		
-		Query sqlQuery = session.createSQLQuery(modules != null ? NOTES_QUERY_WITH_MODULE : NOTES_QUERY);
-		
-		if(modules != null) {
-			sqlQuery.setParameterList("modules", modules);
-		} 		
-		
-		List<Object[]> rows = sqlQuery.list();
-		
-		List<Interview> result = new ArrayList();
-		
-		//Map manually
-		for (Object[] row : rows) {
-			Interview interview = new Interview();
-		    interview.setIdinterview(((BigInteger)row[0]).longValue());
-		    interview.setReferenceNumber(row[1].toString());
-		    
-		    if(row[2] != null){
-		    	ArrayList<Note> notes = new ArrayList<>();
-		    	for(String s : (row[2].toString().split("\\++"))){
-		    		Note note = new Note();
-				    note.setText(s);
+		if(typeColumns != null){
+			
+			final Query sqlQuery = session.createSQLQuery(
+					appendTypes(SELECT_NOTES_QUERY, typeColumns, modules));
+				
+			if(modules != null) {
+				sqlQuery.setParameterList("modules", modules);
+			} 	
+			
+			List<Object[]> rows = sqlQuery.list();
+			
+			List<Interview> result = new ArrayList();
+			
+			//Map manually
+			for (Object[] row : rows) {
+								
+				Interview interview = new Interview();
+			    interview.setIdinterview(((BigInteger)row[0]).longValue());
+			    interview.setReferenceNumber(row[1].toString());
+			    			
+			    ArrayList<Note> notes = new ArrayList<>();
+			    int j = 0;
+			    for(int i = 3; i < row.length; i++){
+			    	
+			    	Note note = new Note();
+				    note.setText((String)row[i]);
+				    note.setType(types.get(j++));
+				    note.setLastUpdated((Date)row[2]);
 				    notes.add(note);
-		    	}
-		    	interview.setNotes(notes);
-		    }
-		    
-			result.add(interview);
-		}		
+			    }
+			    
+			    interview.setNotes(notes);
+			    
+				result.add(interview);
+			}		
+			
+			return result;
+		}
 		
-		return result;
+		return null;
+	}
+
+	private String appendTypes(String query, String[] typeColumns, String[] modules) {
+		StringBuilder sb = new StringBuilder(query);
+		for(String column : typeColumns){
+			sb.append(",");
+			sb.append(column);			
+		}
+		
+		sb.append(modules != null ? SELECT_NOTES_WITH_MODULE_FROM : SELECT_NOTES_FROM);
+		
+		return sb.toString();
+	}
+
+	private String[] getTypeColumns(List<String> list) {
+		String[] listColumn = null;
+		
+		if(list.size() > 0){
+		
+			listColumn = new String[list.size()];
+			
+			for(int i= 0; i < list.size(); i++){
+				listColumn[i] = NOTES_TYPE_COLUMN_QUERY.replace(":type", list.get(i));				
+			}
+		}
+		
+		return listColumn;
+	}
+
+	@Override
+	public List<String> getNoteTypes() {
+		
+		final Session session = sessionFactory.getCurrentSession();
+		
+		final Query types = session.createSQLQuery("select distinct type from Note");
+		
+		return types.list();
 	}
 }
 

@@ -6,11 +6,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.occideas.base.dao.BaseDao;
-import org.occideas.entity.Fragment;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Module;
 import org.occideas.entity.SystemProperty;
@@ -29,7 +27,6 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
-import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
@@ -508,5 +505,11 @@ public class InterviewServiceImpl implements InterviewService {
 	
 	public List<Interview> listAssessmentsForNotes(String[] modules) {
 		return interviewDao.getAssessmentsForNotes(modules);
+	}
+
+	@Override
+	public List<String> getNoteTypes() {
+		
+		return interviewDao.getNoteTypes();
 	}
 }
