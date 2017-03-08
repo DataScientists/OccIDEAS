@@ -47,7 +47,7 @@
 	
 })();
 
-var noteZindex = 1050;
+var noteZindex = 10500;
 function newNote(element,$itemScope,$compile) {
 	if($itemScope.rule == null){
 		return;
@@ -55,20 +55,25 @@ function newNote(element,$itemScope,$compile) {
 	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
 	angular.element(tpl).zIndex(++noteZindex);
 	
-	var wrapper = element;
+	var wrapper = angular.element('#allModuleRulesOfAgent').parent().parent()[0];
 	var maxDialogNum = 5;
-	var leftPoint = -800;
-
-	var zFactor = 1050;
-	var leftPoint = leftPoint+((noteZindex-zFactor)*100) + 50;
+	var leftPoint = 965;
+	
+	if(wrapper != null){
+		var position = wrapper.getBoundingClientRect();
+		leftPoint = (position.left);
+	}
+	var zFactor = 10500;
+	var topPoint = ((noteZindex-zFactor)*100);
 	var temp = noteZindex-zFactor;
 	
 	if(temp > maxDialogNum){
-		leftPoint = leftPoint + (Math.floor((noteZindex-zFactor)/maxDialogNum) * 20);		
-		topPoint = (((temp%6) + 1) * 100) + 50 ;
+		topPoint = (((temp%6) + 1) * 100) + 5;
+		leftPoint = leftPoint + (Math.floor((noteZindex-zFactor)/maxDialogNum) * 20);				
 	}
-	//angular.element(tpl).css('left', leftPoint+'px');
-	//angular.element(tpl).css('top', topPoint+'px');
+	angular.element(tpl).css('left', leftPoint+'px');
+	angular.element(tpl).css('top', topPoint+'px');
+	
 	angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteZindex);

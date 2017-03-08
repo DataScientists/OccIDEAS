@@ -1,4 +1,5 @@
 <div class="row " prog_tree>
+    <div id="allModuleRulesOfAgent" class="tree-node"></div>
 	<div class="col-sm-12">
 	<div class="panel panel-default">
  	 <div class="panel-body">
@@ -11,6 +12,7 @@
   </div>
 </div>
 	</div>
+  <a id="back-to-top" href="#" ng-click="scrollToTop();" class="btn btn-primary btn-lg back-to-top" role="button" style="z-index:100001"><span class="glyphicon glyphicon-chevron-up"></span></a>
 </div>
 <script type="text/ng-template" id="nodes_renderer.html">
   <div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}" ng-attr-data-nodrag="{{isReadOnly}}">
@@ -65,8 +67,9 @@
 			</div>
 			
 			</div>
-			<div id="allModuleRulesOfAgent" class="tree-node"></div>
+			
 		  </div>
+		  
 		  <div style="position: absolute;top: 20px;right: 0px;">
 			<div style="margin-right: 10px;">
 			<div class="form-group" style="position: absolute;right: 2px;top: -20px;">

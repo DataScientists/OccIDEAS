@@ -1930,18 +1930,39 @@
 				  promise.then(function(data){
 					  var mRules = data;
 					  if(mRules.length > 0){
+						$scope.scrollToTop();
+						var uniqueRules = [];
 					  	for(var i=0;i<mRules.length;i++){
-					  		var scope = $itemScope.$new();
-					  		scope.model = model;
-					  		scope.rule = mRules[i].rule;
-					  		scope.agentName = mRules[i].agentName;
-						  	var x = scope.rule.conditions;
-						  	x.idRule = scope.rule.idRule;
-						  	addPopoverInfo(x,scope.rule.idRule);
-						  	var targetDiv = angular.element("#allModuleRulesOfAgent");
-						  	newNote(targetDiv,scope,$compile);
-						  	$scope.activeRule = scope.rule;
+					  		var theRule = mRules[i].rule;
+					  		var bFound = false;
+					  		for(var j=0;j<uniqueRules.length;j++){
+					  			uRule = uniqueRules[j];;
+					  			if(uRule.idRule==theRule.idRule){
+					  				bFound = true;
+					  			}
+					  		}
+					  		if(!bFound){
+					  			uniqueRules.push(theRule);
+					  			var scope = $itemScope.$new();
+						  		scope.model = model;
+						  		scope.rule = theRule;
+					  			scope.agentName = mRules[i].agentName;
+							  	var x = scope.rule.conditions;
+							  	x.idRule = scope.rule.idRule;
+							  	addPopoverInfo(x,scope.rule.idRule);
+							  	var targetDiv = angular.element("#allModuleRulesOfAgent");
+							  	newNote(targetDiv,scope,$compile);
+							  	$scope.activeRule = scope.rule;
+					  		}				  							  							  		
 					  	}
+					  }else{
+						  var msg = 'No rules to show';
+						  ngToast.create({
+				    		  className: 'warning',
+				    		  content: msg,
+				    		  dismissOnTimeout: false,
+				    		  dismissButton: true
+				    	 });
 					  }	  
 				  });
 			  	}			  
@@ -3158,6 +3179,20 @@
     	   }else{
     		   return node;
     	   }
+       }
+       
+       $(window).scroll(function () {
+           if ($(this).scrollTop() > 50) {
+               $('#back-to-top').fadeIn();
+           } else {
+               $('#back-to-top').fadeOut();
+           }
+       });
+       // scroll body to 0px on click
+       $scope.scrollToTop = function(){
+    	   $('body,html').animate({
+               scrollTop: 0
+           }, 800);
        }
        
 	}
