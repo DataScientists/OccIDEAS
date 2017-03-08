@@ -54,6 +54,21 @@ function newNote(element,$itemScope,$compile) {
 	}	
 	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
 	angular.element(tpl).zIndex(++noteZindex);
+	
+	var wrapper = element;
+	var maxDialogNum = 5;
+	var leftPoint = -800;
+
+	var zFactor = 1050;
+	var leftPoint = leftPoint+((noteZindex-zFactor)*100) + 50;
+	var temp = noteZindex-zFactor;
+	
+	if(temp > maxDialogNum){
+		leftPoint = leftPoint + (Math.floor((noteZindex-zFactor)/maxDialogNum) * 20);		
+		topPoint = (((temp%6) + 1) * 100) + 50 ;
+	}
+	//angular.element(tpl).css('left', leftPoint+'px');
+	//angular.element(tpl).css('top', topPoint+'px');
 	angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
 		'dragstart', function() {
 			angular.element(this).zIndex(++noteZindex);

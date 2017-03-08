@@ -58,4 +58,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	List<RandomInterviewReport> createRandomInterviews(int count);
 
 	List<Interview> listAssessmentsForNotes(String[] filterModule);
+
+	List<String> getNoteTypes();
 }

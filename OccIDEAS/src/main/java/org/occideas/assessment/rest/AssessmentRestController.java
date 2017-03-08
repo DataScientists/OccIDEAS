@@ -1198,13 +1198,20 @@ public class AssessmentRestController {
 		
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.1);
 		Set<String> headers = new LinkedHashSet<>();
-		headers.add("Interview Id");
-		headers.add("AWES ID");
-				
+		headers.add("IdInterview");
+		headers.add("Reference Number");
+		
+		List<String> types = getTypes();
+		for(String type : types){
+			headers.add(type);
+		}
+		
+		headers.add("LastUpdated");
+
 		long startTime = System.currentTimeMillis();
 		long elapsedTime = 0; 
 		int currentCount = 0;
-		int maxNoteSize = 0;
+		
 		for (Interview interviewVO : interviews) {
 			
 			currentCount++;
@@ -1219,22 +1226,27 @@ public class AssessmentRestController {
 			answers.add(String.valueOf(interviewVO.getIdinterview()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
 			
-			maxNoteSize = Math.max(maxNoteSize, (interviewVO.getNotes() != null) ? interviewVO.getNotes().size() : 0);
-			
 			for(Note note : interviewVO.getNotes()){
-				if(note.getText() != null){
+				if(note.getText() == null){
+					answers.add("");
+				}
+				else{
 					answers.add(note.getText());
 				}				
+				if(answers.size() == 5){
+					answers.add(note.getLastUpdated().toString());
+				}
 			}
-				
+
 			exportCSVVO.getAnswers().put(interviewVO, answers);
 			
 			elapsedTime = System.currentTimeMillis() - startTime;
-		}
-		for(int i = 0; i < maxNoteSize ; i++){
-			headers.add("Note"+i);
-		}
+		}	
 		
 		return headers;
+	}
+
+	private List<String> getTypes() {
+		return interviewService.getNoteTypes();
 	}	
 }

@@ -246,8 +246,17 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				//if(index==3){
 				//	System.out.println("debug");
 				//}
+				boolean bFound = false;
 				QuestionVO questionUntilRootModule = getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
-				nodeVOList.add(questionUntilRootModule);
+				for(QuestionVO q: nodeVOList){
+					if(q.getIdNode()==questionUntilRootModule.getIdNode()){
+						bFound=true;
+					}
+				}
+				if(!bFound){
+					nodeVOList.add(questionUntilRootModule);
+				}
+				
 			}else if("F".equals(node.getNodeclass())){
 				//parent is a link
 				System.out.println("inside F");

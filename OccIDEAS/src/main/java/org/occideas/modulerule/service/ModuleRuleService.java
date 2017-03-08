@@ -14,4 +14,6 @@ public interface ModuleRuleService extends BaseService<ModuleRuleVO>{
 	List<ModuleRuleVO> findByIdNode(Long id);
 
 	Number getRuleCountById(Long id);
+
+	List<ModuleRuleVO> findByModuleIdAndAgentId(Long moduleId, Long agentId);
 }
