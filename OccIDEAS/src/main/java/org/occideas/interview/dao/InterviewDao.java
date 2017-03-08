@@ -81,12 +81,12 @@ public class InterviewDao implements IInterviewDao{
 			
 	private final String SELECT_NOTES_FROM = 		
               " FROM Note a, Interview b"
-            + " where a.interviewId = b.idinterview and text is not null" 
+            + " where a.interviewId = b.idinterview" 
             + " order by interviewId, lastUpdated";
 	
 	private final String SELECT_NOTES_WITH_MODULE_FROM = 		
             " FROM Note a, Interview b, InterviewIntroModule_Module c"
-          + " where a.interviewId = b.idinterview and text is not null and a.interviewId = c.interviewId" 
+          + " where a.interviewId = b.idinterview and a.interviewId = c.interviewId" 
           + " and (c.idModule in (:modules))"
           + " order by interviewId, lastUpdated";
 	
