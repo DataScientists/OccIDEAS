@@ -49,6 +49,19 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		}
 		return Response.ok(list).build();
 	}
+	@GET
+	@Path(value="/getbymoduleandagent")
+	@Produces(value=MediaType.APPLICATION_JSON_VALUE)
+	public Response getByModuleIdAndAgentId(@QueryParam("moduleId") Long moduleId,@QueryParam("agentId") Long agentId) {
+		List<ModuleRuleVO> list = new ArrayList<ModuleRuleVO>();
+		try{
+			list = service.findByModuleIdAndAgentId(moduleId,agentId);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
 	
 	@GET
 	@Path(value = "/getRuleCountById")

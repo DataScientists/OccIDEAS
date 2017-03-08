@@ -1188,6 +1188,9 @@
 		$scope.showRulesMenu = function(scope){
 			return $scope.rulesMenuOptions;
 		}
+		$scope.showRulesTopMenu = function(scope){
+			return $scope.rulesTopMenuOptions;
+		}
 		$scope.showMenu = function(scope) {
 			if(scope.node.nodeclass=='M'){
 				var menu = $scope.moduleMenuOptions;
@@ -1834,6 +1837,15 @@
 			});
 			return deffered.promise;
 		}
+		function getUpdatedModuleRulesForWholeModuleForThisAgent(agentId,deffered){
+			var moduleId = $scope.data[0].idNode;
+			ModuleRuleService.getModuleRulesFromModuleForAgent(moduleId,agentId).then(function(response) {	
+				if(response.data){
+					deffered.resolve(response.data);
+				}
+			});
+			return deffered.promise;
+		}
 		
 		
 		$scope.rulesMenuOptions =
@@ -1906,6 +1918,32 @@
 	    				}
 	    			});
 					  
+			  	}			  
+			  ]
+			];
+		$scope.rulesTopMenuOptions =
+			[
+			  [ 'Show Rules', function($itemScope, $event, model) {
+				  var agentId = $event.target.id;
+				  var deffered = $q.defer();
+				  var promise = getUpdatedModuleRulesForWholeModuleForThisAgent(agentId,deffered);
+				  promise.then(function(data){
+					  var mRules = data;
+					  if(mRules.length > 0){
+					  	for(var i=0;i<mRules.length;i++){
+					  		var scope = $itemScope.$new();
+					  		scope.model = model;
+					  		scope.rule = mRules[i].rule;
+					  		scope.agentName = mRules[i].agentName;
+						  	var x = scope.rule.conditions;
+						  	x.idRule = scope.rule.idRule;
+						  	addPopoverInfo(x,scope.rule.idRule);
+						  	var targetDiv = angular.element("#allModuleRulesOfAgent");
+						  	newNote(targetDiv,scope,$compile);
+						  	$scope.activeRule = scope.rule;
+					  	}
+					  }	  
+				  });
 			  	}			  
 			  ]
 			];

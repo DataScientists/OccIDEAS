@@ -14,6 +14,13 @@
 			  });
 			  return request.then(handleSuccess,handleError);
 		}; 
+		var getModuleRulesFromModuleForAgent = function(moduleId,agentId) {
+			  var request = $http({
+				method:'GET',
+				url: moduleRuleUrl+'/getbymoduleandagent?moduleId='+moduleId+'&agentId='+agentId
+			  });
+			  return request.then(handleSuccess,handleError);
+		}; 
 		
 		var getRuleCountById = function(idNode) {
 			  var request = $http({
@@ -39,6 +46,7 @@
 		
 		return {
 			getModuleRule: getModuleRule,
+			getModuleRulesFromModuleForAgent:getModuleRulesFromModuleForAgent,
 			getRuleCountById:getRuleCountById
 		};
 	}

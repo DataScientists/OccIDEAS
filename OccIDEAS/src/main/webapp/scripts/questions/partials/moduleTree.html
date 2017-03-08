@@ -56,14 +56,16 @@
 			<div class="numberPosRight">
 			<div style="position:relative;">
 			<div class="agentheader expanded pull-right"
-			ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this,node)">
+			ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)" >
 				<div class="verticalagents">
-						<div class="agentcontainer" ng-repeat="agent in rulesObj ">
-								<span class="rotatedagenttext">{{agent.name}}</span>
+						<div class="agentcontainer" ng-repeat="agent in rulesObj " context-menu="showRulesTopMenu(agent)">
+								<span id="{{agent.idAgent}}" class="rotatedagenttext">{{agent.name}}:{{agent.idAgent}}</span>
 						</div>
 				</div>
 			</div>
+			
 			</div>
+			<div id="allModuleRulesOfAgent" class="tree-node"></div>
 		  </div>
 		  <div style="position: absolute;top: 20px;right: 0px;">
 			<div style="margin-right: 10px;">
