@@ -191,8 +191,12 @@
 				self.isDeleting = true;
 			}
 		}
-		function add() {
+		function add(data) {
 			if (awesIdIsValid($scope.searchAWESID)) {
+				if(!data.selected){
+					$translate.refresh();
+		      		$translate.use('GB');
+				}
 				InterviewsService
 						.checkReferenceNumberExists($scope.searchAWESID)
 						.then(

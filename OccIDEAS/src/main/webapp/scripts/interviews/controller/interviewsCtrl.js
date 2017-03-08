@@ -3,7 +3,7 @@
 			InterviewsCtrl).filter('displayFlag',function(){
 				return function(translated,node,storage){
 					if(translated){
-					if(translated == node.name.toLowerCase()){
+					if(translated == node.name){
 						return 'bfh-flag-GB';
 					}else{
 						return storage.chosenLang.flag;
