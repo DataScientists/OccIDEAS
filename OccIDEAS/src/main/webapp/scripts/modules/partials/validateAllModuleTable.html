@@ -12,6 +12,7 @@
 						<th>Questions</th>
 						<th>Answers</th>
 						<th>Rules</th>
+						<th>Issues</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -21,6 +22,15 @@
 						<td>{{item.totalQuestions}}</td>						
 						<td>{{item.totalAnswers}}</td>
 						<td>{{item.totalRules}}</td>
+						<td> 						
+							<a ng-if="item.issues" style="color:red;cursor:pointer" 
+								tabindex="0" 
+								class="glyphicon glyphicon-warning-sign" 
+								uib-popover-template="issuePopOver.templateUrl"
+								popover-popup-delay="100"  
+								popover-trigger="focus">
+							</a>
+						</td>
 					</tr>
 				</tbody>
 			</table>

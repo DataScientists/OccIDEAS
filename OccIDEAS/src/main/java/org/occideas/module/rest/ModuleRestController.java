@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -49,6 +50,10 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Autowired
 	private SystemPropertyService sysPropService;
 	
+	private String FREE_TEXT_REGEX = "\\[free\\s?text\\]";
+	
+	private Pattern pattern = Pattern.compile(FREE_TEXT_REGEX, Pattern.CASE_INSENSITIVE);
+		
 	@GET
 	@Path(value = "/getlist")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -349,9 +354,14 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	
 	private void populateAnswers(List<PossibleAnswer> childNodes,
 			ModuleReportVO report) {
-		
+	
 		for (PossibleAnswer vo : childNodes) {
 			report.setTotalAnswers(report.getTotalAnswers()+1);
+			
+			if(vo.getType().equals("P_freetext") && !pattern.matcher(vo.getName()).find()){
+				report.addIssue(vo.getIdNode() +" "+vo.getName());				
+			}
+			
 			if (!vo.getModuleRule().isEmpty()) {
 				populateRules(vo.getModuleRule(), report);
 			}

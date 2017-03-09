@@ -537,6 +537,10 @@
 	        });
 	        setInvalid(invalidCellsByRow.length > 0);
 	      }
+	    
+	    $scope.issuePopOver = {
+	    	templateUrl: 'scripts/modules/partials/issuePopOver.html'
+    	};
 	}
 })();
 

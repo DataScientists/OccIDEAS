@@ -1,0 +1,18 @@
+<div class="form-group" style="height:100px;overflow:auto">
+	<div class="popoverTitle"></div>
+	<md-progress-circular
+		ng-if="item.info[item.vo.idNode].popoverInProgress"
+		md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
+	<div
+		ng-if="!item.info[item.idNode].popoverInProgress">
+		<form>
+			<div>
+				Non-matching placeholders for free text fields
+			</div>
+			<md-divider></md-divider>
+			<span class="form-group" ng-repeat="issue in item.issues">
+				{{issue}} <br/>
+			</span>
+		</form>
+	</div>
+</div>
