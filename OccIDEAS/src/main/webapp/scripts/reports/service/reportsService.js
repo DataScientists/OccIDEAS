@@ -31,7 +31,8 @@
 			var request =  $http({
 				  method: 'POST',
 				  url: restDownloadReportUrl,
-				  data:reportVo
+				  data:reportVo,
+				  responseType:'arraybuffer'
 				})
 			return request.then(handleSuccess,handleError);
     	}
@@ -41,7 +42,8 @@
 			var request =  $http({
 				  method: 'POST',
 				  url: restDownloadReportUrl,
-				  data:reportVo
+				  data:reportVo,
+				  responseType:'arraybuffer'
 				})
 			return request.then(handleSuccess,handleError);
     	}

@@ -1,10 +1,14 @@
 package org.occideas.reporthistory.rest;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -31,13 +35,44 @@ public class ReportHistoryRestController {
 	@Path(value="/downloadReport")
 	@POST
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
-	@Produces({ "application/csv"})
+	@Produces({ "application/zip"})
 	public Response downloadReport(ReportHistoryVO vo) throws IOException {
-		java.nio.file.Path path = Paths.get(vo.getPath());
-		return Response.ok(getOut(Files.readAllBytes(path),vo.getPath()), 
+		
+		String pathStr = makeZip(vo);
+		
+		java.nio.file.Path path = Paths.get(pathStr);
+		return Response.ok(getOut(Files.readAllBytes(path),pathStr), 
 				javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM)
 				.header("content-disposition","attachment; filename = "+vo.getName())
-                .build();
+				.build();
+	}
+
+	private String makeZip(ReportHistoryVO vo) {
+		byte[] buffer = new byte[1024];
+
+		String pathStr = vo.getPath()+".zip";
+    	try{
+
+    		FileOutputStream fos = new FileOutputStream(pathStr);
+    		ZipOutputStream zos = new ZipOutputStream(fos);
+    		ZipEntry ze = new ZipEntry(vo.getName());
+    		zos.putNextEntry(ze);
+    		FileInputStream in = new FileInputStream(vo.getPath());
+
+    		int len;
+    		while ((len = in.read(buffer)) > 0) {
+    			zos.write(buffer, 0, len);
+    		}
+
+    		in.close();
+    		zos.closeEntry();
+    		
+    		zos.close();
+
+    	}catch(IOException ex){
+    	   ex.printStackTrace();
+    	}
+		return pathStr;
 	}
 	
 	private StreamingOutput getOut(final byte[] excelBytes,String pathStr) {
@@ -121,14 +156,15 @@ public class ReportHistoryRestController {
 	@Path(value="/downloadLookup")
 	@POST
     @Consumes(value=MediaType.APPLICATION_JSON_VALUE)
-	@Produces({ "application/csv"})
+	@Produces({ "application/zip"})
 	public Response downloadLookup(ReportHistoryVO vo) throws IOException {
-		
+				
 		String pathStr = vo.getPath().substring(0, vo.getPath().length()-4).concat("-Lookup.csv");
-		//String newName = vo.getName().substring(0, vo.getName().length()-4).concat("-Lookup.csv");
 		java.nio.file.Path path = Paths.get(pathStr);
 		if(path.toFile().exists()){
-			return Response.ok(getOut(Files.readAllBytes(path),pathStr), 
+			
+			String zipPathStr = makeZip(vo);			
+			return Response.ok(getOut(Files.readAllBytes(Paths.get(zipPathStr)),zipPathStr), 
 					javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM)
 					.header("content-disposition","attachment; filename = "+vo.getName())
 	                .build();

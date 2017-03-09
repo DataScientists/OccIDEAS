@@ -33,14 +33,16 @@
 				var data = response.data;
 				if(response.status == '200'){
 					
-					csvData = new Blob([data], { type: 'text/csv' }); 
+					csvData = new Blob([data], { type: 'application/octet-stream' }); 
 					var csvUrl = URL.createObjectURL(csvData);
 					
 					var anchor = angular.element('<a/>');
 				     anchor.attr({
 				         href: csvUrl,
 				         target: '_blank',
-				         download: reportHistoryVO.name.substring(0, reportHistoryVO.name.length-4)+"-Link.csv"
+				         download: reportHistoryVO.name
+				         		.substring(0, reportHistoryVO.name.length-4)
+				         		+"-Link.zip"
 				     })[0].click();
 				}
 				else{
@@ -57,7 +59,7 @@
 				var data = response.data;
 				if(response.status == '200'){
 					
-					csvData = new Blob([data], { type: 'text/csv' }); 
+					csvData = new Blob([data], { type: 'application/octet-stream' }); 
 					var csvUrl = URL.createObjectURL(csvData);
 					
 					var anchor = angular.element('<a/>');
@@ -65,6 +67,8 @@
 				         href: csvUrl,
 				         target: '_blank',
 				         download: reportHistoryVO.name
+				         		.substring(0, reportHistoryVO.name.length - 4)
+				         		+'.zip'
 				     })[0].click();
 				}
 				else{
