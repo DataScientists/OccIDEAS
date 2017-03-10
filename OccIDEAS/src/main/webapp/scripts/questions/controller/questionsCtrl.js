@@ -1866,7 +1866,7 @@
 					  	var x = scope.rule.conditions;
 					  	x.idRule = scope.rule.idRule;
 					  	addPopoverInfo(x,scope.rule.idRule);
-					  	newNote($event.currentTarget.parentElement,scope,$compile);
+					  	showRuleDialog($event.currentTarget.parentElement,scope,$compile);
 					  	$scope.activeRule = scope.rule;
 				  	}
 				  }	  

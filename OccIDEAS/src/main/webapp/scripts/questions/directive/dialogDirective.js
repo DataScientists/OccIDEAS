@@ -32,6 +32,20 @@
 	angular
 	.module('occIDEASApp.Questions')
 	.directive(
+			'showRuleDialog',
+			function() {
+				return {
+					restrict : 'A',
+					link : function(scope, element, attrs) {
+						element.on( "click", function() {
+							  showRuleDialog();
+						});
+					}
+				};
+			});
+	angular
+	.module('occIDEASApp.Questions')
+	.directive(
 			'closeRuleDialog',
 			function() {
 				return {
@@ -83,6 +97,27 @@ function newNote(element,$itemScope,$compile) {
 
 	return false;
 };
+function showRuleDialog(element,$itemScope,$compile) {
+	if($itemScope.rule == null){
+		return;
+	}	
+	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
+	angular.element(tpl).zIndex(++noteZindex);
+	
+	var leftPoint = ((noteZindex-10500)*20)-500;
+	
+	angular.element(tpl).css('left', leftPoint+'px');
+	//angular.element(tpl).css('top', topPoint+'px');
+	angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
+		'dragstart', function() {
+			angular.element(this).zIndex(++noteZindex);
+		});
+	angular.element('textarea').autogrow();
+	angular.element('.note');
+
+	return false;
+};
+
 
 var noteIntZindex = 1050;
 function firedRuleDialog(element,$itemScope,$compile,interviewId) {
