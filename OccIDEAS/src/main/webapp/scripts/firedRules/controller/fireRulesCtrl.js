@@ -1018,7 +1018,7 @@
 											  }
 											  var level = vibrationRule.ruleAdditionalfields[0].value;
 											  var moduleName = getModuleNameOfNode(vibrationRule.conditions[0]);
-											  particalVibration = Math.sqrt(Number(frequencyhours)*Number(frequencyhours)*Number(level)/8);
+											  particalVibration = (Number(level)*Number(level)*Number(frequencyhours));
 
 											  var vibrationRow = {nodeNumber:vibrationRule.conditions[0].number,
 													  	idNode:vibrationRule.conditions[0].idNode,
@@ -1035,7 +1035,7 @@
 											  totalExposure += Number(level);
 											  dailyVibration += Number(particalVibration);								  
 										  }							  
-										  $scope.dailyVibration = dailyVibration.toFixed(4);
+										  $scope.dailyVibration = Math.sqrt(dailyVibration/8).toFixed(4);
 									  }
 
 								}
