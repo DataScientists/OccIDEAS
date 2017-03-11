@@ -15,7 +15,7 @@
 					<span popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
 					popover-placement="left" popover-popup-delay="1000" ng-mouseenter="$parent.$parent.$parent.$parent.nodePopover.open(node,rule.idRule)" 
 					uib-popover-template="$parent.$parent.$parent.$parent.nodePopover.templateUrl" style="font-size:1.5em;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-					<span style="margin-left:3px;">{{node.number}}</span>
+					<span style="margin-left:3px;">{{node.topModName}}&nbsp;{{node.number}}</span>
 				</li>
   			</ul>
 			<ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">

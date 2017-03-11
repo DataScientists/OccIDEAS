@@ -6,12 +6,12 @@
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
 	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService',
-	                           'AutoAssessmentService','ngToast'];
+	                           'AutoAssessmentService','ngToast','ModulesService'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
 			RulesService,$ngToast,SystemPropertyService, $mdDialog,
 			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService,
-			AutoAssessmentService,ngToast) {
+			AutoAssessmentService,ngToast,ModulesService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -222,10 +222,38 @@
 								var interviewFiredRules = response.data;
 								vm.interviewFiredRules = interviewFiredRules;
 								$scope.data.firedRules = [];
+								$scope.data.topModuleNameList = [];
+								$scope.data.topNodeIds = [];
+								$scope.moduleNameCount = 0;
 								for(var i=0;i<interviewFiredRules.length;i++){
 									var rules = interviewFiredRules[i].rules;
 									for(var j=0;j<rules.length;j++){
-										$scope.data.firedRules.push(rules[j]);
+										for(var x=0;x<rules[j].conditions.length;x++){
+											var node = rules[j].conditions[x];
+											if($scope.data.topNodeIds.indexOf(node.topNodeId) == -1){
+												$scope.data.topNodeIds.push(node.topNodeId);
+												var idnode = angular.copy(node.topNodeId);
+												$scope.data.topModuleNameList.push({
+													idnode:idnode,
+													topModuleName:''
+												});
+												ModulesService.getNodeNameById(idnode).then(function(response){
+													if(response.status == '200'){
+														var topModuleName =
+															response.data.name;
+//														var found = _.find($scope.data.topModuleNameList, 
+//																function(o) { return o.idnode == idnode; });
+//														if(found){
+														$scope.data.topModuleNameList[$scope.moduleNameCount]
+														.topModuleName = topModuleName; 
+														$scope.moduleNameCount = $scope.moduleNameCount + 1;
+//															found.topModuleName = topModuleName;
+//														}
+													}
+												});
+											}
+										}
+											$scope.data.firedRules.push(rules[j]);
 									}              		
 			                	} 
 							}
@@ -773,7 +801,16 @@
 					  	var scope = $itemScope.$new();
 				  		scope.model = model;
 				  		scope.rule = ruleArray[i];
+				  		for(var x = 0;x < scope.rule.conditions.length;x++){
+				  			var condition = scope.rule.conditions[x];
+				  			var topMod = _.find($scope.data.topModuleNameList, 
+									function(o) { return o.idnode == condition.topNodeId; });
+				  			if(topMod){
+				  				condition.topModName = topMod.topModuleName.substring(0, 4);
+				  			}
+				  		}
 				  		scope.agentName = $itemScope.agent.name;
+				  		console.log($scope.data.topModuleNameList);
 						if($("#rule-dialog-"+$scope.interviewId+"-"+scope.rule.idRule).length == 0){
 							firedRuleDialog($event.currentTarget.parentElement,scope,$compile,$scope.interviewId);
 						}
