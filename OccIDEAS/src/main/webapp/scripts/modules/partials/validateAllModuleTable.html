@@ -17,8 +17,11 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="item in allModuleValidationReport">
-						<td>{{item.vo.idNode}}</td>
-						<td>{{item.vo.name}}</td>						
+						<td>{{item.vo.idNode}}</td>	
+						<td>
+						<a style="cursor: pointer;" href
+							ng-click="addModuleTab(item.vo)">{{item.vo.name}}</a>
+						</td>				
 						<td>{{item.totalQuestions}}</td>						
 						<td>{{item.totalAnswers}}</td>
 						<td>{{item.totalRules}}</td>
