@@ -6,12 +6,12 @@
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
 	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService',
-	                           'AutoAssessmentService','ngToast','ModulesService'];
+	                           'AutoAssessmentService','ngToast','ModulesService','QuestionsService'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
 			RulesService,$ngToast,SystemPropertyService, $mdDialog,
 			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService,
-			AutoAssessmentService,ngToast,ModulesService) {
+			AutoAssessmentService,ngToast,ModulesService,QuestionsService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -23,6 +23,21 @@
 		$scope.loadingTree = false;
 		$scope.openAnswerSummary = function(node){
 			$scope.openAnswerSummaryTab(node,$scope.moduleName,$scope.interviewId);
+		}
+		
+		function addPopoverInfo(x,idRule){
+			 if(angular.isUndefined(x[0].info)){
+	    		  x[0].info = [];
+	    	  }
+			 x[0].info["Node"+x[0].idNode+idRule] = {
+	    				  idNode:x[0].idNode,
+	    				  idRule:idRule,
+	    				  nodeclass:x[0].nodeclass,
+	    				  nodePopover:{
+	    					  isOpen: false
+	    				  },
+	    				  nodePopoverInProgress : false
+	          };
 		}
 		
 		$(window).scroll(function () {
@@ -216,6 +231,44 @@
 						$scope.assessmentStatus = $scope.interview.assessedStatus;
 						$scope.data = response.data[0];
 						
+						$scope.nodePopover = {
+				    		    templateUrl: 'scripts/questions/partials/nodePopover.html',
+				    		    open: function(x,idRule) {
+				    		    	if(x.info){
+				    		    		if(x.info["Node"+x.idNode+idRule].nodePopover.isOpen){
+				    		    			return;
+				    		    		}
+				    		    	}
+				    		    	var nodeclass = 'P';
+				    		    	if(angular.isUndefined(x.info)){
+				  		    		  x.info = [];
+				  		    	  	}
+				    		    	 x.info["Node"+x.idNode+idRule] = {
+											    				  idNode:x.idNode,
+											    				  nodeclass:nodeclass,
+											    				  nodePopover:{
+											    					  isOpen: false
+											    				  },
+											    				  nodePopoverInProgress : false
+						    		  							};
+				    		    	 var nodeInPopup = x.info["Node"+x.idNode+idRule];
+				    		    	 nodeInPopup.nodePopoverInProgress = true;
+				    		         var deffered = $q.defer();
+				    		         QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {	
+				    		    		nodeInPopup.data = data.data[0];
+				    		    		nodeInPopup.idRule =idRule;
+				   						nodeInPopup.nodePopoverInProgress = false;
+				   						deffered.resolve();
+				 					 });
+				    		         deffered.promise.then(function(){
+				    		        	 nodeInPopup.nodePopover.isOpen = true;
+				    		    	 })
+				    		    },   		    
+				  		        close: function close(x,idRule) {
+				  		        	x.info["Node"+x.idNode+idRule].nodePopover.isOpen = false;
+				  		        }
+				    	};
+						
 						$('#back-to-top').fadeOut();
 						FiredRulesService.getByInterviewId($scope.interviewId).then(function(response){
 							if(response.status == '200'){
@@ -224,6 +277,7 @@
 								$scope.data.firedRules = [];
 								$scope.data.topModuleNameList = [];
 								$scope.data.topNodeIds = [];
+								var promises = [];
 								$scope.moduleNameCount = 0;
 								for(var i=0;i<interviewFiredRules.length;i++){
 									var rules = interviewFiredRules[i].rules;
@@ -232,30 +286,15 @@
 											var node = rules[j].conditions[x];
 											if($scope.data.topNodeIds.indexOf(node.topNodeId) == -1){
 												$scope.data.topNodeIds.push(node.topNodeId);
-												var idnode = angular.copy(node.topNodeId);
-												$scope.data.topModuleNameList.push({
-													idnode:idnode,
-													topModuleName:''
-												});
-												ModulesService.getNodeNameById(idnode).then(function(response){
-													if(response.status == '200'){
-														var topModuleName =
-															response.data.name;
-//														var found = _.find($scope.data.topModuleNameList, 
-//																function(o) { return o.idnode == idnode; });
-//														if(found){
-														$scope.data.topModuleNameList[$scope.moduleNameCount]
-														.topModuleName = topModuleName; 
-														$scope.moduleNameCount = $scope.moduleNameCount + 1;
-//															found.topModuleName = topModuleName;
-//														}
-													}
-												});
+												promises.push(populateModuleName(angular.copy(node.topNodeId)));
 											}
 										}
 											$scope.data.firedRules.push(rules[j]);
 									}              		
 			                	} 
+								$q.all(promises).then(function () {
+									console.log('test');
+			        			});
 							}
 						});
 						ManualAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
@@ -310,6 +349,19 @@
 						vm.fragmentsInInterview = response.data;
 						//vm.firedRulesByModule = $scope.modulesInInterview
 					}
+				}
+			});
+		}
+		
+		function populateModuleName(idnode){
+			return ModulesService.getNodeNameById(idnode).then(function(response){
+				if(response.status == '200'){
+					var topModuleName =
+						response.data.name;
+					$scope.data.topModuleNameList.push({
+						idnode:idnode,
+						topModuleName:topModuleName
+					});
 				}
 			});
 		}
@@ -809,6 +861,7 @@
 				  				condition.topModName = topMod.topModuleName.substring(0, 4);
 				  			}
 				  		}
+				  		addPopoverInfo(scope.rule.conditions,scope.rule.idRule);
 				  		scope.agentName = $itemScope.agent.name;
 				  		console.log($scope.data.topModuleNameList);
 						if($("#rule-dialog-"+$scope.interviewId+"-"+scope.rule.idRule).length == 0){
