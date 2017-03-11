@@ -1360,7 +1360,7 @@
 									$scope.$broadcast('angular-ui-tree:expand-all');
 								}, 200);
 							}
-						}, 200);
+						}, 500);
 						
 						$scope.cancel();
 					}	
