@@ -150,6 +150,8 @@ function firedRuleDialog(element,$itemScope,$compile,interviewId) {
 	angular.element('.int-note');
 	return false;
 };
+
+
 function editAssessmentDialog(element,$itemScope,$compile,interviewId) {
 	var tpl = $compile(angular.element("#editAssessment-template").html())($itemScope);	
 	angular.element(tpl).zIndex(++noteIntZindex);
