@@ -49,4 +49,6 @@ public interface NodeLanguageService {
 	List<LanguageModBreakdown> getLanguageModBreakdown(String flag);
 
 	List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag);
+
+	void batchSave(List<NodeLanguageVO> nodeLanguageVO);
 }

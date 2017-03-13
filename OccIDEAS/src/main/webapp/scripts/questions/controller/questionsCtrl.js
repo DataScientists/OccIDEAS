@@ -59,28 +59,30 @@
         
         $scope.saveAllLanguage = function(){
         	var listOfTranslatedNodes = [];
-        	saveNodeTranslation(angular.copy(data[0]),listOfTranslatedNodes);
+        	var listOfLang = [];
+        	saveNodeTranslation(angular.copy(data[0]),listOfTranslatedNodes,listOfLang);
+        	NodeLanguageService.batchSave(listOfLang).then(function(response){
+    			if(response.status == '200'){
+    				$translate.refresh();
+    				$translate.use(self.lang.language);
+    			}
+    		});
         	self.editTranslateNode = false;
         }
         
-        function saveNodeTranslation(node,listOfTranslatedNodes){
+        function saveNodeTranslation(node,listOfTranslatedNodes,listOfLang){
         	if(node.translated != 'No available translation'
         		&& !listOfTranslatedNodes.indexOf(node.name.toLowerCase().trim()) > -1){
         		listOfTranslatedNodes.push(node.name.toLowerCase().trim());
         		var data = {
         				languageId:$scope.selectedLanguage.id,
-        				word:node.name.toLowerCase().trim(),
+        				word:node.name.trim(),
         				translation:node.translated
         		};
-        		NodeLanguageService.save(data).then(function(response){
-        			if(response.status == '200'){
-        				$translate.refresh();
-        				$translate.use(self.lang.language);
-        			}
-        		});
+        		listOfLang.push(data);
         	}
         	_.each(node.nodes,function(n){
-        		saveNodeTranslation(n,listOfTranslatedNodes);
+        		saveNodeTranslation(n,listOfTranslatedNodes,listOfLang);
         	});
         }
         

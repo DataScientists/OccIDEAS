@@ -16,9 +16,7 @@ import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeLanguageMapper;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
-import org.occideas.vo.FragmentVO;
 import org.occideas.vo.LanguageVO;
-import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeLanguageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +42,11 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 			return;
 		}
 		dao.save(mapper.convertToNodeLanguage(nodeLanguageVO));
+	}
+	
+	@Override
+	public void batchSave(List<NodeLanguageVO> list) {
+		dao.batchSave(mapper.convertToNodeLanguageList(list));
 	}
 
 	@Override

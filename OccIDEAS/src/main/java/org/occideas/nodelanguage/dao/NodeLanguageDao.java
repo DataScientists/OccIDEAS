@@ -57,7 +57,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 			if(nodeLanguageByWordAndLanguage != null){
 				nl.setId(nodeLanguageByWordAndLanguage.getId());
 			}
-			sessionFactory.getCurrentSession().saveOrUpdate(nl);
+			sessionFactory.getCurrentSession().merge(nl);
 		}
 	}
 

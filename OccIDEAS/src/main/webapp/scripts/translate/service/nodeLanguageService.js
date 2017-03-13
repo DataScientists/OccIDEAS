@@ -89,6 +89,16 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
+		function batchSave(data){
+			var restSaveUrl = url+'/batchSave';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function deleteNodeLanguage(data){
 			var restSaveUrl = url+'/delete';
 			var request =  $http({
@@ -205,7 +215,8 @@
 			getTotalUntranslatedFragment:getTotalUntranslatedFragment,
 			getTotalFragmentCount:getTotalFragmentCount,
 			getLanguageModBreakdown:getLanguageModBreakdown,
-			getLanguageFragBreakdown:getLanguageFragBreakdown
+			getLanguageFragBreakdown:getLanguageFragBreakdown,
+			batchSave:batchSave
 		};
 	}
 })();
