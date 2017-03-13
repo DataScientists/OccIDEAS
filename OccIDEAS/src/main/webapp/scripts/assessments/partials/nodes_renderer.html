@@ -2,8 +2,7 @@
 	data-clone-enabled="{{isClonable}}">
 	<div class="tree-node" id="{{node.anchorId}}">
 
-		<div
-			class="pull-left tree-handle angular-ui-tree-handle {{node.type}}">
+		<div ng-if="node.type.indexOf('Q_linked') > -1" class="pull-left tree-handle {{node.type}}">
 			<span class="glyphicon glyphicon-list"></span>
 		</div>
 
@@ -62,7 +61,11 @@
 
 
 				<div class="form-group">
-					<span class="badge">{{node.header}} {{node.number}}</span><span style="font-size: 20px;color: green;position: relative;top: 6px;" class="glyphicon glyphicon-list-alt" ng-if="node.nodeclass == 'P'" ng-click="openAnswerSummary(node)"></span>
+					<span class="badge">{{node.header}} {{node.number}}</span>
+					<span style="font-size: 20px;background: #E3F0F6; color: #7D89B7;position: relative;top: 6px;" 
+					class="glyphicon glyphicon-list-alt" ng-if="node.nodeclass == 'P'" 
+					ng-click="openAnswerSummary(node)" 
+					onmouseover="this.style.color='blue';" onmouseout="this.style.color='#7D89B7';"></span>
 				</div>
 			</div>			
 		</div>
