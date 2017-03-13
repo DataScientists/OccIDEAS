@@ -22,6 +22,18 @@
 		$scope.moduleName = moduleName;
 		$scope.loadingTree = false;
 		$scope.openAnswerSummary = function(node){
+			   var linkNode = _.find($scope.data.topModuleNameList,function(qnode){
+				  var retValue = false;
+				  if(qnode.idnode){
+					  if(qnode.idnode == node.topNodeId){
+						  retValue = true;
+					  }
+				  }
+				  return retValue;
+			  });
+			  if(linkNode){
+				  node.header = linkNode.topModuleName.substr(0,4);
+			  }
 			$scope.openAnswerSummaryTab(node,$scope.moduleName,$scope.interviewId);
 		}
 		
