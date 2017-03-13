@@ -847,7 +847,11 @@
 					}				  
 					return retValue;
 				});
-				return childFrequencyNode;
+				if(_.includes(childFrequencyNode.type, 'P_frequency')){
+					return childFrequencyNode;
+				}else{
+					return findFrequencyIdNode(childFrequencyNode);
+				}
 			}else{
 				return;
 			}
