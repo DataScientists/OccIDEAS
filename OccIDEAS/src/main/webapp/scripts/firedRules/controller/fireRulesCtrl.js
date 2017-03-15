@@ -59,14 +59,12 @@
                 $('#back-to-top').fadeOut();
             }
         });
-        // scroll body to 0px on click
-        $('#back-to-top').click(function () {
-            $('#back-to-top').tooltip('hide');
-            $('body,html').animate({
-                scrollTop: 0
-            }, 800);
-            return false;
-        });
+		// scroll body to 0px on click
+        $scope.scrollToTop = function(){
+    	   $('body,html').animate({
+               scrollTop: 0
+           }, 800);
+        }
         
         $('#back-to-top').tooltip('show');
         
@@ -847,7 +845,11 @@
 					}				  
 					return retValue;
 				});
-				return childFrequencyNode;
+				if(_.includes(childFrequencyNode.type, 'P_frequency')){
+					return childFrequencyNode;
+				}else{
+					return findFrequencyIdNode(childFrequencyNode);
+				}
 			}else{
 				return;
 			}
@@ -1114,7 +1116,12 @@
 											  if($scope.foundNode){
 												  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
 												  if(frequencyHoursNode){
-													  frequencyhours = Number(frequencyHoursNode.answerFreetext);
+													  if(frequencyHoursNode.answerFreetext=='[Time]'){
+														  frequencyhours = 0;
+													  }else{
+														  frequencyhours = Number(frequencyHoursNode.answerFreetext); 
+													  }
+													  
 												  }
 												  $scope.foundNode=null;
 											  }
