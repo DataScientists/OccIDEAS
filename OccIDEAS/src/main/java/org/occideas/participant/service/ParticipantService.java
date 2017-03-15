@@ -21,4 +21,6 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
 	Long getMaxParticipantId();
 
 	  public String getMaxReferenceNumber();
+
+	void updateNewTransaction(ParticipantVO o);
 }

@@ -3,6 +3,7 @@ package org.occideas.interviewanswer.dao;
 import java.util.List;
 
 import org.occideas.entity.InterviewAnswer;
+import org.occideas.entity.InterviewQuestion;
 
 public interface IInterviewAnswerDao {
 
@@ -11,5 +12,7 @@ public interface IInterviewAnswerDao {
 	List<InterviewAnswer> saveAnswerAndQueueQuestions(List<InterviewAnswer> ia);
 
 	List<InterviewAnswer> findByInterviewId(Long id);
+
+	List<InterviewQuestion> saveIntervewAnswersAndGetChildQuestion(List<InterviewAnswer> convertToInterviewAnswerList);
 
 }

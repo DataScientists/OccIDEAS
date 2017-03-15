@@ -6,7 +6,9 @@ import java.util.List;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.mapper.InterviewAnswerMapper;
+import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService{
 
 	@Autowired
 	private InterviewAnswerMapper mapper;
+	@Autowired
+	private InterviewQuestionMapper qmapper;
 	@Autowired
 	private IInterviewAnswerDao dao;
 	
@@ -59,6 +63,11 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService{
 	public List<InterviewAnswerVO> saveIntervewAnswersAndQueueQuestions(List<InterviewAnswerVO> o) {
 		return mapper.convertToInterviewAnswerVOList(dao.saveAnswerAndQueueQuestions(mapper.convertToInterviewAnswerList(o)));
 	}
+    
+    @Override
+   	public List<InterviewQuestionVO> saveIntervewAnswersAndGetChildQuestion(List<InterviewAnswerVO> o) {
+   		return qmapper.convertToInterviewQuestionVOList(dao.saveIntervewAnswersAndGetChildQuestion(mapper.convertToInterviewAnswerList(o)));
+   	}
 
 	@Override
 	public List<InterviewAnswerVO> findByInterviewId(Long id) {

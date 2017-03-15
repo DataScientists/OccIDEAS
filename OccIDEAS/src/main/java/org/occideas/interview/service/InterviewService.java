@@ -60,4 +60,5 @@ public interface InterviewService extends BaseService<InterviewVO> {
 	List<Interview> listAssessmentsForNotes(String[] filterModule);
 
 	List<String> getNoteTypes();
+
 }

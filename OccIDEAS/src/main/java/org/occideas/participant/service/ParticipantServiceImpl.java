@@ -15,6 +15,7 @@ import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -54,8 +55,15 @@ public class ParticipantServiceImpl implements ParticipantService {
         list.add(ParticipantVO);
         return list;
     }
+    
     @Override
     public void update(ParticipantVO o) {
+    	participantDao.saveOrUpdate(mapper.convertToParticipant(o,true));
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
+    @Override
+    public void updateNewTransaction(ParticipantVO o) {
     	participantDao.saveOrUpdate(mapper.convertToParticipant(o,true));
     }
     

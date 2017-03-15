@@ -32,6 +32,7 @@ import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
+import org.occideas.vo.NoteVO;
 import org.occideas.vo.ParticipantVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
@@ -186,7 +187,7 @@ public class InterviewServiceImpl implements InterviewService {
 	public void update(InterviewVO o) {
 		dao.saveOrUpdate(mapper.convertToInterview(o));
 	}
-
+	
 	@Override
 	public void merge(InterviewVO o) {
 		dao.merge(mapper.convertToInterview(o));
@@ -254,7 +255,7 @@ public class InterviewServiceImpl implements InterviewService {
 		list.add(InterviewVO);
 		return list;
 	}
-
+	
 	@Override
 	public InterviewVO findInterviewWithFiredRulesById(Long id) {
 		Interview interview = interviewDao.get(id);
@@ -339,7 +340,7 @@ public class InterviewServiceImpl implements InterviewService {
 				randomInterviewReport.setInterviewId(newInterviewVO.getInterviewId());
 				referenceNumber = generateReferenceAuto(referenceNumber);
 				// populate interview question by module
-				populateInterviewWithQuestions(modVO, results, randomInterviewReport, newInterviewVO);
+				populateInterviewWithQuestions(modVO, results, randomInterviewReport, newInterviewVO,participantVO);
 			}
 		}
 
@@ -347,7 +348,7 @@ public class InterviewServiceImpl implements InterviewService {
 	}
 
 	private void populateInterviewWithQuestions(NodeVO nodeVO, List<RandomInterviewReport> results,
-			RandomInterviewReport randomInterviewReport, InterviewVO newInterviewVO) {
+			RandomInterviewReport randomInterviewReport, InterviewVO newInterviewVO, ParticipantVO participantVO) {
 		InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
 		interviewQuestionVO.setIdInterview(newInterviewVO.getInterviewId());
 		interviewQuestionVO.setTopNodeId(nodeVO.getIdNode());
@@ -370,6 +371,16 @@ public class InterviewServiceImpl implements InterviewService {
 
 		InterviewVO randomInterview = interviewList.get(0);
 		processRandomQuestionsAndAnswers(randomInterview,randomInterviewReport,results);
+		List<NoteVO> notes = new ArrayList<>();
+		NoteVO noteVO = new NoteVO();
+		noteVO.setDeleted(0);
+		noteVO.setInterviewId(randomInterview.getInterviewId());
+		noteVO.setText("AUTO GENERATED INTERVIEW");
+		noteVO.setType("System");
+		notes.add(noteVO);
+		interviewDao.saveNewTransaction(mapper.convertToInterview(randomInterview));
+		participantVO.setStatus(2);
+		participantService.updateNewTransaction(participantVO);
 		results.add(randomInterviewReport);
 	}
 
@@ -377,7 +388,7 @@ public class InterviewServiceImpl implements InterviewService {
 		List<InterviewQuestionVO> questionList = randomInterview.getQuestionHistory();
 		InterviewQuestionVO questionAsked = findNextQuestionQueued(questionList);
 		if (questionAsked == null) {
-			log.info("[Randominterview]-No question to ask for interview id " + randomInterview.getInterviewId());
+			log.info("[Randominterview]-No question to ask for interview id " + randomInterview.getInterviewId()+" end interview as completed");
 			return;
 		} else {
 			List<QuestionVO> questionsWithSingleChildLevel = questionService
@@ -455,8 +466,19 @@ public class InterviewServiceImpl implements InterviewService {
 		interviewAnswer.setIsProcessed(true);
 		List<InterviewAnswerVO> listOfAnswers = new ArrayList<>();
 		listOfAnswers.add(interviewAnswer);
-		interviewAnswerService.saveIntervewAnswersAndQueueQuestions(listOfAnswers);
+		List<InterviewQuestionVO> questions = interviewAnswerService.saveIntervewAnswersAndGetChildQuestion(listOfAnswers);
 		randomInterviewReport.getListAnswer().add(interviewAnswer);
+		refreshUnprocessedQuestions(questions,randomInterview);
+	}
+
+	private void refreshUnprocessedQuestions(List<InterviewQuestionVO> questions,InterviewVO randomInterview) {
+		if(questions != null && !questions.isEmpty()){
+			for(InterviewQuestionVO iVO:questions){
+				if(!randomInterview.getQuestionHistory().contains(iVO)){
+					randomInterview.getQuestionHistory().add(iVO);
+				}
+			}
+		}
 	}
 
 	private InterviewQuestionVO findNextQuestionQueued(List<InterviewQuestionVO> questionList) {

@@ -431,5 +431,6 @@ public class InterviewDao implements IInterviewDao{
 		
 		return types.list();
 	}
+
 }
 
