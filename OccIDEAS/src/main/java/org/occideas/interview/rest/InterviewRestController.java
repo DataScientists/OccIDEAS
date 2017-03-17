@@ -1033,10 +1033,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	@GET
 	@Path(value = "/createRandomInterviews")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
-	public Response createRandomInterviews(@QueryParam("count") Integer count) {
+	public Response createRandomInterviews(@QueryParam("count") Integer count,
+			@QueryParam("isRandomAnswers") Boolean isRandomAnswers) {
 		List<RandomInterviewReport> results = null;
 		try {
-			 results = service.createRandomInterviews(count);		
+			 results = service.createRandomInterviews(count,isRandomAnswers);		
 			
 		} catch (Throwable e) {
 			

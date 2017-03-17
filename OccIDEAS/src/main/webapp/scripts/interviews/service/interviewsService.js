@@ -5,9 +5,9 @@
 	InterviewsService.$inject = [ '$http', '$q' ];
 	function InterviewsService($http, $q) {
 
-		function createRandomInterviews(count) {
+		function createRandomInterviews(count,isRandomAnswers) {
 			var restUrl = 'web/rest/interview/createRandomInterviews?count='
-					+ count;
+					+ count+'&isRandomAnswers='+isRandomAnswers;
 
 			var request = $http({
 				method : 'GET',

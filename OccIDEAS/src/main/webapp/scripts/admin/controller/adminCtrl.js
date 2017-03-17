@@ -17,17 +17,25 @@
 	    self.addNewConfigBtn = addNewConfigBtn;
 		
 	    $scope.randomIntCount = 0;
+	    $scope.randomAnswerChecked = true;
 	    
 	    self.createRandomInterviews = function(){
 	    	$scope.randomReport = undefined;
-	    	InterviewsService.createRandomInterviews($scope.randomIntCount).then(function(response){
+	    	InterviewsService.createRandomInterviews($scope.randomIntCount,$scope.randomAnswerChecked).then(function(response){
 	    		if(response.status == '200'){
 	    			$scope.randomReport = response.data;
 	    			_.each($scope.randomReport,function(report){
 	    				var i = 0;
 	    				for(i;i < report.listQuestion.length;i++){
 	    					if(i < report.listAnswer.length){
-	    						report.listQuestion[i].answer = report.listAnswer[i];
+	    						var a = _.find(report.listAnswer,function(ans){
+	    							return ans.parentQuestionId == report.listQuestion[i].questionId;
+	    						});
+	    						if(a){
+	    							report.listQuestion[i].answer = a;
+	    						}else{
+	    							report.listQuestion[i].answer = {name:'No Answer Available.'};
+	    						}
 	    					}
 	    				}
 	    			});
