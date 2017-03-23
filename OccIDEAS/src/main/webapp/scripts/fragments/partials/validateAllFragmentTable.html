@@ -7,6 +7,7 @@
 			<table class="table table-sm">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Fragment Id</th>
 						<th>Fragment Name</th>
 						<th>Questions</th>
@@ -16,6 +17,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="item in allFragmentValidationReport">
+						<td>{{$index}}</td>	
 						<td>{{item.vo.idNode}}</td>
 						<td>{{item.vo.name}}</td>						
 						<td>{{item.totalQuestions}}</td>						

@@ -7,6 +7,7 @@
 			<table class="table table-sm">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Module Id</th>
 						<th>Module Name</th>
 						<th>Questions</th>
@@ -17,6 +18,7 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="item in allModuleValidationReport">
+						<td>{{$index}}</td>	
 						<td>{{item.vo.idNode}}</td>	
 						<td>
 						<a style="cursor: pointer;" href

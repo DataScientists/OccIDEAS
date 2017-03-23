@@ -231,7 +231,7 @@ public class InterviewServiceImpl implements InterviewService {
 			}
 		}
 		System.out.println("2:listAllInterviewsWithoutAnswers:" + new Date());
-		return mapper.convertToInterviewWithoutAnswersList(debug1);
+		return mapper.convertToInterviewWithoutAnswersList(debug);
 	}
 
 	@Override

@@ -441,7 +441,13 @@ public class AssessmentRestController {
 			List<String> answers = new ArrayList<>();
 			answers.add(String.valueOf(interviewVO.getIdinterview()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
-			answers.add(String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus())));
+			String pStatus = "ERROR";
+			try{
+				pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
+			}catch(Exception e){
+				System.out.println("no participant at interview"+interviewVO.getIdinterview());
+			}
+			answers.add(pStatus);
 			
 			addModuleNames(interviewVO, answers);
 			
@@ -488,13 +494,13 @@ public class AssessmentRestController {
 					}catch(Exception e){
 						System.err.println("Invalid noise rule! Check rule "+noiseRule.getIdRule());
 					}
-					Float partialExposure = (float) Math.sqrt((float)(frequencyhours)*(float)(frequencyhours)*(float)(level)/8);
+					Float partialExposure = (float)(frequencyhours)*(float)(frequencyhours)*(float)(level);
 
 					totalPartialExposure = ((totalPartialExposure) + (partialExposure));
 					totalFrequency += frequencyhours;									
 				}
 
-				Float dailyVibration = (float)Math.sqrt((float)(totalFrequency)*(float)(totalFrequency)*(float)(totalPartialExposure)/8);
+				Float dailyVibration = (float)Math.sqrt((float)(totalPartialExposure)/8);
 				dailyvibration = dailyVibration.toString();
 				
 			}
@@ -540,6 +546,7 @@ public class AssessmentRestController {
 		for (Interview interviewVO : uniqueInterviews) {
 			
 			currentCount++;
+			System.out.println("Noise report:"+currentCount);
 			
 			updateProgress(uniqueInterviews.size(), 
 					reportHistoryVO, 
@@ -552,7 +559,13 @@ public class AssessmentRestController {
 			List<String> answers = new ArrayList<>();
 			answers.add(String.valueOf(interviewVO.getIdinterview()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
-			answers.add(String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus())));
+			String pStatus = "ERROR";
+			try{
+				pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
+			}catch(Exception e){
+				System.out.println("No participant for interview "+interviewVO.getIdinterview());
+			}
+			answers.add(pStatus);
 			
 			addModuleNames(interviewVO, answers);
 			
