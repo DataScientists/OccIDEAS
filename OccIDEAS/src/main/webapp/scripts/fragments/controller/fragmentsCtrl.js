@@ -449,6 +449,10 @@
 				}
 			});
 	    }
+	    
+	    $scope.issuePopOver = {
+		    	templateUrl: 'scripts/modules/partials/issuePopOver.html'
+	    	};
 
         $scope.showLinkPopup = function(row) {
         	$scope.fragmentLinkProgress = true;

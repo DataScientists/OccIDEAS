@@ -2,6 +2,7 @@ package org.occideas.fragment.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -30,6 +31,10 @@ import org.springframework.http.MediaType;
 @Path("/fragment")
 public class FragmentRestController implements BaseRestController<FragmentVO>{
 
+	private String FREE_TEXT_REGEX = "\\[free\\s?text\\]";
+	
+	private Pattern pattern = Pattern.compile(FREE_TEXT_REGEX, Pattern.CASE_INSENSITIVE);
+	
 	@Autowired
 	private FragmentService service;
 	
@@ -227,6 +232,10 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		
 		for (PossibleAnswer vo : childNodes) {
 			report.setTotalAnswers(report.getTotalAnswers()+1);
+			if(vo.getType().equals("P_freetext") && !pattern.matcher(vo.getName()).find()){
+				report.addIssue(vo.getIdNode() +" "+vo.getName());				
+			}
+			
 			if (!vo.getModuleRule().isEmpty()) {
 				populateRules(vo.getModuleRule(), report);
 			}
