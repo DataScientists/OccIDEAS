@@ -14,18 +14,32 @@
 		<div layout="column" ng-cloak class="md-inline-form">
 			<md-content>
 			<div layout-gt-sm="row">
-				<md-input-container class="md-block" flex-gt-sm>
+				<md-input-container class="md-block" flex-gt-sm style="height: 10px;">
 				<label>Number of Interviews</label> <input required maxlength="20"
 					name="randomIntCount" ng-model="randomIntCount" /> </md-input-container>
 				<div flex="5" hide-xs hide-sm>
 					<!-- Spacer //-->
 				</div>
 			</div>
-			<div layout-wrap layout-gt-sm="row" >
         <div flex-gt-sm="50">
           <md-checkbox ng-model="randomAnswerChecked" aria-label="Select Random Answers">
   					Select Random Answers
 				</md-checkbox>
+        </div>
+        </div>
+        <div layout-wrap layout-gt-sm="row" >
+        <div>
+     	 	<table ng-table="vm.filterModTableParams"
+				class="table table-condensed table-bordered table-striped">
+				<tr ng-repeat="mod in $data track by $index">
+					<td width="30" style="text-align: left" header="'ng-table/headers/checkbox.html'">
+						<input type="checkbox" style="position:static;" ng-model="checkboxes.items[mod.link]" />
+					</td>
+					<td title="'Module Id'">{{mod.link}}</td>
+					<td title="'Module Name'" filter="{name:'text'}">{{mod.name}}</td>
+				</tr>
+			</table>
+        </div>
         </div>
         </div>
 			<div class="panel panel-default" ng-if="randomReport.length > 0">
@@ -57,4 +71,7 @@
 	</div>
 	</md-dialog-content>
 </form>
+<script type="text/ng-template" id="ng-table/headers/checkbox.html">
+        		<input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value="" />
+    		</script>
 </md-dialog>

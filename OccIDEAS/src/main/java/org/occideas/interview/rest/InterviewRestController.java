@@ -37,6 +37,7 @@ import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewAutoAssessmentVO;
 import org.occideas.vo.InterviewFiredRulesVO;
+import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.occideas.vo.InterviewModuleFragmentVO;
 import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
@@ -48,6 +49,7 @@ import org.occideas.vo.NoteVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RandomInterviewReport;
+import org.occideas.vo.RandomInterviewVO;
 import org.occideas.vo.RuleVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1063,13 +1065,29 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 	}
 	
 	@GET
-	@Path(value = "/createRandomInterviews")
+	@Path(value = "/getLinksByModule")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
-	public Response createRandomInterviews(@QueryParam("count") Integer count,
-			@QueryParam("isRandomAnswers") Boolean isRandomAnswers) {
+	public Response getLinksByModule(@QueryParam("id") Long id) {
+		List<QuestionVO> list = null;
+		try {
+			list = service.getLinksByModule(id);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+	
+	
+	@POST
+	@Path(value = "/createRandomInterviews")
+	@Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response createRandomInterviews(RandomInterviewVO randomInterview) {
 		List<RandomInterviewReport> results = null;
 		try {
-			 results = service.createRandomInterviews(count,isRandomAnswers);		
+			 results = service.createRandomInterviews(randomInterview.getCount(),randomInterview.isRandomAnswers(),
+					 randomInterview.getFilterModule());		
 			
 		} catch (Throwable e) {
 			

@@ -3,8 +3,8 @@
 	  .module('occIDEASApp.Admin')
 	  .controller('AdminCtrl',AdminCtrl);
 	
-	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService','ngToast','InterviewsService'];
-	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService,$ngToast,InterviewsService){
+	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService','ngToast','InterviewsService','$sessionStorage'];
+	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService,$ngToast,InterviewsService,$sessionStorage){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -19,9 +19,69 @@
 	    $scope.randomIntCount = 0;
 	    $scope.randomAnswerChecked = true;
 	    
+	    self.filterModTableParams =  new NgTableParams(
+				{
+				}, 
+			{	
+	        getData: function(params) {
+	          if(params.filter().interviewModuleName){	
+		        return $filter('filter')(self.filterModTableParams.settings().dataset, params.filter());
+		      }
+		      if(!self.filterModTableParams.shouldGetData){
+		        return self.filterModTableParams.settings().dataset;
+		      }	          
+	          return  InterviewsService.getLinksByModule($sessionStorage.activeIntro.value).then(function(response) {	        	         	
+	        	  var data = response.data;
+	        	  if(data){
+	        		 data = _.uniqBy(data, 'link');
+	        	  }
+	        	  self.originalData = angular.copy(data);
+	        	  self.filterModTableParams.settings().dataset = data;
+	        	  self.filterModTableParams.shouldGetData = true;
+	        	  return data;
+	          	});
+	          }
+	      });
+		self.filterModTableParams.shouldGetData = true;
+		$scope.checkboxes = { 'checked': false, items: {} };
+		$scope.$watch('checkboxes.items', function(values) {
+		    if (!self.filterModTableParams.settings().dataset) {
+		        return;
+		    }
+		    var checked = 0, unchecked = 0,
+		        total = self.filterModTableParams.settings().dataset.length;
+		    angular.forEach(self.filterModTableParams.settings().dataset, function(item) {
+		        checked   +=  ($scope.checkboxes.items[item.link]) || 0;
+		        unchecked += (!$scope.checkboxes.items[item.link]) || 0;
+		    });
+		    if ((unchecked == 0) || (checked == 0)) {
+		        $scope.checkboxes.checked = (checked == total);
+		    }
+		    // grayed checkbox
+		    angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+		    
+		    $scope.fileName = "";
+		    var moduleList = self.filterModTableParams.settings().dataset;
+		  }, true);
+		
 	    self.createRandomInterviews = function(){
+	    	if($scope.randomIntCount == 0){
+	    		alert("count must be greater than 0.");
+	    		return;
+	    	}
 	    	$scope.randomReport = undefined;
-	    	InterviewsService.createRandomInterviews($scope.randomIntCount,$scope.randomAnswerChecked).then(function(response){
+	    	var filterModule = [];
+			 _.each($scope.checkboxes.items,function(value, key){
+				 if(value){
+					 filterModule.push(key);
+				 }
+			 });
+			 var requestParam = {
+				count:$scope.randomIntCount,
+				isRandomAnswers:$scope.randomAnswerChecked,
+				filterModule:filterModule
+			 }
+	    	InterviewsService.createRandomInterviews(requestParam).then(function(response){
 	    		if(response.status == '200'){
 	    			$scope.randomReport = response.data;
 	    			_.each($scope.randomReport,function(report){

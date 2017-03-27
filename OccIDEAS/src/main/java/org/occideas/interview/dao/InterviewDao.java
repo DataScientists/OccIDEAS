@@ -16,12 +16,16 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Agent;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewIntroModuleModule;
+import org.occideas.entity.Node;
 import org.occideas.entity.Note;
+import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.NodeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -430,6 +434,28 @@ public class InterviewDao implements IInterviewDao{
 		final Query types = session.createSQLQuery("select distinct type from Note");
 		
 		return types.list();
+	}
+	
+	@Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
+	public List<Long> getLinksByAnswerId(long answerId){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Node.class)
+				.add(Restrictions.eq("parentId", String.valueOf(answerId)))
+				.add(Restrictions.ne("link",0L))
+				.setProjection(Projections.projectionList()
+						.add(Projections.property("link"),"link")
+						);
+		return crit.list();
+	}
+
+	@Override
+	public List<Question> getLinksByModule(Long id) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Question.class)
+				.add(Restrictions.eq("topNodeId", id))
+				.add(Restrictions.ne("link",0L));
+		return crit.list();
 	}
 
 }

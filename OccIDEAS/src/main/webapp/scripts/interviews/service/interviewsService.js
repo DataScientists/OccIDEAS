@@ -5,9 +5,19 @@
 	InterviewsService.$inject = [ '$http', '$q' ];
 	function InterviewsService($http, $q) {
 
-		function createRandomInterviews(count,isRandomAnswers) {
-			var restUrl = 'web/rest/interview/createRandomInterviews?count='
-					+ count+'&isRandomAnswers='+isRandomAnswers;
+		function createRandomInterviews(data) {
+			var restUrl = 'web/rest/interview/createRandomInterviews';
+
+			var request = $http({
+				method : 'POST',
+				url : restUrl,
+				data:data
+			})
+			return request.then(handleSuccess, handleError);
+		}
+		
+		function getLinksByModule(id) {
+			var restUrl = 'web/rest/interview/getLinksByModule?id='+id;
 
 			var request = $http({
 				method : 'GET',
@@ -60,6 +70,8 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		
+		
 
 		function getDistinctModules() {
 			var restUrl = 'web/rest/interviewintromodule/getDistinctModules';
@@ -597,7 +609,8 @@
 			findQuestionsByNodeId:findQuestionsByNodeId,
 			checkFragmentProcessed:checkFragmentProcessed,
 			createRandomInterviews:createRandomInterviews,
-			exportNotesCSV:exportNotesCSV
+			exportNotesCSV:exportNotesCSV,
+			getLinksByModule:getLinksByModule
 		};
 	}
 })();

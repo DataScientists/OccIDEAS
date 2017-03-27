@@ -6,6 +6,8 @@ import java.util.List;
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Interview;
 import org.occideas.vo.InterviewVO;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RandomInterviewReport;
 
 public interface InterviewService extends BaseService<InterviewVO> {
@@ -55,10 +57,12 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	Long checkFragmentProcessed(long idFragment, long primaryKey);
 	
-	List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers);
+	List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers, String[] filterModule);
 
 	List<Interview> listAssessmentsForNotes(String[] filterModule);
 
 	List<String> getNoteTypes();
+
+	List<QuestionVO> getLinksByModule(Long id);
 
 }
