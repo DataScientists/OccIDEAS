@@ -1,6 +1,7 @@
 package org.occideas.assessment.rest;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -25,7 +26,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.occideas.assessment.service.AssessmentService;
 import org.occideas.entity.AssessmentAnswerSummary;
 import org.occideas.entity.Constant;
@@ -38,6 +41,7 @@ import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.entity.Rule;
 import org.occideas.interview.service.InterviewService;
+import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.mapper.RuleMapperImpl;
 import org.occideas.question.service.QuestionService;
@@ -52,6 +56,8 @@ import org.occideas.vo.AgentVO;
 import org.occideas.vo.AssessmentAnswerSummaryFilterVO;
 import org.occideas.vo.ExportCSVVO;
 import org.occideas.vo.FilterModuleVO;
+import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.PageVO;
 import org.occideas.vo.ReportHistoryVO;
@@ -60,6 +66,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 @Path("/assessment")
@@ -76,6 +83,8 @@ public class AssessmentRestController {
 	private InterviewService interviewService;
 	@Autowired
 	private InterviewQuestionService interviewQuestionService;
+	@Autowired
+	private InterviewAnswerService interviewAnswerService;
 	@Autowired
 	private SystemPropertyService systemPropertyService;
 	@Autowired
@@ -125,13 +134,191 @@ public class AssessmentRestController {
 				ReportsStatusEnum.IN_PROGRESS.getValue(), 
 				0.11, new Date(), INITIAL_DURATION_MIN);	
 		
+		long msPerInterview = getMsPerInterview(count.intValue(), 
+				reportHistoryVO, ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);		
+		
+		
 		log.info("[Report] before getting unique interview questions ");
-		List<InterviewQuestion> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
+		//List<InterviewQuestion> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
+		List<Interview> uniqueInterviews = interviewService.listAllWithRules(filterModuleVO.getFilterModule());
+		
 		log.info("[Report] after getting unique interview questions ");
+		Map<Long, NodeVO> nodeVoList = new HashMap<>();
+		String[] modules = filterModuleVO.getFilterModule();
+		//Initialize map to prevent multiple re-queries
+		for(String module : modules){
+			nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));			
+		}
+		try {
+			long startTime = System.currentTimeMillis();
+			long elapsedTime = 0; 
+			int currentCount = 0;
+			
+			String tempFolder = csvDir.getValue()+reportHistoryVO.getId()+"/";
+			File temp = new File(tempFolder);
+			//FileUtils.deleteDirectory(temp);
+			temp.mkdir();
+			int iCount = 0;			
+			for(Interview interview: uniqueInterviews){
+				
+				currentCount++;
+				
+				updateProgress(uniqueInterviews.size(), 
+						reportHistoryVO, 
+						currentCount, 
+						elapsedTime,
+						msPerInterview);
+				
+				File file = new File(tempFolder+iCount+".csv");
+				CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
+				List<InterviewAnswerVO> answers = interviewAnswerService.findByInterviewId(interview.getIdinterview());
+				List<InterviewQuestionVO> questions = interviewQuestionService.findByInterviewId(interview.getIdinterview());
+				List<String> headerList = new ArrayList<String>();
+				headerList.add("InterviewId");
+				headerList.add("ReferenceNumber");
+				headerList.add("Status");
+				List<String> answerList = new ArrayList<String>();
+				answerList.add(String.valueOf(interview.getIdinterview()));
+				answerList.add(String.valueOf(interview.getReferenceNumber()));
+				String pStatus = "ERROR";
+				try{
+					pStatus = String.valueOf(getStatusDescription(interview.getParticipant().getStatus()));
+				}catch(Exception e){
+					System.out.println("no participant at interview"+interview.getIdinterview());
+				}
+				answerList.add(pStatus);
+				
+				for(InterviewAnswerVO ia: answers){
+					//InterviewQuestionVO iq = interviewQuestionService.findById(ia.getInterviewQuestionId()).get(0);
+					String headerKey = generateHeaderKey(ia,nodeVoList,questions);
+					//System.out.println(interview.getReferenceNumber());
+					//System.out.println(interview.getIdinterview());
+					//System.out.println(headerKey);
+					//System.out.println(ia.getAnswerFreetext());
+					boolean ignore = false;
+					if(headerList.contains(headerKey)){
+						//String dupSufix = "DUP";
+						/*String last4Char = headerKey.substring(headerKey.length() - 4);
+						if(last4Char.startsWith("DUP")){
+							String lastChar = last4Char.substring(last4Char.length()-1);
+							if(NumberUtils.isNumber(lastChar)){
+								Integer dupCount = Integer.valueOf(lastChar);
+								dupCount = dupCount+1;
+								dupSufix = "DUP"+dupCount;
+							}						
+						}else{*/
+						//	headerList.add("ERROR-"+headerKey+"-"+dupSufix);
+						//}
+						ignore = true;					
+					}else{
+						headerList.add(headerKey);
+						
+					}	
+					if(!ignore){
+						answerList.add(ia.getAnswerFreetext());
+					}
+				}
+				writer.writeNext(headerList.toArray(new String[headerList.size()]));
+				writer.writeNext(answerList.toArray(new String[answerList.size()]));
+				writer.close();
+				iCount++;
+				/*if(iCount>200){
+					updateProgress(uniqueInterviews.size(), 
+							reportHistoryVO, 
+							uniqueInterviews.size(), 
+							elapsedTime,
+							msPerInterview);
+					updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
+					
+					break;
+				}*/
+				//System.out.println(iCount);
+			}	
+			File folder = new File(tempFolder);
+			
+			File[] listOfFiles = folder.listFiles();
+			List<String> fullHeaderList = new ArrayList<String>();
+			for (File rfile : listOfFiles) {
+			    if (rfile.isFile()) {
+			       // System.out.println(rfile.getName());
+			        CSVReader reader = new CSVReader(new FileReader(rfile));
+					String[] line = null;
+					iCount = 0;
+					String[] headerKeys = null;
+					while((line = reader.readNext())!=null){
+						//if(!line.isEmpty()){
+							if(iCount==0){
+								headerKeys = line;
+								for(String headerKey: headerKeys){
+									if(!fullHeaderList.contains(headerKey)){
+										fullHeaderList.add(headerKey);					
+									}
+								}
+							}else if(iCount==1){
+								
+								
+							}else {
+								System.out.println("Error more lines than there should be");
+							}
+						//}
+						iCount++;
+					}
+					reader.close();
+					
+			    }
+			}
+			File fileOut = new File(fullPath);
+			CSVWriter writer = new CSVWriter(new FileWriter(fileOut), ',');
+			Collections.sort(fullHeaderList);
+			writer.writeNext(fullHeaderList.toArray(new String[fullHeaderList.size()]));
+			for (File rfile : listOfFiles) {
+			    if (rfile.isFile()) {
+			        //System.out.println(rfile.getName());
+			        //BufferedReader br = new BufferedReader(new FileReader(rfile));
+			        CSVReader reader = new CSVReader(new FileReader(rfile));
+					iCount = 0;
+					String[] headerKeys = null;
+					String[] answers = null;
+					String[] record = null;
+					while((record = reader.readNext())!=null){
+						//if(!line.isEmpty()){
+							if(iCount==0){
+								headerKeys = record;							
+							}else if(iCount==1){
+								answers = record;							
+							}else {
+								System.out.println("Error more lines than there should be");
+							}
+						//}
+						iCount++;
+					}
+					reader.close();
+					Map<String, String> answerMap = new HashMap<String,String>();
+					for(int i=0;i<headerKeys.length;i++){						
+						answerMap.put(headerKeys[i], answers[i]);
+					}
+					List<String> fullAnswerList = new ArrayList<String>();					
+					for(String header:fullHeaderList){
+						String answer = "-NA-";
+						if(answerMap.get(header)!=null){
+							answer = answerMap.get(header);
+						}
+						fullAnswerList.add(answer);
+					}
+					writer.writeNext(fullAnswerList.toArray(new String[fullAnswerList.size()]));									
+			    }
+			}
+			writer.close();
+			FileUtils.deleteDirectory(temp);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO,filterModuleVO.getFilterModule(), count);
+		System.out.println("Report Done");
+		//ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO,filterModuleVO.getFilterModule(), count);
 		
-		writeReport(fullPath, reportHistoryVO, csvVO);
+		//writeReport(fullPath, reportHistoryVO, csvVO);
 		
 		return Response.ok().build();
     }
@@ -383,6 +570,13 @@ public class AssessmentRestController {
 		ExportCSVVO vo = new ExportCSVVO();
 		Set<String> headers = populateHeadersAndAnswers(uniqueInterviewQuestions,vo,reportHistoryVO,modules, count);
 		vo.setHeaders(headers);
+		return vo;
+	}
+	private ExportCSVVO populateCSVNew(List<Interview> uniqueInterview,ReportHistoryVO reportHistoryVO, String[] modules, 
+			Long count) {
+		ExportCSVVO vo = new ExportCSVVO();
+		/*Set<String> headers = populateHeadersAndAnswersNew(uniqueInterviewQuestions,vo,reportHistoryVO,modules, count);
+		vo.setHeaders(headers);*/
 		return vo;
 	}
 	private ExportCSVVO populateAssessmentCSV(List<Interview> uniqueInterviews,ReportHistoryVO reportHistoryVO, 
@@ -790,7 +984,13 @@ public class AssessmentRestController {
 			List<String> answers = new ArrayList<>();
 			answers.add(String.valueOf(interviewVO.getIdinterview()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
-			answers.add(String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus())));
+			String pStatus = "ERROR";
+			try{
+				pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
+			}catch(Exception e){
+				System.out.println("no participant at interview"+interviewVO.getIdinterview());
+			}
+			answers.add(pStatus);
 						
 			addModuleNames(interviewVO, answers);
 			
@@ -937,6 +1137,12 @@ public class AssessmentRestController {
 		}
 		
 		return headers;
+	}
+
+	private String findHeaderInList(Set<String> headers, InterviewAnswerVO interviewAnswer) {
+		long interviewQuestionId = interviewAnswer.getInterviewQuestionId();
+		
+		return null;
 	}
 
 	private void handleSimpleQuestion(Interview interviewVO, List<String> answers, String questionId) {
@@ -1116,6 +1322,54 @@ public class AssessmentRestController {
 			exportCSVVO.getQuestionIdList().add(String.valueOf(interviewQuestionVO.getQuestionId()));
 		}
 	}
+	private void addHeadersAndAnswersNew(Set<String> headers, 
+			Interview interviewVO, ExportCSVVO exportCSVVO, Map<Long, NodeVO> nodeVoList) {
+		
+		List<InterviewAnswerVO> listInterviewAnswerVO = interviewAnswerService.findByInterviewId(interviewVO.getIdinterview());
+		for(InterviewAnswerVO interviewAnswerVO : listInterviewAnswerVO){
+			
+			
+				
+		}
+	}
+
+	private String generateHeaderKey(InterviewAnswerVO interviewAnswerVO,Map<Long, NodeVO> nodeVoList,List<InterviewQuestionVO> questions) {
+		String retValue = interviewAnswerVO.getNumber();
+		InterviewQuestionVO interviewQuestionVO = null;
+		for(InterviewQuestionVO question: questions){
+			if(interviewAnswerVO.getInterviewQuestionId()==question.getId()){
+				interviewQuestionVO = question;
+				break;
+			}
+		}
+		if(interviewQuestionVO==null){
+			interviewQuestionVO = interviewQuestionService.findIntQuestion(interviewAnswerVO.getIdInterview(), interviewAnswerVO.getParentQuestionId());
+		}
+		long topNodeId = Long.valueOf(interviewAnswerVO.getTopNodeId());
+		NodeVO topModule = nodeVoList.get(topNodeId);
+		if(topModule == null){
+			topModule = getTopModuleByTopNodeId(topNodeId);
+			nodeVoList.put(topNodeId, topModule);
+		}
+		
+		StringBuilder header = new StringBuilder();
+		if("Q_multiple".equals(interviewQuestionVO.getType())){					
+						header.append(topModule.getName().substring(0, 4));
+						header.append("_");
+						header.append(interviewQuestionVO.getNumber());
+						header.append("_");
+						header.append(interviewAnswerVO.getNumber());
+						retValue = header.toString();
+		
+		}else{			
+			header.append(topModule.getName().substring(0, 4));
+			header.append("_");
+			header.append(interviewQuestionVO.getNumber());
+			retValue = header.toString();
+		}
+		return retValue;
+
+	}
 
 	private NodeVO getTopModuleByTopNodeId(long topNodeId) {
 		return questionService.getTopModuleByTopNodeId(topNodeId);
@@ -1127,6 +1381,13 @@ public class AssessmentRestController {
 	}
 
 	private boolean isModuleOrAjsm(InterviewQuestion interviewQuestionVO) {
+		return "M".equals(interviewQuestionVO.getNodeClass())
+				|| "M_IntroModule".equals(interviewQuestionVO.getType())
+				|| "Q_linkedajsm".equals(interviewQuestionVO.getType())
+				|| "Q_linkedmodule".equals(interviewQuestionVO.getType())
+				|| "F_ajsm".equals(interviewQuestionVO.getType());
+	}
+	private boolean isModuleOrAjsm(InterviewQuestionVO interviewQuestionVO) {
 		return "M".equals(interviewQuestionVO.getNodeClass())
 				|| "M_IntroModule".equals(interviewQuestionVO.getType())
 				|| "Q_linkedajsm".equals(interviewQuestionVO.getType())

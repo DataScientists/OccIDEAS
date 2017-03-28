@@ -7,6 +7,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
@@ -79,6 +81,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao{
         final Criteria crit = session.createCriteria(InterviewAnswer.class);
         if (interviewId != null) {
             crit.add(Restrictions.eq("idInterview", interviewId));
+            crit.addOrder(Order.desc("id"));
         }
         return crit.list();
 	}
