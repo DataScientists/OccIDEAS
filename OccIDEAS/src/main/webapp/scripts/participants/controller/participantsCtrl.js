@@ -90,7 +90,12 @@
 			var label = angular.element(document.querySelector('#awesidlabel'));
 			if (event.which === 13 || event.which === 32) {
 				if (awesIdIsValid(elem.val())) {
-					self.add();
+					if($scope.$storage.langEnabled){
+						self.add($scope.selectLanguage);
+					}else{
+						self.add();
+					}
+					
 				} else {
 					counter.append("Please enter a valid AWES ID");
 				}
@@ -193,10 +198,13 @@
 		}
 		function add(data) {
 			if (awesIdIsValid($scope.searchAWESID)) {
-				if(!data.selected){
-					$translate.refresh();
-		      		$translate.use('GB');
+				if($scope.$storage.langEnabled){
+					if(!data.selected){
+						$translate.refresh();
+			      		$translate.use('GB');
+					}
 				}
+				
 				InterviewsService
 						.checkReferenceNumberExists($scope.searchAWESID)
 						.then(
