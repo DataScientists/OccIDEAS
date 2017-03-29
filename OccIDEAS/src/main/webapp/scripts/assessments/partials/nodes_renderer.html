@@ -9,9 +9,8 @@
 		<!-- start content -->
 		<div style="height: auto !important"
 			class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}"
-			ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"
 			scroll-body="'#moduleTreeBody'" scroll-stop='0'
-			id="node-{{node.idNode}}">
+			id="node-{{node.idNode}}" context-menu="showMenu(this)">
 			
 			<a ng-if="node.nodes != null && node.nodes.length > 0 || node.link != 0"
 				class="btn btn-success btn-xs {{node.type}}" ng-click="toggleNode(node, this)">

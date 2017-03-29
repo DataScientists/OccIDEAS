@@ -1447,6 +1447,18 @@
 				clickOutsideToClose:false
 			});
 		}
+		
+		$scope.menuOptions = 
+			[ 
+			  [ 'Expand All', function($itemScope) {
+				  $scope.expandAll();	
+			  }]
+			];
+			
+		$scope.showMenu = function(scope) {
+			return $scope.menuOptions;
+		}
 	}
+	
 
 })();
