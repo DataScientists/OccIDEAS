@@ -7,14 +7,16 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.entity.Constant;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,6 +30,9 @@ public class InterviewAnswerDao implements IInterviewAnswerDao{
 	
 	@Autowired
     private PossibleAnswerService possibleAnswerService;
+	
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 	
 	@Override
 	public List<InterviewAnswer> saveOrUpdate(List<InterviewAnswer> ia) {
@@ -46,6 +51,8 @@ public class InterviewAnswerDao implements IInterviewAnswerDao{
 		for(InterviewAnswer a:ia){
 			sessionFactory.getCurrentSession().saveOrUpdate(a);
 			if(a.getDeleted()==0){
+				SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+				                if(filterStudyAgentFlag == null || "false".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())){
 				for(PossibleAnswerVO pa :possibleAnswerService.findByIdWithChildren(a.getAnswerId())){			
 					int intQuestionSequence = 1;
 					List<QuestionVO> queueQuestions = pa.getChildNodes();
@@ -68,7 +75,8 @@ public class InterviewAnswerDao implements IInterviewAnswerDao{
 						intQuestionSequence++;
 						sessionFactory.getCurrentSession().saveOrUpdate(iq);
 					}	
-				}		
+				}
+				                }
 			}
 			list.add(a);
 		}
