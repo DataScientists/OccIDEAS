@@ -140,9 +140,6 @@ public class InterviewQuestionDao implements IInterviewQuestionDao{
         	if(introModule == null){
         		log.error(Constant.STUDY_INTRO+" is not set in config , report to admin.");
         	}else{
-//        		if(introModule.getValue().equalsIgnoreCase(String.valueOf(parentModuleId))){
-//        			queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
-//        		}else{
         			if(iq.getType().equalsIgnoreCase("Q_linkedajsm")){
         				FragmentVO moduleFilterStudyAgent = (FragmentVO)moduleService.getModuleFilterStudyAgent(parentModuleId);
                 		queueQuestions = moduleFilterStudyAgent.getChildNodes();
@@ -150,10 +147,12 @@ public class InterviewQuestionDao implements IInterviewQuestionDao{
         				ModuleVO moduleFilterStudyAgent = (ModuleVO)moduleService.getModuleFilterStudyAgent(parentModuleId);
         				if(moduleFilterStudyAgent != null){
                 		queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        				}else{
+        					if(introModule.getValue().equalsIgnoreCase(String.valueOf(parentModuleId))){
+        	        			queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
+        	        		}
         				}
         			}
-        			
-//        		}       		
         	}
         }else{
         	queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
