@@ -142,7 +142,10 @@ public class InterviewQuestionDao implements IInterviewQuestionDao{
         	}else{
         			if(iq.getType().equalsIgnoreCase("Q_linkedajsm")){
         				FragmentVO moduleFilterStudyAgent = (FragmentVO)moduleService.getModuleFilterStudyAgent(parentModuleId);
-                		queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        				if(moduleFilterStudyAgent!=null){
+        					queueQuestions = moduleFilterStudyAgent.getChildNodes();
+        				}
+                		
         			}else{
         				ModuleVO moduleFilterStudyAgent = (ModuleVO)moduleService.getModuleFilterStudyAgent(parentModuleId);
         				if(moduleFilterStudyAgent != null){
