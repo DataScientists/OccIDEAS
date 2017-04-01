@@ -34,7 +34,7 @@
 				ng-if="interviewStarted">
 				<md-toolbar>
 					<span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
-					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span> 
+					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}{{questionBeingEdited.name}}</span> 
 					<md-button id="numId" event-focus> 
 					<i ng-if="storage.langEnabled" class="glyphicon {{interview.showedQuestion.name  |
 							translate | displayFlag:interview.showedQuestion:storage}}"></i>
@@ -137,7 +137,7 @@
 						</md-radio-group>
 					</div>
 
-					<md-button
+					<md-button ng-if="!editModeOn"
 						ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
 						class="md-fab md-raised"> <span>NEXT</span> </md-button>
 

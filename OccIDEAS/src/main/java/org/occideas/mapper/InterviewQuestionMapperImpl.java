@@ -308,5 +308,27 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 	public List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question) {
 		return convertToInterviewQuestionVOList(question, false);
 	}
+	@Override
+	public List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> question,
+			Long qId) {
+		return convertToInterviewQuestionVOWithSelectedAnswer(question, false,qId);
+	}
+	private List<InterviewQuestionVO> convertToInterviewQuestionVOWithSelectedAnswer(List<InterviewQuestion> question,
+			boolean b, Long qId) {
+		if (question == null) {
+			return null;
+		}
+		List<InterviewQuestionVO> list = new ArrayList<InterviewQuestionVO>();
+		for (InterviewQuestion iq : question) {
+			// if(iq.getDeleted() == 0){
+			if(iq.getId() == qId){
+				list.add(convertToInterviewQuestionVO(iq,true));
+			}else{
+				list.add(convertToInterviewQuestionVOExcAnswers(iq));
+			}
+			// }
+		}
+		return list;
+	}
 
 }

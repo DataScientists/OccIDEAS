@@ -102,6 +102,18 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 		}
 		return crit.list();
 	}
+	
+	@Override
+	public List<InterviewAnswer> findByInterviewId(Long interviewId,Long questionId) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewAnswer.class);
+		if (interviewId != null) {
+			crit.add(Restrictions.eq("idInterview", interviewId));
+			crit.add(Restrictions.eq("parentQuestionId", questionId));
+			crit.addOrder(Order.desc("id"));
+		}
+		return crit.list();
+	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override

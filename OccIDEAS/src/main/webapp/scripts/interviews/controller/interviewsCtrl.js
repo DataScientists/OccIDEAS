@@ -720,6 +720,9 @@
 				console.error(msg);
 				alert(msg);				
 			}
+			if(newQuestionAsked.questionId == $scope.iq.questionId){
+				newQuestionAsked.answers = $scope.iq.answers;
+			}
 			var bIsFreeText = false;
 			var bDeleteAnswersRequired = false;
 			var selectedAnswer = question.selectedAnswer;
@@ -1838,11 +1841,12 @@
 		$scope.showEditQuestionPromptModule = function(ev,node) {
 			$scope.participant.status = 0;//running
 			$scope.interviewStarted = true;
-			
+			$scope.editModeOn = true; 
 			InterviewsService.getInterviewQuestionByQuestionId(node.idNode, 
 					$scope.interview.interviewId).then(function(response){
 				if(response.status === 200){
 					var iq = response.data;
+					$scope.iq = iq;
 					QuestionsService.findQuestionSingleChildLevel(iq.questionId).then(function(response){
 						if(response.status === 200){
 							$log.info('Question Found');
@@ -1863,6 +1867,10 @@
 									});
 								}	
 							});
+							var nodeLink = _.find($scope.interview.questionHistory,function(node){
+								return node.link==fullQuestion.topNodeId;
+							});
+							$scope.questionheader.name = nodeLink.name.substring(0, 4);
 							$scope.questionBeingEdited = fullQuestion;
 							$scope.questionBeingEditedCopy = angular.copy(fullQuestion);
 							if(fullQuestion.type == 'Q_frequency'){

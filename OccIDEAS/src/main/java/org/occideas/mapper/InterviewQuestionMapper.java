@@ -38,5 +38,7 @@ public interface InterviewQuestionMapper {
 	InterviewQuestionVO convertToInterviewQuestionNoAnswersVO(InterviewQuestion question);
 
 	List<InterviewQuestionVO> convertToInterviewQuestionNoAnswersVOList(List<InterviewQuestion> question);
+
+	List<InterviewQuestionVO> convertToInterviewQuestionVOList(List<InterviewQuestion> questionHistory, Long qId);
 	
 }

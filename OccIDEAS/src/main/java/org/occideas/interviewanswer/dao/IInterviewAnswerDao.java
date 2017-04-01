@@ -15,4 +15,6 @@ public interface IInterviewAnswerDao {
 
 	List<InterviewQuestion> saveIntervewAnswersAndGetChildQuestion(List<InterviewAnswer> convertToInterviewAnswerList);
 
+	List<InterviewAnswer> findByInterviewId(Long interviewId, Long questionId);
+
 }

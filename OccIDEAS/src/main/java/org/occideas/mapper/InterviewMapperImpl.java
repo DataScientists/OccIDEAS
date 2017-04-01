@@ -61,6 +61,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 
 		return interviewVO;
 	}
+	
 
 	@Override
 	public InterviewVO convertToInterviewWithRulesVO(Interview interview, boolean isIncludeAnswer) {
