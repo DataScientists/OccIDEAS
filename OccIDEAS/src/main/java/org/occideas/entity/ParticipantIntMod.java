@@ -22,8 +22,6 @@ public class ParticipantIntMod implements Serializable {
 	private Date lastUpdated;
 	private int deleted;
 	private Long idinterview;
-	private Long idModule;
-	private String interviewModuleName;
 	private transient String statusDescription;
 
 	public Long getIdParticipant() {
@@ -72,22 +70,6 @@ public class ParticipantIntMod implements Serializable {
 
 	public void setIdinterview(Long idinterview) {
 		this.idinterview = idinterview;
-	}
-
-	public Long getIdModule() {
-		return idModule;
-	}
-
-	public void setIdModule(Long idModule) {
-		this.idModule = idModule;
-	}
-
-	public String getInterviewModuleName() {
-		return interviewModuleName;
-	}
-
-	public void setInterviewModuleName(String interviewModuleName) {
-		this.interviewModuleName = interviewModuleName;
 	}
 
 	public String getStatusDescription() {
