@@ -20,7 +20,7 @@
 					<tr ng-repeat="item in allFragmentValidationReport">
 						<td>{{$index}}</td>	
 						<td>{{item.vo.idNode}}</td>
-						<td>{{item.vo.name}}</td>						
+						<td class="linkStyle" ng-click="addFragmentTab(item.vo)" style="cursor: pointer;">{{item.vo.name}}</td>						
 						<td>{{item.totalQuestions}}</td>						
 						<td>{{item.totalAnswers}}</td>
 						<td>{{item.totalRules}}</td>
