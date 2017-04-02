@@ -26,7 +26,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.occideas.assessment.service.AssessmentService;
@@ -42,6 +41,7 @@ import org.occideas.entity.Question;
 import org.occideas.entity.Rule;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
+import org.occideas.interviewfiredrules.service.InterviewFiredRulesService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.mapper.RuleMapperImpl;
 import org.occideas.question.service.QuestionService;
@@ -57,10 +57,13 @@ import org.occideas.vo.AssessmentAnswerSummaryFilterVO;
 import org.occideas.vo.ExportCSVVO;
 import org.occideas.vo.FilterModuleVO;
 import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewFiredRulesVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.PageVO;
+import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.ReportHistoryVO;
+import org.occideas.vo.RuleVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -93,6 +96,8 @@ public class AssessmentRestController {
 	private ReportHistoryService reportHistoryService;
 	@Autowired
 	private AssessmentService assessmentService;
+	@Autowired
+	private InterviewFiredRulesService firedRulesService;
 		
 	private DecimalFormat df = new DecimalFormat("#.0");
 	
@@ -158,7 +163,9 @@ public class AssessmentRestController {
 			File temp = new File(tempFolder);
 			//FileUtils.deleteDirectory(temp);
 			temp.mkdir();
-			int iCount = 0;			
+			int iCount = 0;		
+			List<InterviewAnswerVO> allAnswers = new ArrayList<InterviewAnswerVO>();
+			List<InterviewQuestionVO> allQuestions = new ArrayList<InterviewQuestionVO>();
 			for(Interview interview: uniqueInterviews){
 				
 				currentCount++;
@@ -173,6 +180,8 @@ public class AssessmentRestController {
 				CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
 				List<InterviewAnswerVO> answers = interviewAnswerService.findByInterviewId(interview.getIdinterview());
 				List<InterviewQuestionVO> questions = interviewQuestionService.findByInterviewId(interview.getIdinterview());
+				allAnswers.addAll(answers);
+				allQuestions.addAll(questions);
 				List<String> headerList = new ArrayList<String>();
 				headerList.add("InterviewId");
 				headerList.add("ReferenceNumber");
@@ -222,7 +231,7 @@ public class AssessmentRestController {
 				writer.writeNext(answerList.toArray(new String[answerList.size()]));
 				writer.close();
 				iCount++;
-				/*if(iCount>200){
+				if(iCount>200){
 					updateProgress(uniqueInterviews.size(), 
 							reportHistoryVO, 
 							uniqueInterviews.size(), 
@@ -231,8 +240,8 @@ public class AssessmentRestController {
 					updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
 					
 					break;
-				}*/
-				//System.out.println(iCount);
+				}
+				System.out.println(iCount);
 			}	
 			File folder = new File(tempFolder);
 			
@@ -269,7 +278,7 @@ public class AssessmentRestController {
 			}
 			File fileOut = new File(fullPath);
 			CSVWriter writer = new CSVWriter(new FileWriter(fileOut), ',');
-			Collections.sort(fullHeaderList);
+			//Collections.sort(fullHeaderList);
 			writer.writeNext(fullHeaderList.toArray(new String[fullHeaderList.size()]));
 			for (File rfile : listOfFiles) {
 			    if (rfile.isFile()) {
@@ -310,10 +319,12 @@ public class AssessmentRestController {
 			}
 			writer.close();
 			FileUtils.deleteDirectory(temp);
+			writeLookupNew(fullPath, allAnswers,nodeVoList,allQuestions);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
 		
 		System.out.println("Report Done");
 		//ExportCSVVO csvVO = populateCSV(uniqueInterviewQuestions,reportHistoryVO,filterModuleVO.getFilterModule(), count);
@@ -322,6 +333,9 @@ public class AssessmentRestController {
 		
 		return Response.ok().build();
     }
+
+		
+	
 
 	private void writeReport(String fullPath, ReportHistoryVO reportHistoryVO, ExportCSVVO csvVO) {
 		CSVWriter writer;
@@ -400,6 +414,48 @@ public class AssessmentRestController {
 		
 		reportHistoryService.save(lookupVO);
 	}
+	
+	private void writeLookupNew(String fullPath, List<InterviewAnswerVO> allAnswers,Map<Long, NodeVO> nodeVoList,List<InterviewQuestionVO> questions) throws IOException {
+			
+		List<String> aNames = new ArrayList<String>();
+		List<String> fullHeaderList = new ArrayList<String>();
+		for(InterviewAnswerVO ia:allAnswers){
+			String header = generateHeaderKeyLookUp(ia,nodeVoList,questions);
+			if(!fullHeaderList.contains(header)){
+				fullHeaderList.add(header);
+			}
+			
+		}
+		
+		
+		ReportHistoryVO lookupVO = new ReportHistoryVO();
+		lookupVO.setType("Lookup");
+		lookupVO.setStartDt(new Date());
+		
+		//Write lookup file
+		File fileLookup = new File(fullPath.substring(0, fullPath.length() - 4)+"-Lookup.csv");
+		CSVWriter lookupWriter = new CSVWriter(new FileWriter(fileLookup), ',');
+		
+		String[] lookupHeader = new String[]{"Id", "Name"};			
+		lookupWriter.writeNext(lookupHeader);
+		for(String lookupkeyvalue:fullHeaderList){	
+			String[] line = lookupkeyvalue.split("<>");
+			lookupWriter.writeNext(line);
+		}		
+		
+		lookupWriter.close();
+		lookupVO.setRequestor(extractUserFromToken());
+		lookupVO.setName(fileLookup.getName());
+		lookupVO.setPath(fullPath);
+		lookupVO.setEndDt(new Date());
+		lookupVO.setDuration(lookupVO.getEndDt().getTime() - lookupVO.getStartDt().getTime());
+		lookupVO.setStatus(ReportsStatusEnum.COMPLETED.getValue());
+		lookupVO.setProgress("100.0%");
+		
+		reportHistoryService.save(lookupVO);
+	}
+
+	
 	@POST
     @Path(value = "/exportAssessmentsCSV")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -631,7 +687,7 @@ public class AssessmentRestController {
 					msPerInterview);
 			
 			boolean bFoundVibrationRules = false;
-			List<Rule> vibrationRules = new ArrayList<Rule>();
+			List<RuleVO> vibrationRules = new ArrayList<RuleVO>();
 			List<String> answers = new ArrayList<>();
 			answers.add(String.valueOf(interviewVO.getIdinterview()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
@@ -644,17 +700,23 @@ public class AssessmentRestController {
 			answers.add(pStatus);
 			
 			addModuleNames(interviewVO, answers);
+			List<InterviewFiredRulesVO> firedRules = firedRulesService.findByInterviewId(interviewVO.getIdinterview());
 			
-			for (Rule rule : interviewVO.getFiredRules()) {
-				if (vibrationAgent.getIdAgent() == rule.getAgentId()) {
-					vibrationRules.add(rule);
-					bFoundVibrationRules = true;
+			for (InterviewFiredRulesVO ir : firedRules) {
+				for(RuleVO rule:ir.getRules()){
+					if (vibrationAgent.getIdAgent() == rule.getAgentId()) {
+						vibrationRules.add(rule);
+						bFoundVibrationRules = true;
+					}
 				}
+				
 			}
 			String shiftHours = "-NA-";
 			String dailyvibration = "-NA-";
-			
-			for (InterviewAnswer ia : interviewVO.getAnswerHistory()) {
+			List<InterviewAnswerVO> interviewAnswers = interviewAnswerService.findByInterviewId(interviewVO.getIdinterview());
+			List<InterviewQuestionVO> interviewQuestions = interviewQuestionService.findByInterviewId(interviewVO.getIdinterview());
+		
+			for (InterviewAnswerVO ia : interviewAnswers) {
 				if (ia.getType().equalsIgnoreCase("P_frequencyshifthours")) {
 					shiftHours = ia.getAnswerFreetext();
 					break;
@@ -666,13 +728,13 @@ public class AssessmentRestController {
 				
 				Float level = new Float(0);
 				Float totalPartialExposure = new Float(0);
-				for (Rule noiseRule : vibrationRules) {											
+				for (RuleVO noiseRule : vibrationRules) {											
 					Float frequencyhours = new Float(0);
-					PossibleAnswer parentNode = noiseRule.getConditions().get(0);
-					InterviewAnswer actualAnswer = findInterviewAnswer(interviewVO.getAnswerHistory(),parentNode);
+					PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+					InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers,parentNode);
 
 					if (actualAnswer != null) {
-						InterviewAnswer frequencyHoursNode = findFrequencyInterviewAnswer(interviewVO,actualAnswer);
+						InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,interviewQuestions,actualAnswer);
 
 						if (frequencyHoursNode != null) {
 							try{
@@ -688,7 +750,7 @@ public class AssessmentRestController {
 					}catch(Exception e){
 						System.err.println("Invalid noise rule! Check rule "+noiseRule.getIdRule());
 					}
-					Float partialExposure = (float)(frequencyhours)*(float)(frequencyhours)*(float)(level);
+					Float partialExposure = (float)(level)*(float)(level)*(float)(frequencyhours);
 
 					totalPartialExposure = ((totalPartialExposure) + (partialExposure));
 					totalFrequency += frequencyhours;									
@@ -749,7 +811,7 @@ public class AssessmentRestController {
 					msPerInterview);
 			
 			boolean bFoundNoiseRules = false;
-			List<Rule> noiseRules = new ArrayList<Rule>();
+			List<RuleVO> noiseRules = new ArrayList<RuleVO>();
 			List<String> answers = new ArrayList<>();
 			answers.add(String.valueOf(interviewVO.getIdinterview()));
 			answers.add(String.valueOf(interviewVO.getReferenceNumber()));
@@ -762,12 +824,17 @@ public class AssessmentRestController {
 			answers.add(pStatus);
 			
 			addModuleNames(interviewVO, answers);
-			
-			for (Rule rule : interviewVO.getFiredRules()) {
-				if (noiseAgent.getIdAgent() == rule.getAgentId()) {
-					noiseRules.add(rule);
-					bFoundNoiseRules = true;
+			List<InterviewFiredRulesVO> firedRules = firedRulesService.findByInterviewId(interviewVO.getIdinterview());
+			for (InterviewFiredRulesVO fr : firedRules) {
+				for(RuleVO r:fr.getRules()){
+					RuleVO rule = r;
+					if (noiseAgent.getIdAgent() == rule.getAgentId()) {
+						noiseRules.add(rule);
+						bFoundNoiseRules = true;
+					}
 				}
+				
+				
 			}
 			String shiftHours = "-NA-";
 			String totalExposure = "-NA-";
@@ -775,7 +842,9 @@ public class AssessmentRestController {
 			String peakNoise = "-NA-";
 			String strRatio = "-NA-";
 
-			for (InterviewAnswer ia : interviewVO.getAnswerHistory()) {
+			List<InterviewAnswerVO> interviewAnswers = interviewAnswerService.findByInterviewId(interviewVO.getIdinterview());
+			List<InterviewQuestionVO> interviewQuestions = interviewQuestionService.findByInterviewId(interviewVO.getIdinterview());
+			for (InterviewAnswerVO ia : interviewAnswers) {
 				if (ia.getType().equalsIgnoreCase("P_frequencyshifthours")) {
 					shiftHours = ia.getAnswerFreetext();
 					break;
@@ -786,14 +855,14 @@ public class AssessmentRestController {
 				Float totalFrequency = new Float(0);
 				Float maxBackgroundPartialExposure = new Float(0);
 				Float maxBackgroundHours = new Float(0);
-				for (Rule noiseRule : noiseRules) {
+				for (RuleVO noiseRule : noiseRules) {
 					if (!noiseRule.getType().equalsIgnoreCase("BACKGROUND")) {
-						PossibleAnswer parentNode = noiseRule.getConditions().get(0);
-						InterviewAnswer actualAnswer = findInterviewAnswer(interviewVO.getAnswerHistory(),parentNode);
+						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers,parentNode);
 
 						String answeredValue = "0";
 						if (actualAnswer != null) {
-							InterviewAnswer frequencyHoursNode = findFrequencyInterviewAnswer(interviewVO,actualAnswer);
+							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,interviewQuestions,actualAnswer);
 
 							if (frequencyHoursNode != null) {
 								answeredValue = frequencyHoursNode.getAnswerFreetext();
@@ -817,43 +886,54 @@ public class AssessmentRestController {
 				Integer level = 0;
 				Integer iPeakNoise = 0;
 				Float totalPartialExposure = new Float(0);
-				for (Rule noiseRule : noiseRules) {
+				for (RuleVO noiseRule : noiseRules) {
 
 					if (noiseRule.getType().equalsIgnoreCase("BACKGROUND")) {
 						Float hoursbg = fShiftHours - totalFrequency;
 						if (hoursbg < 0) {
 							hoursbg = new Float(0);
 						}
-						Float partialExposure = (float) (4 * hoursbg * (Math.pow(10, (level - 100) / 10)));
 						try{
 							String sLevel = noiseRule.getRuleAdditionalfields().get(0).getValue();
 							level = Integer.valueOf(sLevel);
+							Float partialExposure = (float) (4 * hoursbg * (Math.pow(10, (level - 100) / 10)));
+							if (partialExposure > maxBackgroundPartialExposure) {
+								maxBackgroundPartialExposure = partialExposure;
+								maxBackgroundHours = hoursbg;
+							}
 						}catch(Exception e){
 							System.err.println("Invalid noise rule! Check rule "+noiseRule.getIdRule());
 						}
-						if (partialExposure > maxBackgroundPartialExposure) {
-							maxBackgroundPartialExposure = partialExposure;
-							maxBackgroundHours = hoursbg;
-						}
+						
+						
 					} else {
 						
 						Float hours = new Float(0);
 						Float frequencyhours = new Float(0);
-						PossibleAnswer parentNode = noiseRule.getConditions().get(0);
-						InterviewAnswer actualAnswer = findInterviewAnswer(interviewVO.getAnswerHistory(),parentNode);
-
+						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers,parentNode);
+						boolean isSecondsTimeFrequency = false;
 						if (actualAnswer != null) {
-							InterviewAnswer frequencyHoursNode = findFrequencyInterviewAnswer(interviewVO,actualAnswer);
+							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,interviewQuestions,actualAnswer);
 
 							if (frequencyHoursNode != null) {
-								try{
+								try {
 									frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
-								}catch(Exception e){
-									System.err.println("Invalid frequency! Check interview "+interviewVO.getIdinterview());
+									if (frequencyHoursNode.getType().equalsIgnoreCase("P_frequencyseconds")) {
+
+										frequencyhours = Float.valueOf(frequencyhours) / 3600; // convert
+																								// seconds
+																								// to
+																								// hours
+										isSecondsTimeFrequency = true;
+									}
+								} catch (Exception e) {
+									System.err.println(
+											"Invalid frequency! Check interview " + interviewVO.getIdinterview());
 								}
 							}
 						}
-						if (useRatio) {
+						if (useRatio && !isSecondsTimeFrequency) {
 							hours = frequencyhours / ratio;
 						} else {
 							hours = frequencyhours;
@@ -908,10 +988,10 @@ public class AssessmentRestController {
 			
 		return noiseAgent;
 	}
-	private InterviewAnswer findFrequencyInterviewAnswer(Interview interview, InterviewAnswer actualAnswer) {
-		InterviewAnswer retValue = null;
-		InterviewQuestion piq = null;
-		for(InterviewQuestion iq: interview.getQuestionHistory()){
+	private InterviewAnswerVO findFrequencyInterviewAnswer(List<InterviewAnswerVO> interviewAnswers, List<InterviewQuestionVO> interviewQuestions,InterviewAnswerVO actualAnswer) {
+		InterviewAnswerVO retValue = null;
+		InterviewQuestionVO piq = null;
+		for(InterviewQuestionVO iq: interviewQuestions){
 			if(iq.getParentAnswerId()>0){
 				if(iq.getParentAnswerId()==actualAnswer.getAnswerId()){
 					piq = iq;
@@ -920,17 +1000,23 @@ public class AssessmentRestController {
 			}		
 		}
 		if(piq!=null){
-			for(InterviewAnswer ia: interview.getAnswerHistory()){
+			for(InterviewAnswerVO ia: interviewAnswers){
 				if(ia.getParentQuestionId()==piq.getQuestionId()){
 					retValue = ia;
 				}
 			}
 		}
+		if(retValue!=null){
+			if(!retValue.getType().startsWith("P_frequency")){		
+				retValue = findFrequencyInterviewAnswer(interviewAnswers,interviewQuestions,retValue);
+			}
+		}
+		
 		return retValue;
 	}
-	private InterviewAnswer findInterviewAnswer(List<InterviewAnswer> answerHistory, PossibleAnswer parentNode) {
-		InterviewAnswer retValue = null;
-		for(InterviewAnswer ia: answerHistory){
+	private InterviewAnswerVO findInterviewAnswer(List<InterviewAnswerVO> answerHistory, PossibleAnswerVO parentNode) {
+		InterviewAnswerVO retValue = null;
+		for(InterviewAnswerVO ia: answerHistory){
 			if(ia.getAnswerId()==parentNode.getIdNode()){
 				retValue = ia;
 			}
@@ -1367,6 +1453,51 @@ public class AssessmentRestController {
 			header.append(interviewQuestionVO.getNumber());
 			retValue = header.toString();
 		}
+		return retValue;
+
+	}
+
+	private String generateHeaderKeyLookUp(InterviewAnswerVO interviewAnswerVO,Map<Long, NodeVO> nodeVoList,List<InterviewQuestionVO> questions) {
+		String retValue = "";
+		String key = "";
+		String name = "";
+			
+		InterviewQuestionVO interviewQuestionVO = null;
+		for(InterviewQuestionVO question: questions){
+			if(interviewAnswerVO.getInterviewQuestionId()==question.getId()){
+				interviewQuestionVO = question;
+				break;
+			}
+		}
+		if(interviewQuestionVO==null){
+			interviewQuestionVO = interviewQuestionService.findIntQuestion(interviewAnswerVO.getIdInterview(), interviewAnswerVO.getParentQuestionId());
+		}
+		long topNodeId = Long.valueOf(interviewAnswerVO.getTopNodeId());
+		NodeVO topModule = nodeVoList.get(topNodeId);
+		if(topModule == null){
+			topModule = getTopModuleByTopNodeId(topNodeId);
+			nodeVoList.put(topNodeId, topModule);
+		}
+		
+		StringBuilder header = new StringBuilder();
+		if("Q_multiple".equals(interviewQuestionVO.getType())){					
+						header.append(topModule.getName().substring(0, 4));
+						header.append("_");
+						header.append(interviewQuestionVO.getNumber());
+						header.append("_");
+						header.append(interviewAnswerVO.getNumber());
+						key = header.toString();
+						name = interviewQuestionVO.getName()+ " "+ interviewAnswerVO.getName();
+		
+		}else{			
+			header.append(topModule.getName().substring(0, 4));
+			header.append("_");
+			header.append(interviewQuestionVO.getNumber());
+			key = header.toString();
+			name = interviewQuestionVO.getName();
+
+		}
+		retValue = key+"<>"+name;
 		return retValue;
 
 	}

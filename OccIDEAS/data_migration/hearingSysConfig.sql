@@ -26,15 +26,15 @@ INSERT INTO SYS_CONFIG (type,value,name,updatedBy) VALUES
 ('studyagent',140,'Carbon Disulphide','system'),
 ('studyagent',157,'Vibration','system');
 
-INSERT INTO `occideas`.`SYS_CONFIG` 
+INSERT INTO `SYS_CONFIG` 
 (`type`, `name`, `value`, `updatedBy`) 
 VALUES ('config', 'studyidprefix', 'H', 'admin');
 
-INSERT INTO `occideas`.`SYS_CONFIG` 
+INSERT INTO `SYS_CONFIG` 
 (`type`, `name`, `value`,  `updatedBy`) 
 VALUES ('config', 'studyidlength', 7, 'admin');
 
-INSERT INTO `occideas`.`SYS_CONFIG` 
+INSERT INTO  `SYS_CONFIG` 
 (`type`, `name`, `value`, `updatedBy`) 
 VALUES ('config', 'REPORT_EXPORT_CSV_DIR', '/opt/reports/', 'admin');
 

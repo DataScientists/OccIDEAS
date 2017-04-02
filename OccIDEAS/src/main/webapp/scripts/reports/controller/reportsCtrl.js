@@ -42,7 +42,7 @@
 				         target: '_blank',
 				         download: reportHistoryVO.name
 				         		.substring(0, reportHistoryVO.name.length-4)
-				         		+"-Link.zip"
+				         		+"-Lookup.zip"
 				     })[0].click();
 				}
 				else{

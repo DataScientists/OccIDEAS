@@ -22,6 +22,7 @@ public class ReportHistoryDao implements IReportHistoryDao {
 	public List<ReportHistory> getAll() {
 		Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(ReportHistory.class);
+		crit.addOrder(Order.desc("id"));
 		crit.add(Restrictions.ne("type", "Lookup"));
 		return crit.list();
 	}

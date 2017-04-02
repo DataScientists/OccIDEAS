@@ -162,7 +162,7 @@ public class ReportHistoryRestController {
 		String pathStr = vo.getPath().substring(0, vo.getPath().length()-4).concat("-Lookup.csv");
 		java.nio.file.Path path = Paths.get(pathStr);
 		if(path.toFile().exists()){
-			
+			vo.setPath(pathStr);
 			String zipPathStr = makeZip(vo);			
 			return Response.ok(getOut(Files.readAllBytes(Paths.get(zipPathStr)),zipPathStr), 
 					javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM)

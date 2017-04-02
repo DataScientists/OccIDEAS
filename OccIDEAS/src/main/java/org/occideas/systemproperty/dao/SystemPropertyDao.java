@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
 import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -101,6 +102,19 @@ public class SystemPropertyDao {
 				addEntity(PossibleAnswer.class);
 		sqlQuery.setParameter("param", String.valueOf(idModule));
 		List<PossibleAnswer> list = sqlQuery.list();
+		return list;
+	}
+	private final String QUESTION_ON_POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM Node where idNode in" 
+			+" (SELECT idNode FROM ModuleRule where idNode=:param "
+			+" and idAgent in (select value from SYS_CONFIG where type='studyagent'"
+			+"))";
+	
+	public List<Question> getQuestionWithStudyAgentsByIdPossibleAnswer(long idQuestion){
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(QUESTION_ON_POS_ANS_WITH_STUDY_AGENTS_SQL).
+				addEntity(Question.class);
+		sqlQuery.setParameter("param", String.valueOf(idQuestion));
+		List<Question> list = sqlQuery.list();
 		return list;
 	}
 	

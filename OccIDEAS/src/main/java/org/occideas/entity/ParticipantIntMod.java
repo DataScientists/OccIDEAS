@@ -23,6 +23,25 @@ public class ParticipantIntMod implements Serializable {
 	private int deleted;
 	private Long idinterview;
 	private transient String statusDescription;
+	private Long idModule;	
+	private String interviewModuleName;
+		
+		
+	public Long getIdModule() {
+		return idModule;
+	}
+
+	public void setIdModule(Long idModule) {
+		this.idModule = idModule;
+	}
+
+	public String getInterviewModuleName() {
+		return interviewModuleName;
+	}
+
+	public void setInterviewModuleName(String interviewModuleName) {
+		this.interviewModuleName = interviewModuleName;
+	}			
 
 	public Long getIdParticipant() {
 		return idParticipant;
