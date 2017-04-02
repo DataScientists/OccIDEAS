@@ -1365,3 +1365,13 @@ li.borderless {
 .fontBold{
 	font-weight:bold
 }
+
+.linkStyle{
+	background:none!important;
+     color:blue;
+     border:none; 
+     padding:0!important;
+     font: inherit;
+     /*border is optional*/
+     cursor: pointer;
+}
