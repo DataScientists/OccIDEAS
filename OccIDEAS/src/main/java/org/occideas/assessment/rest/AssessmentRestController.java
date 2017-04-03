@@ -143,11 +143,13 @@ public class AssessmentRestController {
 				reportHistoryVO, ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);		
 		
 		
-		log.info("[Report] before getting unique interview questions ");
+	//	log.info("[Report] before getting unique interview questions ");
 		//List<InterviewQuestion> uniqueInterviewQuestions = interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
+		System.out.println("About to  get interviews");
 		List<Interview> uniqueInterviews = interviewService.listAllWithRules(filterModuleVO.getFilterModule());
+		System.out.println("found interviews "+uniqueInterviews.size());
 		
-		log.info("[Report] after getting unique interview questions ");
+		//log.info("[Report] after getting unique interview questions ");
 		Map<Long, NodeVO> nodeVoList = new HashMap<>();
 		String[] modules = filterModuleVO.getFilterModule();
 		//Initialize map to prevent multiple re-queries
@@ -159,10 +161,12 @@ public class AssessmentRestController {
 			long elapsedTime = 0; 
 			int currentCount = 0;
 			
+			System.out.println("About to  create folder");
 			String tempFolder = csvDir.getValue()+reportHistoryVO.getId()+"/";
 			File temp = new File(tempFolder);
 			//FileUtils.deleteDirectory(temp);
 			temp.mkdir();
+			System.out.println("done creating folder");
 			int iCount = 0;		
 			List<InterviewAnswerVO> allAnswers = new ArrayList<InterviewAnswerVO>();
 			List<InterviewQuestionVO> allQuestions = new ArrayList<InterviewQuestionVO>();
