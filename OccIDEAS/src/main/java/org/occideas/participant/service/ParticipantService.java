@@ -3,6 +3,7 @@ package org.occideas.participant.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.ParticipantIntMod;
 import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.PageVO;
@@ -23,4 +24,6 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
 	  public String getMaxReferenceNumber();
 
 	void updateNewTransaction(ParticipantVO o);
+
+	PageVO<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size, GenericFilterVO filterVO);
 }

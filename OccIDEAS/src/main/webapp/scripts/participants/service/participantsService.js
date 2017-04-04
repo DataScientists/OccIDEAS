@@ -25,6 +25,15 @@
 			});
 			return request.then(handleSuccess1,handleError);
 		}
+		
+		var getPaginatedAssessmentWithModList = function(assessmentFilter){
+			var request =  $http({
+                method: 'POST',
+                url: modulesUrl+'/getPaginatedAssessmentWithModList',
+                data:assessmentFilter
+			});
+			return request.then(handleSuccess1,handleError);
+		}
 				
 		var getPaginatedParticipantList = function(participantFilter){
 			var request = $http({
@@ -109,7 +118,8 @@
 		    deleteParticipant: deleteParticipant,
 		    createParticipant:createParticipant,
 		    getPaginatedParticipantWithModList:getPaginatedParticipantWithModList,
-		    getPaginatedParticipantList:getPaginatedParticipantList
+		    getPaginatedParticipantList:getPaginatedParticipantList,
+		    getPaginatedAssessmentWithModList:getPaginatedAssessmentWithModList
 		};
 		function handleError( response ) {
             if (

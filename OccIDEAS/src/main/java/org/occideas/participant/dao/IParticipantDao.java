@@ -3,6 +3,7 @@ package org.occideas.participant.dao;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
@@ -33,5 +34,9 @@ public interface IParticipantDao {
 	Participant get(Long id);
 
 	void delete(Participant participant);
+
+	List<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size, GenericFilterVO filter);
+
+	BigInteger getAsssessmentWithModTotalCount(GenericFilterVO filter);
 
 }

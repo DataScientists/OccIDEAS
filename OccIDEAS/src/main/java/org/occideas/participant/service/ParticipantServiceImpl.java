@@ -3,6 +3,7 @@ package org.occideas.participant.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
 import org.occideas.mapper.ParticipantMapper;
@@ -30,6 +31,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 	
 	@Autowired
 	private PageUtil<ParticipantIntMod> pageUtilIntMod;
+	
+	@Autowired
+	private PageUtil<AssessmentIntMod> pageAssessmentUtilIntMod;
 	
 	@Autowired
 	private PageUtil<ParticipantVO> pageUtil;
@@ -93,6 +97,15 @@ public class ParticipantServiceImpl implements ParticipantService {
 		List<ParticipantIntMod> list = participantDao.getPaginatedParticipantWithModList(pageNumber, size,filterVO);
 		PageVO<ParticipantIntMod> page = pageUtilIntMod.populatePage(list, pageNumber, size);
 		page.setTotalSize(participantDao.getParticipantWithModTotalCount(filterVO).intValue());
+		page.setFilterVO(filterVO);
+		return page;
+	}
+	
+	@Override
+	public PageVO<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size,GenericFilterVO filterVO) {
+		List<AssessmentIntMod> list = participantDao.getPaginatedAssessmentWithModList(pageNumber, size,filterVO);
+		PageVO<AssessmentIntMod> page = pageAssessmentUtilIntMod.populatePage(list, pageNumber, size);
+		page.setTotalSize(participantDao.getAsssessmentWithModTotalCount(filterVO).intValue());
 		page.setFilterVO(filterVO);
 		return page;
 	}

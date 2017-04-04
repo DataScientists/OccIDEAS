@@ -23,6 +23,7 @@ import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -80,8 +81,9 @@ public class ModuleDao implements IModuleDao{
       
       return crit.list();
     }
+    
     @SuppressWarnings("unchecked")
-   	public List<Module> getAllActive() {
+    public List<Module> getAllActive() {
          final Session session = sessionFactory.getCurrentSession();
          final Criteria crit = session.createCriteria(Module.class)
         		 					.addOrder(Order.asc("name"))

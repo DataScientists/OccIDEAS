@@ -11,6 +11,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
@@ -67,10 +68,8 @@ public class ParticipantDao implements IParticipantDao {
     }
     
     private final String paginatedParticipantSQL 
-    = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview, i.assessedStatus,"
-                        + "(select link from Interview_Question where idinterview = i.idinterview and nodeClass = 'M') AS idModule, "
-                        + "'' AS interviewModuleName"+
-                            "  from Participant p "+ 
+    = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview, i.assessedStatus"+
+                        "  from Participant p "+ 
                         "  join Interview i "+  
                         " where p.idParticipant = i.idParticipant"+ 
                         " and p.idParticipant like :idParticipant"+
@@ -138,6 +137,19 @@ public class ParticipantDao implements IParticipantDao {
 		List<ParticipantIntMod> list = sqlQuery.list();
 		return list;
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+	public List<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber,int size,GenericFilterVO filter) {
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(paginatedParticipantWithModSQL).
+				addEntity(AssessmentIntMod.class);
+		sqlQuery.setFirstResult(pageUtil.calculatePageIndex(pageNumber, size));
+		sqlQuery.setMaxResults(size);
+		filter.applyFilter(filter, sqlQuery);
+		List<AssessmentIntMod> list = sqlQuery.list();
+		return list;
+    }
 
     private final String participantCountWithModule = 
     		"select count(*) from Participant p " 
@@ -160,6 +172,15 @@ public class ParticipantDao implements IParticipantDao {
 		filter.applyFilter(filter, sqlQuery);
 		return (BigInteger) sqlQuery.uniqueResult();
     }
+    
+    @Override
+    public BigInteger getAsssessmentWithModTotalCount(GenericFilterVO filter){
+    	final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(participantCountWithModule);
+		filter.applyFilter(filter, sqlQuery);
+		return (BigInteger) sqlQuery.uniqueResult();
+    }
+    
     
     @Override
     public Long getMaxParticipantId(){
