@@ -17,6 +17,13 @@ public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswe
 	@JsonProperty(value = "nodes")
 	private List<QuestionVO> childNodes;
 
+	public PossibleAnswerVO() {
+	}
+	
+	public PossibleAnswerVO(long idNode) {
+		this.idNode = idNode;
+	}
+	
 	private QuestionVO parent;
 		
 	public List<QuestionVO> getChildNodes() {

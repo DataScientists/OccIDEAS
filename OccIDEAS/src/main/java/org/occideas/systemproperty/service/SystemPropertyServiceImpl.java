@@ -1,11 +1,13 @@
 package org.occideas.systemproperty.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
@@ -144,6 +146,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
 		// check child links if we have study agents
 		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		if(posAnsWithStudyAgentsList.contains(new PossibleAnswerVO(43565L))){
+			System.out.println("contains 43565L");
+		}
 		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
 			return null;
 		}else{
@@ -227,15 +232,23 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		int index = 0;
 		for(PossibleAnswerVO ans:posAnsWithStudyAgentsList){
 			index++;
+			if(ans.getIdNode() == 43781L){
+				System.out.println("contains 43781L");
+			}
 			if(parentIdList.contains(ans.getParentId())){
 				continue;
 			}
+			
 			// get parent until module is reached
 			Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
 			parentIdList.add(ans.getParentId());
 			if("Q".equals(node.getNodeclass())){
 				//parent is a question
 				QuestionVO questionVO = questionMapper.convertToQuestionWithModRulesReduced((Question)node);
+				if(questionVO.getIdNode() == 43780L){
+					System.out.println("43780L");
+				}
+				
 				if(!ans.getChildNodes().isEmpty()){
 					// got a linking question
 					PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
@@ -243,20 +256,19 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 						posAns.getChildNodes().addAll(ans.getChildNodes());
 					}
 				}
-				//if(index==3){
-				//	System.out.println("debug");
-				//}
-				boolean bFound = false;
 				QuestionVO questionUntilRootModule = getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
-				for(QuestionVO q: nodeVOList){
-					if(q.getIdNode()==questionUntilRootModule.getIdNode()){
-						bFound=true;
+				if(nodeVOList.contains(questionUntilRootModule)){
+					QuestionVO qVO = nodeVOList.get(nodeVOList.indexOf(questionUntilRootModule));
+					try {
+						BeanUtils.copyProperties(qVO, questionUntilRootModule);
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
 					}
-				}
-				if(!bFound){
+				}else{
 					nodeVOList.add(questionUntilRootModule);
 				}
-				
 			}else if("F".equals(node.getNodeclass())){
 				//parent is a link
 				System.out.println("inside F");
@@ -265,6 +277,22 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		return nodeVOList;
 	}
 	
+
+
+
+	private void cleanseChildAnswers(QuestionVO questionVO, List<PossibleAnswerVO> posAnsWithStudyAgentsList, List<PossibleAnswerVO> removeIds) {
+		for(PossibleAnswerVO ansVO:questionVO.getChildNodes()){
+			if(!posAnsWithStudyAgentsList.contains(ansVO)){
+				if(ansVO.getChildNodes().isEmpty()){
+					removeIds.add(ansVO);
+				}else{
+					for(QuestionVO qVO:ansVO.getChildNodes()){
+						cleanseChildAnswers(qVO,posAnsWithStudyAgentsList,removeIds);
+					}
+				}
+			}
+		}
+	}
 
 	public List<QuestionVO> getChildFrequencyNodes(String idNode, PossibleAnswerVO answerVO){
 		//System.out.println(answerVO.getName());
@@ -312,9 +340,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 					posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer)node, true);
 			
 			for(int i=0;i<possibleAnswerVO.getChildNodes().size();i++){
-				//if(possibleAnswerVO.getIdNode() ==43562 ){
-				//	System.out.println("debug");
-				//}
+//				if(possibleAnswerVO.getIdNode() ==43781L ){
+//					System.out.println("debug");
+//				}
 				if(!possAnswerCheckList.contains(possibleAnswerVO.getIdNode())){
 					possAnswerCheckList.add(possibleAnswerVO.getIdNode());
 					possibleAnswerVO.getChildNodes().clear();

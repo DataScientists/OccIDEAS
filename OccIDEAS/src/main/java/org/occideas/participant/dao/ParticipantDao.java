@@ -69,7 +69,7 @@ public class ParticipantDao implements IParticipantDao {
     
     private final String paginatedParticipantSQL 
     = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview, i.assessedStatus"+
-                        "  from Participant p "+ 
+                            "  from Participant p "+ 
                         "  join Interview i "+  
                         " where p.idParticipant = i.idParticipant"+ 
                         " and p.idParticipant like :idParticipant"+

@@ -96,6 +96,41 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
         
         return answerVO;
 	}
+	
+	@Override
+	public PossibleAnswerVO convertToPossibleAnswerVOExcQuestionAnsChild(PossibleAnswer answerEntity) {
+		if ( answerEntity == null ) {
+            return null;
+        }
+
+		PossibleAnswerVO answerVO = new PossibleAnswerVO();
+
+        answerVO.setIdNode( answerEntity.getIdNode() );
+        answerVO.setName( answerEntity.getName() );
+        answerVO.setDescription( answerEntity.getDescription() );
+        answerVO.setType( answerEntity.getType() );
+        answerVO.setSequence( answerEntity.getSequence() );
+        answerVO.setNumber( answerEntity.getNumber() );
+        answerVO.setParentId( answerEntity.getParentId());
+        answerVO.setLink( answerEntity.getLink() );
+        answerVO.setTopNodeId( answerEntity.getTopNodeId() );
+        answerVO.setLastUpdated( answerEntity.getLastUpdated() );
+        List<Question> childNodes = new ArrayList<Question>();
+        	childNodes = answerEntity.getChildNodes();
+        	if(!CommonUtil.isListEmpty(childNodes)){
+                answerVO.setChildNodes( mapper.convertToQuestionVOExcludeChildsList( childNodes ) );
+            }
+        	List<ModuleRule> moduleRule = answerEntity.getModuleRule();
+            if(!CommonUtil.isListEmpty(moduleRule)){
+            	answerVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+            }
+        answerVO.setOriginalId( answerEntity.getOriginalId() );
+        answerVO.setDeleted( answerEntity.getDeleted() );
+        answerVO.setNodeclass( answerEntity.getNodeclass() );
+        
+        return answerVO;
+	}
+	
 	@Override
 	public PossibleAnswerVO convertToInterviewPossibleAnswerVO(PossibleAnswer answerEntity) {
 		if ( answerEntity == null ) {

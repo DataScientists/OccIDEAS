@@ -36,4 +36,6 @@ public interface PossibleAnswerMapper {
 	List<PossibleAnswerVO> convertToPossibleAnswerVOWithFlagList(List<PossibleAnswer> answerEntity,
 			boolean includeChildNode,
 			boolean includeRules);
+
+	PossibleAnswerVO convertToPossibleAnswerVOExcQuestionAnsChild(PossibleAnswer answerEntity);
 }
