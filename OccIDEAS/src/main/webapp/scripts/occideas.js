@@ -96,10 +96,9 @@ angular
     return $delegate;
   });	
 
-   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService','dataBeanService','$window','$sessionStorage','$q'];
-   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService,dataBeanService,$window,$sessionStorage,$q) {
+   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService','dataBeanService','$window','$sessionStorage'];
+   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService,dataBeanService,$window,$sessionStorage) {
 	   	$rootScope._ = window._; 
-	   	$q.errorOnUnhandledRejections(false);
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
         $rootScope.isReadOnly = false; 
