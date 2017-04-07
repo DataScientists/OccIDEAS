@@ -26,6 +26,7 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.StudyAgentUtil;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
@@ -179,6 +180,17 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 						.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
 				try {
 					studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent);
+					if(introModule.getValue().equals(parentModuleId)){
+						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
+					}else{
+						if(moduleFilterStudyAgent instanceof ModuleVO){
+							ModuleVO modVO = (ModuleVO)moduleFilterStudyAgent;
+							loopChildStudyAgentAndQueue(iq, intQuestionSequence,modVO.getChildNodes());
+						}else if(moduleFilterStudyAgent instanceof FragmentVO){
+							FragmentVO fragVO = (FragmentVO)moduleFilterStudyAgent;
+							loopChildStudyAgentAndQueue(iq, intQuestionSequence,fragVO.getChildNodes());
+						}
+					}
 				} catch (JsonGenerationException e) {
 					e.printStackTrace();
 				} catch (JsonMappingException e) {
@@ -187,8 +199,13 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 					e.printStackTrace();
 				}
 			}
+		}else{
+			loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
 		}
+		return iq;
+	}
 
+	private void loopChildQuestionsAndQueue(InterviewQuestion iq, int intQuestionSequence, long parentModuleId) {
 		List<QuestionVO> queueQuestions = new ArrayList<>();
 		queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
 		Collections.sort(queueQuestions);
@@ -209,9 +226,28 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 			iqQueue.setDeleted(0);
 			sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
 		}
-		return iq;
-	}
-
+		}
+		
+		private void loopChildStudyAgentAndQueue(InterviewQuestion iq, int intQuestionSequence, List<QuestionVO> queueQuestions) {
+			Collections.sort(queueQuestions);
+			for (QuestionVO question : queueQuestions) {
+				InterviewQuestion iqQueue = new InterviewQuestion();
+				iqQueue.setIdInterview(iq.getIdInterview());
+				iqQueue.setName(question.getName());
+				iqQueue.setDescription(question.getDescription());
+				iqQueue.setNodeClass(question.getNodeclass());
+				iqQueue.setNumber(question.getNumber());
+				iqQueue.setModCount(iq.getModCount());
+				iqQueue.setLink(question.getLink());
+				iqQueue.setType(question.getType());
+				iqQueue.setParentModuleId(question.getTopNodeId());
+				iqQueue.setQuestionId(question.getIdNode());
+				iqQueue.setTopNodeId(question.getTopNodeId());
+				iqQueue.setIntQuestionSequence(++intQuestionSequence);
+				iqQueue.setDeleted(0);
+				sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
+			}
+		}
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getAll() {
