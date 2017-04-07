@@ -180,7 +180,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 						.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
 				try {
 					studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent);
-					if(introModule.getValue().equals(parentModuleId)){
+					if(introModule.getValue().equals(String.valueOf(parentModuleId))){
 						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
 					}else{
 						if(moduleFilterStudyAgent instanceof ModuleVO){
