@@ -25,9 +25,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.occideas.assessment.service.AssessmentService;
 import org.occideas.entity.AssessmentAnswerSummary;
 import org.occideas.entity.Constant;

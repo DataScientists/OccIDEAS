@@ -60,6 +60,7 @@ public class ModuleDao implements IModuleDao{
       return (Module) sessionFactory.getCurrentSession().merge(module);
     }
 
+	@Transactional(value=TxType.REQUIRES_NEW)
     public void saveOrUpdate(Module module){
       sessionFactory.getCurrentSession().saveOrUpdate(module);
     }
@@ -165,6 +166,22 @@ public class ModuleDao implements IModuleDao{
 		List<Question> list =  sqlQuery.list();
 		if(!list.isEmpty()){
 			return list.get(0);
+		}
+		return null;
+	}
+	
+	private final String GET_ALL_LINKING_QUESTION_BY_MOD_ID = "select * from Node where link "
+			+ "!= 0 and topNodeId = :modId and deleted = 0";
+	
+	@Override
+	public List<Question> getAllLinkingQuestionByModId(Long modId) {
+		final Session session = sessionFactory.getCurrentSession();
+		SQLQuery sqlQuery = session.createSQLQuery(GET_ALL_LINKING_QUESTION_BY_MOD_ID).
+				addEntity(Node.class);
+		sqlQuery.setParameter("modId", String.valueOf(modId));
+		List<Question> list =  sqlQuery.list();
+		if(!list.isEmpty()){
+			return list;
 		}
 		return null;
 	}

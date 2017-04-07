@@ -14,6 +14,9 @@ import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.StudyAgentUtil;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
@@ -33,6 +36,9 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 
 	@Autowired
 	private SystemPropertyService systemPropertyService;
+	
+	@Autowired
+	private StudyAgentUtil studyAgentUtil;
 
 	@Override
 	public List<InterviewAnswer> saveOrUpdate(List<InterviewAnswer> ia) {
@@ -50,46 +56,79 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 		List<InterviewAnswer> list = new ArrayList<>();
 		for (InterviewAnswer a : ia) {
 			sessionFactory.getCurrentSession().saveOrUpdate(a);
-			if (a.getDeleted() == 0) {
-				for (PossibleAnswerVO pa : possibleAnswerService.findByIdWithChildren(a.getAnswerId())) {
-					int intQuestionSequence = 1;
-					List<QuestionVO> queueQuestions = pa.getChildNodes();
-					Collections.sort(queueQuestions);
-					for (QuestionVO question : queueQuestions) {
-						InterviewQuestion iq = new InterviewQuestion();
-						iq.setIdInterview(a.getIdInterview());
-						iq.setName(question.getName());
-						iq.setNodeClass(question.getNodeclass());
-						iq.setNumber(question.getNumber());
-						iq.setModCount(a.getModCount());
-						iq.setLink(question.getLink());
-						iq.setParentAnswerId(a.getAnswerId());
-						iq.setQuestionId(question.getIdNode());
-						iq.setType(question.getType());
-						iq.setDescription(question.getDescription());
-						iq.setTopNodeId(a.getTopNodeId());
-						iq.setIntQuestionSequence(intQuestionSequence);
-						iq.setDeleted(0);
-						SystemPropertyVO filterStudyAgentFlag = systemPropertyService
-								.getByName(Constant.FILTER_STUDY_AGENTS);
-						if (question.getLink() != 0 && (filterStudyAgentFlag != null
-								&& "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim()))) {
-							intQuestionSequence++;
-							sessionFactory.getCurrentSession().saveOrUpdate(iq);
-						} else if(filterStudyAgentFlag != null
-								&& "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())){
-							//do nothing
-						}else{
-							intQuestionSequence++;
-							sessionFactory.getCurrentSession().saveOrUpdate(iq);
-
-						}
-					}
-				}
+			SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+			if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
+				saveQueuedQuestionsForStudyAgents(a);
+			}else if (a.getDeleted() == 0) {
+				saveQueuedQuestionsForNormalInterview(a);
 			}
 			list.add(a);
 		}
 		return list;
+	}
+
+	private void saveQueuedQuestionsForNormalInterview(InterviewAnswer a) {
+		List<PossibleAnswerVO> answerChildNodes = possibleAnswerService.findByIdWithChildren(a.getAnswerId());
+		for (PossibleAnswerVO pa : answerChildNodes) {
+			int intQuestionSequence = 1;
+			List<QuestionVO> queueQuestions = pa.getChildNodes();
+			Collections.sort(queueQuestions);
+			for (QuestionVO question : queueQuestions) {
+				InterviewQuestion iq = new InterviewQuestion();
+				iq.setIdInterview(a.getIdInterview());
+				iq.setName(question.getName());
+				iq.setNodeClass(question.getNodeclass());
+				iq.setNumber(question.getNumber());
+				iq.setModCount(a.getModCount());
+				iq.setLink(question.getLink());
+				iq.setParentAnswerId(a.getAnswerId());
+				iq.setQuestionId(question.getIdNode());
+				iq.setType(question.getType());
+				iq.setDescription(question.getDescription());
+				iq.setTopNodeId(a.getTopNodeId());
+				iq.setIntQuestionSequence(intQuestionSequence);
+				iq.setDeleted(0);
+				intQuestionSequence++;
+				sessionFactory.getCurrentSession().saveOrUpdate(iq);
+			}
+		}
+	}
+
+	private void saveQueuedQuestionsForStudyAgents(InterviewAnswer a) {
+		ModuleVO vo = null;
+		NodeVO node = null;
+		try {
+			vo = studyAgentUtil.getStudyAgentJson(String.valueOf(a.getTopNodeId()));
+			node = new StudyAgentUtil().searchNode(vo, a.getAnswerId());
+			if(node == null){
+				node = new PossibleAnswerVO();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		PossibleAnswerVO ansVO = (PossibleAnswerVO)node;
+		List<QuestionVO> queueQuestions = new ArrayList<>();
+		queueQuestions = ansVO.getChildNodes();	
+		Collections.sort(queueQuestions);
+		int intQuestionSequence = 1;
+		for (QuestionVO question : queueQuestions) {
+			InterviewQuestion iq = new InterviewQuestion();
+			iq.setIdInterview(a.getIdInterview());
+			iq.setName(question.getName());
+			iq.setNodeClass(question.getNodeclass());
+			iq.setNumber(question.getNumber());
+			iq.setModCount(a.getModCount());
+			iq.setLink(question.getLink());
+			iq.setParentAnswerId(a.getAnswerId());
+			iq.setQuestionId(question.getIdNode());
+			iq.setType(question.getType());
+			iq.setDescription(question.getDescription());
+			iq.setTopNodeId(a.getTopNodeId());
+			iq.setIntQuestionSequence(intQuestionSequence);
+			iq.setDeleted(0);
+			intQuestionSequence++;
+			sessionFactory.getCurrentSession().saveOrUpdate(iq);
+		}
 	}
 
 	@Override
