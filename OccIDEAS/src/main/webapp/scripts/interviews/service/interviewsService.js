@@ -5,6 +5,16 @@
 	InterviewsService.$inject = [ '$http', '$q' ];
 	function InterviewsService($http, $q) {
 
+		function preloadActiveIntro(data) {
+			var restUrl = 'web/rest/interview/preloadActiveIntro';
+
+			var request = $http({
+				method : 'GET',
+				url : restUrl
+			})
+			return request.then(handleSuccess, handleError);
+		}
+		
 		function createRandomInterviews(data) {
 			var restUrl = 'web/rest/interview/createRandomInterviews';
 
@@ -610,7 +620,8 @@
 			checkFragmentProcessed:checkFragmentProcessed,
 			createRandomInterviews:createRandomInterviews,
 			exportNotesCSV:exportNotesCSV,
-			getLinksByModule:getLinksByModule
+			getLinksByModule:getLinksByModule,
+			preloadActiveIntro:preloadActiveIntro
 		};
 	}
 })();

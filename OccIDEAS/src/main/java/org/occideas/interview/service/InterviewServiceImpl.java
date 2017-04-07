@@ -101,6 +101,11 @@ public class InterviewServiceImpl implements InterviewService {
 	private final String PARTICIPANT_PREFIX = "auto";
 
 	@Override
+	public void preloadActiveIntro(){
+		interviewQuestionDao.preloadActiveIntro();
+	}
+	
+	@Override
 	public List<InterviewVO> listAll() {
 		return mapper.convertToInterviewVOList(interviewDao.getAll());
 	}
@@ -354,7 +359,7 @@ public class InterviewServiceImpl implements InterviewService {
 
 		return results;
 	}
-
+	
 	private void populateInterviewWithQuestions(NodeVO nodeVO, List<RandomInterviewReport> results,
 			RandomInterviewReport randomInterviewReport, InterviewVO newInterviewVO, ParticipantVO participantVO, Boolean isRandomAnswers, String[] filterModuleVO) {
 		InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();

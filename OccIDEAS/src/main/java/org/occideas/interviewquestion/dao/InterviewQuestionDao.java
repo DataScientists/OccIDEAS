@@ -18,6 +18,9 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.Question;
+import org.occideas.mapper.QuestionMapper;
+import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
@@ -56,6 +59,12 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 	@Autowired
 	private StudyAgentUtil studyAgentUtil;
 
+	@Autowired
+	private IModuleDao moduleDao;
+	
+	@Autowired
+	private QuestionMapper qMapper;
+	
 	private final String UNIQUE_INT_QUESTION_SQL = "select distinct(a.question_id) as question_id,a.id,a.idinterview,"
 			+ "a.type,a.name,a.topNodeId, a.nodeClass,a.parentModuleId,"
 			+ "a.modCount,a.parentAnswerId,a.link, a.deleted,a.isProcessed,"
@@ -124,6 +133,32 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		}
 		return list;
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Override
+	public void preloadActiveIntro(){
+		SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+		if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
+			// get intro id
+			SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+			if (introModule == null) {
+				log.error("no intro module set");
+			} else {
+				String moduleId = introModule.getValue();
+				List<Question> qList = moduleDao.getAllLinkingQuestionByModId(Long.valueOf(moduleId));
+				List<QuestionVO> qListVO = qMapper.convertToQuestionVOList(qList);
+				for(QuestionVO qVO:qListVO){
+					ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService
+							.getModuleFilterStudyAgent(Long.valueOf(qVO.getLink()));
+					try {
+						studyAgentUtil.createStudyAgentJson(String.valueOf(qVO.getLink()), moduleFilterStudyAgent);
+					} catch (Exception e) {
+						e.printStackTrace();
+					} 
+				}
+			}
+		}
+	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
@@ -140,9 +175,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 				log.error("no intro module set");
 				return null;
 			} else {
-				String moduleId = introModule.getValue();
-				ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService
-						.getModuleFilterStudyAgent(Long.valueOf(moduleId));
+				NodeVO moduleFilterStudyAgent = (NodeVO) moduleService
+						.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
 				try {
 					studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent);
 				} catch (JsonGenerationException e) {

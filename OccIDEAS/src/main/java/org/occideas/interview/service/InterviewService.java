@@ -65,4 +65,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<QuestionVO> getLinksByModule(Long id);
 
+	void preloadActiveIntro();
+
 }

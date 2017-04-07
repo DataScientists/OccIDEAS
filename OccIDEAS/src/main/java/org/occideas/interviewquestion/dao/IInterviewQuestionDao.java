@@ -44,4 +44,6 @@ public interface IInterviewQuestionDao {
 
 	List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule);
 
+	void preloadActiveIntro();
+
 }

@@ -216,6 +216,19 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     }
     
     @GET
+    @Path(value = "/preloadActiveIntro")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response preloadActiveIntro() {
+		try{
+			service.preloadActiveIntro();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+    }
+    
+    @GET
     @Path(value = "/getbyref")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getByRef(@QueryParam("ref") String referenceNumber) {

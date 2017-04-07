@@ -19,6 +19,17 @@
 	    $scope.randomIntCount = 0;
 	    $scope.randomAnswerChecked = true;
 	    
+	    
+	    self.preloadActiveIntro = function(){
+	    	InterviewsService.preloadActiveIntro().then(function(response){
+	    		if(response.status == '200'){
+	    			alert("Preload study agents successful");
+	    		}else{
+	    			alert("Preload study agents failed, check the logs.");
+	    		}
+	    	});
+	    }
+	    
 	    self.filterModTableParams =  new NgTableParams(
 				{
 				}, 

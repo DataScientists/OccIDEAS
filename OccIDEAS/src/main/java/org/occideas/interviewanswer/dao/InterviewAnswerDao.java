@@ -49,7 +49,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 		}
 		return list;
 	}
-
+	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public List<InterviewAnswer> saveAnswerAndQueueQuestions(List<InterviewAnswer> ia) {
