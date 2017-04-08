@@ -941,9 +941,11 @@
 												  if($scope.foundNode){
 													 var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);
 														
-													 if(frequencyHoursNode){
+													 if(frequencyHoursNode!=null){
 														 if(frequencyHoursNode.type!='P_frequencyseconds'){
-															 answeredValue = frequencyHoursNode.answerFreetext;
+															 if(!isNaN(frequencyHoursNode.answerFreetext)){
+																 answeredValue = frequencyHoursNode.answerFreetext; 
+															 }															 
 														 }									 
 													 }								
 													 $scope.foundNode=null;
@@ -966,6 +968,8 @@
 											  if(noiseRule.type=='BACKGROUND'){
 												var hoursbg = shiftHours-totalFrequency;
 												if(hoursbg<0){
+													hoursbg = 0;
+												}else if(isNaN(hoursbg)){
 													hoursbg = 0;
 												}
 												if(noiseRule.ruleAdditionalfields[0]==undefined){
