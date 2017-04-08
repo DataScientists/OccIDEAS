@@ -28,14 +28,14 @@ public class StudyAgentUtil {
 	public ModuleVO getStudyAgentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		String path = context.getRealPath("");
-		ModuleVO modVO = mapper.readValue(new File(path+"\\"+idNode + ".json"), ModuleVO.class);
+		ModuleVO modVO = mapper.readValue(new File(path+"/"+idNode + ".json"), ModuleVO.class);
 		return modVO;
 	}
 
 	public boolean isStudyAgentJsonExist(Long idNode)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		String path = context.getRealPath("");
-		File file = new File(path+"\\"+idNode + ".json");
+		File file = new File(path+"/"+idNode + ".json");
 		return file.exists();
 	}
 
@@ -50,7 +50,7 @@ public class StudyAgentUtil {
 			throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		String path = context.getRealPath("");
-		mapper.writeValue(new File(path+"\\"+idNode + ".json"), vo);
+		mapper.writeValue(new File(path+"/"+idNode + ".json"), vo);
 	}
 
 	public NodeVO searchNode(NodeVO nodeVO, Long idNode)
