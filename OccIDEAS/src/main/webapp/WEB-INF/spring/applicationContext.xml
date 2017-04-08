@@ -23,9 +23,9 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/occideas" />
+		<property name="url" value="jdbc:mysql://localhost:3306/occideas?characterEncoding=UTF-8" />
 		<property name="username" value="root" />
-		<property name="password" value="password" />
+		<property name="password" value="P@ssw0rd" />
 	</bean>
 
 	<bean id="sessionFactory"
