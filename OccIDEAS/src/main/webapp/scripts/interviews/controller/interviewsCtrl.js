@@ -1490,7 +1490,7 @@
 					
 					var scrollTarget = $('#interview-question-tree');
 					if(scrollTarget && scrollTarget[0]){													
-						scrollTarget.animate({scrollTop : scrollTarget[0].scrollHeight }, 500, 'swing');
+				//		scrollTarget.animate({scrollTop : scrollTarget[0].scrollHeight }, 500, 'swing');
 					}			
 					
 					var node = $('#node-'+$scope.lastQNodeId);
