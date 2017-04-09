@@ -183,12 +183,17 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 					if(introModule.getValue().equals(String.valueOf(parentModuleId))){
 						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
 					}else{
-						if(moduleFilterStudyAgent instanceof ModuleVO){
+						if(moduleFilterStudyAgent ==null){
+							//empty link remove it from queue
+							iq.setDeleted(1);
+							sessionFactory.getCurrentSession().saveOrUpdate(iq);
+												
+						}else if(moduleFilterStudyAgent instanceof ModuleVO){
 							ModuleVO modVO = (ModuleVO)moduleFilterStudyAgent;
-							loopChildStudyAgentAndQueue(iq, intQuestionSequence,modVO.getChildNodes());
+							loopChildStudyAgentAndQueue(iq, intQuestionSequence,modVO.getChildNodes());												
 						}else if(moduleFilterStudyAgent instanceof FragmentVO){
 							FragmentVO fragVO = (FragmentVO)moduleFilterStudyAgent;
-							loopChildStudyAgentAndQueue(iq, intQuestionSequence,fragVO.getChildNodes());
+							loopChildStudyAgentAndQueue(iq, intQuestionSequence,fragVO.getChildNodes());							
 						}
 					}
 				} catch (JsonGenerationException e) {
