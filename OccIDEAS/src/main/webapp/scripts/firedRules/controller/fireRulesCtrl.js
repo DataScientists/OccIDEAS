@@ -969,7 +969,7 @@
 												var hoursbg = shiftHours-totalFrequency;
 												if(hoursbg<0){
 													hoursbg = 0;
-												}else if(isNaN(hoursbg)){
+												}else if(isNaN(hoursbg)) {
 													hoursbg = 0;
 												}
 												if(noiseRule.ruleAdditionalfields[0]==undefined){
