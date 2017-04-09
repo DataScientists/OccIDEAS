@@ -536,9 +536,9 @@
         $scope.addInterviewTabInterviewersEdit = function(participant) {
         	var isSameIntroModule = true;
         	//participant.idModule is the intro module id
-        	if(participant.idModule != $sessionStorage.activeIntro.value){
-        		isSameIntroModule = false;
-        	}
+        	//if(participant.idModule != $sessionStorage.activeIntro.value){
+        	//	isSameIntroModule = false;
+        	//}
             //close other interview tabs
             for (var i = tabs.length - 1; i >= 0; i--) {
                 var tab = tabs[i];
