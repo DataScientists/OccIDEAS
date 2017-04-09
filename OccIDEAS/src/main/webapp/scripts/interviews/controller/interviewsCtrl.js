@@ -1827,6 +1827,7 @@
 			}else{
 				alert("OOPS! Lost the Scope Interview, Please take a screen shot and submit a issue ticket");
 			}
+			$scope.editModeOn = false; 
 			
 		}
 		$scope.showNotePrompt = function(ev) {
