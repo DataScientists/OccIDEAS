@@ -40,4 +40,6 @@ public interface IModuleDao {
 
 	List<Question> getAllLinkingQuestionByModId(Long modId);
 
+	List<Question> getChildLinkNodes(String idNode);
+
 }
