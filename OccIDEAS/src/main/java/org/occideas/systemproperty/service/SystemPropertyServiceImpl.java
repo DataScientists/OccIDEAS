@@ -149,18 +149,51 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		// check child links if we have study agents
 		addAnsDependencyFromLinkAjsmNew(vo, nodeWithStudyAgentsList);
 		getStudyAgentsForLinks(nodeWithStudyAgentsList,posAnsWithStudyAgentsList,vo);
+		addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
 		if(posAnsWithStudyAgentsList.isEmpty() && nodeWithStudyAgentsList.isEmpty()){
 			return null;
 		}else{
-			for(PossibleAnswerVO pa:posAnsWithStudyAgentsList){
-				System.out.println(pa.getNumber());
-			}
 			vo.getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
 			vo.getChildNodes().removeAll(Collections.singleton(null));
+			printAllQIdNumbers(vo);
 		}
 		return vo;
 	}
 	
+	private void printAllQIdNumbers(NodeVO vo) {
+		System.out.println(vo.getIdNode()+"-"+vo.getNumber());
+		if(vo instanceof QuestionVO){
+			QuestionVO qvo = (QuestionVO) vo;
+			if(qvo.getChildNodes() != null && !qvo.getChildNodes().isEmpty()){
+				for(PossibleAnswerVO avo:qvo.getChildNodes()){
+					printAllQIdNumbers(avo);
+				}
+			}
+		}else if(vo instanceof PossibleAnswerVO){
+			PossibleAnswerVO avo = (PossibleAnswerVO) vo;
+			if(avo.getChildNodes() != null && !avo.getChildNodes().isEmpty()){
+				for(QuestionVO qvo:avo.getChildNodes()){
+					printAllQIdNumbers(qvo);
+				}
+			}
+		}else if(vo instanceof ModuleVO){
+			ModuleVO mvo = (ModuleVO) vo;
+			if(mvo.getChildNodes() != null && !mvo.getChildNodes().isEmpty()){
+				for(QuestionVO qvo:mvo.getChildNodes()){
+					printAllQIdNumbers(qvo);
+				}
+			}
+		}else if(vo instanceof FragmentVO){
+			FragmentVO fvo = (FragmentVO) vo;
+			if(fvo.getChildNodes() != null && !fvo.getChildNodes().isEmpty()){
+				for(QuestionVO qvo:fvo.getChildNodes()){
+					printAllQIdNumbers(qvo);
+				}
+			}
+		}
+		
+	}
+
 	private void getStudyAgentsForLinks(List<NodeVO> nodeWithStudyAgentsList, 
 			List<PossibleAnswerVO> posAnsWithStudyAgentsList, NodeVO nodeVo) {
 		List<String> parentIdList = new ArrayList<>();
@@ -168,6 +201,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			if(parentIdList.contains(node.getParentId())){
 				continue;
 			}
+//			System.out.println("parent id "+node.getParentId());
 			Node n = moduleDao.getNodeById(Long.valueOf(node.getParentId()));
 			if(n instanceof PossibleAnswer){
 				PossibleAnswerVO vo = posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer)n, false);
@@ -188,6 +222,8 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 					}
 				}
 				
+			}else{
+				System.out.println("something else");
 			}
 		}
 	}
@@ -199,7 +235,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		qIdCheckList.clear();
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithAgents(vo,idAgent);
 		// check child links if we have study agents
-		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		boolean shouldReturnNull = addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
 		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
 			return null;
 		}else{
@@ -223,7 +259,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		return shouldReturnNull;
 	}
 	
-	private boolean addAnsDependencyFromLinkAjsm(NodeVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
+	private boolean addAnsDependencyFromModuleFragment(NodeVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
 		boolean shouldReturnNull = true;
 		List<ModuleFragmentVO> moduleFragments = moduleFragmentService.getModuleFragmentByModuleId(vo.getIdNode());
 		for(ModuleFragmentVO modFragVO:moduleFragments){
@@ -282,9 +318,6 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			index++;
 			if(parentIdList.contains(ans.getParentId())){
 				continue;
-			}
-			if(ans.getNumber().equalsIgnoreCase("1D1A1C")){
-				System.out.println(ans.getNumber());
 			}
 			// get parent until module is reached
 			Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
@@ -517,7 +550,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		possAnswerCheckList.clear();
 		List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithAgents(vo,idAgent);
 		// check child links if we have study agents
-		boolean shouldReturnNull = addAnsDependencyFromLinkAjsm(vo, posAnsWithStudyAgentsList);
+		boolean shouldReturnNull = addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
 		if(posAnsWithStudyAgentsList.isEmpty() && shouldReturnNull){
 			return null;
 		}else{
