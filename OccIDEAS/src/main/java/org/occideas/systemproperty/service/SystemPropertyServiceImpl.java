@@ -152,6 +152,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		if(posAnsWithStudyAgentsList.isEmpty() && nodeWithStudyAgentsList.isEmpty()){
 			return null;
 		}else{
+			for(PossibleAnswerVO pa:posAnsWithStudyAgentsList){
+				System.out.println(pa.getNumber());
+			}
 			vo.getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
 			vo.getChildNodes().removeAll(Collections.singleton(null));
 		}
@@ -280,7 +283,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			if(parentIdList.contains(ans.getParentId())){
 				continue;
 			}
-			
+			if(ans.getNumber().equalsIgnoreCase("1D1A1C")){
+				System.out.println(ans.getNumber());
+			}
 			// get parent until module is reached
 			Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
 			parentIdList.add(ans.getParentId());
@@ -380,6 +385,26 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		}
 		return childFrequencyNodes;
 	}
+	public List<QuestionVO> getChildLinkNodes(String idNode, PossibleAnswerVO answerVO){
+		//System.out.println(answerVO.getName());
+		List<Question> childQuestions = moduleDao.getChildLinkNodes(String.valueOf(answerVO.getIdNode()));
+		if(childQuestions.isEmpty()){
+			return null;
+		}
+		List<QuestionVO> childFrequencyNodes = questionMapper.
+				convertToQuestionVOReducedDetailsList(childQuestions);
+		if(!childFrequencyNodes.isEmpty()){
+			for(QuestionVO qVO:childFrequencyNodes){
+				//System.out.println(qVO.getName());
+				for(PossibleAnswerVO ansVO:qVO.getChildNodes()){
+					//System.out.println(ansVO.getName());
+					List<QuestionVO> childFrequencyNodes2 = getChildLinkNodes(String.valueOf(ansVO.getIdNode()),ansVO);
+					ansVO.setChildNodes(childFrequencyNodes2);
+				}
+			}
+		}
+		return childFrequencyNodes;
+	}
 
 	private QuestionVO getQuestionUntilRootModule(String parentId, NodeVO nodeVO) {
 		
@@ -393,6 +418,14 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				PossibleAnswerVO posAns = questionVO1.getChildNodes().get(questionVO1.getChildNodes().indexOf(answer));
 				if(posAns != null){
 					posAns.getChildNodes().addAll(childFrequencyNodes);
+				}
+			}
+			
+			List<QuestionVO> childlinkNodes = getChildLinkNodes(String.valueOf(answer.getIdNode()),answer);
+			if(childlinkNodes != null && !childlinkNodes.isEmpty()){
+				PossibleAnswerVO posAns = questionVO1.getChildNodes().get(questionVO1.getChildNodes().indexOf(answer));
+				if(posAns != null){
+	//				posAns.getChildNodes().addAll(childlinkNodes);
 				}
 			}
 		}

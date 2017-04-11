@@ -170,8 +170,10 @@ public class ModuleDao implements IModuleDao{
 		return null;
 	}
 	
-	private final String GET_ALL_LINKING_QUESTION_BY_MOD_ID = "select * from Node where link "
-			+ "!= 0 and topNodeId = :modId and deleted = 0";
+	private final String GET_ALL_LINKING_QUESTION_BY_MOD_ID = "SELECT distinct n.idNode,n.link,n.name "
+			+ "FROM Node n, ModuleRule mr "
+			+ "WHERE n.topNodeId=:modId and n.link>0 and n.deleted=0 and n.link=mr.idModule "
+			+ "AND mr.idAgent in (select value from SYS_CONFIG where type='studyagent')";
 	
 	@Override
 	public List<Question> getAllLinkingQuestionByModId(Long modId) {
@@ -192,6 +194,14 @@ public class ModuleDao implements IModuleDao{
 		final Criteria crit = session.createCriteria(Question.class)
 				.add(Restrictions.eq("parentId",idNode))
 				.add(Restrictions.like("type", "frequency", MatchMode.ANYWHERE));
+		return crit.list();
+	}
+	@Override
+	public List<Question> getChildLinkNodes(String idNode){
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(Question.class)
+				.add(Restrictions.eq("parentId",idNode))
+				.add(Restrictions.like("type", "linked", MatchMode.ANYWHERE));
 		return crit.list();
 	}
 }
