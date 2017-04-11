@@ -290,16 +290,20 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				
 				if(!ans.getChildNodes().isEmpty()){
 					// got a linking question
+					try{
 					PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
 					if(posAns != null){
 						posAns.getChildNodes().addAll(ans.getChildNodes());
+					}
+					}catch(Throwable ex){
+						ex.printStackTrace();
 					}
 				}
 				QuestionVO questionUntilRootModule = getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
 				if(nodeVOList.contains(questionUntilRootModule)){
 					QuestionVO qVO = nodeVOList.get(nodeVOList.indexOf(questionUntilRootModule));
 					try {
-						BeanUtils.copyProperties(qVO, questionUntilRootModule);
+						mergeDifferences(questionUntilRootModule, qVO, false);
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					} catch (InvocationTargetException e) {
@@ -318,6 +322,43 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	
 
 
+
+	private void mergeDifferences(NodeVO source, NodeVO target,boolean mergeComplete) 
+				throws IllegalAccessException, InvocationTargetException {
+//		if(mergeComplete){
+//			return;
+//		}
+		if(source instanceof QuestionVO){
+			QuestionVO qvoSource = (QuestionVO)source;
+			QuestionVO qvoTarget = (QuestionVO)target;
+			for(PossibleAnswerVO avo:qvoSource.getChildNodes()){
+				if(!qvoTarget.getChildNodes().contains(avo)){
+					qvoTarget.getChildNodes().add(avo);
+					mergeComplete = true;
+					System.out.println("Merge complete.");
+//					return; 
+				}else{
+					mergeComplete = false;
+					mergeDifferences(avo,qvoTarget.getChildNodes().get(qvoTarget.getChildNodes().indexOf(avo)),mergeComplete);
+				}
+			}
+		}
+		else if(source instanceof PossibleAnswerVO){
+			PossibleAnswerVO ansSource = (PossibleAnswerVO)source;
+			PossibleAnswerVO ansTarget = (PossibleAnswerVO)target;
+			for(QuestionVO qvo:ansSource.getChildNodes()){
+				if(!ansTarget.getChildNodes().contains(qvo)){
+					ansTarget.getChildNodes().add(qvo);
+					mergeComplete = true;
+					System.out.println("Merge complete.");
+//					return; 
+				}else{
+					mergeComplete = false;
+					mergeDifferences(qvo,ansTarget.getChildNodes().get(ansTarget.getChildNodes().indexOf(qvo)),mergeComplete);
+				}
+			}
+		}
+	}
 
 	public List<QuestionVO> getChildFrequencyNodes(String idNode, PossibleAnswerVO answerVO){
 		//System.out.println(answerVO.getName());
