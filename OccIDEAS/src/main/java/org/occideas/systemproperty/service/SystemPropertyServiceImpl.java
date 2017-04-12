@@ -3,6 +3,7 @@ package org.occideas.systemproperty.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -150,6 +151,10 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		addAnsDependencyFromLinkAjsmNew(vo, nodeWithStudyAgentsList);
 		getStudyAgentsForLinks(nodeWithStudyAgentsList,posAnsWithStudyAgentsList,vo);
 		addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
+		for(PossibleAnswerVO avo:posAnsWithStudyAgentsList){
+			System.out.println(avo.getIdNode() + "-"+avo.getNumber());
+		}
+		
 		if(posAnsWithStudyAgentsList.isEmpty() && nodeWithStudyAgentsList.isEmpty()){
 			return null;
 		}else{
@@ -469,19 +474,19 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		if("P".equals(node.getNodeclass())){
 			//parent is a answer
 			PossibleAnswerVO possibleAnswerVO = 
-					posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer)node, true);
+					posAnsMapper.convertToPossibleAnswerVOExcQuestionAnsChild((PossibleAnswer)node);
 			
 			for(int i=0;i<possibleAnswerVO.getChildNodes().size();i++){
 //				if(possibleAnswerVO.getIdNode() ==43781L ){
 //					System.out.println("debug");
 //				}
-				if(!possAnswerCheckList.contains(possibleAnswerVO.getIdNode())){
-					possAnswerCheckList.add(possibleAnswerVO.getIdNode());
+//				if(!possAnswerCheckList.contains(possibleAnswerVO.getIdNode())){
+//					possAnswerCheckList.add(possibleAnswerVO.getIdNode());
 					possibleAnswerVO.getChildNodes().clear();
-				}
-				if(!possibleAnswerVO.getChildNodes().contains(nodeVO)){
+//				}
+//				if(!possibleAnswerVO.getChildNodes().contains(nodeVO)){
 					possibleAnswerVO.getChildNodes().add((QuestionVO)nodeVO);
-				}
+//				}
 //				QuestionVO qVO = possibleAnswerVO.getChildNodes().get(i);
 //				if(qVO.getIdNode() == nodeVO.getIdNode()){
 //					possibleAnswerVO.getChildNodes().set(i,(QuestionVO)nodeVO);
@@ -494,14 +499,14 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			//if(questionVO.getIdNode() ==43562 ){
 			//	System.out.println("debug");
 			//}
-			
+			PossibleAnswerVO pavo = (PossibleAnswerVO)nodeVO;
 			for(int i=0;i<questionVO.getChildNodes().size();i++){
 				PossibleAnswerVO aVO = questionVO.getChildNodes().get(i);
 				if(aVO.getIdNode() == nodeVO.getIdNode()){
-					questionVO.getChildNodes().set(i,(PossibleAnswerVO)nodeVO);
+					qIdCheckList.add(pavo.getIdNode());
+					questionVO.getChildNodes().set(i,(PossibleAnswerVO)pavo);
 				}
 			}
-			
 			return getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
 		}else if("M".equals(node.getNodeclass())){
 			return (QuestionVO)nodeVO;
@@ -511,9 +516,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		return null;
 	}
 
+
 	private List<PossibleAnswerVO> getAnswersWithStudyAgents(NodeVO vo) {
-		List<PossibleAnswer> posAnsWithStudyAgentsList = 
-				dao.getPosAnsWithStudyAgentsByIdMod(vo.getIdNode());
+		List<PossibleAnswer> posAnsWithStudyAgentsList = dao.getPosAnsWithStudyAgentsByIdMod(vo.getIdNode());
 		List<PossibleAnswerVO> newPosAnsWithStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList(posAnsWithStudyAgentsList);
 		return newPosAnsWithStudyAgentsList;
 	}
@@ -535,7 +540,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		List<NodeVO> nodeWithStudyAgentsList = new ArrayList<>(); 
 		addAnsDependencyFromLinkAjsmNew(vo, nodeWithStudyAgentsList);
 		getStudyAgentsForLinks(nodeWithStudyAgentsList,posAnsWithStudyAgentsList,vo);
-		
+		for(PossibleAnswerVO avo:posAnsWithStudyAgentsList){
+			System.out.println(avo.getIdNode() + "-"+avo.getNumber());
+		}
 		if(posAnsWithStudyAgentsList.isEmpty() && nodeWithStudyAgentsList.isEmpty()){
 			return null;
 		}else{
