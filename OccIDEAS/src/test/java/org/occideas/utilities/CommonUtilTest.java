@@ -44,4 +44,5 @@ public class CommonUtilTest {
 		assertTrue("1ZA1".equals(CommonUtil.getNextQuestionByCurrentNumber("1ZA")));
 	}
 	
+	
 }

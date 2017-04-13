@@ -19,11 +19,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
-import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
-import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -170,7 +167,7 @@ public class ModuleDao implements IModuleDao{
 		return null;
 	}
 	
-	private final String GET_ALL_LINKING_QUESTION_BY_MOD_ID = "SELECT distinct n.idNode,n.link,n.name "
+	private final String GET_ALL_LINKING_QUESTION_BY_MOD_ID = "SELECT distinct n.* "
 			+ "FROM Node n, ModuleRule mr "
 			+ "WHERE n.topNodeId=:modId and n.link>0 and n.deleted=0 and n.link=mr.idModule "
 			+ "AND mr.idAgent in (select value from SYS_CONFIG where type='studyagent')";
@@ -204,4 +201,6 @@ public class ModuleDao implements IModuleDao{
 				.add(Restrictions.like("type", "linked", MatchMode.ANYWHERE));
 		return crit.list();
 	}
+
+	
 }

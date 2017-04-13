@@ -1497,15 +1497,15 @@
 					
 					if(node && node[0]){
 						
-						var treePanel = $('#tree-panel');
+					//	var treePanel = $('#tree-panel');
 					
-						if(treePanel[0] && node[0].scrollWidth < (treePanel[0].scrollWidth *.5)){												
+					//	if(treePanel[0] && node[0].scrollWidth < (treePanel[0].scrollWidth *.5)){												
 							
-							$('#tree-panel-body').width($('#tree-panel-body')[0].scrollWidth * 1.25);
-							treePanel.width($('#tree-panel-body').width() + 30);
-						}
+					//		$('#tree-panel-body').width($('#tree-panel-body')[0].scrollWidth * 1.25);
+					//		treePanel.width($('#tree-panel-body').width() + 30);
+					//	}
 						
-						scrollTarget.animate({scrollLeft : node[0].scrollWidth }, 500, 'swing');
+					//	scrollTarget.animate({scrollLeft : node[0].scrollWidth }, 500, 'swing');
 					}
 				});
 			}
@@ -1789,6 +1789,8 @@
 		}
 		$scope.cancel = function() {
 			$mdDialog.cancel();
+			$scope.editModeOn = false; 
+			
 		};
 		$scope.saveNewNoteButton = function(data) {
 			saveNewNote(data);

@@ -20,4 +20,6 @@ public interface SystemPropertyService {
 	public ModuleVO filterModulesNodesWithAgents(ModuleVO vo, long idAgent);
 	public FragmentVO filterFragmentNodesWithAgents(FragmentVO vo, Long idAgent);
 	public FragmentVO getFragmentNodesWithAgents(FragmentVO fragmentVO, Long idAgent);
+	void populateNodeidList(Long nodeId);
+	void testNodeidList(Long nodeId);
 }

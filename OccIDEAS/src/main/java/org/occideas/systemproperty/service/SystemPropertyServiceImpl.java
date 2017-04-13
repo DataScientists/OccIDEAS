@@ -1,14 +1,13 @@
 package org.occideas.systemproperty.service;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
@@ -21,6 +20,7 @@ import org.occideas.mapper.SystemPropertyMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.modulefragment.service.ModuleFragmentService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
+import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleFragmentVO;
 import org.occideas.vo.ModuleVO;
@@ -49,6 +49,13 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	private ModuleMapper moduleMapper;
 	@Autowired
 	private ModuleFragmentService moduleFragmentService;
+	
+	@Autowired
+	private StudyAgentUtil studyAgentUtil;
+	
+	
+	private List<Long> nodeIds = new ArrayList<Long>();
+	
 	
 	//used to check if answer has already been processed
 	private List<Long> possAnswerCheckList = new ArrayList<>();
@@ -152,7 +159,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		getStudyAgentsForLinks(nodeWithStudyAgentsList,posAnsWithStudyAgentsList,vo);
 		addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
 		for(PossibleAnswerVO avo:posAnsWithStudyAgentsList){
-			System.out.println(avo.getIdNode() + "-"+avo.getNumber());
+			//System.out.println(avo.getIdNode() + "-"+avo.getNumber());
 		}
 		
 		if(posAnsWithStudyAgentsList.isEmpty() && nodeWithStudyAgentsList.isEmpty()){
@@ -160,7 +167,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		}else{
 			vo.getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
 			vo.getChildNodes().removeAll(Collections.singleton(null));
-			printAllQIdNumbers(vo);
+			//printAllQIdNumbers(vo);
 		}
 		return vo;
 	}
@@ -378,7 +385,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				if(!qvoTarget.getChildNodes().contains(avo)){
 					qvoTarget.getChildNodes().add(avo);
 					mergeComplete = true;
-					System.out.println("Merge complete.");
+					//System.out.println("Merge complete.");
 //					return; 
 				}else{
 					mergeComplete = false;
@@ -393,7 +400,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 				if(!ansTarget.getChildNodes().contains(qvo)){
 					ansTarget.getChildNodes().add(qvo);
 					mergeComplete = true;
-					System.out.println("Merge complete.");
+			//		System.out.println("Merge complete.");
 //					return; 
 				}else{
 					mergeComplete = false;
@@ -565,6 +572,52 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 			vo.getChildNodes().removeAll(Collections.singleton(null));
 		}
 		return vo;
+	}
+	@Override
+	public void populateNodeidList(Long nodeId){
+		Node node = moduleDao.getNodeById(Long.valueOf(nodeId));
+		if("P".equals(node.getNodeclass())){
+			//parent is a answer
+			PossibleAnswerVO possibleAnswerVO = posAnsMapper.convertToPossibleAnswerVOExcQuestionAnsChild((PossibleAnswer)node);
+			this.nodeIds.add(Long.valueOf(possibleAnswerVO.getParentId()));
+			populateNodeidList(Long.valueOf(possibleAnswerVO.getParentId()));
+		}else if("Q".equals(node.getNodeclass())){
+			//parent is a question
+			QuestionVO questionVO = questionMapper.convertToQuestionVOReducedDetails((Question)node);
+			this.nodeIds.add(Long.valueOf(questionVO.getParentId()));
+			populateNodeidList(Long.valueOf(questionVO.getParentId()));
+			
+		}else if("M".equals(node.getNodeclass())){
+		//	System.out.println("End of module");
+		}else if("F".equals(node.getNodeclass())){
+			System.out.println("End of fragment");
+		}
+	}
+	@Override
+	public void testNodeidList(Long nodeId){
+		
+		try {
+			boolean isError = false;
+			ModuleVO vo = studyAgentUtil.getStudyAgentJson(String.valueOf(nodeId));
+			for(Long id:this.nodeIds){
+				NodeVO node = new StudyAgentUtil().searchNode(vo, id);
+				if(node==null){
+					//System.out.println("ERROR: idNode - "+id);
+					isError = true;
+				}else{
+					//System.out.println("Found "+id);
+				}
+			}
+			if(isError){
+				System.out.println("ERROR: idNode - "+nodeId);
+			}
+			this.nodeIds = new ArrayList<Long>();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.fragment.dao.FragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
@@ -23,6 +24,7 @@ import org.occideas.rule.dao.RuleDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
+import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
@@ -73,6 +75,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private QuestionService questionService;
 	@Autowired
 	private SystemPropertyService sysPropService;
+	@Autowired
+	private SystemPropertyDao sysPropDao;
 
 	@Auditable(actionType = AuditingActionType.GENERIC)
     @Override
@@ -436,5 +440,11 @@ public class ModuleServiceImpl implements ModuleService {
 			return fragmentVO;
 		}
 		return null;
+	}
+
+	@Override
+	public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(Long theId) {
+		//dao.getPosAnsWithStudyAgentsByIdMod(theId);
+		return sysPropDao.getPosAnsWithStudyAgentsByIdMod(theId);
 	}
 }

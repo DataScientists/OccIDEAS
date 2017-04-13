@@ -1,5 +1,6 @@
 package org.occideas.interview.rest;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +23,8 @@ import org.occideas.entity.Constant;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.Module;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
@@ -32,12 +35,12 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.modulerule.service.ModuleRuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewAutoAssessmentVO;
 import org.occideas.vo.InterviewFiredRulesVO;
-import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.occideas.vo.InterviewModuleFragmentVO;
 import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
@@ -91,6 +94,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Autowired
 	private FragmentService fragmentService;
     
+    @Autowired
+	private StudyAgentUtil studyAgentUtil;
+	   
     @GET
     @Path(value = "/getlist")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -220,7 +226,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response preloadActiveIntro() {
 		try{
-			service.preloadActiveIntro();
+			//service.preloadActiveIntro();
+			this.testStudySpecificModules();
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -228,6 +235,33 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		return Response.ok().build();
     }
     
+    private void testStudySpecificModules(){
+    	for(Module m:moduleService.getAllModules()){
+    		System.out.println("Checking module "+m.getName());
+    		Long theId = Long.valueOf(m.getIdNode());
+    		//Long theId = Long.valueOf("7424");
+    		NodeVO moduleFilterStudyAgent = (NodeVO) moduleService.getModuleFilterStudyAgent(theId);
+    		try {
+    			studyAgentUtil.createStudyAgentJson(String.valueOf(theId), moduleFilterStudyAgent);
+    			List<PossibleAnswer> posAnsWithStudyAgentsList = moduleService.getPosAnsWithStudyAgentsByIdMod(theId);
+    			for(PossibleAnswer pa:posAnsWithStudyAgentsList){
+    				sysPropService.populateNodeidList(pa.getIdNode());
+    				
+    			}
+    			sysPropService.testNodeidList(theId);
+    			
+    			
+    			
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	
+    	}
+			
+	}
+    
+	
     @GET
     @Path(value = "/getbyref")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Module;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeVO;
@@ -31,4 +32,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public NodeVO getModuleFilterAgent(Long id, Long idAgent);
 	public List<Module> getAllModules();
 	public NodeVO getNodeNameById(Long idNode);
+	public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(Long theId);
 }

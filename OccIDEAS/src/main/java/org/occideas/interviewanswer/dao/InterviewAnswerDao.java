@@ -58,7 +58,13 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 			sessionFactory.getCurrentSession().saveOrUpdate(a);
 			SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
 			if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
-				saveQueuedQuestionsForStudyAgents(a);
+				SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+				if(introModule.getValue().equals(String.valueOf(a.getTopNodeId()))){
+					saveQueuedQuestionsForNormalInterview(a);
+				}else{
+					saveQueuedQuestionsForStudyAgents(a);
+					
+				}				
 			}else if (a.getDeleted() == 0) {
 				saveQueuedQuestionsForNormalInterview(a);
 			}

@@ -34,7 +34,7 @@
 				ng-if="interviewStarted">
 				<md-toolbar>
 					<span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
-					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}{{questionBeingEdited.name}}</span> 
+					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span> 
 					<md-button id="numId" event-focus> 
 					<i ng-if="storage.langEnabled" class="glyphicon {{interview.showedQuestion.name  |
 							translate | displayFlag:interview.showedQuestion:storage}}"></i>
