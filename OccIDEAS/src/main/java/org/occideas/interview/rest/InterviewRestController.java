@@ -983,6 +983,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			if(!vo.isProcessed()){
 				continue;
 			}
+			if(vo.getDeleted() == 1){
+				continue;
+			}
 			
 			if(!isExpanded && linkId != 0){
 				if(vo.getTopNodeId() != linkId && !"Q_linkedajsm".equals(vo.getType())){
@@ -1004,7 +1007,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			//iPACount++;
 			//System.out.println(iPACount+" pa of "+iPASize+" ");
 			//if(vo.isProcessed()){
+			if(answer.getDeleted() == 0){
 				answerMap.put(Long.valueOf(answer.getAnswerId()), answer);
+			}
 			//}	
 		}
 	}
