@@ -526,7 +526,7 @@
 	    function setInvalid(isInvalid) {
 	        self.$invalid = isInvalid;
 	        self.$valid = !isInvalid;
-	      }
+	    }
 	    
 	    function untrack(row) {
 	        _.remove(invalidCellsByRow, function(item) {
