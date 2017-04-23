@@ -233,7 +233,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		for (PossibleAnswer vo : childNodes) {
 			report.setTotalAnswers(report.getTotalAnswers()+1);
 			if(vo.getType().equals("P_freetext") && !pattern.matcher(vo.getName()).find()){
-				report.addIssue(vo.getIdNode() +" "+vo.getNumber() +" "+vo.getName());				
+				report.addIssue(vo.getNumber() +" "+vo.getName());				
 			}
 			
 			if (!vo.getModuleRule().isEmpty()) {
