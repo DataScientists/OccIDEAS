@@ -869,7 +869,7 @@
 	     }
 
 		$scope.deleteNode = function(scope) {
-			if(scope.$modelValue.moduleRule.length>0){
+			if(scope.$modelValue.moduleRule && scope.$modelValue.moduleRule.length>0){
 				var rules = scope.$modelValue.moduleRule;
 				var msg = "This node ("+scope.$modelValue.number+") has rules on agents ";
 				for(var i=0;i<rules.length;i++){
