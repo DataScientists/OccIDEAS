@@ -368,7 +368,9 @@
 			    	if(v){
 			    		_.each(moduleList, function(o) { 
 					    	if(k==o.idModule){
-					    		$scope.fileName += o.interviewModuleName.substr(0, 4);
+					    		if($scope.fileName.length < 20){
+					    			$scope.fileName += o.interviewModuleName.substr(0, 4);
+					    		}
 					    	} 
 				    	});
 			    	} 
