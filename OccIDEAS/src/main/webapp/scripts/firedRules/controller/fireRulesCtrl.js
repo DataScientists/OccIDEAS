@@ -644,7 +644,7 @@
         		}        		
         	});        	
         	
-        	$(".tree-node-content span").removeClass("highlight-rulenode");
+        	$(".tree-node div").removeClass("highlight-rulenode");
         	var elementId = 'node-' + idNode;	
         	
         	defer.promise.then(function(){
