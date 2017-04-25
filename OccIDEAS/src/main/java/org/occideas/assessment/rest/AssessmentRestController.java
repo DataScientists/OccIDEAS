@@ -1391,8 +1391,8 @@ public class AssessmentRestController {
 					StringBuilder header = new StringBuilder();
 					header.append(topModule.getName().substring(0, 4));
 					header.append("_");
-					header.append(interviewQuestionVO.getNumber());
-					header.append("_");
+					//header.append(interviewQuestionVO.getNumber());
+					//header.append("_");
 					header.append(pVO.getNumber());
 					headers.add(header.toString());
 					exportCSVVO.getQuestionList().add(interviewQuestionVO.getName() + " " + pVO.getName()+"|"+header.toString());
@@ -1450,8 +1450,8 @@ public class AssessmentRestController {
 						}
 						header.append(headerName);
 						header.append("_");
-						header.append(interviewQuestionVO.getNumber());
-						header.append("_");
+						//header.append(interviewQuestionVO.getNumber());
+						//header.append("_");
 						header.append(interviewAnswerVO.getNumber());
 						retValue = header.toString();
 		
@@ -1499,8 +1499,8 @@ public class AssessmentRestController {
 			}
 						header.append(headerName);
 						header.append("_");
-						header.append(interviewQuestionVO.getNumber());
-						header.append("_");
+						//header.append(interviewQuestionVO.getNumber());
+						//header.append("_");
 						header.append(interviewAnswerVO.getNumber());
 						key = header.toString();
 						name = interviewQuestionVO.getName()+ " "+ interviewAnswerVO.getName();
