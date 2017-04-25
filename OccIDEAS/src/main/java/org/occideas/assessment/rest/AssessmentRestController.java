@@ -1443,8 +1443,12 @@ public class AssessmentRestController {
 		}
 		
 		StringBuilder header = new StringBuilder();
-		if("Q_multiple".equals(interviewQuestionVO.getType())){					
-						header.append(topModule.getName().substring(0, 4));
+		if("Q_multiple".equals(interviewQuestionVO.getType())){
+						String headerName = topModule.getName().substring(0, 4);
+						if(headerName.charAt(0) == '_'){
+							headerName = headerName.replaceFirst("_", ""); 
+						}
+						header.append(headerName);
 						header.append("_");
 						header.append(interviewQuestionVO.getNumber());
 						header.append("_");
@@ -1452,7 +1456,11 @@ public class AssessmentRestController {
 						retValue = header.toString();
 		
 		}else{			
-			header.append(topModule.getName().substring(0, 4));
+			String headerName = topModule.getName().substring(0, 4);
+			if(headerName.charAt(0) == '_'){
+				headerName = headerName.replaceFirst("_", ""); 
+			}
+			header.append(headerName);
 			header.append("_");
 			header.append(interviewQuestionVO.getNumber());
 			retValue = header.toString();
@@ -1485,7 +1493,11 @@ public class AssessmentRestController {
 		
 		StringBuilder header = new StringBuilder();
 		if("Q_multiple".equals(interviewQuestionVO.getType())){					
-						header.append(topModule.getName().substring(0, 4));
+			String headerName = topModule.getName().substring(0, 4);
+			if(headerName.charAt(0) == '_'){
+				headerName = headerName.replaceFirst("_", ""); 
+			}
+						header.append(headerName);
 						header.append("_");
 						header.append(interviewQuestionVO.getNumber());
 						header.append("_");
@@ -1494,7 +1506,11 @@ public class AssessmentRestController {
 						name = interviewQuestionVO.getName()+ " "+ interviewAnswerVO.getName();
 		
 		}else{			
-			header.append(topModule.getName().substring(0, 4));
+			String headerName = topModule.getName().substring(0, 4);
+			if(headerName.charAt(0) == '_'){
+				headerName = headerName.replaceFirst("_", ""); 
+			}
+			header.append(headerName);
 			header.append("_");
 			header.append(interviewQuestionVO.getNumber());
 			key = header.toString();
