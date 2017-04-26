@@ -10,7 +10,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.moduleintromodule.service.ModuleIntroModuleService;
 import org.occideas.vo.ModuleIntroModuleVO;
 import org.occideas.vo.ModuleVO;
@@ -20,15 +21,15 @@ import org.springframework.http.MediaType;
 @Path("/moduleintromodule")
 public class ModuleIntroModuleRestController {
 
-	private Logger log = Logger.getLogger(this.getClass());
-	
+	private Logger log = LogManager.getLogger(this.getClass());
+
 	@Autowired
 	private ModuleIntroModuleService service;
 
 	@GET
 	@Path(value = "/getModuleIntroModuleByModuleId")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
-	public Response getModuleIntroModuleByModuleId(@QueryParam("id") Long id){
+	public Response getModuleIntroModuleByModuleId(@QueryParam("id") Long id) {
 		List<ModuleIntroModuleVO> list = new ArrayList<>();
 		try {
 			list = service.getModuleIntroModuleByModuleId(id);
@@ -38,7 +39,7 @@ public class ModuleIntroModuleRestController {
 		}
 		return Response.ok(list).build();
 	}
-	
+
 	@GET
 	@Path(value = "/getWithFragments")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
@@ -52,5 +53,5 @@ public class ModuleIntroModuleRestController {
 		}
 		return Response.ok(list).build();
 	}
-	
+
 }

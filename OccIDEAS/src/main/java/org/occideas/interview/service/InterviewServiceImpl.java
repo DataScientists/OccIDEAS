@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Module;
-import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
 import org.occideas.fragment.dao.FragmentDao;
@@ -51,7 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class InterviewServiceImpl implements InterviewService {
 
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = LogManager.getLogger(this.getClass());
 
 	@Autowired
 	private BaseDao dao;
@@ -88,23 +88,23 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Autowired
 	private QuestionService questionService;
-	
+
 	@Autowired
 	private FragmentDao fragmentDao;
 
 	@Autowired
 	private FragmentMapper fragmentMapper;
-	
+
 	@Autowired
 	private QuestionMapper questionMapper;
-	
+
 	private final String PARTICIPANT_PREFIX = "auto";
 
 	@Override
-	public void preloadActiveIntro(){
+	public void preloadActiveIntro() {
 		interviewQuestionDao.preloadActiveIntro();
 	}
-	
+
 	@Override
 	public List<InterviewVO> listAll() {
 		return mapper.convertToInterviewVOList(interviewDao.getAll());
@@ -156,7 +156,7 @@ public class InterviewServiceImpl implements InterviewService {
 		list.add(InterviewVO);
 		return list;
 	}
-	
+
 	@Override
 	public List<InterviewVO> findByReferenceNumber(String referenceNumber) {
 		List<Interview> list = interviewDao.findByReferenceNumber(referenceNumber);
@@ -200,7 +200,7 @@ public class InterviewServiceImpl implements InterviewService {
 	public void update(InterviewVO o) {
 		dao.saveOrUpdate(mapper.convertToInterview(o));
 	}
-	
+
 	@Override
 	public void merge(InterviewVO o) {
 		dao.merge(mapper.convertToInterview(o));
@@ -268,7 +268,7 @@ public class InterviewServiceImpl implements InterviewService {
 		list.add(InterviewVO);
 		return list;
 	}
-	
+
 	@Override
 	public InterviewVO findInterviewWithFiredRulesById(Long id) {
 		Interview interview = interviewDao.get(id);
@@ -313,7 +313,8 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public List<RandomInterviewReport> createRandomInterviews(int count,Boolean isRandomAnswers,String[] filterModuleVO) {
+	public List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers,
+			String[] filterModuleVO) {
 		// get active intro
 		SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
 		if (activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())) {
@@ -353,15 +354,17 @@ public class InterviewServiceImpl implements InterviewService {
 				randomInterviewReport.setInterviewId(newInterviewVO.getInterviewId());
 				referenceNumber = generateReferenceAuto(referenceNumber);
 				// populate interview question by module
-				populateInterviewWithQuestions(modVO, results, randomInterviewReport, newInterviewVO,participantVO,isRandomAnswers,filterModuleVO);
+				populateInterviewWithQuestions(modVO, results, randomInterviewReport, newInterviewVO, participantVO,
+						isRandomAnswers, filterModuleVO);
 			}
 		}
 
 		return results;
 	}
-	
+
 	private void populateInterviewWithQuestions(NodeVO nodeVO, List<RandomInterviewReport> results,
-			RandomInterviewReport randomInterviewReport, InterviewVO newInterviewVO, ParticipantVO participantVO, Boolean isRandomAnswers, String[] filterModuleVO) {
+			RandomInterviewReport randomInterviewReport, InterviewVO newInterviewVO, ParticipantVO participantVO,
+			Boolean isRandomAnswers, String[] filterModuleVO) {
 		InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
 		interviewQuestionVO.setIdInterview(newInterviewVO.getInterviewId());
 		interviewQuestionVO.setTopNodeId(nodeVO.getIdNode());
@@ -379,11 +382,12 @@ public class InterviewServiceImpl implements InterviewService {
 		InterviewQuestionVO linkAndQueueQuestions = interviewQuestionService
 				.updateInterviewLinkAndQueueQuestions(interviewQuestionVO);
 		// get interview
-		List<InterviewVO> interviewList = mapper.convertToInterviewWithQuestionAnswerList(
-				interviewDao.getInterview(newInterviewVO.getInterviewId()));
+		List<InterviewVO> interviewList = mapper
+				.convertToInterviewWithQuestionAnswerList(interviewDao.getInterview(newInterviewVO.getInterviewId()));
 
 		InterviewVO randomInterview = interviewList.get(0);
-		processRandomQuestionsAndAnswers(randomInterview,randomInterviewReport,results,isRandomAnswers,filterModuleVO);
+		processRandomQuestionsAndAnswers(randomInterview, randomInterviewReport, results, isRandomAnswers,
+				filterModuleVO);
 		List<NoteVO> notes = new ArrayList<>();
 		NoteVO noteVO = new NoteVO();
 		noteVO.setDeleted(0);
@@ -397,22 +401,24 @@ public class InterviewServiceImpl implements InterviewService {
 		results.add(randomInterviewReport);
 	}
 
-	private void processRandomQuestionsAndAnswers(InterviewVO randomInterview, RandomInterviewReport randomInterviewReport, 
-			List<RandomInterviewReport> results, Boolean isRandomAnswers, String[] filterModuleVO) {
+	private void processRandomQuestionsAndAnswers(InterviewVO randomInterview,
+			RandomInterviewReport randomInterviewReport, List<RandomInterviewReport> results, Boolean isRandomAnswers,
+			String[] filterModuleVO) {
 		List<InterviewQuestionVO> questionList = randomInterview.getQuestionHistory();
 		InterviewQuestionVO questionAsked = findNextQuestionQueued(questionList);
 		if (questionAsked == null) {
-			log.info("[Randominterview]-No question to ask for interview id " + randomInterview.getInterviewId()+" end interview as completed");
+			log.info("[Randominterview]-No question to ask for interview id " + randomInterview.getInterviewId()
+					+ " end interview as completed");
 			return;
 		} else {
 			List<QuestionVO> questionsWithSingleChildLevel = questionService
 					.getQuestionsWithSingleChildLevel(questionAsked.getQuestionId());
 			QuestionVO actualQuestion = questionsWithSingleChildLevel.get(0);
 			List<PossibleAnswerVO> answers = actualQuestion.getChildNodes();
-			if(actualQuestion.getLink() != 0L){
+			if (actualQuestion.getLink() != 0L) {
 				// its a linking question
 				System.out.println("This is a linking questions");
-				InterviewQuestionVO qVO = populateInteviewQuestionJsonByLinkedQuestion(randomInterview,questionAsked);
+				InterviewQuestionVO qVO = populateInteviewQuestionJsonByLinkedQuestion(randomInterview, questionAsked);
 				qVO.setProcessed(true);
 				questionAsked.setProcessed(true);
 				interviewQuestionService.updateInterviewLinkAndQueueQuestions(qVO);
@@ -421,25 +427,29 @@ public class InterviewServiceImpl implements InterviewService {
 				interviewAnswerVO.setName("This is a linking question");
 				randomInterviewReport.getListAnswer().add(interviewAnswerVO);
 				List<InterviewVO> unprocessedQuestions = getUnprocessedQuestions(randomInterview.getInterviewId());
-				if(unprocessedQuestions != null){
+				if (unprocessedQuestions != null) {
 					unprocessedQuestions.removeAll(Collections.singleton(null));
-					if(!unprocessedQuestions.isEmpty()){
-					for(InterviewQuestionVO iVO:unprocessedQuestions.get(0).getQuestionQueueUnprocessed()){
-						if(!randomInterview.getQuestionHistory().contains(iVO)){
-							randomInterview.getQuestionHistory().add(iVO);
+					if (!unprocessedQuestions.isEmpty()) {
+						for (InterviewQuestionVO iVO : unprocessedQuestions.get(0).getQuestionQueueUnprocessed()) {
+							if (!randomInterview.getQuestionHistory().contains(iVO)) {
+								randomInterview.getQuestionHistory().add(iVO);
+							}
 						}
-					}
-					processRandomQuestionsAndAnswers(randomInterview,randomInterviewReport,results,isRandomAnswers,filterModuleVO);
+						processRandomQuestionsAndAnswers(randomInterview, randomInterviewReport, results,
+								isRandomAnswers, filterModuleVO);
 					}
 				}
-			}else if (answers.isEmpty()) {
-				saveQuestion(randomInterview, questionAsked,randomInterviewReport,results,isRandomAnswers,filterModuleVO);
+			} else if (answers.isEmpty()) {
+				saveQuestion(randomInterview, questionAsked, randomInterviewReport, results, isRandomAnswers,
+						filterModuleVO);
 				InterviewAnswerVO interviewAnswerVO = new InterviewAnswerVO();
 				interviewAnswerVO.setName("ERROR: No answer to select for this Question.");
 				randomInterviewReport.getListAnswer().add(interviewAnswerVO);
 			} else {
-				saveAnswer(randomInterview, questionAsked, answers,randomInterviewReport,isRandomAnswers,filterModuleVO);
-				saveQuestion(randomInterview, questionAsked,randomInterviewReport,results,isRandomAnswers,filterModuleVO);
+				saveAnswer(randomInterview, questionAsked, answers, randomInterviewReport, isRandomAnswers,
+						filterModuleVO);
+				saveQuestion(randomInterview, questionAsked, randomInterviewReport, results, isRandomAnswers,
+						filterModuleVO);
 			}
 		}
 	}
@@ -465,56 +475,59 @@ public class InterviewServiceImpl implements InterviewService {
 		return intQuestionVO;
 	}
 
-	private void saveQuestion(InterviewVO randomInterview, InterviewQuestionVO questionAsked,RandomInterviewReport 
-			randomInterviewReport,List<RandomInterviewReport> results, Boolean isRandomAnswers, String[] filterModuleVO) {
+	private void saveQuestion(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
+			RandomInterviewReport randomInterviewReport, List<RandomInterviewReport> results, Boolean isRandomAnswers,
+			String[] filterModuleVO) {
 		questionAsked.setProcessed(true);
 		interviewQuestionService.updateIntQ(questionAsked);
 		randomInterviewReport.getListQuestion().add(questionAsked);
-		processRandomQuestionsAndAnswers(randomInterview,randomInterviewReport,results,isRandomAnswers,filterModuleVO);
+		processRandomQuestionsAndAnswers(randomInterview, randomInterviewReport, results, isRandomAnswers,
+				filterModuleVO);
 	}
 
 	private void saveAnswer(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
-			List<PossibleAnswerVO> answers,RandomInterviewReport randomInterviewReport, Boolean isRandomAnswers, 
+			List<PossibleAnswerVO> answers, RandomInterviewReport randomInterviewReport, Boolean isRandomAnswers,
 			String[] filterModuleVO) {
-		
+
 		PossibleAnswerVO selectedAnswer = null;
-		if(!isRandomAnswers){
+		if (!isRandomAnswers) {
 			selectedAnswer = answers.get(0);
-		}else{
-			selectedAnswer = chooseRandomAnswer(answers,filterModuleVO);
+		} else {
+			selectedAnswer = chooseRandomAnswer(answers, filterModuleVO);
 		}
 		InterviewAnswerVO interviewAnswer = populateInterviewAnswer(randomInterview, selectedAnswer);
 		interviewAnswer.setInterviewQuestionId(questionAsked.getId());
 		interviewAnswer.setIsProcessed(true);
 		List<InterviewAnswerVO> listOfAnswers = new ArrayList<>();
 		listOfAnswers.add(interviewAnswer);
-		List<InterviewQuestionVO> questions = interviewAnswerService.saveIntervewAnswersAndGetChildQuestion(listOfAnswers);
+		List<InterviewQuestionVO> questions = interviewAnswerService
+				.saveIntervewAnswersAndGetChildQuestion(listOfAnswers);
 		randomInterviewReport.getListAnswer().add(interviewAnswer);
-		refreshUnprocessedQuestions(questions,randomInterview);
+		refreshUnprocessedQuestions(questions, randomInterview);
 	}
 
 	private PossibleAnswerVO chooseRandomAnswer(List<PossibleAnswerVO> answers, String[] filterModuleVO) {
-		if(filterModuleVO != null && filterModuleVO.length > 0){
+		if (filterModuleVO != null && filterModuleVO.length > 0) {
 			String filterModuleId = filterModuleVO[0];
-			//choose an answer that would have the link module
-			for(PossibleAnswerVO ans:answers){
+			// choose an answer that would have the link module
+			for (PossibleAnswerVO ans : answers) {
 				List<Long> linksByAnswerId = interviewDao.getLinksByAnswerId(ans.getIdNode());
-				if(linksByAnswerId.contains(Long.valueOf(filterModuleId))){
+				if (linksByAnswerId.contains(Long.valueOf(filterModuleId))) {
 					return ans;
 				}
 			}
 		}
 		int rnd = new Random().nextInt(answers.size());
-		if(rnd == answers.size()){
+		if (rnd == answers.size()) {
 			rnd = rnd - 1;
 		}
 		return answers.get(rnd);
 	}
 
-	private void refreshUnprocessedQuestions(List<InterviewQuestionVO> questions,InterviewVO randomInterview) {
-		if(questions != null && !questions.isEmpty()){
-			for(InterviewQuestionVO iVO:questions){
-				if(!randomInterview.getQuestionHistory().contains(iVO)){
+	private void refreshUnprocessedQuestions(List<InterviewQuestionVO> questions, InterviewVO randomInterview) {
+		if (questions != null && !questions.isEmpty()) {
+			for (InterviewQuestionVO iVO : questions) {
+				if (!randomInterview.getQuestionHistory().contains(iVO)) {
 					randomInterview.getQuestionHistory().add(iVO);
 				}
 			}
@@ -565,14 +578,14 @@ public class InterviewServiceImpl implements InterviewService {
 		System.out.println(sb.toString());
 		return PARTICIPANT_PREFIX + sb.toString();
 	}
-	
+
 	public List<Interview> listAssessmentsForNotes(String[] modules) {
 		return interviewDao.getAssessmentsForNotes(modules);
 	}
 
 	@Override
 	public List<String> getNoteTypes() {
-		
+
 		return interviewDao.getNoteTypes();
 	}
 
@@ -582,5 +595,5 @@ public class InterviewServiceImpl implements InterviewService {
 		List<QuestionVO> questionVOList = questionMapper.convertToQuestionVOList(linksByModule);
 		return questionVOList;
 	}
-	
+
 }

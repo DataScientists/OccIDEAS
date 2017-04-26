@@ -11,11 +11,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.ReadOnlyPaths;
 import org.occideas.security.model.TokenResponse;
@@ -26,7 +25,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 public class ReadOnlyFilter extends GenericFilterBean {
 
-	private static final Logger logger = Logger.getLogger(ReadOnlyFilter.class);
+	private static final Logger logger = LogManager.getLogger(ReadOnlyFilter.class);
 
 	private String extractUserFromToken() {
 		TokenManager tokenManager = new TokenManager();

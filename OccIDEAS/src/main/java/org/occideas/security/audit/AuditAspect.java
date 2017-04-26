@@ -8,7 +8,8 @@ import java.util.LinkedHashMap;
 
 import javax.transaction.Transactional;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -22,13 +23,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @Aspect
 public class AuditAspect {
-	
-	private Logger log = Logger.getLogger(this.getClass()); 
-	
+
+	private Logger log = LogManager.getLogger(this.getClass());
+
 	@Autowired
 	private IAuditDao dao;
 
-	@Before(value="@annotation(auditable)")
+	@Before(value = "@annotation(auditable)")
 	@Transactional
 	public void logTheAuditActivity(JoinPoint aPoint, Auditable auditable) {
 		AuditLog auditLog = new AuditLog();
@@ -38,7 +39,8 @@ public class AuditAspect {
 		String arguments = getArgs(aPoint.getArgs());
 		String[] split = aPoint.getThis().toString().split("\\.");
 		String classNameLast = split[split.length - 1];
-		String methodInvocation =  classNameLast.substring(0, classNameLast.indexOf("@"))+ "-"+aPoint.getSignature().getName();
+		String methodInvocation = classNameLast.substring(0, classNameLast.indexOf("@")) + "-"
+				+ aPoint.getSignature().getName();
 		if (arguments.length() > 0) {
 			auditLog.setArguments(arguments.getBytes());
 		}
@@ -68,11 +70,11 @@ public class AuditAspect {
 			return "";
 		}
 	}
-	
-	private String getRoles(){
-		try{
+
+	private String getRoles() {
+		try {
 			return extractAuthFromToken();
-		}catch(NullPointerException npe){
+		} catch (NullPointerException npe) {
 			log.error("Function getRoles in AuditAspect - No Roles");
 			return "";
 		}
@@ -80,12 +82,12 @@ public class AuditAspect {
 
 	private String extractAuthFromToken() {
 		TokenManager tokenManager = new TokenManager();
-		String token = ((TokenResponse)SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+		String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
 		Collection<GrantedAuthority> auth = tokenManager.parseAuthFromToken(token);
 		StringBuilder sb = new StringBuilder();
 		Iterator<GrantedAuthority> iterator = auth.iterator();
-		while(iterator.hasNext()){
-			LinkedHashMap<String, String> ga = (LinkedHashMap<String, String>)iterator.next();
+		while (iterator.hasNext()) {
+			LinkedHashMap<String, String> ga = (LinkedHashMap<String, String>) iterator.next();
 			sb.append(ga.get("authority"));
 		}
 		return sb.toString();
@@ -93,7 +95,7 @@ public class AuditAspect {
 
 	private String extractUserFromToken() {
 		TokenManager tokenManager = new TokenManager();
-		String token = ((TokenResponse)SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+		String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
 		return tokenManager.parseUsernameFromToken(token);
 	}
 

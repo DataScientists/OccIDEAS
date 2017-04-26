@@ -7,7 +7,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -29,7 +30,6 @@ import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
-import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @Repository
 public class InterviewQuestionDao implements IInterviewQuestionDao {
 
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = LogManager.getLogger(this.getClass());
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -62,10 +62,10 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
 	@Autowired
 	private IModuleDao moduleDao;
-	
+
 	@Autowired
 	private QuestionMapper qMapper;
-	
+
 	private final String UNIQUE_INT_QUESTION_SQL = "select distinct(a.question_id) as question_id,a.id,a.idinterview,"
 			+ "a.type,a.name,a.topNodeId, a.nodeClass,a.parentModuleId,"
 			+ "a.modCount,a.parentAnswerId,a.link, a.deleted,a.isProcessed,"
@@ -134,10 +134,10 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		}
 		return list;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
-	public void preloadActiveIntro(){
+	public void preloadActiveIntro() {
 		SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
 		if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
 			// get intro id
@@ -148,14 +148,14 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 				String moduleId = introModule.getValue();
 				List<Question> qList = moduleDao.getAllLinkingQuestionByModId(Long.valueOf(moduleId));
 				List<QuestionVO> qListVO = qMapper.convertToQuestionVOList(qList);
-				for(QuestionVO qVO:qListVO){
+				for (QuestionVO qVO : qListVO) {
 					ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService
 							.getModuleFilterStudyAgent(Long.valueOf(qVO.getLink()));
 					try {
 						studyAgentUtil.createStudyAgentJson(String.valueOf(qVO.getLink()), moduleFilterStudyAgent);
 					} catch (Exception e) {
 						e.printStackTrace();
-					} 
+					}
 				}
 			}
 		}
@@ -180,20 +180,20 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 						.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
 				try {
 					studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent);
-					if(introModule.getValue().equals(String.valueOf(parentModuleId))){
+					if (introModule.getValue().equals(String.valueOf(parentModuleId))) {
 						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
-					}else{
-						if(moduleFilterStudyAgent ==null){
-							//empty link remove it from queue
+					} else {
+						if (moduleFilterStudyAgent == null) {
+							// empty link remove it from queue
 							iq.setDeleted(1);
 							sessionFactory.getCurrentSession().saveOrUpdate(iq);
-												
-						}else if(moduleFilterStudyAgent instanceof ModuleVO){
-							ModuleVO modVO = (ModuleVO)moduleFilterStudyAgent;
-							loopChildStudyAgentAndQueue(iq, intQuestionSequence,modVO.getChildNodes());												
-						}else if(moduleFilterStudyAgent instanceof FragmentVO){
-							FragmentVO fragVO = (FragmentVO)moduleFilterStudyAgent;
-							loopChildStudyAgentAndQueue(iq, intQuestionSequence,fragVO.getChildNodes());							
+
+						} else if (moduleFilterStudyAgent instanceof ModuleVO) {
+							ModuleVO modVO = (ModuleVO) moduleFilterStudyAgent;
+							loopChildStudyAgentAndQueue(iq, intQuestionSequence, modVO.getChildNodes());
+						} else if (moduleFilterStudyAgent instanceof FragmentVO) {
+							FragmentVO fragVO = (FragmentVO) moduleFilterStudyAgent;
+							loopChildStudyAgentAndQueue(iq, intQuestionSequence, fragVO.getChildNodes());
 						}
 					}
 				} catch (JsonGenerationException e) {
@@ -204,7 +204,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 					e.printStackTrace();
 				}
 			}
-		}else{
+		} else {
 			loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
 		}
 		return iq;
@@ -231,28 +231,30 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 			iqQueue.setDeleted(0);
 			sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
 		}
+	}
+
+	private void loopChildStudyAgentAndQueue(InterviewQuestion iq, int intQuestionSequence,
+			List<QuestionVO> queueQuestions) {
+		Collections.sort(queueQuestions);
+		for (QuestionVO question : queueQuestions) {
+			InterviewQuestion iqQueue = new InterviewQuestion();
+			iqQueue.setIdInterview(iq.getIdInterview());
+			iqQueue.setName(question.getName());
+			iqQueue.setDescription(question.getDescription());
+			iqQueue.setNodeClass(question.getNodeclass());
+			iqQueue.setNumber(question.getNumber());
+			iqQueue.setModCount(iq.getModCount());
+			iqQueue.setLink(question.getLink());
+			iqQueue.setType(question.getType());
+			iqQueue.setParentModuleId(question.getTopNodeId());
+			iqQueue.setQuestionId(question.getIdNode());
+			iqQueue.setTopNodeId(question.getTopNodeId());
+			iqQueue.setIntQuestionSequence(++intQuestionSequence);
+			iqQueue.setDeleted(0);
+			sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
 		}
-		
-		private void loopChildStudyAgentAndQueue(InterviewQuestion iq, int intQuestionSequence, List<QuestionVO> queueQuestions) {
-			Collections.sort(queueQuestions);
-			for (QuestionVO question : queueQuestions) {
-				InterviewQuestion iqQueue = new InterviewQuestion();
-				iqQueue.setIdInterview(iq.getIdInterview());
-				iqQueue.setName(question.getName());
-				iqQueue.setDescription(question.getDescription());
-				iqQueue.setNodeClass(question.getNodeclass());
-				iqQueue.setNumber(question.getNumber());
-				iqQueue.setModCount(iq.getModCount());
-				iqQueue.setLink(question.getLink());
-				iqQueue.setType(question.getType());
-				iqQueue.setParentModuleId(question.getTopNodeId());
-				iqQueue.setQuestionId(question.getIdNode());
-				iqQueue.setTopNodeId(question.getTopNodeId());
-				iqQueue.setIntQuestionSequence(++intQuestionSequence);
-				iqQueue.setDeleted(0);
-				sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
-			}
-		}
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<InterviewQuestion> getAll() {

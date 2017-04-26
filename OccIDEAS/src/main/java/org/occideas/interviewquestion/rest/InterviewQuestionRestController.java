@@ -12,7 +12,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
@@ -24,7 +25,7 @@ import org.springframework.http.MediaType;
 @Path("/interviewquestionanswer")
 public class InterviewQuestionRestController implements BaseRestController<InterviewQuestionVO> {
 
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = LogManager.getLogger(this.getClass());
 
 	@Autowired
 	private InterviewQuestionService service;
@@ -33,9 +34,7 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 
 	@POST
 	@Path(value = "/updateModuleNameForInterviewId")
-	public Response updateModuleNameForInterviewId(
-			@QueryParam("id") long id,
-			@QueryParam("newName") String newName) {
+	public Response updateModuleNameForInterviewId(@QueryParam("id") long id, @QueryParam("newName") String newName) {
 		try {
 			service.updateModuleNameForInterviewId(id, newName);
 		} catch (Throwable e) {
@@ -93,18 +92,16 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 		}
 		return Response.ok(interviewQuestion).build();
 	}
-	
+
 	/**
 	 * Used for edit question popup
 	 */
 	@GET
 	@Path(value = "/getInterviewQuestionByQId")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
-	public Response getInterviewQuestionByQuestionId(
-			@QueryParam("questionId") Long questionId,
-			@QueryParam("interviewId") Long interviewId,
-			@QueryParam("parentId") Long parentQuestionId) {
-		
+	public Response getInterviewQuestionByQuestionId(@QueryParam("questionId") Long questionId,
+			@QueryParam("interviewId") Long interviewId, @QueryParam("parentId") Long parentQuestionId) {
+
 		List<InterviewQuestionVO> list = service.findById(questionId, interviewId);
 		InterviewQuestionVO interviewQuestion = null;
 		for (InterviewQuestionVO iq : list) {
@@ -174,19 +171,19 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@GET
-    @Path(value = "/findQuestionsByNodeId")
-    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public Response findQuestionsByNodeId(@QueryParam("id") Long questionId) {
+	@Path(value = "/findQuestionsByNodeId")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response findQuestionsByNodeId(@QueryParam("id") Long questionId) {
 		List<InterviewQuestionVO> result = null;
-		
-    	try{
-			result = service.findQuestionsByNodeId(questionId);			
-		}catch(Throwable e){
+
+		try {
+			result = service.findQuestionsByNodeId(questionId);
+		} catch (Throwable e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(result).build();
-    }
+	}
 }

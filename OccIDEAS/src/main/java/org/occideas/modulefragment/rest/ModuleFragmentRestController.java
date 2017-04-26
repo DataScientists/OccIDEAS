@@ -10,7 +10,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.modulefragment.service.ModuleFragmentService;
 import org.occideas.vo.ModuleFragmentVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +20,15 @@ import org.springframework.http.MediaType;
 @Path("/modulefragment")
 public class ModuleFragmentRestController {
 
-	private Logger log = Logger.getLogger(this.getClass());
-	
+	private Logger log = LogManager.getLogger(this.getClass());
+
 	@Autowired
 	private ModuleFragmentService service;
 
 	@GET
 	@Path(value = "/getModuleFragmentByModuleId")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
-	public Response getModuleFragmentByModuleId(@QueryParam("id") Long id){
+	public Response getModuleFragmentByModuleId(@QueryParam("id") Long id) {
 		List<ModuleFragmentVO> list = new ArrayList<>();
 		try {
 			list = service.getModuleFragmentByModuleId(id);
@@ -37,5 +38,5 @@ public class ModuleFragmentRestController {
 		}
 		return Response.ok(list).build();
 	}
-	
+
 }

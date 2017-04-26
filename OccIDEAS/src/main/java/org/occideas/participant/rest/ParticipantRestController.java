@@ -35,7 +35,7 @@ import org.springframework.http.MediaType;
 @Path("/participant")
 public class ParticipantRestController implements BaseRestController<ParticipantVO> {
 
-	//private Logger log = Logger.getLogger(this.getClass());
+	//private Logger log = LogManager.getLogger(this.getClass());
 
 	@Autowired
     private ParticipantService service;

@@ -3,7 +3,8 @@ package org.occideas.module.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
@@ -49,8 +50,8 @@ import org.springframework.util.StringUtils;
 @Transactional
 public class ModuleServiceImpl implements ModuleService {
 
-	private Logger log = Logger.getLogger(this.getClass());
-	
+	private Logger log = LogManager.getLogger(this.getClass());
+
 	@Autowired
 	private IModuleDao dao;
 	@Autowired
@@ -79,7 +80,7 @@ public class ModuleServiceImpl implements ModuleService {
 	private SystemPropertyDao sysPropDao;
 
 	@Auditable(actionType = AuditingActionType.GENERIC)
-    @Override
+	@Override
 	public List<ModuleVO> listAll() {
 		return mapper.convertToModuleVOList(dao.getAllActive(), false);
 	}
@@ -101,12 +102,13 @@ public class ModuleServiceImpl implements ModuleService {
 		list.add(moduleVO);
 		return list;
 	}
+
 	@Override
 	public List<ModuleVO> findByIdNoRules(Long id) {
 		Module module = dao.get(id);
 		boolean includeChildNodes = true;
 		boolean includeRules = false;
-		ModuleVO moduleVO = mapper.convertToModuleWithFlagsVO(module,includeChildNodes,includeRules);
+		ModuleVO moduleVO = mapper.convertToModuleWithFlagsVO(module, includeChildNodes, includeRules);
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
 		list.add(moduleVO);
 		return list;
@@ -156,15 +158,15 @@ public class ModuleServiceImpl implements ModuleService {
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
-	
+
 	@Override
-	public NodeRuleHolder copyModule(ModuleCopyVO vo,ModuleReportVO report) {
+	public NodeRuleHolder copyModule(ModuleCopyVO vo, ModuleReportVO report) {
 		ModuleVO copyVO = vo.getVo();
 		Long idNode = dao.generateIdNode() + 1;
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
-		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
+		questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder, report);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
@@ -185,16 +187,16 @@ public class ModuleServiceImpl implements ModuleService {
 			ruleDao.save(ruleMapper.convertToRule(ruleVO));
 		}
 	}
-	
+
 	@Override
-	public ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder,ModuleReportVO reportVO) {
+	public ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO reportVO) {
 		List<AgentVO> missingAgentList = new ArrayList<>();
 		List<RuleVO> missingRuleList = new ArrayList<>();
 		for (RuleVO ruleVO : idNodeHolder.getRuleList()) {
 			Agent agent = agentDao.get(ruleVO.getAgent().getIdAgent());
-			if(agent !=null){
-			    ruleDao.save(ruleMapper.convertToRule(ruleVO));
-			}else{
+			if (agent != null) {
+				ruleDao.save(ruleMapper.convertToRule(ruleVO));
+			} else {
 				missingAgentList.add(ruleVO.getAgent());
 				missingRuleList.add(ruleVO);
 			}
@@ -202,7 +204,7 @@ public class ModuleServiceImpl implements ModuleService {
 		reportVO.setMissingAgentsList(missingAgentList);
 		return reportVO;
 	}
-	
+
 	@Override
 	public void addNodeRules(NodeRuleHolder idNodeHolder) {
 		List<NodeRuleVO> list = idNodeHolder.getNodeRuleList();
@@ -216,13 +218,13 @@ public class ModuleServiceImpl implements ModuleService {
 		List<NodeRuleVO> list = idNodeHolder.getNodeRuleList();
 		for (NodeRuleVO vo : list) {
 			boolean isRuleMissing = false;
-			for(RuleVO ruleVO:report.getMissingRuleAgentList()){
-				if(vo.getIdRule() == ruleVO.getIdRule()){
+			for (RuleVO ruleVO : report.getMissingRuleAgentList()) {
+				if (vo.getIdRule() == ruleVO.getIdRule()) {
 					isRuleMissing = true;
 					break;
 				}
 			}
-			if(!isRuleMissing){
+			if (!isRuleMissing) {
 				nodeRuleDao.save(nodeRuleMapper.convertToNodeRule(vo));
 			}
 		}
@@ -231,71 +233,73 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public NodeRuleHolder copyModuleAutoGenerateModule(ModuleCopyVO copyVo, ModuleReportVO report) {
 		ModuleVO vo = copyVo.getVo();
-		Long idNode = dao.generateIdNode()+1;
+		Long idNode = dao.generateIdNode() + 1;
 		vo.setIdNode(idNode);
 		vo.setName(copyVo.getName());
 		vo.setAnchorId(idNode);
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
-		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, vo.getChildNodes(), idNodeRuleHolder,report);
-		createMissingModule(vo,copyVo,idNodeRuleHolder,report);
+		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, vo.getChildNodes(), idNodeRuleHolder, report);
+		createMissingModule(vo, copyVo, idNodeRuleHolder, report);
 		dao.saveCopy(mapper.convertToModule(vo, true));
 		return idNodeRuleHolder;
 	}
 
 	@Override
-	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo,ModuleReportVO report) {
+	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo, ModuleReportVO report) {
 		ModuleVO copyVO = vo.getVo();
-		Long idNode = dao.generateIdNode()+1;
+		Long idNode = dao.generateIdNode() + 1;
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
 		copyVO.setAnchorId(idNode);
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);
-		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,report);
-		createMissingFragments(copyVO,idNodeRuleHolder,report);
+		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder,
+				report);
+		createMissingFragments(copyVO, idNodeRuleHolder, report);
 		dao.saveCopy(mapper.convertToModule(copyVO, true));
 		return idNodeRuleHolder;
 	}
-	
+
 	@Override
-	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo,ModuleReportVO report,NodeRuleHolder idNodeRuleHolder) {
-		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNodeRuleHolder.getLastIdNode(), vo.getVo().getChildNodes(), idNodeRuleHolder,report);
-		createMissingFragments(vo.getVo(),idNodeRuleHolder,report);
+	public NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo, ModuleReportVO report,
+			NodeRuleHolder idNodeRuleHolder) {
+		questionCopier.populateQuestionsIncludeLinksWithIdNode(idNodeRuleHolder.getLastIdNode(),
+				vo.getVo().getChildNodes(), idNodeRuleHolder, report);
+		createMissingFragments(vo.getVo(), idNodeRuleHolder, report);
 		dao.saveCopy(mapper.convertToModule(vo.getVo(), true));
 		return idNodeRuleHolder;
 	}
 
-	private void createMissingFragments(ModuleVO copyVO, NodeRuleHolder idNodeRuleHolder,ModuleReportVO report) {
+	private void createMissingFragments(ModuleVO copyVO, NodeRuleHolder idNodeRuleHolder, ModuleReportVO report) {
 		List<FragmentVO> fragments = copyVO.getFragments();
-		for(FragmentVO vo:fragments){
-			//check if fragment exist
+		for (FragmentVO vo : fragments) {
+			// check if fragment exist
 			List<Fragment> list = fragmentDao.findByName(vo.getName());
-			if(list.isEmpty()){
+			if (list.isEmpty()) {
 				// no fragment lets create one
-				generateIdNodeForFragments(vo,idNodeRuleHolder);
+				generateIdNodeForFragments(vo, idNodeRuleHolder);
 				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
 				report.getFragmentVODecoratorList().add(new FragmentVODecorator(vo, true));
-			}else if(list.size() > 1){
+			} else if (list.size() > 1) {
 				// found name more than one add warning
 				log.error("Error on creating missing fragments, "
-						+ "found more than one possible match for fragment name "+
-						vo.getName());
-			}else{
+						+ "found more than one possible match for fragment name " + vo.getName());
+			} else {
 				// use existing fragment
 				report.getFragmentVODecoratorList().add(new FragmentVODecorator(vo, false));
 			}
 		}
-		
+
 	}
-	
-	public void createMissingModule(ModuleVO moduleVO,ModuleCopyVO copyVO,
-				NodeRuleHolder idNodeRuleHolder,ModuleReportVO report) {
+
+	public void createMissingModule(ModuleVO moduleVO, ModuleCopyVO copyVO, NodeRuleHolder idNodeRuleHolder,
+			ModuleReportVO report) {
 		List<ModuleVO> modules = moduleVO.getModules();
-		for(ModuleVO vo:modules){
-			//check if module exist
+		for (ModuleVO vo : modules) {
+			// check if module exist
 			List<Module> list = dao.findByName(vo.getName());
-			if(list.isEmpty()){
+			if (list.isEmpty()) {
 				ModuleVO newModuleVO = vo;
-				Long idNode = idNodeRuleHolder.getLastIdNode()+1;
+				Long idNode = idNodeRuleHolder.getLastIdNode() + 1;
 				idNodeRuleHolder.setLastIdNode(idNode);
 				idNodeRuleHolder.setTopNodeId(idNode);
 				newModuleVO.setIdNode(idNode);
@@ -306,20 +310,20 @@ public class ModuleServiceImpl implements ModuleService {
 				newModuleCopyVO.setIncludeRules(true);
 				newModuleCopyVO.setName(vo.getName());
 				newModuleVO.setName(newModuleCopyVO.getName());
-				report.getModuleVODecoratorList().add(new ModuleVODecorator(newModuleVO,true));
-				copyModuleAutoGenerateFragments(newModuleCopyVO,report,idNodeRuleHolder);
-//				fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo, true));
-			}else if(list.size() > 1){
+				report.getModuleVODecoratorList().add(new ModuleVODecorator(newModuleVO, true));
+				copyModuleAutoGenerateFragments(newModuleCopyVO, report, idNodeRuleHolder);
+				// fragmentDao.saveOrUpdate(fragmentMapper.convertToFragment(vo,
+				// true));
+			} else if (list.size() > 1) {
 				// found name more than one add warning
-				log.error("Error on creating missing module, "
-						+ "found more than one possible match for module name "+
-						vo.getName());
-			}else{
+				log.error("Error on creating missing module, " + "found more than one possible match for module name "
+						+ vo.getName());
+			} else {
 				// use existing module
-				report.getModuleVODecoratorList().add(new ModuleVODecorator(vo,false));
+				report.getModuleVODecoratorList().add(new ModuleVODecorator(vo, false));
 			}
 		}
-		
+
 	}
 
 	private void generateIdNodeForFragments(FragmentVO vo, NodeRuleHolder idNodeRuleHolder) {
@@ -333,43 +337,44 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public void updateMissingLinks(NodeVO nodeVO) {
 		List<QuestionVO> qVoList = new ArrayList<>();
-		
+
 		ModuleVO moduleVO = new ModuleVO();
-		if(nodeVO instanceof ModuleVO){
-			moduleVO = (ModuleVO)nodeVO;
+		if (nodeVO instanceof ModuleVO) {
+			moduleVO = (ModuleVO) nodeVO;
 			qVoList = moduleVO.getChildNodes();
 		}
 		FragmentVO fragmentVO = new FragmentVO();
-		if(nodeVO instanceof FragmentVO){
-			fragmentVO = (FragmentVO)nodeVO;
+		if (nodeVO instanceof FragmentVO) {
+			fragmentVO = (FragmentVO) nodeVO;
 			qVoList = fragmentVO.getChildNodes();
 		}
 		PossibleAnswerVO answerVO = new PossibleAnswerVO();
-		if(nodeVO instanceof PossibleAnswerVO){
-			answerVO = (PossibleAnswerVO)nodeVO;
+		if (nodeVO instanceof PossibleAnswerVO) {
+			answerVO = (PossibleAnswerVO) nodeVO;
 			qVoList = answerVO.getChildNodes();
 		}
 
-		//lets check our module questions
-		for(QuestionVO qVO : qVoList){
-			if("Q_linkedajsm".equals(qVO.getType())){
-				List<FragmentVO> list = fragmentMapper.convertToFragmentVOList(fragmentDao.findByName(qVO.getName()), true);
-				if(!list.isEmpty()){
+		// lets check our module questions
+		for (QuestionVO qVO : qVoList) {
+			if ("Q_linkedajsm".equals(qVO.getType())) {
+				List<FragmentVO> list = fragmentMapper.convertToFragmentVOList(fragmentDao.findByName(qVO.getName()),
+						true);
+				if (!list.isEmpty()) {
 					FragmentVO fragment = list.get(0);
 					qVO.setLink(fragment.getIdNode());
 					questionService.updateWithIndependentTransaction(qVO);
 				}
 			}
-			if("Q_linkedmodule".equals(qVO.getType())){
+			if ("Q_linkedmodule".equals(qVO.getType())) {
 				List<ModuleVO> list = mapper.convertToModuleVOList(dao.findByName(qVO.getName()), true);
-				if(!list.isEmpty()){
+				if (!list.isEmpty()) {
 					ModuleVO module = list.get(0);
 					qVO.setLink(module.getIdNode());
 					questionService.updateWithIndependentTransaction(qVO);
 				}
 			}
-			if(!qVO.getChildNodes().isEmpty()){
-				for(PossibleAnswerVO ansVo:qVO.getChildNodes()){
+			if (!qVO.getChildNodes().isEmpty()) {
+				for (PossibleAnswerVO ansVo : qVO.getChildNodes()) {
 					updateMissingLinks(ansVo);
 				}
 			}
@@ -380,11 +385,11 @@ public class ModuleServiceImpl implements ModuleService {
 	public void setActiveIntroModule(ModuleVO vo) {
 		SystemPropertyVO activeIntro = sysPropService.getByName(Constant.STUDY_INTRO);
 		Long id = null;
-		if(activeIntro!=null){
+		if (activeIntro != null) {
 			id = activeIntro.getId();
 		}
 		SystemPropertyVO sysPropVO = new SystemPropertyVO();
-		if(id != null){
+		if (id != null) {
 			sysPropVO.setId(id);
 		}
 		sysPropVO.setName(Constant.STUDY_INTRO);
@@ -397,28 +402,28 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public NodeVO getModuleFilterStudyAgent(Long id) {
 		Node node = dao.getNodeById(id);
-		if("M".equals(node.getNodeclass())){
-			ModuleVO moduleVO = mapper.convertToModuleVO((Module)node, true);
+		if ("M".equals(node.getNodeclass())) {
+			ModuleVO moduleVO = mapper.convertToModuleVO((Module) node, true);
 			ModuleVO newModuleVO = sysPropService.filterModulesNodesWithStudyAgents(moduleVO);
 			return newModuleVO;
-		}else if("F".equals(node.getNodeclass())){
-			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment)node, true);
-			FragmentVO newFragmentVO =  sysPropService.filterFragmentNodesWithStudyAgents(fragmentVO);
+		} else if ("F".equals(node.getNodeclass())) {
+			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment) node, true);
+			FragmentVO newFragmentVO = sysPropService.filterFragmentNodesWithStudyAgents(fragmentVO);
 			return newFragmentVO;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public NodeVO getModuleFilterAgent(Long id,Long idAgent) {
+	public NodeVO getModuleFilterAgent(Long id, Long idAgent) {
 		Node node = dao.getNodeById(id);
-		if("M".equals(node.getNodeclass())){
-			ModuleVO moduleVO = mapper.convertToModuleVO((Module)node, true);
-			ModuleVO newModuleVO = sysPropService.filterModulesNodesWithAgents(moduleVO,idAgent);
+		if ("M".equals(node.getNodeclass())) {
+			ModuleVO moduleVO = mapper.convertToModuleVO((Module) node, true);
+			ModuleVO newModuleVO = sysPropService.filterModulesNodesWithAgents(moduleVO, idAgent);
 			return newModuleVO;
-		}else if("F".equals(node.getNodeclass())){
-			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment)node, true);
-			FragmentVO newFragmentVO =  sysPropService.filterFragmentNodesWithAgents(fragmentVO,idAgent);
+		} else if ("F".equals(node.getNodeclass())) {
+			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment) node, true);
+			FragmentVO newFragmentVO = sysPropService.filterFragmentNodesWithAgents(fragmentVO, idAgent);
 			return newFragmentVO;
 		}
 		return null;
@@ -432,11 +437,11 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public NodeVO getNodeNameById(Long idNode) {
 		Node node = dao.getNodeById(idNode);
-		if("M".equals(node.getNodeclass())){
-			ModuleVO moduleVO = mapper.convertToModuleVO((Module)node, false);
+		if ("M".equals(node.getNodeclass())) {
+			ModuleVO moduleVO = mapper.convertToModuleVO((Module) node, false);
 			return moduleVO;
-		}else if("F".equals(node.getNodeclass())){
-			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment)node, false);
+		} else if ("F".equals(node.getNodeclass())) {
+			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment) node, false);
 			return fragmentVO;
 		}
 		return null;
@@ -444,7 +449,7 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(Long theId) {
-		//dao.getPosAnsWithStudyAgentsByIdMod(theId);
+		// dao.getPosAnsWithStudyAgentsByIdMod(theId);
 		return sysPropDao.getPosAnsWithStudyAgentsByIdMod(theId);
 	}
 }

@@ -13,7 +13,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;import org.apache.logging.log4j.Logger;
 import org.occideas.security.model.TokenResponse;
 import org.occideas.utilities.PropUtil;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +32,7 @@ public class TokenManager {
 	private static final String OBJECT_SPLITTER = "@@";
 	private static final String SECRET_KEY = "secret.key";
 
-	private Logger logger = Logger.getLogger(TokenManager.class);
+	private Logger logger = LogManager.getLogger(TokenManager.class);
 
 	private final Mac hmac;
 

@@ -3,16 +3,15 @@ package org.occideas.interviewanswer.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.vo.InterviewAnswerVO;
@@ -22,7 +21,7 @@ import org.springframework.http.MediaType;
 @Path("/interviewanswer")
 public class InterviewAnswerRestController implements BaseRestController<InterviewAnswerVO> {
 
-	private Logger log = Logger.getLogger(this.getClass());
+	private Logger log = LogManager.getLogger(this.getClass());
 
 	@Autowired
 	private InterviewAnswerService service;
@@ -55,7 +54,6 @@ public class InterviewAnswerRestController implements BaseRestController<Intervi
 		return Response.ok(list).build();
 	}
 
-	
 	@Override
 	public Response get(Long id) {
 		// TODO Auto-generated method stub
@@ -68,7 +66,6 @@ public class InterviewAnswerRestController implements BaseRestController<Intervi
 		return null;
 	}
 
-
 	@Override
 	public Response delete(InterviewAnswerVO json) {
 		// TODO Auto-generated method stub
@@ -80,5 +77,5 @@ public class InterviewAnswerRestController implements BaseRestController<Intervi
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
