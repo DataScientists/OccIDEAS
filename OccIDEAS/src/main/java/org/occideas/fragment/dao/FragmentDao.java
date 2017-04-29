@@ -70,12 +70,7 @@ public class FragmentDao {
     @SuppressWarnings("unchecked")
 	public List<Fragment> getAll() {
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(Fragment.class)
-    		  						.setProjection(Projections.projectionList()
-    		  						.add(Projections.property("idNode"),"idNode")
-    		  						.add(Projections.property("name"),"name")
-    		  						.add(Projections.property("description"),"description"))
-    		  						.setResultTransformer(Transformers.aliasToBean(Fragment.class));
+      final Criteria crit = session.createCriteria(Fragment.class);
       return crit.list();
     }
     @SuppressWarnings("unchecked")

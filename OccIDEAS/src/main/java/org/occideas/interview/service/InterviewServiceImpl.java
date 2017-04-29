@@ -596,4 +596,9 @@ public class InterviewServiceImpl implements InterviewService {
 		return questionVOList;
 	}
 
+	@Override
+	public void preloadAllModules() {
+		interviewQuestionDao.preloadAllModules();
+	}
+
 }

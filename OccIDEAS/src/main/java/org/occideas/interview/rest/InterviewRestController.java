@@ -226,8 +226,22 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response preloadActiveIntro() {
 		try{
-			//service.preloadActiveIntro();
-			this.testStudySpecificModules();
+			service.preloadActiveIntro();
+//			this.testStudySpecificModules();
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok().build();
+    }
+    
+    @GET
+    @Path(value = "/preloadAllModules")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response preloadAllModules() {
+		try{
+			service.preloadAllModules();
+//			this.testStudySpecificModules();
 		}catch(Throwable e){
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -242,16 +256,13 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     		//Long theId = Long.valueOf("7424");
     		NodeVO moduleFilterStudyAgent = (NodeVO) moduleService.getModuleFilterStudyAgent(theId);
     		try {
-    			studyAgentUtil.createStudyAgentJson(String.valueOf(theId), moduleFilterStudyAgent);
+    			studyAgentUtil.createStudyAgentJson(String.valueOf(theId), moduleFilterStudyAgent,false);
     			List<PossibleAnswer> posAnsWithStudyAgentsList = moduleService.getPosAnsWithStudyAgentsByIdMod(theId);
     			for(PossibleAnswer pa:posAnsWithStudyAgentsList){
     				sysPropService.populateNodeidList(pa.getIdNode());
     				
     			}
     			sysPropService.testNodeidList(theId);
-    			
-    			
-    			
     		} catch (IOException e) {
     			// TODO Auto-generated catch block
     			e.printStackTrace();

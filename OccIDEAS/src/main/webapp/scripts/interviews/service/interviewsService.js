@@ -15,6 +15,16 @@
 			return request.then(handleSuccess, handleError);
 		}
 		
+		function preloadAllModules(data) {
+			var restUrl = 'web/rest/interview/preloadAllModules';
+
+			var request = $http({
+				method : 'GET',
+				url : restUrl
+			})
+			return request.then(handleSuccess, handleError);
+		}
+		
 		function createRandomInterviews(data) {
 			var restUrl = 'web/rest/interview/createRandomInterviews';
 
@@ -621,7 +631,8 @@
 			createRandomInterviews:createRandomInterviews,
 			exportNotesCSV:exportNotesCSV,
 			getLinksByModule:getLinksByModule,
-			preloadActiveIntro:preloadActiveIntro
+			preloadActiveIntro:preloadActiveIntro,
+			preloadAllModules:preloadAllModules
 		};
 	}
 })();

@@ -18,8 +18,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
+import org.occideas.entity.Fragment;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.Module;
 import org.occideas.entity.Question;
+import org.occideas.fragment.dao.FragmentDao;
+import org.occideas.mapper.FragmentMapper;
+import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
@@ -62,9 +67,18 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
 	@Autowired
 	private IModuleDao moduleDao;
+	
+	@Autowired
+	private FragmentDao fragmentDao;
 
 	@Autowired
 	private QuestionMapper qMapper;
+	
+	@Autowired
+	private ModuleMapper moduleMapper;
+	
+	@Autowired
+	private FragmentMapper fragmentMapper;
 
 	private final String UNIQUE_INT_QUESTION_SQL = "select distinct(a.question_id) as question_id,a.id,a.idinterview,"
 			+ "a.type,a.name,a.topNodeId, a.nodeClass,a.parentModuleId,"
@@ -135,6 +149,31 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		return list;
 	}
 
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void preloadAllModules() {
+		List<Module> modules = moduleDao.getAll(false);
+		List<ModuleVO> voList =  moduleMapper.convertToModuleVOList(modules, false);
+		for(ModuleVO moduleVO:voList){
+			try {
+				studyAgentUtil.createStudyAgentJson(String.valueOf(moduleVO.getIdNode()),moduleVO,false);
+			} catch (Exception e) {
+				log.error("Error creating study agent module json for "
+						+moduleVO.getName()+"-"+moduleVO.getIdNode(),e);
+			} 
+		}
+		List<Fragment> fragments = fragmentDao.getAll();
+		List<FragmentVO> fragmentVOList = fragmentMapper.convertToFragmentVOList(fragments, false);
+		for(FragmentVO fragmentVO:fragmentVOList){
+			try {
+				studyAgentUtil.createStudyAgentJson(String.valueOf(fragmentVO.getIdNode()),fragmentVO,false);
+			} catch (Exception e) {
+				log.error("Error creating study agent fragment json for "
+						+fragmentVO.getName()+"-"+fragmentVO.getIdNode(),e);
+			} 
+		}
+	}
+	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public void preloadActiveIntro() {
@@ -152,9 +191,10 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 					ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService
 							.getModuleFilterStudyAgent(Long.valueOf(qVO.getLink()));
 					try {
-						studyAgentUtil.createStudyAgentJson(String.valueOf(qVO.getLink()), moduleFilterStudyAgent);
+						studyAgentUtil.createStudyAgentJson(String.valueOf(qVO.getLink()), moduleFilterStudyAgent,false);
 					} catch (Exception e) {
-						e.printStackTrace();
+						log.error("Error creating study agent module json for "
+									+qVO.getName()+"-"+qVO.getLink(),e);
 					}
 				}
 			}
@@ -179,7 +219,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 				NodeVO moduleFilterStudyAgent = (NodeVO) moduleService
 						.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
 				try {
-					studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent);
+					studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent,false);
 					if (introModule.getValue().equals(String.valueOf(parentModuleId))) {
 						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
 					} else {
@@ -196,13 +236,9 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 							loopChildStudyAgentAndQueue(iq, intQuestionSequence, fragVO.getChildNodes());
 						}
 					}
-				} catch (JsonGenerationException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				} catch (Exception e) {
+					log.error("Error on saveInterviewLinkAndQueueQuestions ",e);
+				} 
 			}
 		} else {
 			loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
@@ -363,4 +399,5 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
 		return (result != null) ? ((BigInteger) result).longValue() : 0l;
 	}
+
 }

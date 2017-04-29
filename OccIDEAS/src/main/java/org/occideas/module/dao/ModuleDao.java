@@ -67,15 +67,15 @@ public class ModuleDao implements IModuleDao{
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(Module.class);
       
-      if(!isIncludeChild){
-    	  crit.setProjection(Projections.projectionList()
-			.add(Projections.property("idNode"),"idNode")
-			.add(Projections.property("name"),"name")
-			.add(Projections.property("description"),"description"));
-      
-      }    		
+//      if(!isIncludeChild){
+//    	  crit.setProjection(Projections.projectionList()
+//			.add(Projections.property("idNode"),"idNode")
+//			.add(Projections.property("name"),"name")
+//			.add(Projections.property("description"),"description"));
+//      
+//      }    		
       crit.add(Restrictions.eq("deleted", 0));
-      crit.addOrder(Order.asc("name"));
+//      crit.addOrder(Order.asc("name"));
       
       return crit.list();
     }

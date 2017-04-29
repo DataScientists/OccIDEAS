@@ -67,4 +67,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	void preloadActiveIntro();
 
+	void preloadAllModules();
+
 }

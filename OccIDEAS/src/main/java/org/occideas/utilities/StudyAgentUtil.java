@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
@@ -22,20 +24,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class StudyAgentUtil {
 
+	private Logger log = LogManager.getLogger(this.getClass());
+	
 	@Autowired
 	ServletContext context;
 
 	public ModuleVO getStudyAgentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		String path = context.getRealPath("");
-		ModuleVO modVO = mapper.readValue(new File(path+"/"+idNode + ".json"), ModuleVO.class);
+		String path = System.getProperty("user.home");
+		ModuleVO modVO = mapper.readValue(new File(path+"/modules/"+idNode + ".json"), ModuleVO.class);
 		return modVO;
 	}
 
 	public boolean isStudyAgentJsonExist(Long idNode)
 			throws JsonGenerationException, JsonMappingException, IOException {
-		String path = context.getRealPath("");
-		File file = new File(path+"/"+idNode + ".json");
+		String path = System.getProperty("user.home");
+		File file = new File(path+"/modules/"+idNode + ".json");
 		return file.exists();
 	}
 
@@ -46,13 +50,23 @@ public class StudyAgentUtil {
 		return jsonInString;
 	}
 
-	public void createStudyAgentJson(String idNode, NodeVO vo)
+	public void createStudyAgentJson(String idNode, NodeVO vo,boolean override)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		String path = context.getRealPath("");
-		mapper.writeValue(new File(path+"/"+idNode + ".json"), vo);
+		String path = System.getProperty("user.home");
+		String filePath = path+"/modules/"+idNode + ".json";
+		new File(path+"/modules/").mkdir();
+		File expectedFile = new File(filePath);
+		if(expectedFile.exists() && !override){
+			log.info("expected file - "+filePath + " already exist.");
+			return;
+		}else{
+		log.info("[Start] creating file - "+filePath);
+		mapper.writeValue(expectedFile, vo);
+		log.info("[End] creating file - "+filePath);
+		}
 	}
-
+	
 	public NodeVO searchNode(NodeVO nodeVO, Long idNode)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		NodeVO result = null;
@@ -132,7 +146,7 @@ public class StudyAgentUtil {
 		try {
 			// NodeVO node = jsonUtil.searchNode(modVO, 123123L);
 			// System.out.println(node.getName());
-			jsonUtil.createStudyAgentJson("44161", new ModuleVO());
+			jsonUtil.createStudyAgentJson("44161", new ModuleVO(),true);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
