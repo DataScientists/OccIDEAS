@@ -216,13 +216,39 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 				log.error("no intro module set");
 				return null;
 			} else {
-				NodeVO moduleFilterStudyAgent = (NodeVO) moduleService
-						.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
 				try {
-					studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent,false);
+					
 					if (introModule.getValue().equals(String.valueOf(parentModuleId))) {
 						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
 					} else {
+						boolean filterAndCreateJson = false;
+						
+						
+						try {
+							if(!studyAgentUtil.doesStudyAgentJsonExist(String.valueOf(parentModuleId))){
+								filterAndCreateJson = true;
+							}
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						NodeVO moduleFilterStudyAgent = null;
+						NodeVO determineType = moduleService.getNodeNameById(parentModuleId);
+						
+						if(filterAndCreateJson){
+							moduleFilterStudyAgent = (NodeVO) moduleService
+									.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
+							
+							studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent,false);
+						}else{
+							if (determineType instanceof ModuleVO) {
+								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentJson(String.valueOf(parentModuleId));
+							} else if (determineType instanceof FragmentVO) {
+								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentFragmentJson(String.valueOf(parentModuleId));
+							}
+							
+						}
+						
 						if (moduleFilterStudyAgent == null) {
 							// empty link remove it from queue
 							iq.setDeleted(1);

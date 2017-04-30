@@ -35,6 +35,12 @@ public class StudyAgentUtil {
 		ModuleVO modVO = mapper.readValue(new File(path+"/modules/"+idNode + ".json"), ModuleVO.class);
 		return modVO;
 	}
+	public FragmentVO getStudyAgentFragmentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		String path = System.getProperty("user.home");
+		FragmentVO modVO = mapper.readValue(new File(path+"/modules/"+idNode + ".json"), FragmentVO.class);
+		return modVO;
+	}
 
 	public boolean isStudyAgentJsonExist(Long idNode)
 			throws JsonGenerationException, JsonMappingException, IOException {
@@ -64,6 +70,19 @@ public class StudyAgentUtil {
 		log.info("[Start] creating file - "+filePath);
 		mapper.writeValue(expectedFile, vo);
 		log.info("[End] creating file - "+filePath);
+		}
+	}
+	public boolean doesStudyAgentJsonExist(String idNode)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		String path = System.getProperty("user.home");
+		String filePath = path+"/modules/"+idNode + ".json";
+		new File(path+"/modules/").mkdir();
+		File expectedFile = new File(filePath);
+		if(expectedFile.exists()){
+			log.info("expected file - "+filePath + " already exist.");
+			return true;
+		}else{
+			return false;
 		}
 	}
 	
