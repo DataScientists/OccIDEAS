@@ -235,13 +235,13 @@ public class AssessmentRestController {
 				writer.writeNext(answerList.toArray(new String[answerList.size()]));
 				writer.close();
 				iCount++;
-				if (iCount > 200) {
-					updateProgress(uniqueInterviews.size(), reportHistoryVO, uniqueInterviews.size(), elapsedTime,
-							msPerInterview);
-					updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
+	//			if (iCount > 200) {
+	//				updateProgress(uniqueInterviews.size(), reportHistoryVO, uniqueInterviews.size(), elapsedTime,
+	//						msPerInterview);
+	//				updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
 
-					break;
-				}
+	//				break;
+	//			}
 				System.out.println(iCount);
 			}
 			File folder = new File(tempFolder);
