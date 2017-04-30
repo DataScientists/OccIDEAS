@@ -134,7 +134,8 @@
 					+ idNode;
 			var request = $http({
 				method : 'GET',
-				url : restURL
+				url : restURL,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -151,7 +152,8 @@
 			var restURL = 'web/rest/module/getinterviewmodule?id=' + idNode;
 			var request = $http({
 				method : 'GET',
-				url : restURL
+				url : restURL,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -159,7 +161,8 @@
 			var restURL = 'web/rest/fragment/getinterviewfragment?id=' + idNode;
 			var request = $http({
 				method : 'GET',
-				url : restURL
+				url : restURL,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -170,7 +173,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -314,7 +318,8 @@
 					+ interviewId;
 			var request = $http({
 				method : 'GET',
-				url : url
+				url : url,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -323,7 +328,8 @@
 					+ interviewId;
 			var request = $http({
 				method : 'GET',
-				url : url
+				url : url,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -366,7 +372,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -375,7 +382,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -385,7 +393,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -394,7 +403,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -403,7 +413,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -428,7 +439,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -438,7 +450,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -448,7 +461,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restURL,
-				data : data
+				data : data,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -458,7 +472,8 @@
 					+ interviewId;
 			var request = $http({
 				method : 'GET',
-				url : restURL
+				url : restURL,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -467,7 +482,8 @@
 					+ interviewQuestionId;
 			var request = $http({
 				method : 'GET',
-				url : restURL
+				url : restURL,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -479,7 +495,8 @@
 			
 			var request = $http({
 				method : 'GET',
-				url : restURL
+				url : restURL,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -519,7 +536,8 @@
 			
 			var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restUrl,
+				  ignoreLoadingBar: true
 				})
 			return request.then(handleSuccess,handleError);
 		}		
@@ -542,7 +560,8 @@
 					
 			var request = $http({
 				method : 'GET',
-				url : restUrl
+				url : restUrl,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -553,7 +572,8 @@
 			var request = $http({
 				method : 'POST',
 				url : restUrl,
-				data : fragment
+				data : fragment,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}
@@ -564,7 +584,8 @@
 
 			var request = $http({
 				method : 'GET',
-				url : restUrl
+				url : restUrl,
+				ignoreLoadingBar: true
 			})
 			return request.then(handleSuccess, handleError);
 		}

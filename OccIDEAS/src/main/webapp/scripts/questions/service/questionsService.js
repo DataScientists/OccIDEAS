@@ -37,7 +37,8 @@
 			
 			var request =  $http({
 				  method: 'GET',
-				  url: restUrl
+				  url: restUrl,
+				  ignoreLoadingBar: true
 				})
 			return request.then(handleSuccess,handleError);
 		}
