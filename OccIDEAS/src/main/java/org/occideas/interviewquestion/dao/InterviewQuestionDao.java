@@ -156,7 +156,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		List<ModuleVO> voList =  moduleMapper.convertToModuleVOList(modules, false);
 		for(ModuleVO moduleVO:voList){
 			try {
-				studyAgentUtil.createStudyAgentJson(String.valueOf(moduleVO.getIdNode()),moduleVO,false);
+				studyAgentUtil.createStudyAgentJson(String.valueOf(moduleVO.getIdNode()),moduleVO,true);
 			} catch (Exception e) {
 				log.error("Error creating study agent module json for "
 						+moduleVO.getName()+"-"+moduleVO.getIdNode(),e);
@@ -166,7 +166,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		List<FragmentVO> fragmentVOList = fragmentMapper.convertToFragmentVOList(fragments, false);
 		for(FragmentVO fragmentVO:fragmentVOList){
 			try {
-				studyAgentUtil.createStudyAgentJson(String.valueOf(fragmentVO.getIdNode()),fragmentVO,false);
+				studyAgentUtil.createStudyAgentJson(String.valueOf(fragmentVO.getIdNode()),fragmentVO,true);
 			} catch (Exception e) {
 				log.error("Error creating study agent fragment json for "
 						+fragmentVO.getName()+"-"+fragmentVO.getIdNode(),e);
@@ -191,7 +191,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 					ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService
 							.getModuleFilterStudyAgent(Long.valueOf(qVO.getLink()));
 					try {
-						studyAgentUtil.createStudyAgentJson(String.valueOf(qVO.getLink()), moduleFilterStudyAgent,false);
+						studyAgentUtil.createStudyAgentJson(String.valueOf(qVO.getLink()), moduleFilterStudyAgent,true);
 					} catch (Exception e) {
 						log.error("Error creating study agent module json for "
 									+qVO.getName()+"-"+qVO.getLink(),e);
