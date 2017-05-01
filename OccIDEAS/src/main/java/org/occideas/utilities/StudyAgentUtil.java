@@ -8,11 +8,15 @@ import javax.servlet.ServletContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.entity.Constant;
+import org.occideas.module.service.ModuleService;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +32,11 @@ public class StudyAgentUtil {
 	
 	@Autowired
 	ServletContext context;
+	
+	@Autowired
+	private SystemPropertyService systemPropertyService;
+	@Autowired
+	private ModuleService moduleService;
 
 	public ModuleVO getStudyAgentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
@@ -176,6 +185,18 @@ public class StudyAgentUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public void createStudyAgentForUpdatedNode(long idNode, String name) {
+			SystemPropertyVO autoCreateJson = systemPropertyService.getByName(Constant.AUTO_CREATE_STUDY_AGENT_JSON);
+			if (autoCreateJson != null && "true".equals(autoCreateJson.getValue().toLowerCase().trim())) {
+				ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService.getModuleFilterStudyAgent(idNode);
+				try {
+					createStudyAgentJson(String.valueOf(idNode), moduleFilterStudyAgent,true);
+				} catch (Exception e) {
+					log.error("Error creating study agent module json for "
+								+name+"-"+idNode,e);
+				}
+			}
 	}
 
 }

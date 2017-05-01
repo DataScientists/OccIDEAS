@@ -27,6 +27,7 @@ import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.FragmentVODecorator;
@@ -78,6 +79,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private SystemPropertyService sysPropService;
 	@Autowired
 	private SystemPropertyDao sysPropDao;
+	@Autowired
+	private StudyAgentUtil studyAgentUtil;
 
 	@Auditable(actionType = AuditingActionType.GENERIC)
 	@Override
@@ -124,6 +127,7 @@ public class ModuleServiceImpl implements ModuleService {
 	public void update(ModuleVO module) {
 		generateIdIfNotExist(module);
 		dao.saveOrUpdate(mapper.convertToModule(module, true));
+		studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(),module.getName());
 	}
 
 	@Override

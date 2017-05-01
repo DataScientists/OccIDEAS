@@ -15,6 +15,7 @@ import org.occideas.question.dao.QuestionDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
@@ -44,6 +45,8 @@ public class QuestionServiceImpl implements QuestionService {
     
     @Autowired
     private ModuleMapper modMapper;
+    @Autowired
+    private StudyAgentUtil studyAgentUtil;
     
     @Override
     public List<QuestionVO> listAll() {
@@ -78,6 +81,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void update(QuestionVO o) {
         dao.saveOrUpdate(mapper.convertToQuestion(o));
+        studyAgentUtil.createStudyAgentForUpdatedNode(o.getTopNodeId(),o.getName());
     }
 
     @Auditable(actionType = AuditingActionType.DEL_QUESTION)
