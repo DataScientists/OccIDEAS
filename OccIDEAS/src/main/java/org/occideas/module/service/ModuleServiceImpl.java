@@ -127,7 +127,6 @@ public class ModuleServiceImpl implements ModuleService {
 	public void update(ModuleVO module) {
 		generateIdIfNotExist(module);
 		dao.saveOrUpdate(mapper.convertToModule(module, true));
-		studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(),module.getName());
 	}
 
 	@Override
