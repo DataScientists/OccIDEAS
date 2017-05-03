@@ -32,17 +32,17 @@
 		<div ng-if="!inProgress">
 			<ul id="interviewing-{{interview.showedQuestion.idNode}}"
 				ng-if="interviewStarted">
-				<md-toolbar>
+				<div style="background-color:rgb(63,81,181);color:white;min-height:64px;width:100%;font-size:20px;box-sizing:border-box;">
 					<span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
 					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span> 
-					<md-button id="numId" event-focus> 
+					<div id="numId" style="text-align:center;font-size:14px;text-decoration:none;" event-focus> 
 					<i ng-if="storage.langEnabled" class="glyphicon {{interview.showedQuestion.name  |
 							translate | displayFlag:interview.showedQuestion:storage}}"></i>
 					<span
 					class="badge">{{questionheader.name}}</span> 
 					<span class="badge">{{interview.showedQuestion.number}}</span>
 
-				</md-button> </md-toolbar>
+				</div> </div>
 				<div ng-if="interview.showedQuestion.nodes.length == 0">
 					<md-button ng-click="closeOnStopButton()" class="md-fab md-raised ">
 					<span>STOP</span> </md-button>
