@@ -2,16 +2,16 @@
 <button class="btn btn-default"
 			ng-click="newExportCSVButton()">Run Interviews Report</button>
 		
-		<button class="btn btn-default"
+		<button class="btn btn-default" permission="['ROLE_ASSESSOR']"
 			ng-click="newExportAssessmentCSVButton()">Export Assessments</button>
 			
 		<button class="btn btn-default"
-			ng-click="newExportAssessmentNoiseCSVButton()">Export Noise Assessments</button>
+			ng-click="newExportAssessmentNoiseCSVButton()" permission="['ROLE_ASSESSOR']">Export Noise Assessments</button>
 		<button class="btn btn-default"
-			ng-click="newExportAssessmentVibrationCSVButton()">Export Vibration Assessments</button> 
+			ng-click="newExportAssessmentVibrationCSVButton()" permission="['ROLE_ASSESSOR']">Export Vibration Assessments</button> 
 		
 			
-		<button class="btn btn-default"
+		<button class="btn btn-default" permission="['ROLE_ASSESSOR']" 
 			ng-click="exportNotesCSVButton()">Export Notes</button>	
 		
 		<!-- 
