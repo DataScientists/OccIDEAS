@@ -13,7 +13,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 public abstract class BaseSelenium {
 
 	protected static ChromeDriver driver;
-	protected String localhost = "http://localhost:8080/occideas/";
+	protected static String localhost = "http://localhost:8080/occideas/";
 	
 	protected static void openBrowser(){
 		ClassLoader loader = ClassLoader.getSystemClassLoader();
@@ -43,7 +43,7 @@ public abstract class BaseSelenium {
 	}
 	
 	protected static void clickMenubutton() {
-		driver.findElement(By.xpath("/html/body/div[2]/header/div/div/ul/li/md-menu/button")).click();
+		driver.findElement(By.cssSelector("body > div.container > header > div > div > ul > li > md-menu > button")).click();
 	}
 	
 	protected void selectModuleTab() {
