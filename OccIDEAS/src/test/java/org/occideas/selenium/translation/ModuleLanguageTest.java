@@ -42,7 +42,7 @@ public class ModuleLanguageTest extends BaseSelenium {
 		}.getClass().getEnclosingMethod().getName());
 	}
 	
-	@Ignore
+	@Test
 	public void valid2_arabicTranslation() {
 		System.out.println("Starting test " + new Object() {
 		}.getClass().getEnclosingMethod().getName());
