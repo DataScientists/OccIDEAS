@@ -1,7 +1,7 @@
 <div ng-cloak>
    <md-content class="md-padding">
     <md-tabs md-selected="selectedIndex"  md-border-bottom md-autoselect md-dynamic-height md-enable-disconnect='true'>
-      <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" layout-fill>
+      <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled">
       	<md-tab-label>
         <span context-menu="tabMenu(tab)">{{tab.title}}</span>
                     
@@ -15,7 +15,7 @@
               <span class="glyphicon glyphicon-remove" style="margin-left:3px"/>
           </span>
         </md-tab-label>
-        <md-tab-body ng-cloak ng-class="tab.style" layout="column" layout-fill >
+        <md-tab-body ng-cloak ng-class="tab.style" layout="column" >
                 <div class="tab{{$index%4}}" >
                 	<md-progress-circular ng-if="tabsLoading" md-mode="indeterminate"></md-progress-circular>
 					<ng-view ng-cloak ui-view="{{tab.viewName}}" ng-if="tab.viewName != null">
