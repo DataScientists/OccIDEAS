@@ -502,6 +502,8 @@
                     }
                 });
             }
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
         };
         $scope.addInterviewTabInterviewers = function(idNode, awesId) {
             //close other interview tabs
