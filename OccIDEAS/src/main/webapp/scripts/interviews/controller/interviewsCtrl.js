@@ -1124,7 +1124,7 @@
 												}
 											}*/
 											$scope.interview = response.data[0];
-											refreshDisplay();
+											refreshDisplayNew();
 											var question = findNextQuestionQueued($scope.interview);
 											if(question){												
 												QuestionsService.findQuestionSingleChildLevel(question.questionId).then(function(response){
