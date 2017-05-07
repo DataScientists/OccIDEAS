@@ -9,6 +9,8 @@
 	<div class="col-md-4">
 		<div>
 			<div>
+				<md-progress-linear ng-if="inProgress" md-mode="indeterminate"></md-progress-linear>
+
 				<div ng-repeat="displayq in displayQuestions ">
 
 					<div class="tree-node-content P_interviewresult"
@@ -27,28 +29,28 @@
 				</div>
 			</div>
 		</div>
-		<div >
+		<div ng-if="!inProgress">
 			<ul id="interviewing-{{interview.showedQuestion.idNode}}"
-				>
-				<div style="background-color:rgb(63,81,181);color:white;min-height:64px;width:100%;font-size:20px;box-sizing:border-box;">
+				ng-if="interviewStarted">
+				<md-toolbar>
 					<span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
 					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span> 
-					<div id="numId" style="text-align:center;font-size:14px;text-decoration:none;" event-focus> 
+					<md-button id="numId" event-focus> 
 					<i ng-if="storage.langEnabled" class="glyphicon {{interview.showedQuestion.name  |
 							translate | displayFlag:interview.showedQuestion:storage}}"></i>
 					<span
 					class="badge">{{questionheader.name}}</span> 
 					<span class="badge">{{interview.showedQuestion.number}}</span>
 
-				</div> </div>
+				</md-button> </md-toolbar>
 				<div ng-if="interview.showedQuestion.nodes.length == 0">
-					<button ng-click="closeOnStopButton()" class="md-fab md-raised ">
-					<span>STOP</span> </button>
+					<md-button ng-click="closeOnStopButton()" class="md-fab md-raised ">
+					<span>STOP</span> </md-button>
 				</div>
 				<div ng-if="interview.showedQuestion.nodes.length != 0">
 					<div ng-if="interview.showedQuestion.type == 'Q_multiple'">
 						<div ng-repeat="node in interview.showedQuestion.nodes">
-							<input type="checkbox" aria-label="{{node.name}}"
+							<md-checkbox aria-label="{{node.name}}"
 								ng-model="node.isSelected"
 								ng-click="multiToggle(node, multiSelected)" class="green"
 								select-free-text-on-click> <span
@@ -57,10 +59,10 @@
 							| displayFlag:node:storage}}"></i>{{node.name  | translate}}</span>
 							<span
 								ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
-							<div ng-if="node.type=='P_freetext'" md-no-float
+							<md-input-container ng-if="node.type=='P_freetext'" md-no-float
 								class="md-block"> <label>Free Text</label>
 							<input style="width: 270px;" ng-model="node.name"
-								ng-keyup="allowSpaceOnFreeText($event,node)"> </div>
+								ng-keyup="allowSpaceOnFreeText($event,node)"> </md-input-container> </md-checkbox>
 						</div>
 					</div>
 					<div ng-if="interview.showedQuestion.type == 'Q_frequency'">
@@ -68,42 +70,42 @@
 							<!-- <div>{{node.type}}</div> -->
 							<div ng-switch="node.type">
 								<div ng-switch-when="P_frequencyseconds">
-									<div> <label>Seconds</label>
-									<select ng-model="node.name"> <option
+									<md-input-container> <label>Seconds</label>
+									<md-select ng-model="node.name"> <md-option
 										ng-repeat="second in seconds" value="{{second}}">
-									{{second}} </option> </select> </div>
+									{{second}} </md-option> </md-select> </md-input-container>
 								</div>
 								<div ng-switch-when="P_frequencyweeks">
-									<div> <label>Weeks</label>
-									<select ng-model="node.name"> <option
+									<md-input-container> <label>Weeks</label>
+									<md-select ng-model="node.name"> <md-option
 										ng-repeat="week in weeks" value="{{week}}">
-									{{week}} </option> </select> </div>
+									{{week}} </md-option> </md-select> </md-input-container>
 								</div>
 								<div ng-switch-when="P_frequencyhours">
-									<div> <label>Hours</label>
-									<select ng-model="node.name"> <option
+									<md-input-container> <label>Hours</label>
+									<md-select ng-model="node.name"> <md-option
 										ng-repeat="hour in hoursPerWeekArray" value="{{hour}}">
-									{{hour}} </option> </select> </div>
+									{{hour}} </md-option> </md-select> </md-input-container>
 								</div>
 								<div ng-switch-when="P_frequencyshifthours">
-									<div> <label>Hours</label>
-									<select ng-model="interview.showedQuestion.hours">
-									<option ng-repeat="hour in hoursArray" value="{{hour}}">
-									{{hour}} </option> </select> </div>
-									<div> <label>Minutes</label>
-									<select ng-model="interview.showedQuestion.minutes">
-									<option ng-repeat="minute in minutesArray"
-										value="{{minute}}"> {{minute}} </option> </select> </div>
+									<md-input-container> <label>Hours</label>
+									<md-select ng-model="interview.showedQuestion.hours">
+									<md-option ng-repeat="hour in hoursArray" value="{{hour}}">
+									{{hour}} </md-option> </md-select> </md-input-container>
+									<md-input-container> <label>Minutes</label>
+									<md-select ng-model="interview.showedQuestion.minutes">
+									<md-option ng-repeat="minute in minutesArray"
+										value="{{minute}}"> {{minute}} </md-option> </md-select> </md-input-container>
 								</div>
 								<div ng-switch-when="P_frequencyhoursminute">
-									<div> <label>Hours</label>
-									<select ng-model="interview.showedQuestion.hours">
-									<option ng-repeat="hour in hoursArray" value="{{hour}}">
-									{{hour}} </option> </select> </div>
-									<div> <label>Minutes</label>
-									<select ng-model="interview.showedQuestion.minutes">
-									<option ng-repeat="minute in minutesArray"
-										value="{{minute}}"> {{minute}} </option> </select> </div>
+									<md-input-container> <label>Hours</label>
+									<md-select ng-model="interview.showedQuestion.hours">
+									<md-option ng-repeat="hour in hoursArray" value="{{hour}}">
+									{{hour}} </md-option> </md-select> </md-input-container>
+									<md-input-container> <label>Minutes</label>
+									<md-select ng-model="interview.showedQuestion.minutes">
+									<md-option ng-repeat="minute in minutesArray"
+										value="{{minute}}"> {{minute}} </md-option> </md-select> </md-input-container>
 								</div>
 								<div ng-switch-default>Unknown Frequency
 									Type:{{node.type}}</div>
@@ -112,10 +114,10 @@
 					</div>
 					<div
 						ng-if="interview.showedQuestion.type == 'Q_single' || interview.showedQuestion.type == 'Q_simple'">
-						<div ng-model="interview.showedQuestion.selectedAnswer">
+						<md-radio-group ng-model="interview.showedQuestion.selectedAnswer">
 						<div ng-repeat='node in interview.showedQuestion.nodes'>
-							<div >
-								<input type="radio" ng-value="node"
+							<div flex layout-align="start center">
+								<md-radio-button flex ng-value="node"
 									class="md-primary interview-radio-button"
 									select-free-text-on-click> 
 									<i style="margin-right:2px;" ng-if="node.type!='P_freetext' && storage.langEnabled" 
@@ -125,25 +127,24 @@
 									translate}}</span>
 									<span
 									ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
-									<div ng-if="node.type=='P_freetext'"
+									<md-input-container ng-if="node.type=='P_freetext'"
 									md-no-float class="md-block"> <label>Free
-									Text</label> 
-									<input style="width: 270px;" ng-model="node.name">
-								</div> 
+									Text</label> <input style="width: 270px;" ng-model="node.name">
+								</md-input-container> </md-radio-button>
 
 							</div>
 						</div>
-						</div>
+						</md-radio-group>
 					</div>
 
-					<button ng-if="!editModeOn"
+					<md-button ng-if="!editModeOn"
 						ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
-						class="md-fab md-raised"> <span>NEXT</span> </button>
+						class="md-fab md-raised"> <span>NEXT</span> </md-button>
 
 					<p>&nbsp;</p>
 					<p>&nbsp;</p>
-					<button class="md-primary md-raised interviewNotesButton"
-						ng-click="showNotePrompt($event)"> Add Note </button>
+					<md-button class="md-primary md-raised interviewNotesButton"
+						ng-click="showNotePrompt($event)"> Add Note </md-button>
 					<ol>
 						<li ng-if="note.type=='Interviewer'"
 							ng-repeat='note in interview.notes'>{{note.text}}</li>
@@ -153,8 +154,8 @@
 					<p>&nbsp;</p>
 					<p>&nbsp;</p>
 					<p>&nbsp;</p>
-					<button ng-click="stopInterview(interview.showedQuestion)"
-						class="md-fab md-raised"> <span>STOP</span> </button>
+					<md-button ng-click="stopInterview(interview.showedQuestion)"
+						class="md-fab md-raised"> <span>STOP</span> </md-button>
 				</div>
 			</ul>
 		</div>
@@ -163,11 +164,11 @@
 				Thanks!
 				<p>The interview has now come to the end. Please add any final
 					interview notes and click FINISH to mark it as complete</p>
-				<div class="md-block"> <label>Final
+				<md-input-container class="md-block"> <label>Final
 					Interview Notes</label> <textarea ng-model="interview.endNotes"
-					md-maxlength="1000" rows="5" select-on-focus></textarea> </div>
-				<button ng-click="finishInterview()" class="md-fab md-raised ">
-				<span>FINISH</span> </button>
+					md-maxlength="1000" rows="5" md-select-on-focus></textarea> </md-input-container>
+				<md-button ng-click="finishInterview()" class="md-fab md-raised ">
+				<span>FINISH</span> </md-button>
 				<ol>
 					<li ng-if="note.type=='Interviewer'"
 						ng-repeat='note in interview.notes'>{{note.text}}</li>
@@ -180,11 +181,11 @@
 				Interview Stopped!
 				<p>The interview is only partial complete. Please add some
 					interview notes about why it was stopped.</p>
-				<button ng-click="closeOnStopButton()" class="md-fab md-raised ">
-				<span>STOP</span> </button>
+				<md-button ng-click="closeOnStopButton()" class="md-fab md-raised ">
+				<span>STOP</span> </md-button>
 				<p>&nbsp;</p>
-				<button class="md-primary md-raised interviewNotesButton"
-					ng-click="showNotePrompt($event)"> Add Note </button>
+				<md-button class="md-primary md-raised interviewNotesButton"
+					ng-click="showNotePrompt($event)"> Add Note </md-button>
 				<ol>
 					<li ng-if="note.type=='Interviewer'"
 						ng-repeat='note in interview.notes'>{{note.text}}</li>

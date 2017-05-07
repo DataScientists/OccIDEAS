@@ -88,13 +88,7 @@ angular
   })
   .service(service)
   .factory('TokenRefreshInterceptor',TokenRefreshInterceptor)
-  .factory('ErrorHandler',ErrorHandler)
-  .decorator('$mdAria', function mdAriaDecorator($delegate) {
-    $delegate.expect = angular.noop;
-    $delegate.expectAsync = angular.noop;
-    $delegate.expectWithText = angular.noop;
-    return $delegate;
-  });	
+  .factory('ErrorHandler',ErrorHandler);	
 
    configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService','dataBeanService','$window','$sessionStorage'];
    function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService,dataBeanService,$window,$sessionStorage) {
