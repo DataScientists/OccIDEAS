@@ -22,20 +22,21 @@ public class ModuleLanguageTest extends BaseSelenium {
 	public static void init() {
 		openBrowser();
 		driver.get(localhost);
+		driver.manage().window().maximize();
 	}
 
 	@AfterClass
 	public static void cleanup() {
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		logout();
 		driver.quit();
 	}
 
 	@Test
-	public void valid1_enableLanguageTranslation() {
+	public void valid1_enableLanguageTranslation() throws InterruptedException {
 		System.out.println("Starting test " + new Object() {
 		}.getClass().getEnclosingMethod().getName());
-		loginAsAdmin();
+		loginAsContdev();
 		enableLanguageTranslation();
 		checkLanguageSummaryTabIsOpen();
 		System.out.println("Ending test " + new Object() {
@@ -43,14 +44,14 @@ public class ModuleLanguageTest extends BaseSelenium {
 	}
 	
 	@Test
-	public void valid2_arabicTranslation() {
+	public void valid2_arabicTranslation() throws InterruptedException {
 		System.out.println("Starting test " + new Object() {
 		}.getClass().getEnclosingMethod().getName());
-		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+		Thread.sleep(10000);
 		selectModuleTab();
-		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		addIntroModule();
-		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		// try{
 		// element = driver.findElement
 		// (By.xpath(".//*[@id='account_logout']/a"));
@@ -62,21 +63,23 @@ public class ModuleLanguageTest extends BaseSelenium {
 	}
 
 	private void checkLanguageSummaryTabIsOpen() {
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		WebElement languageSummaryTab = driver.findElement(By.xpath(
 				"/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[8]"));
 		Assert.assertNotNull(languageSummaryTab);
 	}
 
-	private void enableLanguageTranslation() {
-		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+	private void enableLanguageTranslation() throws InterruptedException {
 		clickMenubutton();
-		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
-		WebElement element = driver.findElement(By.id("languageId"));
-		Actions actions = new Actions(driver);
-		actions.moveToElement(element).click().perform();
-		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+//		Thread.sleep(5000);
+//		WebElement element = driver.findElement(By.id("languageId"));
+//		Actions actions = new Actions(driver);
+//		actions.moveToElement(element).click().perform();
+		Thread.sleep(10000);
 		driver.findElement(By.id("languageId")).click();
-		driver.findElement(By.xpath("//*[@id='dialogContent_8']/div/md-content/div/md-checkbox/div[1]")).click();
+		Thread.sleep(5000);
+		driver.findElement(By.cssSelector("#enableTranslation > div.md-container.md-ink-ripple")).click();
+		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
 		driver.findElement(By.xpath("/html/body/div[5]/md-dialog/form/md-dialog-actions/button[1]")).click();
 
 	}
@@ -96,12 +99,6 @@ public class ModuleLanguageTest extends BaseSelenium {
 		driver.findElement(
 				By.xpath("//*[@id='tab-content-2']/div/div/ng-view/div/div/table/tbody[1]/tr[2]/td[5]/button[1]"))
 				.click();
-	}
-
-	private void loginAsAdmin() {
-		driver.findElement(By.xpath("//*[@id='lg_username']")).sendKeys("admin");
-		driver.findElement(By.xpath("//*[@id='lg_password']")).sendKeys("admin");
-		driver.findElement(By.xpath("//*[@id='login-form']/div[2]/button")).click();
 	}
 
 }

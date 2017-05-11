@@ -14,6 +14,22 @@ public abstract class BaseSelenium {
 
 	protected static ChromeDriver driver;
 	protected static String localhost = "http://localhost:8080/occideas/";
+	private String usernameAdmin = "admin";
+	private String passwordAdmin = "admin";
+	private String usernameContdev = "contdev";
+	private String passwordContdev = "vedtnoc";
+	
+	protected void loginAsAdmin() {
+		driver.findElement(By.xpath("//*[@id='lg_username']")).sendKeys(usernameAdmin);
+		driver.findElement(By.xpath("//*[@id='lg_password']")).sendKeys(passwordAdmin);
+		driver.findElement(By.xpath("//*[@id='login-form']/div[2]/button")).click();
+	}
+	
+	protected void loginAsContdev() {
+		driver.findElement(By.xpath("//*[@id='lg_username']")).sendKeys(usernameContdev);
+		driver.findElement(By.xpath("//*[@id='lg_password']")).sendKeys(passwordContdev);
+		driver.findElement(By.xpath("//*[@id='login-form']/div[2]/button")).click();
+	}
 	
 	protected static void openBrowser(){
 		ClassLoader loader = ClassLoader.getSystemClassLoader();
@@ -47,7 +63,7 @@ public abstract class BaseSelenium {
 	}
 	
 	protected void selectModuleTab() {
-		driver.findElement(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[2]")).click();
+		driver.findElement(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[1]")).click();
 	}
 	
 }
