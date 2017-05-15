@@ -70,6 +70,19 @@ public class ModuleLanguageTest extends BaseSelenium {
 		Thread.sleep(twoSeconds);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		driver.findElement(By.xpath("/html/body/div[5]/md-dialog/form/md-dialog-actions/button[1]")).click();
+		Thread.sleep(twoSeconds);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content Q')]/span/div[2]/input")).click();
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content Q')]/span/div[2]/input")).clear();
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content Q')]/span/div[2]/input")).sendKeys("يَجِبُ : مِن وَجَبَ (مِثَال ) , فِعْلٌ مُضَارِعٌ مَرْفُوعٌ بِضَمَّةٍ");
+		Thread.sleep(twoSeconds);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).click();
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).clear();
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).sendKeys(" َمَجْرُورٌ بِكَسْرَ");
+		Thread.sleep(twoSeconds);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content M')]/span/input")).click();
 	}
 	
 	private void selectLanguageFlagBtn() throws InterruptedException {
