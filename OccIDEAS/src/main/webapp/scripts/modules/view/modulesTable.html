@@ -10,7 +10,7 @@
 	<button type="button" permission="['ROLE_ADMIN']"  ng-click='validateAllBtn(true)' class="btn btn-default"> Validate Modules</button>
 	<button type="button" permission="['ROLE_ADMIN']"  ng-if="vm.tableParams.filter().isDuplicate == true" ng-click='unfilterValidateItems()' class="btn btn-default"> Remove Filter for Items With Warnings</button>
 	<button type="button" permission="['ROLE_ADMIN']"  ng-if="vm.tableParams.filter().isDuplicate == false" ng-click='filterValidateItems()' class="btn btn-default"> Filter Items With Warnings</button>
-	<button type="button"
+	<button type="button" 
 			class="btn btn-default" ng-if="vm.originalData.length == 0" 
 			ng-click="vm.add('M_Module')">Add Module <span class="glyphicon glyphicon-plus">
 			</span></button>
@@ -31,10 +31,10 @@
                     <strong ng-if="group.value == 'M_Module__'">Tests</strong>
                 </a>
                 <div class="brn-group pull-right">
-       				 <button class="btn btn-default" ng-click="vm.add(group.value)">
+       				 <button id="addModule" class="btn btn-default" ng-click="vm.add(group.value)">
           					<span class="glyphicon glyphicon-plus"></span>
        				 </button>
-       				 <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+       				 <button id="toggleDeleteModuleId" class="btn btn-default" ng-click="vm.toggleIsDeleting()">
           					<span class="glyphicon glyphicon-trash"></span>
        				 </button>
      			 </div>
@@ -100,7 +100,7 @@
 				</span>
 			</td>
 			<td>
-				<button class="btn btn-primary btn-sm"
+				<button class="btn btn-primary btn-sm" id="saveBtn"
 					ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
 					ng-disabled="rowForm.$pristine || rowForm.$invalid">
 					<span class="glyphicon glyphicon-ok"></span>
@@ -113,15 +113,15 @@
 					ng-click="addModuleTab(row)" ng-if="!row.isEditing && row.type != 'M_IntroModule'">
 					<span class="glyphicon glyphicon-list-alt"></span>
 				</button>
-				<button class="btn btn-default btn-sm"
+				<button id="id_{{row.name}}_openmodule" class="btn btn-default btn-sm"
 					ng-click="addIntroTab(row)" ng-if="!row.isEditing && row.type === 'M_IntroModule'">
 					<span class="glyphicon glyphicon-list-alt"></span>
 				</button>
-				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
+				<button id="id_{{row.name}}_delete" class="btn btn-danger btn-sm" ng-click="vm.del(row)"
 					ng-if="vm.isDeleting" confirm="Delete module {{row.name}}?">
 					<span class="glyphicon glyphicon-trash"></span>
 				</button>
-				<button class="btn btn-danger btn-sm" 
+				<button id="id_{{row.name}}_flag" class="btn btn-danger btn-sm" 
 					 ng-click="vm.displayNodeLanguage(row)"
 					 ng-if="!row.isEditing && $storage.langEnabled">
 					 <span class="glyphicon glyphicon-flag"></span>

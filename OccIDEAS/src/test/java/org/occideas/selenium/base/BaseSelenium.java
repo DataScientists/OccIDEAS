@@ -16,8 +16,11 @@ public abstract class BaseSelenium {
 	protected static String localhost = "http://localhost:8080/occideas/";
 	private String usernameAdmin = "admin";
 	private String passwordAdmin = "admin";
-	private String usernameContdev = "contdev";
-	private String passwordContdev = "vedtnoc";
+	private static final String usernameContdev = "contdev";
+	private static final String passwordContdev = "vedtnoc";
+	protected static final int twoSeconds = 2000;
+	protected static final int threeSeconds = 3000;
+
 	
 	protected void loginAsAdmin() {
 		driver.findElement(By.xpath("//*[@id='lg_username']")).sendKeys(usernameAdmin);
@@ -25,7 +28,7 @@ public abstract class BaseSelenium {
 		driver.findElement(By.xpath("//*[@id='login-form']/div[2]/button")).click();
 	}
 	
-	protected void loginAsContdev() {
+	protected static void loginAsContdev() {
 		driver.findElement(By.xpath("//*[@id='lg_username']")).sendKeys(usernameContdev);
 		driver.findElement(By.xpath("//*[@id='lg_password']")).sendKeys(passwordContdev);
 		driver.findElement(By.xpath("//*[@id='login-form']/div[2]/button")).click();
@@ -53,8 +56,10 @@ public abstract class BaseSelenium {
 		return copts;
 	}
 	
-	protected static void logout() {
+	protected static void logout() throws InterruptedException {
 		clickMenubutton();
+		Thread.sleep(twoSeconds);
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.findElement(By.xpath("//*[@id='menu_container_0']/md-menu-content/md-menu-item[3]/a")).click();
 	}
 	
@@ -62,7 +67,11 @@ public abstract class BaseSelenium {
 		driver.findElement(By.cssSelector("body > div.container > header > div > div > ul > li > md-menu > button")).click();
 	}
 	
-	protected void selectModuleTab() {
+	protected static void selectModuleTab() throws InterruptedException {
+		if(driver.findElements(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-prev-button")).size() > 0){
+			driver.findElement(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-prev-button")).click();
+			Thread.sleep(twoSeconds);
+		}
 		driver.findElement(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[1]")).click();
 	}
 	

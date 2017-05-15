@@ -15,8 +15,9 @@
     <md-dialog-content>
       <div class="md-dialog-content" style="height:300px;" >
       	<div layout="column" ng-cloak class="md-inline-form">
-  		<md-content> 
-  			<ui-select ng-model="selectedLanguage.language"
+  		<md-content  style="height:300px;"> 
+  			<div class="select-box">
+  			<ui-select ng-model="selectedLanguage.language" id="selectLanguageId"
 				ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2"
 				ng-disabled="disabled" style="min-width: 300px;"> <ui-select-match>
 			<i class="glyphicon {{$select.selected.flag}}"></i>
@@ -27,6 +28,7 @@
 			<div ng-bind-html="lang.description | highlight: $select.search"
 				style="display: inline"></div>
 			</ui-select-choices> </ui-select>
+			</div>
   		</md-content>
   		</div>
       </div>
