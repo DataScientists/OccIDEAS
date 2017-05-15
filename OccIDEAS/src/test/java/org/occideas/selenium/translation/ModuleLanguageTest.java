@@ -42,21 +42,23 @@ public class ModuleLanguageTest extends BaseSelenium {
 		Thread.sleep(twoSeconds);
 		selectModuleTab();
 		addIntroModule();
-//		selectLanguageFlagBtn();
-//		selectArabicLanguageFromDialog();
+		enableLanguageTranslation();
+		selectModuleTab();
+		selectLanguageFlagBtn();
+		selectArabicLanguageFromDialog();
 		System.out.println("Ending test " + new Object() {
 		}.getClass().getEnclosingMethod().getName());
 	}
 	
-	@Test
-	public void valid2_enableLanguageTranslation() throws InterruptedException {
-		System.out.println("Starting test " + new Object() {
-		}.getClass().getEnclosingMethod().getName());
-		enableLanguageTranslation();
-		checkLanguageSummaryTabIsOpen();
-		System.out.println("Ending test " + new Object() {
-		}.getClass().getEnclosingMethod().getName());
-	}
+//	@Test
+//	public void valid2_enableLanguageTranslation() throws InterruptedException {
+//		System.out.println("Starting test " + new Object() {
+//		}.getClass().getEnclosingMethod().getName());
+//		enableLanguageTranslation();
+//		checkLanguageSummaryTabIsOpen();
+//		System.out.println("Ending test " + new Object() {
+//		}.getClass().getEnclosingMethod().getName());
+//	}
 
 	private void selectArabicLanguageFromDialog() throws InterruptedException {
 		Thread.sleep(twoSeconds);
