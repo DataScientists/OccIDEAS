@@ -22,12 +22,9 @@ import org.occideas.module.dao.IModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.RuleDao;
-import org.occideas.security.audit.Auditable;
-import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
-import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.FragmentVODecorator;
@@ -79,10 +76,7 @@ public class ModuleServiceImpl implements ModuleService {
 	private SystemPropertyService sysPropService;
 	@Autowired
 	private SystemPropertyDao sysPropDao;
-	@Autowired
-	private StudyAgentUtil studyAgentUtil;
 
-	@Auditable(actionType = AuditingActionType.GENERIC)
 	@Override
 	public List<ModuleVO> listAll() {
 		return mapper.convertToModuleVOList(dao.getAllActive(), false);

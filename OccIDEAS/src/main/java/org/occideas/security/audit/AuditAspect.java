@@ -32,6 +32,7 @@ public class AuditAspect {
 	@Before(value = "@annotation(auditable)")
 	@Transactional
 	public void logTheAuditActivity(JoinPoint aPoint, Auditable auditable) {
+		try{
 		AuditLog auditLog = new AuditLog();
 		auditLog.setUsername(getUserName());
 		auditLog.setUserType(getRoles());
@@ -46,7 +47,10 @@ public class AuditAspect {
 		}
 		auditLog.setMethod(methodInvocation);
 		auditLog.setDate(new Timestamp(new Date().getTime()));
-		dao.save(auditLog);
+			dao.save(auditLog);
+		}catch(Throwable throwable){
+			log.error("Error on saving audit logs.",throwable);
+		}
 	}
 
 	private String getArgs(Object[] args) {
