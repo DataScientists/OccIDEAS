@@ -11,7 +11,7 @@
 				<tr ng-if="discriminatorType == 'M'" ng-repeat="nl in $data" ng-click="openModuleLanguageByFlagIcon(nl.idNode)">
 					<td title="'idNode'" filter="{idNode: 'text'}">{{nl.idNode}}</td>
 					<td title="'Name'" filter="{name: 'text'}">{{nl.name}}</td>
-					<td title="'Count'"><span class="{{nl.current?nl.current == nl.total?'greenBorderMed':'redBorderMed':0 == nl.total?'greenBorderMed':'redBorderMed'}}">{{nl.current?nl.current:0}}/{{nl.total}}</span></td>
+					<td title="'Count'"><span class="{{nl.current?nl.current == nl.total?'greenBorderMed':'redBorderMed':0 == nl.total?'greenBorderMed':'redBorderMed'}}" id="count_{{nl.name}}">{{nl.current?nl.current:0}}/{{nl.total}}</span></td>
 				</tr>
 				<tr ng-if="discriminatorType == 'F'" ng-repeat="nl in $data" ng-click="openFragmentLanguageByFlagIcon(nl.idNode)">
 					<td title="'idNode'" filter="{idNode: 'text'}">{{nl.idNode}}</td>

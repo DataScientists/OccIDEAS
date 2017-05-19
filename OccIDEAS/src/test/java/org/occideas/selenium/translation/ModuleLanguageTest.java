@@ -10,13 +10,13 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.occideas.selenium.base.BaseSelenium;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ModuleLanguageTest extends BaseSelenium {
 	private static final String MODULE_NAME = "selenium_test_language";
+	private static final String EDIT_ARABIC = "اسمى تانجا";
 
 	@BeforeClass
 	public static void init() {
@@ -46,6 +46,7 @@ public class ModuleLanguageTest extends BaseSelenium {
 		selectModuleTab();
 		selectLanguageFlagBtn();
 		selectArabicLanguageFromDialog();
+		selectLanguageSummaryTab();
 		System.out.println("Ending test " + new Object() {
 		}.getClass().getEnclosingMethod().getName());
 	}
@@ -59,6 +60,17 @@ public class ModuleLanguageTest extends BaseSelenium {
 //		System.out.println("Ending test " + new Object() {
 //		}.getClass().getEnclosingMethod().getName());
 //	}
+	
+	private void selectLanguageSummaryTab() throws InterruptedException{
+		driver.findElement(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[5]")).click();
+		Thread.sleep(twoSeconds);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.findElement(By.xpath("//*[@id='tab-content-6']/div/div/ng-view/div/div[1]/table/tbody/tr[3]/td[2]/a")).click();
+		
+		Thread.sleep(twoSeconds);
+		String countStr = driver.findElement(By.cssSelector("#count_"+MODULE_NAME)).getText();
+		Assert.assertTrue("2/2".equals(countStr));
+	}
 
 	private void selectArabicLanguageFromDialog() throws InterruptedException {
 		Thread.sleep(twoSeconds);
@@ -74,14 +86,22 @@ public class ModuleLanguageTest extends BaseSelenium {
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content Q')]/span/div[2]/input")).click();
 		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content Q')]/span/div[2]/input")).clear();
-		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content Q')]/span/div[2]/input")).sendKeys("يَجِبُ : مِن وَجَبَ (مِثَال ) , فِعْلٌ مُضَارِعٌ مَرْفُوعٌ بِضَمَّةٍ");
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content Q')]/span/div[2]/input")).sendKeys("مرحبا");
 		Thread.sleep(twoSeconds);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).click();
 		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).clear();
-		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).sendKeys(" َمَجْرُورٌ بِكَسْرَ");
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).sendKeys("أنا بخير, شكرا");
 		Thread.sleep(twoSeconds);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content M')]/span/input")).click();
+		String translateSummaryString = driver.findElement(By.cssSelector("#translatedSummary")).getText();
+		Thread.sleep(oneSeconds);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		Assert.assertTrue("Translated 2/2".equals(translateSummaryString));
+		driver.findElement(By.cssSelector("#editTranslationId")).click();
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).clear();
+		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content P')]/span/div[2]/input")).sendKeys(EDIT_ARABIC);
 		driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content M')]/span/input")).click();
 	}
 	

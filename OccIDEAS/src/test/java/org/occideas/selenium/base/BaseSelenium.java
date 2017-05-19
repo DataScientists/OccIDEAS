@@ -18,6 +18,7 @@ public abstract class BaseSelenium {
 	private String passwordAdmin = "admin";
 	private static final String usernameContdev = "contdev";
 	private static final String passwordContdev = "vedtnoc";
+	protected static final int oneSeconds = 1000;
 	protected static final int twoSeconds = 2000;
 	protected static final int threeSeconds = 3000;
 

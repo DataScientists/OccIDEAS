@@ -29,12 +29,13 @@
 				{{node.name}} 
 <input type="button" class="btn btn-default btn-lg btn-save" value="Edit" 
 				ng-if="(node.nodeclass === 'M'||node.nodeclass === 'F') 
-				&& !vm.editTranslateNode" ng-click="vm.editTranslation()">
+				&& !vm.editTranslateNode" ng-click="vm.editTranslation()"
+				id="editTranslationId">
    		<input type="button" class="btn btn-default btn-lg btn-save" 
 				value="Save" 
 				ng-if="(node.nodeclass === 'M'|| node.nodeclass === 'F') 
 				&& vm.editTranslateNode" ng-click="saveAllLanguage()">	
-		<span ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F'"> Translated {{currentLangCount}}/{{totalLangCount}}</span>
+		<span ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F'" id="translatedSummary"> Translated {{currentLangCount}}/{{totalLangCount}}</span>
 <div class="editBox">
 		  <span class="treeNodeText" ng-if="!vm.editTranslateNode && 
 				node.type != 'P_freetext' && !node.type.match('frequency')
