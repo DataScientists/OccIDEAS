@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 /**
  * Created by quangnn on 2/17/2016.
  */
-@JsonIgnoreProperties({ "endNotes", "interviewStarted", "interviewEnded", "showedQuestion" })
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class InterviewVO {
 	private final String INTRO_MODULE = "M_IntroModule";
 

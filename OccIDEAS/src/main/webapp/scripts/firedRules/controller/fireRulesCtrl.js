@@ -1028,10 +1028,16 @@
 												}else{
 													hours = parseFloat(frequencyhours);		
 												}
+												if(hours<0){
+													hours = 0.0;
+												}else if(isNaN(hours)) {
+													hours = 0.0;
+												}
 												level = noiseRule.ruleAdditionalfields[0].value;
 												var percentage = 100;
 												var partialExposure = 4*hours*(Math.pow(10,(level-100)/10));
-												partialExposure = partialExposure.toFixed(4);				
+												partialExposure = partialExposure.toFixed(4);	
+												
 												hours = hours.toFixed(4);
 												var modHours = "";
 												if(useRatio){

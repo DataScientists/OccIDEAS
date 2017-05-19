@@ -149,9 +149,15 @@
   <div class="panel-body">
     <div >
   		<md-input-container style="margin-right: 10px;">
-        <label>Status:{{assessmentStatus}}</label>
+        <label>Assessment Status:{{assessmentStatus}}</label>
         <md-select ng-model="assessmentStatus" ng-change="onChangeSaveStatus()" >
           <md-option ng-repeat="status in statuses" value="{{status}}" >{{status}}</md-option>
+        </md-select>
+      </md-input-container>
+      <md-input-container style="margin-right: 10px;">
+        <label>Participant Status:{{participantStatus}}</label>
+        <md-select ng-model="participantStatus" ng-change="onChangeSaveParticipantStatus()" >
+          <md-option ng-repeat="status in pstatuses" value="{{status}}" >{{status}}</md-option>
         </md-select>
       </md-input-container>
   		<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note </md-button>
