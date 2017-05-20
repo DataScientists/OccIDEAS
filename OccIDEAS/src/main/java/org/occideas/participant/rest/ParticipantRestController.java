@@ -46,6 +46,20 @@ public class ParticipantRestController implements BaseRestController<Participant
 	@Autowired
     private ModuleService moduleService;
 
+	@GET
+    @Path(value = "/getByReferenceNumber")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getByReferenceNumber(@QueryParam("referenceNumber") String referenceNumber) {
+		ParticipantVO participant = new ParticipantVO();
+		try{
+			participant = service.getByReferenceNumber(referenceNumber);
+		}catch(Throwable e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(participant).build();
+	}
+	
     @GET
     @Path(value = "/getlist")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)

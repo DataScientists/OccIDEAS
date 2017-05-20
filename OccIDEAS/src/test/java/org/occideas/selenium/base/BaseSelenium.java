@@ -7,8 +7,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
 
 public abstract class BaseSelenium {
 
@@ -18,10 +20,18 @@ public abstract class BaseSelenium {
 	private String passwordAdmin = "admin";
 	private static final String usernameContdev = "contdev";
 	private static final String passwordContdev = "vedtnoc";
+	private static final String usernameAssessor = "assessor";
+	private static final String passwordAssessor = "rossessa";
 	protected static final int oneSeconds = 1000;
 	protected static final int twoSeconds = 2000;
 	protected static final int threeSeconds = 3000;
+	protected static String MODULE_NAME = null;
 
+	protected static void loginAsAssessor() {
+		driver.findElement(By.xpath("//*[@id='lg_username']")).sendKeys(usernameAssessor);
+		driver.findElement(By.xpath("//*[@id='lg_password']")).sendKeys(passwordAssessor);
+		driver.findElement(By.xpath("//*[@id='login-form']/div[2]/button")).click();
+	}
 	
 	protected void loginAsAdmin() {
 		driver.findElement(By.xpath("//*[@id='lg_username']")).sendKeys(usernameAdmin);
@@ -74,6 +84,65 @@ public abstract class BaseSelenium {
 			Thread.sleep(twoSeconds);
 		}
 		driver.findElement(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[1]")).click();
+	}
+	
+	protected static void deleteModule() throws InterruptedException {
+		Thread.sleep(twoSeconds);
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.findElement(
+				By.cssSelector("#toggleDeleteModuleId"))
+				.click();
+		Thread.sleep(threeSeconds);
+		WebElement inputElement = driver.findElement(
+				By.cssSelector("#id_"+MODULE_NAME+"_delete"));
+		if(inputElement != null){
+			inputElement.click();
+			Thread.sleep(twoSeconds);
+			driver.findElement(By.cssSelector("div.modal-footer > button.btn.btn-primary")).click();
+			Thread.sleep(twoSeconds);
+		}
+	}
+	
+	protected void addIntroModule() throws InterruptedException {
+		Thread.sleep(twoSeconds);
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.findElement(
+				By.cssSelector("#addModule"))
+				.click();
+		Thread.sleep(threeSeconds);
+		WebElement inputElement = driver.findElement(
+				By.xpath("//*[@id='id_']/div/div/input"));
+		if(inputElement == null){
+			System.out.println("inputElement is null");
+			driver.findElement(
+					By.cssSelector("#addModule"))
+					.click();
+			Thread.sleep(threeSeconds);
+		}
+		driver.findElement(By.xpath("//*[@id='id_']/div/div/input")).clear();
+		driver.findElement(By.xpath("//*[@id='id_']/div/div/input")).sendKeys(MODULE_NAME);
+		driver.findElement(
+				By.xpath("//*[@id='id_']/div/div/input"))
+				.clear();
+		driver.findElement(
+				By.xpath("//*[@id='id_']/div/div/input"))
+				.sendKeys(MODULE_NAME);
+		driver.findElement(
+				By.cssSelector("#saveBtn"))
+				.click();
+		Thread.sleep(twoSeconds);
+		driver.findElement(By.cssSelector("#id_"+MODULE_NAME+"_openmodule")).click();
+		Thread.sleep(twoSeconds);
+		Actions action= new Actions(driver);
+		action.contextClick(driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content M')]"))).build().perform();
+		Thread.sleep(twoSeconds);
+		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(2) > a")).click();
+		Thread.sleep(twoSeconds);
+		action.contextClick(driver.findElement(
+				By.xpath("//div[contains(@class, 'tree-node-content Q')]"))).build().perform();
+		Thread.sleep(twoSeconds);
+		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(1) > a")).click();
+		
 	}
 	
 }

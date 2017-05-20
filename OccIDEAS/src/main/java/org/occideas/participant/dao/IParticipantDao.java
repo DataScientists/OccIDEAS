@@ -39,4 +39,6 @@ public interface IParticipantDao {
 
 	BigInteger getAsssessmentWithModTotalCount(GenericFilterVO filter);
 
+	Participant getByReferenceNumber(String referenceNumber);
+
 }

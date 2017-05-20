@@ -15,11 +15,11 @@ import org.openqa.selenium.interactions.Actions;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ModuleLanguageTest extends BaseSelenium {
-	private static final String MODULE_NAME = "selenium_test_language";
 	private static final String EDIT_ARABIC = "اسمى تانجا";
 
 	@BeforeClass
 	public static void init() {
+		MODULE_NAME = "selenium_test_language";
 		openBrowser();
 		driver.get(localhost);
 		driver.manage().window().maximize();
@@ -39,7 +39,7 @@ public class ModuleLanguageTest extends BaseSelenium {
 	public void valid1_arabicTranslation() throws InterruptedException {
 		System.out.println("Starting test " + new Object() {
 		}.getClass().getEnclosingMethod().getName());
-		Thread.sleep(twoSeconds);
+		Thread.sleep(oneSeconds);
 		selectModuleTab();
 		addIntroModule();
 		enableLanguageTranslation();
@@ -129,63 +129,4 @@ public class ModuleLanguageTest extends BaseSelenium {
 
 	}
 	
-	private void addIntroModule() throws InterruptedException {
-		Thread.sleep(twoSeconds);
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-		driver.findElement(
-				By.cssSelector("#addModule"))
-				.click();
-		Thread.sleep(threeSeconds);
-		WebElement inputElement = driver.findElement(
-				By.xpath("//*[@id='id_']/div/div/input"));
-		if(inputElement == null){
-			System.out.println("inputElement is null");
-			driver.findElement(
-					By.cssSelector("#addModule"))
-					.click();
-			Thread.sleep(threeSeconds);
-		}
-		driver.findElement(By.xpath("//*[@id='id_']/div/div/input")).clear();
-		driver.findElement(By.xpath("//*[@id='id_']/div/div/input")).sendKeys(MODULE_NAME);
-		driver.findElement(
-				By.xpath("//*[@id='id_']/div/div/input"))
-				.clear();
-		driver.findElement(
-				By.xpath("//*[@id='id_']/div/div/input"))
-				.sendKeys(MODULE_NAME);
-		driver.findElement(
-				By.cssSelector("#saveBtn"))
-				.click();
-		Thread.sleep(twoSeconds);
-		driver.findElement(By.cssSelector("#id_"+MODULE_NAME+"_openmodule")).click();
-		Thread.sleep(twoSeconds);
-		Actions action= new Actions(driver);
-		action.contextClick(driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content M')]"))).build().perform();
-		Thread.sleep(twoSeconds);
-		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(2) > a")).click();
-		Thread.sleep(twoSeconds);
-		action.contextClick(driver.findElement(
-				By.xpath("//div[contains(@class, 'tree-node-content Q')]"))).build().perform();
-		Thread.sleep(twoSeconds);
-		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(1) > a")).click();
-		
-	}
-	
-	private static void deleteModule() throws InterruptedException {
-		Thread.sleep(twoSeconds);
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-		driver.findElement(
-				By.cssSelector("#toggleDeleteModuleId"))
-				.click();
-		Thread.sleep(threeSeconds);
-		WebElement inputElement = driver.findElement(
-				By.cssSelector("#id_"+MODULE_NAME+"_delete"));
-		if(inputElement != null){
-			inputElement.click();
-			Thread.sleep(twoSeconds);
-			driver.findElement(By.xpath("/html/body/div[5]/div/div/div[3]/button[1]")).click();
-			Thread.sleep(twoSeconds);
-		}
-	}
-
 }

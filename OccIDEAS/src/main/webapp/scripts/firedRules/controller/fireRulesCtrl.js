@@ -6,12 +6,13 @@
 	                           'InterviewsService','AssessmentsService','$log','$compile',
 	                           'RulesService','ngToast','SystemPropertyService', '$mdDialog','AgentsService', 
 	                           '$q','$sessionStorage','moduleName','$rootScope','ManualAssessmentService',
-	                           'AutoAssessmentService','ngToast','ModulesService','QuestionsService'];
+	                           'AutoAssessmentService','ngToast','ModulesService','QuestionsService',
+	                           'ParticipantsService'];
 	function FiredRulesCtrl($scope, data,FiredRulesService,$timeout,
 			InterviewsService,AssessmentsService,$log,$compile,
 			RulesService,$ngToast,SystemPropertyService, $mdDialog,
 			AgentsService,$q, $sessionStorage,moduleName,$rootScope,ManualAssessmentService,
-			AutoAssessmentService,ngToast,ModulesService,QuestionsService) {
+			AutoAssessmentService,ngToast,ModulesService,QuestionsService,ParticipantsService) {
 		var vm = this;
 		vm.firedRulesByModule = [];
 		$scope.interview = undefined;
@@ -84,6 +85,30 @@
 				saveInterview(interview);
 			}		
 		};
+		
+		$scope.participantStatus = "";
+		$scope.pstatuses = ['Partial','Completed'];
+		$scope.onChangeSaveParticipantStatus = function(){
+			if($scope.interview){
+			// get participant 
+				var referenceNumber = $scope.interview.referenceNumber;
+				ParticipantsService.getByReferenceNumber(referenceNumber).then(function(response){
+					if(response.status == '200'){
+						var participant = response.data;
+						//save participant status
+						// partial is 1, completed is 2
+						participant.status = $scope.participantStatus == 'Completed'?2:1;
+						ParticipantsService.save(participant).then(function(rp){
+							if(rp.status == 200){
+								alert("Participant status saved successfully.");
+							}else{
+								alert("Participant status saved failed.");
+							}
+						})
+					}
+				})
+			}
+		}
 		
 		$scope.toggleAgentView = function (agent){		
 			var agentShown = _.find($scope.agents,function(a){

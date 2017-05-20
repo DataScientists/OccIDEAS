@@ -128,4 +128,13 @@ public class ParticipantServiceImpl implements ParticipantService {
 	public String getMaxReferenceNumber() {
 		return participantDao.getMaxReferenceNumber();
 	}
+
+	@Override
+	public ParticipantVO getByReferenceNumber(String referenceNumber) {
+		Participant participant = participantDao.getByReferenceNumber(referenceNumber);
+		if(participant != null){
+			return mapper.convertToParticipantVOonly(participant);
+		}
+		return null;
+	}
 }

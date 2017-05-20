@@ -79,6 +79,15 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getByReferenceNumber(reference){
+			var restUrl = 'web/rest/participant/getByReferenceNumber?referenceNumber=' + reference;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
 
 		var deleteParticipant = function(p) {
 			var request = $http({
@@ -119,7 +128,8 @@
 		    createParticipant:createParticipant,
 		    getPaginatedParticipantWithModList:getPaginatedParticipantWithModList,
 		    getPaginatedParticipantList:getPaginatedParticipantList,
-		    getPaginatedAssessmentWithModList:getPaginatedAssessmentWithModList
+		    getPaginatedAssessmentWithModList:getPaginatedAssessmentWithModList,
+		    getByReferenceNumber:getByReferenceNumber
 		};
 		function handleError( response ) {
             if (
