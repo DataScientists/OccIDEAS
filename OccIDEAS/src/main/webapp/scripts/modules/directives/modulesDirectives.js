@@ -21,11 +21,15 @@
 	        var dirtyCellsByRow = [];
 	        var invalidCellsByRow = [];
 	        init();
+	        var initTriggered = false;
 	        function init() {
 	            var setter = $parse($attrs.demoTrackedTable).assign;
 	            setter($scope, self);
+	            initTriggered = true;
 	            $scope.$on('$destroy', function () {
-	                setter(null);
+	            	if(initTriggered){
+	            		setter(null);
+	            	}
 	            });
 	            self.reset = reset;
 	            self.isCellDirty = isCellDirty;
