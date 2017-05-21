@@ -80,6 +80,8 @@ public class ParticipantIntMod implements Serializable {
 			statusDescription = "Partial";
 		} else if (status == 2) {
 			statusDescription = "Completed";
+		} else if(status == 3){
+			return "To be excluded";
 		}
 		return statusDescription;
 	}

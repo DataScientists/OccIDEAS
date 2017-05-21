@@ -108,6 +108,9 @@ public class AssessmentAnswerSummaryFilterVO {
 		} else if ("Completed".equals(statusDescription)) {
 			this.status = 2;
 			return;
+		} else if("To be excluded".equals(statusDescription)){
+			this.status = 3;
+			return;
 		}
 		this.status = null;
 	}

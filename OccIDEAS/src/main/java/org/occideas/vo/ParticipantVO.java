@@ -75,7 +75,9 @@ public class ParticipantVO {
 			statusDescription = "Partial";
 		} else if(status==2){
 			statusDescription = "Completed";
-		} 
+		} else if(status == 3){
+			statusDescription = "To be excluded";
+		}
 		return statusDescription;
 	}
 

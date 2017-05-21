@@ -1553,6 +1553,8 @@ public class AssessmentRestController {
 			return "Partial";
 		} else if (status == 2) {
 			return "Completed";
+		} else if(status == 3){
+			return "To be excluded";
 		}
 		return "Running";
 	}

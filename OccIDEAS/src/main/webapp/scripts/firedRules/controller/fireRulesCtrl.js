@@ -87,26 +87,45 @@
 		};
 		
 		$scope.participantStatus = "";
-		$scope.pstatuses = ['Partial','Completed'];
+		$scope.pstatuses = ['Running','Partial','Completed','To be excluded'];
+		
+		
 		$scope.onChangeSaveParticipantStatus = function(){
-			if($scope.interview){
-			// get participant 
-				var referenceNumber = $scope.interview.referenceNumber;
-				ParticipantsService.getByReferenceNumber(referenceNumber).then(function(response){
-					if(response.status == '200'){
-						var participant = response.data;
-						//save participant status
-						// partial is 1, completed is 2
-						participant.status = $scope.participantStatus == 'Completed'?2:1;
-						ParticipantsService.save(participant).then(function(rp){
-							if(rp.status == 200){
-								alert("Participant status saved successfully.");
-							}else{
-								alert("Participant status saved failed.");
-							}
-						})
+			if(participant){
+				// get participant 
+				participant.status = getParticipantStatus($scope.participantStatus);
+				ParticipantsService.save(participant).then(function(rp){
+					if(rp.status == 200){
+						alert("Participant status saved successfully.");
+					}else{
+						alert("Participant status saved failed.");
 					}
 				})
+			}
+		}
+		
+		function getParticipantStatus(status){
+			if(status == 'Running'){
+				return 0;
+			}
+			else if(status == 'Partial'){
+				return 1;
+			}else if(status == 'Completed'){
+				return 2;
+			}else if(status == 'To be excluded'){
+				return 3;
+			}
+		}
+		
+		function getParticipantDescription(status){
+			if(status == 1){
+				return 'Partial';
+			}else if(status == 2){
+				return 'Completed';
+			}else if(status == 3){
+				return 'To be excluded';
+			}else{
+				return 'Running';
 			}
 		}
 		
@@ -254,7 +273,7 @@
 	    		
 	    	});
 		}
-		
+		var participant = undefined;
 		function refreshInterviewDisplay(){
 			
 			if(!$scope.linkedModule){
@@ -263,6 +282,16 @@
 					if(response.status == '200'){	
 						
 						$scope.interview = response.data[0];
+						if($scope.interview){
+							// get participant 
+								var referenceNumber = $scope.interview.referenceNumber;
+								ParticipantsService.getByReferenceNumber(referenceNumber).then(function(response){
+									if(response.status == '200'){
+										participant = response.data;
+										$scope.participantStatus = getParticipantDescription(participant.status); 
+									}
+								});
+						}
 						$scope.assessmentStatus = $scope.interview.assessedStatus;
 						$scope.data = response.data[0];
 						
