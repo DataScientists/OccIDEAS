@@ -282,19 +282,11 @@
 					if(response.status == '200'){	
 						
 						$scope.interview = response.data[0];
-						if($scope.interview){
-							// get participant 
-								var referenceNumber = $scope.interview.referenceNumber;
-								ParticipantsService.getByReferenceNumber(referenceNumber).then(function(response){
-									if(response.status == '200'){
-										participant = response.data;
-										$scope.participantStatus = getParticipantDescription(participant.status); 
-									}
-								});
-						}
+						participant = $scope.interview.participant;
+						$scope.participantStatus = getParticipantDescription(participant.status); 
 						$scope.assessmentStatus = $scope.interview.assessedStatus;
 						$scope.data = response.data[0];
-						
+
 						$scope.nodePopover = {
 				    		    templateUrl: 'scripts/questions/partials/nodePopover.html',
 				    		    open: function(x,idRule) {
