@@ -1054,7 +1054,8 @@ public class AssessmentRestController {
 		Set<String> headers = new LinkedHashSet<>();
 		headers.add("Interview Id");
 		headers.add("AWES ID");
-		headers.add("Status");
+		headers.add("Participant Status");
+		headers.add("Assessment Status");
 		headers.add("Intro Module Name");
 		headers.add("Job Module Name");
 
@@ -1097,7 +1098,7 @@ public class AssessmentRestController {
 				System.out.println("no participant at interview" + interviewVO.getIdinterview());
 			}
 			answers.add(pStatus);
-
+			answers.add(interviewVO.getAssessedStatus());
 			addModuleNames(interviewVO, answers);
 
 			for (AgentVO agent : agents) {

@@ -88,8 +88,6 @@
 		
 		$scope.participantStatus = "";
 		$scope.pstatuses = ['Running','Partial','Completed','To be excluded'];
-		
-		
 		$scope.onChangeSaveParticipantStatus = function(){
 			if(participant){
 				// get participant 
