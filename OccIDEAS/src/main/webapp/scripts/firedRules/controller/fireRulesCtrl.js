@@ -96,9 +96,19 @@
 				participant.status = getParticipantStatus($scope.participantStatus);
 				ParticipantsService.save(participant).then(function(rp){
 					if(rp.status == 200){
-						alert("Participant status saved successfully.");
+						ngToast.create({
+				    		  className: 'success',
+				    		  content: "Save successful",
+				    		  timeout: 4000,
+				    		  dismissButton:true
+				    	});
 					}else{
-						alert("Participant status saved failed.");
+						ngToast.create({
+				    		  className: 'danger',
+				    		  content: "Save failed",
+				    		  timeout: 4000,
+				    		  dismissButton:true
+				    	});
 					}
 				})
 			}
@@ -1403,7 +1413,19 @@
 			InterviewsService.save(interview).then(function(response) {
 				if (response.status === 200) {
 					$log.info("Saving interview at assessment note with id:"+ interview.interviewId + " successful");
-					
+						ngToast.create({
+				    		  className: 'success',
+				    		  content: "Save successful",
+				    		  timeout: 4000,
+				    		  dismissButton:true
+				    	});
+				}else{
+					ngToast.create({
+			    		  className: 'danger',
+			    		  content: "Save failed",
+			    		  timeout: 4000,
+			    		  dismissButton:true
+			    	});
 				}
 			});
 		}
