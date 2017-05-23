@@ -28,11 +28,13 @@
 	          return  AgentsService.get().then(function(data) {
 	        	  console.log("Data get list from agents ajax ...");
 	        	  _.each(data,function(agent){
-	        		  var isStudyAgent = _.find($scope.studyAgents.data,function(studyAgents){
-	        			  return agent.idAgent == studyAgents.value;
-	        		  });
-	        		  if(isStudyAgent){
-	        			  agent.isChecked = true;
+	        		  if($scope.studyAgents && $scope.studyAgents.data){
+	        			  var isStudyAgent = _.find($scope.studyAgents.data,function(studyAgents){
+	        				  return agent.idAgent == studyAgents.value;
+	        			  });
+	        			  if(isStudyAgent){
+	        				  agent.isChecked = true;
+	        			  }
 	        		  }
 	        	  });
 	        	  self.originalData = angular.copy(data);
