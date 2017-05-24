@@ -86,7 +86,9 @@ public abstract class BaseSelenium {
 		driver.findElement(By.xpath("/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[1]")).click();
 	}
 	
-	protected static void deleteModule() throws InterruptedException {
+	protected static void deleteModule(String modulename) throws InterruptedException {
+		driver.findElementByXPath("//*[@id='tab-content-1']/div/div/ng-view/div/div/table/thead/tr[3]/th[2]/div/input")
+		.sendKeys(modulename);
 		Thread.sleep(twoSeconds);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.findElement(
@@ -94,7 +96,7 @@ public abstract class BaseSelenium {
 				.click();
 		Thread.sleep(threeSeconds);
 		WebElement inputElement = driver.findElement(
-				By.cssSelector("#id_"+MODULE_NAME+"_delete"));
+				By.cssSelector("#id_"+modulename+"_delete"));
 		if(inputElement != null){
 			inputElement.click();
 			Thread.sleep(twoSeconds);
@@ -143,6 +145,11 @@ public abstract class BaseSelenium {
 		Thread.sleep(twoSeconds);
 		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(1) > a")).click();
 		
+	}
+	
+	protected static void waitTillRendered(int seconds) throws InterruptedException{
+		Thread.sleep(seconds);
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	}
 	
 }

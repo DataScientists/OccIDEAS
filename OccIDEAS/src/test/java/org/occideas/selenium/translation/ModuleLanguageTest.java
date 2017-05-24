@@ -29,7 +29,7 @@ public class ModuleLanguageTest extends BaseSelenium {
 	@AfterClass
 	public static void cleanup() throws InterruptedException {
 		selectModuleTab();
-		deleteModule();
+		deleteModule(MODULE_NAME);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		logout();
 		driver.quit();

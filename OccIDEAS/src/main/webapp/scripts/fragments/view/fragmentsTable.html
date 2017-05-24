@@ -18,10 +18,10 @@
                     <strong> {{ group.value }}</strong>
                 </a>
                 <div class="brn-group pull-right">
-       				 <button class="btn btn-default" ng-click="vm.add(group.value)">
+       				 <button class="btn btn-default" id="add_{{group.value}}" ng-click="vm.add(group.value)">
           					<span class="glyphicon glyphicon-plus"></span>
        				 </button>
-       				 <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+       				 <button class="btn btn-default" id="delete_{{group.value}}" ng-click="vm.toggleIsDeleting()">
           					<span class="glyphicon glyphicon-trash"></span>
        				 </button>
      			 </div>
@@ -86,7 +86,7 @@
 					<span class="glyphicon glyphicon-list-alt"></span>
 				</button>
 				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
-					ng-if="vm.isDeleting" confirm="Delete fragment {{row.name}}?">
+					ng-if="vm.isDeleting" id="delete_{{row.name}}" confirm="Delete fragment {{row.name}}?">
 					<span class="glyphicon glyphicon-trash"></span>
 				</button>
 				<button class="btn btn-danger btn-sm" 

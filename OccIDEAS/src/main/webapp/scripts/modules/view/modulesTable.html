@@ -31,7 +31,7 @@
                     <strong ng-if="group.value == 'M_Module__'">Tests</strong>
                 </a>
                 <div class="brn-group pull-right">
-       				 <button id="addModule" class="btn btn-default" ng-click="vm.add(group.value)">
+       				 <button id="add_{{group.value}}" class="btn btn-default" ng-click="vm.add(group.value)">
           					<span class="glyphicon glyphicon-plus"></span>
        				 </button>
        				 <button id="toggleDeleteModuleId" class="btn btn-default" ng-click="vm.toggleIsDeleting()">

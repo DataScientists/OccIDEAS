@@ -4,7 +4,7 @@
 			class="table table-bordered table-hover 
   table-condensed editable-table moduleTable"
 			ng-form="tableForm" disable-filter="vm.isAdding"
-			demo-tracked-table="vm.tableTracker">
+			demo-tracked-table="vm.tableTracker" id="addAgentId">
 			<div class="pull-left" style="padding:2px 2px 2px 2px;">
 				<button type="button" ng-click='vm.addGroup()' class="btn btn-default"> Add Agent Group</button>
 			</div>
@@ -81,6 +81,7 @@
 							<span class="glyphicon glyphicon-list-alt"></span>
 						</button>
 						<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
+							id="delete_{{row.name}}"
 							ng-if="vm.isDeleting" confirm="Delete agent {{row.name}}?">
 							<span class="glyphicon glyphicon-trash"></span>
 						</button>

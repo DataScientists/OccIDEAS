@@ -28,7 +28,7 @@ public class FiredRulesTest  extends BaseSelenium {
 		Thread.sleep(oneSeconds);
 		loginAsContdev();
 		selectModuleTab();
-		deleteModule();
+		deleteModule(MODULE_NAME);
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		logout();
 		driver.quit();
