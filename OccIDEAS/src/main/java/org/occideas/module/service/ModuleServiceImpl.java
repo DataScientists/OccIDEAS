@@ -13,7 +13,7 @@ import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
-import org.occideas.fragment.dao.FragmentDao;
+import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeRuleMapper;
@@ -55,7 +55,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Autowired
 	private FragmentMapper fragmentMapper;
 	@Autowired
-	private FragmentDao fragmentDao;
+	private IFragmentDao fragmentDao;
 	@Autowired
 	private ModuleMapper mapper;
 	@Autowired

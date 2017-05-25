@@ -11,15 +11,14 @@ import org.junit.runners.MethodSorters;
 import org.occideas.selenium.base.BaseSelenium;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ModuleLanguageTest extends BaseSelenium {
 	private static final String EDIT_ARABIC = "اسمى تانجا";
+	private static final String MODULE_NAME = "selenium_test_language";
 
 	@BeforeClass
 	public static void init() {
-		MODULE_NAME = "selenium_test_language";
 		openBrowser();
 		driver.get(localhost);
 		driver.manage().window().maximize();
@@ -41,7 +40,7 @@ public class ModuleLanguageTest extends BaseSelenium {
 		}.getClass().getEnclosingMethod().getName());
 		Thread.sleep(oneSeconds);
 		selectModuleTab();
-		addIntroModule();
+		createIntroModule(MODULE_NAME);
 		enableLanguageTranslation();
 		selectModuleTab();
 		selectLanguageFlagBtn();

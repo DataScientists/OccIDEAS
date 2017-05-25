@@ -22,7 +22,7 @@ import org.occideas.entity.Fragment;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.Question;
-import org.occideas.fragment.dao.FragmentDao;
+import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.QuestionMapper;
@@ -69,7 +69,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 	private IModuleDao moduleDao;
 	
 	@Autowired
-	private FragmentDao fragmentDao;
+	private IFragmentDao fragmentDao;
 
 	@Autowired
 	private QuestionMapper qMapper;

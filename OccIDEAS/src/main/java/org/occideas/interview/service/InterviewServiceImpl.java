@@ -15,7 +15,7 @@ import org.occideas.entity.Interview;
 import org.occideas.entity.Module;
 import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
-import org.occideas.fragment.dao.FragmentDao;
+import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
@@ -90,7 +90,7 @@ public class InterviewServiceImpl implements InterviewService {
 	private QuestionService questionService;
 
 	@Autowired
-	private FragmentDao fragmentDao;
+	private IFragmentDao fragmentDao;
 
 	@Autowired
 	private FragmentMapper fragmentMapper;

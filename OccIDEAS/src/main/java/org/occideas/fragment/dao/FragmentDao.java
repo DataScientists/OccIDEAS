@@ -16,9 +16,11 @@ import org.occideas.entity.Fragment;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class FragmentDao {
+public class FragmentDao implements IFragmentDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -31,10 +33,18 @@ public class FragmentDao {
 			" from Node a"+
 			" where link = :link order by name";
 	
+	/* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#save(org.occideas.entity.Fragment)
+	 */
+	@Override
 	public void save(Fragment fragment){
 		sessionFactory.getCurrentSession().persist(fragment);
     }
 	
+	/* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#findByName(java.lang.String)
+	 */
+	@Override
 	public List<Fragment> findByName(String name){
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(Fragment.class)
@@ -42,6 +52,10 @@ public class FragmentDao {
 		return crit.list();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#getLinkingNodeById(long)
+	 */
+	@Override
 	public List<Question> getLinkingNodeById(long idNode){
 		final Session session = sessionFactory.getCurrentSession();
 		final Criteria crit = session.createCriteria(Question.class)
@@ -51,29 +65,54 @@ public class FragmentDao {
 	}
 
 
-    public void delete(Fragment fragment){
+    /* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#delete(org.occideas.entity.Fragment)
+	 */
+    @Override
+	public void delete(Fragment fragment){
       sessionFactory.getCurrentSession().delete(fragment);
     }
 
+	/* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#get(java.lang.Long)
+	 */
+	@Override
 	public Fragment get(Long id){
       return (Fragment) sessionFactory.getCurrentSession().get(Fragment.class, id);
     }
 
+	/* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#merge(org.occideas.entity.Fragment)
+	 */
+	@Override
 	public Fragment merge(Fragment fragment)   {
       return (Fragment) sessionFactory.getCurrentSession().merge(fragment);
     }
 
-    public void saveOrUpdate(Fragment fragment){
+    /* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#saveOrUpdate(org.occideas.entity.Fragment)
+	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+    @Override
+	public void saveOrUpdate(Fragment fragment){
       sessionFactory.getCurrentSession().saveOrUpdate(fragment);
     }
 
-    @SuppressWarnings("unchecked")
+    /* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#getAll()
+	 */
+    @Override
+	@SuppressWarnings("unchecked")
 	public List<Fragment> getAll() {
       final Session session = sessionFactory.getCurrentSession();
       final Criteria crit = session.createCriteria(Fragment.class);
       return crit.list();
     }
-    @SuppressWarnings("unchecked")
+    /* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#getAllActive()
+	 */
+    @Override
+	@SuppressWarnings("unchecked")
    	public List<Fragment> getAllActive() {
          final Session session = sessionFactory.getCurrentSession();
          final Criteria crit = session.createCriteria(Fragment.class)
@@ -88,11 +127,10 @@ public class FragmentDao {
          return crit.list();
        }
     
-    /**
-     * Get all with children nodes
-     * @param isIncludeChild
-     * @return
-     */
+    /* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#getAll(boolean)
+	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Fragment> getAll(boolean isIncludeChild) {
 		final Session session = sessionFactory.getCurrentSession();
@@ -102,6 +140,10 @@ public class FragmentDao {
 		return crit.list();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.occideas.fragment.dao.IFragmentDao#getFragmentParents(java.lang.Long)
+	 */
+	@Override
 	public List<Fragment> getFragmentParents(Long id) {
 		
 		final Session session = sessionFactory.getCurrentSession();
