@@ -106,12 +106,11 @@ public abstract class BaseSelenium {
 	}
 	
 	protected void createIntroModule(String moduleName) throws InterruptedException {
-		Thread.sleep(twoSeconds);
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		waitTillRendered(oneSeconds);
 		driver.findElement(
 				By.cssSelector("#add_M_IntroModule"))
 				.click();
-		Thread.sleep(threeSeconds);
+		waitTillRendered(oneSeconds);
 		WebElement inputElement = driver.findElement(
 				By.xpath("//*[@id='id_']/div/div/input"));
 		if(inputElement == null){
@@ -132,27 +131,67 @@ public abstract class BaseSelenium {
 		driver.findElement(
 				By.cssSelector("#saveBtn"))
 				.click();
-		Thread.sleep(twoSeconds);
+		waitTillRendered(oneSeconds);
 		driver.findElement(By.cssSelector("#id_"+moduleName+"_openmodule")).click();
-		Thread.sleep(twoSeconds);
+		waitTillRendered(oneSeconds);
 		Actions action= new Actions(driver);
 		action.contextClick(driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content M')]"))).build().perform();
-		Thread.sleep(twoSeconds);
+		waitTillRendered(oneSeconds);
 		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(2) > a")).click();
-		Thread.sleep(twoSeconds);
+		waitTillRendered(oneSeconds);
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/span").click();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/div/input").clear();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/div/input").sendKeys("test_intromodule_question");
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/div/input").sendKeys(Keys.RETURN);
+		waitTillRendered(oneSeconds);
 		action.contextClick(driver.findElement(
 				By.xpath("//div[contains(@class, 'tree-node-content Q')]"))).build().perform();
-		Thread.sleep(twoSeconds);
+		waitTillRendered(oneSeconds);
 		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(1) > a")).click();
+		waitTillRendered(oneSeconds);
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/span").click();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/div/input").clear();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/div/input").sendKeys("test_intromodule_answer");
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/div/input").sendKeys(Keys.RETURN);
+		driver.findElementByCssSelector("md-tab-item .glyphicon-remove").click();
 		
 	}
 	
-	protected static void selectFragmentsTab() throws InterruptedException {
-		waitTillRendered(oneSeconds);
+	protected void createModule(String testModuleAssessment) throws InterruptedException {
+		selectModuleTab();
+		waitTillRendered(twoSeconds);
 		driver.findElement(
-				By.xpath(
-		"/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[2]"))
-				.click();
+				By.cssSelector("#add_M_Module"))
+		.click();
+		waitTillRendered(oneSeconds);
+		driver.findElementByXPath("//*[@id='id_']/div/div/input").clear();
+		driver.findElementByXPath("//*[@id='id_']/div/div/input").sendKeys(testModuleAssessment);
+		driver.findElementByXPath("//*[@id='tab-content-1']/div/div/ng-view/div/div/table/tbody[2]/tr[2]/td[3]/div/div/input").clear();
+		driver.findElementByXPath("//*[@id='tab-content-1']/div/div/ng-view/div/div/table/tbody[2]/tr[2]/td[3]/div/div/input").sendKeys(testModuleAssessment);
+		driver.findElementByXPath("//*[@id='saveBtn']").click();
+		waitTillRendered(oneSeconds);
+		driver.findElement(By.cssSelector("#id_"+testModuleAssessment+"_openmodule")).click();
+		waitTillRendered(oneSeconds);
+		Actions action= new Actions(driver);
+		action.contextClick(driver.findElement(By.xpath("//div[contains(@class, 'tree-node-content M')]"))).build().perform();
+		waitTillRendered(oneSeconds);
+		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(2) > a")).click();
+		waitTillRendered(oneSeconds);
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/span").click();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/div/input").clear();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/div/input").sendKeys("test_module_question");
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content Q')]/div/input").sendKeys(Keys.RETURN);
+		waitTillRendered(oneSeconds);
+		action.contextClick(driver.findElement(
+				By.xpath("//div[contains(@class, 'tree-node-content Q')]"))).build().perform();
+		waitTillRendered(oneSeconds);
+		driver.findElement(By.cssSelector("body > div.dropdown.clearfix > ul > li:nth-child(1) > a")).click();
+		waitTillRendered(oneSeconds);
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/span").click();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/div/input").clear();
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/div/input").sendKeys("test_module_answer");
+		driver.findElementByXPath("//div[contains(@class, 'tree-node-content P')]/div/input").sendKeys(Keys.RETURN);
+		driver.findElementByCssSelector("md-tab-item .glyphicon-remove").click();
 	}
 	
 	protected void createAJSM(String name,String description) throws InterruptedException {
@@ -195,18 +234,13 @@ public abstract class BaseSelenium {
 		driver.findElementByCssSelector("md-tab-item .glyphicon-remove").click();
 	}
 	
-	protected void createModule(String testModuleAssessment) throws InterruptedException {
-		selectModuleTab();
-		waitTillRendered(twoSeconds);
-		driver.findElement(
-				By.cssSelector("#add_M_Module"))
-				.click();
+	
+	protected static void selectFragmentsTab() throws InterruptedException {
 		waitTillRendered(oneSeconds);
-		driver.findElementByXPath("//*[@id='id_']/div/div/input").clear();
-		driver.findElementByXPath("//*[@id='id_']/div/div/input").sendKeys(testModuleAssessment);
-		driver.findElementByXPath("//*[@id='tab-content-1']/div/div/ng-view/div/div/table/tbody[2]/tr[2]/td[3]/div/div/input").clear();
-		driver.findElementByXPath("//*[@id='tab-content-1']/div/div/ng-view/div/div/table/tbody[2]/tr[2]/td[3]/div/div/input").sendKeys(testModuleAssessment);
-		driver.findElementByXPath("//*[@id='saveBtn']").click();
+		driver.findElement(
+				By.xpath(
+						"/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[2]"))
+		.click();
 	}
 	
 	protected static void deleteAjsm(String testAjsmAssessment) throws InterruptedException {

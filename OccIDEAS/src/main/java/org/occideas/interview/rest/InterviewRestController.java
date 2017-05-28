@@ -17,6 +17,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.Constant;
@@ -34,6 +36,7 @@ import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.modulerule.service.ModuleRuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.security.filter.AuthenticationFilter;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
@@ -61,6 +64,8 @@ import org.springframework.http.MediaType;
 @Path("/interview")
 public class InterviewRestController implements BaseRestController<InterviewVO> {
 
+	private static final Logger log = LogManager.getLogger(InterviewRestController.class);
+	
 	@Autowired
     private InterviewService service;
 
@@ -339,9 +344,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 				interviewVO.setAutoAssessedRules(autoAssessedRules);
 				service.update(interviewVO);
          	}
-			System.out.println("updateAutoAssessments Done "+new Date());
+			log.info("Assessment completed for "+type+" for interviewIds");
 		}catch(Throwable e){
-			e.printStackTrace();
+			log.error("Error Occured on assessment",e.getMessage());
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();

@@ -109,7 +109,7 @@
 					ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
 					<span class="glyphicon glyphicon-remove"></span>
 				</button>
-				<button class="btn btn-default btn-sm"
+				<button class="btn btn-default btn-sm" id="id_{{row.name}}_openmodule"
 					ng-click="addModuleTab(row)" ng-if="!row.isEditing && row.type != 'M_IntroModule'">
 					<span class="glyphicon glyphicon-list-alt"></span>
 				</button>

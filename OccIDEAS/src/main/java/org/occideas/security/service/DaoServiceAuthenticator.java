@@ -33,10 +33,10 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
 			throws GeneralSecurityException {
 		AuthenticatedExternalWebService authenticatedExternalWebService = null;
 		User user = userService.findBySso(username);
-		log.info("User is " + user);
+		log.debug("User is " + user);
 		if (user != null && !StringUtils.isEmpty(password)) {
 			if (!State.ACTIVE.getState().equals(user.getState())) {
-				log.info("User is no longer Active.");
+				log.debug("User is no longer Active.");
 				throw new GeneralSecurityException("User is no longer Active.");
 			}
 
@@ -47,9 +47,9 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
 				authenticatedExternalWebService = new AuthenticatedExternalWebService(new User(), null,
 						getGrantedAuthorities(user));
 				authenticatedExternalWebService.setToken(tokenResponse);
-				log.info("Login successful token was generated");
+				log.debug("Login successful token was generated");
 			} else {
-				log.info("Invalid username or password");
+				log.debug("Invalid username or password");
 				throw new GeneralSecurityException("Invalid Domain User Credentials");
 			}
 
@@ -70,7 +70,7 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
 		if (authorities.isEmpty()) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_" + UserProfileType.READONLY.name()));
 		}
-		log.info("authorities :" + authorities);
+		log.debug("authorities :" + authorities);
 		return authorities;
 	}
 }
