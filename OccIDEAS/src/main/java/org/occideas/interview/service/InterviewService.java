@@ -69,4 +69,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	void preloadAllModules();
 
+	List<InterviewVO> listAllInterviewsNotAssessed();
+
+	List<InterviewVO> listAllInterviewsAssessed();
+
 }

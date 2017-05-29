@@ -27,6 +27,7 @@ import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
+import org.occideas.exceptions.GenericException;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
@@ -38,6 +39,7 @@ import org.occideas.modulerule.service.ModuleRuleService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.security.filter.AuthenticationFilter;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
@@ -302,13 +304,23 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     public Response updateAutoAssessments(@QueryParam("type") String type) {
     	List<InterviewVO> list = new ArrayList<InterviewVO>();
 		try{
+			if("All".equals(type)){
+			//get all interviews without answers
 			list = service.listAllInterviewsWithoutAnswers();
+			}else if(AssessmentStatusEnum.NOTASSESSED.getDisplay().equals(type)){
+				list = service.listAllInterviewsNotAssessed();
+			}else if(AssessmentStatusEnum.AUTOASSESSED.getDisplay().equals(type)){
+				list = service.listAllInterviewsAssessed();
+			}else{
+				log.error("Invalid Type "+type+" entered in updateAutoAssessments.");
+			}
+			
 			List<AgentVO> listAgents = agentService.getStudyAgents();
 			int iSize = list.size();
 			int iCount = 0;
 			for(InterviewVO interviewVO:list){
 				iCount++;
-				System.out.println(iCount+" of "+iSize);
+				log.info("auto assessment for "+type+" triggered "+iCount+" of "+iSize);
 				interviewVO = this.determineFiredRules(interviewVO);
 				List<InterviewAutoAssessmentVO> assessments = autoAssessmentService.findByInterviewId(interviewVO.getInterviewId());
 				ArrayList<RuleVO> autoAssessedRules = new ArrayList<RuleVO>();

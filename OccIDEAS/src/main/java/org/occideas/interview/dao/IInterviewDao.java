@@ -4,9 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.occideas.entity.Interview;
-import org.occideas.entity.Node;
 import org.occideas.entity.Question;
-import org.occideas.vo.NodeVO;
 
 public interface IInterviewDao {
 
@@ -53,5 +51,9 @@ public interface IInterviewDao {
 	List<Long> getLinksByAnswerId(long answerId);
 
 	List<Question> getLinksByModule(Long id);
+
+	List<Interview> getAllInterviewsNotAssessed();
+
+	List<Interview> getAllInterviewsAssessed();
 
 }

@@ -31,6 +31,7 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
+import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionComparator;
 import org.occideas.vo.InterviewQuestionVO;
@@ -183,8 +184,8 @@ public class InterviewServiceImpl implements InterviewService {
 	@Auditable(actionType = AuditingActionType.CREATE_INTERVIEW)
 	@Override
 	public InterviewVO create(InterviewVO o) {
-		// TODO: Hotfix - Just don't understand why it returns interviewId
-		// instead of object
+		// set default assessed status
+		o.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
 		Object obj = dao.save(mapper.convertToInterview(o));
 		Interview intervew = null;
 		if (obj instanceof Interview) {
@@ -198,6 +199,8 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Override
 	public void update(InterviewVO o) {
+		if (o.getInterviewId() == 0L) {
+		}
 		dao.saveOrUpdate(mapper.convertToInterview(o));
 	}
 
@@ -232,17 +235,20 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Override
 	public List<InterviewVO> listAllInterviewsWithoutAnswers() {
-		System.out.println("1:listAllInterviewsWithoutAnswers:" + new Date());
-		// List<Interview> debug = interviewDao.getAll();
 		List<Interview> debug = interviewDao.getAllInterviewsWithoutAnswers();
-		List<Interview> debug1 = new ArrayList<Interview>();
-		for (int i = 0; i < debug.size(); i++) {
-			if (i < 10) {
-				debug1.add(debug.get(i));
-			}
-		}
-		System.out.println("2:listAllInterviewsWithoutAnswers:" + new Date());
 		return mapper.convertToInterviewWithoutAnswersList(debug);
+	}
+	
+	@Override
+	public List<InterviewVO> listAllInterviewsNotAssessed() {
+		List<Interview> list = interviewDao.getAllInterviewsNotAssessed();
+		return mapper.convertToInterviewWithoutAnswersList(list);
+	}
+	
+	@Override
+	public List<InterviewVO> listAllInterviewsAssessed() {
+		List<Interview> list = interviewDao.getAllInterviewsAssessed();
+		return mapper.convertToInterviewWithoutAnswersList(list);
 	}
 
 	@Override
@@ -348,6 +354,8 @@ public class InterviewServiceImpl implements InterviewService {
 				interviewVO.setParticipant(participantVO);
 				interviewVO.setModule(modVO);
 				interviewVO.setReferenceNumber(referenceNumber);
+				// set default assessed status
+				interviewVO.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
 				Interview interviewEntity = mapper.convertToInterview(interviewVO);
 				interviewDao.saveNewTransaction(interviewEntity);
 				InterviewVO newInterviewVO = mapper.convertToInterviewVO(interviewEntity);

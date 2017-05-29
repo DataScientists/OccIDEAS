@@ -24,6 +24,7 @@ import org.occideas.entity.Node;
 import org.occideas.entity.Note;
 import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
+import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.NodeVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class InterviewDao implements IInterviewDao{
 	
 	private final String NOT_ASSESSED_COUNT = 
 			ASSESSMENT_BASE_COUNT 
-		  	+ " and (i.assessedStatus like '' or i.assessedStatus is null)";
+			+ " and i.assessedStatus like '"+ Constant.NOT_ASSESSED +"'";
 	
 	private final String ASSESSED_COUNT = 
 			ASSESSMENT_BASE_COUNT  
@@ -156,8 +157,7 @@ public class InterviewDao implements IInterviewDao{
 
 		if (assessmentStatus != null) {
 			if (Constant.NOT_ASSESSED.equals(assessmentStatus)) {
-				crit.add(Restrictions.or(Restrictions.isNull("assessedStatus"), 
-						Restrictions.eq("assessedStatus", "")));
+				crit.add(Restrictions.eq("assessedStatus", AssessmentStatusEnum.NOTASSESSED.getDisplay()));
 			} else if (Constant.AUTO_ASSESSED.equals(assessmentStatus)){
 				crit.add(Restrictions.eq("assessedStatus", assessmentStatus));
 			}
@@ -287,6 +287,40 @@ public class InterviewDao implements IInterviewDao{
 	    	       		  					.add(Projections.property("module"),"module")
 	    	       		  					.add(Projections.property("idinterview"),"idinterview")
 	    	       		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
+	    		  						.addOrder(Order.asc("referenceNumber"))
+	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
+	      List<Interview> temp = crit.list();
+	      return temp;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Interview> getAllInterviewsNotAssessed() {
+		final Session session = sessionFactory.getCurrentSession();
+	      final Criteria crit = session.createCriteria(Interview.class)		  						
+	    		  						.setProjection(Projections.projectionList()
+	    	       		  					.add(Projections.property("fragment"),"fragment")
+	    	       		  					.add(Projections.property("module"),"module")
+	    	       		  					.add(Projections.property("idinterview"),"idinterview")
+	    	       		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
+	    		  						.add(Restrictions.eq("assessedStatus", AssessmentStatusEnum.NOTASSESSED.getDisplay()))
+	    		  						.addOrder(Order.asc("referenceNumber"))
+	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
+	      List<Interview> temp = crit.list();
+	      return temp;
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Interview> getAllInterviewsAssessed() {
+		final Session session = sessionFactory.getCurrentSession();
+	      final Criteria crit = session.createCriteria(Interview.class)		  						
+	    		  						.setProjection(Projections.projectionList()
+	    	       		  					.add(Projections.property("fragment"),"fragment")
+	    	       		  					.add(Projections.property("module"),"module")
+	    	       		  					.add(Projections.property("idinterview"),"idinterview")
+	    	       		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
+	    		  						.add(Restrictions.eq("assessedStatus", AssessmentStatusEnum.AUTOASSESSED.getDisplay()))
 	    		  						.addOrder(Order.asc("referenceNumber"))
 	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
 	      List<Interview> temp = crit.list();
