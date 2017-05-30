@@ -188,7 +188,8 @@ public class AssessmentRestController {
 				List<String> headerList = new ArrayList<String>();
 				headerList.add("InterviewId");
 				headerList.add("ReferenceNumber");
-				headerList.add("Status");
+				headerList.add("Participant Status");
+				headerList.add("Assessment Status");
 				List<String> answerList = new ArrayList<String>();
 				answerList.add(String.valueOf(interview.getIdinterview()));
 				answerList.add(String.valueOf(interview.getReferenceNumber()));
@@ -199,6 +200,7 @@ public class AssessmentRestController {
 					System.out.println("no participant at interview" + interview.getIdinterview());
 				}
 				answerList.add(pStatus);
+				answerList.add(interview.getAssessedStatus());
 
 				for (InterviewAnswerVO ia : answers) {
 					// InterviewQuestionVO iq =

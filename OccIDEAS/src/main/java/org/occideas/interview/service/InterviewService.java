@@ -73,4 +73,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
 	List<InterviewVO> listAllInterviewsAssessed();
 
+	void cleanDeletedAnswers(Long id);
+
 }

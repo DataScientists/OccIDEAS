@@ -12,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Interview;
+import org.occideas.entity.InterviewAnswer;
+import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
@@ -293,6 +295,29 @@ public class InterviewServiceImpl implements InterviewService {
 		interview.setQuestionHistory(
 				qsMapper.convertToInterviewQuestionVOList(interviewDao.get(id).getQuestionHistory(), true));
 		return interview;
+	}
+	@Override
+	public void cleanDeletedAnswers(Long id) {
+		List<InterviewQuestion> deletedQs = interviewQuestionDao.getAllDeleted();
+		for(InterviewQuestion iq: deletedQs){
+			this.deleteChildAnswers(iq);
+		}
+	}
+	private void deleteChildAnswers(InterviewQuestion iq){
+		for(InterviewAnswer ia:iq.getAnswers()){		
+			this.deleteChildQuestions(ia);
+			ia.setDeleted(1);			
+		}
+		interviewQuestionDao.saveOrUpdate(iq);
+	}
+	private void deleteChildQuestions(InterviewAnswer ia){
+		//for (InterviewQuestion iq : ia.getQuestions()) {
+
+		//	this.deleteChildAnswers(iq);
+		//	iq.setDeleted(1);
+		//	interviewQuestionDao.saveOrUpdate(iq);
+		//}
+		
 	}
 
 	@Override

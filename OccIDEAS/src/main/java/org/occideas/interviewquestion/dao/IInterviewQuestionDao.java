@@ -48,4 +48,6 @@ public interface IInterviewQuestionDao {
 
 	void preloadAllModules();
 
+	List<InterviewQuestion> getAllDeleted();
+
 }

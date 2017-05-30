@@ -532,6 +532,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
     	ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
     	
+    	//clean deleted answers
+    	service.cleanDeletedAnswers(interview.getInterviewId());
+    	
     	List<InterviewAnswerVO> answerHistory = interviewAnswerService.findByInterviewId(interview.getInterviewId());
     	//h
     	List<ModuleRuleVO> moduleRules = new ArrayList<ModuleRuleVO>();
