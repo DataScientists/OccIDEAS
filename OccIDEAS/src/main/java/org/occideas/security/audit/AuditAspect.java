@@ -70,7 +70,7 @@ public class AuditAspect {
 		try {
 			return extractUserFromToken();
 		} catch (NullPointerException npe) {
-			log.error("Function getUserName in AuditAspect - No UserName");
+			log.debug("Function getUserName in AuditAspect - No UserName");
 			return "";
 		}
 	}
@@ -79,7 +79,7 @@ public class AuditAspect {
 		try {
 			return extractAuthFromToken();
 		} catch (NullPointerException npe) {
-			log.error("Function getRoles in AuditAspect - No Roles");
+			log.debug("Function getRoles in AuditAspect - No Roles");
 			return "";
 		}
 	}

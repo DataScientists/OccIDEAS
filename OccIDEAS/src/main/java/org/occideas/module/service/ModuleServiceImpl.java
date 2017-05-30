@@ -22,9 +22,12 @@ import org.occideas.module.dao.IModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.RuleDao;
+import org.occideas.security.audit.Auditable;
+import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.FragmentVODecorator;
@@ -76,6 +79,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private SystemPropertyService sysPropService;
 	@Autowired
 	private SystemPropertyDao sysPropDao;
+	@Autowired
+    private StudyAgentUtil studyAgentUtil;
 
 	@Override
 	public List<ModuleVO> listAll() {
@@ -111,26 +116,34 @@ public class ModuleServiceImpl implements ModuleService {
 		return list;
 	}
 
+	@Auditable(actionType = AuditingActionType.CREATE_MODULE)
 	@Override
 	public ModuleVO create(ModuleVO module) {
 		Module moduleEntity = dao.save(mapper.convertToModule(module, false));
+		studyAgentUtil.createStudyAgentForUpdatedNode(moduleEntity.getIdNode(),moduleEntity.getName());
 		return mapper.convertToModuleVO(moduleEntity, false);
 	}
 
+	@Auditable(actionType = AuditingActionType.UPDATE_MODULE)
 	@Override
 	public void update(ModuleVO module) {
 		generateIdIfNotExist(module);
 		dao.saveOrUpdate(mapper.convertToModule(module, true));
+		studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(),module.getName());
 	}
 
+	@Auditable(actionType = AuditingActionType.DEL_MODULE)
 	@Override
 	public void delete(ModuleVO module) {
 		dao.delete(mapper.convertToModule(module, false));
+		studyAgentUtil.deleteStudyAgentJson(String.valueOf(module.getIdNode()));
 	}
 
+	@Auditable(actionType = AuditingActionType.DEL_MODULE)
 	@Override
 	public void merge(ModuleVO module) {
 		dao.merge(mapper.convertToModule(module, true));
+		studyAgentUtil.deleteStudyAgentJson(String.valueOf(module.getIdNode()));
 	}
 
 	@Override

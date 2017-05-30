@@ -74,6 +74,7 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionVO create(QuestionVO o) {
         Question question = new Question();
         question.setIdNode(dao.save(mapper.convertToQuestion(o)));
+        studyAgentUtil.createStudyAgentForUpdatedNode(o.getTopNodeId(),o.getName());
         return mapper.convertToQuestionVO(question);
     }
 
@@ -88,6 +89,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void delete(QuestionVO o) {
         dao.delete(mapper.convertToQuestion(o));
+        studyAgentUtil.createStudyAgentForUpdatedNode(o.getTopNodeId(),o.getName());
     }
 
 	@Override

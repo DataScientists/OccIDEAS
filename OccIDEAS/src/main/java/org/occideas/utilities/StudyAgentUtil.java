@@ -81,6 +81,31 @@ public class StudyAgentUtil {
 		log.info("[End] creating file - "+filePath);
 		}
 	}
+	
+	public void deleteStudyAgentJson(String idNode){
+		try{
+		SystemPropertyVO autoCreateJson = systemPropertyService.getByName(Constant.AUTO_CREATE_STUDY_AGENT_JSON);
+		if (autoCreateJson != null && "true".equals(autoCreateJson.getValue().toLowerCase().trim())) {
+		if(doesStudyAgentJsonExist(idNode)){
+			String path = System.getProperty("user.home");
+			String filePath = path+"/modules/"+idNode + ".json";
+			File expectedFile = new File(filePath);
+			if(expectedFile.exists()){
+				boolean deleted = expectedFile.delete();
+				if(deleted){
+					log.info(expectedFile+" has beed deleted.");
+				}else{
+					log.error("Unable to delete "+expectedFile);
+				}
+			}
+		}
+		}
+		}catch(Throwable ex){
+			log.error("Error on delete study agent json "+idNode,ex);
+		}
+	}
+	
+	
 	public boolean doesStudyAgentJsonExist(String idNode)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		String path = System.getProperty("user.home");

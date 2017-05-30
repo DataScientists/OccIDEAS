@@ -3,9 +3,6 @@ package org.occideas.security.provider;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-import org.occideas.exceptions.UserNotActiveException;
-import org.occideas.security.audit.Auditable;
-import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.AuthenticationWithToken;
 import org.occideas.security.service.ExternalServiceAuthenticator;
@@ -32,7 +29,6 @@ public class DomainUsernamePasswordAuthenticationProvider implements Authenticat
 		this.tokenManager = tokenManager;
 	}
 
-	@Auditable(actionType = AuditingActionType.GENERIC)
 	@SuppressWarnings("unchecked")
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
