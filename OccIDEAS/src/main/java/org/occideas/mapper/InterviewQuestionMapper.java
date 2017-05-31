@@ -21,7 +21,11 @@ public interface InterviewQuestionMapper {
 	
 	InterviewQuestion convertToInterviewQuestion(InterviewQuestionVO questionVO);
 	
+	InterviewQuestion convertToInterviewQuestionWithAnswers(InterviewQuestionVO questionVO);
+	
 	List<InterviewQuestion> convertToInterviewQuestionList(List<InterviewQuestionVO> questionVO);
+
+	List<InterviewQuestion> convertToInterviewQuestionListWithAnswers(List<InterviewQuestionVO> questionVO);
 
 	InterviewQuestionVO convertToInterviewQuestionWithRulesVO(InterviewQuestion question);
 

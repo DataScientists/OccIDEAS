@@ -50,6 +50,17 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 		return list;
 	}
 	
+	@Override
+	public List<InterviewAnswer> saveWithClearSession(List<InterviewAnswer> ia) {
+		sessionFactory.getCurrentSession().clear();		
+		List<InterviewAnswer> list = new ArrayList<>();
+		for (InterviewAnswer a : ia) {
+			sessionFactory.getCurrentSession().saveOrUpdate(a);
+			list.add(a);
+		}
+		return list;
+	}
+	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public List<InterviewAnswer> saveAnswerAndQueueQuestions(List<InterviewAnswer> ia) {
@@ -143,6 +154,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 		final Criteria crit = session.createCriteria(InterviewAnswer.class);
 		if (interviewId != null) {
 			crit.add(Restrictions.eq("idInterview", interviewId));
+			crit.add(Restrictions.eq("deleted", 0));
 			crit.addOrder(Order.desc("id"));
 		}
 		return crit.list();

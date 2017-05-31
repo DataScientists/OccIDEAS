@@ -345,6 +345,15 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		final Criteria crit = session.createCriteria(InterviewQuestion.class).add(Restrictions.eq("deleted", 1));
 		return crit.list();
 	}
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<InterviewQuestion> getAllDeleted(Long idInterview) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class);
+		crit.add(Restrictions.eq("deleted", 1));
+		crit.add(Restrictions.eq("idInterview",idInterview));
+		return crit.list();
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
