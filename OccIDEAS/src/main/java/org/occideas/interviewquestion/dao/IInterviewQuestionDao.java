@@ -50,4 +50,6 @@ public interface IInterviewQuestionDao {
 
 	List<InterviewQuestion> getAllDeleted();
 
+	InterviewQuestion saveOrUpdateSingleTransaction(InterviewQuestion iq);
+
 }

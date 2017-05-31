@@ -138,6 +138,12 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		sessionFactory.getCurrentSession().saveOrUpdate(iq);
 		return iq;
 	}
+	
+	@Override
+	public InterviewQuestion saveOrUpdateSingleTransaction(InterviewQuestion iq) {
+		sessionFactory.getCurrentSession().saveOrUpdate(iq);
+		return iq;
+	}
 
 	@Override
 	public List<InterviewQuestion> saveOrUpdate(List<InterviewQuestion> iqs) {
