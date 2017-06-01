@@ -129,7 +129,9 @@ public class ModuleServiceImpl implements ModuleService {
 	public void update(ModuleVO module) {
 		generateIdIfNotExist(module);
 		dao.saveOrUpdate(mapper.convertToModule(module, true));
-		studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(),module.getName());
+		if( module.getIdNode() != 0){
+			studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(),module.getName());
+		}
 	}
 
 	@Auditable(actionType = AuditingActionType.DEL_MODULE)

@@ -205,6 +205,9 @@ public class InterviewServiceImpl implements InterviewService {
 	public void update(InterviewVO o) {
 		if (o.getInterviewId() == 0L) {
 		}
+		if(StringUtils.isEmpty(o.getAssessedStatus())){
+			o.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
+		}
 		dao.saveOrUpdate(mapper.convertToInterview(o));
 	}
 

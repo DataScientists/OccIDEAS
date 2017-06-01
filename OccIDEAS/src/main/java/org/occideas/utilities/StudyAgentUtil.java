@@ -41,7 +41,8 @@ public class StudyAgentUtil {
 	public ModuleVO getStudyAgentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		String path = System.getProperty("user.home");
-		ModuleVO modVO = mapper.readValue(new File(path+"/modules/"+idNode + ".json"), ModuleVO.class);
+		File file = new File(path+"/modules/"+idNode + ".json");
+		ModuleVO modVO = mapper.readValue(file, ModuleVO.class);
 		return modVO;
 	}
 	public FragmentVO getStudyAgentFragmentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
