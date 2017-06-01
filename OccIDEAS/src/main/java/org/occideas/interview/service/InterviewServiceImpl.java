@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Interview;
+import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.Question;
@@ -305,42 +306,45 @@ public class InterviewServiceImpl implements InterviewService {
 		if(deletedQs != null && !deletedQs.isEmpty()){
 			log.info("cleanDeletedAnswers number of questions to cleanup:"+deletedQs.size());
 		}
-		List<InterviewQuestionVO> list = new ArrayList<>();
+	//	List<InterviewQuestionVO> list = new ArrayList<>();
 		for(InterviewQuestion q: deletedQs){
-			InterviewQuestionVO iq = intQuestionMapper.convertToInterviewQuestionVO(q);
-			if(iq.getAnswers() == null || iq.getAnswers().isEmpty()){
-				log.info("ignored no answers to delete for question:"+iq.getId()+" for interview "+iq.getIdInterview());
+			//InterviewQuestionVO iq = intQuestionMapper.convertToInterviewQuestionVO(q);
+			if(q.getAnswers() == null || q.getAnswers().isEmpty()){
+				log.info("ignored no answers to delete for question:"+q.getId()+" for interview "+q.getIdInterview());
 			}else{
-			log.info("delete child answers for question:"+iq.getId()+" for interview "+iq.getIdInterview());
-			this.checkAndDeleteAnswerIfRequired(iq);
+			log.info("delete child answers for question:"+q.getId()+" for interview "+q.getIdInterview());
+			this.checkAndDeleteAnswerIfRequired(q);
 			}
 		}
-		this.deleteChildAnswers(list);
+	//	this.deleteChildAnswers(list);
 	}
 	
-	private void checkAndDeleteAnswerIfRequired(InterviewQuestionVO iq){
+	private void checkAndDeleteAnswerIfRequired(InterviewQuestion iq){
 		boolean needsUpdate = false;
-		for(InterviewAnswerVO ia:iq.getAnswers()){		
+		for(InterviewAnswer ia:iq.getAnswers()){		
 			if(ia.getDeleted() == 1){
 				log.info("ignored child answer to be deleted:"+ia+" for questions "+iq.getId()+" for interview "+iq.getIdInterview());				
 			}else{
 				log.info("adding child answer to be deleted:"+ia+" for questions "+iq.getId()+" for interview "+iq.getIdInterview());
 				ia.setDeleted(1);
 				needsUpdate = true;
-			}					
+			}	
+			List<InterviewQuestion> qstodelete = interviewQuestionDao.getAllChildInterviewQuestions(ia.getAnswerId(),iq.getIdInterview());
+			this.deleteChildQuestions(qstodelete);
 		}
 		if(needsUpdate){
-			interviewAnswerDao.saveWithClearSession(intAnswerMapper.convertToInterviewAnswerList(iq.getAnswers()));
-	
+			interviewAnswerDao.saveWithClearSession(iq.getAnswers());
+			
 		}
 	}
 	
 	
-	private void deleteChildAnswers(List<InterviewQuestionVO> list){
-		List<InterviewQuestion> entity = intQuestionMapper.convertToInterviewQuestionListWithAnswers(list);
-		for(InterviewQuestion iq:entity){
+	private void deleteChildQuestions(List<InterviewQuestion> list){
+		for(InterviewQuestion iq:list){
+			iq.setDeleted(1);
 			log.info("saving question:"+iq.getId()+" for interview "+iq.getIdInterview());
 			interviewQuestionDao.saveOrUpdateSingleTransaction(iq);
+			this.checkAndDeleteAnswerIfRequired(iq);
 		}
 	}
 

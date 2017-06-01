@@ -354,6 +354,15 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		crit.add(Restrictions.eq("idInterview",idInterview));
 		return crit.list();
 	}
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<InterviewQuestion> getAllChildInterviewQuestions(Long idAnswer,Long idInterview) {
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class);
+		crit.add(Restrictions.eq("idInterview",idInterview));
+		crit.add(Restrictions.eq("parentAnswerId",idAnswer));
+		return crit.list();
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")

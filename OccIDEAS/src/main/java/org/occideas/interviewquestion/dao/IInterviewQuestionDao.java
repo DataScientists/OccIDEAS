@@ -54,4 +54,6 @@ public interface IInterviewQuestionDao {
 
 	List<InterviewQuestion> getAllDeleted(Long idInterview);
 
+	List<InterviewQuestion> getAllChildInterviewQuestions(Long idAnswer, Long idInterview);
+
 }
