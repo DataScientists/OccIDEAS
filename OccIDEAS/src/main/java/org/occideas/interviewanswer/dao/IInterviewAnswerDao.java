@@ -17,4 +17,6 @@ public interface IInterviewAnswerDao {
 
 	List<InterviewAnswer> findByInterviewId(Long interviewId, Long questionId);
 
+	List<InterviewAnswer> saveWithClearSession(List<InterviewAnswer> convertToInterviewAnswerList);
+
 }

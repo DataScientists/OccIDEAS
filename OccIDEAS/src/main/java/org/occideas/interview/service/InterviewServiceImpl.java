@@ -16,12 +16,12 @@ import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
-import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.interview.dao.IInterviewDao;
+import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
-import org.occideas.mapper.FragmentMapper;
+import org.occideas.mapper.InterviewAnswerMapper;
 import org.occideas.mapper.InterviewMapper;
 import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.mapper.ModuleMapper;
@@ -63,15 +63,15 @@ public class InterviewServiceImpl implements InterviewService {
 
 	@Autowired
 	private IInterviewQuestionDao interviewQuestionDao;
+	
+	@Autowired
+	private IInterviewAnswerDao interviewAnswerDao;
 
 	@Autowired
 	private ParticipantService participantService;
 
 	@Autowired
 	private InterviewMapper mapper;
-
-	@Autowired
-	private InterviewQuestionMapper qsMapper;
 
 	@Autowired
 	private SystemPropertyDao systemPropertyDao;
@@ -92,16 +92,13 @@ public class InterviewServiceImpl implements InterviewService {
 	private QuestionService questionService;
 
 	@Autowired
-	private IFragmentDao fragmentDao;
-
-	@Autowired
-	private FragmentMapper fragmentMapper;
-
-	@Autowired
 	private QuestionMapper questionMapper;
 	
 	@Autowired
 	private InterviewQuestionMapper intQuestionMapper;
+
+	@Autowired
+	private InterviewAnswerMapper intAnswerMapper;
 
 	private final String PARTICIPANT_PREFIX = "auto";
 
@@ -298,13 +295,13 @@ public class InterviewServiceImpl implements InterviewService {
 	public InterviewVO getQuestionHistory(Long id) {
 		InterviewVO interview = new InterviewVO();
 		interview.setQuestionHistory(
-				qsMapper.convertToInterviewQuestionVOList(interviewDao.get(id).getQuestionHistory(), true));
+				intQuestionMapper.convertToInterviewQuestionVOList(interviewDao.get(id).getQuestionHistory(), true));
 		return interview;
 	}
 	
 	@Override
 	public void cleanDeletedAnswers(Long id) {
-		List<InterviewQuestion> deletedQs = interviewQuestionDao.getAllDeleted();
+		List<InterviewQuestion> deletedQs = interviewQuestionDao.getAllDeleted(id);
 		if(deletedQs != null && !deletedQs.isEmpty()){
 			log.info("cleanDeletedAnswers number of questions to cleanup:"+deletedQs.size());
 		}
@@ -315,30 +312,35 @@ public class InterviewServiceImpl implements InterviewService {
 				log.info("ignored no answers to delete for question:"+iq.getId()+" for interview "+iq.getIdInterview());
 			}else{
 			log.info("delete child answers for question:"+iq.getId()+" for interview "+iq.getIdInterview());
-			this.addQuestion(list, iq);
+			this.checkAndDeleteAnswerIfRequired(iq);
 			}
 		}
 		this.deleteChildAnswers(list);
 	}
 	
-	private void addQuestion(List<InterviewQuestionVO> list,InterviewQuestionVO iq){
+	private void checkAndDeleteAnswerIfRequired(InterviewQuestionVO iq){
+		boolean needsUpdate = false;
 		for(InterviewAnswerVO ia:iq.getAnswers()){		
 			if(ia.getDeleted() == 1){
-				log.info("ignored child answer to be deleted:"+ia+" for questions "+iq.getId()+" for interview "+iq.getIdInterview());
-				return;
-			}
-			log.info("adding child answer to be deleted:"+ia+" for questions "+iq.getId()+" for interview "+iq.getIdInterview());
-			ia.setDeleted(1);			
+				log.info("ignored child answer to be deleted:"+ia+" for questions "+iq.getId()+" for interview "+iq.getIdInterview());				
+			}else{
+				log.info("adding child answer to be deleted:"+ia+" for questions "+iq.getId()+" for interview "+iq.getIdInterview());
+				ia.setDeleted(1);
+				needsUpdate = true;
+			}					
 		}
-		list.add(iq);
+		if(needsUpdate){
+			interviewAnswerDao.saveWithClearSession(intAnswerMapper.convertToInterviewAnswerList(iq.getAnswers()));
+	
+		}
 	}
 	
 	
 	private void deleteChildAnswers(List<InterviewQuestionVO> list){
-		List<InterviewQuestion> entity = intQuestionMapper.convertToInterviewQuestionList(list);
+		List<InterviewQuestion> entity = intQuestionMapper.convertToInterviewQuestionListWithAnswers(list);
 		for(InterviewQuestion iq:entity){
 			log.info("saving question:"+iq.getId()+" for interview "+iq.getIdInterview());
-			interviewQuestionDao.saveOrUpdate(iq);
+			interviewQuestionDao.saveOrUpdateSingleTransaction(iq);
 		}
 	}
 

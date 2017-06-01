@@ -206,6 +206,33 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		
 		return question;
 	}
+	
+	@Override
+	public InterviewQuestion convertToInterviewQuestionWithAnswers(InterviewQuestionVO questionVO) {
+		if (questionVO == null) {
+			return null;
+		}
+		InterviewQuestion question = new InterviewQuestion();
+		question.setId(questionVO.getId());
+		question.setIdInterview(questionVO.getIdInterview());
+		question.setName(questionVO.getName());
+		question.setDeleted(questionVO.getDeleted());
+		question.setDescription(questionVO.getDescription());
+		question.setNodeClass(questionVO.getNodeClass());
+		question.setNumber(questionVO.getNumber());
+		question.setQuestionId(questionVO.getQuestionId());
+		question.setType(questionVO.getType());
+		question.setParentModuleId(questionVO.getParentModuleId());
+		question.setTopNodeId(questionVO.getTopNodeId());
+		question.setParentAnswerId(questionVO.getParentAnswerId());
+		question.setLink(questionVO.getLink());
+		question.setModCount(questionVO.getModCount());
+		question.setAnswers(answerMapper.convertToInterviewAnswerList(questionVO.getAnswers()));
+		question.setIntQuestionSequence(questionVO.getIntQuestionSequence());
+		question.setProcessed(questionVO.isProcessed());
+		
+		return question;
+	}
 
 	@Override
 	public List<InterviewQuestion> convertToInterviewQuestionList(List<InterviewQuestionVO> iq) {
@@ -216,6 +243,19 @@ public class InterviewQuestionMapperImpl implements InterviewQuestionMapper {
 		for (InterviewQuestionVO iqu : iq) {
 			// if(iqu.getDeleted() == 0){
 			list.add(convertToInterviewQuestion(iqu));
+			// }
+		}
+		return list;
+	}
+	@Override
+	public List<InterviewQuestion> convertToInterviewQuestionListWithAnswers(List<InterviewQuestionVO> iq) {
+		if (iq == null) {
+			return null;
+		}
+		List<InterviewQuestion> list = new ArrayList<InterviewQuestion>();
+		for (InterviewQuestionVO iqu : iq) {
+			// if(iqu.getDeleted() == 0){
+			list.add(convertToInterviewQuestionWithAnswers(iqu));
 			// }
 		}
 		return list;
