@@ -299,8 +299,6 @@
 		//Edit Multi Question
 		function processInterviewQuestionWithMultipleAnswersEdit(interview, node) {
 			buildAndEditMultipleQuestion(interview, node);
-			$mdDialog.cancel();
-			
 		}
 		//Edit Frequency Question
 		function processFrequencyNewEdit(interview, node) {
@@ -569,6 +567,51 @@
 				console.error(msg);
 				alert(msg);				
 			}
+			// make sure ids for answers are provided
+			var shouldGetFreshQuestion = false;
+			for(var i = 0;i < newQuestionAsked.answers.length;i++){
+				if(!newQuestionAsked.answers[i].id){
+					shouldGetFreshQuestion = true;
+					break;
+				}
+			}
+			//
+			if(shouldGetFreshQuestion){
+				var defer = $q.defer();
+				processEditAndDeleteQuestionDefer(newQuestionAsked,question,interview,defer);
+				defer.promise.then(function(){
+					$mdDialog.cancel();
+				});
+			}else{
+				processEditAndDeleteQuestion(question,newQuestionAsked,interview);
+				$mdDialog.cancel();
+			}
+			
+		}
+		
+		function processEditAndDeleteQuestionDefer(newQuestionAsked,question,interview,defer){
+			InterviewsService.getInterviewQuestionsByNodeIdAndIntId(newQuestionAsked.questionId,newQuestionAsked.idInterview)
+			.then(function(response){
+			if(response.status == '200'){
+				if(response.data){
+					newQuestionAsked = response.data[0];
+					processEditAndDeleteQuestion(question,newQuestionAsked,interview);	
+					if(defer){
+						defer.resolve();
+					}
+				
+	//bracket for getting new question			
+				}
+			}else{
+				if(defer){
+					defer.reject();
+				}
+				alert("Error calling getInterviewQuestionsByNodeIdAndIntId webservice "+response);
+			}
+		});
+		}
+		
+		function processEditAndDeleteQuestion(question,newQuestionAsked, interview){
 			var bDeleteAnswersRequired = false;
 			var bSaveAnswersRequired = false;
 			var bIsFreeText = false;
@@ -707,8 +750,9 @@
 				if(!bIsFreeText){
 					alert("Nothing was changed");
 				}	
-			}		
+			}
 		}
+		
 		function buildAndEditQuestionNew(interview, question) {
 			var newQuestionAsked = _.find(interview.questionHistory,function(queuedQuestion){
 				return queuedQuestion.questionId == question.idNode 
@@ -875,6 +919,7 @@
 				return defer.promise;
 			}
 		}
+		
 		function saveSingleAnswer(answer,questionBeingEdited){	
 			var container = [];
 			container.push(answer);

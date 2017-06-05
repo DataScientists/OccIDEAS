@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.interviewquestion.dao.InterviewQuestionDao;
@@ -137,5 +138,16 @@ public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 		
 		return mapper.convertToInterviewQuestionVOList(
 				dao.getQuestionsByNodeId(questionId));
+	}
+
+	@Override
+	public List<InterviewQuestionVO> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview) {
+		return mapper.convertToInterviewQuestionVOWithAnswerList(
+				dao.getInterviewQuestionsByNodeIdAndIntId(questionId, idInterview));
+	}
+
+	@Override
+	public InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview) {
+		return null;
 	}
 }

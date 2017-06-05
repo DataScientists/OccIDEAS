@@ -186,4 +186,20 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
 		}
 		return Response.ok(result).build();
 	}
+
+	@GET
+	@Path(value = "/getInterviewQuestionsByNodeIdAndIntId")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getInterviewQuestionsByNodeIdAndIntId(@QueryParam("questionId") Long questionId,
+			@QueryParam("idInterview") Long idInterview){
+		List<InterviewQuestionVO> result = null;
+
+		try {
+			result = service.getInterviewQuestionsByNodeIdAndIntId(questionId,idInterview);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(result).build();
+	}
 }

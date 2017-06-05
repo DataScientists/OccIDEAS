@@ -589,7 +589,19 @@
 			})
 			return request.then(handleSuccess, handleError);
 		}
+		
+		function getInterviewQuestionsByNodeIdAndIntId(questionId,idInterview) {
+			var restUrl = 'web/rest/interviewquestionanswer/getInterviewQuestionsByNodeIdAndIntId?questionId='
+				+ questionId+"&idInterview="+idInterview;
 
+			var request = $http({
+				method : 'GET',
+				url : restUrl,
+				ignoreLoadingBar: true
+			})
+			return request.then(handleSuccess, handleError);
+		}
+			
 		function handleError(response) {
 			if (!angular.isObject(response.data) || !response.data.message) {
 				return ($q.reject("An unknown error occurred."));
@@ -653,7 +665,8 @@
 			exportNotesCSV:exportNotesCSV,
 			getLinksByModule:getLinksByModule,
 			preloadActiveIntro:preloadActiveIntro,
-			preloadAllModules:preloadAllModules
+			preloadAllModules:preloadAllModules,
+			getInterviewQuestionsByNodeIdAndIntId:getInterviewQuestionsByNodeIdAndIntId
 		};
 	}
 })();

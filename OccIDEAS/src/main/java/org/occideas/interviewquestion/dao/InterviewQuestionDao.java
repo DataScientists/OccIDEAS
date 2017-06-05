@@ -19,6 +19,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
+import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.Question;
@@ -431,6 +432,34 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 			return null;
 		}
 		return list;
+	}
+	
+	@Override
+	public List<InterviewQuestion> getInterviewQuestionsByNodeIdAndIntId(Long questionId,Long idInterview) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewQuestion.class);
+		crit.add(Restrictions.eq("questionId", questionId));
+		crit.add(Restrictions.eq("idInterview", idInterview));
+		List<InterviewQuestion> list = crit.list();
+		if (list.isEmpty()) {
+			return null;
+		}
+		return list;
+	}
+	
+	@Override
+	public InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId,Long idInterview) {
+
+		final Session session = sessionFactory.getCurrentSession();
+		final Criteria crit = session.createCriteria(InterviewAnswer.class);
+		crit.add(Restrictions.eq("answerId", answerId));
+		crit.add(Restrictions.eq("idInterview", idInterview));
+		List<InterviewAnswer> list = crit.list();
+		if (list.isEmpty()) {
+			return null;
+		}
+		return (InterviewAnswer)list.get(0);
 	}
 
 	@Override

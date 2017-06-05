@@ -2,6 +2,7 @@ package org.occideas.interviewquestion.dao;
 
 import java.util.List;
 
+import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 
 public interface IInterviewQuestionDao {
@@ -55,5 +56,9 @@ public interface IInterviewQuestionDao {
 	List<InterviewQuestion> getAllDeleted(Long idInterview);
 
 	List<InterviewQuestion> getAllChildInterviewQuestions(Long idAnswer, Long idInterview);
+
+	List<InterviewQuestion> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview);
+
+	InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview);
 
 }

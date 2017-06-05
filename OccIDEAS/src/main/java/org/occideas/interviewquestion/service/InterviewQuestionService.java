@@ -3,6 +3,7 @@ package org.occideas.interviewquestion.service;
 import java.util.List;
 
 import org.occideas.base.service.BaseService;
+import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.vo.InterviewQuestionVO;
 
@@ -29,4 +30,9 @@ public interface InterviewQuestionService extends BaseService<InterviewQuestionV
 	List<InterviewQuestionVO> findById(Long questionId, Long interviewId);
 
 	List<InterviewQuestionVO> findQuestionsByNodeId(Long questionId);
+	
+	List<InterviewQuestionVO> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview);
+
+	InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview);
+	
 }
