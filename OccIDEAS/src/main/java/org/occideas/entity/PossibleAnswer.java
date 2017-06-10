@@ -65,4 +65,12 @@ public class PossibleAnswer extends Node {
 		this.moduleRule = moduleRule;
 	}
 
+	@Override
+	public String toString() {
+		return "PossibleAnswer [childNodes=" + childNodes + ", moduleRule=" + moduleRule + ", idNode=" + idNode
+				+ ", type=" + type + "]";
+	}
+	
+	
+
 }

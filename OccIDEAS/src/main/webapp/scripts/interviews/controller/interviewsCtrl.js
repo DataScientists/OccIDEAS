@@ -442,12 +442,37 @@
 				});
 			});
 		}
+		
+		
+		function checkAnyObjectHasEmptyId(list){
+			var results = false;
+			for(var i =0;i < list.length;i++){
+				if(!_.has(list[i],'id')){
+					results = true;
+				}
+			}
+			return results;
+		}
+		
 		var questionsToDelete = [];
 		var answersToDelete = [];
 		function populateQuestionsAndAnswersToDelete(question){
 			question.deleted = 1;
 			questionsToDelete.push(question);
 			var answers = question.answers;
+			if(answers.length > 0 && listOfAnswersGiven){
+				for(var i = 0;i <answers.length;i++){
+					var ans = _.find(listOfAnswersGiven,function(ansGiven){
+						if(ansGiven.answerId == answers[i].answerId){
+							return true;
+						}
+					});
+					if(ans){
+						answers[i].id = ans.id;
+					}
+				}
+			}
+			console.log(listOfAnswersGiven);
 			if(answers.length > 0){
 				for(var i=0;i<answers.length;i++){
 					var answer = answers[i];

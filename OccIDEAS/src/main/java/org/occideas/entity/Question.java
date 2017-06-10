@@ -65,5 +65,12 @@ public class Question extends Node {
 	public void setModuleRule(List<ModuleRule> moduleRule) {
 		this.moduleRule = moduleRule;
 	}
+
+	@Override
+	public String toString() {
+		return "Question [childNodes=" + childNodes + ", moduleRule=" + moduleRule + ", idNode=" + idNode + ", type="
+				+ type + "]";
+	}
+	
 	
 }
