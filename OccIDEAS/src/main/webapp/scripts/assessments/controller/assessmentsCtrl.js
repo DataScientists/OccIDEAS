@@ -3,52 +3,159 @@
 		   .controller('AssessmentsCtrl',AssessmentsCtrl);
 	AssessmentsCtrl.$inject = ['AssessmentsService','InterviewsService','RulesService','ngTableParams','$scope','$filter',
                           'data','$log','$compile','$http','$q','$mdDialog','$timeout','ParticipantsService','QuestionsService'
-                          ,'$sessionStorage','ReportsService','SystemPropertyService','ngToast'];
+                          ,'$sessionStorage','ReportsService','SystemPropertyService',
+                          'ngToast','AgentsService','FiredRulesService'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
 			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService,
-			$sessionStorage,ReportsService,SystemPropertyService,ngToast){
+			$sessionStorage,ReportsService,SystemPropertyService,ngToast,AgentsService,FiredRulesService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
 		$scope.updateButtonDisabled = false;
-				
+		
+		$scope.statuses = ['Incomplete','Needs Review','Complete','Auto Assessed'];				
+		$scope.onChangeSaveStatus = function (idinterview,assessmentStatus){
+			InterviewsService.getInterview(idinterview).then(function(response){
+				if(response.status == 200){
+					var interview = response.data[0];
+					if(interview){
+						interview.assessedStatus = assessmentStatus;
+						if (!(interview.notes)) {
+							interview.notes = [];
+						}
+						interview.notes.push({
+							interviewId : idinterview,
+							text : "Updated Status",
+							type : 'System'
+						});
+						saveInterview(interview);
+					}
+				}else{
+					alert("Error calling webservice getInterview");
+				}
+			});
+		};
+		
+		function saveInterview(interview) {
+			
+			InterviewsService.save(interview).then(function(response) {
+				if (response.status === 200) {
+					$log.info("Saving interview at assessment note with id:"+ interview.interviewId + " successful");
+						ngToast.create({
+				    		  className: 'success',
+				    		  content: "Save successful",
+				    		  timeout: 4000,
+				    		  dismissButton:true
+				    	});
+				}else{
+					ngToast.create({
+			    		  className: 'danger',
+			    		  content: "Save failed",
+			    		  timeout: 4000,
+			    		  dismissButton:true
+			    	});
+				}
+			});
+		}
+		
+		$scope.updateRules = function(){
+			$scope.currentParticipants.reduce(function(p, data) {
+				return p.then(function() {
+					$scope.interviewIdInProgress = data.idinterview;
+					$scope.counter++;
+					$scope.interviewCount = $scope.counter;
+					AgentsService.getStudyAgentsWithRules(data.idinterview).
+					then(function(response)
+							{
+						data.agents = [];
+
+						_.each(response, function(agent) {
+							data.agents.push(agent);
+						});
+						
+						FiredRulesService.getByInterviewId(data.idinterview).then(function(response){
+							if(response.status == '200'){
+								var interviewFiredRules = response.data;
+								data.interviewFiredRules = interviewFiredRules;
+								data.firedRules = [];
+								for(var i=0;i<interviewFiredRules.length;i++){
+									var rules = interviewFiredRules[i].rules;
+									for(var j=0;j<rules.length;j++){
+										for(var x=0;x<rules[j].conditions.length;x++){
+											var node = rules[j].conditions[x];
+										}
+										data.firedRules.push(rules[j]);
+									}              		
+								} 
+							}
+						});
+						
+					});
+				});
+			}, $q.when(true)).then(function(finalResult) {
+				console.log('finish loading rules');
+//				$timeout(function() {
+//					$scope.cancel();
+//					ModulesService.save(row).then(function(response){
+//						if(response.status === 200){
+//							console.log('Module Save was Successful!');
+//							self.tableParams.shouldGetData = true;
+//							self.tableParams.reload().then(function (data) {
+//								if (data.length === 0 && self.tableParams.total() > 0) {
+//									self.tableParams.page(self.tableParams.page() - 1);
+//									self.tableParams.reload();
+//									$location.hash("");
+//									$anchorScroll();
+//								}
+//							});
+//						}
+//					});
+//				}, 1000);	
+//				self.tableParams.reload();
+			}, function(err) {
+				console.log('error');
+			});
+
+		}
+		
+		
 		$scope.modules = function(column) {
-			  var def = $q.defer();
-			 
-			  /* http service is based on $q service */
-			  InterviewsService.getDistinctModules().then(function(response) {
+			var def = $q.defer();
 
-			    var arr = [],
-			      module = [];
-			    angular.forEach(response.data, function(item) {
-			      if (!_.find(module, _.matchesProperty('title', item.interviewModuleName))) {
-			        if(item.idModule != $sessionStorage.activeIntro.value){
-			    	arr.push(item.interviewModuleName);
-			        module.push({
-			          'id': item.interviewModuleName,
-			          'title': item.interviewModuleName
-			        });
-			        }
-			      }
-			    });
-			    
-			    /* whenever the data is available it resolves the object*/
-			    def.resolve(module);
+			/* http service is based on $q service */
+			InterviewsService.getDistinctModules().then(function(response) {
 
-			  });
+				var arr = [],
+				module = [];
+				angular.forEach(response.data, function(item) {
+					if (!_.find(module, _.matchesProperty('title', item.interviewModuleName))) {
+						if(item.idModule != $sessionStorage.activeIntro.value){
+							arr.push(item.interviewModuleName);
+							module.push({
+								'id': item.interviewModuleName,
+								'title': item.interviewModuleName
+							});
+						}
+					}
+				});
 
-			  return def;
-			};
+				/* whenever the data is available it resolves the object */
+				def.resolve(module);
+
+			});
+
+			return def;
+		};
+
 		
 		
 		
 		
-		
-		//QuestionsService.getAllMultipleQuestion().then(function(response){
-		//	if(response.status == '200'){
-		//		$scope.multipleQuestions = response.data;
-		//	}
-		//});
+		// QuestionsService.getAllMultipleQuestion().then(function(response){
+		// if(response.status == '200'){
+		// $scope.multipleQuestions = response.data;
+		// }
+		// });
 		
 		
 		$scope.openInterviewBtn = function(){
@@ -155,11 +262,11 @@
 		    );
 		}
 		
-		//Make a guesstimate, 3 seconds per assessment
+		// Make a guesstimate, 3 seconds per assessment
 		function getEstimatedDuration(status){
 			
 			var estimateInMin = 0;
-			var defaultDurationInSec = 3; //Slow			
+			var defaultDurationInSec = 3; // Slow
 			
 			if(status === 'All'){
 				estimateInMin = defaultDurationInSec * $scope.totalAssessmentSize;
@@ -175,10 +282,10 @@
 		}
 		
 		$scope.showExportCSVButton = function() {
-		//get list of interview id
+		// get list of interview id
 		InterviewsService.getInterviewIdList().then(function(response){
 			if(response.status == '200'){
-				//display modal with list of id + progress bar
+				// display modal with list of id + progress bar
 				$scope.interviewIdList = response.data;
 				$scope.interviewIdCount = $scope.interviewIdList.length;
 				$scope.counter = 0;
@@ -247,8 +354,9 @@
 			});
 		}
 		
-			//loop through and trigger InterviewService.getInterview(interviewId) 
-			//with deffered
+			// loop through and trigger
+			// InterviewService.getInterview(interviewId)
+			// with deffered
 		};
 		function generateUniqueAgentsList(interviews){			
 			_.each(interviews,function(interview){
@@ -277,10 +385,10 @@
 			$scope.csv.push(obj.A);						
 		}
 		$scope.showExportAssessmentCSVButton = function() {
-			//get list of interview id
+			// get list of interview id
 			InterviewsService.getInterviewsListWithRules().then(function(response){
 				if(response.status == '200'){
-					//display modal with list of id + progress bar
+					// display modal with list of id + progress bar
 					$scope.interviewIdList = response.data;
 					$scope.interviewIdCount = $scope.interviewIdList.length;
 					$scope.counter = 0;
@@ -334,10 +442,10 @@
 					var agent = {name:ssagent.name,idAgent:ssagent.value};
 					$scope.agents.push(agent);
 				});
-				//get list of interview id
+				// get list of interview id
 				InterviewsService.getInterviewsListWithRules().then(function(response){
 					if(response.status == '200'){
-						//display modal with list of id + progress bar
+						// display modal with list of id + progress bar
 						$scope.interviewIdList = response.data;
 						$scope.interviewIdCount = $scope.interviewIdList.length;
 						$scope.counter = 0;
@@ -466,11 +574,11 @@
 					  var noiseRule = noiseRules[k];
 					  if(noiseRule.type!='BACKGROUND'){
 						  var parentNode = noiseRule.conditions[0];
-						  //if(model.module){
-							//  cascadeFindNode(model.module.nodes,parentNode);
-						  //}else{
+						  // if(model.module){
+							// cascadeFindNode(model.module.nodes,parentNode);
+						  // }else{
 							  cascadeFindNode(model.answerHistory,parentNode); 
-						  //}
+						  // }
 						  var answeredValue = 0;
 						  if($scope.foundNode){
 							 var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);
@@ -523,10 +631,10 @@
 						var hours = 0.0;
 						var frequencyhours = 0;
 						var parentNode = noiseRule.conditions[0];
-						//if(model.module){
+						// if(model.module){
 							  cascadeFindNode(model.answerHistory,parentNode);
-						//  }else{
-						//	  cascadeFindNode(model.fragment.nodes,parentNode); 
+						// }else{
+						// cascadeFindNode(model.fragment.nodes,parentNode);
 						 // }
 						  if($scope.foundNode){
 							  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
@@ -583,10 +691,10 @@
 				var obj = {A:[]};
 				obj.A.push(data.interviewId);
 				obj.A.push(data.referenceNumber);
-				//put notes and status
-//				obj.A.push(data.module.idNode);
+				// put notes and status
+// obj.A.push(data.module.idNode);
 				_.each(questionIdList,function(qId){
-					//check if qId has delimeter "_" which means is multiple
+					// check if qId has delimeter "_" which means is multiple
 					if(typeof qId == 'string' && qId.indexOf('_') > -1){
 						var temp = qId.split('_');
 						var questionId = temp[0];
@@ -606,9 +714,10 @@
 										}else{
 											obj.A.push(ans.name);
 											numberExist = true;
-											//console.error("could not find freetext");
-											//invalid = true;
-											//notes = ""
+											// console.error("could not find
+											// freetext");
+											// invalid = true;
+											// notes = ""
 										}
 									}
 								})
@@ -625,7 +734,7 @@
 							&& qHistory.deleted == 0;
 						});
 						if(question){
-							//check for deleted
+							// check for deleted
 							if(question.answers.length > 0){
 								    var ans = question.answers[0];
 									if(ans.answerFreetext){
@@ -649,17 +758,19 @@
 			var questionIdList = [];
 			_.each(response,function(data){
 				data.questionHistory = _.filter(data.questionHistory,function(qh){
-					//$log.info("Interviewid: "+data.interviewId+" Questionid: "+qh.questionId);
+					// $log.info("Interviewid: "+data.interviewId+" Questionid:
+					// "+qh.questionId);
 					return qh.deleted == 0 && qh.topNodeId==15001;
 				});
-				//$log.info("Interviewid: "+data.interviewId+" Questionid: "); 
+				// $log.info("Interviewid: "+data.interviewId+" Questionid: ");
 				// join all questions to listOfQuestion
 				listOfQuestion = listOfQuestion.concat(data.questionHistory);
 			});
 			var sortHeaderList = {};
 			var header = "";
 			_.each(listOfQuestion,function(data){
-				//check if the unique question is a module/ajsm or fragment, if yes add it to the header
+				// check if the unique question is a module/ajsm or fragment, if
+				// yes add it to the header
 				// to be display along with the question number in the CSV
 				if(data.nodeClass == 'M' || data.type == 'M_IntroModule' || data.type == 'Q_linkedajsm' || data.type == 'F_ajsm'){
 					if(header != ""){
@@ -669,11 +780,13 @@
 					if(!sortHeaderList[topHeader]){
 						sortHeaderList[topHeader] = [];
 					}
-				// if the unique question is an actual question get the number and append to its
+				// if the unique question is an actual question get the number
+				// and append to its
 				// respective header which can be a module/ajsm or fragment
 				}else if(data.questionId){
-					//check if the question is of type Multiple, if yes will need to 
-					//add header for each possible answer
+					// check if the question is of type Multiple, if yes will
+					// need to
+					// add header for each possible answer
 					if(data.type == 'Q_multiple'){
 						// check if question is in the multiple question bucket
 						var nodeQuestion = _.find($scope.multipleQuestions,function(question){
@@ -689,7 +802,7 @@
 						sortHeaderList[topHeader] = [];
 						}
 						_.each(nodeQuestion.nodes,function(posAns){
-							//loop through all possible answer
+							// loop through all possible answer
 							sortHeaderList[topHeader].push({
 								header:topHeader+"_"+data.number +"_"+posAns.number,
 								questionId:data.questionId +"_"+posAns.number
@@ -697,7 +810,7 @@
 							
 						});
 					}
-					//for standard questions add the header + question number
+					// for standard questions add the header + question number
 					else{
 					// look for the top node id in listquestion
 					// build the header and check it in sortHeaderList
@@ -722,7 +835,8 @@
 			
 			_.each(sortHeaderList,function(headerGroup){
 				
-				//var uniqueHeaders = _.unionBy(headers,headers,function(o){return o.header;});
+				// var uniqueHeaders =
+				// _.unionBy(headers,headers,function(o){return o.header;});
 				_.each(headerGroup,function(data){
 					csvTemp[0].Q.push(data.header);
 					questionIdList.push(data.questionId);
@@ -796,9 +910,10 @@
 					    return ParticipantsService.getPaginatedAssessmentWithModList(assessmentFilter).then(function(response) {
 				        	  if(response.status == '200'){
 				        		  var data = response.data.content;
-//				        		  _.each(data,function(participant){
-//				        			  participant.interviewId = participant.interviews[0].interviewId;
-//				        		  });
+				        		  $scope.currentParticipants = data;
+// _.each(data,function(participant){
+// participant.interviewId = participant.interviews[0].interviewId;
+// });
 				        		  console.log("Data get list from getParticipants ajax ...");        	 
 				        		  self.originalData = angular.copy(data);
 					        	  self.tableParams.settings().dataset = data;

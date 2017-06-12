@@ -1,28 +1,60 @@
 <div ng-cloak>
 	<div>
-		<button ng-disabled="updateButtonDisabled" class="btn btn-default" 
-			ng-click="updateAutoAssessmentsButton()">Update Auto Assessments</button>
+		<button ng-disabled="updateButtonDisabled" class="btn btn-default"
+			ng-click="updateAutoAssessmentsButton()">Update Auto
+			Assessments</button>
 		Size : {{vm.tableParams.total()}}
-		<table ng-table="vm.tableParams" 
-			   class="table table-condensed table-bordered table-striped"
-			   template-pagination="templatePagination.html">
+		<table ng-table="vm.tableParams"
+			class="table table-condensed table-bordered table-striped"
+			template-pagination="templatePagination.html">
 			<tr ng-repeat="participant in $data | orderBy:'-(idParticipant)'">
-				<td >{{$index}}</td>
+				<td>{{$index}}</td>
 				<td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
 				<td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
 				<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
-				<td  title="'Interview Status'">{{participant.statusDescription}}</td>
-				<td filter="{assessedStatus: 'text'}" title="'Assessment Status'">{{participant.assessedStatus}}</td>	
-				<td filter="{interviewModuleName: 'select' }" filter-data="modules()" title="'Module'" >{{participant.interviewModuleName}}</td>
+				<td title="'Interview Status'">{{participant.statusDescription}}</td>
+				<td filter="{assessedStatus: 'text'}" title="'Assessment Status'">
+				<md-select style="height: 2px;
+    /* vertical-align: top; */
+    margin-top: 0px;"
+						 ng-model="participant.assessedStatus" 
+						 ng-change="onChangeSaveStatus(participant.idinterview,participant.assessedStatus)" >
+          			<md-option ng-repeat="status in statuses" value="{{status}}" >{{status}}</md-option>
+        		</md-select>
+				</td>
+				<td filter="{interviewModuleName: 'select' }"
+					filter-data="modules()" title="'Module'">{{participant.interviewModuleName}}</td>
+				<td filter="{firerules: 'ng-table/filters/firerules.html' }"
+					title="''">
+					<div ng-repeat="agent in participant.agents" class="pull-right"
+						style="height: 40px; width: 27px; border-right: solid aliceblue 1px;">
+						<div class="verticalrules">
+							<div class="rulescontainer" data-toggle="tooltip"
+								title="{{agent.name}}">
+								<div class="agentACell" id="{{agent.idAgent}}"
+									model="participant">
+									<span class="cell-lable"
+										ng-repeat="mrule in participant.firedRules">
+										<div class="{{mrule.level}} {{mrule.type}} "
+											ng-if="(mrule.agentId == agent.idAgent)"></div>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</td>
 				<td>
-					<button data-toggle="tooltip" title="Open FiredRules" ng-click="vm.openFiredRules(participant.idinterview,participant.reference,participant.interviewModuleName)" class="btn btn-default btn-sm" >
+					<button data-toggle="tooltip" title="Open FiredRules"
+						ng-click="vm.openFiredRules(participant.idinterview,participant.reference,participant.interviewModuleName)"
+						class="btn btn-default btn-sm">
 						<span class="glyphicon glyphicon-fire"></span>
 					</button>
 				</td>
 			</tr>
 		</table>
 	</div>
-	
+
 	<script type="text/ng-template" id="templatePagination.html">
     <div>
 		<ul class="pagination ng-table-pagination pull-right">
@@ -42,4 +74,7 @@
       </ul>
 	</div>
   	</script>
+	<script type="text/ng-template" id="ng-table/filters/firerules.html">
+    <input type="button" name="{{interviewid}}" value="Fire Rules" ng-click="updateRules(participant.idinterview)" ng-model="params.filter()[participant.idinterview]" class="input-filter form-control"/>
+  </script>
 </div>
