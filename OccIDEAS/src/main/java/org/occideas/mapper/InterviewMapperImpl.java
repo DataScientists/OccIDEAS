@@ -322,10 +322,11 @@ public class InterviewMapperImpl implements InterviewMapper {
 		}
 		InterviewVO interviewVO = new InterviewVO();
 		interviewVO.setInterviewId(interview.getIdinterview());
+		interviewVO.setNotes(noteMapper.convertToNoteVOList(interview.getNotes()));
+		interviewVO.setAssessedStatus(interview.getAssessedStatus());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
 		interviewVO.setParentId(interview.getParentId());
-		interviewVO.setQuestionHistory(qsMapper.
-				convertToInterviewQuestionWithoutAnswersList(interview.getQuestionHistory()));
+		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionWithoutAnswersList(interview.getQuestionHistory()));
 
 		return interviewVO;
 	}

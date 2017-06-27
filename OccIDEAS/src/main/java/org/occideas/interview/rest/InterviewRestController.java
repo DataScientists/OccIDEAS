@@ -27,17 +27,16 @@ import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
-import org.occideas.exceptions.GenericException;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewautoassessment.service.InterviewAutoAssessmentService;
 import org.occideas.interviewfiredrules.service.InterviewFiredRulesService;
+import org.occideas.interviewmanualassessment.service.InterviewManualAssessmentService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.modulerule.service.ModuleRuleService;
 import org.occideas.question.service.QuestionService;
-import org.occideas.security.filter.AuthenticationFilter;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.utilities.StudyAgentUtil;
@@ -46,6 +45,7 @@ import org.occideas.vo.FragmentVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewAutoAssessmentVO;
 import org.occideas.vo.InterviewFiredRulesVO;
+import org.occideas.vo.InterviewManualAssessmentVO;
 import org.occideas.vo.InterviewModuleFragmentVO;
 import org.occideas.vo.InterviewModuleVO;
 import org.occideas.vo.InterviewQuestionVO;
@@ -73,6 +73,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
 	@Autowired
     private InterviewAutoAssessmentService autoAssessmentService;
+	
+	@Autowired
+    private InterviewManualAssessmentService manualAssessmentService;
 	
 	@Autowired
     private InterviewFiredRulesService firedRulesService;
@@ -351,9 +354,18 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 						}
 					}
 					autoAssessedRules.add(rule);
-				}				
-				interviewVO.setAssessedStatus(Constant.AUTO_ASSESSED);
+				}	
+				boolean bUpdateStatus = true;
+				if(interviewVO.getManualAssessedRules()!=null){
+					if(interviewVO.getManualAssessedRules().size()>0){
+						bUpdateStatus = false;;
+					}
+				}
+				if(bUpdateStatus){
+					interviewVO.setAssessedStatus(Constant.AUTO_ASSESSED);
+				}			
 				interviewVO.setAutoAssessedRules(autoAssessedRules);
+				
 				service.update(interviewVO);
          	}
 			log.info("Assessment completed for "+type+" for interviewIds");
@@ -580,6 +592,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     	note.setText("Ran determineFiredRules");
     	note.setType("System");
     	interview.getNotes().add(note);
+    	List<InterviewManualAssessmentVO> assessmentRules = manualAssessmentService.findByInterviewId(interview.getInterviewId());
+		ArrayList<RuleVO> manualAssessedRules = new ArrayList<RuleVO>();
+		for(InterviewManualAssessmentVO assessment: assessmentRules){				
+			manualAssessedRules.add(assessment.getRule());
+		}
+		interview.setManualAssessedRules(manualAssessedRules);
     	service.update(interview);
     	return interview;
     }

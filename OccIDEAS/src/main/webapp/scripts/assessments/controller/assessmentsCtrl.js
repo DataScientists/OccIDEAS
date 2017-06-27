@@ -15,7 +15,7 @@
 		
 		$scope.statuses = ['Incomplete','Needs Review','Complete','Auto Assessed'];				
 		$scope.onChangeSaveStatus = function (idinterview,assessmentStatus){
-			InterviewsService.getInterview(idinterview).then(function(response){
+			InterviewsService.getInterviewWithRules(idinterview).then(function(response){
 				if(response.status == 200){
 					var interview = response.data[0];
 					if(interview){
