@@ -187,3 +187,15 @@ function CreateParagraph() {
     var p = {text:[]};
     return p;
 }
+
+function contains(obj,word){
+	if(obj && word){
+		return (obj.toLowerCase()).indexOf(word.toLowerCase()) > -1;
+	}else{
+		console.log("contains function error obj is "+obj +" and word is "+word);
+	}
+}
+
+function isEqual(a,b){
+	return a == b;
+}

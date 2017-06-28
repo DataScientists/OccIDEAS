@@ -37,10 +37,8 @@
 			        link: function (scope, element, attrs) {
 			            element.on('click', function () {
 			            	var freetext = element.find("input").val();
-			            	if(freetext){
-			            		if(freetext.lastIndexOf("[Freetext]")>=0){
+			            	if(contains(freetext,'Freetext') || contains(freetext,'free text')){
 				            		element.find("input").val("");
-				            	}
 			            	}
 			            	element.find("input").focus();
 			            });

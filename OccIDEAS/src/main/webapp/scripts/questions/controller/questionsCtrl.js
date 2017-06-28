@@ -1134,6 +1134,13 @@
 		};
 
 		$scope.saveEdit = function(scope) {
+			if(scope.$modelValue.type == 'P_freetext'){
+				if(!contains(scope.$modelValue.name,'freetext')){
+					alert("this answer should have the word freetext, adding it for your convenience.");
+					scope.$modelValue.name = scope.$modelValue.name + " [Freetext]"
+				}
+			}
+			
 			if(!scope.$modelValue.name){
 				scope.$modelValue.name = 'Blank';
 			}

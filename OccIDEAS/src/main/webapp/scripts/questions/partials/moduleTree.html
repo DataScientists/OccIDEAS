@@ -36,11 +36,11 @@
 	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
           <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
 
-          <span class="treeNodeText" ng-if="!node.editEnabled || node.type == 'P_freetext'" ng-click="enable(node)" 
+          <span class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(node)" 
 			event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
 				{{node.name}}
 		  </span>
-          <div ng-if="node.editEnabled && node.type != 'P_freetext'" class="editBox">
+          <div ng-if="node.editEnabled" class="editBox">
       		<input type="text" 
              ng-model="node.name" 
              id="editId_{{node.idNode}}" 
