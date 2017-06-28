@@ -11,6 +11,7 @@ import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.module.dao.IModuleDao;
+import org.occideas.rule.dao.IRuleDao;
 import org.occideas.rule.dao.RuleDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentCopyVO;
@@ -32,7 +33,7 @@ public class FragmentServiceImpl implements FragmentService {
 	private IModuleDao moduleDao;
 
 	@Autowired
-	private RuleDao ruleDao;
+	private IRuleDao ruleDao;
 
 	@Autowired
 	private IFragmentDao dao;

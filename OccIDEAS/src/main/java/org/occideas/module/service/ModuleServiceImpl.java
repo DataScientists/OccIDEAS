@@ -21,7 +21,7 @@ import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.question.service.QuestionService;
-import org.occideas.rule.dao.RuleDao;
+import org.occideas.rule.dao.IRuleDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
@@ -62,7 +62,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Autowired
 	private ModuleMapper mapper;
 	@Autowired
-	private RuleDao ruleDao;
+	private IRuleDao ruleDao;
 	@Autowired
 	private RuleMapper ruleMapper;
 	@Autowired

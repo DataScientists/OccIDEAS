@@ -2,6 +2,7 @@ package org.occideas.rule.dao;
 
 import java.util.List;
 
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,34 +13,47 @@ import org.hibernate.transform.Transformers;
 import org.occideas.entity.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class RuleDao {
+public class RuleDao implements IRuleDao{
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
 	public Long save(Rule rule){		
 		return (Long) sessionFactory.getCurrentSession().save(rule);
     }
 
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
     public void delete(Rule rule){
     	rule.setDeleted(1);
     	sessionFactory.getCurrentSession().saveOrUpdate(rule);
     }
 
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
 	public Rule get(Long id){
 		return (Rule) sessionFactory.getCurrentSession().get(Rule.class, id);
     }
 
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
 	public Rule merge(Rule rule)   {
 		return (Rule) sessionFactory.getCurrentSession().merge(rule);
     }
 
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Override
     public void saveOrUpdate(Rule rule){
     	sessionFactory.getCurrentSession().saveOrUpdate(rule);
     }
     
+	@Override
    	@SuppressWarnings("unchecked")
 	public List<Rule> getAll() {
          final Session session = sessionFactory.getCurrentSession();
@@ -52,6 +66,7 @@ public class RuleDao {
          return crit.list();
        }
 
+	@Override
     public List<Rule> findByAgentId(long agentId) {
         final Session session = sessionFactory.getCurrentSession();
         final Criteria crit = session.createCriteria(Rule.class)
@@ -60,6 +75,7 @@ public class RuleDao {
         return crit.list();
     }
     
+	@Override
     @SuppressWarnings("unchecked")
     public Long getMaxRuleId(){
     	final Session session = sessionFactory.getCurrentSession();
