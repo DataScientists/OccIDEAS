@@ -69,7 +69,7 @@
         
         $('#back-to-top').tooltip('show');
         
-		$scope.statuses = ['Incomplete','Needs Review','Complete'];				
+		$scope.statuses = ['Incomplete','Needs Review','Finished'];				
 		$scope.onChangeSaveStatus = function (){
 			if($scope.interview){
 				var interview = $scope.interview;

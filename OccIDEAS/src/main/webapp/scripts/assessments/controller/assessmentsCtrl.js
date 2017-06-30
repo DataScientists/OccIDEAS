@@ -13,7 +13,7 @@
 		$scope.$root.tabsLoading = false;
 		$scope.updateButtonDisabled = false;
 		
-		$scope.statuses = ['Incomplete','Needs Review','Complete','Auto Assessed'];				
+		$scope.statuses = ['Incomplete','Needs Review','Finished','Auto Assessed'];				
 		$scope.onChangeSaveStatus = function (idinterview,assessmentStatus){
 			InterviewsService.getInterviewWithRules(idinterview).then(function(response){
 				if(response.status == 200){

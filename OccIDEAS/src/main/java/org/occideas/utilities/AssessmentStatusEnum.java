@@ -3,7 +3,10 @@ package org.occideas.utilities;
 public enum AssessmentStatusEnum {
 
 	NOTASSESSED(0,"Not Assessed"),
-	AUTOASSESSED(1,"Auto Assessed");
+	AUTOASSESSED(1,"Auto Assessed"),
+	INCOMPLETE(3,"Incomplete"),
+	NEEDSREVIEW(4,"Needs Review"),
+	FINISHED(5,"Finished");
 	
 	private AssessmentStatusEnum(int status, String display){
 		this.status = status;
