@@ -135,6 +135,8 @@
 								'id': item.interviewModuleName,
 								'title': item.interviewModuleName
 							});
+							module =  _.sortBy(module, 'title');
+							arr = arr.sort();
 						}
 					}
 				});
