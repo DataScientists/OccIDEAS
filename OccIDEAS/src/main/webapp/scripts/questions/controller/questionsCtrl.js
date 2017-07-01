@@ -1,6 +1,11 @@
 (function() {
 	angular.module('occIDEASApp.Questions')
-			.controller('QuestionsCtrl',QuestionsCtrl);
+			.controller('QuestionsCtrl',QuestionsCtrl)
+			.filter('reverse', function() {
+  return function(items) {
+    return items.slice().reverse();
+  };
+});
 
 	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',

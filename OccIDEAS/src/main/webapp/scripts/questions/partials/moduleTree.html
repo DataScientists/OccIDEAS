@@ -76,7 +76,7 @@
     		<span class="badge">{{node.number}}</span>
 		    </div>
 			<div class="pull-right" ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this)" model="node"
-						style="height:40px;width: 27px;border-right: solid aliceblue 1px;position:relative;" ng-repeat="obj in rulesObj | orderBy:'':true">
+						style="height:40px;width: 27px;border-right: solid aliceblue 1px;position:relative;" ng-repeat="obj in rulesObj | reverse">
 						<div class="verticalrules">
 							<div class="rulescontainer">
 								<div class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}" ng-click="addToActiveRule(node,this)" id="{{obj.idAgent}}">
