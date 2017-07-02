@@ -97,15 +97,16 @@ function newNote(element,$itemScope,$compile) {
 
 	return false;
 };
+
 function showRuleDialog(element,$itemScope,$compile) {
 	if($itemScope.rule == null){
 		return;
-	}	
+	}
 	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
 	angular.element(tpl).zIndex(++noteZindex);
-	
-	var leftPoint = ((noteZindex-10500)*20)-500;
-	
+	var substractFrom = noteZindex - 10500; 
+	substractFrom = substractFrom * 20;
+	var leftPoint = -Math.abs(1000-substractFrom);
 	angular.element(tpl).css('left', leftPoint+'px');
 	//angular.element(tpl).css('top', topPoint+'px');
 	angular.element(tpl).hide().appendTo(element).show("fade", 300).draggable().on(
