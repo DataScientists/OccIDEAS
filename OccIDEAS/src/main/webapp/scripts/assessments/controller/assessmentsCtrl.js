@@ -7,7 +7,7 @@
                           'ngToast','AgentsService','FiredRulesService'];
 	function AssessmentsCtrl(AssessmentsService,InterviewsService,RulesService,NgTableParams,$scope,$filter,
 			data,$log,$compile,$http,$q,$mdDialog,$timeout,ParticipantsService,QuestionsService,
-			$sessionStorage,ReportsService,SystemPropertyService,ngToast,AgentsService,FiredRulesService){
+			$sessionStorage,ReportsService,SystemPropertyService,$ngToast,AgentsService,FiredRulesService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -31,7 +31,13 @@
 						saveInterview(interview);
 					}
 				}else{
-					alert("Error calling webservice getInterview");
+					$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'Error calling webservice getInterview',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+					});
 				}
 			});
 		};
@@ -41,14 +47,14 @@
 			InterviewsService.save(interview).then(function(response) {
 				if (response.status === 200) {
 					$log.info("Saving interview at assessment note with id:"+ interview.interviewId + " successful");
-						ngToast.create({
+						$ngToast.create({
 				    		  className: 'success',
 				    		  content: "Save successful",
 				    		  timeout: 4000,
 				    		  dismissButton:true
 				    	});
 				}else{
-					ngToast.create({
+					$ngToast.create({
 			    		  className: 'danger',
 			    		  content: "Save failed",
 			    		  timeout: 4000,
@@ -246,7 +252,7 @@
 				if(response){
 					$scope.updateButtonDisabled = false;
 					
-					ngToast.create({
+					$ngToast.create({
 			    		  className: 'success',
 			    		  content: "Auto assessment is completed."
 			    	});
