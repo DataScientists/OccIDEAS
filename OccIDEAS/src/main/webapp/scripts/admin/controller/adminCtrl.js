@@ -3,8 +3,10 @@
 	  .module('occIDEASApp.Admin')
 	  .controller('AdminCtrl',AdminCtrl);
 	
-	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService','$mdDialog','SystemPropertyService','ngToast','InterviewsService','$sessionStorage'];
-	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,$mdDialog,SystemPropertyService,$ngToast,InterviewsService,$sessionStorage){
+	AdminCtrl.$inject = ['$log','NgTableParams','$scope','$filter','AdminService',
+	                     '$mdDialog','SystemPropertyService','ngToast','InterviewsService','$sessionStorage'];
+	function AdminCtrl($log,NgTableParams,$scope,$filter,AdminService,
+			$mdDialog,SystemPropertyService,$ngToast,InterviewsService,$sessionStorage){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -23,22 +25,32 @@
 	    self.preloadActiveIntro = function(){
 	    	InterviewsService.preloadActiveIntro().then(function(response){
 	    		if(response.status == '200'){
-	    			alert("Preload study agents successful");
+	    			$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'Preload study agents successful',
+	      	    		  animation:'slide'
+	      	    	 });
 	    		}else{
-	    			alert("Preload study agents failed, check the logs.");
+	    			$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'Preload study agents failed, check the logs.',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+	    			});
 	    		}
 	    	});
 	    }
 	    
-	    self.preloadAllModules = function(){
-	    	InterviewsService.preloadAllModules().then(function(response){
-	    		if(response.status == '200'){
-	    			alert("Preload all modules successful");
-	    		}else{
-	    			alert("Preload all modules failed, check the logs.");
-	    		}
-	    	});
-	    }
+//	    self.preloadAllModules = function(){
+//	    	InterviewsService.preloadAllModules().then(function(response){
+//	    		if(response.status == '200'){
+//	    			alert("Preload all modules successful");
+//	    		}else{
+//	    			alert("Preload all modules failed, check the logs.");
+//	    		}
+//	    	});
+//	    }
 	    
 	    self.filterModTableParams =  new NgTableParams(
 				{
@@ -87,7 +99,13 @@
 		
 	    self.createRandomInterviews = function(){
 	    	if($scope.randomIntCount == 0){
-	    		alert("count must be greater than 0.");
+	    		$ngToast.create({
+		    		  className: 'danger',
+		    		  content: 'count must be greater than 0.',
+		    		  dismissButton: true,
+	      	    	  dismissOnClick:false,
+	      	    	  animation:'slide'
+				});
 	    		return;
 	    	}
 	    	$scope.randomReport = undefined;
@@ -300,7 +318,11 @@
 		self.saveSysPropBtn = function(){
 			SystemPropertyService.save(self.sysprop.activemodule).then(function(response){
 				if(response.status == '200'){
-					alert("Config changed was saved successfully.");
+					$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'Config changed was saved successfully.',
+	      	    		  animation:'slide'
+	      	    	 });
 					self.sysprop.activemodule = response.data;
 				}
 			});
@@ -331,11 +353,23 @@
 		
 		$scope.addUserBtn = function(newUser){
 			if(!newUser.state){
-				alert("State is a required field.");
+				$ngToast.create({
+		    		  className: 'danger',
+		    		  content: 'State is a required field.',
+		    		  dismissButton: true,
+	      	    	  dismissOnClick:false,
+	      	    	  animation:'slide'
+				});
 				return;
 			}
 			if(newUser.roles.length == 0){
-				alert("Please select a role for the user.");
+				$ngToast.create({
+		    		  className: 'danger',
+		    		  content: 'Please select a role for the user.',
+		    		  dismissButton: true,
+	      	    	  dismissOnClick:false,
+	      	    	  animation:'slide'
+				});
 				return;
 			}
 			
@@ -384,7 +418,13 @@
 		
 		$scope.changePasswordBtn = function(existingUser){
 			if($scope.existingUser.previousPassword == existingUser.newPassword){
-				alert("No changes on the password.");
+				$ngToast.create({
+		    		  className: 'danger',
+		    		  content: 'No changes on the password.',
+		    		  dismissButton: true,
+	      	    	  dismissOnClick:false,
+	      	    	  animation:'slide'
+				});
 				return;
 			}
 			$scope.existingUser.password = existingUser.newPassword;
@@ -411,11 +451,23 @@
 		
 		$scope.editUserBtn = function(existingUser){
 			if(!existingUser.state){
-				alert("State is a required field.");
+				$ngToast.create({
+		    		  className: 'danger',
+		    		  content: 'State is a required field.',
+		    		  dismissButton: true,
+	      	    	  dismissOnClick:false,
+	      	    	  animation:'slide'
+				});
 				return;
 			}
 			if(existingUser.roles.length == 0){
-				alert("Please select a role for the user.");
+				$ngToast.create({
+		    		  className: 'danger',
+		    		  content: 'Please select a role for the user.',
+		    		  dismissButton: true,
+	      	    	  dismissOnClick:false,
+	      	    	  animation:'slide'
+				});
 				return;
 			}
 			

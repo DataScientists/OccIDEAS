@@ -2,8 +2,8 @@
 	angular.module('occIDEASApp.Agents')
 		   .controller('AgentCtrl',AgentCtrl);
 	
-	AgentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter','$rootScope','$mdDialog'];
-	function AgentCtrl(AgentsService,NgTableParams,$state,$scope,$filter,$rootScope,$mdDialog){
+	AgentCtrl.$inject = ['AgentsService','NgTableParams','$state','$scope','$filter','$rootScope','$mdDialog','ngToast'];
+	function AgentCtrl(AgentsService,NgTableParams,$state,$scope,$filter,$rootScope,$mdDialog,$ngToast){
 		var self = this;
 		self.isDeleting = false;
 		var dirtyCellsByRow = [];
@@ -123,14 +123,26 @@
                         }
                     });
                 }else{
-                    alert("This agent already had rules belong to");
+                	$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'This agent already had rules belong to',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+					});
                 }
             });
 	    }
         function checkAndAddAgentRulesTab(row){
             AgentsService.hasRules(row.idAgent).then(function(response){
                 if("false" == response.data){
-                    alert("This agent has no rules!");
+                	$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'This agent has no rules',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+					});
                 }else{
                     $rootScope.$emit("addAgentRulesTab", row);
                 }
