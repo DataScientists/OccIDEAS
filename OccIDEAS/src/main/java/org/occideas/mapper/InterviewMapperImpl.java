@@ -50,7 +50,7 @@ public class InterviewMapperImpl implements InterviewMapper {
 		InterviewVO interviewVO = new InterviewVO();
 		interviewVO.setInterviewId(interview.getIdinterview());
 		interviewVO.setReferenceNumber(interview.getReferenceNumber());
-		
+		interviewVO.setAssessedStatus(interview.getAssessedStatus());
 		interviewVO.setQuestionHistory(qsMapper.convertToInterviewQuestionVOList(interview.getQuestionHistory()));
 
 		interviewVO.setAnswerHistory(asMapper.convertToInterviewAnswerVOList(interview.getAnswerHistory()));
