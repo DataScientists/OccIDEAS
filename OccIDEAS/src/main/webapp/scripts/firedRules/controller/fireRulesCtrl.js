@@ -1056,6 +1056,11 @@
 													maxBackgroundPartialExposure = partialExposure;
 													maxBackgroundHours = hoursbg;
 												}
+												if(peakNoise<Number(level)){
+													if(partialExposure!=0){
+														peakNoise = Number(level);
+													}	
+												}
 											  }else{
 												var hours = 0.0;
 												var frequencyhours = 0;
@@ -1114,7 +1119,9 @@
 												
 											  }
 											  if(peakNoise<Number(level)){
-												peakNoise = Number(level);
+												  if(totalPartialExposure!=0){
+													  peakNoise = Number(level);
+												  }	
 											  }
 										  }
 										  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
@@ -1122,7 +1129,7 @@
 											totalFrequency += maxBackgroundHours;
 
 											var autoExposureLevel = 10*(Math.log10(totalPartialExposure/(3.2*(Math.pow(10,-9)))))
-											autoExposureLevel = autoExposureLevel.toFixed(4);
+											autoExposureLevel = autoExposureLevel.toFixed(2);
 											$scope.totalPartialExposure = totalPartialExposure;
 											$scope.autoExposureLevel = autoExposureLevel;
 											$scope.peakNoise = peakNoise;

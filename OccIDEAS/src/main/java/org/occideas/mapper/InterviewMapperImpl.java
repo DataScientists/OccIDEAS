@@ -58,7 +58,9 @@ public class InterviewMapperImpl implements InterviewMapper {
 		interviewVO.setParentId(interview.getParentId());
 
 		interviewVO.setNotes(noteMapper.convertToNoteVOList(interview.getNotes()));
-
+		interviewVO.setAutoAssessedRules(ruleMapper.convertToRuleVOList(interview.getAutoAssessedRules()));
+		interviewVO.setManualAssessedRules(ruleMapper.convertToRuleVOList(interview.getManualAssessedRules()));
+		interviewVO.setFiredRules(ruleMapper.convertToRuleVOList(interview.getFiredRules()));
 		return interviewVO;
 	}
 	

@@ -971,7 +971,9 @@ public class AssessmentRestController {
 
 					}
 					if (iPeakNoise < level) {
-						iPeakNoise = level;
+						if(totalPartialExposure!=0){
+							iPeakNoise = level;
+						}					
 					}
 				}
 				totalPartialExposure = ((totalPartialExposure) + (maxBackgroundPartialExposure));
@@ -983,7 +985,7 @@ public class AssessmentRestController {
 				// autoExposureLevel = autoExposureLevel.toFixed(4);
 
 				totalExposure = totalPartialExposure.toString();
-				laeq8 = autoExposureLevel.toString();
+				laeq8 = String.format("%.02f", autoExposureLevel);
 				peakNoise = iPeakNoise.toString();
 				strRatio = ratio.toString();
 			}

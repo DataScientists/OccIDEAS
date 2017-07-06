@@ -50,7 +50,7 @@ public class RuleServiceImpl implements RuleService {
         rule.setIdRule(dao.save(mapper.convertToRule(o)));
         rule.setAgentId(o.getAgentId());
         List<PossibleAnswerVO> conditions = o.getConditions();
-    	if(!conditions.isEmpty()){
+    	if(conditions!=null && !conditions.isEmpty()){
     		PossibleAnswerVO possibleAnswerVO = conditions.get(0);
     		long topNodeId = possibleAnswerVO.getTopNodeId();
     		studyAgentUtil.createStudyAgentForUpdatedNode(topNodeId,possibleAnswerVO.getName());
@@ -63,7 +63,7 @@ public class RuleServiceImpl implements RuleService {
     public void saveOrUpdate(RuleVO o) {
         dao.saveOrUpdate(mapper.convertToRule(o));
         List<PossibleAnswerVO> conditions = o.getConditions();
-    	if(!conditions.isEmpty()){
+    	if(conditions!=null && !conditions.isEmpty()){
     		PossibleAnswerVO possibleAnswerVO = conditions.get(0);
     		long topNodeId = possibleAnswerVO.getTopNodeId();
     		studyAgentUtil.createStudyAgentForUpdatedNode(topNodeId,possibleAnswerVO.getName());
@@ -75,7 +75,7 @@ public class RuleServiceImpl implements RuleService {
     public void delete(RuleVO o) {
         dao.delete(mapper.convertToRule(o));
         List<PossibleAnswerVO> conditions = o.getConditions();
-    	if(!conditions.isEmpty()){
+    	if(conditions!=null && !conditions.isEmpty()){
     		PossibleAnswerVO possibleAnswerVO = conditions.get(0);
     		long topNodeId = possibleAnswerVO.getTopNodeId();
     		studyAgentUtil.createStudyAgentForUpdatedNode(topNodeId,possibleAnswerVO.getName());
@@ -86,7 +86,7 @@ public class RuleServiceImpl implements RuleService {
 	public void update(RuleVO o) {
 		dao.saveOrUpdate(mapper.convertToRule(o));
 		List<PossibleAnswerVO> conditions = o.getConditions();
-    	if(!conditions.isEmpty()){
+    	if(conditions!=null && !conditions.isEmpty()){
     		PossibleAnswerVO possibleAnswerVO = conditions.get(0);
     		long topNodeId = possibleAnswerVO.getTopNodeId();
     		studyAgentUtil.createStudyAgentForUpdatedNode(topNodeId,possibleAnswerVO.getName());
