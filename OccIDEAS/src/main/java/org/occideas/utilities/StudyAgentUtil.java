@@ -215,13 +215,18 @@ public class StudyAgentUtil {
 	public void createStudyAgentForUpdatedNode(long idNode, String name) {
 			SystemPropertyVO autoCreateJson = systemPropertyService.getByName(Constant.AUTO_CREATE_STUDY_AGENT_JSON);
 			if (autoCreateJson != null && "true".equals(autoCreateJson.getValue().toLowerCase().trim())) {
-				ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService.getModuleFilterStudyAgent(idNode);
-				try {
-					createStudyAgentJson(String.valueOf(idNode), moduleFilterStudyAgent,true);
-				} catch (Exception e) {
-					log.error("Error creating study agent module json for "
-								+name+"-"+idNode,e);
-				}
+				 NodeVO nodeVO = moduleService.getModuleFilterStudyAgent(idNode);
+				 if(nodeVO instanceof ModuleVO){
+					 ModuleVO moduleFilterStudyAgent = (ModuleVO) nodeVO;
+					 try {
+						 createStudyAgentJson(String.valueOf(idNode), moduleFilterStudyAgent,true);
+					 } catch (Exception e) {
+						 log.error("Error creating study agent module json for "
+								 +name+"-"+idNode,e);
+					 }
+				 }else{
+					 return;
+				 }
 			}
 	}
 
