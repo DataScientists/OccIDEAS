@@ -290,6 +290,7 @@
 					if(response.status == '200'){	
 						
 						$scope.interview = response.data[0];
+						$scope.originalInterview = _.cloneDeep($scope.interview);
 						participant = $scope.interview.participant;
 						$scope.participantStatus = getParticipantDescription(participant.status); 
 						$scope.assessmentStatus = $scope.interview.assessedStatus;
@@ -334,6 +335,7 @@
 				    	};
 						
 						$('#back-to-top').fadeOut();
+						$scope.rulesLoaded = false;
 						FiredRulesService.getByInterviewId($scope.interviewId).then(function(response){
 							if(response.status == '200'){
 								var interviewFiredRules = response.data;
@@ -357,10 +359,12 @@
 									}              		
 			                	} 
 								$q.all(promises).then(function () {
-									console.log('test');
+									console.log('firedRulesLoaded');
+									$scope.rulesLoaded = true;
 			        			});
 							}
 						});
+						$scope.manualAssessmentLoaded = false;
 						ManualAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
 							if(response.status == '200'){
 								var interviewManualAssessedRules = response.data;
@@ -369,8 +373,10 @@
 									var rule = interviewManualAssessedRules[i].rule;					
 									$scope.data.manualAssessedRules.push(rule);						             		
 			                	} 
+								$scope.manualAssessmentLoaded = true;
 							}
 						});
+						$scope.autoAssessmentLoaded = false;
 						AutoAssessmentService.getByInterviewId($scope.interviewId).then(function(response){
 							if(response.status == '200'){
 								var interviewAutoAssessedRules = response.data;
@@ -378,7 +384,8 @@
 								for(var i=0;i<interviewAutoAssessedRules.length;i++){
 									var rule = interviewAutoAssessedRules[i].rule;					
 									$scope.data.autoAssessedRules.push(rule);						             		
-			                	} 
+			                	}
+								$scope.autoAssessmentLoaded = true;
 							}
 						});
 						
@@ -386,7 +393,9 @@
                 });
 			}
 			
+			
 			AgentsService.getStudyAgentsWithRules($scope.interviewId).then(function(response) {
+				
 				$scope.agents = [];
 				
 				_.each(response, function(agent) {
@@ -1413,7 +1422,25 @@
 		$scope.cancel = function() {
 			$mdDialog.cancel();
 		};
+		
+		$scope.retryCount = 0;
 		function saveInterview(interview) {
+			
+			if(!$scope.rulesLoaded || !$scope.manualAssessmentLoaded ||	!$scope.autoAssessmentLoaded){
+				if($scope.retryCount > 3){
+					alert('Rules has not been completely loaded yet. Please try again later.');
+					$scope.retryCount = 0;
+					$scope.assessmentStatus = $scope.originalInterview.assessedStatus;
+					return;
+				}else{
+					$scope.retryCount = $scope.retryCount + 1;
+					console.log('checking rules if loaded in 3 seconds');
+					$timeout(function() {
+						saveInterview(interview);
+		            }, 3000);
+					return; 
+				}
+			}
 			
 			InterviewsService.save(interview).then(function(response) {
 				if (response.status === 200) {
