@@ -1238,7 +1238,7 @@
 			[
 			  [ 'Update Fired Rules', function($itemScope, $event, model) {
 				  
-				  
+				  $scope.noiseRows = [];
 				  AssessmentsService.updateFiredRules(model.interviewId).then(function (response) {
 		                if (response.status === 200) {
 		                	$log.info("Updated Fired Rules");
