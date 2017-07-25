@@ -65,7 +65,10 @@ var noteZindex = 10500;
 function newNote(element,$itemScope,$compile) {
 	if($itemScope.rule == null){
 		return;
-	}	
+	}
+	if(angular.element('.note') && angular.element('.note').length == 0){
+		noteZindex = 10500;
+	}
 	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
 	angular.element(tpl).zIndex(++noteZindex);
 	
@@ -101,6 +104,9 @@ function newNote(element,$itemScope,$compile) {
 function showRuleDialog(element,$itemScope,$compile) {
 	if($itemScope.rule == null){
 		return;
+	}
+	if(angular.element('.note') && angular.element('.note').length == 0){
+		noteZindex = 10500;
 	}
 	var tpl = $compile(angular.element("#rules-template").html())($itemScope);	
 	angular.element(tpl).zIndex(++noteZindex);
