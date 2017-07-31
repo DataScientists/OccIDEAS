@@ -72,6 +72,17 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function exportToWord(data){
+			var restSaveUrl = 'web/rest/module/exportToWord';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function saveNode(data){
 			if(data.nodeclass=='M'){
 				var restSaveUrl = 'web/rest/module/update';
@@ -151,7 +162,8 @@
 			getMaxId:getMaxId,
             getNextQuestion:getNextQuestion,
             getAllMultipleQuestion:getAllMultipleQuestion,
-            getNodesWithAgent:getNodesWithAgent
+            getNodesWithAgent:getNodesWithAgent,
+            exportToWord:exportToWord
 		};
 	}
 })();

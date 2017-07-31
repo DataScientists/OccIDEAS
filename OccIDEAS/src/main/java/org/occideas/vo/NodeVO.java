@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@JsonIgnoreProperties({"editEnabled","info","warning","placeholder","isEditing","showAgentSlider","id","collapsed","isOpen","isSelected"})
+@JsonIgnoreProperties({ "editEnabled", "info", "warning", "placeholder", "isEditing", "showAgentSlider", "id",
+		"collapsed", "isOpen", "isSelected" })
 public abstract class NodeVO {
 
 	protected long idNode;
@@ -138,12 +139,12 @@ public abstract class NodeVO {
 
 	public String getNodeclass() {
 		nodeclass = "";
-		if(this.getType()!=null){
-			if(this.getType().length()>0){
-				nodeclass = this.getType().substring(0,1);
+		if (this.getType() != null) {
+			if (this.getType().length() > 0) {
+				nodeclass = this.getType().substring(0, 1);
 			}
 		}
-		
+
 		return nodeclass;
 	}
 
@@ -152,7 +153,7 @@ public abstract class NodeVO {
 	}
 
 	public long getAnchorId() {
-		if(anchorId==0){
+		if (anchorId == 0) {
 			anchorId = idNode;
 		}
 		return anchorId;
@@ -161,9 +162,9 @@ public abstract class NodeVO {
 	public void setAnchorId(long anchorId) {
 		this.anchorId = anchorId;
 	}
-	
+
 	public List<ModuleRuleVO> getModuleRule() {
-		if(moduleRule==null){
+		if (moduleRule == null) {
 			moduleRule = new ArrayList<ModuleRuleVO>();
 		}
 		return moduleRule;
@@ -245,6 +246,6 @@ public abstract class NodeVO {
 		return true;
 	}
 	
-	
+	public abstract List<? extends NodeVO> getChildNodes();
 
 }

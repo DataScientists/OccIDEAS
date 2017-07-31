@@ -14,14 +14,14 @@
 	                          '$rootScope','ModuleRuleService','$log','$timeout', 
 	                          'AuthenticationService','$document','InterviewsService',
 	                          'SystemPropertyService','ngToast','$translate',
-	                          'NodeLanguageService','$sessionStorage','lang', 'scrollTo'];
+	                          'NodeLanguageService','$sessionStorage','lang', 'scrollTo','$http'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
 			ModuleRuleService,$log,$timeout, auth,$document,InterviewsService,
 			SystemPropertyService,ngToast,$translate,
-			NodeLanguageService,$sessionStorage,lang, scrollTo) {
+			NodeLanguageService,$sessionStorage,lang, scrollTo,$http) {
 		var self = this;
 		self.lang = lang;
 		if(self.lang){
@@ -1623,6 +1623,41 @@
 				    });			                   
 				} 
 			  ], null, // Divider
+			  [ 'Export to Word', function($itemScope) {
+				  $http({
+					  method: 'POST',
+					  cache: false,
+					  url: 'web/rest/module/exportToWord',
+					  data:data[0],
+					  responseType:'arraybuffer',
+					  headers: {
+//					    'Authorization': "Bearer " + $rootScope.userInfo.access_token,
+					    'Access-Control-Allow-Origin': '*'
+					  }
+					}).then(function (data) {
+					  var octetStreamMime = 'application/octet-stream';
+					  var success = false;
+
+					  // Get the headers
+					  var headers = data.headers();
+					  var blob=new Blob([data.data], {type: 'application/octet-stream'});
+					    var link=document.createElement('a');
+					    link.href=window.URL.createObjectURL(blob);
+					    link.download=data.config.data.idNode+".docx";
+					    link.click();
+					}); 
+				  
+//				  QuestionsService.exportToWord(data[0]).then(function(response){
+//						if(response.status === 200){
+//							var blob=new Blob([response.data], {type: 'application/msword'});
+//						    var link=document.createElement('a');
+//						    link.href=window.URL.createObjectURL(blob);
+//						    link.download="test.doc";
+//						    link.click();
+//						}
+//				  });
+			  	} 
+			  ], null,
 			  [ 'Export to JSON', function($itemScope) {
 				  var activeModule = $scope.data[0];
 				  if(activeModule.type == 'M_IntroModule'){
