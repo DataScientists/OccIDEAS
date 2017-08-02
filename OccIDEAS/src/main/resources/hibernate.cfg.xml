@@ -21,7 +21,6 @@
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
         <property name="hibernate.connection.CharSet">utf8</property>
         <property name="hibernate.connection.characterEncoding">utf8</property>
-        <property name="hibernate.current_session_context_class">thread</property>
     </session-factory>
 
 </hibernate-configuration>
