@@ -2,7 +2,7 @@ package org.occideas.assessment.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.occideas.assessment.dao.AssessmentDao;
 import org.occideas.entity.AssessmentAnswerSummary;

@@ -3,8 +3,8 @@ package org.occideas.nodelanguage.dao;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
@@ -42,7 +42,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
 		return crit.list();
 	}
 
-	@Transactional(value = TxType.REQUIRES_NEW)
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public void save(NodeLanguage entity) {
 		sessionFactory.getCurrentSession().saveOrUpdate(entity);

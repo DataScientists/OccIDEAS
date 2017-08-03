@@ -3,7 +3,7 @@ package org.occideas.moduleintromodule.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.occideas.entity.Module;
 import org.occideas.fragment.service.FragmentService;

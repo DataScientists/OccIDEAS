@@ -2,7 +2,7 @@ package org.occideas.modulefragment.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.occideas.mapper.ModuleFragmentMapper;
 import org.occideas.modulefragment.dao.IModuleFragmentDao;

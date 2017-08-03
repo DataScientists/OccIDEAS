@@ -2,7 +2,7 @@ package org.occideas.interviewmodulefragment.service;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.occideas.entity.InterviewModuleFragment;
 import org.occideas.interviewmodulefragment.dao.InterviewModuleFragmentDao;

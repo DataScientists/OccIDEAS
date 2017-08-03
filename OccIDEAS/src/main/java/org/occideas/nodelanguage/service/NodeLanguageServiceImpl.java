@@ -3,7 +3,7 @@ package org.occideas.nodelanguage.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Language;

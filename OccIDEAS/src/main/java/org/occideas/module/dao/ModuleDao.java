@@ -3,9 +3,6 @@ package org.occideas.module.dao;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -22,6 +19,8 @@ import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ModuleDao implements IModuleDao{
@@ -33,7 +32,7 @@ public class ModuleDao implements IModuleDao{
       return (Module) sessionFactory.getCurrentSession().save(module);
     }
 	
-	@Transactional(value=TxType.REQUIRES_NEW)
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public void saveCopy(Module module){
 	  sessionFactory.getCurrentSession().saveOrUpdate(module);
 	}
@@ -57,7 +56,7 @@ public class ModuleDao implements IModuleDao{
       return (Module) sessionFactory.getCurrentSession().merge(module);
     }
 
-	@Transactional(value=TxType.REQUIRES_NEW)
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
     public void saveOrUpdate(Module module){
       sessionFactory.getCurrentSession().saveOrUpdate(module);
     }

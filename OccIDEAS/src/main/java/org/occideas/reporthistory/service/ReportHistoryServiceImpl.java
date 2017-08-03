@@ -3,7 +3,7 @@ package org.occideas.reporthistory.service;
 import java.io.File;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.occideas.mapper.ReportHistoryMapper;
 import org.occideas.reporthistory.dao.ReportHistoryDao;
