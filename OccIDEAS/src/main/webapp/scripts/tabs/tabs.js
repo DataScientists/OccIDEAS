@@ -755,8 +755,8 @@
 		}).state( {
             name:'tabs.answerSummary',
         	url: '/answerSummary',
-            sticky: false,
-		    deepStateRedirect: false,
+            sticky: true,
+		    deepStateRedirect: true,
 		    authenticate:true,
 		    params:{data:null},
             views:{
