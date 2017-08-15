@@ -24,13 +24,13 @@
 				<td filter="{interviewModuleName: 'select' }"
 					filter-data="modules()" title="'Module'">{{participant.interviewModuleName}}</td>
 				<td filter="{firerules: 'ng-table/filters/firerules.html' }"
-					title="''">
+					title="''" style="height:{{participant[participant.idinterview]+60}}px">
 					<div ng-repeat="agent in participant.agents" class="pull-right"
 						style="height: 40px; width: 27px; border-right: solid aliceblue 1px;">
 						<div class="verticalrules">
 							<div class="rulescontainer" data-toggle="tooltip"
 								title="{{agent.name}}">
-								<div class="agentACell" id="{{agent.idAgent}}"
+								<div class="agentACell" style="height:{{participant[participant.idinterview]}}px" id="{{agent.idAgent}}"
 									model="participant">
 									<span class="cell-lable"
 										ng-repeat="mrule in participant.firedRules">

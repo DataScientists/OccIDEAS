@@ -86,13 +86,19 @@
 								data.firedRules = [];
 								for(var i=0;i<interviewFiredRules.length;i++){
 									var rules = interviewFiredRules[i].rules;
+									var key = data.idinterview;
+									if(interviewFiredRules.length > 12){
+										var result = interviewFiredRules.length - 12;
+										var height = 28 + ((result/3)*1);
+										data[key] = height;
+									}
 									for(var j=0;j<rules.length;j++){
 										for(var x=0;x<rules[j].conditions.length;x++){
 											var node = rules[j].conditions[x];
 										}
 										data.firedRules.push(rules[j]);
 									}              		
-								} 
+								}
 							}
 						});
 						
