@@ -214,36 +214,26 @@
 			return $scope.csv;
 		}
 		
+//		AssessmentsService.getAssessmentSize('All').then(function(response){				
+//			$scope.totalAssessmentSize = 0;
+//			if(response.status == '200'){
+//				$scope.totalAssessmentSize = response.data;
+//			}
+//		});
+		
 		$scope.updateAutoAssessmentsButton = function() {
+//			
+//			$scope.assessedSize = 0;
+//			$scope.notAssessedSize = 0;
+//			$scope.totalAssessmentSize = 0;
 			
-			$scope.assessedSize = 0;
-			$scope.notAssessedSize = 0;
-			$scope.totalAssessmentSize = 0;
-			
-			AssessmentsService.getAssessmentSize('Auto Assessed').then(function(response){				
-				if(response.status == '200'){
-					$scope.assessedSize = response.data;
-				}
-			});
-			
-			AssessmentsService.getAssessmentSize('Not Assessed').then(function(response){				
-				if(response.status == '200'){
-					$scope.notAssessedSize = response.data;
-				}
-			});
-			
-			AssessmentsService.getAssessmentSize('All').then(function(response){				
-				if(response.status == '200'){
-					$scope.totalAssessmentSize = response.data;
-				}
-			});
-						
-			$mdDialog.show({
-				scope: $scope,  
-				preserveScope: true,
-				templateUrl : 'scripts/assessments/partials/autoAssessmentDialog.html',
-				clickOutsideToClose:true
-			});
+//			$mdDialog.show({
+//				scope: $scope,  
+//				preserveScope: true,
+//				templateUrl : 'scripts/assessments/partials/autoAssessmentDialog.html',
+//				clickOutsideToClose:true
+//			});
+			$scope.updateButton('All');
 		}
 				
 		$scope.updateButton = function(status) {
@@ -251,12 +241,11 @@
 			AssessmentsService.updateAutoAssessments(status).then(function(response){
 				if(response){
 					$scope.updateButtonDisabled = false;
-					
 					$ngToast.create({
-			    		  className: 'success',
-			    		  content: "Auto assessment is completed."
-			    	});
-					
+	      	    		  className: 'success',
+	      	    		  content: 'Auto assessment is completed.',
+	      	    		  animation:'slide'
+	      	    	 });
 					console.log('Assessments Updated: '+status);
 				}
 			});	  
@@ -277,7 +266,7 @@
 			var defaultDurationInSec = 3; // Slow
 			
 			if(status === 'All'){
-				estimateInMin = defaultDurationInSec * $scope.totalAssessmentSize;
+				estimateInMin = defaultDurationInSec * self.tableParams.total();
 			}
 			else if(status === 'Auto Assessed'){
 				estimateInMin = defaultDurationInSec *  $scope.assessedSize;

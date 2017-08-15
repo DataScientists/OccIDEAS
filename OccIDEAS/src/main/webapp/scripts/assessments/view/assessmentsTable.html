@@ -2,8 +2,7 @@
 	<div>
 		<button ng-disabled="updateButtonDisabled" class="btn btn-default"
 			ng-click="updateAutoAssessmentsButton()">Update Auto
-			Assessments</button>
-		Size : {{vm.tableParams.total()}}
+			Assessments ({{vm.tableParams.total()}})</button>
 		<table ng-table="vm.tableParams"
 			class="table table-condensed table-bordered table-striped"
 			template-pagination="templatePagination.html">
