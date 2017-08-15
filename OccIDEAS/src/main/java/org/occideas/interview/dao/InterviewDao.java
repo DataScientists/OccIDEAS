@@ -286,7 +286,8 @@ public class InterviewDao implements IInterviewDao{
 	    	       		  					.add(Projections.property("fragment"),"fragment")
 	    	       		  					.add(Projections.property("module"),"module")
 	    	       		  					.add(Projections.property("idinterview"),"idinterview")
-	    	       		  					.add(Projections.property("referenceNumber"),"referenceNumber"))
+	    	       		  				.add(Projections.property("assessedStatus"),"assessedStatus")
+	    		  						.add(Projections.property("referenceNumber"),"referenceNumber"))
 	    		  						.addOrder(Order.asc("referenceNumber"))
 	    		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
 	      List<Interview> temp = crit.list();
