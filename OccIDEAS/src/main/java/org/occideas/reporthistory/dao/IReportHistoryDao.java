@@ -2,6 +2,7 @@ package org.occideas.reporthistory.dao;
 
 import java.util.List;
 
+import org.occideas.entity.InterviewRuleReport;
 import org.occideas.entity.ReportHistory;
 
 public interface IReportHistoryDao {
@@ -11,5 +12,6 @@ public interface IReportHistoryDao {
 	ReportHistory getLatestByType(String type);
 	ReportHistory save(ReportHistory entity);
 	void delete(ReportHistory entity);
+	List<InterviewRuleReport> getInterviewRuleReport();
 	
 }

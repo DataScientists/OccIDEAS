@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -1676,5 +1677,41 @@ public class AssessmentRestController {
 
 	private List<String> getTypes() {
 		return interviewService.getNoteTypes();
+	}
+	
+	@POST
+	@Path(value = "/exportInterviewRulesCSV")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response exportInterviewRulesCSV(String fileName) {
+
+		// check if we have the directory TreeSet ins sys prop
+		SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
+		if (csvDir == null) {
+			return Response.status(Status.BAD_REQUEST).type("text/plain")
+					.entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
+		}
+		String exportFileCSV = createFileName(fileName);
+
+		ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
+				ReportsEnum.INTERVIEW_FIREDRULES.getValue());
+
+		String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+
+		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
+				ReportsEnum.INTERVIEW_FIREDRULES.getValue());
+
+		try {
+			reportHistoryService.generateInterviewRuleReport(fullPath);
+			reportHistoryVO.setStatus(ReportsStatusEnum.COMPLETED.getValue());
+			reportHistoryVO.setProgress(df.format(100) + "%");
+		} catch (Exception e) {
+			reportHistoryVO.setStatus(ReportsStatusEnum.FAILED.getValue());
+			reportHistoryVO.setProgress(df.format(0) + "%");
+			log.error(e.getMessage());
+			return Response.status(Status.BAD_REQUEST).type("text/plain")
+					.entity(e.getMessage()).build();
+		}
+		reportHistoryService.save(reportHistoryVO);
+		return Response.ok().build();
 	}
 }

@@ -5,6 +5,17 @@
 	InterviewsService.$inject = [ '$http', '$q' ];
 	function InterviewsService($http, $q) {
 
+		function exportInterviewRules(fileName){
+			var restUrl = 'web/rest/assessment/exportInterviewRulesCSV';
+
+			var request = $http({
+				method : 'POST',
+				url : restUrl,
+				data : fileName
+			})
+			return request.then(handleSuccess, handleError);
+		}
+		
 		function preloadActiveIntro(data) {
 			var restUrl = 'web/rest/interview/preloadActiveIntro';
 
@@ -666,7 +677,8 @@
 			getLinksByModule:getLinksByModule,
 			preloadActiveIntro:preloadActiveIntro,
 			preloadAllModules:preloadAllModules,
-			getInterviewQuestionsByNodeIdAndIntId:getInterviewQuestionsByNodeIdAndIntId
+			getInterviewQuestionsByNodeIdAndIntId:getInterviewQuestionsByNodeIdAndIntId,
+			exportInterviewRules:exportInterviewRules
 		};
 	}
 })();

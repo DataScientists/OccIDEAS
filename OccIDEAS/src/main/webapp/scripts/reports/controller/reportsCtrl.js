@@ -179,6 +179,27 @@
 				clickOutsideToClose:false
 			});
 		}
+	    
+	    $scope.exportInterviewRulesButton = function(){
+//			$scope.checkboxes = { 'checked': false, items: {} };
+			$scope.fileName = "InterviewFiredRules";
+			$mdDialog.show({
+				scope: $scope.$new(),  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/fileDialog.html',
+				clickOutsideToClose:false
+			});
+		}
+	    
+	    $scope.exportInterviewRules = function(fileName){
+	    	InterviewsService.exportInterviewRules(fileName).
+    		then(function(response){
+    			if(response.status == '200'){
+    			}
+    		});
+	    	$scope.cancel();
+	    }
+	    
 	    $scope.newExportAssessmentNoiseCSVButton = function(){
 			$scope.checkboxes = { 'checked': false, items: {} };
 			$scope.fileName = "assessmentNoiseExport";

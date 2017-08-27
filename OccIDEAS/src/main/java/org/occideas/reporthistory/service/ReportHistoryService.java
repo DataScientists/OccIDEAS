@@ -11,5 +11,6 @@ public interface ReportHistoryService {
 	ReportHistoryVO getLatestByType(String type);
 	ReportHistoryVO save(ReportHistoryVO entity);
 	void delete(ReportHistoryVO entity);
+	void generateInterviewRuleReport(String fullPath) throws Exception;
 	
 }
