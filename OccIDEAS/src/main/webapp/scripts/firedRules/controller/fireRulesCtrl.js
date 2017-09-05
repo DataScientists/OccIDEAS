@@ -345,6 +345,7 @@
 								$scope.data.topNodeIds = [];
 								var promises = [];
 								$scope.moduleNameCount = 0;
+								$scope.data.agentCount = [];
 								for(var i=0;i<interviewFiredRules.length;i++){
 									var rules = interviewFiredRules[i].rules;
 									for(var j=0;j<rules.length;j++){
@@ -355,9 +356,30 @@
 												promises.push(populateModuleName(angular.copy(node.topNodeId)));
 											}
 										}
-											$scope.data.firedRules.push(rules[j]);
-									}              		
+										$scope.data.firedRules.push(rules[j]);
+										var agentCount = _.find($scope.data.agentCount, 
+												function(o) { return o.idAgent == rules[j].agentId; });
+										if(agentCount){
+											agentCount.count = agentCount.count + 1; 
+										}else{
+											$scope.data.agentCount.push({
+												idAgent: rules[j].agentId,
+												count: 1
+											});
+										}
+									}    
 			                	} 
+								if($scope.data.agentCount && $scope.data.agentCount.length > 0){
+									var arr = _.map($scope.data.agentCount, function(element, idx) {
+										  return element.count;
+									});
+									var num=_.max(arr);
+									if(num > 12){
+										var result = num - 12;
+										var height = 28 + ((result/3)*1);
+										$scope.data.height = height;
+									}
+									}
 								$q.all(promises).then(function () {
 									console.log('firedRulesLoaded');
 									$scope.rulesLoaded = true;

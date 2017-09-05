@@ -8,7 +8,8 @@
 				<div class="agentcontainer" >
 					<span class="rotatedagenttext"></span>
 				</div>
-			</div>			
+			</div>
+			<div style="height:{{data.height+10}}px">			
 			<div class="verticalrules">
 				<div class="rulescontainer">
 					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
@@ -16,6 +17,7 @@
 					</div>
 				</div>
 			</div>			
+			</div>
 			<div class="verticalrules">
 				<div class="rulescontainer">
 					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
@@ -40,14 +42,17 @@
 				</div>
 			</div>
 			
+			<div style="height:{{data.height+10}}px">
 			<div class="verticalrules">
 				<div class="rulescontainer">
-					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)" model="data">
+					<div class="agentACell" style="height:{{data.height}}px" 
+						id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)" model="data">
 						<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
 							<div class="{{mrule.level}} {{mrule.type}} " ng-if="(mrule.agentId == agent.idAgent)"></div>
 						</span>
 					</div>
 				</div>
+			</div>
 			</div>
 			
 			<div class="verticalrules">
