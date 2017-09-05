@@ -65,6 +65,7 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 		Writer writer = new FileWriter(filepath);
 		StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
 	    beanToCsv.write(list);
+	    writer.flush();
 	    writer.close();
 	}
 	

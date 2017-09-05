@@ -84,20 +84,39 @@
 								var interviewFiredRules = response.data;
 								data.interviewFiredRules = interviewFiredRules;
 								data.firedRules = [];
+								data.agentCount = [];
 								for(var i=0;i<interviewFiredRules.length;i++){
 									var rules = interviewFiredRules[i].rules;
 									var key = data.idinterview;
-									if(interviewFiredRules.length > 12){
-										var result = interviewFiredRules.length - 12;
-										var height = 28 + ((result/3)*1);
-										data[key] = height;
-									}
 									for(var j=0;j<rules.length;j++){
 										for(var x=0;x<rules[j].conditions.length;x++){
 											var node = rules[j].conditions[x];
 										}
 										data.firedRules.push(rules[j]);
-									}              		
+										var agentCount = _.find(data.agentCount, 
+												function(o) { return o.idAgent == rules[j].agentId; });
+										if(agentCount){
+											agentCount.count = agentCount.count + 1; 
+										}else{
+											data.agentCount.push({
+												idAgent: rules[j].agentId,
+												count: 1
+											});
+										}
+									}
+									if(data.agentCount && data.agentCount.length > 0){
+									var arr = _.map(data.agentCount, function(element, idx) {
+										  return element.count;
+									});
+									var num=_.max(arr);
+									if(num > 12){
+										var result = num - 12;
+										console.log(data.idinterview+' result:'+result);
+										var height = 28 + ((result/3)*1);
+										console.log(data.idinterview+' height:'+height);
+										data[key] = height;
+									}
+									}
 								}
 							}
 						});
