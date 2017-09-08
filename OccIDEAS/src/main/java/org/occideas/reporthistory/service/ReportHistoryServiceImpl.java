@@ -6,8 +6,10 @@ import java.io.Writer;
 import java.util.List;
 
 import org.occideas.entity.InterviewRuleReport;
+import org.occideas.mapper.InterviewRulesMapper;
 import org.occideas.mapper.ReportHistoryMapper;
 import org.occideas.reporthistory.dao.ReportHistoryDao;
+import org.occideas.vo.InterviewRuleReportVO;
 import org.occideas.vo.ReportHistoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 @Service
 @Transactional
@@ -26,6 +26,8 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 	private ReportHistoryDao dao;
 	@Autowired
 	private ReportHistoryMapper mapper;
+	@Autowired
+	private InterviewRulesMapper interviewRuleMapper;
 	
 	@Override
 	public List<ReportHistoryVO> getAll() {
@@ -62,9 +64,10 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 	@Override
 	public void generateInterviewRuleReport(String filepath) throws Exception{
 		List<InterviewRuleReport> list = dao.getInterviewRuleReport();
+		List<InterviewRuleReportVO> listVO = interviewRuleMapper.convertToInterviewRuleVOList(list);
 		Writer writer = new FileWriter(filepath);
 		StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
-	    beanToCsv.write(list);
+	    beanToCsv.write(listVO);
 	    writer.flush();
 	    writer.close();
 	}
