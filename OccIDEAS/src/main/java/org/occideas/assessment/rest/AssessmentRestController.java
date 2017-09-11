@@ -199,6 +199,7 @@ public class AssessmentRestController {
 					pStatus = String.valueOf(getStatusDescription(interview.getParticipant().getStatus()));
 				} catch (Exception e) {
 					System.out.println("no participant at interview" + interview.getIdinterview());
+					log.error("no participant at interview" + interview.getIdinterview(),e);
 				}
 				answerList.add(pStatus);
 				answerList.add(interview.getAssessedStatus());
@@ -327,6 +328,7 @@ public class AssessmentRestController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			log.error(e.getMessage(),e);
 		}
 		updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
 
@@ -375,6 +377,7 @@ public class AssessmentRestController {
 
 		} catch (IOException e) {
 			e.printStackTrace();
+			log.error(e.getMessage(),e);
 			updateProgress(reportHistoryVO, ReportsStatusEnum.FAILED.getValue(), 0);
 		}
 	}
@@ -709,6 +712,7 @@ public class AssessmentRestController {
 			try {
 				pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
 			} catch (Exception e) {
+				log.error("no participant at interview" + interviewVO.getIdinterview(),e);
 				System.out.println("no participant at interview" + interviewVO.getIdinterview());
 			}
 			answers.add(pStatus);
@@ -759,6 +763,7 @@ public class AssessmentRestController {
 							} catch (Exception e) {
 								System.err
 										.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
+								log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
 							}
 						}
 					}
@@ -767,6 +772,7 @@ public class AssessmentRestController {
 						level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
 					} catch (Exception e) {
 						System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+						log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
 					}
 					Float partialExposure = (float) (level) * (float) (level) * (float) (frequencyhours);
 
@@ -836,6 +842,7 @@ public class AssessmentRestController {
 				pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
 			} catch (Exception e) {
 				System.out.println("No participant for interview " + interviewVO.getIdinterview());
+				log.error("No participant for interview " + interviewVO.getIdinterview(),e);
 			}
 			answers.add(pStatus);
 
@@ -891,6 +898,8 @@ public class AssessmentRestController {
 						} catch (Exception e) {
 							System.err.println("Invalid not bg frequency! Check interview "
 									+ interviewVO.getIdinterview() + " Rule " + noiseRule.getIdRule());
+							log.error("Invalid not bg frequency! Check interview "
+									+ interviewVO.getIdinterview() + " Rule " + noiseRule.getIdRule(),e);
 						}
 
 					}
@@ -922,6 +931,7 @@ public class AssessmentRestController {
 							}
 						} catch (Exception e) {
 							System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+							log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
 						}
 
 					} else {
@@ -949,6 +959,7 @@ public class AssessmentRestController {
 								} catch (Exception e) {
 									System.err.println(
 											"Invalid frequency! Check interview " + interviewVO.getIdinterview());
+									log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
 								}
 							}
 						}
@@ -961,6 +972,7 @@ public class AssessmentRestController {
 							level = Integer.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
 						} catch (Exception e) {
 							System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+							log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
 						}
 						Float partialExposure = (float) ((float) 4 * hours
 								* (Math.pow(10, (float) (level - 100) / (float) 10)));
@@ -1101,6 +1113,7 @@ public class AssessmentRestController {
 				pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
 			} catch (Exception e) {
 				System.out.println("no participant at interview" + interviewVO.getIdinterview());
+				log.error("no participant at interview" + interviewVO.getIdinterview(),e);
 			}
 			answers.add(pStatus);
 			answers.add(interviewVO.getAssessedStatus());
@@ -1574,6 +1587,7 @@ public class AssessmentRestController {
 			filter.setStatus();
 			list = assessmentService.getAnswerSummaryByName(filter);
 		} catch (Throwable e) {
+			log.error(e.getMessage(),e);
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
@@ -1687,6 +1701,7 @@ public class AssessmentRestController {
 		// check if we have the directory TreeSet ins sys prop
 		SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
 		if (csvDir == null) {
+			log.error("ERROR","REPORT_EXPORT_CSV_DIR does not exist in System Property.");
 			return Response.status(Status.BAD_REQUEST).type("text/plain")
 					.entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
 		}
@@ -1707,7 +1722,7 @@ public class AssessmentRestController {
 		} catch (Exception e) {
 			reportHistoryVO.setStatus(ReportsStatusEnum.FAILED.getValue());
 			reportHistoryVO.setProgress(df.format(0) + "%");
-			log.error(e.getMessage());
+			log.error("ERROR",e.getMessage(),e);
 			return Response.status(Status.BAD_REQUEST).type("text/plain")
 					.entity(e.getMessage()).build();
 		}

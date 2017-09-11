@@ -14,6 +14,20 @@
 			immediateFlush="false" append="true">
 			<PatternLayout
 				pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n" />
+			 <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+			<Policies>
+    			<OnStartupTriggeringPolicy />
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy/>
+		</RollingFile>
+		<RollingFile name="occideas_error" fileName="${rootPath}/error.log"
+			filePattern="${rootPath}/error.log.%d{MM-dd-yyyy}-%i.log"
+			immediateFlush="false" append="true">
+			<PatternLayout
+				pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n" />
+			 <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
 			<Policies>
     			<OnStartupTriggeringPolicy />
 				<TimeBasedTriggeringPolicy />
@@ -27,6 +41,7 @@
 		<AsyncLogger name="org.occideas" level="info"
 			includeLocation="true" additivity="false">
 			<AppenderRef ref="occideas" />
+			<AppenderRef ref="occideas_error" />
 			<AppenderRef ref="STDOUT" />
 		</AsyncLogger>
 		<AsyncLogger name="org.hibernate.SQL" level="info"
