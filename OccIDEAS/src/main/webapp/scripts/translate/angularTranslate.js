@@ -64,7 +64,7 @@
     		}
   		$timeout(function () {
   			deferred.resolve(translations);
-  		}, 2000);
+  		}, 10000);
 
     		return deferred.promise;
     	};

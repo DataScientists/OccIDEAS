@@ -120,21 +120,10 @@
     		node.translated = $translate.instant(node.name.toLowerCase());
     		if(node.idNode == $scope.data[0].idNode){
     			node.translated = node.name; 
-    			
     		}
     		
-    		/*if(node.translated.trim() == node.name.toLowerCase().trim() && node.idNode != $scope.data[0].idNode){
+    		if(node.translated.trim() == node.name.toLowerCase().trim() && node.idNode != $scope.data[0].idNode){
     			node.translated = 'No available translation';
-    		}*/
-    		if(node.translated.trim() == node.name.toLowerCase().trim()){
-    			node.translated = 'Empty translation';
-    			if(node.idNode != $scope.data[0].idNode){
-    				node.translated = 'No available translation';
-    				console.log("2 Debugging issue 2959");
-    				console.log("node.idNode:"+node.idNode);
-    				console.log("$scope.data[0].idNode:"+$scope.data[0].idNode);
-    			}
-    			
     		}
     		if(node.nodes){
     			_.each(node.nodes,function(childNode){
