@@ -31,6 +31,35 @@ public class NodeLanguageMapperImpl implements NodeLanguageMapper {
 		vo.setLanguageId(entity.getLanguageId());
 		return vo;
 	}
+	
+	@Override
+	public NodeLanguageVO convertToNodeLanguageVOOnly(NodeLanguage entity) {
+		if (entity == null) {
+			return null;
+		}
+
+		NodeLanguageVO vo = new NodeLanguageVO();
+		vo.setId(entity.getId());
+		vo.setWord(entity.getWord());
+		vo.setLastUpdated(entity.getLastUpdated());
+		vo.setTranslation(entity.getTranslation());
+		vo.setLanguageId(entity.getLanguageId());
+		return vo;
+	}
+	
+	@Override
+	public List<NodeLanguageVO> convertToNodeLanguageVOListOnly(List<NodeLanguage> entityList) {
+		if (entityList == null) {
+			return null;
+		}
+
+		List<NodeLanguageVO> list = new ArrayList<>();
+		for (NodeLanguage entity : entityList) {
+			list.add(convertToNodeLanguageVOOnly(entity));
+		}
+
+		return list;
+	}
 
 	@Override
 	public List<NodeLanguageVO> convertToNodeLanguageVOList(List<NodeLanguage> entityList) {

@@ -24,4 +24,8 @@ public interface NodeLanguageMapper {
 	LanguageVO convertToLanguageVO(Language entity);
 	
 	List<LanguageVO> convertToListLanguageVO(List<Language> entityList);
+
+	NodeLanguageVO convertToNodeLanguageVOOnly(NodeLanguage entity);
+
+	List<NodeLanguageVO> convertToNodeLanguageVOListOnly(List<NodeLanguage> entityList);
 }

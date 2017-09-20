@@ -1,10 +1,12 @@
 package org.occideas.nodelanguage.service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Language;
 import org.occideas.entity.LanguageFragBreakdown;
@@ -20,30 +22,34 @@ import org.occideas.vo.LanguageVO;
 import org.occideas.vo.NodeLanguageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class NodeLanguageServiceImpl implements NodeLanguageService{
+public class NodeLanguageServiceImpl implements NodeLanguageService {
 
+	private Logger log = LogManager.getLogger(this.getClass());
+	
 	@Autowired
 	private INodeLanguageDao dao;
 	@Autowired
 	private NodeLanguageMapper mapper;
 	@Autowired
 	private ModuleMapper modMapper;
-	
+
 	@Override
 	public void save(NodeLanguageVO nodeLanguageVO) {
-		NodeLanguage nodeLanguage = dao.getNodeLanguageByWordAndLanguage(nodeLanguageVO.getWord(),nodeLanguageVO.getLanguageId());
-		if(nodeLanguage != null){
+		NodeLanguage nodeLanguage = dao.getNodeLanguageByWordAndLanguage(nodeLanguageVO.getWord(),
+				nodeLanguageVO.getLanguageId());
+		if (nodeLanguage != null) {
 			nodeLanguageVO.setId(nodeLanguage.getId());
 		}
-		if(nodeLanguage != null && nodeLanguage.getTranslation().equals(nodeLanguageVO.getTranslation())){
+		if (nodeLanguage != null && nodeLanguage.getTranslation().equals(nodeLanguageVO.getTranslation())) {
 			return;
 		}
 		dao.save(mapper.convertToNodeLanguage(nodeLanguageVO));
 	}
-	
+
 	@Override
 	public void batchSave(List<NodeLanguageVO> list) {
 		dao.batchSave(mapper.convertToNodeLanguageList(list));
@@ -53,22 +59,31 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	public List<NodeLanguageVO> getNodesByLanguage(String language) {
 		return mapper.convertToNodeLanguageVOList(dao.getNodesByLanguage(language));
 	}
-	
+
 	@Override
-	public void addLanguage(LanguageVO vo){
+	public void addLanguage(LanguageVO vo) {
 		dao.addLanguage(mapper.convertToLanguage(vo));
 	}
-	
+
 	@Override
-	public List<LanguageVO> getAllLanguage(){
+	public List<LanguageVO> getAllLanguage() {
 		return mapper.convertToListLanguageVO(dao.getAllLanguage());
 	}
 
 	@Override
 	public List<NodeLanguageVO> getNodeLanguageById(String id) {
-		return mapper.convertToNodeLanguageVOList(dao.getNodeLanguageById(Long.valueOf(id)));
+		Instant start = Instant.now();
+		List<NodeLanguage> nodeLanguageByIdList = dao.getNodeLanguageById(Long.valueOf(id));
+		Instant end = Instant.now();
+		log.info("getNodeLanguageById -" + Duration.between(start, end));
+		Instant start2 = Instant.now();
+		List<NodeLanguageVO> convertToNodeLanguageVOListOnly = mapper
+				.convertToNodeLanguageVOListOnly(nodeLanguageByIdList);
+		Instant end2 = Instant.now();
+		log.info("convertToNodeLanguageVOListOnly -" + Duration.between(start2, end2));
+		return convertToNodeLanguageVOListOnly;
 	}
-	
+
 	@Override
 	public void delete(NodeLanguageVO vo) {
 		dao.delete(mapper.convertToNodeLanguage(vo));
@@ -82,7 +97,7 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public List<LanguageVO> getDistinctLanguage() {
 		List<Long> distinctNodeLanguageId = dao.getDistinctNodeLanguageId();
-		if(distinctNodeLanguageId.isEmpty()){
+		if (distinctNodeLanguageId.isEmpty()) {
 			return new ArrayList<>();
 		}
 		List<Language> distinctLanguage = dao.getDistinctLanguage(distinctNodeLanguageId);
@@ -103,11 +118,11 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	public List<NodeNodeLanguageFrag> getNodeNodeLanguageFragList() {
 		return dao.getNodeNodeLanguageListFrag();
 	}
-	
+
 	@Override
 	public Integer getUntranslatedModules(String flag) {
 		List<Module> untranslatedModules = dao.getUntranslatedModules(flag);
-		if(untranslatedModules == null){
+		if (untranslatedModules == null) {
 			return 0;
 		}
 		return untranslatedModules.size();
@@ -131,7 +146,7 @@ public class NodeLanguageServiceImpl implements NodeLanguageService{
 	@Override
 	public Integer getUntranslatedFragments(String flag) {
 		List<Fragment> untranslatedFragments = dao.getUntranslatedFragments(flag);
-		if(untranslatedFragments == null){
+		if (untranslatedFragments == null) {
 			return 0;
 		}
 		return untranslatedFragments.size();
