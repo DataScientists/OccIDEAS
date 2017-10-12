@@ -51,10 +51,12 @@
         	});
         }
         if($sessionStorage.langEnabled){
-        	$scope.tabOptions.push({
-        		state: "tabs.languageSummary",
-        		data:""
-        	});
+        	if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
+        		$scope.tabOptions.push({
+            		state: "tabs.languageSummary",
+            		data:""
+            	}); 
+        	}       	
 		}
         var shouldPassHiddenParam = false;
         $scope.$watch('selectedIndex', function(current, old) {
