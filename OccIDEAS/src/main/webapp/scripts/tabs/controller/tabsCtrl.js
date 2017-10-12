@@ -151,10 +151,12 @@
             });
         }
         if(auth.isLoggedIn() && $sessionStorage.langEnabled){
-        	tabs.push({
-                title: 'Language Summary',
-                viewName: 'languageSummary@tabs'
-            });
+        	if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
+        		tabs.push({
+                    title: 'Language Summary',
+                    viewName: 'languageSummary@tabs'
+                });
+        	}       	
 		}
         $scope.tabs = tabs;
         $scope.selectedIndex = 0;
