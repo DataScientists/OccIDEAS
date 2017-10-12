@@ -8,12 +8,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.occideas.entity.Agent;
 import org.occideas.entity.InterviewRuleReport;
 import org.occideas.entity.ReportHistory;
 import org.occideas.utilities.ReportsStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class ReportHistoryDao implements IReportHistoryDao {

@@ -43,7 +43,9 @@
         				}
         			})
         		}
-        		$rootScope.addLanguageTab();
+        		if(auth.userHasPermission(['ROLE_CONTDEV'])){
+        			$rootScope.addLanguageTab();
+                }       		
         	}else{
         		$sessionStorage.langEnabled = false;
         		$rootScope.closeLanguageTab();
