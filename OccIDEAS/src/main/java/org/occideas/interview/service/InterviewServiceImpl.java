@@ -206,7 +206,10 @@ public class InterviewServiceImpl implements InterviewService {
 		if(StringUtils.isEmpty(o.getAssessedStatus())){
 			o.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
 		}
-		dao.saveOrUpdate(mapper.convertToInterview(o));
+		Interview interview = mapper.convertToInterview(o);
+		dao.saveOrUpdate(interview);
+		//System.out.println("Assessment Status:"+interview.getAssessedStatus());
+		
 	}
 
 	@Override

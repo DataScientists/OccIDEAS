@@ -51,10 +51,12 @@
         	});
         }
         if($sessionStorage.langEnabled){
-        	$scope.tabOptions.push({
-        		state: "tabs.languageSummary",
-        		data:""
-        	});
+        	if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
+        		$scope.tabOptions.push({
+            		state: "tabs.languageSummary",
+            		data:""
+            	}); 
+        	}       	
 		}
         var shouldPassHiddenParam = false;
         $scope.$watch('selectedIndex', function(current, old) {
@@ -149,10 +151,12 @@
             });
         }
         if(auth.isLoggedIn() && $sessionStorage.langEnabled){
-        	tabs.push({
-                title: 'Language Summary',
-                viewName: 'languageSummary@tabs'
-            });
+        	if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
+        		tabs.push({
+                    title: 'Language Summary',
+                    viewName: 'languageSummary@tabs'
+                });
+        	}       	
 		}
         $scope.tabs = tabs;
         $scope.selectedIndex = 0;

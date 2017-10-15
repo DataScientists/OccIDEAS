@@ -323,7 +323,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			int iCount = 0;
 			for(InterviewVO interviewVO:list){
 				iCount++;
-				log.info("auto assessment for "+type+" triggered "+iCount+" of "+iSize);
+				log.info("auto assessment for "+interviewVO.getInterviewId()+" triggered "+iCount+" of "+iSize);
+				System.out.println("ID "+interviewVO.getInterviewId()+" triggered "+iCount+" of "+iSize);
 				interviewVO = this.determineFiredRules(interviewVO);
 				List<InterviewAutoAssessmentVO> assessments = autoAssessmentService.findByInterviewId(interviewVO.getInterviewId());
 				ArrayList<RuleVO> autoAssessedRules = new ArrayList<RuleVO>();
@@ -362,11 +363,12 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 					}
 				}
 				if(bUpdateStatus){
-					interviewVO.setAssessedStatus(Constant.AUTO_ASSESSED);
+					//interviewVO.setAssessedStatus(Constant.AUTO_ASSESSED);
 				}			
 				interviewVO.setAutoAssessedRules(autoAssessedRules);
-				
+				System.out.println("Status is"+interviewVO.getAssessedStatus());
 				service.update(interviewVO);
+				
          	}
 			log.info("Assessment completed for "+type+" for interviewIds");
 		}catch(Throwable e){
@@ -598,6 +600,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			manualAssessedRules.add(assessment.getRule());
 		}
 		interview.setManualAssessedRules(manualAssessedRules);
+		//System.out.print("Assessment status before update:"+interview.getAssessedStatus());
     	service.update(interview);
     	return interview;
     }

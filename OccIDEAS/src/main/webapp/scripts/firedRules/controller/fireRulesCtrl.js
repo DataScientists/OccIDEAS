@@ -330,7 +330,14 @@
 				    		    	 })
 				    		    },   		    
 				  		        close: function close(x,idRule) {
-				  		        	x.info["Node"+x.idNode+idRule].nodePopover.isOpen = false;
+				  		        	if(x){
+				  		        		if(x.info){
+					  		        		var ruleInfo = x.info["Node"+x.idNode+idRule];
+						  		        	if(ruleInfo){
+						  		        		ruleInfo.nodePopover.isOpen = false;
+						  		        	}
+					  		        	}
+				  		        	}				  		   				  		        	
 				  		        }
 				    	};
 						
