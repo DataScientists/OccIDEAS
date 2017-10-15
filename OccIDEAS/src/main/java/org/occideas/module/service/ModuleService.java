@@ -33,4 +33,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
 	public List<Module> getAllModules();
 	public NodeVO getNodeNameById(Long idNode);
 	public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(Long theId);
+    public ModuleVO getStudyAgentJSON(Long id);
 }

@@ -1,5 +1,6 @@
 package org.occideas.module.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 @Service
 @Transactional
@@ -464,4 +468,26 @@ public class ModuleServiceImpl implements ModuleService {
 		// dao.getPosAnsWithStudyAgentsByIdMod(theId);
 		return sysPropDao.getPosAnsWithStudyAgentsByIdMod(theId);
 	}
+
+    @Override
+    public ModuleVO getStudyAgentJSON(Long id)
+    {
+        try
+        {
+            return studyAgentUtil.getStudyAgentJson(String.valueOf(id));
+        }
+        catch (JsonGenerationException e)
+        {
+           log.error(e.getMessage(),e);
+        }
+        catch (JsonMappingException e)
+        {
+            log.error(e.getMessage(),e);
+        }
+        catch (IOException e)
+        {
+            log.error(e.getMessage(),e);
+        }
+        return null;
+    }
 }

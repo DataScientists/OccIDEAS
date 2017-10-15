@@ -18,6 +18,7 @@ import org.occideas.entity.LanguageModBreakdown;
 import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
 import org.occideas.nodelanguage.service.NodeLanguageService;
+import org.occideas.vo.LanguageJSONVO;
 import org.occideas.vo.LanguageVO;
 import org.occideas.vo.NodeLanguageVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,20 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		return Response.ok(list).build();
 	}
 	
+	@GET
+    @Path(value="/getNodeLanguageByIdandLanguage")
+    @Produces(value=MediaType.APPLICATION_JSON_VALUE)
+    public Response getNodeLanguageByIdandLanguage(@QueryParam("id") String id,@QueryParam("lang") String languageid) {
+        List<NodeLanguageVO> list = new ArrayList<>();
+        try{
+            list = service.getNodeLanguageByIdandLanguage(Long.valueOf(id), Long.valueOf(languageid));
+        }catch(Throwable e){
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(list).build();
+    }
+	
 	@Override
 	public Response get(Long id) {
 		// TODO Auto-generated method stub
@@ -90,6 +105,20 @@ public class NodeLanguageRestController implements BaseRestController<NodeLangua
 		}
 		return Response.ok().build();
 	}
+	
+	@Path(value = "/batchSaveJson")
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response batchSaveJson(LanguageJSONVO vo) {
+        try{
+            service.batchSaveJson(vo.getIdNode(),vo.getLanguageId(),vo.getVo());
+        }catch(Throwable e){
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
 	
 	@Path(value = "/addLanguage")
 	@POST

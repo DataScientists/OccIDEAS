@@ -1,13 +1,13 @@
 (function() {
-	angular.module('occIDEASApp.Questions')
-			.controller('QuestionsCtrl',QuestionsCtrl)
+	angular.module('occIDEASApp.NodeLanguage')
+			.controller('ModuleLangCtrl',ModuleLangCtrl)
 			.filter('reverse', function() {
   return function(items) {
     return items.slice().reverse();
   };
 });
 
-	QuestionsCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
+	ModuleLangCtrl.$inject = [ 'data', '$scope', '$mdDialog','FragmentsService',
 	                          '$q','QuestionsService','ModulesService',
 	                          '$anchorScroll','$location','$mdMedia','$window','$state',
 	                          'AgentsService','RulesService','$compile',
@@ -15,7 +15,7 @@
 	                          'AuthenticationService','$document','InterviewsService',
 	                          'SystemPropertyService','ngToast','$translate',
 	                          'NodeLanguageService','$sessionStorage','lang', 'scrollTo','$http'];
-	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
+	function ModuleLangCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
@@ -70,13 +70,13 @@
         	saveNodeTranslation(angular.copy(self.node[0]),listOfTranslatedNodes,listOfLang);
         	var jsondata = {
         			idNode:moduleIdNode,
-        			language:self.lang.language,
+        			language:self.lang.id,
         			vo:listOfLang
         	}
-        	NodeLanguageService.batchSaveJson(data).then(function(response){
+        	NodeLanguageService.batchSaveJson(jsondata).then(function(response){
     			if(response.status == '200'){
     				$translate.refresh();
-    				$translate.use(self.lang.language);
+    				$translate.use(self.lang.id);
     			}
     		});
         	self.editTranslateNode = false;
@@ -177,7 +177,7 @@
     		}
     	}
     	
-    	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
+    	$scope.$on('ModuleLangCtrl:scrollTo', function (event, elId) {
     		$scope.scrollWithTimeout(elId);
     	});
     	

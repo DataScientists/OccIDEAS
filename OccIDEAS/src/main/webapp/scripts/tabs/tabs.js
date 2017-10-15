@@ -675,7 +675,7 @@
 			views:{
 				'moduleLanguage@tabs':{
 					template: '<div scope-module-language></div>',
-			        controller: 'QuestionsCtrl as vm',
+			        controller: 'ModuleLangCtrl as vm',
 			        params:{row: null,lang:null},
 			        resolve:{
 			        	data: function($stateParams,QuestionsService) {

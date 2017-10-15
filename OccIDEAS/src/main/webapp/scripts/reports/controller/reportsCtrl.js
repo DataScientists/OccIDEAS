@@ -4,10 +4,10 @@
 	
 	ReportsCtrl.$inject = ['ReportsService','NgTableParams','$state','data','$scope',
 	                       '$filter','$resource','$mdDialog','InterviewsService',
-	                       'SystemPropertyService','ngToast', '$timeout', '$interval'];
+	                       'SystemPropertyService','ngToast', '$timeout', '$interval','AgentsService'];
 	function ReportsCtrl(ReportsService,NgTableParams,$state,data,$scope,
 			$filter,$resource,$mdDialog,InterviewsService,
-			SystemPropertyService,ngToast, $timeout, $interval){
+			SystemPropertyService,ngToast, $timeout, $interval,AgentsService){
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -181,18 +181,30 @@
 		}
 	    
 	    $scope.exportInterviewRulesButton = function(){
-//			$scope.checkboxes = { 'checked': false, items: {} };
+			$scope.agentcheckboxes = { 'checked': false, items: {} };
 			$scope.fileName = "InterviewFiredRules";
 			$mdDialog.show({
 				scope: $scope.$new(),  
 				preserveScope: true,
-				templateUrl : 'scripts/assessments/partials/fileDialog.html',
+				templateUrl : 'scripts/assessments/partials/filterAgentDialog.html',
 				clickOutsideToClose:false
 			});
 		}
 	    
 	    $scope.exportInterviewRules = function(fileName){
-	    	InterviewsService.exportInterviewRules(fileName).
+	    	 var filterAgent = [];
+			 _.each($scope.agentcheckboxes.items,function(value, key){
+				 if(value){
+					 filterAgent.push(key);
+				 }
+			 });
+			 
+			 var data = {
+					 fileName: fileName,
+					 filterAgent:filterAgent
+			 };
+	    	
+	    	InterviewsService.exportInterviewRules(data).
     		then(function(response){
     			if(response.status == '200'){
     			}
@@ -398,6 +410,59 @@
 		    	});
 		    
 		  }, true);
+		
+		self.filterAgentTableParams =  new NgTableParams(
+				{
+				}, 
+			{	
+	        getData: function(params) {
+	          if(params.filter().name){	
+		        return $filter('filter')(
+		        		self.filterAgentTableParams.settings().dataset, params.filter());
+		      }
+		      if(!self.filterAgentTableParams.shouldGetData){
+		        return self.filterAgentTableParams.settings().dataset;
+		      }	          
+	          return  AgentsService.get().then(function(response) {	        	         	
+	        	  var data = response;
+	        	  self.filterAgentTableParams.settings().dataset = data;
+	        	  self.filterAgentTableParams.shouldGetData = true;
+	        	  return data;
+	          	});
+	          }
+	      });
+		self.filterAgentTableParams.shouldGetData = true;
+		
+		$scope.agentcheckboxes = { 'checked': false, items: {} };
+
+		// watch for check all checkbox
+		$scope.$watch('agentcheckboxes.checked', function(value) {	    	
+		    angular.forEach(self.filterAgentTableParams.settings().dataset, function(item) {
+		        if (angular.isDefined(item.idAgent)) {
+		            $scope.agentcheckboxes.items[item.idAgent] = value;
+		             
+		        }
+		    });
+		});
+		
+		// watch for data checkboxes
+		$scope.$watch('agentcheckboxes.items', function(values) {
+		    if (!self.filterAgentTableParams.settings().dataset) {
+		        return;
+		    }
+		    var checked = 0, unchecked = 0,
+		        total = self.filterAgentTableParams.settings().dataset.length;
+		    angular.forEach(self.filterAgentTableParams.settings().dataset, function(item) {
+		        checked   +=  ($scope.agentcheckboxes.items[item.idAgent]) || 0;
+		        unchecked += (!$scope.agentcheckboxes.items[item.idAgent]) || 0;
+		    });
+		    if ((unchecked == 0) || (checked == 0)) {
+		        $scope.agentcheckboxes.checked = (checked == total);
+		    }
+		    // grayed checkbox
+		    angular.element(document.getElementById("select_all")).prop("indeterminate", (checked != 0 && unchecked != 0));
+		});
+		
 		
 		var safeDigest = function (obj){
 			if (!obj.$$phase) {

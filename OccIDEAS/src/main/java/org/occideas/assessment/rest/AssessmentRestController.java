@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -57,6 +56,7 @@ import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.AssessmentAnswerSummaryFilterVO;
 import org.occideas.vo.ExportCSVVO;
+import org.occideas.vo.FilterAgentVO;
 import org.occideas.vo.FilterModuleVO;
 import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewFiredRulesVO;
@@ -1696,7 +1696,7 @@ public class AssessmentRestController {
 	@POST
 	@Path(value = "/exportInterviewRulesCSV")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
-	public Response exportInterviewRulesCSV(String fileName) {
+	public Response exportInterviewRulesCSV(FilterAgentVO filterAgentVO) {
 
 		// check if we have the directory TreeSet ins sys prop
 		SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
@@ -1705,7 +1705,7 @@ public class AssessmentRestController {
 			return Response.status(Status.BAD_REQUEST).type("text/plain")
 					.entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
 		}
-		String exportFileCSV = createFileName(fileName);
+		String exportFileCSV = createFileName(filterAgentVO.getFileName());
 
 		ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
 				ReportsEnum.INTERVIEW_FIREDRULES.getValue());
@@ -1716,7 +1716,8 @@ public class AssessmentRestController {
 				ReportsEnum.INTERVIEW_FIREDRULES.getValue());
 
 		try {
-			reportHistoryService.generateInterviewRuleReport(fullPath);
+//			reportHistoryService.generateInterviewRuleReport(fullPath);
+		    reportHistoryService.generateInterviewRuleFilterReport(fullPath,filterAgentVO.getFilterAgent());
 			reportHistoryVO.setStatus(ReportsStatusEnum.COMPLETED.getValue());
 			reportHistoryVO.setProgress(df.format(100) + "%");
 		} catch (Exception e) {

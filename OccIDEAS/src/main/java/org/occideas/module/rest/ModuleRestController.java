@@ -79,6 +79,38 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	}
 
 	@GET
+    @Path(value = "/getJson")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getJson(@QueryParam("id") Long id) {
+        ModuleVO modvo = new ModuleVO();
+        SystemPropertyVO vo = null;
+        if (id == -1) {
+            vo = sysPropService.getByName(Constant.STUDY_INTRO);
+            if (vo != null) {
+                if (NumberUtils.isNumber(vo.getValue())) {
+                    id = Long.valueOf(vo.getValue());
+                } else {
+                    return Response.status(Status.BAD_REQUEST).type("text/plain")
+                            .entity("Verify that " + Constant.STUDY_INTRO + " in System Config is a number.").build();
+                }
+            }
+        }
+        if (id == -1 && vo == null) {
+            return Response.status(Status.BAD_REQUEST).type("text/plain")
+                    .entity("Unable to find " + Constant.STUDY_INTRO + " in System Config.").build();
+        }
+
+        try {
+            modvo = service.getStudyAgentJSON(id);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(modvo).build();
+    }
+	
+	
+	@GET
 	@Path(value = "/get")
 	@Produces(value = MediaType.APPLICATION_JSON)
 	public Response get(@QueryParam("id") Long id) {
@@ -90,13 +122,13 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 				if (NumberUtils.isNumber(vo.getValue())) {
 					id = Long.valueOf(vo.getValue());
 				} else {
-					return Response.status(Status.EXPECTATION_FAILED).type("text/plain")
+					return Response.status(Status.BAD_REQUEST).type("text/plain")
 							.entity("Verify that " + Constant.STUDY_INTRO + " in System Config is a number.").build();
 				}
 			}
 		}
 		if (id == -1 && vo == null) {
-			return Response.status(Status.EXPECTATION_FAILED).type("text/plain")
+			return Response.status(Status.BAD_REQUEST).type("text/plain")
 					.entity("Unable to find " + Constant.STUDY_INTRO + " in System Config.").build();
 		}
 
@@ -201,14 +233,14 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 					if (NumberUtils.isNumber(vo.getValue())) {
 						id = Long.valueOf(vo.getValue());
 					} else {
-						return Response.status(Status.EXPECTATION_FAILED).type("text/plain")
+						return Response.status(Status.BAD_REQUEST).type("text/plain")
 								.entity("Verify that " + Constant.STUDY_INTRO + " in System Config is a number.")
 								.build();
 					}
 				}
 			}
 			if (id == -1 && vo == null) {
-				return Response.status(Status.EXPECTATION_FAILED).type("text/plain")
+				return Response.status(Status.BAD_REQUEST).type("text/plain")
 						.entity("Unable to find " + Constant.STUDY_INTRO + " in System Config.").build();
 			}
 			list = service.findByIdForInterview(id);

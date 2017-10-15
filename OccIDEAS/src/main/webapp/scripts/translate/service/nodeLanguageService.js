@@ -41,6 +41,16 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getNodeLanguageByIdandLanguage(id,lang){
+			var restUrl = url+'/getNodeLanguageByIdandLanguage?id=' + id+"&lang="+lang;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function getAllLanguage(){
 			var restUrl = url+'/getAllLanguage';
 			var request =  $http({
@@ -91,6 +101,16 @@
 		
 		function batchSave(data){
 			var restSaveUrl = url+'/batchSave';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function batchSaveJson(data){
+			var restSaveUrl = url+'/batchSaveJson';
 			var request =  $http({
 				  method: 'POST',
 				  url: restSaveUrl,
@@ -216,7 +236,9 @@
 			getTotalFragmentCount:getTotalFragmentCount,
 			getLanguageModBreakdown:getLanguageModBreakdown,
 			getLanguageFragBreakdown:getLanguageFragBreakdown,
-			batchSave:batchSave
+			batchSave:batchSave,
+			batchSaveJson:batchSaveJson,
+			getNodeLanguageByIdandLanguage:getNodeLanguageByIdandLanguage
 		};
 	}
 })();

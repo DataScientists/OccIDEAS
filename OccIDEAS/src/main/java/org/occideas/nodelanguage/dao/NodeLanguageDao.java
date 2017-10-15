@@ -3,9 +3,6 @@ package org.occideas.nodelanguage.dao;
 import java.math.BigInteger;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -21,8 +18,11 @@ import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
+import org.occideas.entity.Translate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class NodeLanguageDao implements INodeLanguageDao {
@@ -59,6 +59,11 @@ public class NodeLanguageDao implements INodeLanguageDao {
 			sessionFactory.getCurrentSession().merge(nl);
 		}
 	}
+	
+	@Override
+    public void saveTranslate(Translate entity){
+        sessionFactory.getCurrentSession().saveOrUpdate(entity);
+    }
 
 	@Override
 	public void delete(NodeLanguage entity) {
@@ -76,6 +81,14 @@ public class NodeLanguageDao implements INodeLanguageDao {
 		final Criteria crit = session.createCriteria(NodeLanguage.class).add(Restrictions.eq("languageId", id));
 		return crit.list();
 	}
+	
+	@Override
+    public List<NodeLanguage> getNodeLanguageByIdandLanguage(Long id,Long languageid) {
+        final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(NodeLanguage.class).add(Restrictions.eq("languageId", id))
+            .add(Restrictions.eq("languageId", languageid));
+        return crit.list();
+    }
 
 	@Override
 	public List<NodeLanguage> getNodesByLanguage(String language) {

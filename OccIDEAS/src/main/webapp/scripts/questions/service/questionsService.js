@@ -4,6 +4,16 @@
 	
 	QuestionsService.$inject = ['$http','$q'];
 	function QuestionsService($http,$q){
+		
+		function findModuleJSON(idNode){
+			var restUrl = 'web/rest/module/getJson?id='+idNode;
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
 		function findQuestions(idNode,type) {
 			var restUrl = "";
 			if(type=='M'){
@@ -163,7 +173,8 @@
             getNextQuestion:getNextQuestion,
             getAllMultipleQuestion:getAllMultipleQuestion,
             getNodesWithAgent:getNodesWithAgent,
-            exportToWord:exportToWord
+            exportToWord:exportToWord,
+            findModuleJSON:findModuleJSON
 		};
 	}
 })();

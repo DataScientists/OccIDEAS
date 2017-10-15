@@ -29,7 +29,7 @@ public class UserLoginRestController {
 			return Response.ok().build();
 		}catch(InvalidCurrentPasswordException e){
 			e.printStackTrace();
-			return Response.status(Status.EXPECTATION_FAILED).type("text/plain").entity(e.getMessage()).build();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		catch (Throwable e) {
 			e.printStackTrace();

@@ -10,6 +10,7 @@ import org.occideas.entity.Module;
 import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.NodeNodeLanguageFrag;
 import org.occideas.entity.NodeNodeLanguageMod;
+import org.occideas.entity.Translate;
 
 public interface INodeLanguageDao {
 
@@ -60,5 +61,9 @@ public interface INodeLanguageDao {
 	List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag);
 
 	void batchSave(List<NodeLanguage> entityList);
+
+    List<NodeLanguage> getNodeLanguageByIdandLanguage(Long id, Long languageid);
+
+    void saveTranslate(Translate entity);
 
 }

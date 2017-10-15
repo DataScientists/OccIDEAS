@@ -72,5 +72,16 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 	    writer.close();
 	}
 	
+	@Override
+    public void generateInterviewRuleFilterReport(String filepath,List<Long> agentIds) throws Exception{
+        List<InterviewRuleReport> list = dao.getInterviewRuleReportFilter(agentIds);
+        List<InterviewRuleReportVO> listVO = interviewRuleMapper.convertToInterviewRuleVOList(list);
+        Writer writer = new FileWriter(filepath);
+        StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
+        beanToCsv.write(listVO);
+        writer.flush();
+        writer.close();
+    }
+	
 	
 }

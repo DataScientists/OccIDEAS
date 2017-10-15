@@ -51,4 +51,8 @@ public interface NodeLanguageService {
 	List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag);
 
 	void batchSave(List<NodeLanguageVO> nodeLanguageVO);
+
+    void batchSaveJson(String idNode, String language, List<NodeLanguageVO> vo);
+
+    List<NodeLanguageVO> getNodeLanguageByIdandLanguage(Long id, Long languageid);
 }

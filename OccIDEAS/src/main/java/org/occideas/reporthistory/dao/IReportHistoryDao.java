@@ -13,5 +13,6 @@ public interface IReportHistoryDao {
 	ReportHistory save(ReportHistory entity);
 	void delete(ReportHistory entity);
 	List<InterviewRuleReport> getInterviewRuleReport();
+    List<InterviewRuleReport> getInterviewRuleReportFilter(List<Long> agentIds);
 	
 }
