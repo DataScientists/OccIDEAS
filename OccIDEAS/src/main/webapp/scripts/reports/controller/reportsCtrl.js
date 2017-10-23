@@ -423,7 +423,7 @@
 		      if(!self.filterAgentTableParams.shouldGetData){
 		        return self.filterAgentTableParams.settings().dataset;
 		      }	          
-	          return  AgentsService.get().then(function(response) {	        	         	
+	          return  AgentsService.getStudyAgents().then(function(response) {	        	         	
 	        	  var data = response;
 	        	  self.filterAgentTableParams.settings().dataset = data;
 	        	  self.filterAgentTableParams.shouldGetData = true;
