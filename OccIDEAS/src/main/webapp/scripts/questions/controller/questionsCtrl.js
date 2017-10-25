@@ -68,12 +68,8 @@
         	var listOfTranslatedNodes = [];
         	var listOfLang = [];
         	saveNodeTranslation(angular.copy(self.node[0]),listOfTranslatedNodes,listOfLang);
-        	var jsondata = {
-        			idNode:moduleIdNode,
-        			language:self.lang.language,
-        			vo:listOfLang
-        	}
-        	NodeLanguageService.batchSaveJson(data).then(function(response){
+        	
+        	NodeLanguageService.batchSave(listOfLang).then(function(response){
     			if(response.status == '200'){
     				$translate.refresh();
     				$translate.use(self.lang.language);
