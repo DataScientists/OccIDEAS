@@ -8,12 +8,12 @@ import javax.persistence.Id;
 public class InterviewRuleReport {
 
 	@Id
+	@Column(name = "idRule")
+	private long idRule;
 	@Column(name = "idinterview")
 	private long idInterview;
 	@Column(name = "referenceNumber")
 	private String referenceNumber;
-	@Column(name = "idRule")
-	private long idRule;
 	@Column(name = "name")
 	private String agentName;
 	@Column(name = "level")
