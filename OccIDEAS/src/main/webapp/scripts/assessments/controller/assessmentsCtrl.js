@@ -916,7 +916,17 @@
 						$scope.assessmentFilter.idParticipant=lengthGreaterThan2(params.filter().idParticipant);
 						$scope.assessmentFilter.interviewId=lengthGreaterThan2(params.filter().idinterview);
 						$scope.assessmentFilter.reference=lengthGreaterThan2(params.filter().reference);
-						$scope.assessmentFilter.status=lengthGreaterThan2(params.filter().status);
+						if(lengthGreaterThan2(params.filter().status)){
+							if(params.filter().status.startsWith('run') ){
+								$scope.assessmentFilter.status = 0
+							}else if(params.filter().status.startsWith('par') ){
+								$scope.assessmentFilter.status = 1
+							}else if(params.filter().status.startsWith('com') ){
+								$scope.assessmentFilter.status = 2
+							}else if(params.filter().status.startsWith('tob') ){
+								$scope.assessmentFilter.status = 3
+							}						 
+						}
 						$scope.assessmentFilter.assessedStatus=lengthGreaterThan2(params.filter().assessedStatus);
 						$scope.assessmentFilter.interviewModuleName=lengthGreaterThan2(params.filter().interviewModuleName);
 						$scope.assessmentFilter.pageNumber=params.page();
@@ -926,7 +936,7 @@
 						if(!self.tableParams.settings().dataset || (assessmentFilter.pageNumber != currentPage)  
 								|| assessmentFilter.idParticipant
 								|| assessmentFilter.interviewId || assessmentFilter.reference
-								|| assessmentFilter.status || assessmentFilter.interviewModuleName || 
+								|| assessmentFilter.status || (assessmentFilter.status===0) || assessmentFilter.interviewModuleName || 
 								ifEmptyFilter(params.filter())){
 					    $log.info("Data getting from interviews ajax ..."); 
 					    return ParticipantsService.getPaginatedAssessmentWithModList(assessmentFilter).then(function(response) {

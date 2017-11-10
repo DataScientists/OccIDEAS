@@ -26,7 +26,9 @@ public class RuleVO {
 	private List<RuleAdditionalFieldVO> ruleAdditionalfields = new ArrayList<>();
 	private int levelValue;
 	private Integer deleted;
-
+	private Float noiseHours;
+	private Float noisePartialExposure;
+	
 	public long getIdRule() {
 		return idRule;
 	}
@@ -126,5 +128,22 @@ public class RuleVO {
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
 	}
-	
+
+	public Float getNoiseHours() {
+		return noiseHours;
+	}
+
+	public void setNoiseHours(Float noiseHours) {
+		this.noiseHours = noiseHours;
+	}
+
+	public Float getNoisePartialExposure() {
+		return noisePartialExposure;
+	}
+
+	public void setNoisePartialExposure(Float noisePartialExposure) {
+		this.noisePartialExposure = noisePartialExposure;
+	}
+
+
 }

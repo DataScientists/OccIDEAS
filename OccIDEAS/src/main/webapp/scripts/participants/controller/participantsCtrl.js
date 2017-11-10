@@ -146,8 +146,18 @@
 								.filter().idinterview);
 						$scope.participantFilter.reference = lengthGreaterThan2(params
 								.filter().reference);
-						$scope.participantFilter.status = lengthGreaterThan2(params
-								.filter().status);
+						if(lengthGreaterThan2(params.filter().status)){
+							if(params.filter().status.startsWith('run') ){
+								$scope.participantFilter.status = 0
+							}else if(params.filter().status.startsWith('par') ){
+								$scope.participantFilter.status = 1
+							}else if(params.filter().status.startsWith('com') ){
+								$scope.participantFilter.status = 2
+							}else if(params.filter().status.startsWith('tob') ){
+								$scope.participantFilter.status = 3
+							}						 
+						}
+						
 						$scope.participantFilter.pageNumber = params.page();
 						$scope.participantFilter.size = params.count();
 						params.goToPageNumber = null;
@@ -158,25 +168,20 @@
 								|| participantFilter.interviewId
 								|| participantFilter.reference
 								|| participantFilter.status
+								|| (participantFilter.status===0)
 								|| ifEmptyFilter(params.filter())) {
-							return ParticipantsService
-									.getPaginatedParticipantList(
-											participantFilter)
-									.then(
-											function(response) {
-												if (response.status == '200') {
-													var data = response.data.content;
-													console
-															.log("Data get list from getParticipants ajax ...");
-													self.originalData = angular
-															.copy(data);
-													self.tableParams.settings().dataset = data;
-													self.tableParams.shouldGetData = false;
-													self.tableParams
-															.total(response.data.totalSize);
-													return data;
-												}
-											});
+							return ParticipantsService.getPaginatedParticipantList(participantFilter).then(function(response) {
+									if (response.status == '200') {
+										var data = response.data.content;
+										console.log("Data get list from getParticipants ajax ...");
+										self.originalData = angular.copy(data);
+										self.tableParams.settings().dataset = data;
+										self.tableParams.shouldGetData = false;
+										$scope.totalSize = response.data.totalSize;
+										self.tableParams.total(response.data.totalSize);
+										return data;
+									}
+								});
 						}
 					},
 				});

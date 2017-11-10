@@ -61,7 +61,7 @@ public class InterviewFiredRulesMapperImpl implements InterviewFiredRulesMapper{
 		vo.setIdinterview(entity.getIdinterview());
 		vo.setId(entity.getId());
 		vo.setIdRule(entity.getIdRule());
-		vo.setInterviews(interviewMapper.convertToInterviewVOnoQsList(entity.getInterviews()));
+		//vo.setInterviews(interviewMapper.convertToInterviewVOnoQsList(entity.getInterviews()));
 		vo.setRules(ruleMapper.convertToRuleVOExcPaList(entity.getRules()));
 		return vo;
 	}

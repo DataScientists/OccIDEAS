@@ -30,14 +30,16 @@
 				</button>
 			</div>
 		</div>
+		<div>Total Records:{{totalSize}}</div>
 		<table ng-table="vm.tableParams"
 			class="table table-bordered table-hover table-condensed editable-table"
 			show-filter="true" template-pagination="templatePagination.html">
+			
 			<tr ng-repeat="participant in $data">
 				<td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
 				<td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
 				<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
-				<td title="'Interview Status'">{{participant.statusDescription}}</td>
+				<td filter="{status: 'text'}" title="'Interview Status'">{{participant.statusDescription}}</td>
 				<td title="'Notes'" style="max-width: 200px;">
 					 <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
           					<span class="glyphicon glyphicon-comment"></span>
