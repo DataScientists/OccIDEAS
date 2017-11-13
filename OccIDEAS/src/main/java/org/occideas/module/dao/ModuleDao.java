@@ -184,6 +184,39 @@ public class ModuleDao implements IModuleDao{
 		return null;
 	}
 	
+	private final String DISTINCT_NODE_NAME_BY_IDNODE = "select * from Node where "+
+        "topNodeId = :idNode and type != 'P_freetext' "+ 
+        "and type not like '%frequency%' "+ 
+        "and deleted = 0 and link = 0 "+
+        "group by name "+
+        "order by name";
+	
+	@Override
+    public List<? extends Node> getDistinctNodeNameByIdNode(String idNode) {
+        final Session session = sessionFactory.getCurrentSession();
+        SQLQuery sqlQuery = session.createSQLQuery(DISTINCT_NODE_NAME_BY_IDNODE).
+                addEntity(Node.class);
+        sqlQuery.setParameter("idNode", idNode);
+        List<Node> list = sqlQuery.list();
+        return list;
+    }
+	
+	private final String NODE_NAME_BY_IDNODE = "select name from Node where "+
+        "topNodeId = :idNode and type != 'P_freetext' "+ 
+        "and type not like '%frequency%' "+ 
+        "and deleted = 0 and link = 0 "+
+        "group by name "+
+        "order by name";
+    
+    @Override
+    public List<String> getNodeNameByIdNode(String idNode) {
+        final Session session = sessionFactory.getCurrentSession();
+        Query sqlQuery = session.createSQLQuery(NODE_NAME_BY_IDNODE);
+        sqlQuery.setParameter("idNode", idNode);
+        List<String> list = (List<String>)sqlQuery.list();
+        return list;
+    }
+	
 	@Override
 	public List<Question> getChildFrequencyNodes(String idNode){
 		final Session session = sessionFactory.getCurrentSession();

@@ -3,6 +3,7 @@ package org.occideas.module.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
+import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
@@ -20,6 +22,7 @@ import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.NodeRuleMapper;
 import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
+import org.occideas.nodelanguage.dao.INodeLanguageDao;
 import org.occideas.noderule.dao.NodeRuleDao;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.IRuleDao;
@@ -85,6 +88,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private SystemPropertyDao sysPropDao;
 	@Autowired
     private StudyAgentUtil studyAgentUtil;
+	@Autowired
+	private INodeLanguageDao nodeLanguageDao;
 
 	@Override
 	public List<ModuleVO> listAll() {
@@ -489,5 +494,81 @@ public class ModuleServiceImpl implements ModuleService {
             log.error(e.getMessage(),e);
         }
         return null;
+    }
+    
+    @Override
+    public Integer getModuleTranslationTotalCount(String idNode) {
+        final List<? extends Node> nodeList = dao.getDistinctNodeNameByIdNode(idNode);
+        if(nodeList.size() <= 1){
+            return nodeList.size();
+        }
+        removeNonUniqueNames(nodeList);
+        return nodeList.size();
+    }
+
+    
+    @Override
+    public Integer getModuleTranslationCurrentCount(String idNode,Long languageId) {
+        List<String> nodeList = dao.getNodeNameByIdNode(idNode);
+        replaceListWithLowerCaseAndTrim(nodeList);
+        List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
+        replaceListWithLowerCaseAndTrim(nodeLanguageList);
+        int count = 0;
+        for(int i=0; i < nodeList.size();i++){
+            if(nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    private void replaceListWithLowerCaseAndTrim(List<String> nodeList)
+    {
+        ListIterator<String> listIterator = nodeList.listIterator();
+        while(listIterator.hasNext()){
+            String index = listIterator.next();
+            listIterator.set(index.toLowerCase().trim());
+        }
+    }
+
+    private void removeNonUniqueNames(final List<? extends Node> nodeList)
+    {
+        final java.util.ListIterator<? extends Node> iterator = nodeList.listIterator();
+        String temp = null;
+        while(iterator.hasNext()){
+            if(temp == null){
+                temp = iterator.next().getName(); 
+            }
+            temp = removeSpacesAndLowerCase(temp);
+            final Node next = iterator.next();
+            if(temp.equals(removeSpacesAndLowerCase(next.getName()))){
+                iterator.remove();
+            }else{
+                temp = next.getName();
+            }
+        }
+    }
+    
+    private void removeNonUniqueNamesForNodeLanguage(List<NodeLanguage> nodeList)
+    {
+        final java.util.ListIterator<NodeLanguage> iterator = nodeList.listIterator();
+        String temp = null;
+        while(iterator.hasNext()){
+            if(temp == null){
+                temp = iterator.next().getWord(); 
+            }
+            temp = removeSpacesAndLowerCase(temp);
+            final NodeLanguage next = iterator.next();
+            if(temp.equals(removeSpacesAndLowerCase(next.getWord()))){
+                iterator.remove();
+            }else{
+                temp = next.getWord();
+            }
+        }
+    }
+    
+    private String removeSpacesAndLowerCase(String temp)
+    {
+        return temp.toLowerCase().trim();
     }
 }

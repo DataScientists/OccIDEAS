@@ -42,4 +42,8 @@ public interface IModuleDao {
 
 	List<Question> getChildLinkNodes(String idNode);
 
+    List<? extends Node> getDistinctNodeNameByIdNode(String idNode);
+
+    List<String> getNodeNameByIdNode(String idNode);
+
 }

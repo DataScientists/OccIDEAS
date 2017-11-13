@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Language;
 import org.occideas.entity.LanguageFragBreakdown;
@@ -81,6 +82,17 @@ public class NodeLanguageDao implements INodeLanguageDao {
 		final Criteria crit = session.createCriteria(NodeLanguage.class).add(Restrictions.eq("languageId", id));
 		return crit.list();
 	}
+	
+	@Override
+    public List<String> getNodeLanguageWordsByIdOrderByWord(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        final Criteria crit = session.createCriteria(NodeLanguage.class).
+            add(Restrictions.eq("languageId", id)).
+            addOrder(Order.asc("word"))
+            .setProjection(Projections.projectionList().
+            add(Projections.property("word"), "word"));
+        return crit.list();
+    }
 	
 	@Override
     public List<NodeLanguage> getNodeLanguageByIdandLanguage(Long id,Long languageid) {

@@ -6,11 +6,11 @@
     LanguageBreakdownCtrl.$inject = ['$state','ngToast','$timeout',
                          '$scope','$http','$rootScope','$window','$sessionStorage',
                          '$mdDialog','$translate','NodeLanguageService',
-                         'NgTableParams','$q','$filter','flag','type'];
+                         'NgTableParams','$q','$filter','flag','type','ModulesService'];
     function LanguageBreakdownCtrl($state, ngToast, $timeout, 
     		$scope, $http, $rootScope,$window, 
     		$sessionStorage,$mdDialog,
-    		$translate,NodeLanguageService,NgTableParams,$q,$filter,flag,type) {
+    		$translate,NodeLanguageService,NgTableParams,$q,$filter,flag,type,ModulesService) {
         var vm = this;
         $scope.discriminatorType = type;
         $scope.flagUsed = 'flag-icon-'+flag.split(/[- ]+/).pop().toLowerCase();
@@ -27,6 +27,14 @@
 				cloneLanguage.idNode = idNode;
 			$scope.openModuleLanguageTab(cloneLanguage.id,cloneLanguage);
 		}
+        
+        vm.getTotalByIdNode = function(idNode){
+        	ModulesService.getModuleTranslationTotalCount(idNode).then(function(response){
+        		if(response.status == '200'){
+        			$scope.totalCount = response.data;
+        		}
+        	});
+        }
         
         $scope.openFragmentLanguageByFlagIcon = function(idNode){
 			var cloneLanguage = _.cloneDeep($scope.lang);

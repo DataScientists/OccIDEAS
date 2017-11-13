@@ -113,10 +113,18 @@
     	
     	$rootScope.$on('$translateChangeSuccess',function () {
             translateNodes($scope.data[0]);
-            $scope.currentLangCount = 0;
-        	$scope.totalLangCount = 0;
+            ModulesService.getModuleTranslationCurrentCount($scope.data[0].idNode,$scope.selectedLanguage.id).then(function(response){
+        		if(response.status == '200'){
+        			 $scope.currentLangCount = response.data;
+        		}
+        	});
+            ModulesService.getModuleTranslationTotalCount($scope.data[0].idNode).then(function(response){
+        		if(response.status == '200'){
+        			$scope.totalLangCount = response.data;
+        		}
+        	});
         	$scope.languageNameList.length = 0;
-            refreshNodeLanguageCount($scope.data[0]);
+//            refreshNodeLanguageCount($scope.data[0]);
         });
     	
     	function translateNodes(node){
@@ -142,10 +150,6 @@
     				!node.type.match('frequency') && node.nodeclass != 'M' && node.nodeclass != 'F'){
     			if(node.translated.trim() != 'No available translation'){
     				$scope.currentLangCount++;
-    			}
-    			if(node.translated){
-    				testArray.push(node.idNode);
-    				$scope.totalLangCount++;
     			}
     			$scope.languageNameList.push(node.name.toLowerCase());
     		}

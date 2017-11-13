@@ -412,6 +412,32 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		}
 		return Response.ok(nodeVO).build();
 	}
+	
+	@GET
+    @Path(value = "/getModuleTranslationTotalCount")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getModuleTranslationTotalCount(@QueryParam("id") String idNode) {
+        try {
+           Integer total = service.getModuleTranslationTotalCount(idNode);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+	
+	@GET
+    @Path(value = "/getModuleTranslationCurrentCount")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getModuleTranslationCurrentCount(@QueryParam("id") String idNode,@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getModuleTranslationCurrentCount(idNode, languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
 
 	private List<ModuleReportVO> generateReport(List<Module> modules) {
 		List<ModuleReportVO> reports = new ArrayList();

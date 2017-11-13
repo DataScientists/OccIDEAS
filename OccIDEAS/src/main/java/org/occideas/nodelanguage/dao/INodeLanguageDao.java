@@ -66,4 +66,6 @@ public interface INodeLanguageDao {
 
     void saveTranslate(Translate entity);
 
+    List<String> getNodeLanguageWordsByIdOrderByWord(Long id);
+
 }

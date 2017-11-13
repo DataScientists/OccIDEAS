@@ -382,9 +382,11 @@
 									});
 									var num=_.max(arr);
 									if(num > 12){
-										var result = num - 12;
-										var height = 28 + ((result/3)*1);
-										$scope.data.height = height;
+										var borderTopPx = 7;
+										var borderLowPx = 7;
+										var result = num;
+										var height = (result/3)*5.5;
+										$scope.data.height = height+borderTopPx+borderLowPx;
 									}
 									}
 								$q.all(promises).then(function () {

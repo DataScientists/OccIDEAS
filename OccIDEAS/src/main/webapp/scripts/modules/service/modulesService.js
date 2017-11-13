@@ -170,6 +170,26 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getModuleTranslationTotalCount(idNode){
+			var restUrl = 'web/rest/module/getModuleTranslationTotalCount?id=' + idNode;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getModuleTranslationCurrentCount(idNode,languageId){
+			var restUrl = 'web/rest/module/getModuleTranslationCurrentCount?id=' + idNode+'&languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 
 		function handleError( response ) {
             if (
@@ -201,7 +221,9 @@
             getModuleFilterStudyAgent:getModuleFilterStudyAgent,
             getModuleFilterAgent:getModuleFilterAgent,
             getAllModulesReport:getAllModulesReport,
-            getNodeNameById:getNodeNameById
+            getNodeNameById:getNodeNameById,
+            getModuleTranslationTotalCount:getModuleTranslationTotalCount,
+            getModuleTranslationCurrentCount:getModuleTranslationCurrentCount
 		};
 	}
 	

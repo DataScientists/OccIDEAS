@@ -109,13 +109,16 @@
 										  return element.count;
 									});
 									var num=_.max(arr);
-									if(num > 12){
-										var result = num - 12;
-										console.log(data.idinterview+' result:'+result);
-										var height = 28 + ((result/3)*1);
-										console.log(data.idinterview+' height:'+height);
-										data[key] = height;
-									}
+//									if(num > 12){
+										if(num < 3){
+											num = 3;
+										}
+										var borderTopPx = 7;
+										var borderLowPx = 7;
+										var result = num;
+										var height = (result/3)*5.5;
+										data[key] = height+borderTopPx+borderLowPx;
+//									}
 									}
 								}
 							}

@@ -86,68 +86,121 @@
 	        			_.remove($scope.lang, function (l) {
 	        				  return l.language == 'GB'; 
 	        			});
-	        			_.each($scope.lang,function(l){
-	        				promises.push(NodeLanguageService.getUntranslatedModules(l.flag)
-	        						.then(function(resp){
-	        							if(resp.status == '200'){
-	        								var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
-	        					        		  return nodeMap.languageId == l.id;
-	        					        	});
-	        					        	l.totalCurrent =_.sumBy(data, function(o) { return o.current; });
-	        								l.translatedModuleCount = resp.data;
-	        							}
-	        						}));
-	        						promises.push(NodeLanguageService.getUntranslatedFragments(l.flag)
-	        						.then(function(resp){
-	        							if(resp.status == '200'){
-	        								var data = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
-	        					        		  return nodeMap.languageId == l.id;
-	        					        	});
-	        					        	l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
-	        								l.translatedFragCount = resp.data;
-	        							}
-	        						}));
-	        			});
-	        			$q.all(promises).then(function () {
+//	        			_.each($scope.lang,function(l){
+//	        				promises.push(NodeLanguageService.getUntranslatedModules(l.flag)
+//	        						.then(function(resp){
+//	        							if(resp.status == '200'){
+//	        								var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
+//	        					        		  return nodeMap.languageId == l.id;
+//	        					        	});
+//	        					        	l.totalCurrent =_.sumBy(data, function(o) { return o.current; });
+//	        								l.translatedModuleCount = resp.data;
+//	        							}
+//	        						}));
+//	        						promises.push(NodeLanguageService.getUntranslatedFragments(l.flag)
+//	        						.then(function(resp){
+//	        							if(resp.status == '200'){
+//	        								var data = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
+//	        					        		  return nodeMap.languageId == l.id;
+//	        					        	});
+//	        					        	l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
+//	        								l.translatedFragCount = resp.data;
+//	        							}
+//	        						}));
+//	        			});
+//	        			$q.all(promises).then(function () {
+	        				_.each($scope.lang,function(o){
+	        					o.cssclass = 'greyRow';
+	        				});
 	        				vm.languageSummaryTableParams.settings().dataset = $scope.lang;
 	        				return $scope.lang;
-	        			});
+//	        			});
 	        		}
 	        	});  
 	        }
 	      });
 		
+		vm.loadStatsByLanguage = function(l){
+			vm.getTotalUntranslatedModule();
+			vm.getTotalModuleCount();
+			vm.getTotalFragmentCount();
+			vm.getTotalUntranslatedFragment();
+			vm.getUntranslatedModules(l);
+			vm.getUntranslatedFragments(l);
+			l.cssclass = '';
+		}
 		
-		// get all untranslated nodes
-		NodeLanguageService.getTotalUntranslatedModule().then(function(response){
-			if(response.status == '200'){
-				$scope.grandTotal = response.data;
-			}
-		});
+		vm.getUntranslatedModules = function(l){
+			NodeLanguageService.getUntranslatedModules(l.flag)
+			.then(function(resp){
+				if(resp.status == '200'){
+					var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
+						return nodeMap.languageId == l.id;
+					});
+					l.totalCurrent =_.sumBy(data, function(o) { return o.current; });
+					l.translatedModuleCount = resp.data;
+				}
+			});
+		}
 		
-		// get total module count
-		$scope.totalModuleCount = 0;
-		NodeLanguageService.getTotalModuleCount().then(function(response){
-			if(response.status == '200'){
+		vm.getUntranslatedFragments = function(l){
+			NodeLanguageService.getUntranslatedFragments(l.flag)
+			.then(function(resp){
+				if(resp.status == '200'){
+					var data = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
+						return nodeMap.languageId == l.id;
+					});
+					l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
+					l.translatedFragCount = resp.data;
+				}
+			});
+		}
+		
+		vm.getTotalUntranslatedModule = function(){
+		    if(!$scope.grandTotal){
+			// get all untranslated nodes
+			NodeLanguageService.getTotalUntranslatedModule().then(function(response){
+				if(response.status == '200'){
+					$scope.grandTotal = response.data;
+				}
+			});
+		    }
+		};
+		
+		vm.getTotalModuleCount = function(){
+			if(!$scope.totalModuleCount){
+			// get total module count
+			$scope.totalModuleCount = 0;
+			NodeLanguageService.getTotalModuleCount().then(function(response){
+				if(response.status == '200'){
 				$scope.totalModuleCount = response.data;
+				}
+			});
 			}
-		});
+		}
 		
-		// get all untranslated fragment nodes
-		NodeLanguageService.getTotalUntranslatedFragment().then(function(response){
-			if(response.status == '200'){
-				$scope.grandFragTotal = response.data;
+		vm.getTotalUntranslatedFragment = function(){
+			if(!$scope.grandFragTotal){
+			// get all untranslated fragment nodes
+			NodeLanguageService.getTotalUntranslatedFragment().then(function(response){
+				if(response.status == '200'){
+					$scope.grandFragTotal = response.data;
+				}
+			});
 			}
-		});
+		}
 		
-		// get total fragment count
-		$scope.totalFragCount = 0;
-		NodeLanguageService.getTotalFragmentCount().then(function(response){
-			if(response.status == '200'){
-				$scope.totalFragCount = response.data;
+		vm.getTotalFragmentCount = function(){
+			if(!$scope.totalFragCount){
+				// get total fragment count
+				$scope.totalFragCount = 0;
+				NodeLanguageService.getTotalFragmentCount().then(function(response){
+					if(response.status == '200'){
+						$scope.totalFragCount = response.data;
+					}
+				});
 			}
-		});
-		
+		}
 			
     }
 })();
