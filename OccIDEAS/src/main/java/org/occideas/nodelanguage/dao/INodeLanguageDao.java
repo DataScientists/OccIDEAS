@@ -68,4 +68,6 @@ public interface INodeLanguageDao {
 
     List<String> getNodeLanguageWordsByIdOrderByWord(Long id);
 
+    List<Module> getModulesIdNodeSQL();
+
 }

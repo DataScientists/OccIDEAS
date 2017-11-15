@@ -188,7 +188,7 @@ public class ModuleDao implements IModuleDao{
         "topNodeId = :idNode and type != 'P_freetext' "+ 
         "and type not like '%frequency%' "+ 
         "and deleted = 0 and link = 0 "+
-        "group by name "+
+//        "group by name "+
         "order by name";
 	
 	@Override
@@ -205,7 +205,7 @@ public class ModuleDao implements IModuleDao{
         "topNodeId = :idNode and type != 'P_freetext' "+ 
         "and type not like '%frequency%' "+ 
         "and deleted = 0 and link = 0 "+
-        "group by name "+
+//        "group by name "+
         "order by name";
     
     @Override

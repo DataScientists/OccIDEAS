@@ -5,6 +5,7 @@ import java.util.List;
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
+import org.occideas.vo.LanguageModBreakdownVO;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeVO;
@@ -36,4 +37,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
     public ModuleVO getStudyAgentJSON(Long id);
     Integer getModuleTranslationTotalCount(String idNode);
     Integer getModuleTranslationCurrentCount(String idNode, Long languageId);
+    List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId);
 }

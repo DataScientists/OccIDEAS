@@ -190,6 +190,16 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getModuleLanguageBreakdown(languageId){
+			var restUrl = 'web/rest/module/getModuleLanguageBreakdown?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 
 		function handleError( response ) {
             if (
@@ -223,7 +233,8 @@
             getAllModulesReport:getAllModulesReport,
             getNodeNameById:getNodeNameById,
             getModuleTranslationTotalCount:getModuleTranslationTotalCount,
-            getModuleTranslationCurrentCount:getModuleTranslationCurrentCount
+            getModuleTranslationCurrentCount:getModuleTranslationCurrentCount,
+            getModuleLanguageBreakdown:getModuleLanguageBreakdown
 		};
 	}
 	

@@ -12,6 +12,7 @@ import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
+import org.occideas.entity.LanguageModBreakdown;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.NodeLanguage;
@@ -35,6 +36,7 @@ import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.FragmentVODecorator;
+import org.occideas.vo.LanguageModBreakdownVO;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.ModuleVO;
@@ -507,9 +509,20 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
     
+    private void displayNames(List<? extends Node> nodeList)
+    {
+        StringBuilder sb = new StringBuilder();
+        for(Node node:nodeList){
+            sb.append(node.getName());
+            sb.append(",");
+        }
+        System.out.println(sb.toString());
+    }
+
     @Override
     public Integer getModuleTranslationCurrentCount(String idNode,Long languageId) {
         List<String> nodeList = dao.getNodeNameByIdNode(idNode);
+        removeNonUniqueString(nodeList);
         replaceListWithLowerCaseAndTrim(nodeList);
         List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
         replaceListWithLowerCaseAndTrim(nodeLanguageList);
@@ -520,6 +533,37 @@ public class ModuleServiceImpl implements ModuleService {
             }
         }
         return count;
+    }
+    
+    @Override
+    public List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId){
+        List<LanguageModBreakdownVO> results = new ArrayList<>();
+        
+        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+        for(Module module:listOfModuleIdNodes){
+            long idNode = module.getIdNode();
+            Integer currentCount = 
+                    getModuleTranslationCurrentCount(String.valueOf(
+                        idNode),languageId);
+            Integer totalCount = getModuleTranslationTotalCount(String.valueOf(idNode));
+            
+            LanguageModBreakdownVO vo = 
+                    buildBreakdownStatsForModule(module, idNode, currentCount, totalCount);
+            
+            results.add(vo);
+        }
+        
+        return results;
+    }
+
+    private LanguageModBreakdownVO buildBreakdownStatsForModule(Module module, long idNode, Integer currentCount, Integer totalCount)
+    {
+        LanguageModBreakdownVO vo = new LanguageModBreakdownVO();
+        vo.setIdNode(idNode);
+        vo.setName(module.getName());
+        vo.setCurrent(currentCount);
+        vo.setTotal(totalCount);
+        return vo;
     }
     
     private void replaceListWithLowerCaseAndTrim(List<String> nodeList)
@@ -545,6 +589,24 @@ public class ModuleServiceImpl implements ModuleService {
                 iterator.remove();
             }else{
                 temp = next.getName();
+            }
+        }
+    }
+    
+    private void removeNonUniqueString(final List<String> list)
+    {
+        final java.util.ListIterator<String> iterator = list.listIterator();
+        String temp = null;
+        while(iterator.hasNext()){
+            if(temp == null){
+                temp = iterator.next(); 
+            }
+            temp = removeSpacesAndLowerCase(temp);
+            final String next = iterator.next();
+            if(temp.equals(removeSpacesAndLowerCase(next))){
+                iterator.remove();
+            }else{
+                temp = next;
             }
         }
     }

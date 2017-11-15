@@ -37,6 +37,7 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.MSWordGenerator;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.LanguageModBreakdownVO;
 import org.occideas.vo.ModuleCopyVO;
 import org.occideas.vo.ModuleReportVO;
 import org.occideas.vo.ModuleVO;
@@ -433,6 +434,19 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
         try {
            Integer total = service.getModuleTranslationCurrentCount(idNode, languageId);
            return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+	
+	@GET
+    @Path(value = "/getModuleLanguageBreakdown")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getModuleLanguageBreakdown(@QueryParam("languageId") long languageId) {
+        try {
+           List<LanguageModBreakdownVO> vo = service.getModuleLanguageBreakdown(languageId);
+           return Response.ok(vo).build();
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

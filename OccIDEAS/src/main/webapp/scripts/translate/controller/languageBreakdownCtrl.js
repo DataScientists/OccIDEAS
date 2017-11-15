@@ -28,14 +28,6 @@
 			$scope.openModuleLanguageTab(cloneLanguage.id,cloneLanguage);
 		}
         
-        vm.getTotalByIdNode = function(idNode){
-        	ModulesService.getModuleTranslationTotalCount(idNode).then(function(response){
-        		if(response.status == '200'){
-        			$scope.totalCount = response.data;
-        		}
-        	});
-        }
-        
         $scope.openFragmentLanguageByFlagIcon = function(idNode){
 			var cloneLanguage = _.cloneDeep($scope.lang);
 				cloneLanguage.idNode = idNode;
@@ -54,7 +46,7 @@
 		        	return $filter('filter')(vm.languageSummaryTableParams.settings().dataset, params.filter());
 	        	}
 	        	if(type == 'M'){
-	        		return NodeLanguageService.getLanguageModBreakdown(flag)
+	        		return ModulesService.getModuleLanguageBreakdown($scope.lang.id)
 	        		.then(function(response){
 		        		if(response.status == '200'){
 		        			vm.languageSummaryTableParams.settings().dataset = response.data;
