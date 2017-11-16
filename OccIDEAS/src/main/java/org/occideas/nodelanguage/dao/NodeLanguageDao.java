@@ -301,8 +301,8 @@ public class NodeLanguageDao implements INodeLanguageDao {
 	}
 	
 	String getModulesIdNodeSQL = " select *"+
-        " from Node n"+
-        " where node_discriminator = 'M' and type in ('M_Module','M_IntroModule')";
+        " from Node "+
+        " where node_discriminator = 'M' and type in ('M_Module','M_IntroModule') AND deleted=0 ORDER BY name";
 	
 	@Override
     public List<Module> getModulesIdNodeSQL() {
