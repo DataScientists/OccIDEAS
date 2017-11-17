@@ -537,6 +537,13 @@ public class AssessmentRestController {
 
 		List<Interview> uniqueInterviews = interviewService.listAllWithRules(filterModuleVO.getFilterModule());
 
+		/*List<Interview> uniqueInterviewsDebug = new ArrayList<Interview>();
+		for(Interview interview: uniqueInterviews){
+			if(interview.getReferenceNumber().equalsIgnoreCase("H132678")){
+				uniqueInterviewsDebug.add(interview);
+			}
+		}
+		uniqueInterviews = uniqueInterviewsDebug;*/
 		//ExportCSVVO csvVO = populateAssessmentNoiseCSV(uniqueInterviews, reportHistoryVO, msPerInterview);
 		//writeReport(fullPath, reportHistoryVO, csvVO);
 		
@@ -561,6 +568,7 @@ public class AssessmentRestController {
 			headers.add("Node Number");
 			headers.add("Answer");
 			headers.add("dB");
+			headers.add("isBackground");
 			headers.add("Hours");
 			headers.add("Partial Exposure");
 			String[] line = Arrays.copyOf(headers.toArray(), headers.toArray().length, String[].class);
@@ -574,9 +582,12 @@ public class AssessmentRestController {
 			int iSize = uniqueInterviews.size();
 			
 			for (Interview interviewVO : uniqueInterviews) {
-
+				String referenceNumber = interviewVO.getReferenceNumber();
 				currentCount++;
 				System.out.println("Noise report:" + currentCount + " of "+ iSize);
+				if(referenceNumber.equalsIgnoreCase("H120243")){
+					System.out.println(referenceNumber);
+				}
 				boolean bFoundNoiseRules = false;
 				List<RuleVO> noiseRules = new ArrayList<RuleVO>();
 				
@@ -608,9 +619,9 @@ public class AssessmentRestController {
 					}
 				}
 				if (bFoundNoiseRules) {
-					Float totalFrequency = new Float(0);
-					Float maxBackgroundPartialExposure = new Float(0);
-					Float maxBackgroundHours = new Float(0);
+					Double totalFrequency = new Double(0);
+					Double maxBackgroundPartialExposure = new Double(0);
+					Double maxBackgroundHours = new Double(0);
 					for (RuleVO noiseRule : noiseRules) {
 						if (!noiseRule.getType().equalsIgnoreCase("BACKGROUND")) {
 							PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
@@ -622,11 +633,13 @@ public class AssessmentRestController {
 										interviewQuestions, actualAnswer);
 
 								if (frequencyHoursNode != null) {
-									answeredValue = frequencyHoursNode.getAnswerFreetext();
+									if(!frequencyHoursNode.getType().equalsIgnoreCase("P_frequencyseconds")){
+										answeredValue = frequencyHoursNode.getAnswerFreetext();															 
+									 }										
 								}
 							}
 							try {
-								totalFrequency += Float.valueOf(answeredValue);
+								totalFrequency += Double.valueOf(answeredValue);
 							} catch (Exception e) {
 								System.err.println("Invalid not bg frequency! Check interview "
 										+ interviewVO.getIdinterview() + " Rule " + noiseRule.getIdRule());
@@ -637,26 +650,28 @@ public class AssessmentRestController {
 						}
 					}
 					boolean useRatio = false;
-					Float ratio = new Float(1);
-					Float fShiftHours = Float.valueOf(shiftHours);
+					Double ratio = new Double(1);
+					Double fShiftHours = Double.valueOf(shiftHours);
 					if (totalFrequency > fShiftHours) {
 						useRatio = true;
 						ratio = totalFrequency / fShiftHours;
+						DecimalFormat newFormat = new DecimalFormat("#.####");
+						ratio =  Double.valueOf(newFormat.format(ratio));
 					}
 					Integer level = 0;
 					Integer iPeakNoise = 0;
-					Float totalPartialExposure = new Float(0);
+					Double totalPartialExposure = new Double(0);
 					for (RuleVO noiseRule : noiseRules) {
-
+						noiseRule.setRatio(useRatio);
 						if (noiseRule.getType().equalsIgnoreCase("BACKGROUND")) {
-							Float hoursbg = fShiftHours - totalFrequency;
+							Double hoursbg = fShiftHours - totalFrequency;
 							if (hoursbg < 0) {
-								hoursbg = new Float(0);
+								hoursbg = new Double(0);
 							}
 							try {
 								String sLevel = noiseRule.getRuleAdditionalfields().get(0).getValue();
 								level = Integer.valueOf(sLevel);
-								Float partialExposure = (float) (4 * hoursbg * (Math.pow(10, (float)((float)level - (float)100) / (float)10)));
+								Double partialExposure = (Double) (4 * hoursbg * (Math.pow(10, (Double)((double)level - (double)100) / (double)10)));
 								if (partialExposure > maxBackgroundPartialExposure) {
 									maxBackgroundPartialExposure = partialExposure;
 									maxBackgroundHours = hoursbg;
@@ -667,38 +682,35 @@ public class AssessmentRestController {
 								log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
 							}
 							noiseRule.setNoiseHours(hoursbg);
-							
+							noiseRule.setBackgroundFlag("B");
 						} else {
 
-							Float hours = new Float(0);
-							Float frequencyhours = new Float(0);
+							Double hours = new Double(0);
+							Double frequencyhours = new Double(0);
 							PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
 							InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
 							boolean isSecondsTimeFrequency = false;
 							if (actualAnswer != null) {
-								InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
-										interviewQuestions, actualAnswer);
+								InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers, interviewQuestions, actualAnswer);
 
 								if (frequencyHoursNode != null) {
 									try {
-										frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+										frequencyhours = Double.valueOf(frequencyHoursNode.getAnswerFreetext());
 										if (frequencyHoursNode.getType().equalsIgnoreCase("P_frequencyseconds")) {
 
-											frequencyhours = Float.valueOf(frequencyhours) / 3600; // convert
-																									// seconds
-																									// to
-																									// hours
+											frequencyhours = Double.valueOf(frequencyhours) / 3600; 
 											isSecondsTimeFrequency = true;
 										}
 									} catch (Exception e) {
-										frequencyhours = new Float(-1);
+										frequencyhours = new Double(0);
 										System.err.println("Invalid frequency! Check interview id:" + interviewVO.getIdinterview() + " ref:"+interviewVO.getReferenceNumber());
 										log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
 									}
 								}
 							}
 							if (useRatio && !isSecondsTimeFrequency) {
-								hours = frequencyhours / ratio;
+								hours = (frequencyhours / ratio);
+								
 							} else {
 								hours = frequencyhours;
 							}
@@ -709,7 +721,7 @@ public class AssessmentRestController {
 								System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
 								log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
 							}
-							Float partialExposure = (float) (4 * hours * (Math.pow(10, (float)((float)level - (float)100) / (float)10)));
+							Double partialExposure = (double) (4 * hours * (Math.pow(10, (double)((double)level - (double)100) / (double)10)));
 							// System.out.println(parentNode.getNumber() + " " +
 							// parentNode.getIdNode() + " "
 							// + parentNode.getName() + " " + level + " " + hours +
@@ -728,7 +740,7 @@ public class AssessmentRestController {
 					// totalPartialExposure = totalPartialExposure.toFixed(4);
 					totalFrequency += maxBackgroundHours;
 
-					Float autoExposureLevel = (float) (10 * (Math.log10(totalPartialExposure / (3.2 * (Math.pow(10, -9))))));
+					Double autoExposureLevel = (double) (10 * (Math.log10(totalPartialExposure / (3.2 * (Math.pow(10, -9))))));
 					// autoExposureLevel = autoExposureLevel.toFixed(4);
 
 					totalExposure = String.format("%.04f",totalPartialExposure);
@@ -765,6 +777,7 @@ public class AssessmentRestController {
 					
 					String sLevel = noiseRule.getRuleAdditionalfields().get(0).getValue();
 					answers.add(sLevel);
+					answers.add(noiseRule.getBackgroundFlag());
 					answers.add(String.format("%.04f",noiseRule.getNoiseHours()));				
 					answers.add(String.format("%.04f",noiseRule.getNoisePartialExposure()));
 										
