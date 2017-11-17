@@ -50,7 +50,10 @@
 	        		.then(function(response){
 		        		if(response.status == '200'){
 		        			vm.languageSummaryTableParams.settings().dataset = response.data;
-		        			return response.data;
+		        			var modulestats = response.data; 
+		        			vm.totalModuleCurrentCount = _.sumBy(modulestats, function(o) { return o.current; });
+		        			vm.totalModuleCount = _.sumBy(modulestats, function(o) { return o.total; });
+		        			return modulestats;
 		        		}
 		        	});
 	            }
