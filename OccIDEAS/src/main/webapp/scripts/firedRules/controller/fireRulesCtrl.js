@@ -939,11 +939,16 @@
 					}				  
 					return retValue;
 				});
-				if(_.includes(childFrequencyNode.type, 'P_frequency')){
-					return childFrequencyNode;
+				if(childFrequencyNode){
+					if(_.includes(childFrequencyNode.type, 'P_frequency')){
+						return childFrequencyNode;
+					}else{
+						return findFrequencyIdNode(childFrequencyNode);
+					}
 				}else{
-					return findFrequencyIdNode(childFrequencyNode);
+					return;
 				}
+				
 			}else{
 				return;
 			}
@@ -1077,7 +1082,7 @@
 												level = noiseRule.ruleAdditionalfields[0].value;
 												hoursbg = hoursbg.toFixed(4);
 												var partialExposure = 4*hoursbg*(Math.pow(10,(level-100)/10));
-												partialExposure = partialExposure.toFixed(4);
+												partialExposure = partialExposure;
 												
 												
 												var moduleName = getModuleNameOfNode(noiseRule.conditions[0]);
@@ -1165,7 +1170,7 @@
 											  }
 										  }
 										  	totalPartialExposure = (parseFloat(totalPartialExposure)+parseFloat(maxBackgroundPartialExposure));
-										  	totalPartialExposure = totalPartialExposure.toFixed(4);
+										  	totalPartialExposure = totalPartialExposure;
 											totalFrequency += maxBackgroundHours;
 
 											var autoExposureLevel = 10*(Math.log10(totalPartialExposure/(3.2*(Math.pow(10,-9)))))

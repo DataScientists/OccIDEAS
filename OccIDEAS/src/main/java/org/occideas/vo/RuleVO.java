@@ -26,8 +26,10 @@ public class RuleVO {
 	private List<RuleAdditionalFieldVO> ruleAdditionalfields = new ArrayList<>();
 	private int levelValue;
 	private Integer deleted;
-	private Float noiseHours;
-	private Float noisePartialExposure;
+	private Double noiseHours;
+	private Double noisePartialExposure;
+	private String backgroundFlag;
+	private boolean isRatio;
 	
 	public long getIdRule() {
 		return idRule;
@@ -129,20 +131,36 @@ public class RuleVO {
 		this.deleted = deleted;
 	}
 
-	public Float getNoiseHours() {
+	public Double getNoiseHours() {
 		return noiseHours;
 	}
 
-	public void setNoiseHours(Float noiseHours) {
+	public void setNoiseHours(Double noiseHours) {
 		this.noiseHours = noiseHours;
 	}
 
-	public Float getNoisePartialExposure() {
+	public Double getNoisePartialExposure() {
 		return noisePartialExposure;
 	}
 
-	public void setNoisePartialExposure(Float noisePartialExposure) {
+	public void setNoisePartialExposure(Double noisePartialExposure) {
 		this.noisePartialExposure = noisePartialExposure;
+	}
+
+	public boolean isRatio() {
+		return isRatio;
+	}
+
+	public void setRatio(boolean isRatio) {
+		this.isRatio = isRatio;
+	}
+
+	public String getBackgroundFlag() {
+		return backgroundFlag;
+	}
+
+	public void setBackgroundFlag(String backgroundFlag) {
+		this.backgroundFlag = backgroundFlag;
 	}
 
 
