@@ -16,13 +16,15 @@
 					<td title="'Count'"><span class="{{nl.current?nl.current == nl.total?'greenBorderMed':'redBorderMed':0 == nl.total?'greenBorderMed':'redBorderMed'}}" id="count_{{nl.name}}">{{nl.current?nl.current:0}}/{{nl.total}}</span></td>
 				</tr>
 				<tr ng-if="discriminatorType == 'F'" ng-repeat="nl in $data" ng-click="openFragmentLanguageByFlagIcon(nl.idNode)">
+					<td>{{$index+1}}</td>
 					<td title="'idNode'" filter="{idNode: 'text'}">{{nl.idNode}}</td>
 					<td title="'Name'" filter="{name: 'text'}">{{nl.name}}</td>
 					<td title="'Count'"><span class="{{nl.current?nl.current == nl.total?'greenBorderMed':'redBorderMed':0 == nl.total?'greenBorderMed':'redBorderMed'}}">{{nl.current?nl.current:0}}/{{nl.total}}</span></td>
 				</tr>
 				<tr>
 					<td colspan="3">Total</td>
-					<td>{{vm.totalModuleCurrentCount}}/{{vm.totalModuleCount}}</td>
+					<td ng-if="vm.totalModuleCurrentCount!==undefined">{{vm.totalModuleCurrentCount}}/{{vm.totalModuleCount}}</td>
+					<td ng-if="vm.totalFragmentCurrentCount!==undefined">{{vm.totalFragmentCurrentCount}}/{{vm.totalFragmentCount}}</td>
 				</tr>
 			</tbody>
 		</table>

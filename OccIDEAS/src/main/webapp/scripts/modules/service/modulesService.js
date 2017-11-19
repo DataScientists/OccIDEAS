@@ -200,6 +200,36 @@
 				})
 			return request.then(handleSuccess,handleError);
 		}
+		
+		function getTotalUntranslatedModule(languageId){
+			var restUrl = 'web/rest/module/getTotalUntranslatedModule?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getTotalTranslatedNodeByLanguage(languageId){
+			var restUrl = 'web/rest/module/getTotalTranslatedNodeByLanguage?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
+		
+		function getModulesWithTranslationCount(languageId){
+			var restUrl = 'web/rest/module/getModulesWithTranslationCount?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess,handleError);
+		}
 
 		function handleError( response ) {
             if (
@@ -234,7 +264,10 @@
             getNodeNameById:getNodeNameById,
             getModuleTranslationTotalCount:getModuleTranslationTotalCount,
             getModuleTranslationCurrentCount:getModuleTranslationCurrentCount,
-            getModuleLanguageBreakdown:getModuleLanguageBreakdown
+            getModuleLanguageBreakdown:getModuleLanguageBreakdown,
+            getTotalUntranslatedModule:getTotalUntranslatedModule,
+            getTotalTranslatedNodeByLanguage:getTotalTranslatedNodeByLanguage,
+            getModulesWithTranslationCount:getModulesWithTranslationCount
 		};
 	}
 	

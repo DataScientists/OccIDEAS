@@ -313,6 +313,20 @@ public class NodeLanguageDao implements INodeLanguageDao {
         return list;
     }
 	
+	String getFragmentIdNodeSQL = " select *"+
+        " from Node "+
+        " where node_discriminator = 'F' and type in "
+        + "('F_template','F_ajsm') AND deleted=0 ORDER BY name";
+    
+    @Override
+    public List<Fragment> getFragmentIdNodeSQL() {
+        final Session session = sessionFactory.getCurrentSession();
+        SQLQuery sqlQuery = session.createSQLQuery(getFragmentIdNodeSQL)
+                .addEntity(Fragment.class);
+        List<Fragment> list = sqlQuery.list();
+        return list;
+    }
+	
 	String getLanguageFragBreakdownSQL = " select idNode,name,"+
 			" (select nf.current from NodeNodeLanguageFrag nf"+
 			" where nf.idNode = n.idNode and nf.flag = :param) as current,"+

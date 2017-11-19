@@ -2,6 +2,9 @@ package org.occideas.utilities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+
+import org.occideas.entity.Node;
 
 public class CommonUtil {
 
@@ -61,5 +64,59 @@ public class CommonUtil {
 		}
 		return list;
 	}
+    
+    public static void replaceListWithLowerCaseAndTrim(List<String> nodeList)
+    {
+        ListIterator<String> listIterator = nodeList.listIterator();
+        while(listIterator.hasNext()){
+            String index = listIterator.next();
+            listIterator.set(index.toLowerCase().trim());
+        }
+    }
+
+    public static void removeNonUniqueNames(final List<? extends Node> nodeList)
+    {
+        final java.util.ListIterator<? extends Node> iterator = nodeList.listIterator();
+        String temp = null;
+        while(iterator.hasNext()){
+            if(temp == null){
+                temp = iterator.next().getName(); 
+            }
+            temp = removeSpacesAndLowerCase(temp);
+            final Node next = iterator.next();
+            if(temp.equals(removeSpacesAndLowerCase(next.getName()))){
+                iterator.remove();
+            }else{
+                temp = next.getName();
+            }
+        }
+    }
+    
+    public static void removeNonUniqueString(final List<String> list)
+    {
+        final java.util.ListIterator<String> iterator = list.listIterator();
+        String temp = null;
+        while(iterator.hasNext()){
+            if(temp == null){
+                temp = iterator.next(); 
+            }
+            temp = removeSpacesAndLowerCase(temp);
+            if(iterator.hasNext()){
+                
+            final String next = iterator.next();
+            if(temp.equals(removeSpacesAndLowerCase(next))){
+                iterator.remove();
+            }else{
+                temp = next;
+            }
+            }
+        }
+    }
+    
+    public static String removeSpacesAndLowerCase(String temp)
+    {
+        return temp.toLowerCase().trim();
+    }
+    
 
 }

@@ -12,7 +12,6 @@ import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
-import org.occideas.entity.LanguageModBreakdown;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.NodeLanguage;
@@ -32,6 +31,7 @@ import org.occideas.security.audit.AuditingActionType;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.FragmentVO;
@@ -504,28 +504,18 @@ public class ModuleServiceImpl implements ModuleService {
         if(nodeList.size() <= 1){
             return nodeList.size();
         }
-        removeNonUniqueNames(nodeList);
+        CommonUtil.removeNonUniqueNames(nodeList);
         return nodeList.size();
     }
 
     
-    private void displayNames(List<? extends Node> nodeList)
-    {
-        StringBuilder sb = new StringBuilder();
-        for(Node node:nodeList){
-            sb.append(node.getName());
-            sb.append(",");
-        }
-        System.out.println(sb.toString());
-    }
-
     @Override
     public Integer getModuleTranslationCurrentCount(String idNode,Long languageId) {
         List<String> nodeList = dao.getNodeNameByIdNode(idNode);
-        removeNonUniqueString(nodeList);
-        replaceListWithLowerCaseAndTrim(nodeList);
+        CommonUtil.removeNonUniqueString(nodeList);
+        CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
         List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
-        replaceListWithLowerCaseAndTrim(nodeLanguageList);
+        CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
         int count = 0;
         for(int i=0; i < nodeList.size();i++){
             if(nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())){
@@ -533,6 +523,24 @@ public class ModuleServiceImpl implements ModuleService {
             }
         }
         return count;
+    }
+    
+    private boolean hasAnyNodeTranslated(String idNode,Long languageId,List<String> nodeLanguageList) {
+        List<String> nodeList = dao.getNodeNameByIdNode(idNode);
+        CommonUtil.removeNonUniqueString(nodeList);
+        CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
+        for(int i=0; i < nodeList.size();i++){
+            if(nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private Integer countUniqueNodeNamesInModule(String idNode){
+        List<String> nodeList = dao.getNodeNameByIdNode(idNode);
+        CommonUtil.removeNonUniqueString(nodeList);
+        return nodeList.size();
     }
     
     @Override
@@ -555,7 +563,52 @@ public class ModuleServiceImpl implements ModuleService {
         
         return results;
     }
+    
+    @Override
+    public Integer getTotalUntranslatedModule(Long languageId){
+        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+        int count = 0;
+        for(Module module:listOfModuleIdNodes){
+            count = count + countUniqueNodeNamesInModule(String.valueOf(module.getIdNode()));
+        }
+        return count;
+    }
 
+    @Override
+    public Integer getModulesWithTranslationCount(long languageId)
+    {
+        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+        int count = 0;
+        List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
+        CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
+        for(Module module:listOfModuleIdNodes){
+            if(hasAnyNodeTranslated(String.valueOf(module.getIdNode()), languageId, nodeLanguageList)){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public Integer getTotalTranslatedNodeByLanguage(long languageId)
+    {
+        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+        int count = 0;
+        List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
+        CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
+        for(Module module:listOfModuleIdNodes){
+            List<String> nodeList = dao.getNodeNameByIdNode(String.valueOf(module.getIdNode()));
+            CommonUtil.removeNonUniqueString(nodeList);
+            CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
+            for(int i=0; i < nodeList.size();i++){
+                if(nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    
     private LanguageModBreakdownVO buildBreakdownStatsForModule(Module module, long idNode, Integer currentCount, Integer totalCount)
     {
         LanguageModBreakdownVO vo = new LanguageModBreakdownVO();
@@ -566,71 +619,4 @@ public class ModuleServiceImpl implements ModuleService {
         return vo;
     }
     
-    private void replaceListWithLowerCaseAndTrim(List<String> nodeList)
-    {
-        ListIterator<String> listIterator = nodeList.listIterator();
-        while(listIterator.hasNext()){
-            String index = listIterator.next();
-            listIterator.set(index.toLowerCase().trim());
-        }
-    }
-
-    private void removeNonUniqueNames(final List<? extends Node> nodeList)
-    {
-        final java.util.ListIterator<? extends Node> iterator = nodeList.listIterator();
-        String temp = null;
-        while(iterator.hasNext()){
-            if(temp == null){
-                temp = iterator.next().getName(); 
-            }
-            temp = removeSpacesAndLowerCase(temp);
-            final Node next = iterator.next();
-            if(temp.equals(removeSpacesAndLowerCase(next.getName()))){
-                iterator.remove();
-            }else{
-                temp = next.getName();
-            }
-        }
-    }
-    
-    private void removeNonUniqueString(final List<String> list)
-    {
-        final java.util.ListIterator<String> iterator = list.listIterator();
-        String temp = null;
-        while(iterator.hasNext()){
-            if(temp == null){
-                temp = iterator.next(); 
-            }
-            temp = removeSpacesAndLowerCase(temp);
-            final String next = iterator.next();
-            if(temp.equals(removeSpacesAndLowerCase(next))){
-                iterator.remove();
-            }else{
-                temp = next;
-            }
-        }
-    }
-    
-    private void removeNonUniqueNamesForNodeLanguage(List<NodeLanguage> nodeList)
-    {
-        final java.util.ListIterator<NodeLanguage> iterator = nodeList.listIterator();
-        String temp = null;
-        while(iterator.hasNext()){
-            if(temp == null){
-                temp = iterator.next().getWord(); 
-            }
-            temp = removeSpacesAndLowerCase(temp);
-            final NodeLanguage next = iterator.next();
-            if(temp.equals(removeSpacesAndLowerCase(next.getWord()))){
-                iterator.remove();
-            }else{
-                temp = next.getWord();
-            }
-        }
-    }
-    
-    private String removeSpacesAndLowerCase(String temp)
-    {
-        return temp.toLowerCase().trim();
-    }
 }

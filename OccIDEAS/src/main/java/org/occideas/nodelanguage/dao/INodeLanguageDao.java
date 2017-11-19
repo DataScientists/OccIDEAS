@@ -70,4 +70,6 @@ public interface INodeLanguageDao {
 
     List<Module> getModulesIdNodeSQL();
 
+    List<Fragment> getFragmentIdNodeSQL();
+
 }

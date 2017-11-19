@@ -155,6 +155,83 @@
 				})
 			return request.then(handleSuccess1,handleError);
 		}
+		
+		function getFragmentTranslationTotalCount(idNode){
+			var restUrl = 'web/rest/fragment/getFragmentTranslationTotalCount?id=' + idNode;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
+		function getFragmentTranslationCurrentCount(idNode,languageId){
+			var restUrl = 'web/rest/fragment/getFragmentTranslationCurrentCount?id=' + idNode+'&languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
+		function getFragmentLanguageBreakdown(languageId){
+			var restUrl = 'web/rest/fragment/getFragmentLanguageBreakdown?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
+		function getTotalUntranslatedFragment(languageId){
+			var restUrl = 'web/rest/fragment/getTotalUntranslatedFragment?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
+		function getTotalTranslatedNodeByLanguage(languageId){
+			var restUrl = 'web/rest/fragment/getTotalTranslatedNodeByLanguage?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
+		function getFragmentsWithTranslationCount(languageId){
+			var restUrl = 'web/rest/fragment/getFragmentsWithTranslationCount?languageId='+languageId;
+
+			var request =  $http({
+				  method: 'GET',
+				  url: restUrl
+				})
+			return request.then(handleSuccess1,handleError);
+		}
+		
+		function handleError( response ) {
+			if (
+					! angular.isObject( response.data ) ||
+					! response.data.message
+			) {
+				return( $q.reject( "An unknown error occurred." ) );
+			}
+			return( $q.reject( response.data.message ) );
+		}
+		
+		function handleSuccess( response ) {
+			return( response.data );
+		}
+		function handleSuccess1( response ) {
+			return( response );
+		}
 
 		return {		  
 			checkExists: checkExists,
@@ -171,24 +248,14 @@
 		    getFilterStudyAgents:getFilterStudyAgents,
 		    getFilterAgents:getFilterAgents,
 		    getAllFragmentsReport:getAllFragmentsReport,
-		    getFragmentParents:getFragmentParents
+		    getFragmentParents:getFragmentParents,
+		    getFragmentTranslationTotalCount:getFragmentTranslationTotalCount,
+            getFragmentTranslationCurrentCount:getFragmentTranslationCurrentCount,
+            getFragmentLanguageBreakdown:getFragmentLanguageBreakdown,
+            getTotalUntranslatedFragment:getTotalUntranslatedFragment,
+            getTotalTranslatedNodeByLanguage:getTotalTranslatedNodeByLanguage,
+            getFragmentsWithTranslationCount:getFragmentsWithTranslationCount
 		};
-		function handleError( response ) {
-            if (
-                ! angular.isObject( response.data ) ||
-                ! response.data.message
-                ) {
-                return( $q.reject( "An unknown error occurred." ) );
-            }
-            return( $q.reject( response.data.message ) );
-        }
-
-		function handleSuccess( response ) {
-            return( response.data );
-        }
-		function handleSuccess1( response ) {
-            return( response );
-        }
 	}
 	
 })();

@@ -6,11 +6,11 @@
     LanguageSummaryCtrl.$inject = ['$state','ngToast','$timeout',
                          '$scope','$http','$rootScope','$window','$sessionStorage',
                          '$mdDialog','$translate','NodeLanguageService',
-                         'NgTableParams','$q'];
+                         'NgTableParams','$q','ModulesService','FragmentsService'];
     function LanguageSummaryCtrl($state, ngToast, $timeout, 
     		$scope, $http, $rootScope,$window, 
     		$sessionStorage,$mdDialog,
-    		$translate,NodeLanguageService,NgTableParams,$q) {
+    		$translate,NodeLanguageService,NgTableParams,$q,ModulesService,FragmentsService) {
         var vm = this;
 
         $scope.$storage = $sessionStorage; 
@@ -121,27 +121,35 @@
 	      });
 		
 		vm.loadStatsByLanguage = function(l){
-			vm.getTotalUntranslatedModule();
+			vm.getTotalUntranslatedModule(l);
+			vm.getTotalTranslatedNodeByLanguage(l);
 			vm.getTotalModuleCount();
+			vm.getModulesWithTranslationCount(l);
 			vm.getTotalFragmentCount();
-			vm.getTotalUntranslatedFragment();
-			vm.getUntranslatedModules(l);
-			vm.getUntranslatedFragments(l);
+			vm.getTotalUntranslatedFragment(l);
+			vm.getTotalTranslatedNodeFragmentByLanguage(l);
+			vm.getFragmentsWithTranslationCount(l);
 			l.cssclass = '';
 		}
 		
-		vm.getUntranslatedModules = function(l){
-			NodeLanguageService.getUntranslatedModules(l.flag)
+		vm.getModulesWithTranslationCount = function(l){
+			ModulesService.getModulesWithTranslationCount(l.id)
 			.then(function(resp){
 				if(resp.status == '200'){
-					var data = _.filter($scope.nodeNodeLanguageMap,function(nodeMap){
-						return nodeMap.languageId == l.id;
-					});
-					l.totalCurrent =_.sumBy(data, function(o) { return o.current; });
 					l.translatedModuleCount = resp.data;
 				}
 			});
 		}
+		
+		vm.getFragmentsWithTranslationCount = function(l){
+			FragmentsService.getFragmentsWithTranslationCount(l.id)
+			.then(function(resp){
+				if(resp.status == '200'){
+					l.translatedFragCount = resp.data;
+				}
+			});
+		}
+		
 		
 		vm.getUntranslatedFragments = function(l){
 			NodeLanguageService.getUntranslatedFragments(l.flag)
@@ -150,16 +158,32 @@
 					var data = _.filter($scope.nodeNodeLanguageFragmentMap,function(nodeMap){
 						return nodeMap.languageId == l.id;
 					});
-					l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
-					l.translatedFragCount = resp.data;
+//					l.totalFragCurrent =_.sumBy(data, function(o) { return o.current; });
+//					l.translatedFragCount = resp.data;
 				}
 			});
 		}
 		
-		vm.getTotalUntranslatedModule = function(){
+		vm.getTotalTranslatedNodeByLanguage = function(l){
+			ModulesService.getTotalTranslatedNodeByLanguage(l.id).then(function(response){
+				if(response.status == '200'){
+					l.totalCurrent = response.data;
+				}
+			});
+		}
+		
+		vm.getTotalTranslatedNodeFragmentByLanguage = function(l){
+			FragmentsService.getTotalTranslatedNodeByLanguage(l.id).then(function(response){
+				if(response.status == '200'){
+					l.totalFragCurrent = response.data;
+				}
+			});
+		}
+		
+		vm.getTotalUntranslatedModule = function(l){
 		    if(!$scope.grandTotal){
 			// get all untranslated nodes
-			NodeLanguageService.getTotalUntranslatedModule().then(function(response){
+		    	ModulesService.getTotalUntranslatedModule(l.id).then(function(response){
 				if(response.status == '200'){
 					$scope.grandTotal = response.data;
 				}
@@ -179,14 +203,14 @@
 			}
 		}
 		
-		vm.getTotalUntranslatedFragment = function(){
+		vm.getTotalUntranslatedFragment = function(l){
 			if(!$scope.grandFragTotal){
-			// get all untranslated fragment nodes
-			NodeLanguageService.getTotalUntranslatedFragment().then(function(response){
-				if(response.status == '200'){
-					$scope.grandFragTotal = response.data;
-				}
-			});
+				// get all untranslated fragment nodes
+				FragmentsService.getTotalUntranslatedFragment(l.id).then(function(response){
+					if(response.status == '200'){
+						$scope.grandFragTotal = response.data;
+					}
+				});
 			}
 		}
 		

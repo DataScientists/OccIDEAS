@@ -6,11 +6,11 @@
     LanguageBreakdownCtrl.$inject = ['$state','ngToast','$timeout',
                          '$scope','$http','$rootScope','$window','$sessionStorage',
                          '$mdDialog','$translate','NodeLanguageService',
-                         'NgTableParams','$q','$filter','flag','type','ModulesService'];
+                         'NgTableParams','$q','$filter','flag','type','ModulesService','FragmentsService'];
     function LanguageBreakdownCtrl($state, ngToast, $timeout, 
     		$scope, $http, $rootScope,$window, 
     		$sessionStorage,$mdDialog,
-    		$translate,NodeLanguageService,NgTableParams,$q,$filter,flag,type,ModulesService) {
+    		$translate,NodeLanguageService,NgTableParams,$q,$filter,flag,type,ModulesService,FragmentsService) {
         var vm = this;
         $scope.discriminatorType = type;
         $scope.flagUsed = 'flag-icon-'+flag.split(/[- ]+/).pop().toLowerCase();
@@ -59,10 +59,13 @@
 	            }
 	            
 	            if(type == 'F'){
-	            	return NodeLanguageService.getLanguageFragBreakdown(flag)
+	            	return FragmentsService.getFragmentLanguageBreakdown($scope.lang.id)
 	        		.then(function(response){
 		        		if(response.status == '200'){
 		        			vm.languageSummaryTableParams.settings().dataset = response.data;
+		        			var fragmentstats = response.data; 
+		        			vm.totalFragmentCurrentCount = _.sumBy(fragmentstats, function(o) { return o.current; });
+		        			vm.totalFragmentCount = _.sumBy(fragmentstats, function(o) { return o.total; });
 		        			return response.data;
 		        		}
 		        	});

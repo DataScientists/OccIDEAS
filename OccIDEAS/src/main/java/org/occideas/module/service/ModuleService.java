@@ -7,10 +7,10 @@ import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.vo.LanguageModBreakdownVO;
 import org.occideas.vo.ModuleCopyVO;
+import org.occideas.vo.ModuleReportVO;
+import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.ModuleReportVO;
 
 public interface ModuleService extends BaseService<ModuleVO>{
 	public void merge(ModuleVO module);
@@ -38,4 +38,7 @@ public interface ModuleService extends BaseService<ModuleVO>{
     Integer getModuleTranslationTotalCount(String idNode);
     Integer getModuleTranslationCurrentCount(String idNode, Long languageId);
     List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId);
+    Integer getTotalUntranslatedModule(Long languageId);
+    public Integer getTotalTranslatedNodeByLanguage(long languageId);
+    public Integer getModulesWithTranslationCount(long languageId);
 }

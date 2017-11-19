@@ -23,6 +23,7 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.LanguageFragmentBreakdownVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,4 +270,82 @@ public class FragmentRestController implements BaseRestController<FragmentVO>{
 		}
 		return Response.ok(fragments).build();
 	}
+	
+	@GET
+    @Path(value = "/getTotalUntranslatedFragment")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getTotalUntranslatedFragment(@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getTotalUntranslatedFragment(languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path(value = "/getTotalTranslatedNodeByLanguage")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getTotalTranslatedNodeByLanguage(@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getTotalTranslatedNodeByLanguage(languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path(value = "/getFragmentsWithTranslationCount")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getFragmentsWithTranslationCount(@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getFragmentWithTranslationCount(languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path(value = "/getFragmentTranslationTotalCount")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getFragmentTranslationTotalCount(@QueryParam("id") String idNode) {
+        try {
+           Integer total = service.getFragmentTranslationTotalCount(idNode);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path(value = "/getFragmentTranslationCurrentCount")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getFragmentTranslationCurrentCount(@QueryParam("id") String idNode,@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getFragmentTranslationCurrentCount(idNode, languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @GET
+    @Path(value = "/getFragmentLanguageBreakdown")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getFragmentLanguageBreakdown(@QueryParam("languageId") long languageId) {
+        try {
+           List<LanguageFragmentBreakdownVO> vo = service.getFragmentLanguageBreakdown(languageId);
+           return Response.ok(vo).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
 }

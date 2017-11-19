@@ -7,6 +7,7 @@ import org.occideas.entity.Fragment;
 import org.occideas.vo.FragmentCopyVO;
 import org.occideas.vo.FragmentReportVO;
 import org.occideas.vo.FragmentVO;
+import org.occideas.vo.LanguageFragmentBreakdownVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.QuestionVO;
 
@@ -35,4 +36,16 @@ public interface FragmentService extends BaseService<FragmentVO> {
 	List<Fragment> getAllFragments();
 
 	List<FragmentVO> getFragmentParents(Long id);
+
+    Integer getFragmentTranslationTotalCount(String idNode);
+
+    Integer getFragmentTranslationCurrentCount(String idNode, Long languageId);
+
+    List<LanguageFragmentBreakdownVO> getFragmentLanguageBreakdown(Long languageId);
+
+    Integer getTotalUntranslatedFragment(Long languageId);
+
+    Integer getFragmentWithTranslationCount(long languageId);
+
+    Integer getTotalTranslatedNodeByLanguage(long languageId);
 }

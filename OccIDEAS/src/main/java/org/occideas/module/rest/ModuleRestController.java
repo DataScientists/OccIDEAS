@@ -415,6 +415,45 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	}
 	
 	@GET
+    @Path(value = "/getTotalUntranslatedModule")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getTotalUntranslatedModule(@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getTotalUntranslatedModule(languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+	
+	@GET
+    @Path(value = "/getTotalTranslatedNodeByLanguage")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getTotalTranslatedNodeByLanguage(@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getTotalTranslatedNodeByLanguage(languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+	
+	@GET
+    @Path(value = "/getModulesWithTranslationCount")
+    @Produces(value = MediaType.APPLICATION_JSON)
+    public Response getModulesWithTranslationCount(@QueryParam("languageId") long languageId) {
+        try {
+           Integer total = service.getModulesWithTranslationCount(languageId);
+           return Response.ok(total).build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+	
+	@GET
     @Path(value = "/getModuleTranslationTotalCount")
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response getModuleTranslationTotalCount(@QueryParam("id") String idNode) {
