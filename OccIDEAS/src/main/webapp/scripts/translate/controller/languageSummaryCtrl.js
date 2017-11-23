@@ -33,7 +33,7 @@
 				}
 			})
 		};
-		$scope.getAllLanguage();
+		//$scope.getAllLanguage();
 		
 		// For Fragments
 		$scope.getAllFragmentLanguage = function(){
@@ -44,7 +44,7 @@
 				}
 			})
 		};
-		$scope.getAllFragmentLanguage();
+		//$scope.getAllFragmentLanguage();
 		
 		$scope.selectLanguage = {};
 		$scope.selectLanguage.selected ='';
