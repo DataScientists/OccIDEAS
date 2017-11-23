@@ -875,15 +875,10 @@
 		$scope.scrollTo = function( target){
 			var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
-			var scrollY = scrollTarget.offset().top - 150;			
-			scrollPane.animate({scrollTop : scrollY }, 500, 'swing' , function(){
-				
-				if(scrollY < 0){
-					//When scrollTarget.offset().top = 0
-					console.log("Re-scroll");
-					$scope.scrollTo(target);
-				}
-			});
+			var scrollY = scrollTarget.offset().top - 150;		
+			if(scrollPane){
+				$("html, body").animate({ scrollTop: scrollY }, 1000);
+			}			
 		};
 
 		vm.showRulesMenu = function(scope){
