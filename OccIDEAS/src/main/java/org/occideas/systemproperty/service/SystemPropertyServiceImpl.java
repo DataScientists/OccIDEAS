@@ -180,6 +180,10 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
         List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
         List<NodeVO> nodeWithStudyAgentsList = new ArrayList<>(); 
         // check child links if we have study agents
+        if(vo == null){
+            return list;
+        }
+        
         addAnsDependencyFromLinkAjsmNew(vo, nodeWithStudyAgentsList);
         getStudyAgentsForLinks(nodeWithStudyAgentsList,posAnsWithStudyAgentsList,vo);
         addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
