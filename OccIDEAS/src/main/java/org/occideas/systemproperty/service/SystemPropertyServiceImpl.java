@@ -634,6 +634,10 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 
 
 	private List<PossibleAnswerVO> getAnswersWithStudyAgents(NodeVO vo) {
+	    if(vo == null){
+	        return new ArrayList<>();
+	    }
+	    
 		List<PossibleAnswer> posAnsWithStudyAgentsList = dao.getPosAnsWithStudyAgentsByIdMod(vo.getIdNode());
 		List<PossibleAnswerVO> newPosAnsWithStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList(posAnsWithStudyAgentsList);
 		return newPosAnsWithStudyAgentsList;

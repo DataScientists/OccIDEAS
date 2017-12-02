@@ -198,7 +198,9 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 	                List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
                     try
                     {
+                        if(listOfIdNodes != null && !listOfIdNodes.isEmpty()){
                         studyAgentUtil.createStudyAgentCSV(moduleId, listOfIdNodes,true);
+                        }
                     }
                     catch (IOException e)
                     {
@@ -212,8 +214,10 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
                     List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
                     try
                     {
+                        if(listOfIdNodes != null && !listOfIdNodes.isEmpty()){
                         studyAgentUtil.createStudyAgentCSV(moduleId, listOfIdNodes,true);
-                    }
+                        }
+                        }
                     catch (IOException e)
                     {
                         log.error("error in creating file "+moduleId,e);
