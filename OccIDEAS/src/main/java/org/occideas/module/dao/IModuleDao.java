@@ -46,4 +46,6 @@ public interface IModuleDao {
 
     List<String> getNodeNameByIdNode(String idNode);
 
+    List<? extends Node> getNodeByType(String type);
+
 }

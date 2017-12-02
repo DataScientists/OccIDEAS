@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
@@ -171,6 +172,31 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		return vo;
 	}
 	
+	@Override
+    public List<String> filterNodesWithStudyAgents(NodeVO vo) {
+	    List<String> list = new ArrayList<>();
+        possAnswerCheckList.clear();
+        qIdCheckList.clear();
+        List<PossibleAnswerVO> posAnsWithStudyAgentsList = getAnswersWithStudyAgents(vo);
+        List<NodeVO> nodeWithStudyAgentsList = new ArrayList<>(); 
+        // check child links if we have study agents
+        addAnsDependencyFromLinkAjsmNew(vo, nodeWithStudyAgentsList);
+        getStudyAgentsForLinks(nodeWithStudyAgentsList,posAnsWithStudyAgentsList,vo);
+        addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
+        if(posAnsWithStudyAgentsList.isEmpty() && nodeWithStudyAgentsList.isEmpty()){
+            return null;
+        }else{
+            if(vo instanceof ModuleVO){
+                ((ModuleVO)vo).getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+            }else{
+                ((FragmentVO)vo).getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
+            }
+            listAllQId(list,vo);
+            list = list.stream().distinct().collect(Collectors.toList());
+        }
+        return list;
+    }
+	
 	private void printAllQIdNumbers(NodeVO vo) {
 		System.out.println(vo.getIdNode()+"-"+vo.getNumber());
 		if(vo instanceof QuestionVO){
@@ -204,6 +230,43 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		}
 		
 	}
+	
+	@Override
+	public void listAllQId(List<String> listOfIdNodes,NodeVO vo) {
+	    listOfIdNodes.add(String.valueOf(vo.getIdNode()));
+        if(vo instanceof QuestionVO){
+            QuestionVO qvo = (QuestionVO) vo;
+            if(qvo.getChildNodes() != null && !qvo.getChildNodes().isEmpty()){
+                for(PossibleAnswerVO avo:qvo.getChildNodes()){
+                    listAllQId(listOfIdNodes,avo);
+                }
+            }
+        }else if(vo instanceof PossibleAnswerVO){
+            PossibleAnswerVO avo = (PossibleAnswerVO) vo;
+            if(avo.getChildNodes() != null && !avo.getChildNodes().isEmpty()){
+                for(QuestionVO qvo:avo.getChildNodes()){
+                    listAllQId(listOfIdNodes,qvo);
+                }
+            }
+        }else if(vo instanceof ModuleVO){
+            ModuleVO mvo = (ModuleVO) vo;
+            if(mvo.getChildNodes() != null && !mvo.getChildNodes().isEmpty()){
+                for(QuestionVO qvo:mvo.getChildNodes()){
+                    listAllQId(listOfIdNodes,qvo);
+                }
+            }
+        }else if(vo instanceof FragmentVO){
+            FragmentVO fvo = (FragmentVO) vo;
+            if(fvo.getChildNodes() != null && !fvo.getChildNodes().isEmpty()){
+                for(QuestionVO qvo:fvo.getChildNodes()){
+                    listAllQId(listOfIdNodes,qvo);
+                }
+            }
+        }
+        
+    }
+	
+	
 
 	private void getStudyAgentsForLinks(List<NodeVO> nodeWithStudyAgentsList, 
 			List<PossibleAnswerVO> posAnsWithStudyAgentsList, NodeVO nodeVo) {
@@ -369,7 +432,54 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		return nodeVOList;
 	}
 	
-
+	private List<String> buildStringNodesWithStudyAgents(List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
+        List<String> results = new ArrayList<>();
+	    List<QuestionVO> nodeVOList = new ArrayList<>();
+        List<String> parentIdList = new ArrayList<>();
+        int index = 0;
+        for(PossibleAnswerVO ans:posAnsWithStudyAgentsList){
+            index++;
+            if(parentIdList.contains(ans.getParentId())){
+                continue;
+            }
+            // get parent until module is reached
+            Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
+            parentIdList.add(ans.getParentId());
+            if("Q".equals(node.getNodeclass())){
+                //parent is a question
+                QuestionVO questionVO = questionMapper.convertToQuestionWithModRulesReduced((Question)node);
+                
+                if(!ans.getChildNodes().isEmpty()){
+                    // got a linking question
+                    try{
+                    PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
+                    if(posAns != null){
+                        posAns.getChildNodes().addAll(ans.getChildNodes());
+                    }
+                    }catch(Throwable ex){
+                        ex.printStackTrace();
+                    }
+                }
+                QuestionVO questionUntilRootModule = getQuestionUntilRootModule(questionVO.getParentId(),questionVO);
+                if(nodeVOList.contains(questionUntilRootModule)){
+                    QuestionVO qVO = nodeVOList.get(nodeVOList.indexOf(questionUntilRootModule));
+                    try {
+                        mergeDifferences(questionUntilRootModule, qVO, false);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    results.add(String.valueOf(questionUntilRootModule.getIdNode()));
+                }
+            }else if("F".equals(node.getNodeclass())){
+                //parent is a link
+                System.out.println("inside F");
+            }
+        }
+        return results;
+    }
 
 
 	private void mergeDifferences(NodeVO source, NodeVO target,boolean mergeComplete) 
@@ -528,6 +638,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 		List<PossibleAnswerVO> newPosAnsWithStudyAgentsList = posAnsMapper.convertToPossibleAnswerVOExModRuleList(posAnsWithStudyAgentsList);
 		return newPosAnsWithStudyAgentsList;
 	}
+	
 	
 	private List<PossibleAnswerVO> getAnswersWithAgents(NodeVO vo,long idAgent) {
 		List<PossibleAnswer> posAnsWithStudyAgentsList = 

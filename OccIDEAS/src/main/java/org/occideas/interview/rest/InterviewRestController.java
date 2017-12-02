@@ -259,28 +259,6 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 		return Response.ok().build();
     }
     
-    private void testStudySpecificModules(){
-    	for(Module m:moduleService.getAllModules()){
-    		System.out.println("Checking module "+m.getName());
-    		Long theId = Long.valueOf(m.getIdNode());
-    		//Long theId = Long.valueOf("7424");
-    		NodeVO moduleFilterStudyAgent = (NodeVO) moduleService.getModuleFilterStudyAgent(theId);
-    		try {
-    			studyAgentUtil.createStudyAgentJson(String.valueOf(theId), moduleFilterStudyAgent,false);
-    			List<PossibleAnswer> posAnsWithStudyAgentsList = moduleService.getPosAnsWithStudyAgentsByIdMod(theId);
-    			for(PossibleAnswer pa:posAnsWithStudyAgentsList){
-    				sysPropService.populateNodeidList(pa.getIdNode());
-    				
-    			}
-    			sysPropService.testNodeidList(theId);
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
-    	
-    	}
-			
-	}
     
 	
     @GET

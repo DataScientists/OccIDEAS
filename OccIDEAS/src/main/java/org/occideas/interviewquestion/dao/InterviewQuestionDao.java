@@ -22,6 +22,7 @@ import org.occideas.entity.Fragment;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
+import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
@@ -184,28 +185,42 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public void preloadActiveIntro() {
-		SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
-		if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
-			// get intro id
-			SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
-			if (introModule == null) {
-				log.error("no intro module set");
-			} else {
-				String moduleId = introModule.getValue();
-				List<Question> qList = moduleDao.getAllLinkingQuestionByModId(Long.valueOf(moduleId));
-				List<QuestionVO> qListVO = qMapper.convertToQuestionVOList(qList);
-				for (QuestionVO qVO : qListVO) {
-					ModuleVO moduleFilterStudyAgent = (ModuleVO) moduleService
-							.getModuleFilterStudyAgent(Long.valueOf(qVO.getLink()));
-					try {
-						studyAgentUtil.createStudyAgentJson(String.valueOf(qVO.getLink()), moduleFilterStudyAgent,true);
-					} catch (Exception e) {
-						log.error("Error creating study agent module json for "
-									+qVO.getName()+"-"+qVO.getLink(),e);
-					}
-				}
-			}
-		}
+	    SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+	    if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
+	        // get intro id
+	        SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+	        if (introModule == null) {
+	            log.error("no intro module set");
+	        } else {
+	            List<? extends Node> allActiveModule = moduleDao.getNodeByType("M_Module");
+	            for(Node node:allActiveModule){
+	                String moduleId = String.valueOf(node.getIdNode());
+	                List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
+                    try
+                    {
+                        studyAgentUtil.createStudyAgentCSV(moduleId, listOfIdNodes,true);
+                    }
+                    catch (IOException e)
+                    {
+                        log.error("error in creating file "+moduleId,e);
+                    }
+	            }
+	            
+	            List<? extends Node> allActiveAJSM = moduleDao.getNodeByType("F_ajsm");
+                for(Node node:allActiveAJSM){
+                    String moduleId = String.valueOf(node.getIdNode());
+                    List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
+                    try
+                    {
+                        studyAgentUtil.createStudyAgentCSV(moduleId, listOfIdNodes,true);
+                    }
+                    catch (IOException e)
+                    {
+                        log.error("error in creating file "+moduleId,e);
+                    }
+                }
+	        }
+	    }
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -215,76 +230,77 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 		sessionFactory.getCurrentSession().saveOrUpdate(iq);
 		int intQuestionSequence = iq.getIntQuestionSequence();
 		long parentModuleId = iq.getLink();
-		SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
-		if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
-			// get intro id
-			SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
-			if (introModule == null) {
-				log.error("no intro module set");
-				return null;
-			} else {
-				try {
-					
-					if (introModule.getValue().equals(String.valueOf(parentModuleId))) {
-						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
-					} else {
-						boolean filterAndCreateJson = false;
-						
-						
-						try {
-							if(!studyAgentUtil.doesStudyAgentJsonExist(String.valueOf(parentModuleId))){
-								filterAndCreateJson = true;
-							}
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						NodeVO moduleFilterStudyAgent = null;
-						NodeVO determineType = moduleService.getNodeNameById(parentModuleId);
-						
-						if(filterAndCreateJson){
-							moduleFilterStudyAgent = (NodeVO) moduleService
-									.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
-							
-							studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent,false);
-						}else{
-							if (determineType instanceof ModuleVO) {
-								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentJson(String.valueOf(parentModuleId));
-							} else if (determineType instanceof FragmentVO) {
-								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentFragmentJson(String.valueOf(parentModuleId));
-							}
-							
-						}
-						
-						if (moduleFilterStudyAgent == null) {
-							// empty link remove it from queue
-							iq.setDeleted(1);
-							sessionFactory.getCurrentSession().saveOrUpdate(iq);
-
-						} else if (moduleFilterStudyAgent instanceof ModuleVO) {
-							ModuleVO modVO = (ModuleVO) moduleFilterStudyAgent;
-							loopChildStudyAgentAndQueue(iq, intQuestionSequence, modVO.getChildNodes());
-						} else if (moduleFilterStudyAgent instanceof FragmentVO) {
-							FragmentVO fragVO = (FragmentVO) moduleFilterStudyAgent;
-							loopChildStudyAgentAndQueue(iq, intQuestionSequence, fragVO.getChildNodes());
-						}
-					}
-				} catch (Exception e) {
-					log.error("Error on saveInterviewLinkAndQueueQuestions ",e);
-				} 
-			}
-		} else {
+//		SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+//		if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
+//			// get intro id
+//			SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+//			if (introModule == null) {
+//				log.error("no intro module set");
+//				return null;
+//			} else {
+//				try {
+//					
+//					if (introModule.getValue().equals(String.valueOf(parentModuleId))) {
+//						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
+//					} else {
+//						boolean filterAndCreateJson = false;
+//						
+//						
+//						try {
+//							if(!studyAgentUtil.doesStudyAgentJsonExist(String.valueOf(parentModuleId))){
+//								filterAndCreateJson = true;
+//							}
+//						} catch (IOException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//						NodeVO moduleFilterStudyAgent = null;
+//						NodeVO determineType = moduleService.getNodeNameById(parentModuleId);
+//						
+//						if(filterAndCreateJson){
+//							moduleFilterStudyAgent = (NodeVO) moduleService
+//									.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
+//							
+//							studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent,false);
+//						}else{
+//							if (determineType instanceof ModuleVO) {
+//								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentJson(String.valueOf(parentModuleId));
+//							} else if (determineType instanceof FragmentVO) {
+//								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentFragmentJson(String.valueOf(parentModuleId));
+//							}
+//							
+//						}
+//						
+//						if (moduleFilterStudyAgent == null) {
+//							// empty link remove it from queue
+//							iq.setDeleted(1);
+//							sessionFactory.getCurrentSession().saveOrUpdate(iq);
+//
+//						} else if (moduleFilterStudyAgent instanceof ModuleVO) {
+//							ModuleVO modVO = (ModuleVO) moduleFilterStudyAgent;
+//							loopChildStudyAgentAndQueue(iq, intQuestionSequence, modVO.getChildNodes());
+//						} else if (moduleFilterStudyAgent instanceof FragmentVO) {
+//							FragmentVO fragVO = (FragmentVO) moduleFilterStudyAgent;
+//							loopChildStudyAgentAndQueue(iq, intQuestionSequence, fragVO.getChildNodes());
+//						}
+//					}
+//				} catch (Exception e) {
+//					log.error("Error on saveInterviewLinkAndQueueQuestions ",e);
+//				} 
+//			}
+//		} else {
 			loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
-		}
+//		}
 		return iq;
 	}
 
 	private void loopChildQuestionsAndQueue(InterviewQuestion iq, int intQuestionSequence, long parentModuleId) {
-		List<QuestionVO> queueQuestions = new ArrayList<>();
+	    List<QuestionVO> queueQuestions = new ArrayList<>();
 		queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
 		Collections.sort(queueQuestions);
+		SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
 		for (QuestionVO question : queueQuestions) {
-			InterviewQuestion iqQueue = new InterviewQuestion();
+		    InterviewQuestion iqQueue = new InterviewQuestion();
 			iqQueue.setIdInterview(iq.getIdInterview());
 			iqQueue.setName(question.getName());
 			iqQueue.setDescription(question.getDescription());
@@ -298,11 +314,74 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 			iqQueue.setTopNodeId(question.getTopNodeId());
 			iqQueue.setIntQuestionSequence(++intQuestionSequence);
 			iqQueue.setDeleted(0);
+			shouldQueueQuestion(iq,filterStudyAgentFlag,iqQueue);
 			sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
 		}
 	}
 
-	private void loopChildStudyAgentAndQueue(InterviewQuestion iq, int intQuestionSequence,
+	private void shouldQueueQuestion(InterviewQuestion iq, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue)
+	{
+	    if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
+	        SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+	        if (introModule == null) {
+	            log.error("no intro module set");
+	            return;
+	        } 
+	        
+	            try {
+
+	                if (introModule.getValue().equals(String.valueOf(iq.getLink()))) {
+	                    return;
+	                } else {
+	                    boolean filterAndCreateCSV = false;
+	                    try {
+	                        if(!studyAgentUtil.doesStudyAgentCSVExist(String.valueOf(iq.getLink()))){
+	                            filterAndCreateCSV = true;
+	                        }
+	                    } catch (IOException e1) {
+	                        log.error("Unable to access file id node "+iq.getLink(),e1);
+	                        return;
+	                    }
+	                    String[] listOfIdNodes = null;
+	                    if(filterAndCreateCSV){
+	                        List<String> list = moduleService
+                                .getFilterStudyAgent(Long.valueOf(iq.getLink()));
+	                        listOfIdNodes = list.toArray(new String[0]);
+	                        studyAgentUtil.createStudyAgentCSV(String.valueOf(iq.getLink()), list,false);
+	                    }else{
+	                        listOfIdNodes = studyAgentUtil.getStudyAgentCSV(String.valueOf(iq.getLink()));
+	                    }
+
+	                    if (listOfIdNodes.length < 1) {
+	                        emptyLinkFoundDoNotQueue(iq);
+	                    } else{
+	                        isQuestionIdStudyAgent(iqQueue, listOfIdNodes);
+	                    }
+	                }
+	            } catch (Exception e) {
+	                log.error("Error on saveInterviewLinkAndQueueQuestions ",e);
+	            } 
+	    }
+	}
+
+    private void isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes)
+    {
+        boolean isExist = studyAgentUtil.doesIdNodeExistInArray(listOfIdNodes, String.valueOf(iqQueue.getQuestionId()));
+        if(isExist){
+            log.info("Question id "+iqQueue.getQuestionId()+" exist so saving it in queue question.");
+        }else{
+            iqQueue.setDeleted(1);
+            log.info("Question id "+iqQueue.getQuestionId()+" does not exist so saving it in queue question as deleted.");
+        }
+    }
+
+    private void emptyLinkFoundDoNotQueue(InterviewQuestion iq)
+    {
+        iq.setDeleted(1);
+        sessionFactory.getCurrentSession().saveOrUpdate(iq);
+    }
+
+    private void loopChildStudyAgentAndQueue(InterviewQuestion iq, int intQuestionSequence,
 			List<QuestionVO> queueQuestions) {
 		Collections.sort(queueQuestions);
 		for (QuestionVO question : queueQuestions) {

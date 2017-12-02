@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.SystemPropertyVO;
 
 public interface SystemPropertyService {
@@ -22,4 +23,6 @@ public interface SystemPropertyService {
 	public FragmentVO getFragmentNodesWithAgents(FragmentVO fragmentVO, Long idAgent);
 	void populateNodeidList(Long nodeId);
 	void testNodeidList(Long nodeId);
+    List<String> filterNodesWithStudyAgents(NodeVO node);
+    void listAllQId(List<String> listOfIdNodes, NodeVO vo);
 }

@@ -11,7 +11,7 @@ import org.occideas.entity.Question;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
-import org.occideas.question.dao.QuestionDao;
+import org.occideas.question.dao.IQuestionDao;
 import org.occideas.security.audit.Auditable;
 import org.occideas.security.audit.AuditingActionType;
 import org.occideas.utilities.CommonUtil;
@@ -21,7 +21,6 @@ import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
-    @Qualifier("QuestionDao")
-    private QuestionDao qdao;
+    private IQuestionDao qdao;
     
     @Autowired
     private BaseDao dao;

@@ -1,8 +1,13 @@
 package org.occideas.utilities;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 
@@ -24,210 +29,402 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opencsv.CSVReader;
 
 @Component
-public class StudyAgentUtil {
+public class StudyAgentUtil
+{
 
-	private Logger log = LogManager.getLogger(this.getClass());
-	
-	@Autowired
-	ServletContext context;
-	
-	@Autowired
-	private SystemPropertyService systemPropertyService;
-	@Autowired
-	private ModuleService moduleService;
+    private Logger log = LogManager.getLogger(this.getClass());
 
-	public ModuleVO getStudyAgentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		String path = System.getProperty("user.home");
-		File file = new File(path+"/modules/"+idNode + ".json");
-		ModuleVO modVO = mapper.readValue(file, ModuleVO.class);
-		return modVO;
-	}
-	public FragmentVO getStudyAgentFragmentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		String path = System.getProperty("user.home");
-		FragmentVO modVO = mapper.readValue(new File(path+"/modules/"+idNode + ".json"), FragmentVO.class);
-		return modVO;
-	}
+    @Autowired
+    ServletContext context;
 
-	public boolean isStudyAgentJsonExist(Long idNode)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		String path = System.getProperty("user.home");
-		File file = new File(path+"/modules/"+idNode + ".json");
-		return file.exists();
-	}
+    @Autowired
+    private SystemPropertyService systemPropertyService;
+    @Autowired
+    private ModuleService moduleService;
 
-	public String convertModuleStudyAgentToJsonString(ModuleVO studyAgent) throws JsonProcessingException {
-		ObjectMapper mapper = new ObjectMapper();
-		// Object to JSON in String
-		String jsonInString = mapper.writeValueAsString(studyAgent);
-		return jsonInString;
-	}
 
-	public void createStudyAgentJson(String idNode, NodeVO vo,boolean override)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		String path = System.getProperty("user.home");
-		String filePath = path+"/modules/"+idNode + ".json";
-		new File(path+"/modules/").mkdir();
-		File expectedFile = new File(filePath);
-		if(expectedFile.exists() && !override){
-			log.info("expected file - "+filePath + " already exist.");
-			return;
-		}else{
-		log.info("[Start] creating file - "+filePath);
-		mapper.writeValue(expectedFile, vo);
-		log.info("[End] creating file - "+filePath);
-		}
-	}
-	
-	public void deleteStudyAgentJson(String idNode){
-		try{
-		SystemPropertyVO autoCreateJson = systemPropertyService.getByName(Constant.AUTO_CREATE_STUDY_AGENT_JSON);
-		if (autoCreateJson != null && "true".equals(autoCreateJson.getValue().toLowerCase().trim())) {
-		if(doesStudyAgentJsonExist(idNode)){
-			String path = System.getProperty("user.home");
-			String filePath = path+"/modules/"+idNode + ".json";
-			File expectedFile = new File(filePath);
-			if(expectedFile.exists()){
-				boolean deleted = expectedFile.delete();
-				if(deleted){
-					log.info(expectedFile+" has beed deleted.");
-				}else{
-					log.error("Unable to delete "+expectedFile);
-				}
-			}
-		}
-		}
-		}catch(Throwable ex){
-			log.error("Error on delete study agent json "+idNode,ex);
-		}
-	}
-	
-	
-	public boolean doesStudyAgentJsonExist(String idNode)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		String path = System.getProperty("user.home");
-		String filePath = path+"/modules/"+idNode + ".json";
-		new File(path+"/modules/").mkdir();
-		File expectedFile = new File(filePath);
-		if(expectedFile.exists()){
-			log.info("expected file - "+filePath + " already exist.");
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	public NodeVO searchNode(NodeVO nodeVO, Long idNode)
-			throws JsonGenerationException, JsonMappingException, IOException {
-		NodeVO result = null;
-		if (nodeVO instanceof ModuleVO) {
-			ModuleVO mod = (ModuleVO) nodeVO;
-			if (nodeVO.getIdNode() == idNode) {
-				return nodeVO;
-			} else {
-				List<QuestionVO> childNodes = mod.getChildNodes();
-				for (QuestionVO qVO : childNodes) {
-					result = searchNode(qVO, idNode);
-					if (result != null) {
-						break;
-					}
-				}
-			}
-		}
-		if (nodeVO instanceof FragmentVO) {
-			FragmentVO frag = (FragmentVO) nodeVO;
-			if (nodeVO.getIdNode() == idNode) {
-				return nodeVO;
-			} else {
-				List<QuestionVO> childNodes = frag.getChildNodes();
-				for (QuestionVO qVO : childNodes) {
-					result = searchNode(qVO, idNode);
-					if (result != null) {
-						break;
-					}
-				}
-			}
-		}
-		if (nodeVO instanceof QuestionVO) {
-			QuestionVO qVO = (QuestionVO) nodeVO;
-			if (nodeVO.getIdNode() == idNode) {
-				return nodeVO;
-			} else {
-				List<PossibleAnswerVO> childNodes = qVO.getChildNodes();
-				for (PossibleAnswerVO aVO : childNodes) {
-					result = searchNode(aVO, idNode);
-					if (result != null) {
-						break;
-					}
-				}
-			}
-		}
-		if (nodeVO instanceof PossibleAnswerVO) {
-			PossibleAnswerVO aVO = (PossibleAnswerVO) nodeVO;
-			if (nodeVO.getIdNode() == idNode) {
-				return nodeVO;
-			} else {
-				List<QuestionVO> childNodes = aVO.getChildNodes();
-				for (QuestionVO qVO : childNodes) {
-					result = searchNode(qVO, idNode);
-					if (result != null) {
-						break;
-					}
-				}
-			}
-		}
-		return result;
-	}
+    public ModuleVO getStudyAgentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        File file = getJsonFile(idNode);
+        ModuleVO modVO = mapper.readValue(file, ModuleVO.class);
+        return modVO;
+    }
 
-	public static void main(String[] args) throws JsonGenerationException, JsonMappingException, IOException {
-		StudyAgentUtil jsonUtil = new StudyAgentUtil();
-		// System.out.println(jsonUtil.isStudyAgentJsonExist(123123L));
-		// ModuleVO modVO = new ModuleVO();
-		// modVO.setIdNode(111111L);
-		// List<QuestionVO> list = new ArrayList<>();
-		// QuestionVO qVO1 = new QuestionVO();
-		// qVO1.setIdNode(123123L);
-		// qVO1.setName("test");
-		// QuestionVO qVO2 = new QuestionVO();
-		// qVO2.setIdNode(666666L);
-		// list.add(qVO1);
-		// list.add(qVO2);
-		// modVO.setChildNodes(list);
-		try {
-			// NodeVO node = jsonUtil.searchNode(modVO, 123123L);
-			// System.out.println(node.getName());
-			jsonUtil.createStudyAgentJson("44161", new ModuleVO(),true);
-		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	public void createStudyAgentForUpdatedNode(long idNode, String name) {
-			SystemPropertyVO autoCreateJson = systemPropertyService.getByName(Constant.AUTO_CREATE_STUDY_AGENT_JSON);
-			if (autoCreateJson != null && "true".equals(autoCreateJson.getValue().toLowerCase().trim())) {
-				 NodeVO nodeVO = moduleService.getModuleFilterStudyAgent(idNode);
-				 if(nodeVO instanceof ModuleVO){
-					 ModuleVO moduleFilterStudyAgent = (ModuleVO) nodeVO;
-					 try {
-						 createStudyAgentJson(String.valueOf(idNode), moduleFilterStudyAgent,true);
-					 } catch (Exception e) {
-						 log.error("Error creating study agent module json for "
-								 +name+"-"+idNode,e);
-					 }
-				 }else{
-					 return;
-				 }
-			}
-	}
+
+    public FragmentVO getStudyAgentFragmentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        String path = System.getProperty("user.home");
+        FragmentVO modVO = mapper.readValue(new File(path + "/modules/" + idNode + ".json"), FragmentVO.class);
+        return modVO;
+    }
+
+
+    public boolean isStudyAgentJsonExist(Long idNode)
+        throws JsonGenerationException, JsonMappingException, IOException
+    {
+        String path = System.getProperty("user.home");
+        File file = new File(path + "/modules/" + idNode + ".json");
+        return file.exists();
+    }
+
+
+    public String convertModuleStudyAgentToJsonString(ModuleVO studyAgent) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        // Object to JSON in String
+        String jsonInString = mapper.writeValueAsString(studyAgent);
+        return jsonInString;
+    }
+
+
+    public void createStudyAgentJson(String idNode, NodeVO vo, boolean override)
+        throws JsonGenerationException, JsonMappingException, IOException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        String filePath = createJsonFilePath(idNode);
+        File expectedFile = new File(filePath);
+        if (expectedFile.exists() && !override)
+        {
+            log.info("expected file - " + filePath + " already exist.");
+            return;
+        }
+        else
+        {
+            log.info("[Start] creating file - " + filePath);
+            mapper.writeValue(expectedFile, vo);
+            log.info("[End] creating file - " + filePath);
+        }
+    }
+
+
+    public String[] getStudyAgentCSV(String idNode) throws JsonGenerationException, JsonMappingException, IOException
+    {
+        CSVReader reader = new CSVReader(new FileReader(getCSVFile(idNode)));
+        List<String[]> list = reader.readAll();
+        if (!list.isEmpty())
+        {
+            return list.get(0);
+        }
+        return null;
+    }
+    
+    private File getCSVFile(String idNode)
+    {
+        String path = System.getProperty("user.home");
+        File file = new File(path + "/modules/" + idNode + ".csv");
+        return file;
+    }
+
+
+    private File getJsonFile(String idNode)
+    {
+        String path = System.getProperty("user.home");
+        File file = new File(path + "/modules/" + idNode + ".json");
+        return file;
+    }
+
+
+    public void createStudyAgentCSV(String idNode, List<String> list, boolean override) throws IOException
+    {
+        String filePath = createCSVFilePath(idNode);
+        File expectedFile = new File(filePath);
+        if (expectedFile.exists() && !override)
+        {
+            log.info("expected file - " + filePath + " already exist.");
+        }
+        else
+        {
+            if(list != null && !list.isEmpty()){
+            list = list.stream().sorted().collect(Collectors.toList());
+            writeNewCSVFile(list, filePath, expectedFile);
+            }
+        }
+    }
+
+
+    private void writeNewCSVFile(List<String> list, String filePath, File expectedFile) throws IOException
+    {
+        FileWriter writer = new FileWriter(expectedFile);
+        log.info("[Start] creating file - " + filePath);
+        String commaDelimitedString = String.join(",", list);
+        writer.write(commaDelimitedString);
+        writer.close();
+        log.info("[End] creating file - " + filePath);
+    }
+    
+    public boolean doesIdNodeExistInArray(String[] arrayToSearch,String idNode){
+        return binarySearch(arrayToSearch, idNode) != - 1? true:false; 
+    }
+    
+    
+    private int binarySearch(String[] arrayToSearch, String value) {
+        int low = 0;
+        int high = arrayToSearch.length - 1;
+        int mid;
+
+        while (low <= high) {
+            mid = (low + high) / 2;
+
+            if (arrayToSearch[mid].compareTo(value) < 0) {
+                low = mid + 1;
+            } else if (arrayToSearch[mid].compareTo(value) > 0) {
+                high = mid - 1;
+            } else {
+                return mid;
+            }
+        }
+
+        return -1;
+    }
+
+
+    private String createCSVFilePath(String idNode)
+    {
+        String path = System.getProperty("user.home");
+        String filePath = path + "/modules/" + idNode + ".csv";
+        new File(path + "/modules/").mkdir();
+        return filePath;
+    }
+
+
+    private String createJsonFilePath(String idNode)
+    {
+        String path = System.getProperty("user.home");
+        String filePath = path + "/modules/" + idNode + ".json";
+        new File(path + "/modules/").mkdir();
+        return filePath;
+    }
+
+
+    public void deleteStudyAgentJson(String idNode)
+    {
+        try
+        {
+            SystemPropertyVO autoCreateJson = systemPropertyService.getByName(Constant.AUTO_CREATE_STUDY_AGENT_JSON);
+            if (autoCreateJson != null && "true".equals(autoCreateJson.getValue().toLowerCase().trim()))
+            {
+                if (doesStudyAgentJsonExist(idNode))
+                {
+                    String path = System.getProperty("user.home");
+                    String filePath = path + "/modules/" + idNode + ".json";
+                    File expectedFile = new File(filePath);
+                    if (expectedFile.exists())
+                    {
+                        boolean deleted = expectedFile.delete();
+                        if (deleted)
+                        {
+                            log.info(expectedFile + " has beed deleted.");
+                        }
+                        else
+                        {
+                            log.error("Unable to delete " + expectedFile);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Throwable ex)
+        {
+            log.error("Error on delete study agent json " + idNode, ex);
+        }
+    }
+
+
+    public boolean doesStudyAgentJsonExist(String idNode)
+        throws JsonGenerationException, JsonMappingException, IOException
+    {
+        String filePath = createJsonFilePath(idNode);
+        File expectedFile = new File(filePath);
+        if (expectedFile.exists())
+        {
+            log.info("expected file - " + filePath + " already exist.");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    public boolean doesStudyAgentCSVExist(String idNode)
+        throws JsonGenerationException, JsonMappingException, IOException
+    {
+        String filePath = createCSVFilePath(idNode);
+        File expectedFile = new File(filePath);
+        if (expectedFile.exists())
+        {
+            log.info("expected file - " + filePath + " already exist.");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    public NodeVO searchNode(NodeVO nodeVO, Long idNode)
+        throws JsonGenerationException, JsonMappingException, IOException
+    {
+        NodeVO result = null;
+        if (nodeVO instanceof ModuleVO)
+        {
+            ModuleVO mod = (ModuleVO) nodeVO;
+            if (nodeVO.getIdNode() == idNode)
+            {
+                return nodeVO;
+            }
+            else
+            {
+                List<QuestionVO> childNodes = mod.getChildNodes();
+                for (QuestionVO qVO : childNodes)
+                {
+                    result = searchNode(qVO, idNode);
+                    if (result != null)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        if (nodeVO instanceof FragmentVO)
+        {
+            FragmentVO frag = (FragmentVO) nodeVO;
+            if (nodeVO.getIdNode() == idNode)
+            {
+                return nodeVO;
+            }
+            else
+            {
+                List<QuestionVO> childNodes = frag.getChildNodes();
+                for (QuestionVO qVO : childNodes)
+                {
+                    result = searchNode(qVO, idNode);
+                    if (result != null)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        if (nodeVO instanceof QuestionVO)
+        {
+            QuestionVO qVO = (QuestionVO) nodeVO;
+            if (nodeVO.getIdNode() == idNode)
+            {
+                return nodeVO;
+            }
+            else
+            {
+                List<PossibleAnswerVO> childNodes = qVO.getChildNodes();
+                for (PossibleAnswerVO aVO : childNodes)
+                {
+                    result = searchNode(aVO, idNode);
+                    if (result != null)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        if (nodeVO instanceof PossibleAnswerVO)
+        {
+            PossibleAnswerVO aVO = (PossibleAnswerVO) nodeVO;
+            if (nodeVO.getIdNode() == idNode)
+            {
+                return nodeVO;
+            }
+            else
+            {
+                List<QuestionVO> childNodes = aVO.getChildNodes();
+                for (QuestionVO qVO : childNodes)
+                {
+                    result = searchNode(qVO, idNode);
+                    if (result != null)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+
+    public static void main(String[] args) throws JsonGenerationException, JsonMappingException, IOException
+    {
+        StudyAgentUtil jsonUtil = new StudyAgentUtil();
+        // System.out.println(jsonUtil.isStudyAgentJsonExist(123123L));
+        // ModuleVO modVO = new ModuleVO();
+        // modVO.setIdNode(111111L);
+        // List<QuestionVO> list = new ArrayList<>();
+        // QuestionVO qVO1 = new QuestionVO();
+        // qVO1.setIdNode(123123L);
+        // qVO1.setName("test");
+        // QuestionVO qVO2 = new QuestionVO();
+        // qVO2.setIdNode(666666L);
+        // list.add(qVO1);
+        // list.add(qVO2);
+        // modVO.setChildNodes(list);
+        try
+        {
+            // NodeVO node = jsonUtil.searchNode(modVO, 123123L);
+            // System.out.println(node.getName());
+            jsonUtil.createStudyAgentCSV("44161", Arrays.asList(new String[]{"44164","44162","44163"}), false);
+            String[] studyAgentCSV = jsonUtil.getStudyAgentCSV("44161");
+            System.out.println(jsonUtil.doesIdNodeExistInArray(studyAgentCSV, "44165"));
+//            int retVal = Arrays.binarySearch("44163",studyAgentCSV);
+        }
+        catch (JsonGenerationException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (JsonMappingException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
+    public void createStudyAgentForUpdatedNode(long idNode, String name)
+    {
+        SystemPropertyVO autoCreateJson = systemPropertyService.getByName(Constant.AUTO_CREATE_STUDY_AGENT_JSON);
+        if (autoCreateJson != null && "true".equals(autoCreateJson.getValue().toLowerCase().trim()))
+        {
+            NodeVO nodeVO = moduleService.getModuleFilterStudyAgent(idNode);
+            if (nodeVO instanceof ModuleVO)
+            {
+                ModuleVO moduleFilterStudyAgent = (ModuleVO) nodeVO;
+                List<String> listOfIdNodes = new ArrayList<>();
+                systemPropertyService.listAllQId(listOfIdNodes, moduleFilterStudyAgent);
+                try
+                {
+                    createStudyAgentJson(String.valueOf(idNode), moduleFilterStudyAgent, true);
+                    createStudyAgentCSV(String.valueOf(idNode), listOfIdNodes, true);
+                }
+                catch (Exception e)
+                {
+                    log.error("Error creating study agent module json for "
+                        + name + "-" + idNode, e);
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
 
 }

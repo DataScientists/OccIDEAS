@@ -41,4 +41,5 @@ public interface ModuleService extends BaseService<ModuleVO>{
     Integer getTotalUntranslatedModule(Long languageId);
     public Integer getTotalTranslatedNodeByLanguage(long languageId);
     public Integer getModulesWithTranslationCount(long languageId);
+    List<String> getFilterStudyAgent(Long id);
 }

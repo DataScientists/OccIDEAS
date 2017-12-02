@@ -6,8 +6,8 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.NodesAgent;
@@ -15,11 +15,14 @@ import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-@Repository("QuestionDao")
-public class QuestionDao{
+@Repository
+public class QuestionDao implements IQuestionDao{
 	
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	private BaseDao baseDao;
 
 	public Question getQuestionByModuleIdAndNumber(String parentId,String number){
 		final Session session = sessionFactory.getCurrentSession();
@@ -106,5 +109,11 @@ public class QuestionDao{
 		List<NodesAgent> list = sqlQuery.list();
 		return list;
 	}
+
+	@Override
+    public Question get(Class<Question> type, Long id)
+    {
+        return baseDao.get(type, id);
+    }
 	
 }

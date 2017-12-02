@@ -3,11 +3,12 @@ package org.occideas.possibleanswer.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
+import org.occideas.possibleanswer.dao.IPossibleAnswerDao;
+import org.occideas.question.dao.IQuestionDao;
 import org.occideas.vo.PossibleAnswerVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PossibleAnswerServiceImpl implements PossibleAnswerService {
 
 	@Autowired
-	private BaseDao dao;
+	private IPossibleAnswerDao possibleAnswerDao;
+	@Autowired
+	private IQuestionDao questionDao;
 
 	@Autowired
 	private PossibleAnswerMapper mapper;
@@ -33,10 +36,10 @@ public class PossibleAnswerServiceImpl implements PossibleAnswerService {
 
 	@Override
 	public List<PossibleAnswerVO> findById(Long id) {
-		PossibleAnswer answer = dao.get(PossibleAnswer.class, id);
+		PossibleAnswer answer = possibleAnswerDao.get(id);
 		PossibleAnswerVO paVO = mapper.convertToPossibleAnswerVO(answer,false);
 		
-		Question question = dao.get(Question.class, Long.valueOf(answer.getParentId()));		
+		Question question = questionDao.get(Question.class, Long.valueOf(answer.getParentId()));		
 		paVO.setParent(questionMapper.convertToQuestionVO(question));
        
         List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
@@ -45,7 +48,7 @@ public class PossibleAnswerServiceImpl implements PossibleAnswerService {
 	}
 	@Override
 	public List<PossibleAnswerVO> findByIdWithChildren(Long id) {
-		PossibleAnswer answer = dao.get(PossibleAnswer.class, id);
+		PossibleAnswer answer = possibleAnswerDao.get(id);
 		PossibleAnswerVO paVO = mapper.convertToPossibleAnswerVO(answer,true);
 
         List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
@@ -68,7 +71,7 @@ public class PossibleAnswerServiceImpl implements PossibleAnswerService {
 
 	@Override
 	public PossibleAnswerVO findAnswerWithRulesById(long id) {
-		PossibleAnswer answer = dao.get(PossibleAnswer.class, id);
+		PossibleAnswer answer = possibleAnswerDao.get(id);
 		return mapper.convertToPossibleAnswerWithModuleRuleVO(answer);
 	}
 
