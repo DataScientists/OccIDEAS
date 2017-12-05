@@ -106,6 +106,7 @@ public class StudyAgentUtil
     {
         CSVReader reader = new CSVReader(new FileReader(getCSVFile(idNode)));
         List<String[]> list = reader.readAll();
+        reader.close();
         if (!list.isEmpty())
         {
             return list.get(0);
