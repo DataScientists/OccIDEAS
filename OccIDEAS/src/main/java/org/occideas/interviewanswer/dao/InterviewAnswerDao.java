@@ -230,7 +230,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao
                 log.error("Error queuing question possible that "+ia.getTopNodeId()+" is a IntroModule",e);
             }
         }
-        return false;
+        return true;
     }
     
     private boolean isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes)

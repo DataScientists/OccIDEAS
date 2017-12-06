@@ -318,24 +318,25 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 			iqQueue.setTopNodeId(question.getTopNodeId());
 			iqQueue.setIntQuestionSequence(++intQuestionSequence);
 			iqQueue.setDeleted(0);
-			shouldQueueQuestion(iq,filterStudyAgentFlag,iqQueue);
-			sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
+			if(shouldQueueQuestion(iq,filterStudyAgentFlag,iqQueue)){
+			    sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
+			}
 		}
 	}
 
-	private void shouldQueueQuestion(InterviewQuestion iq, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue)
+	private boolean shouldQueueQuestion(InterviewQuestion iq, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue)
 	{
 	    if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
 	        SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
 	        if (introModule == null) {
 	            log.error("no intro module set");
-	            return;
+	            return false;
 	        } 
 	        
 	            try {
 
 	                if (introModule.getValue().equals(String.valueOf(iq.getLink()))) {
-	                    return;
+	                    return true;
 	                } else {
 	                    boolean filterAndCreateCSV = false;
 	                    try {
@@ -344,7 +345,6 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 	                        }
 	                    } catch (IOException e1) {
 	                        log.error("Unable to access file id node "+iq.getLink(),e1);
-	                        return;
 	                    }
 	                    String[] listOfIdNodes = null;
 	                    if(filterAndCreateCSV){
@@ -358,25 +358,29 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
 	                    if (listOfIdNodes.length < 1) {
 	                        emptyLinkFoundDoNotQueue(iq);
+	                        return false;
 	                    } else{
-	                        isQuestionIdStudyAgent(iqQueue, listOfIdNodes);
+	                        return isQuestionIdStudyAgent(iqQueue, listOfIdNodes);
 	                    }
 	                }
 	            } catch (Exception e) {
 	                log.error("Error on saveInterviewLinkAndQueueQuestions ",e);
+	                return false;
 	            } 
 	    }
+        return true;
 	}
 
-    private void isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes)
+    private boolean isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes)
     {
         boolean isExist = studyAgentUtil.doesIdNodeExistInArray(listOfIdNodes, String.valueOf(iqQueue.getQuestionId()));
         if(isExist){
             log.info("Question id "+iqQueue.getQuestionId()+" exist so saving it in queue question.");
         }else{
-            iqQueue.setDeleted(1);
+//            iqQueue.setDeleted(1);
             log.info("Question id "+iqQueue.getQuestionId()+" does not exist so saving it in queue question as deleted.");
         }
+        return isExist;
     }
 
     private void emptyLinkFoundDoNotQueue(InterviewQuestion iq)
