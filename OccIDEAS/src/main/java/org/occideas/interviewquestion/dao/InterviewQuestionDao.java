@@ -23,6 +23,7 @@ import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
@@ -36,16 +37,12 @@ import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 @Repository
 public class InterviewQuestionDao implements IInterviewQuestionDao {
@@ -192,40 +189,76 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 	        if (introModule == null) {
 	            log.error("no intro module set");
 	        } else {
-	            List<? extends Node> allActiveModule = moduleDao.getNodeByType("M_Module");
-	            for(Node node:allActiveModule){
-	                String moduleId = String.valueOf(node.getIdNode());
-	                List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
-                    try
-                    {
-                        if(listOfIdNodes != null && !listOfIdNodes.isEmpty()){
-                        studyAgentUtil.createStudyAgentCSV(moduleId, listOfIdNodes,true);
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        log.error("error in creating file "+moduleId,e);
-                    }
-	            }
-	            
-	            List<? extends Node> allActiveAJSM = moduleDao.getNodeByType("F_ajsm");
-                for(Node node:allActiveAJSM){
-                    String moduleId = String.valueOf(node.getIdNode());
-                    List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
-                    try
-                    {
-                        if(listOfIdNodes != null && !listOfIdNodes.isEmpty()){
-                        studyAgentUtil.createStudyAgentCSV(moduleId, listOfIdNodes,true);
-                        }
-                        }
-                    catch (IOException e)
-                    {
-                        log.error("error in creating file "+moduleId,e);
-                    }
-                }
+	            Node node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
+	            generateCSVForChildAJSMandModule(node);
 	        }
 	    }
 	}
+	
+	private void generateCSVForChildAJSMandModule(Node node){
+	    if(node instanceof Fragment){
+	        if(((Fragment)node).getLink() > 0){
+	            generateCSVFile(node);
+	            Node linkNode = moduleDao.getNodeById(Long.valueOf(node.getLink()));
+	            generateCSVForChildAJSMandModule(linkNode);
+	        }
+        }else if(node instanceof Question){
+            if(((Question)node).getLink() > 0){
+                generateCSVFile(node);
+                Node linkNode = moduleDao.getNodeById(Long.valueOf(node.getLink()));
+                generateCSVForChildAJSMandModule(linkNode);
+            }
+        }
+	    
+	    if(node instanceof Module){
+	      for(Question question: ((Module)node).getChildNodes()){
+	          generateCSVForChildAJSMandModule(question);
+	      }
+	    }else if(node instanceof Fragment){
+	        List<Question> childNodes = ((Fragment)node).getChildNodes();
+	        if(!childNodes.isEmpty()){
+	        for(Question question: childNodes){
+	              generateCSVForChildAJSMandModule(question);
+	        }  
+	        }
+	    }else if(node instanceof Question){
+	        List<PossibleAnswer> childNodes = ((Question)node).getChildNodes();
+	        if(!childNodes.isEmpty()){
+	        for(PossibleAnswer answer: childNodes){
+                generateCSVForChildAJSMandModule(answer);
+	        }  
+	        }
+	    }else if(node instanceof PossibleAnswer){
+	        List<Question> childNodes = ((PossibleAnswer)node).getChildNodes();
+	        if(!childNodes.isEmpty()){
+	            for(Question question: childNodes){
+	                generateCSVForChildAJSMandModule(question);
+	            } 
+	        }
+	    }
+	    
+	}
+
+    private void generateCSVFile(Node node)
+    {
+        String moduleId = String.valueOf(node.getLink());
+        List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
+        try
+        {
+            if(listOfIdNodes != null && !listOfIdNodes.isEmpty()){
+                SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+                if(moduleId.equals(introModule.getValue())){
+                    return;
+                }
+                studyAgentUtil.createStudyAgentCSV(moduleId, listOfIdNodes,true);
+            }
+        }
+        catch (IOException e)
+        {
+            log.error("error in creating file "+moduleId,e);
+        }
+    }
+	
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
