@@ -174,6 +174,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	
 	@Override
     public List<String> filterNodesWithStudyAgents(NodeVO vo) {
+	    vo.getChildNodes().clear();
 	    List<String> list = new ArrayList<>();
         possAnswerCheckList.clear();
         qIdCheckList.clear();
