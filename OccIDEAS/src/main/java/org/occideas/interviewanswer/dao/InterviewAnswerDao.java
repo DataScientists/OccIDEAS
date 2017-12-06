@@ -207,39 +207,42 @@ public class InterviewAnswerDao implements IInterviewAnswerDao
                 iq.setTopNodeId(a.getTopNodeId());
                 iq.setIntQuestionSequence(intQuestionSequence);
                 iq.setDeleted(0);
-                shouldQueueQuestion(a, filterStudyAgentFlag, iq);
                 intQuestionSequence++;
-                sessionFactory.getCurrentSession().saveOrUpdate(iq);
+                if(shouldQueueQuestion(a, filterStudyAgentFlag, iq)){
+                    sessionFactory.getCurrentSession().saveOrUpdate(iq);
+                }
             }
         }
     }
 
 
-    private void shouldQueueQuestion(InterviewAnswer ia, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue)
+    private boolean shouldQueueQuestion(InterviewAnswer ia, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue)
     {
         if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
             String[] listOfIdNodes;
             try
             {
                 listOfIdNodes = studyAgentUtil.getStudyAgentCSV(String.valueOf(ia.getTopNodeId()));
-                isQuestionIdStudyAgent(iqQueue, listOfIdNodes);
+                return isQuestionIdStudyAgent(iqQueue, listOfIdNodes);
             }
             catch (Exception e)
             {
                 log.error("Error queuing question possible that "+ia.getTopNodeId()+" is a IntroModule",e);
             }
         }
+        return false;
     }
     
-    private void isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes)
+    private boolean isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes)
     {
         boolean isExist = studyAgentUtil.doesIdNodeExistInArray(listOfIdNodes, String.valueOf(iqQueue.getQuestionId()));
         if(isExist){
             log.info("Question id "+iqQueue.getQuestionId()+" exist so saving it in queue question.");
         }else{
-            iqQueue.setDeleted(1);
+//            iqQueue.setDeleted(1);
             log.info("Question id "+iqQueue.getQuestionId()+" does not exist so saving it in queue question as deleted.");
         }
+        return isExist;
     }
 
 
