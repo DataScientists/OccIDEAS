@@ -21,6 +21,25 @@
 	    $scope.randomIntCount = 0;
 	    $scope.randomAnswerChecked = true;
 	    
+	    self.cleanOrphans = function(){
+	    	AdminService.cleanOrphans().then(function(response){
+				if(response.status == '200'){
+					$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'Cleanup Orphans successfull.',
+	      	    		  animation:'slide'
+	      	    	 });
+				}else{
+					$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'Cleanup Orphans failed, check the logs.',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+	    			});
+				}
+			});
+	    }
 	    
 	    self.preloadActiveIntro = function(){
 	    	InterviewsService.preloadActiveIntro().then(function(response){

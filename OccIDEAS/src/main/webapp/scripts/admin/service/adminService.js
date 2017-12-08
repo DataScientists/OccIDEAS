@@ -85,6 +85,14 @@
 			});
 		};
 		
+		var cleanOrphans = function() {
+			return $http.get(adminEndpoint + '/cleanOrphans', {
+				cache : false
+			}).then(function(response) {
+				return response;
+			});
+		};
+		
 		function handleError(response) {
 			if (!angular.isObject(response.data) || !response.data.message) {
 				return ($q.reject("An unknown error occurred."));
@@ -104,7 +112,8 @@
 			deleteUserProfile:deleteUserProfile,
 			updateUser:updateUser,
 			saveUserProfileList:saveUserProfileList,
-			updatePassword:updatePassword
+			updatePassword:updatePassword,
+			cleanOrphans:cleanOrphans
 		};
 	}
 
