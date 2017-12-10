@@ -15,6 +15,27 @@
 		$scope.$storage = $sessionStorage;
 		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
 		
+		$scope.interviewStatusList = [{
+			'id':0,
+			'title':'Running'
+		},
+		{
+			'id':1,
+			'title':'Partial'
+		},
+		{
+			'id':2,
+			'title':'Completed'
+		},
+		{
+			'id':3,
+			'title':'To be excluded'
+		}
+		];
+		$scope.getInterviewStatusList = function(column) {
+			return $scope.interviewStatusList;
+		};
+		
 		$scope.$watch('$storage.langEnabled', function(value) {	   
 			if($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad){
 				$translate.refresh();

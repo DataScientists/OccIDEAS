@@ -42,6 +42,41 @@
 			});
 		};
 		
+		$scope.getStatusList = function(column) {
+			var statusArr = [];
+			var index = 0;
+			_.each($scope.statuses,function(value){
+				statusArr.push({
+					'id':value,
+					'title':value
+				});
+				index++;
+			})
+			
+			return statusArr;
+		};
+		
+		$scope.interviewStatusList = [{
+			'id':0,
+			'title':'Running'
+		},
+		{
+			'id':1,
+			'title':'Partial'
+		},
+		{
+			'id':2,
+			'title':'Completed'
+		},
+		{
+			'id':3,
+			'title':'To be excluded'
+		}
+		];
+		$scope.getInterviewStatusList = function(column) {
+			return $scope.interviewStatusList;
+		};
+		
 		function saveInterview(interview) {
 			
 			InterviewsService.save(interview).then(function(response) {

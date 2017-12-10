@@ -11,8 +11,8 @@
 				<td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
 				<td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
 				<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
-				<td filter="{status: 'text'}" title="'Interview Status'">{{participant.statusDescription}}</td>
-				<td filter="{assessedStatus: 'text'}" title="'Assessment Status'">
+				<td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Interview Status'">{{participant.statusDescription}}</td>
+				<td filter="{assessedStatus: 'select'}" filter-data="getStatusList()" title="'Assessment Status'">
 				<md-select style="height: 2px;
     /* vertical-align: top; */
     margin-top: 0px;"

@@ -39,7 +39,7 @@
 				<td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
 				<td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
 				<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
-				<td filter="{status: 'text'}" title="'Interview Status'">{{participant.statusDescription}}</td>
+				<td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Interview Status'">{{participant.statusDescription}}</td>
 				<td title="'Notes'" style="max-width: 200px;">
 					 <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
           					<span class="glyphicon glyphicon-comment"></span>
