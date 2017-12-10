@@ -284,19 +284,21 @@
 //			}
 //		});
 		
-		$scope.updateAutoAssessmentsButton = function() {
-//			
-//			$scope.assessedSize = 0;
-//			$scope.notAssessedSize = 0;
-//			$scope.totalAssessmentSize = 0;
-			
-//			$mdDialog.show({
-//				scope: $scope,  
-//				preserveScope: true,
-//				templateUrl : 'scripts/assessments/partials/autoAssessmentDialog.html',
-//				clickOutsideToClose:true
-//			});
-			$scope.updateButton('All');
+		$scope.updateAutoAssessmentsButton = function(ev) {
+			var status = 'All';
+			var confirmDialog = $mdDialog.confirm()
+			.title('Would you like to proceed with Update Auto Assessment?')
+			.textContent('Estimated duration: '+ getEstimatedDuration(status) + ' minutes. ' 
+	        		+ '\n You will be prompted once auto assessment is completed.')
+			.ariaLabel('Update Auto Assessment')
+			.targetEvent(ev)
+			.ok('Yes')
+			.cancel('Cancel');
+
+			$mdDialog.show(confirmDialog).then(function() {
+				$scope.updateButton(status);
+			}, function() {
+			});
 		}
 				
 		$scope.updateButton = function(status) {
@@ -312,14 +314,6 @@
 					console.log('Assessments Updated: '+status);
 				}
 			});	  
-			
-			$mdDialog.show(
-				$mdDialog.alert()
-		        .clickOutsideToClose(true)
-		        .textContent('Estimated duration: '+ getEstimatedDuration(status) + ' minutes. ' 
-		        		+ '\n You will be prompted once auto assessment is completed.')				        
-		        .ok('Ok')				      
-		    );
 		}
 		
 		// Make a guesstimate, 3 seconds per assessment
