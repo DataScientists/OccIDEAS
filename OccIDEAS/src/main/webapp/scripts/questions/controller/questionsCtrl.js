@@ -609,7 +609,7 @@
 					if(!destNode){
 						sourceNode.warning = 'warning';						
 					}else{
-						if(sourceNode.nodeclass=='Q'){
+						if(sourceNode.nodeclass=='Q' && sourceNode.type != 'Q_linkedmodule'){
 							if(destNode.nodeclass=='Q'){
 								$log.info("Hovering Q on Q");
 								
@@ -619,6 +619,16 @@
 								wrappedplaceholder.removeClass('angular-ui-tree-placeholder-warning');
 								sourceNode.warning = '';
 							}			
+						}else if(sourceNode.nodeclass=='Q' && sourceNode.type == 'Q_linkedmodule'){
+							if(destNode.nodeclass!='P'){
+								$log.info("Hovering Q_linkedmodule on a non P node");
+								
+								wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
+								sourceNode.warning = 'warning';		
+							}else{
+								wrappedplaceholder.removeClass('angular-ui-tree-placeholder-warning');
+								sourceNode.warning = '';
+							}
 						}else if(sourceNode.nodeclass=='P'){
 							if(destNode.nodeclass=='P'){
 								$log.info("Hovering P on P");
@@ -650,11 +660,17 @@
 					if(!destNode){
 						$scope.isDragging = false;
 						retValue=false;
+						sourceNode.warning = '';
 					}else{
 						if(sourceNode.nodeclass=='Q'){
 							if(destNode.nodeclass=='Q'){
 								$log.info("dropped Q on Q");							
 								retValue=false;		
+							}else if(sourceNode.type == 'Q_linkedmodule'){
+								if(destNode.nodeclass!='P'){
+									$log.info("dropped Q_linkedmodule on a non P node");
+									retValue=false;
+								}
 							}			
 						}else if(sourceNode.nodeclass=='P'){
 							if(destNode.nodeclass=='P'){
@@ -662,7 +678,7 @@
 								retValue=false;		
 							}else if(destNode.nodeclass=='M'){
 								$log.info("Dropped P on M");
-								retValue=false;			
+								retValue=false;
 							}else{
 								sourceNode.warning = '';
 							}			
