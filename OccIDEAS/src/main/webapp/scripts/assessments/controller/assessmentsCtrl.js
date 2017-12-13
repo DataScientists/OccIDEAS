@@ -948,7 +948,7 @@
 						$scope.assessmentFilter.idParticipant=lengthGreaterThan2(params.filter().idParticipant);
 						$scope.assessmentFilter.interviewId=lengthGreaterThan2(params.filter().idinterview);
 						$scope.assessmentFilter.reference=lengthGreaterThan2(params.filter().reference);
-						if(lengthGreaterThan2(params.filter().status)){
+						/*if(lengthGreaterThan2(params.filter().status)){
 							if(params.filter().status.startsWith('run') ){
 								$scope.assessmentFilter.status = 0
 							}else if(params.filter().status.startsWith('par') ){
@@ -958,7 +958,8 @@
 							}else if(params.filter().status.startsWith('tob') ){
 								$scope.assessmentFilter.status = 3
 							}						 
-						}
+						}*/
+						$scope.assessmentFilter.status = params.filter().status;
 						$scope.assessmentFilter.assessedStatus=lengthGreaterThan2(params.filter().assessedStatus);
 						$scope.assessmentFilter.interviewModuleName=lengthGreaterThan2(params.filter().interviewModuleName);
 						$scope.assessmentFilter.pageNumber=params.page();
