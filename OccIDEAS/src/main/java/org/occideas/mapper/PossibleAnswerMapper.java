@@ -38,4 +38,12 @@ public interface PossibleAnswerMapper {
 			boolean includeRules);
 
 	PossibleAnswerVO convertToPossibleAnswerVOExcQuestionAnsChild(PossibleAnswer answerEntity);
+
+    PossibleAnswer convertToPossibleAnswer(PossibleAnswerVO answerVO, boolean includeChild);
+
+    List<PossibleAnswerVO> convertToPossibleAnswerListVO(List<PossibleAnswer> answer, boolean includeChild);
+
+    PossibleAnswerVO convertToPossibleAnswerVOOnly(PossibleAnswer answerEntity, boolean includeChildNode);
+
+    List<PossibleAnswerVO> convertToPossibleAnswerVOOnlyList(List<PossibleAnswer> answerEntity, boolean includeChildNodes);
 }

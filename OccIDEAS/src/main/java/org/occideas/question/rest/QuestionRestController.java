@@ -15,7 +15,9 @@ import javax.ws.rs.core.Response.Status;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.NodesAgent;
 import org.occideas.module.service.ModuleService;
+import org.occideas.node.service.INodeService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.vo.ModuleVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -25,9 +27,10 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 
 	@Autowired
 	private QuestionService service;
-	
 	@Autowired
 	private ModuleService moduleService;
+	@Autowired
+	private INodeService nodeService;
 	
 	@GET
 	@Path(value="/getlist")
@@ -152,4 +155,22 @@ public class QuestionRestController implements BaseRestController<QuestionVO>{
 		}
 		return Response.ok(list).build();
 	}
+	
+	@GET
+    @Path(value = "/getQuestionById")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response getQuestionById(@QueryParam("id") Long id)
+    {
+        QuestionVO question = null;
+        try
+        {
+            question = nodeService.getQuestion(id);
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(question).build();
+    }
 }

@@ -11,7 +11,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.Module;
+import org.occideas.entity.Question;
 import org.occideas.modulerule.service.ModuleRuleService;
+import org.occideas.node.service.INodeService;
 import org.occideas.vo.ModuleRuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -104,6 +107,7 @@ public class ModuleRuleRestController implements BaseRestController<ModuleRuleVO
 		}
 		return Response.ok(list).build();
 	}
+	
 
 	@Override
 	public Response get(Long id) {

@@ -24,6 +24,35 @@ public class ModuleMapperImpl implements ModuleMapper {
     private ModuleRuleMapper ruleMapper;
 
     @Override
+    public ModuleVO convertToModuleVOOnly(Module moduleEntity) {
+        if ( moduleEntity == null ) {
+            return null;
+        }
+
+        ModuleVO moduleVO = new ModuleVO();
+
+        moduleVO.setIdNode( moduleEntity.getIdNode() );
+        moduleVO.setName( moduleEntity.getName() );
+        moduleVO.setDescription( moduleEntity.getDescription() );
+        moduleVO.setType( moduleEntity.getType() );
+        moduleVO.setSequence( moduleEntity.getSequence() );
+        moduleVO.setNumber( moduleEntity.getNumber() );
+        moduleVO.setParentId( moduleEntity.getParentId());
+        moduleVO.setLink( moduleEntity.getLink() );
+        moduleVO.setTopNodeId( moduleEntity.getTopNodeId() );
+        moduleVO.setLastUpdated( moduleEntity.getLastUpdated() );
+        moduleVO.setChildNodes(nodeMapper.convertToQuestionVOExcludeChildsList(moduleEntity.getChildNodes()));
+        moduleVO.setOriginalId( moduleEntity.getOriginalId() );
+        moduleVO.setDeleted( moduleEntity.getDeleted() );
+        moduleVO.setNodeclass( moduleEntity.getNodeclass() );
+        List<ModuleRule> moduleRule = moduleEntity.getModuleRule();
+        if(!CommonUtil.isListEmpty(moduleRule)){
+            moduleVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+        }
+        return moduleVO;
+    }
+    
+    @Override
     public ModuleVO convertToModuleVO(Module moduleEntity,boolean includeChild) {
         if ( moduleEntity == null ) {
             return null;

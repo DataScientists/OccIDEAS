@@ -19,6 +19,8 @@ angular
     "pascalprecht.translate",
     "ui.bootstrap.contextMenu",
     "ui.bootstrap",
+    "bsLoadingOverlay",
+    "bsLoadingOverlaySpinJs",
     "ui.select",
     'ngMessages',
     "occIDEASApp.Tabs",
@@ -90,8 +92,8 @@ angular
   .factory('TokenRefreshInterceptor',TokenRefreshInterceptor)
   .factory('ErrorHandler',ErrorHandler);	
 
-   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService','dataBeanService','$window','$sessionStorage'];
-   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService,dataBeanService,$window,$sessionStorage) {
+   configureDefaults.$inject = ['ngTableDefaults','$state', '$rootScope','AuthenticationService','dataBeanService','$window','$sessionStorage','bsLoadingOverlayService'];
+   function configureDefaults(ngTableDefaults,$state,$rootScope,AuthenticationService,dataBeanService,$window,$sessionStorage,bsLoadingOverlayService) {
 	   	$rootScope._ = window._; 
 	   	ngTableDefaults.params.count = 5;
         ngTableDefaults.settings.counts = [];
@@ -131,6 +133,9 @@ angular
             }
           });
         
+        bsLoadingOverlayService.setGlobalConfig({
+    		templateUrl: 'bsLoadingOverlaySpinJs'
+    	});  
    }
    
    ErrorHandler.$inject = ['$injector','$window','$location'];

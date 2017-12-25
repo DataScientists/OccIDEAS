@@ -35,5 +35,9 @@ public interface QuestionMapper {
 			boolean includeRules);
 
 	QuestionVO convertToQuestionWithFlagsVO(Question question, boolean includeChildnodes, boolean includeRules);
+
+    QuestionVO convertToQuestionVOOnly(Question question);
+
+    List<QuestionVO> convertToQuestionVOOnlyList(List<Question> questionEntity);
 	
 }

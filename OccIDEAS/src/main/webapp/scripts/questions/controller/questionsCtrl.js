@@ -14,17 +14,32 @@
 	                          '$rootScope','ModuleRuleService','$log','$timeout', 
 	                          'AuthenticationService','$document','InterviewsService',
 	                          'SystemPropertyService','ngToast','$translate',
-	                          'NodeLanguageService','$sessionStorage','lang', 'scrollTo','$http'];
+	                          'NodeLanguageService','$sessionStorage','lang', 'scrollTo','$http','bsLoadingOverlayService'];
 	function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
 			$q,QuestionsService,ModulesService,
 			$anchorScroll,$location,$mdMedia,$window,$state,
 			AgentsService,RulesService,$compile,$rootScope,
 			ModuleRuleService,$log,$timeout, auth,$document,InterviewsService,
 			SystemPropertyService,ngToast,$translate,
-			NodeLanguageService,$sessionStorage,lang, scrollTo,$http) {
+			NodeLanguageService,$sessionStorage,lang, scrollTo,$http,bsLoadingOverlayService) {
 		var self = this;
 		self.lang = lang;
-		self.node = data;
+		self.data = data;
+		var indexCount = 0;
+		var totalIndexCount = self.data[0].nodes.length;
+		self.determinateValue = indexCount/totalIndexCount;
+		  
+		self.node = reduceNodeDetails(data);
+		function reduceNodeDetails(node){
+			var result = angular.copy(node);
+			result[indexCount].nodes = [];
+			if(totalIndexCount > 0){
+				result[indexCount].nodes.push(self.data[indexCount].nodes[indexCount]);
+			}
+			indexCount++;
+			return result;
+		}
+		
 		if(self.lang){
 			$sessionStorage.idNode = self.node[0].idNode;
 			$translate.refresh();
@@ -353,11 +368,9 @@
 
 		$scope.isCollapsableNode = function(node){
 			if(node){				
-				if($scope.isModuleHeaderNode(node)){
+				if(((node.nodeclass === 'M')||(node.nodeclass === 'F'))){
 					return false;
 				}else if(node.nodes.length==0){
-					return false;
-				}else if(node.deleted==1){
 					return false;
 				}else{
 					return true;
@@ -3266,6 +3279,45 @@
                scrollTop: 0
            }, 800);
        }
+       
+       var loadNodes = function(){
+    	   bsLoadingOverlayService.start();
+    	   for(var i=1;i < totalIndexCount;i++){
+    		   (function(i) {
+    			   $timeout(function() {
+    				   loadChildNodes(i);
+    			   }, 0);
+    		   })(i)
+    	   }
+    	   if(totalIndexCount < 1){
+    		   bsLoadingOverlayService.stop();
+    	   }
+       }
+       
+       var loadChildNodes = function(i){
+    	   $scope.safeApply(function () {
+    		   self.node[0].nodes.push(self.data[0].nodes[i]);
+    		   indexCount++;
+    		   var childLength = getNumberOfChildNode(self.data[0].nodes[i],0);
+    		   if(i >= self.data[0].nodes.length-1){
+   				 bsLoadingOverlayService.stop();
+     	   		}
+    		   
+    	   });
+       }
+       
+       function getNumberOfChildNode(n, count){
+    	   count = count + n.nodes.length; 
+    	   _.each(n.nodes,function(x){
+    		   count = getNumberOfChildNode(x, count);
+    	   });
+    	   return count;
+       }
+       
+       $timeout(function() {
+    	   loadNodes();
+       }, 1000);
+
        
 	}
 })();

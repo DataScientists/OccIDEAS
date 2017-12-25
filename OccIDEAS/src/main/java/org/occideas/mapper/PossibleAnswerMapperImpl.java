@@ -98,6 +98,42 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 	}
 	
 	@Override
+    public PossibleAnswerVO convertToPossibleAnswerVOOnly(PossibleAnswer answerEntity,boolean includeChildNode) {
+        if ( answerEntity == null ) {
+            return null;
+        }
+
+        PossibleAnswerVO answerVO = new PossibleAnswerVO();
+
+        answerVO.setIdNode( answerEntity.getIdNode() );
+        answerVO.setName( answerEntity.getName() );
+        answerVO.setDescription( answerEntity.getDescription() );
+        answerVO.setType( answerEntity.getType() );
+        answerVO.setSequence( answerEntity.getSequence() );
+        answerVO.setNumber( answerEntity.getNumber() );
+        answerVO.setParentId( answerEntity.getParentId());
+        answerVO.setLink( answerEntity.getLink() );
+        answerVO.setTopNodeId( answerEntity.getTopNodeId() );
+        answerVO.setLastUpdated( answerEntity.getLastUpdated() );
+        List<Question> childNodes = new ArrayList<Question>();
+        if(includeChildNode){
+            childNodes = answerEntity.getChildNodes();
+            if(!CommonUtil.isListEmpty(childNodes)){
+                answerVO.setChildNodes( mapper.convertToQuestionVOOnlyList( childNodes ) );
+            }
+            List<ModuleRule> moduleRule = answerEntity.getModuleRule();
+            if(!CommonUtil.isListEmpty(moduleRule)){
+                answerVO.setModuleRule(ruleMapper.convertToModuleRuleVOList(moduleRule));
+            }
+        }
+        answerVO.setOriginalId( answerEntity.getOriginalId() );
+        answerVO.setDeleted( answerEntity.getDeleted() );
+        answerVO.setNodeclass( answerEntity.getNodeclass() );
+        
+        return answerVO;
+    }
+	
+	@Override
 	public PossibleAnswerVO convertToPossibleAnswerVOExcQuestionAnsChild(PossibleAnswer answerEntity) {
 		if ( answerEntity == null ) {
             return null;
@@ -174,6 +210,21 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 
         return list;
 	}
+	
+	@Override
+    public List<PossibleAnswerVO> convertToPossibleAnswerVOOnlyList(List<PossibleAnswer> answerEntity,boolean includeChildNodes) {
+        if ( answerEntity == null ) {
+            return null;
+        }
+
+        List<PossibleAnswerVO> list = new ArrayList<PossibleAnswerVO>();
+        for ( PossibleAnswer answer : answerEntity ) {
+            list.add( convertToPossibleAnswerVOOnly( answer,includeChildNodes) );
+        }
+
+        return list;
+    }
+	
 	@Override
 	public List<PossibleAnswerVO> convertToInterviewPossibleAnswerVOList(List<PossibleAnswer> answerEntity) {
 		if ( answerEntity == null ) {
@@ -215,6 +266,35 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 	        possibleAnswer.setNodeclass( answerVO.getNodeclass() );
 	        return possibleAnswer;
 	}
+	
+	@Override
+    public PossibleAnswer convertToPossibleAnswer(PossibleAnswerVO answerVO,boolean includeChild) {
+         if ( answerVO == null ) {
+                return null;
+            }
+
+         PossibleAnswer possibleAnswer = new PossibleAnswer();
+
+            possibleAnswer.setIdNode( answerVO.getIdNode() );
+            possibleAnswer.setName( answerVO.getName() );
+            possibleAnswer.setDescription( answerVO.getDescription() );
+            possibleAnswer.setType( answerVO.getType() );
+            possibleAnswer.setSequence( answerVO.getSequence() );
+            possibleAnswer.setParentId( answerVO.getParentId() );
+            possibleAnswer.setLastUpdated( answerVO.getLastUpdated() );
+            List<QuestionVO> childNodes = answerVO.getChildNodes();
+            if(!CommonUtil.isListEmpty(childNodes) && includeChild){
+                possibleAnswer.setChildNodes( mapper.convertToQuestionList(childNodes) );
+            }
+            possibleAnswer.setNumber( answerVO.getNumber() );
+            possibleAnswer.setLink( answerVO.getLink() );
+            possibleAnswer.setTopNodeId( answerVO.getTopNodeId() );
+            possibleAnswer.setOriginalId( answerVO.getOriginalId() );
+            possibleAnswer.setDeleted( answerVO.getDeleted() );
+            possibleAnswer.setNodeclass( answerVO.getNodeclass() );
+            return possibleAnswer;
+    }
+	
 	@Override
 	public PossibleAnswer convertToPossibleAnswerExModRule(PossibleAnswerVO answerVO) {
 		 if ( answerVO == null ) {
@@ -253,6 +333,21 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 
         return list;
 	}
+	
+	@Override
+    public List<PossibleAnswerVO> convertToPossibleAnswerListVO(List<PossibleAnswer> answer, boolean includeChild) {
+        if ( answer == null ) {
+            return null;
+        }
+
+        List<PossibleAnswerVO> list = new ArrayList<>();
+        for ( PossibleAnswer entity : answer ) {
+            list.add( convertToPossibleAnswerVO( entity ,includeChild) );
+        }
+
+        return list;
+    }
+	
 	@Override
 	public List<PossibleAnswer> convertToPossibleAnswerExModRuleList(List<PossibleAnswerVO> answerVO) {
 		if ( answerVO == null ) {

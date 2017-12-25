@@ -7,28 +7,18 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
-import org.hibernate.annotations.Where;
 
 @Entity 
 @DiscriminatorValue("P")
 @DynamicUpdate(value=true)
 @DynamicInsert(value=true)
 @SelectBeforeUpdate(value=true)
-public class PossibleAnswer extends Node {
+public class PossibleAnswer extends Node<Question> {
 
-	@OneToMany(mappedBy="parentId",targetEntity=Node.class)
-	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
-	@Where(clause = "deleted = 0")
-	@OrderBy("sequence ASC")
-	private List<Question> childNodes;
-	
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinColumn(name="idNode",referencedColumnName="idNode",updatable=false)
 	protected List<ModuleRule> moduleRule; 
@@ -37,7 +27,7 @@ public class PossibleAnswer extends Node {
 		super();
 	}
 
-	public PossibleAnswer(Node node) {
+	public PossibleAnswer(Node<Question> node) {
 		super(node);
 	}
 
@@ -47,14 +37,6 @@ public class PossibleAnswer extends Node {
 
 	public PossibleAnswer(long idNode) {
 		this.setIdNode(idNode);
-	}
-
-	public List<Question> getChildNodes() {
-		return childNodes;
-	}
-
-	public void setChildNodes(List<Question> childNodes) {
-		this.childNodes = childNodes;
 	}
 
 	public List<ModuleRule> getModuleRule() {
