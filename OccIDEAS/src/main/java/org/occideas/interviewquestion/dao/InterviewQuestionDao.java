@@ -260,76 +260,16 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     }
 	
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	@Override
-	public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq) {
-		iq.setProcessed(true);
-		sessionFactory.getCurrentSession().saveOrUpdate(iq);
-		int intQuestionSequence = iq.getIntQuestionSequence();
-		long parentModuleId = iq.getLink();
-//		SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
-//		if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
-//			// get intro id
-//			SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
-//			if (introModule == null) {
-//				log.error("no intro module set");
-//				return null;
-//			} else {
-//				try {
-//					
-//					if (introModule.getValue().equals(String.valueOf(parentModuleId))) {
-//						loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
-//					} else {
-//						boolean filterAndCreateJson = false;
-//						
-//						
-//						try {
-//							if(!studyAgentUtil.doesStudyAgentJsonExist(String.valueOf(parentModuleId))){
-//								filterAndCreateJson = true;
-//							}
-//						} catch (IOException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-//						NodeVO moduleFilterStudyAgent = null;
-//						NodeVO determineType = moduleService.getNodeNameById(parentModuleId);
-//						
-//						if(filterAndCreateJson){
-//							moduleFilterStudyAgent = (NodeVO) moduleService
-//									.getModuleFilterStudyAgent(Long.valueOf(parentModuleId));
-//							
-//							studyAgentUtil.createStudyAgentJson(String.valueOf(parentModuleId), moduleFilterStudyAgent,false);
-//						}else{
-//							if (determineType instanceof ModuleVO) {
-//								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentJson(String.valueOf(parentModuleId));
-//							} else if (determineType instanceof FragmentVO) {
-//								moduleFilterStudyAgent = studyAgentUtil.getStudyAgentFragmentJson(String.valueOf(parentModuleId));
-//							}
-//							
-//						}
-//						
-//						if (moduleFilterStudyAgent == null) {
-//							// empty link remove it from queue
-//							iq.setDeleted(1);
-//							sessionFactory.getCurrentSession().saveOrUpdate(iq);
-//
-//						} else if (moduleFilterStudyAgent instanceof ModuleVO) {
-//							ModuleVO modVO = (ModuleVO) moduleFilterStudyAgent;
-//							loopChildStudyAgentAndQueue(iq, intQuestionSequence, modVO.getChildNodes());
-//						} else if (moduleFilterStudyAgent instanceof FragmentVO) {
-//							FragmentVO fragVO = (FragmentVO) moduleFilterStudyAgent;
-//							loopChildStudyAgentAndQueue(iq, intQuestionSequence, fragVO.getChildNodes());
-//						}
-//					}
-//				} catch (Exception e) {
-//					log.error("Error on saveInterviewLinkAndQueueQuestions ",e);
-//				} 
-//			}
-//		} else {
-			loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
-//		}
-		return iq;
-	}
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq) {
+        iq.setProcessed(true);
+        sessionFactory.getCurrentSession().saveOrUpdate(iq);
+        int intQuestionSequence = iq.getIntQuestionSequence();
+        long parentModuleId = iq.getLink();
+        loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
+        return iq;
+    }
 
 	private void loopChildQuestionsAndQueue(InterviewQuestion iq, int intQuestionSequence, long parentModuleId) {
 	    List<QuestionVO> queueQuestions = new ArrayList<>();

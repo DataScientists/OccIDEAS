@@ -283,7 +283,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     @Path(value = "/updateAutoAssessments")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response updateAutoAssessments() {
-    	List<InterviewVO> list = new ArrayList<InterviewVO>();
+    	List<InterviewVO> list = service.listAllInterviewsWithoutAnswers();
 		try{
 			
 			List<AgentVO> listAgents = agentService.getStudyAgents();
