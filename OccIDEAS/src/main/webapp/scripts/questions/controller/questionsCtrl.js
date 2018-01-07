@@ -29,7 +29,8 @@
 		var totalIndexCount = self.data[0].nodes.length;
 		self.determinateValue = indexCount/totalIndexCount;
 		  
-		self.node = reduceNodeDetails(data);
+		self.node = data;
+//		self.node = reduceNodeDetails(data);
 		function reduceNodeDetails(node){
 			var result = angular.copy(node);
 			result[indexCount].nodes = [];
@@ -3314,9 +3315,9 @@
     	   return count;
        }
        
-       $timeout(function() {
-    	   loadNodes();
-       }, 1000);
+//       $timeout(function() {
+//    	   loadNodes();
+//       }, 1000);
 
        
 	}
