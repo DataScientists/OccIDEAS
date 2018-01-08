@@ -71,12 +71,13 @@
         	var jsondata = {
         			idNode:moduleIdNode,
         			language:self.lang.id,
+        			languageId:self.lang.id,
         			vo:listOfLang
         	}
-        	NodeLanguageService.batchSaveJson(jsondata).then(function(response){
+        	NodeLanguageService.batchSave(jsondata).then(function(response){
     			if(response.status == '200'){
     				$translate.refresh();
-    				$translate.use(self.lang.id);
+    				$translate.use(lang.language);
     			}
     		});
         	self.editTranslateNode = false;
