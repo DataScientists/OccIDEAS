@@ -98,14 +98,14 @@
 			<td ng-click="highlightNode(noiseRow.idNode,noiseRow)">{{noiseRow.nodeNumber}}</td>
 			<td>{{noiseRow.nodeText}}</td>
 			<td>{{noiseRow.dB}}</td>
-			<td>{{noiseRow.backgroundhours}}</td>
-			<td>{{noiseRow.partialExposure}}</td>
+			<td>{{noiseRow.backgroundhours | number : 4}}</td>
+			<td>{{noiseRow.partialExposure | number : 4}}</td>
 		</tr>
 		</table>
 		
-		<div>Total Partial Exposure: {{totalPartialExposure}}</div>
-		<div>Auto Exposure Level: {{autoExposureLevel}}</div>
-		<div>Peak Noise: {{peakNoise}}</div>
+		<div>Total Partial Exposure: {{totalPartialExposure | number : 4}}</div>
+		<div>Auto Exposure Level: {{autoExposureLevel | number : 4}}</div>
+		<div>Peak Noise: {{peakNoise | number : 4}}</div>
 		
 	</div>
 	<div class="vibrationAssessmentWrapper" ng-if="vibrationRows.length>0">
