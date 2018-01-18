@@ -414,16 +414,32 @@ public class ModuleRestController implements BaseRestController<ModuleVO>
     @Produces(value = MediaType.APPLICATION_JSON)
     public Response update(ModuleVO json)
     {
+        Long idNode = null; 
         try
         {
-            service.update(json);
+            idNode = service.update(json);
         }
         catch (Throwable e)
         {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
-        return Response.ok().build();
+        return Response.ok(idNode).build();
+    }
+    
+    public Response save(ModuleVO json)
+    {
+        Long idNode = null;
+        try
+        {
+            idNode = service.save(json);
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(idNode).build();
     }
 
 

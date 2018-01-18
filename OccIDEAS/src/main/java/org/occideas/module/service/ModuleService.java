@@ -2,7 +2,6 @@ package org.occideas.module.service;
 
 import java.util.List;
 
-import org.occideas.base.service.BaseService;
 import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.vo.LanguageModBreakdownVO;
@@ -12,7 +11,7 @@ import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeRuleHolder;
 import org.occideas.vo.NodeVO;
 
-public interface ModuleService extends BaseService<ModuleVO>{
+public interface ModuleService{
 	public void merge(ModuleVO module);
 	public Long getMaxId();
 	List<ModuleVO> findByIdForInterview(Long id);
@@ -42,4 +41,10 @@ public interface ModuleService extends BaseService<ModuleVO>{
     public Integer getTotalTranslatedNodeByLanguage(long languageId);
     public Integer getModulesWithTranslationCount(long languageId);
     List<String> getFilterStudyAgent(Long id);
+    public long update(ModuleVO vo);
+    public long save(ModuleVO module);
+    ModuleVO create(ModuleVO module);
+    void delete(ModuleVO module);
+    List<ModuleVO> findById(Long id);
+    List<ModuleVO> listAll();
 }

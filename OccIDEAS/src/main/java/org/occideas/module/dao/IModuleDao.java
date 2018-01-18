@@ -21,6 +21,8 @@ public interface IModuleDao {
 	public Module merge(Module module);
 
 	public void saveOrUpdate(Module module);
+	
+	public long create(Module module);
 
 	public List<Module> getAll(boolean b);
 

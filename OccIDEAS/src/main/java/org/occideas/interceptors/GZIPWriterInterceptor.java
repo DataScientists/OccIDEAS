@@ -11,7 +11,7 @@ import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
 
 @Provider
-//@Compress
+//@Compressx
 public class GZIPWriterInterceptor implements WriterInterceptor {
 
     @Override

@@ -136,14 +136,22 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Auditable(actionType = AuditingActionType.UPDATE_MODULE)
-	@Override
-	public void update(ModuleVO module) {
-		generateIdIfNotExist(module);
-		dao.saveOrUpdate(mapper.convertToModule(module, true));
+	public long update(ModuleVO module) {
 		if( module.getIdNode() != 0){
+		    dao.saveOrUpdate(mapper.convertToModule(module, true));
 			studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(),module.getName());
+			return module.getIdNode();
+		}else{
+		    return dao.create(mapper.convertToModule(module, true));
 		}
 	}
+	
+	@Auditable(actionType = AuditingActionType.UPDATE_MODULE)
+    public long save(ModuleVO module) {
+        return dao.create(mapper.convertToModule(module, true));
+    }
+	
+	
 
 	@Auditable(actionType = AuditingActionType.DEL_MODULE)
 	@Override
@@ -164,11 +172,6 @@ public class ModuleServiceImpl implements ModuleService {
 		return dao.generateIdNode();
 	}
 
-	private void generateIdIfNotExist(ModuleVO module) {
-		if (StringUtils.isEmpty(module.getIdNode())) {
-			module.setIdNode(dao.generateIdNode());
-		}
-	}
 
 	@Override
 	public NodeRuleHolder copyModule(ModuleCopyVO vo) {

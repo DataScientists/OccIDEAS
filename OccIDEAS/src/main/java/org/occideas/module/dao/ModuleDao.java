@@ -1,5 +1,6 @@
 package org.occideas.module.dao;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -74,6 +75,13 @@ public class ModuleDao implements IModuleDao
     public void saveOrUpdate(Module module)
     {
         sessionFactory.getCurrentSession().saveOrUpdate(module);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public long create(Module module)
+    {
+        sessionFactory.getCurrentSession().save(module);
+        return module.getIdNode();
     }
 
 
