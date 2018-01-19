@@ -210,6 +210,8 @@ public class InterviewAnswerDao implements IInterviewAnswerDao
                 intQuestionSequence++;
                 if(shouldQueueQuestion(a, filterStudyAgentFlag, iq)){
                     sessionFactory.getCurrentSession().saveOrUpdate(iq);
+                }else{
+                	System.out.println("Not queing question "+iq.getName());
                 }
             }
         }

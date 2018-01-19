@@ -190,7 +190,7 @@ public class ModuleDao implements IModuleDao
         return list;
     }
 
-    private final String GET_NODE_BY_TYPE = "SELECT * from node where "+
+    private final String GET_NODE_BY_TYPE = "SELECT * from Node where "+
         " type = :type"+
         " and deleted = 0";
 
