@@ -794,9 +794,209 @@ public class AssessmentRestController {
 		updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
 		return Response.ok().build();
 	}
-
+	
 	@POST
 	@Path(value = "/exportAssessmentsVibrationCSV")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response exportAssessmentsVibrationFullCSV(FilterModuleVO filterModuleVO) {
+
+		// check if we have the directory TreeSet ins sys prop
+		SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
+		if (csvDir == null) {
+			return Response.status(Status.BAD_REQUEST).type("text/plain")
+					.entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
+		}
+		String exportFileCSV = createFileName(filterModuleVO.getFileName());
+
+		ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
+				ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
+		String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+		reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
+				ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
+
+		Long count = interviewService.getAllWithRulesCount(filterModuleVO.getFilterModule());
+
+		reportHistoryVO.setRecordCount(count);
+
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.11, new Date(),
+				INITIAL_DURATION_MIN);
+
+		List<Interview> uniqueInterviews = interviewService.listAllWithRules(filterModuleVO.getFilterModule());
+
+		List<ModuleVO> modules = moduleService.listAll();
+		List<FragmentVO> fragements = fragementService.listAll();
+		
+		try {
+			File file = new File(fullPath);
+			CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
+			Set<String> headers = new LinkedHashSet<>();
+			headers.add("Interview Id");
+			headers.add("AWES ID");
+			headers.add("Status");
+			headers.add("Module");
+			headers.add("Job Module Name");
+			headers.add("Shiftlength");
+			headers.add("Daily Vibration");
+			headers.add("aJSM Name");
+			headers.add("Node Number");
+			headers.add("Answer");
+			headers.add("Partial Vibration");
+			
+			String[] line = Arrays.copyOf(headers.toArray(), headers.toArray().length, String[].class);
+			writer.writeNext(line);
+						
+			int currentCount = 0;
+
+			AgentVO noiseAgent = getAgent("VIBRATIONAGENT");
+			
+			int iSize = uniqueInterviews.size();
+			
+			for (Interview interviewVO : uniqueInterviews) {
+				currentCount++;
+				
+				//if(currentCount>10){
+				//	break;
+				//}
+				System.out.println("Vibration report:" + currentCount + " of "+ iSize);
+				
+				boolean bFoundNoiseRules = false;
+				List<RuleVO> noiseRules = new ArrayList<RuleVO>();
+				
+				List<InterviewFiredRulesVO> firedRules = firedRulesService.findByInterviewId(interviewVO.getIdinterview());
+				for (InterviewFiredRulesVO fr : firedRules) {
+					for (RuleVO r : fr.getRules()) {
+						RuleVO rule = r;
+						if (noiseAgent.getIdAgent() == rule.getAgentId()) {
+							noiseRules.add(rule);
+							bFoundNoiseRules = true;
+						}
+					}
+				}
+				String shiftHours = "-NA-";				
+
+				List<InterviewAnswerVO> interviewAnswers = interviewAnswerService
+						.findByInterviewId(interviewVO.getIdinterview());
+				List<InterviewQuestionVO> interviewQuestions = interviewQuestionService
+						.findByInterviewId(interviewVO.getIdinterview());
+				for (InterviewAnswerVO ia : interviewAnswers) {
+					if (ia.getType().equalsIgnoreCase("P_frequencyshifthours")) {
+						shiftHours = ia.getAnswerFreetext();
+						break;
+					}
+				}
+				String dailyvibration = "-NA-";
+				if (bFoundNoiseRules) {
+					Float totalFrequency = new Float(0);
+
+					Float level = new Float(0);
+					Float totalPartialExposure = new Float(0);
+					for (RuleVO noiseRule : noiseRules) {
+						Float frequencyhours = new Float(0);
+						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
+
+						if (actualAnswer != null) {
+							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
+									interviewQuestions, actualAnswer);
+
+							if (frequencyHoursNode != null) {
+								try {
+									frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+								} catch (Exception e) {
+									System.err
+											.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
+									log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
+								}
+							}
+						}
+
+						try {
+							level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+						} catch (Exception e) {
+							System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+							log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
+						}
+						Float partialExposure = (float) (level) * (float) (level) * (float) (frequencyhours);
+
+						
+						totalPartialExposure = ((totalPartialExposure) + (partialExposure));
+						totalFrequency += frequencyhours;
+					}
+
+					Float dailyVibration = (float) Math.sqrt((float) (totalPartialExposure) / 8);
+					dailyvibration = dailyVibration.toString();
+				}
+				for (RuleVO noiseRule : noiseRules) {
+					List<String> answers = new ArrayList<>();
+					answers.add(String.valueOf(interviewVO.getIdinterview()));
+					answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+					String pStatus = "ERROR";
+					try {
+						pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
+					} catch (Exception e) {
+						System.out.println("No participant for interview " + interviewVO.getIdinterview());
+						log.error("No participant for interview " + interviewVO.getIdinterview(),e);
+					}
+					answers.add(pStatus);
+
+					addModuleNames(interviewVO, answers);
+					answers.add(shiftHours);
+					answers.add(dailyvibration);
+					PossibleAnswerVO node = noiseRule.getConditions().get(0);
+					
+					
+					answers.add(findModuleName(node.getTopNodeId(),modules,fragements));
+					
+					answers.add(node.getNumber());
+					answers.add(node.getName());
+					
+					Float level = new Float(0);
+					Float frequencyhours = new Float(0);
+					PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+					InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
+
+					if (actualAnswer != null) {
+						InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
+								interviewQuestions, actualAnswer);
+
+						if (frequencyHoursNode != null) {
+							try {
+								frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+							} catch (Exception e) {
+								System.err.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
+								log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
+							}
+						}
+					}
+
+					try {
+						level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+					} catch (Exception e) {
+						System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+						log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
+					}
+					Float partialExposure = (float) (level) * (float) (level) * (float) (frequencyhours);
+					answers.add(partialExposure.toString());
+					
+					
+					
+										
+					line = Arrays.copyOf(answers.toArray(), answers.toArray().length, String[].class);
+					writer.writeNext(line);
+				}						
+			}
+			writer.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
+		return Response.ok().build();
+	}
+
+	@POST
+	@Path(value = "/exportAssessmentsVibrationOldCSV")
 	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
 	public Response exportAssessmentsVibrationCSV(FilterModuleVO filterModuleVO) {
 
@@ -932,7 +1132,7 @@ public class AssessmentRestController {
 	private ExportCSVVO populateAssessmentVibrationCSV(List<Interview> uniqueInterviews,
 			ReportHistoryVO reportHistoryVO, long msPerInterview) {
 		ExportCSVVO vo = new ExportCSVVO();
-		Set<String> headers = populateHeadersAndAnswersAssessmentVibration(uniqueInterviews, vo, reportHistoryVO,
+		Set<String> headers = populateHeadersAndAnswersAssessmentVibrationFull(uniqueInterviews, vo, reportHistoryVO,
 				msPerInterview);
 		vo.setHeaders(headers);
 		return vo;
@@ -951,7 +1151,7 @@ public class AssessmentRestController {
 		headers.add("Job Module Name");
 		headers.add("Shift Length");
 		headers.add("Daily Vibration");
-
+		
 		long startTime = System.currentTimeMillis();
 		long elapsedTime = 0;
 		int currentCount = 0;
@@ -1037,6 +1237,7 @@ public class AssessmentRestController {
 					}
 					Float partialExposure = (float) (level) * (float) (level) * (float) (frequencyhours);
 
+					
 					totalPartialExposure = ((totalPartialExposure) + (partialExposure));
 					totalFrequency += frequencyhours;
 				}
@@ -1048,6 +1249,132 @@ public class AssessmentRestController {
 			answers.add(dailyvibration);
 
 			exportCSVVO.getAnswers().put(interviewVO, answers);
+
+			elapsedTime = System.currentTimeMillis() - startTime;
+		}
+
+		return headers;
+	}
+	private Set<String> populateHeadersAndAnswersAssessmentVibrationFull(List<Interview> uniqueInterviews,
+			ExportCSVVO exportCSVVO, ReportHistoryVO reportHistoryVO, long msPerInterview) {
+
+		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.3);
+
+		Set<String> headers = new LinkedHashSet<>();
+		headers.add("Interview Id");
+		headers.add("AWES ID");
+		headers.add("Status");
+		headers.add("Intro Module Name");
+		headers.add("Job Module Name");
+		headers.add("Shift Length");
+		headers.add("Partial Exposure");
+
+		long startTime = System.currentTimeMillis();
+		long elapsedTime = 0;
+		int currentCount = 0;
+
+		AgentVO vibrationAgent = getAgent("VIBRATIONAGENT");
+
+		for (Interview interviewVO : uniqueInterviews) {
+
+			currentCount++;
+			if(currentCount>100){
+				break;
+			}
+
+			updateProgress(uniqueInterviews.size(), reportHistoryVO, currentCount, elapsedTime, msPerInterview);
+			System.out.println(currentCount+ " of " + uniqueInterviews.size());
+			boolean bFoundVibrationRules = false;
+			List<RuleVO> vibrationRules = new ArrayList<RuleVO>();
+			String pStatus = "ERROR";
+			try {
+				pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
+			} catch (Exception e) {
+				log.error("no participant at interview" + interviewVO.getIdinterview(),e);
+				System.out.println("no participant at interview" + interviewVO.getIdinterview());
+			}
+			
+			List<InterviewFiredRulesVO> firedRules = firedRulesService.findByInterviewId(interviewVO.getIdinterview());
+
+			for (InterviewFiredRulesVO ir : firedRules) {
+				for (RuleVO rule : ir.getRules()) {
+					if (vibrationAgent.getIdAgent() == rule.getAgentId()) {
+						vibrationRules.add(rule);
+						bFoundVibrationRules = true;
+					}
+				}
+
+			}
+			String shiftHours = "-NA-";
+			String dailyvibration = "-NA-";
+			List<InterviewAnswerVO> interviewAnswers = interviewAnswerService
+					.findByInterviewId(interviewVO.getIdinterview());
+			List<InterviewQuestionVO> interviewQuestions = interviewQuestionService
+					.findByInterviewId(interviewVO.getIdinterview());
+
+			for (InterviewAnswerVO ia : interviewAnswers) {
+				if (ia.getType().equalsIgnoreCase("P_frequencyshifthours")) {
+					shiftHours = ia.getAnswerFreetext();
+					break;
+				}
+			}
+			
+			if (bFoundVibrationRules) {
+				Float totalFrequency = new Float(0);
+
+				Float level = new Float(0);
+				Float totalPartialExposure = new Float(0);
+				for (RuleVO noiseRule : vibrationRules) {
+					Float frequencyhours = new Float(0);
+					PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+					InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
+
+					if (actualAnswer != null) {
+						InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
+								interviewQuestions, actualAnswer);
+
+						if (frequencyHoursNode != null) {
+							try {
+								frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+							} catch (Exception e) {
+								System.err
+										.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
+								log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
+							}
+						}
+					}
+
+					try {
+						level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+					} catch (Exception e) {
+						System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+						log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
+					}
+					List<String> answers = new ArrayList<>();
+					
+					answers.add(String.valueOf(interviewVO.getIdinterview()));
+					answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+					answers.add(pStatus);
+
+					addModuleNames(interviewVO, answers);
+					answers.add(shiftHours);
+					
+					Float partialExposure = (float) (level) * (float) (level) * (float) (frequencyhours);
+					
+					answers.add(partialExposure.toString());
+					exportCSVVO.getAnswers().put(interviewVO, answers);
+					
+					totalPartialExposure = ((totalPartialExposure) + (partialExposure));
+					totalFrequency += frequencyhours;
+				}
+
+				Float dailyVibration = (float) Math.sqrt((float) (totalPartialExposure) / 8);
+				dailyvibration = dailyVibration.toString();
+
+			}
+			//answers.add(dailyvibration);
+
+			
 
 			elapsedTime = System.currentTimeMillis() - startTime;
 		}
