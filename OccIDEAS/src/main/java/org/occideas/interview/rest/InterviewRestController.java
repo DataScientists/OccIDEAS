@@ -310,15 +310,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 				}
 				
 				setRuleLevelNoExposure(listAgents, autoAssessedRules, firedRules);	
-				boolean bUpdateStatus = true;
-				if(interviewVO.getManualAssessedRules()!=null){
-					if(interviewVO.getManualAssessedRules().size()>0){
-						bUpdateStatus = false;;
-					}
-				}
-				if(bUpdateStatus){
-					//interviewVO.setAssessedStatus(Constant.AUTO_ASSESSED);
-				}			
+				evaluateAssessmentStatus(interviewVO);			
+				
 				interviewVO.setAutoAssessedRules(autoAssessedRules);
 				System.out.println("Status is"+interviewVO.getAssessedStatus());
 				service.update(interviewVO);
@@ -330,6 +323,21 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
 		}
 		return Response.ok(list).build();
+    }
+
+    private void evaluateAssessmentStatus(InterviewVO interviewVO)
+    {
+        if(hasManualAssessedRules(interviewVO)){
+            interviewVO.setAssessedStatus(AssessmentStatusEnum.NOTREASSESSED.getDisplay());
+        }
+        else{
+        	interviewVO.setAssessedStatus(AssessmentStatusEnum.AUTOASSESSED.getDisplay());
+        }
+    }
+    
+    private boolean hasManualAssessedRules(InterviewVO interviewVO){
+        return interviewVO.getManualAssessedRules() != null && 
+            !interviewVO.getManualAssessedRules().isEmpty();
     }
 
     private void setRuleLevelNoExposure(List<AgentVO> listAgents, ArrayList<RuleVO> autoAssessedRules, ArrayList<RuleVO> firedRules)

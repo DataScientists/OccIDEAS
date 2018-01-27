@@ -6,7 +6,8 @@ public enum AssessmentStatusEnum {
 	AUTOASSESSED(1,"Auto Assessed"),
 	INCOMPLETE(3,"Incomplete"),
 	NEEDSREVIEW(4,"Needs Review"),
-	FINISHED(5,"Finished");
+	FINISHED(5,"Finished"),
+	NOTREASSESSED(6,"Not Reassessed");
 	
 	private AssessmentStatusEnum(int status, String display){
 		this.status = status;
