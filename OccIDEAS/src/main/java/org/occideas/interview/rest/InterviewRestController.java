@@ -329,9 +329,13 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     {
         if(hasManualAssessedRules(interviewVO)){
             interviewVO.setAssessedStatus(AssessmentStatusEnum.NOTREASSESSED.getDisplay());
-        }
-        else{
-        	interviewVO.setAssessedStatus(AssessmentStatusEnum.AUTOASSESSED.getDisplay());
+        } else {
+        	if(interviewVO.getAssessedStatus().equalsIgnoreCase(AssessmentStatusEnum.NOTASSESSED.getDisplay())){
+        		interviewVO.setAssessedStatus(AssessmentStatusEnum.AUTOASSESSED.getDisplay());
+        	}else{
+        		//leave status the same for now
+        	}
+        	
         }
     }
     
