@@ -424,20 +424,21 @@
                 });
 			}
 			
-			
-			AgentsService.getStudyAgentsWithRules($scope.interviewId).then(function(response) {
-				
-				$scope.agents = [];
-				
-				_.each(response, function(agent) {
-					$scope.agents.push(agent);
+			vm.getStudyAgentsWithRules = function(){
+				AgentsService.getStudyAgentsWithRules($scope.interviewId).then(function(response) {
+
+					$scope.agents = [];
+
+					_.each(response, function(agent) {
+						$scope.agents.push(agent);
+					});
+
+					if($scope.agents.length==0 && $scope.interview){
+						$scope.agents = $scope.interview.agents;
+					}
 				});
-				
-				if($scope.agents.length==0 && $scope.interview){
-					$scope.agents = $scope.interview.agents;
-				}
-			});
-			
+			}
+			vm.getStudyAgentsWithRules();
 			
 			InterviewsService.findModulesByInterviewId($scope.interviewId).then(function(response){
 				if(response.status == '200'){
@@ -1274,6 +1275,7 @@
 		                if (response.status === 200) {
 		                	$log.info("Updated Fired Rules");
 		                	$scope.data = response.data[0];
+		                	vm.getStudyAgentsWithRules();
 		                }
 				  });
 			  	}			  
@@ -1293,6 +1295,7 @@
 		                    	RulesService.saveList(rules).then(function(response){
 		                			if(response.status === 200){
 		                				$log.info('Rules SaveList was Successful!'+rule);
+		                				vm.getStudyAgentsWithRules();
 		                			}
 		                		});
 		                	}
@@ -1315,6 +1318,7 @@
 				  				 InterviewsService.save($scope.data).then(function (response) {
 			  		                if (response.status === 200) {
 			  		                	$log.info("Interview saved with auto assessments");
+			  		                	vm.getStudyAgentsWithRules();
 			  		                }
 				  				 });
 		                	});
@@ -1336,6 +1340,7 @@
                     	RulesService.saveList(rules).then(function(response){
                 			if(response.status === 200){
                 				$log.info('Rules SaveList was Successful!'+rule);
+                				vm.getStudyAgentsWithRules();
                 			}
                 		});
  
@@ -1360,6 +1365,7 @@
 		                	for(var i=0;i<response.data.length;i++){
 		                		model.manualAssessedRules.push(response.data[i].rule);
 		                	}               	
+		                	vm.getStudyAgentsWithRules();
 		                }
                     });
                     
