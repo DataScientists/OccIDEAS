@@ -286,26 +286,28 @@
 		
 		$scope.updateAutoAssessmentsButton = function(ev) {
 			var status = 'All';
-			var confirmDialog = $mdDialog.confirm()
-			.title('Would you like to proceed with Update Auto Assessment?')
-			.textContent('Estimated duration: '+ getEstimatedDuration(status) + ' minutes. ' 
-	        		+ '\n You will be prompted once auto assessment is completed.')
-			.ariaLabel('Update Auto Assessment')
-			.targetEvent(ev)
-			.ok('Yes')
-			.cancel('Cancel');
-
-			$mdDialog.show(confirmDialog).then(function() {
-				$scope.updateButton(status);
-			}, function() {
+			
+			$scope.status = status;
+			$scope.estimatedDuration = getEstimatedDuration(status);
+			$scope.showButtons = true;
+			$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/assessments/partials/autoAssessmentDialog.html',
+				clickOutsideToClose:false
 			});
+
 		}
 				
 		$scope.updateButton = function(status) {
 			$scope.updateButtonDisabled = true;
+			$scope.processAutoAssessment = true;
+			$scope.showButtons = false;
 			AssessmentsService.updateAutoAssessments(status).then(function(response){
 				if(response){
 					$scope.updateButtonDisabled = false;
+					$scope.processAutoAssessment = false;
+					$scope.cancel();
 					$ngToast.create({
 	      	    		  className: 'success',
 	      	    		  content: 'Auto assessment is completed.',
