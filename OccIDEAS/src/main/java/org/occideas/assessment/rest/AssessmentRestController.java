@@ -840,6 +840,8 @@ public class AssessmentRestController {
 			headers.add("aJSM Name");
 			headers.add("Node Number");
 			headers.add("Answer");
+			headers.add("Vib Mag");
+			headers.add("Hours");
 			headers.add("Partial Vibration");
 			
 			String[] line = Arrays.copyOf(headers.toArray(), headers.toArray().length, String[].class);
@@ -907,6 +909,7 @@ public class AssessmentRestController {
 											.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
 									log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
 								}
+								
 							}
 						}
 
@@ -962,6 +965,7 @@ public class AssessmentRestController {
 						if (frequencyHoursNode != null) {
 							try {
 								frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+								answers.add(frequencyhours.toString());
 							} catch (Exception e) {
 								System.err.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
 								log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
@@ -971,6 +975,7 @@ public class AssessmentRestController {
 
 					try {
 						level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+						answers.add(level.toString());
 					} catch (Exception e) {
 						System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
 						log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
