@@ -840,8 +840,8 @@ public class AssessmentRestController {
 			headers.add("aJSM Name");
 			headers.add("Node Number");
 			headers.add("Answer");
-			headers.add("Vib Mag");
 			headers.add("Hours");
+			headers.add("Vib Mag");
 			headers.add("Partial Vibration");
 			
 			String[] line = Arrays.copyOf(headers.toArray(), headers.toArray().length, String[].class);
