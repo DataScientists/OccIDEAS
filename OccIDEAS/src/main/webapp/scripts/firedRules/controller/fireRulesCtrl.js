@@ -1219,6 +1219,41 @@
 										  var dailyVibration = 0;
 										  var level = 0;					  				  
 										  $scope.vibrationRows = [];
+										  var shiftHours = 0;
+										  for(var m=0;m<$scope.interview.answerHistory.length;m++){
+											  var iqa = $scope.interview.answerHistory[m];
+											  if(iqa.type=='P_frequencyshifthours'){
+												  shiftHours = iqa.answerFreetext;
+												  break;
+											  }
+										  }
+										  
+										  for(var k=0;k<vibrationRules.length;k++){
+											  var vibrationRule = vibrationRules[k];
+											  
+											  var parentNode = vibrationRule.conditions[0];
+											  cascadeFindNode($scope.interview.answerHistory,parentNode); 
+											  var frequencyhours = 0;
+											  if($scope.foundNode){
+												  var frequencyHoursNode = findFrequencyIdNode($scope.foundNode);								  
+												  if(frequencyHoursNode){
+													  if(frequencyHoursNode.answerFreetext=='[Time]'){
+														  frequencyhours = 0;
+													  }else{
+														  frequencyhours = Number(frequencyHoursNode.answerFreetext); 
+													  }			  
+												  }
+												  $scope.foundNode=null;
+											  }
+											  totalFrequency += Number(frequencyhours);											  											  		  
+										  }
+										  var useRatio = false;
+										  var ratio = 1.0;
+										  if(totalFrequency>shiftHours){
+											  useRatio = true;
+											  ratio = parseFloat(totalFrequency)/parseFloat(shiftHours);
+											  ratio = ratio.toFixed(4);
+										  }	
 										  for(var k=0;k<vibrationRules.length;k++){
 											  var vibrationRule = vibrationRules[k];
 											  
@@ -1239,23 +1274,30 @@
 											  }
 											  var level = vibrationRule.ruleAdditionalfields[0].value;
 											  var moduleName = getModuleNameOfNode(vibrationRule.conditions[0]);
+											  if(useRatio){
+												  frequencyhours = frequencyhours/ratio; 
+												  modHours = '*'+frequencyhours.toFixed(4)+'*';
+											  }else{
+												  modHours = frequencyhours.toFixed(4);
+											  }
 											  particalVibration = (Number(level)*Number(level)*Number(frequencyhours));
 
 											  var vibrationRow = {nodeNumber:vibrationRule.conditions[0].number,
 													  	idNode:vibrationRule.conditions[0].idNode,
 													  	nodeText:vibrationRule.conditions[0].name,
 													  	vibMag:level,								
-														frequencyhours:frequencyhours.toFixed(4),
+														frequencyhours:modHours,
 														partialExposure:particalVibration.toFixed(4),
 														type:'vibration',
 														moduleName:moduleName,
 														topNodeId:vibrationRule.conditions[0].topNodeId}
 											  
 											  $scope.vibrationRows.push(vibrationRow);
-											  totalFrequency += Number(frequencyhours);
+											  //totalFrequency += Number(frequencyhours);
 											  totalExposure += Number(level);
 											  dailyVibration += Number(particalVibration);								  
 										  }							  
+
 										  $scope.dailyVibration = Math.sqrt(dailyVibration/8).toFixed(4);
 									  }
 
