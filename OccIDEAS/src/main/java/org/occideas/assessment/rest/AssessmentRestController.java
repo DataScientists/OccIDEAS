@@ -840,6 +840,7 @@ public class AssessmentRestController {
 			headers.add("aJSM Name");
 			headers.add("Node Number");
 			headers.add("Answer");
+			headers.add("Ratio");
 			headers.add("Hours");
 			headers.add("Vib Mag");
 			headers.add("Partial Vibration");
@@ -887,8 +888,9 @@ public class AssessmentRestController {
 					}
 				}
 				String dailyvibration = "-NA-";
+				Float totalFrequency = new Float(0);
 				if (bFoundNoiseRules) {
-					Float totalFrequency = new Float(0);
+					
 
 					Float level = new Float(0);
 					Float totalPartialExposure = new Float(0);
@@ -929,6 +931,15 @@ public class AssessmentRestController {
 					Float dailyVibration = (float) Math.sqrt((float) (totalPartialExposure) / 8);
 					dailyvibration = dailyVibration.toString();
 				}
+				boolean useRatio = false;
+				Double ratio = new Double(1);
+				Double fShiftHours = Double.valueOf(shiftHours);
+				if (totalFrequency > fShiftHours) {
+					useRatio = true;
+					ratio = totalFrequency / fShiftHours;
+					DecimalFormat newFormat = new DecimalFormat("#.####");
+					ratio =  Double.valueOf(newFormat.format(ratio));
+				}
 				for (RuleVO noiseRule : noiseRules) {
 					List<String> answers = new ArrayList<>();
 					answers.add(String.valueOf(interviewVO.getIdinterview()));
@@ -953,8 +964,8 @@ public class AssessmentRestController {
 					answers.add(node.getNumber());
 					answers.add(node.getName());
 					
-					Float level = new Float(0);
-					Float frequencyhours = new Float(0);
+					Double level = new Double(0);
+					Double frequencyhours = new Double(0);
 					PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
 					InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
 
@@ -964,7 +975,10 @@ public class AssessmentRestController {
 
 						if (frequencyHoursNode != null) {
 							try {
-								frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
+								frequencyhours = Double.valueOf(frequencyHoursNode.getAnswerFreetext());
+								if(useRatio) {
+									frequencyhours = frequencyhours/ratio;
+								}
 								answers.add(frequencyhours.toString());
 							} catch (Exception e) {
 								System.err.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
@@ -972,15 +986,15 @@ public class AssessmentRestController {
 							}
 						}
 					}
-
 					try {
-						level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+						level = Double.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
 						answers.add(level.toString());
 					} catch (Exception e) {
 						System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
 						log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
 					}
-					Float partialExposure = (float) (level) * (float) (level) * (float) (frequencyhours);
+					
+					Double partialExposure = (double) (level) * (double) (level) * (double) (frequencyhours);
 					answers.add(partialExposure.toString());
 					
 					
