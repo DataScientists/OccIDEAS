@@ -857,11 +857,11 @@ public class AssessmentRestController {
 			for (Interview interviewVO : uniqueInterviews) {
 				currentCount++;
 				
-				//if(currentCount>10){
-				//	break;
-				//}
-				System.out.println("Vibration report:" + currentCount + " of "+ iSize);
 				
+				System.out.println("Vibration report:" + currentCount + " of "+ iSize);
+			//	if(interviewVO.getIdinterview()!=1039){
+			//		continue;
+			//	}
 				boolean bFoundNoiseRules = false;
 				List<RuleVO> noiseRules = new ArrayList<RuleVO>();
 				
@@ -875,7 +875,7 @@ public class AssessmentRestController {
 						}
 					}
 				}
-				String shiftHours = "-NA-";				
+				String shiftHours = "0";				
 
 				List<InterviewAnswerVO> interviewAnswers = interviewAnswerService
 						.findByInterviewId(interviewVO.getIdinterview());
@@ -888,21 +888,18 @@ public class AssessmentRestController {
 					}
 				}
 				String dailyvibration = "-NA-";
-				Float totalFrequency = new Float(0);
+				Double totalFrequency = new Double(0);
 				if (bFoundNoiseRules) {
 					
-
-					Float level = new Float(0);
-					Float totalPartialExposure = new Float(0);
+					Double level = new Double(0);
+					Double totalPartialExposure = new Double(0);
 					for (RuleVO noiseRule : noiseRules) {
 						Float frequencyhours = new Float(0);
 						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
 						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
-
 						if (actualAnswer != null) {
 							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
 									interviewQuestions, actualAnswer);
-
 							if (frequencyHoursNode != null) {
 								try {
 									frequencyhours = Float.valueOf(frequencyHoursNode.getAnswerFreetext());
@@ -910,99 +907,142 @@ public class AssessmentRestController {
 									System.err
 											.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
 									log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
-								}
-								
+								}							
 							}
 						}
-
 						try {
-							level = Float.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+							level = Double.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
 						} catch (Exception e) {
 							System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
 							log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
 						}
-						Float partialExposure = (float) (level) * (float) (level) * (float) (frequencyhours);
-
-						
-						totalPartialExposure = ((totalPartialExposure) + (partialExposure));
 						totalFrequency += frequencyhours;
 					}
 
-					Float dailyVibration = (float) Math.sqrt((float) (totalPartialExposure) / 8);
-					dailyvibration = dailyVibration.toString();
-				}
-				boolean useRatio = false;
-				Double ratio = new Double(1);
-				Double fShiftHours = Double.valueOf(shiftHours);
-				if (totalFrequency > fShiftHours) {
-					useRatio = true;
-					ratio = totalFrequency / fShiftHours;
-					DecimalFormat newFormat = new DecimalFormat("#.####");
-					ratio =  Double.valueOf(newFormat.format(ratio));
-				}
-				for (RuleVO noiseRule : noiseRules) {
-					List<String> answers = new ArrayList<>();
-					answers.add(String.valueOf(interviewVO.getIdinterview()));
-					answers.add(String.valueOf(interviewVO.getReferenceNumber()));
-					String pStatus = "ERROR";
-					try {
-						pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
-					} catch (Exception e) {
-						System.out.println("No participant for interview " + interviewVO.getIdinterview());
-						log.error("No participant for interview " + interviewVO.getIdinterview(),e);
+					
+				
+					boolean useRatio = false;
+					Double ratio = new Double(1);
+					Double fShiftHours = Double.valueOf(shiftHours);
+					if (totalFrequency > fShiftHours) {
+						useRatio = true;
+						ratio = totalFrequency / fShiftHours;
+						DecimalFormat newFormat = new DecimalFormat("#.####");
+						ratio =  Double.valueOf(newFormat.format(ratio));
 					}
-					answers.add(pStatus);
-
-					addModuleNames(interviewVO, answers);
-					answers.add(shiftHours);
-					answers.add(dailyvibration);
-					PossibleAnswerVO node = noiseRule.getConditions().get(0);
-					
-					
-					answers.add(findModuleName(node.getTopNodeId(),modules,fragements));
-					
-					answers.add(node.getNumber());
-					answers.add(node.getName());
-					
-					Double level = new Double(0);
-					Double frequencyhours = new Double(0);
-					PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
-					InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
-
-					if (actualAnswer != null) {
-						InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
-								interviewQuestions, actualAnswer);
-
-						if (frequencyHoursNode != null) {
-							try {
-								frequencyhours = Double.valueOf(frequencyHoursNode.getAnswerFreetext());
-								if(useRatio) {
-									frequencyhours = frequencyhours/ratio;
-								}
-								answers.add(frequencyhours.toString());
-							} catch (Exception e) {
-								System.err.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
-								log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
+					for (RuleVO noiseRule : noiseRules) {
+						Double frequencyhours = new Double(0);
+						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
+						if (actualAnswer != null) {
+							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
+									interviewQuestions, actualAnswer);
+							if (frequencyHoursNode != null) {
+								try {
+									frequencyhours = Double.valueOf(frequencyHoursNode.getAnswerFreetext());
+									if(useRatio) {
+										frequencyhours = frequencyhours/ratio;						
+									}								
+								} catch (Exception e) {
+									frequencyhours = new Double(0);
+									System.err
+											.println("Invalid f"
+													+ "requency! Check interview " + interviewVO.getIdinterview());
+									log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
+								}	
+								
 							}
 						}
+						try {
+							level = Double.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+						} catch (Exception e) {
+							System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+							log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
+						}
+						totalFrequency += frequencyhours;
+						
+						Double partialExposure = (double) (level) * (double) (level) * (double) (frequencyhours);
+						totalPartialExposure = ((totalPartialExposure) + (partialExposure));
+						
 					}
-					try {
-						level = Double.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
-						answers.add(level.toString());
-					} catch (Exception e) {
-						System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
-						log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
+					Double dailyVibration = (double) Math.sqrt((double) (totalPartialExposure) / 8);
+					dailyvibration = dailyVibration.toString();
+					for (RuleVO noiseRule : noiseRules) {
+						List<String> answers = new ArrayList<>();
+						answers.add(String.valueOf(interviewVO.getIdinterview()));
+						answers.add(String.valueOf(interviewVO.getReferenceNumber()));
+						String pStatus = "ERROR";
+						try {
+							pStatus = String.valueOf(getStatusDescription(interviewVO.getParticipant().getStatus()));
+						} catch (Exception e) {
+							System.out.println("No participant for interview " + interviewVO.getIdinterview());
+							log.error("No participant for interview " + interviewVO.getIdinterview(),e);
+						}
+						answers.add(pStatus);
+	
+						addModuleNames(interviewVO, answers);
+						answers.add(shiftHours);
+						answers.add(dailyvibration);
+						PossibleAnswerVO node = noiseRule.getConditions().get(0);
+						
+						
+						answers.add(findModuleName(node.getTopNodeId(),modules,fragements));
+						
+						answers.add(node.getNumber());
+						answers.add(node.getName());
+						
+						//Double level = new Double(0);
+						Double frequencyhours = new Double(0);
+						PossibleAnswerVO parentNode = noiseRule.getConditions().get(0);
+						InterviewAnswerVO actualAnswer = findInterviewAnswer(interviewAnswers, parentNode);
+	
+						if (actualAnswer != null) {
+							InterviewAnswerVO frequencyHoursNode = findFrequencyInterviewAnswer(interviewAnswers,
+									interviewQuestions, actualAnswer);
+	
+							if (frequencyHoursNode != null) {
+								try {
+									frequencyhours = Double.valueOf(frequencyHoursNode.getAnswerFreetext());
+									if(useRatio) {
+										frequencyhours = frequencyhours/ratio;
+										answers.add("1");
+									}else {
+										answers.add("0");
+									}
+									answers.add(frequencyhours.toString());
+								} catch (Exception e) {
+									answers.add("0");
+									frequencyhours = new Double(0);
+									answers.add(frequencyhours.toString());
+									System.err.println("Invalid frequency! Check interview " + interviewVO.getIdinterview());
+									log.error("Invalid frequency! Check interview " + interviewVO.getIdinterview(),e);
+								}
+							}else {
+								answers.add("0");
+								frequencyhours = new Double(0);
+								answers.add(frequencyhours.toString());
+							}
+						}
+						try {
+							level = Double.valueOf(noiseRule.getRuleAdditionalfields().get(0).getValue());
+							answers.add(level.toString());
+						} catch (Exception e) {
+							answers.add("-1");
+							System.err.println("Invalid noise rule! Check rule " + noiseRule.getIdRule());
+							log.error("Invalid noise rule! Check rule " + noiseRule.getIdRule(),e);
+						}
+						
+						Double partialExposure = (double) (level) * (double) (level) * (double) (frequencyhours);
+						answers.add(partialExposure.toString());
+						
+						totalPartialExposure = ((totalPartialExposure) + (partialExposure));
+						
+						
+											
+						line = Arrays.copyOf(answers.toArray(), answers.toArray().length, String[].class);
+						writer.writeNext(line);
 					}
-					
-					Double partialExposure = (double) (level) * (double) (level) * (double) (frequencyhours);
-					answers.add(partialExposure.toString());
-					
-					
-					
-										
-					line = Arrays.copyOf(answers.toArray(), answers.toArray().length, String[].class);
-					writer.writeNext(line);
-				}						
+				}
 			}
 			writer.close();
 			
