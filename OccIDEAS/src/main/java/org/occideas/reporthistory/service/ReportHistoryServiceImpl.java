@@ -64,10 +64,25 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 	@Override
 	public void generateInterviewRuleReport(String filepath) throws Exception{
 		List<InterviewRuleReport> list = dao.getInterviewRuleReport();
-		List<InterviewRuleReportVO> listVO = interviewRuleMapper.convertToInterviewRuleVOList(list);
+	//	List<InterviewRuleReportVO> listVO = interviewRuleMapper.convertToInterviewRuleVOList(list);
 		Writer writer = new FileWriter(filepath);
+		/*String header = "agentName,idInterview,idRule,level,modName,referenceNumber";
+        writer.write(header+System.lineSeparator());
+        for(InterviewRuleReportVO row: listVO) {
+        	if(!row.getReferenceNumber().equalsIgnoreCase("H000307")) {
+        		continue;
+        	}
+        	writer.write(row.getAgentName()+",");
+        	writer.write(row.getIdInterview()+",");
+        	writer.write(row.getIdRule()+",");
+        	writer.write(row.getLevel()+",");
+        	writer.write(row.getModName().replace(",", "")+",");
+        	writer.write(row.getReferenceNumber());
+        	writer.write(System.lineSeparator());
+
+        }*/
 		StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
-	    beanToCsv.write(listVO);
+	    beanToCsv.write(list);
 	    writer.flush();
 	    writer.close();
 	}
@@ -75,10 +90,29 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 	@Override
     public void generateInterviewRuleFilterReport(String filepath,List<Long> agentIds) throws Exception{
         List<InterviewRuleReport> list = dao.getInterviewRuleReportFilter(agentIds);
-        List<InterviewRuleReportVO> listVO = interviewRuleMapper.convertToInterviewRuleVOList(list);
+    //    List<InterviewRuleReportVO> listVO = interviewRuleMapper.convertToInterviewRuleVOList(list);
         Writer writer = new FileWriter(filepath);
+        /*String header = "agentName,idInterview,idRule,level,modName,referenceNumber";
+        writer.write(header+System.lineSeparator());
+        int iCount = 0;
+        for(InterviewRuleReport row: list) {
+        	iCount++;
+        	
+        	if(!row.getReferenceNumber().equalsIgnoreCase("H000307")) {
+        		continue;
+        	}
+        	System.out.println(iCount);
+        	writer.write(row.getAgentName()+",");
+        	writer.write(row.getIdInterview()+",");
+        	writer.write(row.getIdRule()+",");
+        	writer.write(row.getLevel()+",");
+        	writer.write(row.getModName().replace(",", "")+",");
+        	writer.write(row.getReferenceNumber());
+        	writer.write(System.lineSeparator());
+
+        }*/
         StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
-        beanToCsv.write(listVO);
+        beanToCsv.write(list);
         writer.flush();
         writer.close();
     }

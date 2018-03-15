@@ -65,7 +65,7 @@ public class ReportHistoryDao implements IReportHistoryDao {
 		session.delete(entity);
 	}
 	
-	private final String interviewRuleReportFilterSQL = "SELECT i.idinterview,i.referenceNumber,f.idRule,"
+	private final String interviewRuleReportFilterSQL = "SELECT CONCAT(CONVERT(i.idinterview, CHAR(250)), '_', CONVERT(f.idRule, CHAR(250))) as id,i.idinterview,i.referenceNumber,f.idRule,"
 								+ " a.name,CASE WHEN r.level = 0 THEN 'probHigh'"+
 								  " WHEN r.level = 1 THEN 'probMedium' "+
 								  " WHEN r.level = 2 THEN 'probLow' "+
@@ -83,9 +83,10 @@ public class ReportHistoryDao implements IReportHistoryDao {
 						          " and nr.idRule = r.idRule "+
 						          " and nr.idNode = n.idNode "+
 						          " and nt.idNode = n.topNodeId "+
-								  " group by i.idinterview,i.referenceNumber,f.idRule, a.name, level, modName";
+								  " group by i.idinterview,i.referenceNumber,f.idRule, a.name, level, modName"
+								  + " order by i.referenceNumber";
 	
-	private final String interviewRuleReportSQL = "SELECT i.idinterview,i.referenceNumber,f.idRule,"
+	private final String interviewRuleReportSQL = "SELECT CONCAT(CONVERT(i.idinterview, CHAR(250)), '_', CONVERT(f.idRule, CHAR(250))) as id,i.idinterview,i.referenceNumber,f.idRule,"
         + " a.name,CASE WHEN r.level = 0 THEN 'probHigh'"+
           " WHEN r.level = 1 THEN 'probMedium' "+
           " WHEN r.level = 2 THEN 'probLow' "+

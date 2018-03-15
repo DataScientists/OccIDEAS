@@ -8,6 +8,8 @@ import javax.persistence.Id;
 public class InterviewRuleReport {
 
 	@Id
+	@Column(name = "id")
+	private String id;
 	@Column(name = "idRule")
 	private long idRule;
 	@Column(name = "idinterview")
@@ -67,6 +69,14 @@ public class InterviewRuleReport {
 
 	public void setModName(String modName) {
 		this.modName = modName;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }
