@@ -3,7 +3,6 @@ package org.occideas.module.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +13,6 @@ import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
-import org.occideas.entity.NodeLanguage;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
@@ -51,7 +49,6 @@ import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -176,7 +173,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public NodeRuleHolder copyModule(ModuleCopyVO vo) {
 		ModuleVO copyVO = vo.getVo();
-		Long idNode = dao.generateIdNode() + 1;
+		long idNode = dao.generateIdNode() + 1;
 		copyVO.setIdNode(idNode);
 		copyVO.setName(vo.getName());
 		NodeRuleHolder idNodeRuleHolder = createNodeRuleHolder(idNode);

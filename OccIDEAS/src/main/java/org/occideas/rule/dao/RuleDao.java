@@ -77,6 +77,7 @@ public class RuleDao implements IRuleDao{
     
 	@Override
     @SuppressWarnings("unchecked")
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long getMaxRuleId(){
     	final Session session = sessionFactory.getCurrentSession();
     	final Criteria crit = session.createCriteria(Rule.class)

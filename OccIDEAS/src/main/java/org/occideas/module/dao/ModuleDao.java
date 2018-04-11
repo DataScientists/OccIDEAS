@@ -37,10 +37,10 @@ public class ModuleDao implements IModuleDao
     }
 
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveCopy(Module module)
     {
-        sessionFactory.getCurrentSession().saveOrUpdate(module);
+        sessionFactory.getCurrentSession().save(module);
     }
 
 
@@ -123,6 +123,7 @@ public class ModuleDao implements IModuleDao
 
 
     @SuppressWarnings("unchecked")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long generateIdNode()
     {
         final Session session = sessionFactory.getCurrentSession();

@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
 @Entity 
@@ -50,7 +51,7 @@ public class Question extends Node<PossibleAnswer> {
 
 	@Override
 	public String toString() {
-		return "Question [childNodes=" + childNodes + ", moduleRule=" + moduleRule + ", idNode=" + idNode + ", type="
+		return "Question [childNodes=" + childNodes + ", moduleRule=" + moduleRule + ", idNode=" + getIdNode() + ", type="
 				+ type + "]";
 	}
 	

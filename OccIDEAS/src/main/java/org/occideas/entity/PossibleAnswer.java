@@ -49,7 +49,7 @@ public class PossibleAnswer extends Node<Question> {
 
 	@Override
 	public String toString() {
-		return "PossibleAnswer [childNodes=" + childNodes + ", moduleRule=" + moduleRule + ", idNode=" + idNode
+		return "PossibleAnswer [childNodes=" + childNodes + ", moduleRule=" + moduleRule + ", idNode=" + getIdNode()
 				+ ", type=" + type + "]";
 	}
 	
