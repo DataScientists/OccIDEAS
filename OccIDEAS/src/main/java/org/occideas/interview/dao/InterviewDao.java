@@ -235,7 +235,7 @@ public class InterviewDao implements IInterviewDao{
 								  		.add(Projections.property("referenceNumber"),"referenceNumber")
 								  		)
 						    		.add(Restrictions.eq("referenceNumber", referenceNumber))
-						    		.add(Restrictions.eq("deleted", "0"))
+						    	//	.add(Restrictions.eq("deleted", "0"))
     		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
       List<Interview> retValue = new ArrayList<Interview>();
       List<Interview> temp = crit.list();

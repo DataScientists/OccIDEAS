@@ -238,8 +238,11 @@ public class InterviewAnswerDao implements IInterviewAnswerDao
     private boolean isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes)
     {
         boolean isExist = studyAgentUtil.doesIdNodeExistInArray(listOfIdNodes, String.valueOf(iqQueue.getQuestionId()));
-        if(isExist){
-            log.info("Question id "+iqQueue.getQuestionId()+" exist so saving it in queue question.");
+        if(iqQueue.getLink()>0){
+        	isExist = true;
+        	log.info("Question id "+iqQueue.getQuestionId()+" is link so including it.");
+        }else if(isExist){
+        	log.info("Question id "+iqQueue.getQuestionId()+" exist so saving it in queue question.");
         }else{
 //            iqQueue.setDeleted(1);
             log.info("Question id "+iqQueue.getQuestionId()+" does not exist so saving it in queue question as deleted.");
