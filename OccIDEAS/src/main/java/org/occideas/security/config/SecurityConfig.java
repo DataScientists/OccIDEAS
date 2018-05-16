@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.occideas.jmx.filter.JMXFilter;
 import org.occideas.security.filter.AuthenticationFilter;
 import org.occideas.security.filter.ReadOnlyFilter;
 import org.occideas.security.handler.TokenManager;
@@ -50,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticationEntryPoint(unauthorizedEntryPoint());
 
 		http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
-				.addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
+				.addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class)
+				.addFilterBefore(new JMXFilter(),BasicAuthenticationFilter.class);
 	}
 
 	@Bean

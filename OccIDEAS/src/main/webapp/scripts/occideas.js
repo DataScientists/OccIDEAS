@@ -47,7 +47,8 @@ angular
     "occIDEASApp.angular.translate",
     "occIDEASApp.angular.translate.service",
     "occIDEASApp.Notes",
-    "occIDEASApp.NodeLanguage"
+    "occIDEASApp.NodeLanguage",
+    "occIDEASApp.JMeter"
   ], function($rootScopeProvider){
 	  $rootScopeProvider.digestTtl(100);
   })

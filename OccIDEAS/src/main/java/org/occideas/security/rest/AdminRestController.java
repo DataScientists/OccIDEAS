@@ -20,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @Path("/admin")
-public class AdminRestController
-{
+public class AdminRestController {
 
     @Autowired
     private UserService service;
@@ -202,5 +201,6 @@ public class AdminRestController
         }
         return Response.ok().build();
     }
+
 
 }
