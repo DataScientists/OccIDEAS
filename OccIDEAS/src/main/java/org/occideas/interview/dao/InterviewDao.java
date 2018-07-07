@@ -227,7 +227,7 @@ public class InterviewDao implements IInterviewDao{
     @SuppressWarnings("unchecked")
 	public List<Interview> findByReferenceNumber(String referenceNumber) {
       final Session session = sessionFactory.getCurrentSession();
-      final Criteria crit = session.createCriteria(Interview.class)
+      final Criteria interviewCriteria = session.createCriteria(Interview.class)
 						    		.setProjection(Projections.projectionList()
 								  		.add(Projections.property("fragment"),"fragment")
 								  		.add(Projections.property("module"),"module")
@@ -235,10 +235,11 @@ public class InterviewDao implements IInterviewDao{
 								  		.add(Projections.property("referenceNumber"),"referenceNumber")
 								  		)
 						    		.add(Restrictions.eq("referenceNumber", referenceNumber))
-						    	//	.add(Restrictions.eq("deleted", "0"))
+						    		.createAlias("participant", "participant")
+					                .add(Restrictions.eq("participant.deleted", 0))
     		  						.setResultTransformer(Transformers.aliasToBean(Interview.class));
       List<Interview> retValue = new ArrayList<Interview>();
-      List<Interview> temp = crit.list();
+      List<Interview> temp = interviewCriteria.list();
       setFiredRules(retValue, temp);
       return retValue;
     }
