@@ -207,6 +207,20 @@
 	    	InterviewsService.exportInterviewRules(data).
     		then(function(response){
     			if(response.status == '200'){
+    				 ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'Reports are being generated. Please come back later and refresh the page.',
+	      	    		  animation:'slide',
+	      	    		  timeout: 7000 
+	      	    	 });
+    			}else{
+    				ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'Unable to generate report with status '+response.status + '. Please take screenshot and report to IT.',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+					});
     			}
     		});
 	    	$scope.cancel();
