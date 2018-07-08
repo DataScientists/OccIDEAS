@@ -12,6 +12,12 @@
 			<button type="button" style="margin-left:3px;"
 			class="btn btn-default" 
 			ng-click="vm.cleanOrphans()">Clean Orphans Nodes</button>
+			<button type="button" style="margin-left:3px;"
+			class="btn btn-default" 
+			ng-click="vm.purgeParticipants()">Purge Participants</button>
+			<button type="button" style="margin-left:3px;"
+			class="btn btn-default" 
+			ng-click="vm.purgeModule()">Purge Modules</button>
 	</div>
 	<div class="panel panel-default">
 		<div class="panel-heading">Configuration</div>
@@ -93,7 +99,7 @@
 							{{row.updatedBy}}
 						</td>
 						<td title="'Updated Dt'" filter="{updatedDt: 'text'}">
-							{{row.updatedDt}}
+							{{row.updatedDt | date}}
 						</td>
 						<td>
 							<button class="btn btn-primary btn-sm"

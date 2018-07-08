@@ -93,6 +93,22 @@
 			});
 		};
 		
+		var purgeParticipants = function() {
+			return $http.get(adminEndpoint + '/purgeParticipants', {
+				cache : false
+			}).then(function(response) {
+				return response;
+			});
+		};
+		
+		var purgeModule = function() {
+			return $http.get(adminEndpoint + '/purgeModule', {
+				cache : false
+			}).then(function(response) {
+				return response;
+			});
+		};
+		
 		function handleError(response) {
 			if (!angular.isObject(response.data) || !response.data.message) {
 				return ($q.reject("An unknown error occurred."));
@@ -113,7 +129,10 @@
 			updateUser:updateUser,
 			saveUserProfileList:saveUserProfileList,
 			updatePassword:updatePassword,
-			cleanOrphans:cleanOrphans
+			cleanOrphans:cleanOrphans,
+			purgeParticipants:purgeParticipants,
+			purgeModule:purgeModule
+			
 		};
 	}
 

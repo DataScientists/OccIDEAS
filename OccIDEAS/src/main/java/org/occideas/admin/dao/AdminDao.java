@@ -57,6 +57,25 @@ public class AdminDao implements IAdminDao
         List<Node> list = (List<Node>) sqlQuery.list();
         return list;
     }
+
+	@Override
+	public void deleteAllInterviews() {
+		final Session session = sessionFactory.getCurrentSession();
+		session.createSQLQuery("truncate table Interview_Answer").executeUpdate();
+		session.createSQLQuery("truncate table Interview_AutoAssessedRules").executeUpdate();
+		session.createSQLQuery("truncate table Interview_Display").executeUpdate();
+		session.createSQLQuery("truncate table Interview_DisplayAnswer").executeUpdate();
+		session.createSQLQuery("truncate table Interview_FiredRules").executeUpdate();
+		session.createSQLQuery("truncate table Interview_ManualAssessedRules").executeUpdate();
+		session.createSQLQuery("truncate table Interview_Module").executeUpdate();
+		session.createSQLQuery("truncate table Interview_Question").executeUpdate();
+	}
+
+	@Override
+	public void deleteAllParticipants() {
+		final Session session = sessionFactory.getCurrentSession();
+		session.createSQLQuery("truncate table Participant").executeUpdate();
+	}
     
     
     

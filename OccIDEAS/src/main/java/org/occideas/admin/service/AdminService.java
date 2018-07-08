@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.admin.dao.IAdminDao;
 import org.occideas.entity.Node;
+import org.occideas.utilities.StudyAgentUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,9 +50,18 @@ public class AdminService implements IAdminService
             log.info("cleanOrphan node detected and will be removed "+node.getIdNode());
         }
     }
-    
-    
-    
-    
+
+	@Override
+	public void purgeParticipants() {
+		// TODO Auto-generated method stub
+		dao.deleteAllInterviews();
+		dao.deleteAllParticipants();
+	}
+
+	@Override
+	public void purgeModule() {
+		StudyAgentUtil studyAgentUtil = new StudyAgentUtil();
+		studyAgentUtil.purgeStudyAgentFiles();
+	}
 
 }

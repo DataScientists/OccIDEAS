@@ -28,6 +28,39 @@ public class AdminRestController {
     @Autowired
     private IAdminService adminService;
 
+    @GET
+    @Path(value = "/purgeParticipants")
+    public Response purgeParticipants()
+    {
+        try
+        {
+            adminService.purgeParticipants();
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+    
+    
+    @GET
+    @Path(value = "/purgeModule")
+    public Response purgeModule()
+    {
+        try
+        {
+            adminService.purgeModule();
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+    
 
     @GET
     @Path(value = "/cleanOrphans")

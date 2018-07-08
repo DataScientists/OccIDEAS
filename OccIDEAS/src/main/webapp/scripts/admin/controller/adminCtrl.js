@@ -21,6 +21,46 @@
 	    $scope.randomIntCount = 0;
 	    $scope.randomAnswerChecked = true;
 	    
+	    self.purgeParticipants = function(){
+	    	AdminService.purgeParticipants().then(function(response){
+				if(response.status == '200'){
+					$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'Purge participants successfull.',
+	      	    		  animation:'slide'
+	      	    	 });
+				}else{
+					$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'Purge participants failed, check the logs.',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+	    			});
+				}
+			});
+	    }
+	    
+	    self.purgeModule = function(){
+	    	AdminService.purgeModule().then(function(response){
+				if(response.status == '200'){
+					$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'Purge module successfull.',
+	      	    		  animation:'slide'
+	      	    	 });
+				}else{
+					$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'Purge module failed, check the logs.',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+	    			});
+				}
+			});
+	    }
+	    
 	    self.cleanOrphans = function(){
 	    	AdminService.cleanOrphans().then(function(response){
 				if(response.status == '200'){

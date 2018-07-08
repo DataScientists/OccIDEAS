@@ -14,5 +14,9 @@ public interface IAdminDao
     void setDeletedFlagForListOfNodes(List<Node> listOfOrphanNodes);
 
     void setForeignKeyCheck(int flag);
+
+	void deleteAllInterviews();
+
+	void deleteAllParticipants();
     
 }

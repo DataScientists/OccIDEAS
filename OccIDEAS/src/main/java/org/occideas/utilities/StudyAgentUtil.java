@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
@@ -201,6 +202,18 @@ public class StudyAgentUtil
         return filePath;
     }
 
+    public void purgeStudyAgentFiles() {
+    	String path = System.getProperty("user.home");
+        String filePath = path + "/modules/";
+        File dir = new File(filePath);
+        File[] files = dir.listFiles();
+        for(File file:files) {
+        	if("csv".equals(FilenameUtils.getExtension(file.getName()))) {
+        		file.delete();
+        		log.info(file.getAbsolutePath() + " has beed deleted.");
+        	}
+        }
+    }
 
     public void deleteStudyAgentJson(String idNode)
     {
@@ -357,46 +370,6 @@ public class StudyAgentUtil
     }
 
 
-    public static void main(String[] args) throws JsonGenerationException, JsonMappingException, IOException
-    {
-        StudyAgentUtil jsonUtil = new StudyAgentUtil();
-        // System.out.println(jsonUtil.isStudyAgentJsonExist(123123L));
-        // ModuleVO modVO = new ModuleVO();
-        // modVO.setIdNode(111111L);
-        // List<QuestionVO> list = new ArrayList<>();
-        // QuestionVO qVO1 = new QuestionVO();
-        // qVO1.setIdNode(123123L);
-        // qVO1.setName("test");
-        // QuestionVO qVO2 = new QuestionVO();
-        // qVO2.setIdNode(666666L);
-        // list.add(qVO1);
-        // list.add(qVO2);
-        // modVO.setChildNodes(list);
-        try
-        {
-            // NodeVO node = jsonUtil.searchNode(modVO, 123123L);
-            // System.out.println(node.getName());
-            jsonUtil.createStudyAgentCSV("44161", Arrays.asList(new String[]{"44164","44162","44163"}), false);
-            String[] studyAgentCSV = jsonUtil.getStudyAgentCSV("44161");
-            System.out.println(jsonUtil.doesIdNodeExistInArray(studyAgentCSV, "44165"));
-//            int retVal = Arrays.binarySearch("44163",studyAgentCSV);
-        }
-        catch (JsonGenerationException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (JsonMappingException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 
 
     public void createStudyAgentForUpdatedNode(long idNode, String name)
@@ -427,5 +400,10 @@ public class StudyAgentUtil
             }
         }
     }
+    
+//    public static void main(String[] args) {
+//    	StudyAgentUtil studyAgentUtil = new StudyAgentUtil();
+//    	studyAgentUtil.purgeStudyAgentFiles();
+//    }
 
 }
