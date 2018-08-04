@@ -90,11 +90,11 @@
 								<div ng-switch-when="P_frequencyshifthours">
 									<md-input-container> <label>Hours</label>
 									<md-select ng-model="interview.showedQuestion.hours">
-									<md-option ng-repeat="hour in hoursArray" value="{{hour}}">
+									<md-option ng-repeat="hour in getShiftHoursArray()" value="{{hour}}">
 									{{hour}} </md-option> </md-select> </md-input-container>
 									<md-input-container> <label>Minutes</label>
 									<md-select ng-model="interview.showedQuestion.minutes">
-									<md-option ng-repeat="minute in minutesArray"
+									<md-option ng-repeat="minute in getShiftMinutesArray()"
 										value="{{minute}}"> {{minute}} </md-option> </md-select> </md-input-container>
 								</div>
 								<div ng-switch-when="P_frequencyhoursminute">

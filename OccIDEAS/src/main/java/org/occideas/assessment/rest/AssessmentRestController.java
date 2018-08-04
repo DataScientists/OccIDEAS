@@ -615,6 +615,7 @@ public class AssessmentRestController {
 				for (InterviewAnswerVO ia : interviewAnswers) {
 					if (ia.getType().equalsIgnoreCase("P_frequencyshifthours")) {
 						shiftHours = ia.getAnswerFreetext();
+						
 						break;
 					}
 				}
@@ -651,6 +652,9 @@ public class AssessmentRestController {
 					}
 					boolean useRatio = false;
 					Double ratio = new Double(1);
+					if(shiftHours.equalsIgnoreCase("-NA-")) {
+						shiftHours = "8";
+					}
 					Double fShiftHours = Double.valueOf(shiftHours);
 					if (totalFrequency > fShiftHours) {
 						useRatio = true;

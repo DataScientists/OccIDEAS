@@ -167,6 +167,7 @@
 								.filter().idinterview);
 						$scope.participantFilter.reference = lengthGreaterThan2(params
 								.filter().reference);
+						/*
 						if(lengthGreaterThan2(params.filter().status)){
 							if(params.filter().status.startsWith('run') ){
 								$scope.participantFilter.status = 0
@@ -178,7 +179,8 @@
 								$scope.participantFilter.status = 3
 							}						 
 						}
-						
+						*/
+						$scope.participantFilter.status = params.filter().status;
 						$scope.participantFilter.pageNumber = params.page();
 						$scope.participantFilter.size = params.count();
 						params.goToPageNumber = null;
