@@ -77,7 +77,7 @@ public class InterviewDao implements IInterviewDao{
 
 	//Dynamic type column
 	private final String NOTES_TYPE_COLUMN_QUERY = 
-			  " CASE WHEN type = ':type' THEN text END :type";
+			  " CASE WHEN type = ':type' THEN a.text END as ':type'";
 		
 	private final String SELECT_NOTES_QUERY = 
 			" SELECT a.interviewId," 

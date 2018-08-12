@@ -4,24 +4,41 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvBindByPosition;
+
 @Entity
 public class InterviewRuleReport {
 
+	@Column(name = "name")
+	@CsvBindByName(column = "agentName", required = true)
+	@CsvBindByPosition(position = 0)
+	private String agentName;
 	@Id
 	@Column(name = "id")
+	@CsvBindByName(column = "OccIDEASID", required = true)
+	@CsvBindByPosition(position = 1)
 	private String id;
-	@Column(name = "idRule")
-	private long idRule;
 	@Column(name = "idinterview")
+	@CsvBindByName(column = "InterviewID", required = true)
+	@CsvBindByPosition(position = 2)
 	private long idInterview;
-	@Column(name = "referenceNumber")
-	private String referenceNumber;
-	@Column(name = "name")
-	private String agentName;
+	@Column(name = "idRule")
+	@CsvBindByName(column = "idRule", required = true)
+	@CsvBindByPosition(position = 3)
+	private long idRule;
 	@Column(name = "level")
+	@CsvBindByName(column = "level", required = true)
+	@CsvBindByPosition(position = 4)
 	private String level;
 	@Column(name = "modName")
+	@CsvBindByName(column = "modName", required = true)
+	@CsvBindByPosition(position = 5)
 	private String modName;
+	@Column(name = "referenceNumber")
+	@CsvBindByName(column = "ParticipantID", required = true)
+	@CsvBindByPosition(position = 6)
+	private String referenceNumber;
 
 	public long getIdInterview() {
 		return idInterview;

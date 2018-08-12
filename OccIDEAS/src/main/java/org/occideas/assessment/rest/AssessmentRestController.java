@@ -195,8 +195,8 @@ public class AssessmentRestController {
 				allAnswers.addAll(answers);
 				allQuestions.addAll(questions);
 				List<String> headerList = new ArrayList<String>();
-				headerList.add("InterviewId");
-				headerList.add("ReferenceNumber");
+				headerList.add("InterviewID");
+				headerList.add("ParticipantID");
 				headerList.add("Participant Status");
 				headerList.add("Assessment Status");
 				List<String> answerList = new ArrayList<String>();
@@ -554,8 +554,8 @@ public class AssessmentRestController {
 			File file = new File(fullPath);
 			CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
 			Set<String> headers = new LinkedHashSet<>();
-			headers.add("Interview Id");
-			headers.add("AWES ID");
+			headers.add("InterviewID");
+			headers.add("ParticipantID");
 			headers.add("Status");
 			headers.add("Module");
 			headers.add("Job Module Name");
@@ -834,8 +834,8 @@ public class AssessmentRestController {
 			File file = new File(fullPath);
 			CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
 			Set<String> headers = new LinkedHashSet<>();
-			headers.add("Interview Id");
-			headers.add("AWES ID");
+			headers.add("InterviewID");
+			headers.add("ParticipantID");
 			headers.add("Status");
 			headers.add("Module");
 			headers.add("Job Module Name");
@@ -1324,8 +1324,8 @@ public class AssessmentRestController {
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.3);
 
 		Set<String> headers = new LinkedHashSet<>();
-		headers.add("Interview Id");
-		headers.add("AWES ID");
+		headers.add("InterviewID");
+		headers.add("ParticipantID");
 		headers.add("Status");
 		headers.add("Intro Module Name");
 		headers.add("Job Module Name");
@@ -1475,8 +1475,8 @@ public class AssessmentRestController {
 
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.2);
 		Set<String> headers = new LinkedHashSet<>();
-		headers.add("Interview Id");
-		headers.add("AWES ID");
+		headers.add("InterviewID");
+		headers.add("ParticipantID");
 		headers.add("Status");
 		headers.add("Module");
 		headers.add("Job Module Name");
@@ -1736,8 +1736,8 @@ public class AssessmentRestController {
 
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.1);
 		Set<String> headers = new LinkedHashSet<>();
-		headers.add("Interview Id");
-		headers.add("AWES ID");
+		headers.add("InterviewID");
+		headers.add("ParticipantID");
 		headers.add("Participant Status");
 		headers.add("Assessment Status");
 		headers.add("Intro Module Name");
@@ -2313,8 +2313,8 @@ public class AssessmentRestController {
 
 		updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.1);
 		Set<String> headers = new LinkedHashSet<>();
-		headers.add("IdInterview");
-		headers.add("Reference Number");
+		headers.add("InterviewID");
+		headers.add("ParticipantID");
 
 		List<String> types = getTypes();
 		for (String type : types) {

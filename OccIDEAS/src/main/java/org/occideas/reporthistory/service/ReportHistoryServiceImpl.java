@@ -5,11 +5,11 @@ import java.io.FileWriter;
 import java.io.Writer;
 import java.util.List;
 
+import org.occideas.entity.CustomMappingStrategy;
 import org.occideas.entity.InterviewRuleReport;
 import org.occideas.mapper.InterviewRulesMapper;
 import org.occideas.mapper.ReportHistoryMapper;
 import org.occideas.reporthistory.dao.ReportHistoryDao;
-import org.occideas.vo.InterviewRuleReportVO;
 import org.occideas.vo.ReportHistoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,28 +90,12 @@ public class ReportHistoryServiceImpl implements ReportHistoryService{
 	@Override
     public void generateInterviewRuleFilterReport(String filepath,List<Long> agentIds) throws Exception{
         List<InterviewRuleReport> list = dao.getInterviewRuleReportFilter(agentIds);
-    //    List<InterviewRuleReportVO> listVO = interviewRuleMapper.convertToInterviewRuleVOList(list);
+        CustomMappingStrategy<InterviewRuleReport> mappingStrategy = new CustomMappingStrategy<>();
+        mappingStrategy.setType(InterviewRuleReport.class);
         Writer writer = new FileWriter(filepath);
-        /*String header = "agentName,idInterview,idRule,level,modName,referenceNumber";
-        writer.write(header+System.lineSeparator());
-        int iCount = 0;
-        for(InterviewRuleReport row: list) {
-        	iCount++;
-        	
-        	if(!row.getReferenceNumber().equalsIgnoreCase("H000307")) {
-        		continue;
-        	}
-        	System.out.println(iCount);
-        	writer.write(row.getAgentName()+",");
-        	writer.write(row.getIdInterview()+",");
-        	writer.write(row.getIdRule()+",");
-        	writer.write(row.getLevel()+",");
-        	writer.write(row.getModName().replace(",", "")+",");
-        	writer.write(row.getReferenceNumber());
-        	writer.write(System.lineSeparator());
-
-        }*/
-        StatefulBeanToCsv beanToCsv = new StatefulBeanToCsvBuilder(writer).build();
+        StatefulBeanToCsv<InterviewRuleReport> beanToCsv = 
+        		new StatefulBeanToCsvBuilder<InterviewRuleReport>(writer)
+        		.withMappingStrategy(mappingStrategy).withSeparator(',').withApplyQuotesToAll(false).build();
         beanToCsv.write(list);
         writer.flush();
         writer.close();
