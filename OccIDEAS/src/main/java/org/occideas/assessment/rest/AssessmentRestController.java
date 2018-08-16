@@ -1698,10 +1698,12 @@ public class AssessmentRestController {
 		InterviewAnswerVO retValue = null;
 		InterviewQuestionVO piq = null;
 		for (InterviewQuestionVO iq : interviewQuestions) {
-			if (iq.getParentAnswerId() > 0) {
+			if (iq.getType().startsWith("Q_frequency")) {
 				if (iq.getParentAnswerId() == actualAnswer.getAnswerId()) {
-					piq = iq;
-					break;
+					if (iq.getParentAnswerId() == actualAnswer.getAnswerId()) {
+						piq = iq;
+						break;
+					}
 				}
 			}
 		}

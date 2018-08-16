@@ -921,9 +921,12 @@
 			var childQuestionNode = _.find($scope.interview.questionHistory,function(qnode){
 				var retValue = false;
 				  
-				if(qnode.parentAnswerId == node.answerId){
-					retValue = true;
-				}				  
+				if(_.includes(qnode.type, 'Q_frequency')){
+					if(qnode.parentAnswerId == node.answerId){
+						retValue = true;
+					}
+				}				
+							  
 				return retValue;
 			});
 			if(childQuestionNode){
