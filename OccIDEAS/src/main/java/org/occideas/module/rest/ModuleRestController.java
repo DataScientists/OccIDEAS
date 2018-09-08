@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -221,27 +220,21 @@ public class ModuleRestController implements BaseRestController<ModuleVO>
 
 
     @Path(value = "/exportToWord")
-    @POST
+    @GET
     @Consumes(value = MediaType.APPLICATION_JSON)
     @Produces(value = MediaType.APPLICATION_OCTET_STREAM)
-    public Response exportToWord(ModuleVO vo)
+    public Response exportToWord(@QueryParam("idNode") String idNode,
+    		@DefaultValue("false") @QueryParam("filterStudyAgent") String filterStudyAgent)
     {
-        if (vo == null || vo.getIdNode() == 0L)
+    	boolean shouldFilter = "true".equals(filterStudyAgent)?true:false;
+        if (idNode == null || idNode.equals(0L))
         {
             return Response.status(Status.BAD_REQUEST).type("text/plain")
                 .entity("export to Word , invalid data submitted for this request.").build();
         }
         try
         {
-            List<String> numbers = new LinkedList<>();
-            List<String> descriptions = new LinkedList<>();
-            generateNumbersAndDescriptionsToString(vo, numbers, descriptions);
-            if (!numbers.isEmpty())
-            {
-                numbers.removeAll(Collections.singleton(null));
-            }
-            File file = msWordGenerator.writeDocument(String.valueOf(vo.getIdNode()), numbers.toArray(new String[numbers.size()]),
-                descriptions.toArray(new String[descriptions.size()]));
+            File file = msWordGenerator.writeDocument(idNode, shouldFilter);
             return Response.ok((Object) file, MediaType.APPLICATION_OCTET_STREAM)
                 .header("Content-Disposition", "attachment; filename=\""
                     + file.getName() + "\"")

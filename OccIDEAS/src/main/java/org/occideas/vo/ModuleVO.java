@@ -46,4 +46,9 @@ public class ModuleVO extends NodeVO {
 		this.modules = modules;
 	}
 
+	@Override
+	public String getNodeType() {
+		return "Module";
+	}
+
 }

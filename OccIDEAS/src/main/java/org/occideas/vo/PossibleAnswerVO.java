@@ -84,6 +84,11 @@ public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswe
 		} else if (!(idNode == (other.idNode)))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String getNodeType() {
+		return "Answer";
 	}	
 	
 }

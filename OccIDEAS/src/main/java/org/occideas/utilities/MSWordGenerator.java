@@ -5,11 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +16,17 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.occideas.entity.Constant;
+import org.occideas.entity.Fragment;
+import org.occideas.entity.Module;
+import org.occideas.entity.Node;
+import org.occideas.mapper.FragmentMapper;
+import org.occideas.mapper.ModuleMapper;
+import org.occideas.module.dao.IModuleDao;
+import org.occideas.module.service.ModuleService;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.vo.FragmentVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,24 +37,38 @@ public class MSWordGenerator {
 	public Map<Integer, XWPFTableRow> map;
 
 	private Logger log = LogManager.getLogger(this.getClass());
-	
+
 	@Autowired
 	private SystemPropertyService systemPropertyService;
+	@Autowired
+	private ModuleMapper mapper;
+	@Autowired
+	private FragmentMapper fragmentMapper;
+	@Autowired
+	private StudyAgentUtil studyAgentUtil;
+	@Autowired
+	private ModuleService moduleService;
+	@Autowired
+	private IModuleDao dao;
 
-	public File writeDocument(String idNode, String[] nodeNumbers, String[] descriptions) throws IOException {
+	public File writeDocument(String idNode, boolean filterStudyAgent) throws IOException {
+		if (idNode == null) {
+			log.error("No idNode provided in MSWord.");
+			return null;
+		}
 		// Blank Document
 		map = new HashMap<>();
 		XWPFDocument document = new XWPFDocument();
 		String path = System.getProperty("user.home");
 		SystemPropertyVO reportDir = systemPropertyService.getByName(Constant.REPORT_DOC_DIR);
 		if (reportDir == null) {
-			log.info("Admin config "+Constant.REPORT_DOC_DIR+ " does not exist going for default path user home.");
-		}else{
+			log.info("Admin config " + Constant.REPORT_DOC_DIR + " does not exist going for default path user home.");
+		} else {
 			path = reportDir.getValue();
 		}
 		LocalDateTime localDateTime = LocalDateTime.now();
 		String formatDate = DateTimeFormatter.ofPattern("yyy_MM_dd_HH_mm_ss").format(localDateTime);
-		File file = new File(path +"/"+ idNode + "_" + formatDate + ".docx");
+		File file = new File(path + "/" + idNode + "_" + formatDate + ".docx");
 		// Write the Document in file system
 		FileOutputStream out = new FileOutputStream(file);
 
@@ -55,15 +78,63 @@ public class MSWordGenerator {
 		// create first row
 		XWPFTableRow tableRowOne = table.getRow(0);
 		createheader(tableRowOne);
-		populateNodeNumbers(nodeNumbers, table);
-		populateDescriptions(descriptions, table);
-		
+		Long idNodeLong = Long.valueOf(idNode);
+		if (!filterStudyAgent) {
+			List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
+			if (!moduleList.isEmpty()) {
+				ModuleVO moduleVO = moduleList.get(0);
+				generateRowForNodes(moduleVO, table, 1);
+			}
+		} else {
+//			Node node = dao.getNodeById(idNodeLong);
+			List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
+			if (!moduleList.isEmpty()) {
+				ModuleVO moduleVO = moduleList.get(0);
+				ModuleVO newModuleVO = systemPropertyService.filterModulesNodesWithStudyAgents(moduleVO);
+				generateRowForNodes(newModuleVO, table, 1);
+			}
+		}
+		// List<String> list = moduleService
+		// .getFilterStudyAgent(idNodeLong);
+		// studyAgentUtil.createStudyAgentCSV(idNode,list,false);
+		// String[] listOfIds = studyAgentUtil.getStudyAgentCSV(idNode);
+		// List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
+		// if(!moduleList.isEmpty()) {
+		// ModuleVO moduleVO = moduleList.get(0);
+		// if(filterStudyAgent) {
+		// generateRowForNodes(moduleVO,table,1,listOfIds);
+		// }else {
+		// generateRowForNodes(moduleVO,table,1);
+		// }
+		// }
 		document.write(out);
 		document.close();
 		out.flush();
 		out.close();
-		log.info("doc report created in "+file.getAbsolutePath()+" successfully.");
+		log.info("doc report created in " + file.getAbsolutePath() + " successfully.");
 		return file;
+	}
+
+	public boolean containsInArray(String[] arr, String targetValue) {
+		return Arrays.asList(arr).contains(targetValue);
+	}
+
+	private void generateRowForNodes(NodeVO vo, XWPFTable table, int row, String[] listOfIds) {
+		if (listOfIds != null && !containsInArray(listOfIds, String.valueOf(vo.getIdNode()))) {
+			return;
+		}
+		XWPFTableRow tablerow = table.createRow();
+		tablerow.getCell(0).setText(vo.getNumber());
+		tablerow.getCell(1).setText(vo.getNodeType());
+		tablerow.getCell(2).setText(vo.getName());
+		tablerow.getCell(3).setText(vo.getDescription());
+		row++;
+		if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
+			for (NodeVO nodes : vo.getChildNodes()) {
+				generateRowForNodes(nodes, table, row);
+			}
+		}
+
 	}
 
 	private void populateDescriptions(String[] descriptions, XWPFTable table) {
@@ -84,10 +155,26 @@ public class MSWordGenerator {
 		}
 	}
 
+	private void generateRowForNodes(NodeVO vo, XWPFTable table, int row) {
+		XWPFTableRow tablerow = table.createRow();
+		tablerow.getCell(0).setText(vo.getNumber());
+		tablerow.getCell(1).setText(vo.getNodeType());
+		tablerow.getCell(2).setText(vo.getName());
+		tablerow.getCell(3).setText(vo.getDescription());
+		row++;
+		if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
+			for (NodeVO nodes : vo.getChildNodes()) {
+				generateRowForNodes(nodes, table, row);
+			}
+		}
+	}
+
 	private void createheader(XWPFTableRow tableRowOne) {
 		tableRowOne.getCell(0).setText("Node Number");
+		tableRowOne.addNewTableCell().setText("Type");
+		tableRowOne.addNewTableCell().setText("Name");
 		tableRowOne.addNewTableCell().setText("Description");
-		tableRowOne.addNewTableCell().setText("Translation");
+		// tableRowOne.addNewTableCell().setText("Translation");
 	}
 
 }

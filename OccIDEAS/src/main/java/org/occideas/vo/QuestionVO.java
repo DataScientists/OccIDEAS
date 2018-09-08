@@ -85,6 +85,14 @@ public class QuestionVO extends NodeVO implements Cloneable, Comparable<Question
 			return  o.getSequence() - this.getSequence(); //descending
 		}	
 	}
+
+	@Override
+	public String getNodeType() {
+		if(this.link > 0L) {
+			return "Question Linked";
+		}
+		return "Question";
+	}
 	
 	
 }

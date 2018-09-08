@@ -1661,11 +1661,17 @@
 				} 
 			  ], null, // Divider
 			  [ 'Export to Word', function($itemScope) {
+				  var newUrl = '';
+				  if (confirm('Should we filter it by study agent?Ok for Yes and Cancel to run without filter.')) {
+					  newUrl =  'web/rest/module/exportToWord?idNode='+data[0].idNode+'&filterStudyAgent=true';
+				  }else{
+					  newUrl =  'web/rest/module/exportToWord?idNode='+data[0].idNode+'&filterStudyAgent=false';
+				  }
 				  $http({
-					  method: 'POST',
+					  method: 'GET',
 					  cache: false,
-					  url: 'web/rest/module/exportToWord',
-					  data:data[0],
+					  url: newUrl,
+					  data:data[0].idNode,
 					  responseType:'arraybuffer',
 					  headers: {
 //					    'Authorization': "Bearer " + $rootScope.userInfo.access_token,
@@ -1680,7 +1686,7 @@
 					  var blob=new Blob([data.data], {type: 'application/octet-stream'});
 					    var link=document.createElement('a');
 					    link.href=window.URL.createObjectURL(blob);
-					    link.download=data.config.data.idNode+".docx";
+					    link.download=data.config.data+".docx";
 					    link.click();
 					}); 
 				  

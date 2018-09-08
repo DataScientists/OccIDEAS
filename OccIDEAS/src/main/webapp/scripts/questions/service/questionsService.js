@@ -83,12 +83,11 @@
 			return request.then(handleSuccess,handleError);
 		}
 		
-		function exportToWord(data){
-			var restSaveUrl = 'web/rest/module/exportToWord';
+		function exportToWord(idNode,filter){
+			var restSaveUrl = 'web/rest/module/exportToWord?idNode='+idNode+'&filterStudyAgent='+filter;
 			var request =  $http({
-				  method: 'POST',
-				  url: restSaveUrl,
-				  data:data
+				  method: 'GET',
+				  url: restSaveUrl
 				})
 			return request.then(handleSuccess,handleError);
 		}

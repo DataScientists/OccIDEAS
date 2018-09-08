@@ -24,4 +24,9 @@ public class FragmentVO extends NodeVO{
 		this.childNodes = childNodes;
 	}
 
+	@Override
+	public String getNodeType() {
+		return "Fragment";
+	}
+
 }

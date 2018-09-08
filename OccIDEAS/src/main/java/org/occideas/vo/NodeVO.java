@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonIgnoreProperties({ "editEnabled", "info", "warning", "placeholder", "isEditing", "showAgentSlider", "id",
 		"collapsed", "isOpen", "isSelected" })
 public abstract class NodeVO {
-
+	
 	protected long idNode;
 	protected long anchorId;
 	protected String name;
@@ -247,5 +247,7 @@ public abstract class NodeVO {
 	}
 	
 	public abstract List<? extends NodeVO> getChildNodes();
+	
+	public abstract String getNodeType();
 
 }
