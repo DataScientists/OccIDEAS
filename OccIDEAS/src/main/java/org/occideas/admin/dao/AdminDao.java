@@ -10,7 +10,7 @@ import org.occideas.entity.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository 
 public class AdminDao implements IAdminDao
 {
 
