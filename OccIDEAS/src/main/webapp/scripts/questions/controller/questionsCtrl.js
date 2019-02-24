@@ -2364,10 +2364,14 @@
 		}
 
 		$scope.scrollTo = function( target){
-			var scrollPane = $("body");
+			//var scrollPane = $("body");
 			var scrollTarget = $('#'+target);
 			var scrollY = scrollTarget.offset().top - 150;
-			scrollPane.animate({scrollTop : scrollY }, 1000, 'swing');
+			//scrollPane.animate({scrollTop : scrollY }, 1000, 'swing');
+			
+			$('html, body').animate({
+			    scrollTop: scrollY
+			  }, 2000, 'swing');
 		};
 
         $scope.highlightNode = function(idNode){
