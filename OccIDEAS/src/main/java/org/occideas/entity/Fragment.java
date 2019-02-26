@@ -26,6 +26,10 @@ public class Fragment extends Node<Question>{
 		super();
 	}
 	
+	public Fragment(Node node) {
+		super(node);
+	}
+	
 	public Fragment(Long idNode) {
 		super();
 		this.setIdNode(idNode);

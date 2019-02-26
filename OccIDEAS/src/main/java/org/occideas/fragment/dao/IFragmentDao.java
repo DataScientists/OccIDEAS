@@ -34,4 +34,6 @@ public interface IFragmentDao {
 
 	List<Fragment> getFragmentParents(Long id);
 
+	void saveOrUpdateIgnoreFK(Fragment fragment);
+
 }

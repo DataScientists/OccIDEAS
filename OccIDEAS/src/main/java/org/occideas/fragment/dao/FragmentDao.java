@@ -13,6 +13,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Fragment;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -97,6 +98,14 @@ public class FragmentDao implements IFragmentDao {
 	public void saveOrUpdate(Fragment fragment){
       sessionFactory.getCurrentSession().saveOrUpdate(fragment);
     }
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void saveOrUpdateIgnoreFK(Fragment fragment) {
+		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
+		.executeUpdate();
+		sessionFactory.getCurrentSession().saveOrUpdate(fragment);
+	}
 
     /* (non-Javadoc)
 	 * @see org.occideas.fragment.dao.IFragmentDao#getAll()

@@ -494,6 +494,12 @@ public class InterviewDao implements IInterviewDao{
 				.add(Restrictions.ne("link",0L));
 		return crit.list();
 	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void deleteAll() {
+		sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview").executeUpdate();
+	}
 
 }
 

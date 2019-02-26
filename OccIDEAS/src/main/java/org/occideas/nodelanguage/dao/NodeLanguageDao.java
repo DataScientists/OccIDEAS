@@ -348,4 +348,10 @@ public class NodeLanguageDao implements INodeLanguageDao {
 		List<LanguageFragBreakdown> list = sqlQuery.list();
 		return list;
 	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void deleteAll() {
+		sessionFactory.getCurrentSession().createSQLQuery("truncate table Node_Language").executeUpdate();
+	}
 }

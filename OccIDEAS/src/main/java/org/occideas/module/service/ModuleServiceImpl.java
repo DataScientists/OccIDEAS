@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.agent.dao.AgentDao;
+import org.occideas.agent.dao.IAgentDao;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Agent;
 import org.occideas.entity.Constant;
@@ -21,7 +21,7 @@ import org.occideas.mapper.NodeRuleMapper;
 import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
-import org.occideas.noderule.dao.NodeRuleDao;
+import org.occideas.noderule.dao.INodeRuleDao;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.IRuleDao;
 import org.occideas.security.audit.Auditable;
@@ -72,11 +72,11 @@ public class ModuleServiceImpl implements ModuleService {
 	@Autowired
 	private RuleMapper ruleMapper;
 	@Autowired
-	private NodeRuleDao nodeRuleDao;
+	private INodeRuleDao nodeRuleDao;
 	@Autowired
 	private NodeRuleMapper nodeRuleMapper;
 	@Autowired
-	private AgentDao agentDao;
+	private IAgentDao agentDao;
 	@Autowired
 	private IQuestionCopier questionCopier;
 	@Autowired

@@ -41,4 +41,6 @@ public interface IParticipantDao {
 
 	Participant getByReferenceNumber(String referenceNumber);
 
+	void deleteAll();
+
 }

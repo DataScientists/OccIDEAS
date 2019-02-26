@@ -197,4 +197,10 @@ public class ParticipantDao implements IParticipantDao {
 		}
 		return reference;
 	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void deleteAll() {
+		sessionFactory.getCurrentSession().createSQLQuery("truncate table Participant").executeUpdate();
+	}
 }

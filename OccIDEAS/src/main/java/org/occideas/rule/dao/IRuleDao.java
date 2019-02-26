@@ -9,6 +9,8 @@ public interface IRuleDao {
 	Long save(Rule rule);
 
 	void delete(Rule rule);
+	
+	void deleteAll();
 
 	Rule get(Long id);
 
@@ -21,5 +23,7 @@ public interface IRuleDao {
 	List<Rule> findByAgentId(long agentId);
 
 	Long getMaxRuleId();
+
+	void saveBatchRule(List<Rule> rules);
 
 }

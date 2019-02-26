@@ -56,4 +56,6 @@ public interface IInterviewDao {
 
 	List<Interview> getAllInterviewsAssessed();
 
+	void deleteAll();
+
 }

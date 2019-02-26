@@ -5,19 +5,20 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AgentVO {
 
+	private String discriminator;
 	private long idAgent;
 	private String name;
 	private String description;
 
 	private AgentGroupVO agentGroup;
-	
+
 	private Date lastUpdated;
 	private Integer total = 0;
 	private Integer deleted = 0;
-	
+
 	private List<RuleVO> rules;
 
 	public long getIdAgent() {
@@ -82,6 +83,14 @@ public class AgentVO {
 
 	public void setRules(List<RuleVO> rules) {
 		this.rules = rules;
+	}
+
+	public String getDiscriminator() {
+		return discriminator;
+	}
+
+	public void setDiscriminator(String discriminator) {
+		this.discriminator = discriminator;
 	}
 
 	@Override

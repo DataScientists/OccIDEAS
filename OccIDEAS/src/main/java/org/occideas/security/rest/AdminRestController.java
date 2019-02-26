@@ -12,7 +12,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.occideas.admin.service.IAdminService;
+import org.occideas.admin.service.IDbConnectService;
 import org.occideas.security.service.UserService;
+import org.occideas.vo.DBConnect;
+import org.occideas.vo.NodeVO;
 import org.occideas.vo.UserProfileVO;
 import org.occideas.vo.UserUserProfileVO;
 import org.occideas.vo.UserVO;
@@ -28,6 +31,9 @@ public class AdminRestController {
     @Autowired
     private IAdminService adminService;
 
+    @Autowired
+    private IDbConnectService iDbConnectService;
+    
     @GET
     @Path(value = "/purgeParticipants")
     public Response purgeParticipants()
@@ -132,6 +138,24 @@ public class AdminRestController {
         {
             UserVO userVO = service.save(vo);
             return Response.ok(userVO).build();
+        }
+        catch (Throwable e)
+        {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+    
+    @Path(value = "/importLibrary")
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public Response importLibrary(DBConnect vo)
+    {
+        try
+        {
+        	List<NodeVO> importLibrary = iDbConnectService.importLibrary(vo);
+            return Response.ok(importLibrary).build();
         }
         catch (Throwable e)
         {

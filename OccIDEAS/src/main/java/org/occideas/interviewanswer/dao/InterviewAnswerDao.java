@@ -321,4 +321,12 @@ public class InterviewAnswerDao implements IInterviewAnswerDao
         }
         return list;
     }
+    
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void deleteAll() {
+		sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_Answer").executeUpdate();
+	}
+
 }

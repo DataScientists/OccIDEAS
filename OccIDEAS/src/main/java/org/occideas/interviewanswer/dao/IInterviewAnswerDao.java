@@ -19,4 +19,6 @@ public interface IInterviewAnswerDao {
 
 	List<InterviewAnswer> saveWithClearSession(List<InterviewAnswer> convertToInterviewAnswerList);
 
+	void deleteAll();
+
 }

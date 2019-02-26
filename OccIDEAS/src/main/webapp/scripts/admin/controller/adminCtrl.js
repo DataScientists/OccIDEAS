@@ -20,6 +20,41 @@
 		
 	    $scope.randomIntCount = 0;
 	    $scope.randomAnswerChecked = true;
+	    $scope.dbConnect = {
+	    		host:'',
+	    		username:'',
+	    		password:''
+	    };
+	    
+	    self.importLibraryDialog = function(){
+	    	$mdDialog.show({
+				scope: $scope,  
+				preserveScope: true,
+				templateUrl : 'scripts/admin/partials/importLibrary.html',
+				clickOutsideToClose:false
+			});
+	    }
+	    
+	    self.importLibrary = function(){
+	    	AdminService.importLibrary($scope.dbConnect).then(function(response){
+	    		if(response.status == '200'){
+	    			$ngToast.create({
+	      	    		  className: 'success',
+	      	    		  content: 'Import library successfull.',
+	      	    		  animation:'slide'
+	      	    	 });
+	    		}else{
+	    			$ngToast.create({
+			    		  className: 'danger',
+			    		  content: 'Import library failed, check the logs.',
+			    		  dismissButton: true,
+		      	    	  dismissOnClick:false,
+		      	    	  animation:'slide'
+	    			});
+	    		}
+	    		$mdDialog.cancel();
+	    	});
+	    }
 	    
 	    self.purgeParticipants = function(){
 	    	AdminService.purgeParticipants().then(function(response){

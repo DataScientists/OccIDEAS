@@ -26,7 +26,7 @@ public class PossibleAnswer extends Node<Question> {
 	public PossibleAnswer() {
 		super();
 	}
-
+	
 	public PossibleAnswer(Node<Question> node) {
 		super(node);
 	}

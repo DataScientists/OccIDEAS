@@ -78,6 +78,15 @@ public class ModuleDao implements IModuleDao
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void saveOrUpdateIgnoreFK(Module module)
+    {
+    	sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
+		.executeUpdate();
+        sessionFactory.getCurrentSession().saveOrUpdate(module);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public long create(Module module)
     {
         sessionFactory.getCurrentSession().save(module);

@@ -36,6 +36,11 @@ public class Module extends Node<Question> implements Serializable
     {
         super();
     }
+    
+    public Module(Node node)
+    {
+        super(node);
+    }
 
 
     public Module(long idNode)

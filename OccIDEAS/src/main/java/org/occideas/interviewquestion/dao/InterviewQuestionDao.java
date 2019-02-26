@@ -545,5 +545,11 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
 		return (result != null) ? ((BigInteger) result).longValue() : 0l;
 	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void deleteAll() {
+		sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_Question").executeUpdate();
+	}
 
 }

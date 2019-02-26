@@ -6,5 +6,9 @@ public interface IPossibleAnswerDao
 {
 
     PossibleAnswer get(long id);
+
+	void saveOrUpdate(PossibleAnswer answer);
+
+	void saveOrUpdateIgnoreFK(PossibleAnswer answer);
     
 }

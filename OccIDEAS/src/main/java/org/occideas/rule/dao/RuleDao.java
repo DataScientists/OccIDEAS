@@ -10,6 +10,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Agent;
 import org.occideas.entity.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -52,6 +53,16 @@ public class RuleDao implements IRuleDao{
     public void saveOrUpdate(Rule rule){
     	sessionFactory.getCurrentSession().saveOrUpdate(rule);
     }
+	
+	@Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void saveBatchRule(List<Rule> rules){
+		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
+		.executeUpdate();
+		for(Rule rule:rules) {
+			sessionFactory.getCurrentSession().save(rule);
+		}
+    }
     
 	@Override
    	@SuppressWarnings("unchecked")
@@ -93,5 +104,13 @@ public class RuleDao implements IRuleDao{
 		}
     	return maxRuleId;
     }
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void deleteAll() {
+		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
+		.executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("truncate table Rule").executeUpdate();
+	}
 
 }

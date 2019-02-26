@@ -15,6 +15,13 @@ public class AgentGroupVO {
 	private Integer total = 0;
 	private Integer deleted = 0;
 
+	public AgentGroupVO() {
+	}
+
+	public AgentGroupVO(long idAgent){
+		this.idAgent = idAgent;
+	}
+	
 	public long getIdAgent() {
 		return idAgent;
 	}

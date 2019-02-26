@@ -14,45 +14,58 @@ import org.occideas.entity.NodesAgent;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class QuestionDao implements IQuestionDao{
-	
+public class QuestionDao implements IQuestionDao {
+
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+
 	@Autowired
 	private BaseDao baseDao;
 
-	public Question getQuestionByModuleIdAndNumber(String parentId,String number){
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void saveOrUpdate(Question question) {
+		sessionFactory.getCurrentSession().saveOrUpdate(question);
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void saveOrUpdateIgnoreFK(Question question) {
+		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
+		.executeUpdate();
+		sessionFactory.getCurrentSession().saveOrUpdate(question);
+	}
+
+	public Question getQuestionByModuleIdAndNumber(String parentId, String number) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class)
-				.add(Restrictions.eq("parentId",parentId))
-				.add(Restrictions.eq("number",number))
-						.add(Restrictions.eq("deleted",0));
-		if(!crit.list().isEmpty()){
+		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))
+				.add(Restrictions.eq("number", number)).add(Restrictions.eq("deleted", 0));
+		if (!crit.list().isEmpty()) {
 			return (Question) crit.list().get(0);
 		}
 		return null;
-		
+
 	}
-	public List<Question> getQuestionsByParentId(String parentId){
+
+	public List<Question> getQuestionsByParentId(String parentId) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class)
-				.add(Restrictions.eq("parentId",parentId))
-				.add(Restrictions.eq("deleted",0));
-		if(!crit.list().isEmpty()){
+		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))
+				.add(Restrictions.eq("deleted", 0));
+		if (!crit.list().isEmpty()) {
 			return crit.list();
 		}
-		return null;	
+		return null;
 	}
-	
-	public List<Question> getAllMultipleQuestions(){
+
+	public List<Question> getAllMultipleQuestions() {
 		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class)
-				.add(Restrictions.eq("type","Q_multiple"))
-				.add(Restrictions.eq("deleted",0));
-		if(!crit.list().isEmpty()){
+		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("type", "Q_multiple"))
+				.add(Restrictions.eq("deleted", 0));
+		if (!crit.list().isEmpty()) {
 			return crit.list();
 		}
 		return null;
@@ -60,60 +73,51 @@ public class QuestionDao implements IQuestionDao{
 
 	public Module getModuleByParentId(Long idNode) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Module.class)
-						.add(Restrictions.eq("idNode",idNode))
-						.add(Restrictions.eq("deleted",0));
-		if(!crit.list().isEmpty()){
+		final Criteria crit = session.createCriteria(Module.class).add(Restrictions.eq("idNode", idNode))
+				.add(Restrictions.eq("deleted", 0));
+		if (!crit.list().isEmpty()) {
 			return (Module) crit.list().get(0);
 		}
 		return null;
 	}
-	
+
 	public Question findMultipleQuestion(long questionId) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class)
-				.add(Restrictions.eq("type","Q_multiple"))
-				.add(Restrictions.eq("idNode",questionId))
-				.add(Restrictions.eq("deleted",0));
+		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("type", "Q_multiple"))
+				.add(Restrictions.eq("idNode", questionId)).add(Restrictions.eq("deleted", 0));
 		List list = crit.list();
-		if(!list.isEmpty()){
-			return (Question)list.get(0);
+		if (!list.isEmpty()) {
+			return (Question) list.get(0);
 		}
 		return null;
 	}
-	
+
 	public Node getTopModuleByTopNodeId(long topNodeId) {
 		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Node.class)
-				.add(Restrictions.eq("idNode",topNodeId));
+		final Criteria crit = session.createCriteria(Node.class).add(Restrictions.eq("idNode", topNodeId));
 		List list = crit.list();
-		if(!list.isEmpty()){
-			return (Node)list.get(0);
+		if (!list.isEmpty()) {
+			return (Node) list.get(0);
 		}
 		return null;
 	}
-	
-	private String getNodesWithAgentSQL = " select concat(r.idRule, ':',n.idNode, ':',a.idAgent)"+ 
-			" as primaryKey, r.idRule,n.idNode,a.idAgent from Node_Rule n,AgentInfo a, Rule r" +
-			" where n.idRule = r.idRule" +
-			" and a.idAgent = r.agentId" +
-			" and r.deleted = 0" +
-			" and a.deleted = 0" +
-			" and a.idAgent = :param";
-	
-	public List<NodesAgent> getNodesWithAgent(long agentId){
+
+	private String getNodesWithAgentSQL = " select concat(r.idRule, ':',n.idNode, ':',a.idAgent)"
+			+ " as primaryKey, r.idRule,n.idNode,a.idAgent from Node_Rule n,AgentInfo a, Rule r"
+			+ " where n.idRule = r.idRule" + " and a.idAgent = r.agentId" + " and r.deleted = 0" + " and a.deleted = 0"
+			+ " and a.idAgent = :param";
+
+	public List<NodesAgent> getNodesWithAgent(long agentId) {
 		final Session session = sessionFactory.getCurrentSession();
-		SQLQuery sqlQuery = session.createSQLQuery(getNodesWithAgentSQL).
-				addEntity(NodesAgent.class);
+		SQLQuery sqlQuery = session.createSQLQuery(getNodesWithAgentSQL).addEntity(NodesAgent.class);
 		sqlQuery.setParameter("param", agentId);
 		List<NodesAgent> list = sqlQuery.list();
 		return list;
 	}
 
 	@Override
-    public Question get(Class<Question> type, Long id)
-    {
-        return baseDao.get(type, id);
-    }
-	
+	public Question get(Class<Question> type, Long id) {
+		return baseDao.get(type, id);
+	}
+
 }

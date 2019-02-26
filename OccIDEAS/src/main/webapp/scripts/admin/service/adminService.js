@@ -26,6 +26,16 @@
 			return request.then(handleSuccess,handleError);
 		};
 		
+		var importLibrary = function(data){
+			var restSaveUrl = adminEndpoint +'/importLibrary';
+			var request =  $http({
+				  method: 'POST',
+				  url: restSaveUrl,
+				  data:data
+				})
+			return request.then(handleSuccess,handleError);
+		};
+		
 		var updateUser = function(data){
 			var restSaveUrl = adminEndpoint +'/updateUser';
 			var request =  $http({
@@ -131,8 +141,8 @@
 			updatePassword:updatePassword,
 			cleanOrphans:cleanOrphans,
 			purgeParticipants:purgeParticipants,
-			purgeModule:purgeModule
-			
+			purgeModule:purgeModule,
+			importLibrary:importLibrary
 		};
 	}
 

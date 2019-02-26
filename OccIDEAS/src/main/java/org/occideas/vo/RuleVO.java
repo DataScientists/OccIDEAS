@@ -163,5 +163,15 @@ public class RuleVO {
 		this.backgroundFlag = backgroundFlag;
 	}
 
+	@Override
+	public String toString() {
+		return "RuleVO [idRule=" + idRule + ", agentId=" + agentId + ", agent=" + agent + ", type=" + type + ", level="
+				+ level + ", lastUpdated=" + lastUpdated + ", conditions=" + conditions + ", legacyRuleId="
+				+ legacyRuleId + ", ruleAdditionalfields=" + ruleAdditionalfields + ", levelValue=" + levelValue
+				+ ", deleted=" + deleted + ", noiseHours=" + noiseHours + ", noisePartialExposure="
+				+ noisePartialExposure + ", backgroundFlag=" + backgroundFlag + ", isRatio=" + isRatio + "]";
+	}
 
+	
+	
 }

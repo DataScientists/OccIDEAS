@@ -72,4 +72,6 @@ public interface INodeLanguageDao {
 
     List<Fragment> getFragmentIdNodeSQL();
 
+	void deleteAll();
+
 }

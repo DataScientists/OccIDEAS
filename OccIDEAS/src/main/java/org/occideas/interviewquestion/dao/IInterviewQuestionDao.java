@@ -61,4 +61,6 @@ public interface IInterviewQuestionDao {
 
 	InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview);
 
+	void deleteAll();
+
 }

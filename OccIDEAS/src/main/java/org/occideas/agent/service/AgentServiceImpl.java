@@ -3,7 +3,7 @@ package org.occideas.agent.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.agent.dao.AgentDao;
+import org.occideas.agent.dao.IAgentDao;
 import org.occideas.entity.Agent;
 import org.occideas.entity.AgentGroup;
 import org.occideas.entity.Constant;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AgentServiceImpl implements AgentService {
 
 	@Autowired
-	private AgentDao dao;
+	private IAgentDao dao;
 	@Autowired
 	private SystemPropertyService sysPropService;
 	
