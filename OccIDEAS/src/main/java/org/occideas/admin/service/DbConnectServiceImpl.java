@@ -562,7 +562,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		}else {
 			executeCmd = "mysqldump -u " + username
 			+ " -p" + password + " " + databaseName
-			+ " -r opt/data/backup.sql";
+			+ " -r /opt/data/backup.sql";
 		}
 		return executeCmd;
 	}
