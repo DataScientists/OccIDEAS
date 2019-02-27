@@ -16,19 +16,19 @@
 				 <div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
 					<label>*Host</label> <input required 
-						maxlength="1000"
+						maxlength="1000" placeholder="jdbc:mysql://localhost:3306/occideas"
 						ng-model="dbConnect.host" /> </md-input-container>
 				</div>  	
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-					<label>*Username</label> <input required 
+					<label>*DBUsername</label> <input required 
 						maxlength="50" value=""
 						ng-model="dbConnect.username" /> </md-input-container>
 					<div flex="5" hide-xs hide-sm>
 						<!-- Spacer //-->
 					</div>
 					<md-input-container class="md-block" flex-gt-sm>
-					<label>*Password</label> 
+					<label>*DBPassword</label> 
 					<input type="password"
 						maxlength="50" value=""
 						ng-model="dbConnect.password" />

@@ -36,6 +36,16 @@
 	    }
 	    
 	    self.importLibrary = function(){
+	    	if(!$scope.dbConnect.host || !$scope.dbConnect.username || !$scope.dbConnect.password){
+	    		$ngToast.create({
+		    		  className: 'danger',
+		    		  content: 'Field in * are required.',
+		    		  dismissButton: true,
+	      	    	  dismissOnClick:false,
+	      	    	  animation:'slide'
+	    		});
+	    		return;
+	    	}
 	    	AdminService.importLibrary($scope.dbConnect).then(function(response){
 	    		if(response.status == '200'){
 	    			$ngToast.create({

@@ -3,7 +3,7 @@ package org.occideas.vo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class DBConnect {
+public class DBConnectVO {
 
 	private String host;
 	private String username;

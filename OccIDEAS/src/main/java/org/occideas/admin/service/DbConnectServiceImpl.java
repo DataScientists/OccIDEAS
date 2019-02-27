@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.IAgentDao;
 import org.occideas.entity.AdditionalField;
 import org.occideas.entity.AgentPlain;
-import org.occideas.entity.Node;
 import org.occideas.entity.NodePlain;
 import org.occideas.entity.NodeRule;
 import org.occideas.entity.Rule;
@@ -49,7 +48,7 @@ import org.occideas.utilities.NodeUtil;
 import org.occideas.utilities.OSUtil;
 import org.occideas.vo.AgentGroupVO;
 import org.occideas.vo.AgentVO;
-import org.occideas.vo.DBConnect;
+import org.occideas.vo.DBConnectVO;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeLanguageVO;
@@ -145,7 +144,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 
 
 	@Override
-	public Connection connectToDb(DBConnect dbConnect) {
+	public Connection connectToDb(DBConnectVO dbConnect) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection con = DriverManager.getConnection(dbConnect.getHost(), dbConnect.getUsername(),
@@ -158,7 +157,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 	}
 
 	@Override
-	public List<NodePlain> importLibrary(DBConnect dbConnect) throws SQLException {
+	public List<NodePlain> importLibrary(DBConnectVO dbConnect) throws SQLException {
 		createDumpFile(dbConnect);
 		deleteNodeRules();
 		deleteAgents();
@@ -492,7 +491,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		return null;
 	}
 
-	public void createDumpFile(DBConnect dbConnect) {
+	public void createDumpFile(DBConnectVO dbConnect) {
 
 		/***********************************************************/
 		if(context.getBean("dataSource") instanceof BoneCPDataSource) {
@@ -518,16 +517,14 @@ public class DbConnectServiceImpl implements IDbConnectService {
 			runtimeProcess = Runtime.getRuntime().exec(executeCmd);
 			int processComplete = runtimeProcess.waitFor();
 			if (processComplete == 0) {
-				System.out.println("Backup taken successfully");
-
+				log.info("Backup taken successfully");
 			} else {
-				System.out.println("Could not take mysql backup");
-
+				log.error("Could not take mysql backup");
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Could not take mysql backup",e);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			log.error("Could not take mysql backup",e);
 		}
 	}
 

@@ -5,11 +5,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.occideas.entity.NodePlain;
-import org.occideas.vo.DBConnect;
+import org.occideas.vo.DBConnectVO;
 
 public interface IDbConnectService {
 
-	Connection connectToDb(DBConnect dbConnect);
+	Connection connectToDb(DBConnectVO dbConnect);
 	
-	List<NodePlain> importLibrary(DBConnect dbConnect) throws SQLException;
+	List<NodePlain> importLibrary(DBConnectVO dbConnect) throws SQLException;
 }
