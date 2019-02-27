@@ -13,9 +13,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.occideas.admin.service.IAdminService;
 import org.occideas.admin.service.IDbConnectService;
+import org.occideas.entity.NodePlain;
 import org.occideas.security.service.UserService;
 import org.occideas.vo.DBConnect;
-import org.occideas.vo.NodeVO;
 import org.occideas.vo.UserProfileVO;
 import org.occideas.vo.UserUserProfileVO;
 import org.occideas.vo.UserVO;
@@ -154,7 +154,7 @@ public class AdminRestController {
     {
         try
         {
-        	List<NodeVO> importLibrary = iDbConnectService.importLibrary(vo);
+        	List<NodePlain> importLibrary = iDbConnectService.importLibrary(vo);
             return Response.ok(importLibrary).build();
         }
         catch (Throwable e)

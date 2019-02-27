@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.occideas.entity.Node;
+import org.occideas.entity.NodePlain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -42,6 +43,15 @@ public class NodeDao implements INodeDao
 		.executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery(
 				"truncate table Node").executeUpdate();
+	}
+
+	@Override
+	public void saveBatchNodesPlain(List<NodePlain> nodes) {
+		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
+		.executeUpdate();
+    	for(NodePlain node:nodes) {
+    		sessionFactory.getCurrentSession().save(node);
+    	}
 	}
     
 }

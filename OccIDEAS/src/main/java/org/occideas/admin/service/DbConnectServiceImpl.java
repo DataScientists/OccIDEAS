@@ -13,12 +13,14 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.IAgentDao;
 import org.occideas.entity.AdditionalField;
 import org.occideas.entity.AgentPlain;
 import org.occideas.entity.Node;
+import org.occideas.entity.NodePlain;
 import org.occideas.entity.NodeRule;
 import org.occideas.entity.Rule;
 import org.occideas.entity.RuleAdditionalField;
@@ -44,6 +46,7 @@ import org.occideas.possibleanswer.dao.IPossibleAnswerDao;
 import org.occideas.question.dao.IQuestionDao;
 import org.occideas.rule.dao.IRuleDao;
 import org.occideas.utilities.NodeUtil;
+import org.occideas.utilities.OSUtil;
 import org.occideas.vo.AgentGroupVO;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.DBConnect;
@@ -155,7 +158,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 	}
 
 	@Override
-	public List<NodeVO> importLibrary(DBConnect dbConnect) throws SQLException {
+	public List<NodePlain> importLibrary(DBConnect dbConnect) throws SQLException {
 		createDumpFile(dbConnect);
 		deleteNodeRules();
 		deleteAgents();
@@ -165,13 +168,13 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		deleteRules();
 		Connection connectToDb = connectToDb(dbConnect);
 //		List<RuleAdditionalFieldVO> ruleAddFieldList = copyRuleAddFieldFromDB(connectToDb);
-		List<Node> nodesFromDB = getNodesFromDB(connectToDb);
+		List<NodePlain> nodesFromDB = getNodesFromDB(connectToDb);
 		saveBatchNodes(nodesFromDB);
 		saveBatchAgentsPlain(copyAgentInfoPlainFromDB(connectToDb));
 		saveBatchRules(copyRulesFromDB(connectToDb));
 		saveBatchNodeRules(copyNodeRuleFromDB(connectToDb));
 		saveBatchNodeLanguage(copyNodeLanguageFromDB(connectToDb));
-		return util.convertToNodeVOList(nodesFromDB);
+		return nodesFromDB;
 	}
 
 	private void saveBatchAgentsPlain(List<AgentPlain> copyAgentInfoPlainFromDB) {
@@ -197,8 +200,8 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		participantDao.deleteAll();
 	}
 
-	private void saveBatchNodes(List<Node> nodes) {
-		nodeDao.saveBatchNodes(nodes);
+	private void saveBatchNodes(List<NodePlain> nodes) {
+		nodeDao.saveBatchNodesPlain(nodes);
 	}
 	
 	private void saveNodes(List<NodeVO> nodes) {
@@ -374,15 +377,15 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		return null;
 	}
 
-	private List<Node> getNodesFromDB(Connection connect) throws SQLException {
+	private List<NodePlain> getNodesFromDB(Connection connect) throws SQLException {
 		Statement stmt = null;
 		String query = "select * from Node where deleted = 0";
 		try {
 			stmt = connect.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			List<Node> list = new ArrayList<>();
+			List<NodePlain> list = new ArrayList<>();
 			while (rs.next()) {
-				Node node = new Node();
+				NodePlain node = new NodePlain();
 				node.setIdNode(rs.getLong("idNode"));
 				node.setNodeDiscriminator(rs.getString("node_discriminator"));
 				node.setDeleted(rs.getInt("deleted"));
@@ -492,19 +495,48 @@ public class DbConnectServiceImpl implements IDbConnectService {
 	public void createDumpFile(DBConnect dbConnect) {
 
 		/***********************************************************/
-		BoneCPDataSource dataSource = (BoneCPDataSource) context.getBean("dataSource");
+		if(context.getBean("dataSource") instanceof BoneCPDataSource) {
+			BoneCPDataSource dataSource = (BoneCPDataSource) context.getBean("dataSource");
+			createDumpBoneCpDatasource(dataSource);
+		}else {
+			BasicDataSource dataSource = (BasicDataSource) context.getBean("dataSource");
+			createDumpBasicDataSource(dataSource);
+		}
+		
+
+	}
+
+	private void createDumpBoneCpDatasource(BoneCPDataSource dataSource) {
 		String jdbcUrl = dataSource.getJdbcUrl();
 		int lastIndex = jdbcUrl.contains("?")?jdbcUrl.indexOf("?"):jdbcUrl.length();
 		String databaseName = jdbcUrl.substring(jdbcUrl.lastIndexOf("/")+1, lastIndex);
 		
-		// Execute Shell Command
-//		String executeCmd = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump -u " + dataSource.getUsername()
-//				+ " -p" + dataSource.getPassword() + " " + databaseName
-//				+ " -r C:\\Users\\jed\\Documents\\dumps\\backup.sql";
+		String executeCmd = getExecuteCmd(databaseName,dataSource.getUsername(),dataSource.getPassword());
+
+		Process runtimeProcess;
+		try {
+			runtimeProcess = Runtime.getRuntime().exec(executeCmd);
+			int processComplete = runtimeProcess.waitFor();
+			if (processComplete == 0) {
+				System.out.println("Backup taken successfully");
+
+			} else {
+				System.out.println("Could not take mysql backup");
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void createDumpBasicDataSource(BasicDataSource dataSource) {
+		String jdbcUrl = dataSource.getUrl();
+		int lastIndex = jdbcUrl.contains("?")?jdbcUrl.indexOf("?"):jdbcUrl.length();
+		String databaseName = jdbcUrl.substring(jdbcUrl.lastIndexOf("/")+1, lastIndex);
 		
-		String executeCmd = "mysqldump -u " + dataSource.getUsername()
-		+ " -p" + dataSource.getPassword() + " " + databaseName
-		+ " -r opt/data/backup.sql";
+		String executeCmd = getExecuteCmd(databaseName,dataSource.getUsername(),dataSource.getPassword());
 		
 		Process runtimeProcess;
 		try {
@@ -522,7 +554,20 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
 
+	private String getExecuteCmd(String databaseName,String username,String password) {
+		String executeCmd = "";
+		if(OSUtil.isWindows()) {
+			executeCmd = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump -u " + 
+		username + " -p" + password + " " + databaseName
+			+ " -r C:\\Users\\jed\\Documents\\dumps\\backup.sql";
+		}else {
+			executeCmd = "mysqldump -u " + username
+			+ " -p" + password + " " + databaseName
+			+ " -r opt/data/backup.sql";
+		}
+		return executeCmd;
 	}
 
 	private Map<Long, Long> prepareIdsForNodes(List<NodeVO> list) {
