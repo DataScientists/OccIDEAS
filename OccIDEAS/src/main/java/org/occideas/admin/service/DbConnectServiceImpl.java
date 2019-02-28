@@ -1,11 +1,13 @@
 package org.occideas.admin.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -554,17 +556,33 @@ public class DbConnectServiceImpl implements IDbConnectService {
 	}
 
 	private String getExecuteCmd(String databaseName,String username,String password) {
+		String filename = "backup"+LocalDateTime.now().toString()+".sql";
 		String executeCmd = "";
 		if(OSUtil.isWindows()) {
+			String fullpath = "C:\\Users\\jed\\Documents\\dumps\\"+filename; 
+			createFile(fullpath);
 			executeCmd = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump -u " + 
 		username + " -p" + password + " " + databaseName
-			+ " -r C:\\Users\\jed\\Documents\\dumps\\backup.sql";
+			+ " -r "+fullpath;
 		}else {
+			String fullpath = "/opt/data/"+filename; 
+			createFile(fullpath);
 			executeCmd = "mysqldump -u " + username
 			+ " -p" + password + " " + databaseName
-			+ " -r opt/data/backup.sql";
+			+ " -r "+fullpath;
 		}
 		return executeCmd;
+	}
+	
+	private void createFile(String fullpath) {
+		File file = new File(fullpath);
+		if(!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				log.error(e.getMessage(),e);
+			}
+		}
 	}
 
 	private Map<Long, Long> prepareIdsForNodes(List<NodeVO> list) {

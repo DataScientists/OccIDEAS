@@ -46,6 +46,7 @@ public class NodeDao implements INodeDao
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void saveBatchNodesPlain(List<NodePlain> nodes) {
 		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
 		.executeUpdate();
