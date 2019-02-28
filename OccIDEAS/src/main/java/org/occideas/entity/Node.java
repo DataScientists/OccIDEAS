@@ -61,7 +61,7 @@ public class Node<T extends Node> implements Cloneable {
 	@JsonInclude(Include.NON_EMPTY)
 	protected List<Note> notes;
 	protected long originalId;
-	protected Integer deleted = 0;
+	protected int deleted;
 	protected String nodeclass;
 
 	@OneToMany(mappedBy = "parentId", targetEntity = Node.class)
@@ -199,11 +199,11 @@ public class Node<T extends Node> implements Cloneable {
 		this.originalId = originalId;
 	}
 
-	public Integer getDeleted() {
+	public int getDeleted() {
 		return deleted;
 	}
 
-	public void setDeleted(Integer deleted) {
+	public void setDeleted(int deleted) {
 		this.deleted = deleted;
 	}
 

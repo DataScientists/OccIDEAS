@@ -193,6 +193,12 @@
     		}
     	}
     	
+    	$scope.setBgColor = function(node){
+    		if(node.deleted == 1){
+    			return {'background-color':'rgba(255, 212, 0, 0.83)'};
+    		}
+    	}
+    	
     	$scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
     		$scope.scrollWithTimeout(elId);
     	});
