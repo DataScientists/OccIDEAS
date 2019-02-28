@@ -167,13 +167,19 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		deleteInterview();
 		deleteNodes();
 		deleteRules();
+		System.out.println("Cleaned up db");
 		Connection connectToDb = connectToDb(dbConnect);
 //		List<RuleAdditionalFieldVO> ruleAddFieldList = copyRuleAddFieldFromDB(connectToDb);
 		List<NodePlain> nodesFromDB = getNodesFromDB(connectToDb);
+		System.out.println("Importing Nodes");
 		saveBatchNodes(nodesFromDB);
+		System.out.println("Importing agents");
 		saveBatchAgentsPlain(copyAgentInfoPlainFromDB(connectToDb));
+		System.out.println("Importing rules");
 		saveBatchRules(copyRulesFromDB(connectToDb));
+		System.out.println("Importing node rules");
 		saveBatchNodeRules(copyNodeRuleFromDB(connectToDb));
+		System.out.println("Importing languages");
 		saveBatchNodeLanguage(copyNodeLanguageFromDB(connectToDb));
 		return nodesFromDB;
 	}

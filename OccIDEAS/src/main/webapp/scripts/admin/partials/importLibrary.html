@@ -15,13 +15,13 @@
 			<md-content>
 				 <div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-					<label>*Host</label> <input required 
+					<label>*Host</label> <input id="dbhost" required 
 						maxlength="1000" placeholder="jdbc:mysql://localhost:3306/occideas"
 						ng-model="dbConnect.host" /> </md-input-container>
 				</div>  	
 				<div layout-gt-sm="row">
 					<md-input-container class="md-block" flex-gt-sm>
-					<label>*DBUsername</label> <input required 
+					<label>*DBUsername</label> <input id="dbuser" required 
 						maxlength="50" value=""
 						ng-model="dbConnect.username" /> </md-input-container>
 					<div flex="5" hide-xs hide-sm>
@@ -29,14 +29,14 @@
 					</div>
 					<md-input-container class="md-block" flex-gt-sm>
 					<label>*DBPassword</label> 
-					<input type="password"
+					<input id="dbpword" type="password"
 						maxlength="50" value=""
 						ng-model="dbConnect.password" />
 					</md-input-container>
 				</div>
 				<md-dialog-actions layout="row">
 					<md-button ng-click="cancel()" class="md-raised">Cancel</md-button>
-					<md-button type="submit" ng-click="vm.importLibrary()" class="md-raised">Submit</md-button>
+					<md-button id="importLibrary" type="submit" ng-click="vm.importLibrary()" class="md-raised">Submit</md-button>
 				</md-dialog-actions>
 			</md-content>
 		</div>
