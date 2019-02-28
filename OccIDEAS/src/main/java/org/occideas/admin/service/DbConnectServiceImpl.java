@@ -25,6 +25,7 @@ import org.occideas.entity.NodePlain;
 import org.occideas.entity.NodeRule;
 import org.occideas.entity.Rule;
 import org.occideas.entity.RuleAdditionalField;
+import org.occideas.entity.RulePlain;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
@@ -192,8 +193,8 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		nodeRuleDao.saveBatchNodeRule(nodeRuleMapper.convertToNodeRuleList(nrules));
 	}
 
-	private void saveBatchRules(List<RuleVO> copyRulesFromDB) {
-		ruleDao.saveBatchRule(ruleMapper.convertToRuleList(copyRulesFromDB));
+	private void saveBatchRules(List<RulePlain> copyRulesFromDB) {
+		ruleDao.saveBatchRule(copyRulesFromDB);
 	}
 
 	private void saveBatchAgents(List<AgentVO> copyAgentInfoFromDB) {
@@ -420,15 +421,15 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		return null;
 	}
 
-	private List<RuleVO> copyRulesFromDB(Connection connect) throws SQLException {
+	private List<RulePlain> copyRulesFromDB(Connection connect) throws SQLException {
 		Statement stmt = null;
 		String query = "select * from Rule where deleted = 0";
 		try {
 			stmt = connect.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
-			List<RuleVO> list = new ArrayList<>();
+			List<RulePlain> list = new ArrayList<>();
 			while (rs.next()) {
-				Rule rule = new Rule();
+				RulePlain rule = new RulePlain();
 				rule.setIdRule(rs.getLong("idRule"));
 				rule.setAgentId(rs.getLong("agentId"));
 				rule.setLastUpdated(rs.getDate("lastUpdated"));
@@ -436,7 +437,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 				rule.setLevel(rs.getInt("level"));
 				rule.setType(rs.getString("type"));
 				rule.setDeleted(rs.getInt("deleted"));
-				list.add(ruleMapper.convertToRuleVO(rule));
+				list.add(rule);
 			}
 			return list;
 		} catch (SQLException e) {
@@ -563,6 +564,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 
 	private String getExecuteCmd(String databaseName,String username,String password) {
 		String filename = "backup"+LocalDateTime.now().toString()+".sql";
+		filename = filename.replace(":", "").replace("-", "");
 		String executeCmd = "";
 		if(OSUtil.isWindows()) {
 			String fullpath = "C:\\Users\\jed\\Documents\\dumps\\"+filename; 

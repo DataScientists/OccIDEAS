@@ -2,7 +2,6 @@ package org.occideas.rule.dao;
 
 import java.util.List;
 
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,8 +9,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.occideas.entity.Agent;
 import org.occideas.entity.Rule;
+import org.occideas.entity.RulePlain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -56,10 +55,10 @@ public class RuleDao implements IRuleDao{
 	
 	@Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void saveBatchRule(List<Rule> rules){
+    public void saveBatchRule(List<RulePlain> rules){
 		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
 		.executeUpdate();
-		for(Rule rule:rules) {
+		for(RulePlain rule:rules) {
 			sessionFactory.getCurrentSession().save(rule);
 		}
     }

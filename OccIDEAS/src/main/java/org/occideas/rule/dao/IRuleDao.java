@@ -3,6 +3,7 @@ package org.occideas.rule.dao;
 import java.util.List;
 
 import org.occideas.entity.Rule;
+import org.occideas.entity.RulePlain;
 
 public interface IRuleDao {
 
@@ -24,6 +25,6 @@ public interface IRuleDao {
 
 	Long getMaxRuleId();
 
-	void saveBatchRule(List<Rule> rules);
+	void saveBatchRule(List<RulePlain> rules);
 
 }

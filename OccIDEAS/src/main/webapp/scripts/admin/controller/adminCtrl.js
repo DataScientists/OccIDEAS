@@ -27,6 +27,8 @@
 	    };
 	    
 	    self.importLibraryDialog = function(){
+	    	$scope.importLibraryDisabled = false;
+	    	$scope.importLibraryProgress = false;
 	    	$mdDialog.show({
 				scope: $scope,  
 				preserveScope: true,
@@ -46,6 +48,8 @@
 	    		});
 	    		return;
 	    	}
+	    	$scope.importLibraryDisabled = true;
+	    	$scope.importLibraryProgress = true;
 	    	AdminService.importLibrary($scope.dbConnect).then(function(response){
 	    		if(response.status == '200'){
 	    			$ngToast.create({
@@ -63,6 +67,8 @@
 	    			});
 	    		}
 	    		$mdDialog.cancel();
+	    		$scope.importLibraryDisabled = false;
+	    		$scope.importLibraryProgress = false;
 	    	});
 	    }
 	    

@@ -5,7 +5,7 @@
 	<div class="md-toolbar-tools">
 		<h2>Import Library</h2>
 		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()"> <span
+		<md-button  class="md-icon-button" ng-disabled="importLibraryDisabled" ng-click="cancel()"> <span
 			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
 	</div>
 	</md-toolbar>
@@ -34,9 +34,14 @@
 						ng-model="dbConnect.password" />
 					</md-input-container>
 				</div>
+				<md-progress-linear ng-if="importLibraryProgress" md-mode="indeterminate"></md-progress-linear>	
 				<md-dialog-actions layout="row">
-					<md-button ng-click="cancel()" class="md-raised">Cancel</md-button>
-					<md-button id="importLibrary" type="submit" ng-click="vm.importLibrary()" class="md-raised">Submit</md-button>
+					<md-button ng-click="cancel()" ng-disabled="importLibraryDisabled" class="md-raised">Cancel</md-button>
+					<md-button id="importLibrary" 
+							   type="submit" 
+							   ng-disabled="importLibraryDisabled"
+							   ng-click="vm.importLibrary()" 
+							   class="md-raised">Submit</md-button>
 				</md-dialog-actions>
 			</md-content>
 		</div>
