@@ -50,14 +50,14 @@
         		data:""
         	});
         }
-        
+        /*
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])) {
             $scope.tabOptions.push({
                 state: "tabs.jmx",
                 data: ""
             });
         }
-        
+        */
         if($sessionStorage.langEnabled){
         	if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
         		$scope.tabOptions.push({
@@ -166,12 +166,14 @@
                 });
         	}       	
 		}
+        /*
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])) {
         	tabs.push({
                 title: 'JMeter',
                 viewName: 'jmx@tabs'
             });
         }
+        */
         $scope.tabs = tabs;
         $scope.selectedIndex = 0;
 
