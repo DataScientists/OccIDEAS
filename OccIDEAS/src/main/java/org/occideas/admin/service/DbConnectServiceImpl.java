@@ -331,7 +331,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 	
 	private List<AgentPlain> copyAgentInfoPlainFromDB(Connection connect) throws SQLException {
 		Statement stmt = null;
-		String query = "select * from AgentInfo where deleted = 0";
+		String query = "select * from AgentInfo";
 		try {
 			stmt = connect.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
