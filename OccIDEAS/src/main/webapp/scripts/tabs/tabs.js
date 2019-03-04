@@ -294,7 +294,7 @@
 			}
 		}).state( {
 			name:'tabs.intro',
-			url: '/intro/:row',
+			url: '/intro/:row/:ts',
 			sticky: true,
 			authenticate:true,
 			views:{

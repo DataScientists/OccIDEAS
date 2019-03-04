@@ -2167,6 +2167,40 @@
 			});	
 		}
 		
+		function saveModuleWithReloadDeff(locationId,deffered){
+			QuestionsService.getMaxId().then(function(response){
+				if(response.status === 200){
+					var nodes = $scope.data[0].nodes;
+					var maxId = response.data;
+					var parentId = $scope.data[0].idNode;
+					var parentNodeNumber = $scope.data[0].number;
+					var topNodeId = $scope.data[0].idNode;
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
+					QuestionsService.saveNode($scope.data[0]).then(function(response){
+						if(response.status === 200){
+							$log.info('Save was Successful Now Reloading!');
+//							$state.reload();
+//							$state.go($state.current, {row: $scope.data[0].idNode}, {reload: true});
+							$scope.reloadTab($scope.data[0]);
+						}
+						else{
+							$log.error('ERROR on Save!'+response.status.message);
+							if(deffered){
+								deffered.reject();
+								throw response;
+							}
+						}
+					});
+					}else{
+						$log.error('ERROR on Get max ID!'+response.status.message);
+						if(deffered){
+							deffered.reject();
+							throw response;
+						}
+					}
+			});	
+		}
+		
 		
 		function saveAsFragment(data,mydata){
 			QuestionsService.getMaxId().then(function(response){
@@ -2356,7 +2390,7 @@
 		$scope.undo = function(){
 			$log.info("Undo is being processed ........");
 			$scope.data = $window.beforeNode;
-			saveModuleWithoutReload();
+			saveModuleWithReloadDeff();
 			$scope.undoEnable = false;
 		}
 		

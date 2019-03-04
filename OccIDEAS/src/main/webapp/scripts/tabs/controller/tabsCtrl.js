@@ -70,7 +70,8 @@
         $scope.$watch('selectedIndex', function(current, old) {
             var state = null;
             var data = null;
-            if ($scope.tabOptions[current]) {
+            
+            if ($scope.tabOptions[current] ) {
                 if ($scope.tabOptions[current].state) {
                     $log.info("Navigating to " + $scope.tabOptions[current].state);
                     state = $scope.tabOptions[current].state;
@@ -478,7 +479,31 @@
             safeDigest($rootScope.tabsLoading);
             $log.info("addIntroTab called");
         };
-
+        var tsInc = 0;
+        $scope.reloadTab = function(row) {
+            var state = $state.current.name;
+            $stickyState.reset(state);
+            if (checkIfTabIsOpen(tabs, row.name)) {
+            	$scope.removeTab(getCurrentIndexIfOpenTab(tabs,row.name));
+            	tabs.push({
+                    title: row.name,
+                    viewName: Object.keys($state.current.views)[0],
+                    canClose: true,
+                    disabled: false
+                });
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                        row: row.idNode,
+                        ts:++tsInc
+                    }
+                });
+            }
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
+            $log.info("addIntroTab called");
+        };
+        
         $scope.addRulesTab = function(scope) {
             var nodeData = scope.$modelValue;
             var tabTitle = "Rules " + nodeData.name;
@@ -805,6 +830,16 @@
                 }
             });
             return openedTab;
+        }
+        
+        function getCurrentIndexIfOpenTab(tabs, title) {
+            _.find(tabs, function(el, ind) {
+                if (el.title === title) {
+                    $scope.selectedIndex = ind;
+                    safeDigest($scope.selectedIndex);
+                }
+            });
+            return $scope.selectedIndex;
         }
 
         var safeDigest = function(obj) {
