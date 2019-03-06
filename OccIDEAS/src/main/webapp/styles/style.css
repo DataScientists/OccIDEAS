@@ -713,6 +713,7 @@ a:focus {
 	right:230px;
 	padding: 0 0 0 0;
 	width: 190px;
+	height:auto;
 	min-height: 130px;
 	margin: 0 30px 30px 0;
 	background: #4478a0;

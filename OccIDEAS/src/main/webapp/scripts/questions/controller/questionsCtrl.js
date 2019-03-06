@@ -2449,6 +2449,7 @@
         $scope.setActiveRule = function(rule,el){
         	$scope.activeRuleDialog = el.model.idNode+'-'+rule.agentId+'-'+rule.idRule;
         	$scope.activeRuleCell = el.model.idNode+rule.agentId;
+        	$scope.activeRuleEl = el;
         	$scope.activeRule = rule;
         	if (!$scope.activeRuleDialog.$$phase) {
 		        try {
@@ -2493,12 +2494,31 @@
     			    			        }
     			    			        catch (e) { }
     			    		    }
+//    			    			resize();
     						}
     						});
     				}
     			});
         	}
         }
+        
+        function resize() { 
+        	 //get element
+
+        	 var height=document.getElementById($scope.activeRuleDialog).style.height;
+
+        	 //transform element from string to integer
+
+        	 height=height.replace("px","");
+        	  height=+height;
+
+        	  //change height
+
+        	  var n=height;
+        	  height=n+300+'px';        
+        	 document.getElementById($scope.activeRuleDialog).style.height = height;
+        	}
+        
         $scope.saveRule = function(rule){
         	RulesService.save(rule).then(function(response){
     			if(response.status === 200){
