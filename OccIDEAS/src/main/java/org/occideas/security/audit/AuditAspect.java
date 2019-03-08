@@ -47,7 +47,7 @@ public class AuditAspect {
 		}
 		auditLog.setMethod(methodInvocation);
 		auditLog.setDate(new Timestamp(new Date().getTime()));
-			dao.save(auditLog);
+		//	dao.save(auditLog);
 		}catch(Throwable throwable){
 			log.error("Error on saving audit logs.",throwable);
 		}

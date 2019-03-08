@@ -59,7 +59,7 @@ public class StudyAgentUtil
     public FragmentVO getStudyAgentFragmentJson(String idNode) throws JsonGenerationException, JsonMappingException, IOException
     {
         ObjectMapper mapper = new ObjectMapper();
-        String path = System.getProperty("user.home");
+        String path = "/opt/data";
         FragmentVO modVO = mapper.readValue(new File(path + "/modules/" + idNode + ".json"), FragmentVO.class);
         return modVO;
     }
@@ -68,7 +68,7 @@ public class StudyAgentUtil
     public boolean isStudyAgentJsonExist(Long idNode)
         throws JsonGenerationException, JsonMappingException, IOException
     {
-        String path = System.getProperty("user.home");
+        String path = "/opt/data";
         File file = new File(path + "/modules/" + idNode + ".json");
         return file.exists();
     }
@@ -117,7 +117,7 @@ public class StudyAgentUtil
     
     private File getCSVFile(String idNode)
     {
-        String path = System.getProperty("user.home");
+        String path = "/opt/data";
         File file = new File(path + "/modules/" + idNode + ".csv");
         return file;
     }
@@ -125,7 +125,7 @@ public class StudyAgentUtil
 
     private File getJsonFile(String idNode)
     {
-        String path = System.getProperty("user.home");
+        String path = "/opt/data";
         File file = new File(path + "/modules/" + idNode + ".json");
         return file;
     }
@@ -142,8 +142,8 @@ public class StudyAgentUtil
         else
         {
             if(list != null && !list.isEmpty()){
-            list = list.stream().sorted().collect(Collectors.toList());
-            writeNewCSVFile(list, filePath, expectedFile);
+            	list = list.stream().sorted().collect(Collectors.toList());
+            	writeNewCSVFile(list, filePath, expectedFile);
             }
         }
     }
@@ -187,7 +187,7 @@ public class StudyAgentUtil
 
     private String createCSVFilePath(String idNode)
     {
-        String path = System.getProperty("user.home");
+        String path = "/opt/data";
         String filePath = path + "/modules/" + idNode + ".csv";
         new File(path + "/modules/").mkdir();
         return filePath;
@@ -196,14 +196,14 @@ public class StudyAgentUtil
 
     private String createJsonFilePath(String idNode)
     {
-        String path = System.getProperty("user.home");
+        String path = "/opt/data";
         String filePath = path + "/modules/" + idNode + ".json";
         new File(path + "/modules/").mkdir();
         return filePath;
     }
 
     public void purgeStudyAgentFiles() {
-    	String path = System.getProperty("user.home");
+    	String path = "/opt/data";
         String filePath = path + "/modules/";
         File dir = new File(filePath);
         File[] files = dir.listFiles();
@@ -224,7 +224,7 @@ public class StudyAgentUtil
             {
                 if (doesStudyAgentJsonExist(idNode))
                 {
-                    String path = System.getProperty("user.home");
+                    String path = "/opt/data";
                     String filePath = path + "/modules/" + idNode + ".json";
                     File expectedFile = new File(filePath);
                     if (expectedFile.exists())
