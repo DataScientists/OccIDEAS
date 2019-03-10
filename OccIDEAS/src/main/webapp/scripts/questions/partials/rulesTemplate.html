@@ -1,5 +1,5 @@
 <script id="rules-template" type="text/x-custom-template">
-<div ng-attr-id="{{model.idNode+'-'+rule.agentId+'-'+rule.idRule}}" class="note {{activeRuleDialog === (model.idNode+'-'+rule.agentId+'-'+rule.idRule)?'activeRule':''}}" prevent-right-click ng-click="setActiveRule(rule,this)">
+<div ng-attr-id="{{model.idNode+'-'+rule.agentId+'-'+rule.idRule}}" style="height:auto !important;" class="note {{activeRuleDialog === (model.idNode+'-'+rule.agentId+'-'+rule.idRule)?'activeRule':''}}" prevent-right-click ng-click="setActiveRule(rule,this)">
 	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleDialog(this,$event)" aria-label="Left Align">
 		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	</button>
