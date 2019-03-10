@@ -917,6 +917,52 @@
 	     }
 
 		$scope.deleteNode = function(scope) {
+			if(!checkIfRulesExist(scope.$modelValue)){
+				recordAction($scope.data);
+				if(scope.$modelValue.deleted){
+					scope.$modelValue.deleted = 0;
+					cascadeDelete(scope.$modelValue.nodes,0);
+				}else{
+					scope.$modelValue.deleted = 1;
+					cascadeDelete(scope.$modelValue.nodes,1);
+				}
+				
+				var deffered = $q.defer();
+				saveModuleWithoutReload('',deffered);
+				deffered.promise.then(function(resolve){
+					saveModuleWithoutReload();
+					searchAndRemoveNode($scope.data,scope);
+				});
+			}	
+		};
+		
+		function checkIfRulesExist(node){
+			if(node.moduleRule && node.moduleRule.length>0){
+				var rules = node.moduleRule;
+				var msg = "This node ("+node.number+") has rules on agents ";
+				for(var i=0;i<rules.length;i++){
+					msg += rules[i].agentName+" ";
+				}
+				msg += "please remove the rules first";
+				ngToast.create({
+		    		  className: 'warning',
+		    		  content: msg,
+		    		  dismissOnTimeout: false,
+		    		  dismissButton: true
+		    	 });
+				return true;
+			}
+			
+			if(node.nodes){
+				for(var i in node.nodes){
+					if(checkIfRulesExist(node.nodes[i])){
+						return true;
+					}
+				}
+			}	
+		}
+		
+		function checkAnswerIfRulesExist(scope){
 			if(scope.$modelValue.moduleRule && scope.$modelValue.moduleRule.length>0){
 				var rules = scope.$modelValue.moduleRule;
 				var msg = "This node ("+scope.$modelValue.number+") has rules on agents ";
@@ -947,7 +993,7 @@
 					searchAndRemoveNode($scope.data,scope);
 				});
 			}
-		};
+		}
 		
 		function searchAndRemoveNode(objSearch,scope){
 			 var index = _.findIndex(objSearch, function(o) {
