@@ -2493,7 +2493,12 @@
         };
         
         $scope.setActiveRule = function(rule,el){
-        	$scope.activeRuleDialog = el.model.idNode+'-'+rule.agentId+'-'+rule.idRule;
+        	var firstRuleNodeId = el.model.idNode;
+        	if(!firstRuleNodeId){
+        		el.model.idNode = rule.conditions[0].idNode;
+        		firstRuleNodeId = rule.conditions[0].idNode;       		
+        	}
+        	$scope.activeRuleDialog = firstRuleNodeId+'-'+rule.agentId+'-'+rule.idRule;
         	$scope.activeRuleCell = el.model.idNode+rule.agentId;
         	$scope.activeRuleEl = el;
         	$scope.activeRule = rule;
@@ -2503,7 +2508,7 @@
 		        }
 		        catch (e) {
 		        }
-        	}
+        	}       	      	
         }
         $scope.addToActiveRule = function(node,rules){
         	
