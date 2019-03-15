@@ -182,6 +182,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
 		saveBatchNodeRules(copyNodeRuleFromDB(connectToDb));
 		System.out.println("Importing languages");
 		saveBatchNodeLanguage(copyNodeLanguageFromDB(connectToDb));
+		System.out.println("Import from Library Done!");		
 		return nodesFromDB;
 	}
 
@@ -526,9 +527,9 @@ public class DbConnectServiceImpl implements IDbConnectService {
 			runtimeProcess = Runtime.getRuntime().exec(executeCmd);
 			int processComplete = runtimeProcess.waitFor();
 			if (processComplete == 0) {
-				log.info("Backup taken successfully");
+				log.info("Backup taken successfully with "+executeCmd);
 			} else {
-				log.error("Could not take mysql backup");
+				log.error("Could not take mysql backup with "+executeCmd);
 			}
 		} catch (IOException e) {
 			log.error("Could not take mysql backup",e);
@@ -549,10 +550,10 @@ public class DbConnectServiceImpl implements IDbConnectService {
 			runtimeProcess = Runtime.getRuntime().exec(executeCmd);
 			int processComplete = runtimeProcess.waitFor();
 			if (processComplete == 0) {
-				System.out.println("Backup taken successfully");
+				System.out.println("Backup taken successfully with "+executeCmd);
 
 			} else {
-				System.out.println("Could not take mysql backup");
+				System.out.println("Could not take mysql backup with "+executeCmd);
 
 			}
 		} catch (IOException e) {
