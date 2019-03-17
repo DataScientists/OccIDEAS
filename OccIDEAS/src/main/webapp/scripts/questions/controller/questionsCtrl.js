@@ -2548,13 +2548,33 @@
         	
         	var rule = $scope.activeRule;
         	var bAlreadyInRule = false;
+        	var nodeNumbers = [];
         	for(var i=0;i<rule.conditions.length;i++){
         		var iCondition = rule.conditions[i];
         		if(iCondition.idNode==node.idNode){
         			bAlreadyInRule = true;
         			break;
         		}
+        		if(iCondition.number){
+        			nodeNumbers.push(iCondition.number);
+        		}
         	}
+        	for(var i=0;i<nodeNumbers.length;i++){
+        		if(_.startsWith(nodeNumbers[i],node.number)){
+        			bAlreadyInRule = true;
+        			break;
+        		}
+        	}
+        	if(bAlreadyInRule){
+        		ngToast.create({
+		    		  className: 'warning',
+		    		  content: 'Child node already has this rule.',
+		    		  dismissOnTimeout: true,
+		    		  dismissButton: true
+		    	 });
+        		return;
+        	}
+        	
         	if(!bAlreadyInRule){
         		rule.conditions.push(node);
             	if(rules.rules==null){
