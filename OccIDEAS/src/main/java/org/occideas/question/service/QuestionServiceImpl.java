@@ -67,7 +67,6 @@ public class QuestionServiceImpl implements QuestionService {
         return list;
     }
 
-    @Auditable(actionType = AuditingActionType.CREATE_QUESTION)
     @Override
     public QuestionVO create(QuestionVO o) {
         Question question = new Question();
@@ -76,14 +75,12 @@ public class QuestionServiceImpl implements QuestionService {
         return mapper.convertToQuestionVO(question);
     }
 
-    @Auditable(actionType = AuditingActionType.UPDATE_QUESTION)
     @Override
     public void update(QuestionVO o) {
         dao.saveOrUpdate(mapper.convertToQuestion(o));
         studyAgentUtil.createStudyAgentForUpdatedNode(o.getTopNodeId(),o.getName());
     }
 
-    @Auditable(actionType = AuditingActionType.DEL_QUESTION)
     @Override
     public void delete(QuestionVO o) {
         dao.delete(mapper.convertToQuestion(o));

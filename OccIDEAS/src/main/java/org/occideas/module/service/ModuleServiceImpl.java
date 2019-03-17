@@ -124,7 +124,6 @@ public class ModuleServiceImpl implements ModuleService {
 		return list;
 	}
 
-	@Auditable(actionType = AuditingActionType.CREATE_MODULE)
 	@Override
 	public ModuleVO create(ModuleVO module) {
 		Module moduleEntity = dao.save(mapper.convertToModule(module, false));
@@ -132,7 +131,6 @@ public class ModuleServiceImpl implements ModuleService {
 		return mapper.convertToModuleVO(moduleEntity, false);
 	}
 
-	@Auditable(actionType = AuditingActionType.UPDATE_MODULE)
 	public long update(ModuleVO module) {
 		if( module.getIdNode() != 0){
 		    dao.saveOrUpdate(mapper.convertToModule(module, true));
@@ -143,21 +141,18 @@ public class ModuleServiceImpl implements ModuleService {
 		}
 	}
 	
-	@Auditable(actionType = AuditingActionType.UPDATE_MODULE)
     public long save(ModuleVO module) {
         return dao.create(mapper.convertToModule(module, true));
     }
 	
 	
 
-	@Auditable(actionType = AuditingActionType.DEL_MODULE)
 	@Override
 	public void delete(ModuleVO module) {
 		dao.delete(mapper.convertToModule(module, false));
 		studyAgentUtil.deleteStudyAgentJson(String.valueOf(module.getIdNode()));
 	}
 
-	@Auditable(actionType = AuditingActionType.DEL_MODULE)
 	@Override
 	public void merge(ModuleVO module) {
 		dao.merge(mapper.convertToModule(module, true));

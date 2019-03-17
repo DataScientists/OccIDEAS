@@ -51,8 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authenticationEntryPoint(unauthorizedEntryPoint());
 
 		http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
-				.addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class)
-				.addFilterBefore(new JMXFilter(),BasicAuthenticationFilter.class);
+				.addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
 	}
 
 	@Bean

@@ -43,7 +43,6 @@ public class RuleServiceImpl implements RuleService {
         return list;
     }
 
-    @Auditable(actionType = AuditingActionType.CREATE_RULE)
     @Override
     public RuleVO create(RuleVO o) {
         Rule rule = new Rule();
@@ -58,7 +57,6 @@ public class RuleServiceImpl implements RuleService {
         return mapper.convertToRuleVO(rule);
     }
 
-    @Auditable(actionType = AuditingActionType.SAVE_UPD_RULE)
     @Override
     public void saveOrUpdate(RuleVO o) {
         dao.saveOrUpdate(mapper.convertToRule(o));
@@ -70,7 +68,6 @@ public class RuleServiceImpl implements RuleService {
     	}
     }
 
-    @Auditable(actionType = AuditingActionType.DELETE_RULE)
     @Override
     public void delete(RuleVO o) {
         dao.delete(mapper.convertToRule(o));

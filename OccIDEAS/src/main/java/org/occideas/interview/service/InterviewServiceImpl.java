@@ -183,7 +183,6 @@ public class InterviewServiceImpl implements InterviewService {
 		return list;
 	}
 
-	@Auditable(actionType = AuditingActionType.CREATE_INTERVIEW)
 	@Override
 	public InterviewVO create(InterviewVO o) {
 		// set default assessed status
