@@ -2433,10 +2433,44 @@
 			$scope.undoEnable = true;
 		}
 		
-		$scope.undo = function(){
+		$scope.undo = function($itemScope){
 			$log.info("Undo is being processed ........");
-			$scope.data = $window.beforeNode;
-			saveModuleWithReloadDeff();
+			QuestionsService.getMaxId().then(function(response){
+				if(response.status === 200){
+					var nodes = $window.beforeNode[0].nodes;
+					var maxId = response.data;
+					var parentId = $window.beforeNode[0].idNode;
+					var parentNodeNumber = $window.beforeNode[0].number;
+					var topNodeId = $window.beforeNode[0].idNode;
+					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
+					QuestionsService.saveNode($window.beforeNode[0]).then(function(response){
+						if(response.status === 200){
+							ngToast.create({
+					    		  className: 'success',
+					    		  content: 'Undo successful '+$window.beforeNode[0].name,
+					    		  dismissOnTimeout: true,
+					    		  dismissButton: true
+					    	 });
+							$itemScope.$modelValue.nodes = $window.beforeNode[0].nodes;
+						}
+						else{
+							ngToast.create({
+					    		  className: 'danger',
+					    		  content: 'Undo failed '+response.status.message,
+					    		  dismissOnTimeout: true,
+					    		  dismissButton: true
+					    	 });
+						}
+					});
+					}else{
+						ngToast.create({
+				    		  className: 'danger',
+				    		  content: 'Undo failed ERROR on Get max ID!'+response.status.message,
+				    		  dismissOnTimeout: true,
+				    		  dismissButton: true
+				    	 });
+					}
+			});
 			$scope.undoEnable = false;
 		}
 		
