@@ -19,6 +19,7 @@ import org.occideas.entity.Constant;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
+import org.occideas.fragment.service.FragmentService;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.module.dao.IModuleDao;
@@ -49,6 +50,8 @@ public class MSWordGenerator {
 	@Autowired
 	private ModuleService moduleService;
 	@Autowired
+	private FragmentService fragmentService;
+	@Autowired
 	private IModuleDao dao;
 
 	public File writeDocument(String idNode, boolean filterStudyAgent) throws IOException {
@@ -78,40 +81,39 @@ public class MSWordGenerator {
 		// create first row
 		XWPFTableRow tableRowOne = table.getRow(0);
 		createheader(tableRowOne);
+
 		Long idNodeLong = Long.valueOf(idNode);
+		NodeVO nodeVO = null;
+		List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
+		List<FragmentVO> fragmentList = fragmentService.findById(idNodeLong);
+
 		if (!filterStudyAgent) {
-			List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
 			if (!moduleList.isEmpty()) {
-				ModuleVO moduleVO = moduleList.get(0);
-				generateRowForNodes(moduleVO, table, 1);
-			}
+				nodeVO = moduleList.get(0);
+			} else if (!fragmentList.isEmpty()) {
+				nodeVO = fragmentList.get(0);
+			} 
 		} else {
-//			Node node = dao.getNodeById(idNodeLong);
-			List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
 			if (!moduleList.isEmpty()) {
 				ModuleVO moduleVO = moduleList.get(0);
-				ModuleVO newModuleVO = systemPropertyService.filterModulesNodesWithStudyAgents(moduleVO);
-				generateRowForNodes(newModuleVO, table, 1);
-			}
+				nodeVO = systemPropertyService.filterModulesNodesWithStudyAgents(moduleVO);
+			} else if (!fragmentList.isEmpty()) {
+				FragmentVO fragmentVO = fragmentList.get(0);
+				nodeVO = systemPropertyService.filterFragmentNodesWithStudyAgents(fragmentVO);
+			} 
 		}
-		// List<String> list = moduleService
-		// .getFilterStudyAgent(idNodeLong);
-		// studyAgentUtil.createStudyAgentCSV(idNode,list,false);
-		// String[] listOfIds = studyAgentUtil.getStudyAgentCSV(idNode);
-		// List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
-		// if(!moduleList.isEmpty()) {
-		// ModuleVO moduleVO = moduleList.get(0);
-		// if(filterStudyAgent) {
-		// generateRowForNodes(moduleVO,table,1,listOfIds);
-		// }else {
-		// generateRowForNodes(moduleVO,table,1);
-		// }
-		// }
-		document.write(out);
+		
+		if(nodeVO == null) {
+			log.info("Can't generate document for null object");
+		}else {
+			generateRowForNodes(nodeVO, table, 1);
+			document.write(out);
+			log.info("doc report created in " + file.getAbsolutePath() + " successfully.");
+		}
+		
 		document.close();
 		out.flush();
 		out.close();
-		log.info("doc report created in " + file.getAbsolutePath() + " successfully.");
 		return file;
 	}
 

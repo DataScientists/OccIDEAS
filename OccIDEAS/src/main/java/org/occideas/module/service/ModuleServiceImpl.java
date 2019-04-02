@@ -86,7 +86,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Autowired
 	private SystemPropertyDao sysPropDao;
 	@Autowired
-    private StudyAgentUtil studyAgentUtil;
+	private StudyAgentUtil studyAgentUtil;
 	@Autowired
 	private INodeLanguageDao nodeLanguageDao;
 
@@ -100,7 +100,7 @@ public class ModuleServiceImpl implements ModuleService {
 		Module module = dao.get(id);
 		ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
-		if(moduleVO !=null)
+		if (moduleVO != null)
 			list.add(moduleVO);
 		return list;
 	}
@@ -128,25 +128,23 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	public ModuleVO create(ModuleVO module) {
 		Module moduleEntity = dao.save(mapper.convertToModule(module, false));
-		studyAgentUtil.createStudyAgentForUpdatedNode(moduleEntity.getIdNode(),moduleEntity.getName());
+		studyAgentUtil.createStudyAgentForUpdatedNode(moduleEntity.getIdNode(), moduleEntity.getName());
 		return mapper.convertToModuleVO(moduleEntity, false);
 	}
 
 	public long update(ModuleVO module) {
-		if( module.getIdNode() != 0){
-		    dao.saveOrUpdate(mapper.convertToModule(module, true));
-			studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(),module.getName());
+		if (module.getIdNode() != 0) {
+			dao.saveOrUpdate(mapper.convertToModule(module, true));
+			studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(), module.getName());
 			return module.getIdNode();
-		}else{
-		    return dao.create(mapper.convertToModule(module, true));
+		} else {
+			return dao.create(mapper.convertToModule(module, true));
 		}
 	}
-	
-    public long save(ModuleVO module) {
-        return dao.create(mapper.convertToModule(module, true));
-    }
-	
-	
+
+	public long save(ModuleVO module) {
+		return dao.create(mapper.convertToModule(module, true));
+	}
 
 	@Override
 	public void delete(ModuleVO module) {
@@ -164,7 +162,6 @@ public class ModuleServiceImpl implements ModuleService {
 	public Long getMaxId() {
 		return dao.generateIdNode();
 	}
-
 
 	@Override
 	public NodeRuleHolder copyModule(ModuleCopyVO vo) {
@@ -432,24 +429,23 @@ public class ModuleServiceImpl implements ModuleService {
 		}
 		return null;
 	}
-	
-	@Override
-    public List<String> getFilterStudyAgent(Long id) {
-        Node node = dao.getNodeById(id);
-        NodeVO vo = convertToModuleOrFragment(node);
-        return sysPropService.filterNodesWithStudyAgents(vo);
-    }
 
-    private NodeVO convertToModuleOrFragment(Node node)
-    {
-        NodeVO vo = null;
-        if ("M".equals(node.getNodeclass())) {
-            vo = mapper.convertToModuleVO((Module) node, true);
-        } else if ("F".equals(node.getNodeclass())) {
-            vo = fragmentMapper.convertToFragmentVO((Fragment) node, true);
-        }
-        return vo;
-    }
+	@Override
+	public List<String> getFilterStudyAgent(Long id) {
+		Node node = dao.getNodeById(id);
+		NodeVO vo = convertToModuleOrFragment(node);
+		return sysPropService.filterNodesWithStudyAgents(vo);
+	}
+
+	private NodeVO convertToModuleOrFragment(Node node) {
+		NodeVO vo = null;
+		if ("M".equals(node.getNodeclass())) {
+			vo = mapper.convertToModuleVO((Module) node, true);
+		} else if ("F".equals(node.getNodeclass())) {
+			vo = fragmentMapper.convertToFragmentVO((Fragment) node, true);
+		}
+		return vo;
+	}
 
 	@Override
 	public NodeVO getModuleFilterAgent(Long id, Long idAgent) {
@@ -490,147 +486,133 @@ public class ModuleServiceImpl implements ModuleService {
 		return sysPropDao.getPosAnsWithStudyAgentsByIdMod(theId);
 	}
 
-    @Override
-    public ModuleVO getStudyAgentJSON(Long id)
-    {
-        try
-        {
-            return studyAgentUtil.getStudyAgentJson(String.valueOf(id));
-        }
-        catch (JsonGenerationException e)
-        {
-           log.error(e.getMessage(),e);
-        }
-        catch (JsonMappingException e)
-        {
-            log.error(e.getMessage(),e);
-        }
-        catch (IOException e)
-        {
-            log.error(e.getMessage(),e);
-        }
-        return null;
-    }
-    
-    @Override
-    public Integer getModuleTranslationTotalCount(String idNode) {
-        final List<? extends Node> nodeList = dao.getDistinctNodeNameByIdNode(idNode);
-        if(nodeList.size() <= 1){
-            return nodeList.size();
-        }
-        CommonUtil.removeNonUniqueNames(nodeList);
-        return nodeList.size();
-    }
+	@Override
+	public ModuleVO getStudyAgentJSON(Long id) {
+		try {
+			return studyAgentUtil.getStudyAgentJson(String.valueOf(id));
+		} catch (JsonGenerationException e) {
+			log.error(e.getMessage(), e);
+		} catch (JsonMappingException e) {
+			log.error(e.getMessage(), e);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
+	}
 
-    
-    @Override
-    public Integer getModuleTranslationCurrentCount(String idNode,Long languageId) {
-        List<String> nodeList = dao.getNodeNameByIdNode(idNode);
-        CommonUtil.removeNonUniqueString(nodeList);
-        CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
-        List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
-        CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
-        int count = 0;
-        for(int i=0; i < nodeList.size();i++){
-            if(nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())){
-                count++;
-            }
-        }
-        return count;
-    }
-    
-    private boolean hasAnyNodeTranslated(String idNode,Long languageId,List<String> nodeLanguageList) {
-        List<String> nodeList = dao.getNodeNameByIdNode(idNode);
-        CommonUtil.removeNonUniqueString(nodeList);
-        CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
-        for(int i=0; i < nodeList.size();i++){
-            if(nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())){
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    private Integer countUniqueNodeNamesInModule(String idNode){
-        List<String> nodeList = dao.getNodeNameByIdNode(idNode);
-        CommonUtil.removeNonUniqueString(nodeList);
-        return nodeList.size();
-    }
-    
-    @Override
-    public List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId){
-        List<LanguageModBreakdownVO> results = new ArrayList<>();
-        
-        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
-        for(Module module:listOfModuleIdNodes){
-            long idNode = module.getIdNode();
-            Integer currentCount = 
-                    getModuleTranslationCurrentCount(String.valueOf(
-                        idNode),languageId);
-            Integer totalCount = getModuleTranslationTotalCount(String.valueOf(idNode));
-            
-            LanguageModBreakdownVO vo = 
-                    buildBreakdownStatsForModule(module, idNode, currentCount, totalCount);
-            
-            results.add(vo);
-        }
-        
-        return results;
-    }
-    
-    @Override
-    public Integer getTotalUntranslatedModule(Long languageId){
-        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
-        int count = 0;
-        for(Module module:listOfModuleIdNodes){
-            count = count + countUniqueNodeNamesInModule(String.valueOf(module.getIdNode()));
-        }
-        return count;
-    }
+	@Override
+	public Integer getModuleTranslationTotalCount(String idNode) {
+		final List<? extends Node> nodeList = dao.getDistinctNodeNameByIdNode(idNode);
+		if (nodeList.size() <= 1) {
+			return nodeList.size();
+		}
+		CommonUtil.removeNonUniqueNames(nodeList);
+		return nodeList.size();
+	}
 
-    @Override
-    public Integer getModulesWithTranslationCount(long languageId)
-    {
-        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
-        int count = 0;
-        List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
-        CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
-        for(Module module:listOfModuleIdNodes){
-            if(hasAnyNodeTranslated(String.valueOf(module.getIdNode()), languageId, nodeLanguageList)){
-                count++;
-            }
-        }
-        return count;
-    }
+	@Override
+	public Integer getModuleTranslationCurrentCount(String idNode, Long languageId) {
+		List<String> nodeList = dao.getNodeNameByIdNode(idNode);
+		CommonUtil.removeNonUniqueString(nodeList);
+		CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
+		List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
+		CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
+		int count = 0;
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())) {
+				count++;
+			}
+		}
+		return count;
+	}
 
-    @Override
-    public Integer getTotalTranslatedNodeByLanguage(long languageId)
-    {
-        List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
-        int count = 0;
-        List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
-        CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
-        for(Module module:listOfModuleIdNodes){
-            List<String> nodeList = dao.getNodeNameByIdNode(String.valueOf(module.getIdNode()));
-            CommonUtil.removeNonUniqueString(nodeList);
-            CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
-            for(int i=0; i < nodeList.size();i++){
-                if(nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())){
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-    
-    private LanguageModBreakdownVO buildBreakdownStatsForModule(Module module, long idNode, Integer currentCount, Integer totalCount)
-    {
-        LanguageModBreakdownVO vo = new LanguageModBreakdownVO();
-        vo.setIdNode(idNode);
-        vo.setName(module.getName());
-        vo.setCurrent(currentCount);
-        vo.setTotal(totalCount);
-        return vo;
-    }
-    
+	private boolean hasAnyNodeTranslated(String idNode, Long languageId, List<String> nodeLanguageList) {
+		List<String> nodeList = dao.getNodeNameByIdNode(idNode);
+		CommonUtil.removeNonUniqueString(nodeList);
+		CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
+		for (int i = 0; i < nodeList.size(); i++) {
+			if (nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Integer countUniqueNodeNamesInModule(String idNode) {
+		List<String> nodeList = dao.getNodeNameByIdNode(idNode);
+		CommonUtil.removeNonUniqueString(nodeList);
+		return nodeList.size();
+	}
+
+	@Override
+	public List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId) {
+		List<LanguageModBreakdownVO> results = new ArrayList<>();
+
+		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		for (Module module : listOfModuleIdNodes) {
+			long idNode = module.getIdNode();
+			Integer currentCount = getModuleTranslationCurrentCount(String.valueOf(idNode), languageId);
+			Integer totalCount = getModuleTranslationTotalCount(String.valueOf(idNode));
+
+			LanguageModBreakdownVO vo = buildBreakdownStatsForModule(module, idNode, currentCount, totalCount);
+
+			results.add(vo);
+		}
+
+		return results;
+	}
+
+	@Override
+	public Integer getTotalUntranslatedModule(Long languageId) {
+		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		int count = 0;
+		for (Module module : listOfModuleIdNodes) {
+			count = count + countUniqueNodeNamesInModule(String.valueOf(module.getIdNode()));
+		}
+		return count;
+	}
+
+	@Override
+	public Integer getModulesWithTranslationCount(long languageId) {
+		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		int count = 0;
+		List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
+		CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
+		for (Module module : listOfModuleIdNodes) {
+			if (hasAnyNodeTranslated(String.valueOf(module.getIdNode()), languageId, nodeLanguageList)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	@Override
+	public Integer getTotalTranslatedNodeByLanguage(long languageId) {
+		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		int count = 0;
+		List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
+		CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
+		for (Module module : listOfModuleIdNodes) {
+			List<String> nodeList = dao.getNodeNameByIdNode(String.valueOf(module.getIdNode()));
+			CommonUtil.removeNonUniqueString(nodeList);
+			CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
+			for (int i = 0; i < nodeList.size(); i++) {
+				if (nodeLanguageList.contains(nodeList.get(i).toLowerCase().trim())) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	private LanguageModBreakdownVO buildBreakdownStatsForModule(Module module, long idNode, Integer currentCount,
+			Integer totalCount) {
+		LanguageModBreakdownVO vo = new LanguageModBreakdownVO();
+		vo.setIdNode(idNode);
+		vo.setName(module.getName());
+		vo.setCurrent(currentCount);
+		vo.setTotal(totalCount);
+		return vo;
+	}
+
 }
