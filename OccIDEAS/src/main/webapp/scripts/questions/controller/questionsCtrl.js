@@ -345,6 +345,12 @@
 		            	  return o.idAgent === agents.idAgent; }), 1)[0];
 		        });
 				agents.style = "";
+				var dialogRules = angular.element(".note");
+				_.each(dialogRules,function(e){
+					if(_.includes(e.id, '-'+agents.idAgent+'-')){
+						e.remove();
+					}
+				})
 			}else{
 				$scope.rulesObj.push(agents);
 				agents.style = "agent-shown";
