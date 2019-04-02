@@ -100,7 +100,8 @@ public class ModuleServiceImpl implements ModuleService {
 		Module module = dao.get(id);
 		ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
-		list.add(moduleVO);
+		if(moduleVO !=null)
+			list.add(moduleVO);
 		return list;
 	}
 
