@@ -2,7 +2,7 @@
 <Configuration xmlns="http://logging.apache.org/log4j/2.0/config" 
 	status="WARN">
 	<Properties>
-		<Property name="rootPath">/logs/</Property>
+		<Property name="rootPath">logs</Property>
 	</Properties>
 	<Appenders>
 		<Console name="STDOUT" target="SYSTEM_OUT">
