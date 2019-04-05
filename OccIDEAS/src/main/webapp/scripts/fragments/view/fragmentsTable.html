@@ -84,7 +84,7 @@
 				<button class="btn btn-default btn-sm"
 					id="addFragment_{{row.name}}"
 					ng-click="addFragmentTab(row)" ng-if="!row.isEditing">
-					<span class="glyphicon glyphicon-list-alt"></span>
+					<span class="glyphicon glyphicon-list-alt" title="Click for more detail"></span>
 				</button>
 				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
 					ng-if="vm.isDeleting" id="delete_{{row.name}}" confirm="Delete fragment {{row.name}}?">
@@ -97,7 +97,7 @@
 				</button>
 				<button ng-if="!vm.isDeleting && !row.isEditing" class="btn btn-default btn-sm"
 					ng-click="showLinkPopup(row)" ng-if="!row.isEditing">
-					<span class="glyphicon glyphicon-link"></span>
+					<span class="glyphicon glyphicon-link" title="Click for linking with module"></span>
 				</button>
 			</td>
         </tr>

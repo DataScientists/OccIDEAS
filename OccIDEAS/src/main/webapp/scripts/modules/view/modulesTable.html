@@ -117,7 +117,7 @@
 				</button>
 				<button id="id_{{row.name}}_openmodule" class="btn btn-default btn-sm"
 					ng-click="addIntroTab(row)" ng-if="!row.isEditing && row.type === 'M_IntroModule'">
-					<span class="glyphicon glyphicon-list-alt"></span>
+					<span class="glyphicon glyphicon-list-alt" title="Click for more detail"></span>
 				</button>
 				<button id="id_{{row.name}}_delete" class="btn btn-danger btn-sm" ng-click="vm.del(row)"
 					ng-if="vm.isDeleting" confirm="Delete module {{row.name}}?">
