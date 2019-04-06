@@ -2,3 +2,5 @@
 lib
 OccIDEAS/pom.xml
 OccIDEAS/logs
+OccIDEAS/.settings
+.DS_Store
