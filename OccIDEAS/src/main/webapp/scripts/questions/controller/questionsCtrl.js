@@ -2184,40 +2184,42 @@
 				}
 			});
 		}
-		
-		function saveModuleWithoutReload(locationId,deffered){
-			QuestionsService.getMaxId().then(function(response){
-				if(response.status === 200){
-					var nodes = $scope.data[0].nodes;
-					var maxId = response.data;
-					var parentId = $scope.data[0].idNode;
-					var parentNodeNumber = $scope.data[0].number;
-					var topNodeId = $scope.data[0].idNode;
-					generateIdNodeCascade(nodes,maxId,parentId,parentNodeNumber,topNodeId);		
-					QuestionsService.saveNode($scope.data[0]).then(function(response){
-						if(response.status === 200){
-							$log.info('Save was Successful! Not Reloading '+$scope.data[0].name);
-							if(deffered){
-								deffered.resolve();
-							}
-						}
-						else{
-							$log.error('ERROR on Save!'+response.status.message);
-							if(deffered){
-								deffered.reject();
-								throw response;
-							}
-						}
-					});
-					}else{
-						$log.error('ERROR on Get max ID!'+response.status.message);
-						if(deffered){
-							deffered.reject();
-							throw response;
-						}
-					}
-			});	
-		}
+
+        function saveModuleWithoutReload(locationId, deffered) {
+            QuestionsService.getMaxId().then(function (response) {
+                if (response.status === 200) {
+                    var node_data = $scope.data[0];
+                    var nodes = node_data.nodes;
+                    var maxId = response.data;
+                    var parentId = node_data.idNode;
+                    var parentNodeNumber = node_data.number;
+                    var topNodeId = node_data.idNode;
+                    generateIdNodeCascade(nodes, maxId, parentId, parentNodeNumber, topNodeId);
+                    QuestionsService.saveNode(node_data).then(function (response) {
+                        if (response.status === 200) {
+                            $log.info('Save was Successful! Not Reloading ' + node_data.name);
+                            if (deffered) {
+                                deffered.resolve();
+                            }
+                            $scope.scrollTo(locationId);
+							$scope.highlight(locationId);
+                        } else {
+                            $log.error('ERROR on Save!' + response.status.message);
+                            if (deffered) {
+                                deffered.reject();
+                                throw response;
+                            }
+                        }
+                    });
+                } else {
+                    $log.error('ERROR on Get max ID!' + response.status.message);
+                    if (deffered) {
+                        deffered.reject();
+                        throw response;
+                    }
+                }
+            });
+        }
 		
 		function saveModuleWithReloadDeff(locationId,deffered){
 			QuestionsService.getMaxId().then(function(response){
@@ -2504,7 +2506,11 @@
         	var elementId = 'node-'+idNode;
         	$scope.scrollTo(elementId);
         	$('#'+elementId).toggleClass('highlight');       	   
-        }
+        };
+
+		$scope.highlight = function (idNode) {
+			$('#' + idNode).toggleClass('highlight');
+		};
         
         function getObject (array,idNode){
         	var object = _.find(array, _.matchesProperty('idNode', idNode));
