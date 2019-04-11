@@ -125,19 +125,19 @@
         }
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
-                title: 'Module List',
+                title: 'Job Module',
                 viewName: 'modules@tabs',
             });
         }
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
-                title: 'Fragment List',
+                title: 'Task Module',
                 viewName: 'fragments@tabs'
             });
         }
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
-                title: 'Agent List',
+                title: 'Agents',
                 viewName: 'agents@tabs'
             });
         }
