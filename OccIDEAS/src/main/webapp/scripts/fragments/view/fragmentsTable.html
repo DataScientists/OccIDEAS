@@ -1,107 +1,113 @@
 <div ng-cloak>
-<div >
+    <div>
 
-	<div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
-	<button type="button" permission="['ROLE_ADMIN']"  ng-click='validateAllBtn(true)' class="btn btn-default"> Validate Fragments</button>
-	</div>
-	
-	<table ng-table="vm.tableParams"
-		class="table table-bordered table-hover 
+        <div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
+            <button type="button" permission="['ROLE_ADMIN']" ng-click='validateAllBtn(true)' class="btn btn-default">
+                Validate Fragments
+            </button>
+        </div>
+
+        <table ng-table="vm.tableParams"
+               class="table table-bordered table-hover
   table-condensed editable-table moduleTable"
-		ng-form="tableForm" disable-filter="vm.isAdding"
-		demo-tracked-table="vm.tableTracker">      
-        <tbody ng-repeat="group in $groups">
-        <tr class="ng-table-group">
-            <td colspan="{{$columns.length}}">
-                <a href="" ng-click="group.$hideRows = !group.$hideRows">
-                    <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-                    <strong> {{ group.value }}</strong>
-                </a>
-                <div class="brn-group pull-right">
-       				 <button class="btn btn-default" id="add_{{group.value}}" ng-click="vm.add(group.value)">
-          					<span class="glyphicon glyphicon-plus"></span>
-       				 </button>
-       				 <button class="btn btn-default" id="delete_{{group.value}}" ng-click="vm.toggleIsDeleting()">
-          					<span class="glyphicon glyphicon-trash"></span>
-       				 </button>
-     			 </div>
-            </td>
-        </tr>
-        <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm" demo-tracked-table-row="row">          
-            <td sortable="type" data-title="'Type'" groupable="'type'" ng-if="false">
-            	{{row.type}}
-          	</td>
-            <td title="'Name'" filter="{name: 'text'}" ng-switch="row.isEditing" 
-            	ng-class="name.$dirty ? 'bg-warning' : ''"
-				ng-form="name" demo-tracked-table-cell>
-				<div ng-click="row.isEditing = true">
-					<span ng-switch-default class="editable-text">{{row.name}}</span>
-					<div class="controls"
-						ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
-						ng-switch-when="true">
-						<input type="text" name="name" ng-model="row.name"
-							class="editable-input form-control input-sm" required />
-					</div>
-				</div>
-			</td>
-			<td title="'Description'" filter="{description: 'text'}"
-				ng-switch="row.isEditing"
-				ng-class="description.$dirty ? 'bg-warning' : ''"
-				ng-form="description" demo-tracked-table-cell>
-				<div ng-click="row.isEditing = true">
-					<span ng-switch-default class="editable-text">{{row.description}}</span>
-					<div class="controls"
-						ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"
-						ng-switch-when="true">
-						<input type="text" name="description" ng-model="row.description"
-							class="editable-input form-control input-sm" required />
-					</div>
-				</div>
-			</td>
-			<td permission="['ROLE_ADMIN']">
-				<div >
-					<span >
-						<span class="badge" ng-if="row.ruleCount == undefined" ng-click="showRuleCount(row,$event)" title="Click for Rule Count">&nbsp;</span>
+               ng-form="tableForm" disable-filter="vm.isAdding"
+               demo-tracked-table="vm.tableTracker">
+            <tbody ng-repeat="group in $groups">
+                <tr class="ng-table-group">
+                    <td colspan="{{$columns.length}}">
+                        <a href="" ng-click="group.$hideRows = !group.$hideRows">
+                        <span class="glyphicon"
+                              ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                            <strong> {{ group.value }}</strong>
+                        </a>
+                        <div class="brn-group pull-right">
+                            <button class="btn btn-default" id="add_{{group.value}}" ng-click="vm.add(group.value)">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <button class="btn btn-default" id="delete_{{group.value}}"
+                                    ng-click="vm.toggleIsDeleting()">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr ng-hide="group.$hideRows" ng-repeat="row in group.data" ng-form="rowForm"
+                    demo-tracked-table-row="row">
+                    <td sortable="type" data-title="'Type'" groupable="'type'" ng-if="false">
+                        {{row.type}}
+                    </td>
+                    <td title="'Name'" filter="{name: 'text'}" ng-switch="row.isEditing"
+                        ng-class="name.$dirty ? 'bg-warning' : ''"
+                        ng-form="name" demo-tracked-table-cell>
+                        <div ng-click="row.isEditing = true">
+                            <span ng-switch-default class="editable-text">{{row.name}}</span>
+                            <div class="controls"
+                                 ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
+                                 ng-switch-when="true">
+                                <input type="text" name="name" ng-model="row.name"
+                                       class="editable-input form-control input-sm" required/>
+                            </div>
+                        </div>
+                    </td>
+                    <td title="'Description'" filter="{description: 'text'}"
+                        ng-switch="row.isEditing"
+                        ng-class="description.$dirty ? 'bg-warning' : ''"
+                        ng-form="description" demo-tracked-table-cell>
+                        <div ng-click="row.isEditing = true">
+                            <span ng-switch-default class="editable-text">{{row.description}}</span>
+                            <div class="controls"
+                                 ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"
+                                 ng-switch-when="true">
+                                <input type="text" name="description" ng-model="row.description"
+                                       class="editable-input form-control input-sm" required/>
+                            </div>
+                        </div>
+                    </td>
+                    <td permission="['ROLE_ADMIN']">
+                        <div>
+					<span>
+						<span class="badge" ng-if="row.ruleCount == undefined" ng-click="showRuleCount(row,$event)"
+                              title="Click for Rule Count">&nbsp;</span>
 						<span class="badge" ng-if="row.ruleCount >= 0">{{row.ruleCount}}</span>
 					</span>
-				</div>
-			</td>
-			<td permission="['ROLE_ADMIN','ROLE_CONTDEV']" style="width:100px;" ng-if="$storage.langEnabled">
+                        </div>
+                    </td>
+                    <td permission="['ROLE_ADMIN','ROLE_CONTDEV']" style="width:100px;" ng-if="$storage.langEnabled">
 				<span ng-repeat="lang in row.flags" class="{{lang.current == lang.total?'greenBorder':'redBorder'}}">
 				<i class="glyphicon {{lang.flag}}" ng-click="openModuleLanguageByFlagIcon(lang)"></i>
 				</span>
-			</td>
-			<td>
-				<button class="btn btn-primary btn-sm"
-					ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
-					ng-disabled="rowForm.$pristine || rowForm.$invalid">
-					<span class="glyphicon glyphicon-ok"></span>
-				</button>
-				<button class="btn btn-default btn-sm"
-					ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
-					<span class="glyphicon glyphicon-remove"></span>
-				</button>
-				<button class="btn btn-default btn-sm"
-					id="addFragment_{{row.name}}"
-					ng-click="addFragmentTab(row)" ng-if="!row.isEditing">
-					<span class="glyphicon glyphicon-list-alt" title="Click for more detail"></span>
-				</button>
-				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
-					ng-if="vm.isDeleting" id="delete_{{row.name}}" confirm="Delete fragment {{row.name}}?">
-					<span class="glyphicon glyphicon-trash"></span>
-				</button>
-				<button class="btn btn-danger btn-sm" 
-					 ng-click="vm.displayNodeLanguage(row)"
-					 ng-if="!row.isEditing && $storage.langEnabled">
-					 <span class="glyphicon glyphicon-flag"></span>
-				</button>
-				<button ng-if="!vm.isDeleting && !row.isEditing" class="btn btn-default btn-sm"
-					ng-click="showLinkPopup(row)" ng-if="!row.isEditing">
-					<span class="glyphicon glyphicon-link" title="Click for linking with module"></span>
-				</button>
-			</td>
-        </tr>
-    </tbody>
-	</table>
-</div>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm"
+                                ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
+                                ng-disabled="rowForm.$pristine || rowForm.$invalid">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                        <button class="btn btn-default btn-sm"
+                                ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button class="btn btn-default btn-sm"
+                                id="addFragment_{{row.name}}"
+                                ng-click="addFragmentTab(row)" ng-if="!row.isEditing">
+                            <span class="glyphicon glyphicon-list-alt" title="Click for more detail"></span>
+                        </button>
+                        <button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
+                                ng-if="vm.isDeleting" id="delete_{{row.name}}" confirm="Delete fragment {{row.name}}?">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        <button class="btn btn-danger btn-sm"
+                                ng-click="vm.displayNodeLanguage(row)"
+                                ng-if="!row.isEditing && $storage.langEnabled">
+                            <span class="glyphicon glyphicon-flag"></span>
+                        </button>
+                        <button ng-if="!vm.isDeleting && !row.isEditing" class="btn btn-default btn-sm"
+                                ng-click="showLinkPopup(row)" ng-if="!row.isEditing">
+                            <span class="glyphicon glyphicon-link" title="Click for linking with module"></span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
