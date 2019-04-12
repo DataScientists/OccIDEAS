@@ -45,7 +45,9 @@
         		}
         		if(auth.userHasPermission(['ROLE_CONTDEV'])){
         			$rootScope.addLanguageTab();
-                }       		
+                } else if(auth.userHasPermission(['ROLE_ADMIN'])){
+                	$rootScope.addLanguageTab();
+                }      		
         	}else{
         		$sessionStorage.langEnabled = false;
         		$rootScope.closeLanguageTab();
