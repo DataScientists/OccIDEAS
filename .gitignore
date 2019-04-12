@@ -3,4 +3,5 @@ lib
 OccIDEAS/pom.xml
 OccIDEAS/logs
 OccIDEAS/.settings
+OccIDEAS/occideas.iml
 .DS_Store
