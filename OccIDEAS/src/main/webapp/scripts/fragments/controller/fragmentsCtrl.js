@@ -252,7 +252,7 @@
                     }
                     data.map(function (x) {
                         if (x.type === 'F_ajsm')
-                            x['type'] = " Task Module"
+                            x['type'] = " Task Modules";
                     });
                     return data;
                 });

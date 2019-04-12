@@ -125,13 +125,13 @@
         }
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
-                title: 'Job Module',
+                title: 'Job Modules',
                 viewName: 'modules@tabs',
             });
         }
         if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV','ROLE_ADMIN'])) {
             tabs.push({
-                title: 'Task Module',
+                title: 'Task Modules',
                 viewName: 'fragments@tabs'
             });
         }
