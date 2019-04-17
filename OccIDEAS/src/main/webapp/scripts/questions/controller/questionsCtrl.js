@@ -1759,33 +1759,33 @@
 //				  });
 			  	} 
 			  ], null,
-			  [ 'Export to JSON', function($itemScope) {
-				  var activeModule = $scope.data[0];
-				  if(activeModule.type == 'M_IntroModule'){
-					  ngToast.create({
-			    		  className: 'warning',
-			    		  content: 'Cannot export an Intro module.'
-			    	 });
-				  }else{
-					//need to display pop up first
-					  var newScope = $itemScope.$new();
-					  newScope.name = $scope.data[0].name+"_"+$scope.data[0].idNode+".json";
-					  newScope.includeLinks = true;
-					  newScope.filterOnStudyAgents = false;
-					  $mdDialog.show({
-						  scope: newScope,
-					      templateUrl: 'scripts/questions/view/exportToJsonDialog.html',
-					      parent: angular.element(document.body),
-					      clickOutsideToClose:true
-					    })
-					    .then(function(answer) {
-					      $scope.status = 'You said the information was "' + answer + '".';
-					    }, function() {
-					      $scope.status = 'You cancelled the dialog.';
-					    });	
-				  }				  		                   
-				} 
-			  ],
+			  // [ 'Export to JSON', function($itemScope) {
+				//   var activeModule = $scope.data[0];
+				//   if(activeModule.type == 'M_IntroModule'){
+				// 	  ngToast.create({
+			  //   		  className: 'warning',
+			  //   		  content: 'Cannot export an Intro module.'
+			  //   	 });
+				//   }else{
+				// 	//need to display pop up first
+				// 	  var newScope = $itemScope.$new();
+				// 	  newScope.name = $scope.data[0].name+"_"+$scope.data[0].idNode+".json";
+				// 	  newScope.includeLinks = true;
+				// 	  newScope.filterOnStudyAgents = false;
+				// 	  $mdDialog.show({
+				// 		  scope: newScope,
+				// 	      templateUrl: 'scripts/questions/view/exportToJsonDialog.html',
+				// 	      parent: angular.element(document.body),
+				// 	      clickOutsideToClose:true
+				// 	    })
+				// 	    .then(function(answer) {
+				// 	      $scope.status = 'You said the information was "' + answer + '".';
+				// 	    }, function() {
+				// 	      $scope.status = 'You cancelled the dialog.';
+				// 	    });
+				//   }
+				// }
+			  // ],
 			  [ 'Export to PDF', function($itemScope) {
 				  
 				  		var doc = new jsPDF('p', 'pt', 'a4');
