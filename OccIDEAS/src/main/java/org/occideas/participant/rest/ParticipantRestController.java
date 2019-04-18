@@ -177,8 +177,9 @@ public class ParticipantRestController implements BaseRestController<Participant
     @Path(value = "/delete")
     @POST
     public Response delete(ParticipantVO json) {
+		json.setDeleted(1);
         try {
-            service.delete(json);
+            service.update(json);
         } catch (Throwable e) {
         	e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
