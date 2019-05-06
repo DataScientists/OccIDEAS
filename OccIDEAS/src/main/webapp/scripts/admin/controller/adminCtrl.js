@@ -410,6 +410,7 @@
 	        	    self.originalData = angular.copy(response.data);
 	        	    self.tableConfig.settings().dataset = response.data;
 	        	    self.tableConfig.shouldGetData = true;
+								self.sysprop = response.data;
 	        	  	return response.data;
 	        	  }
 	          });
@@ -420,11 +421,7 @@
 		AdminService.getRoles().then(function(data){
 			self.roleList = data;
 		});
-		
-		SystemPropertyService.getAll().then(function(response){
-			self.sysprop = response.data;
-		});
-		
+
 		self.saveSysPropBtn = function(){
 			SystemPropertyService.save(self.sysprop.activemodule).then(function(response){
 				if(response.status == '200'){
