@@ -1,10 +1,5 @@
 package org.occideas.mapper;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.occideas.security.model.User;
 import org.occideas.security.model.UserProfile;
 import org.occideas.security.model.UserUserProfile;
@@ -12,6 +7,11 @@ import org.occideas.vo.UserProfileVO;
 import org.occideas.vo.UserUserProfileVO;
 import org.occideas.vo.UserVO;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class UserMapperImpl implements UserMapper {
@@ -39,7 +39,7 @@ public class UserMapperImpl implements UserMapper {
 		vo.setFirstName(entity.getFirstName());
 		vo.setId(entity.getId());
 		vo.setLastName(entity.getLastName());
-		vo.setPassword(entity.getPassword());
+		// vo.setPassword(entity.getPassword());
 		vo.setSsoId(entity.getSsoId());
 		vo.setState(entity.getState());
 		vo.setUserProfiles(convertToUserProfileVO(entity.getUserProfiles()));
