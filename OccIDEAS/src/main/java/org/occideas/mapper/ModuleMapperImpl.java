@@ -8,6 +8,7 @@ import org.occideas.entity.Module;
 import org.occideas.entity.ModuleRule;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.NodeDiscriminatorEnum;
 import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.QuestionVO;
@@ -178,7 +179,7 @@ public class ModuleMapperImpl implements ModuleMapper {
         module.setTopNodeId( moduleVO.getTopNodeId() );
         module.setOriginalId( moduleVO.getOriginalId() );
         module.setDeleted( moduleVO.getDeleted() );
-        module.setNodeclass( moduleVO.getNodeclass() );
+        module.setNodeclass( NodeDiscriminatorEnum.M.name() );
 
         return module;
     }

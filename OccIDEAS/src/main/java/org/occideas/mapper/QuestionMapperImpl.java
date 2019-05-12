@@ -6,6 +6,7 @@ import java.util.List;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.NodeDiscriminatorEnum;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,7 +244,7 @@ public class QuestionMapperImpl implements QuestionMapper
         question.setTopNodeId(questionVO.getTopNodeId());
         question.setOriginalId(questionVO.getOriginalId());
         question.setDeleted(questionVO.getDeleted());
-        question.setNodeclass(questionVO.getNodeclass());
+        question.setNodeclass(NodeDiscriminatorEnum.Q.name());
 
         return question;
     }
