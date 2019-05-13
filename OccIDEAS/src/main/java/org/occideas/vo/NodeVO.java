@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.occideas.utilities.NodeDiscriminatorEnum;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -138,14 +140,24 @@ public abstract class NodeVO {
 	}
 
 	public String getNodeclass() {
-		nodeclass = "";
-		if (this.getType() != null) {
-			if (this.getType().length() > 0) {
-				nodeclass = this.getType().substring(0, 1);
+		if(StringUtils.isEmpty(this.nodeclass)) {
+			if(this instanceof PossibleAnswerVO) {
+				this.nodeclass = NodeDiscriminatorEnum.P.name();
+			}
+			else if(this instanceof QuestionVO) {
+				this.nodeclass = NodeDiscriminatorEnum.Q.name();
+			}
+			else if(this instanceof FragmentVO) {
+				this.nodeclass = NodeDiscriminatorEnum.F.name();
+			}
+			else if(this instanceof ModuleVO) {
+				this.nodeclass = NodeDiscriminatorEnum.M.name();
+			}else {
+				this.nodeclass = NodeDiscriminatorEnum.O.name();
 			}
 		}
 
-		return nodeclass;
+		return this.nodeclass;
 	}
 
 	public void setNodeclass(String nodeclass) {

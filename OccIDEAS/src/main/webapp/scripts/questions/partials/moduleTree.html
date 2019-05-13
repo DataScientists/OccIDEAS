@@ -25,7 +25,7 @@
           <span class="glyphicon glyphicon-list"></span>
         </div>
 <!-- start content -->
-        <div style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}" context-menu="showMenu(this)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
+        <div style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}" context-menu="showMenu(node)" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
 		 <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
             <span ng-if="((node.nodeclass != 'M')||(node.nodeclass != 'F')) || node.nodes.length!=0" class="glyphicon glyphicon-chevron-down" ng-class="{
               'glyphicon-chevron-right': collapsed,

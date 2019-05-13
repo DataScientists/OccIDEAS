@@ -7,10 +7,13 @@ import org.occideas.entity.ModuleRule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.NodeDiscriminatorEnum;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ext.DOMDeserializer.NodeDeserializer;
 
 @Component
 public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
@@ -263,7 +266,7 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 	        possibleAnswer.setTopNodeId( answerVO.getTopNodeId() );
 	        possibleAnswer.setOriginalId( answerVO.getOriginalId() );
 	        possibleAnswer.setDeleted( answerVO.getDeleted() );
-	        possibleAnswer.setNodeclass( answerVO.getNodeclass() );
+	        possibleAnswer.setNodeclass( NodeDiscriminatorEnum.P.name() );
 	        return possibleAnswer;
 	}
 	
@@ -291,7 +294,7 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
             possibleAnswer.setTopNodeId( answerVO.getTopNodeId() );
             possibleAnswer.setOriginalId( answerVO.getOriginalId() );
             possibleAnswer.setDeleted( answerVO.getDeleted() );
-            possibleAnswer.setNodeclass( answerVO.getNodeclass() );
+            possibleAnswer.setNodeclass( NodeDiscriminatorEnum.P.name() );
             return possibleAnswer;
     }
 	
@@ -316,7 +319,7 @@ public class PossibleAnswerMapperImpl implements PossibleAnswerMapper{
 	        possibleAnswer.setTopNodeId( answerVO.getTopNodeId() );
 	        possibleAnswer.setOriginalId( answerVO.getOriginalId() );
 	        possibleAnswer.setDeleted( answerVO.getDeleted() );
-	        possibleAnswer.setNodeclass( answerVO.getNodeclass() );
+	        possibleAnswer.setNodeclass( NodeDiscriminatorEnum.P.name() );
 	        return possibleAnswer;
 	}
 

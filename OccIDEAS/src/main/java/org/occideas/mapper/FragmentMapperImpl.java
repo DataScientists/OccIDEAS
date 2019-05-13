@@ -7,6 +7,7 @@ import org.occideas.entity.Fragment;
 import org.occideas.entity.ModuleRule;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.NodeDiscriminatorEnum;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.QuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,7 +128,7 @@ public class FragmentMapperImpl implements FragmentMapper {
         fragment.setTopNodeId( fragmentVO.getTopNodeId() );
         fragment.setOriginalId( fragmentVO.getOriginalId() );
         fragment.setDeleted( fragmentVO.getDeleted() );
-        fragment.setNodeclass( fragmentVO.getNodeclass() );
+        fragment.setNodeclass(NodeDiscriminatorEnum.F.name());
 
         return fragment;
     }

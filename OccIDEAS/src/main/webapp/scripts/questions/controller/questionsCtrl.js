@@ -1314,10 +1314,10 @@
     $scope.showRulesTopMenu = function (scope) {
       return $scope.rulesTopMenuOptions;
     };
-    $scope.showMenu = function (scope) {
-      if (scope.node.nodeclass == 'M') {
+    $scope.showMenu = function (node) {
+      if (node.nodeclass == 'M') {
         var menu = $scope.moduleMenuOptions;
-        if (scope.node.type != 'M_IntroModule') {
+        if (node.type != 'M_IntroModule') {
           _.remove(menu, {
             0: 'Run Interview'
           });
@@ -1325,24 +1325,24 @@
         return menu;
 
 
-      } else if (scope.node.nodeclass == 'F') {
+      } else if (node.nodeclass == 'F') {
         var menu = $scope.moduleMenuOptions;
         _.remove(menu, {
           0: 'Run Interview'
         });
         return menu;
-      } else if (scope.node.nodeclass == 'Q') {
-        $scope.selectedNode = scope.node;
+      } else if (node.nodeclass == 'Q') {
+        $scope.selectedNode = node;
         var menuOptions;
-        if (scope.node.type == 'Q_linkedmodule') {
+        if (node.type == 'Q_linkedmodule') {
           menuOptions = $scope.linkedModuleMenuOptions;
-        } else if (scope.node.type == 'Q_linkedajsm') {
+        } else if (node.type == 'Q_linkedajsm') {
           menuOptions = $scope.linkedAjsmMenuOptions;
         } else {
           menuOptions = $scope.questionMenuOptions;
         }
         return menuOptions;
-      } else if (scope.node.nodeclass == 'P') {
+      } else if (node.nodeclass == 'P') {
         return $scope.possibleAnswerMenuOptions;
       } else {
         return $scope.defauisReadOnlyEnabledltMenuOptions;
