@@ -174,7 +174,7 @@
 				if(participant.status == 2){//completed interview
 					endInterview();
 				}else{
-					var msg = "Could not queue first question";
+					var msg = "Could not queue next question, please check study agent configuration settings.";
 					console.error(msg);
 					alert(msg);
 					endInterview();
@@ -1156,8 +1156,8 @@
 													}
 												});	
 											}else{
-												console.error("Could not queue first question");
-												alert("Could not queue first question");
+												console.error("Could not queue next question, please check study agent configuration settings.");
+												alert("Could not queue next question, please check study agent configuration settings.");
 											}
 										}
 									});
@@ -1752,8 +1752,8 @@
 									processLinkingQuestionNew(question);
 								}
 							}else{
-								console.error("Could not queue first question");
-								alert("Could not queue first question");
+								console.error("Could not queue next question, please check study agent configuration settings.");
+								alert("Could not queue next question, please check study agent configuration settings.");
 							}
 						}
 					});
