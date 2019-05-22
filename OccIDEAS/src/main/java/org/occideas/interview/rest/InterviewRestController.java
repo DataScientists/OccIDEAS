@@ -678,7 +678,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 				//Get linked module
 				List<ModuleVO> sortedLinkQuestion = moduleService.findById(Long.valueOf(vo.getLink()));
 				
-				if(!sortedLinkQuestion.isEmpty()){					
+				if(!sortedLinkQuestion.isEmpty() && sortedLinkQuestion.get(0) != null){
 					sortedQuestions.addAll(sortedLinkQuestion);					
 					linkQuestion(sortedLinkQuestion.get(0).getChildNodes(), sortedQuestions);	
 				}

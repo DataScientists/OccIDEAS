@@ -88,16 +88,16 @@ public class MSWordGenerator {
 		List<FragmentVO> fragmentList = fragmentService.findById(idNodeLong);
 
 		if (!filterStudyAgent) {
-			if (!moduleList.isEmpty()) {
+			if (!moduleList.isEmpty() && moduleList.get(0) != null) {
 				nodeVO = moduleList.get(0);
 			} else if (!fragmentList.isEmpty()) {
 				nodeVO = fragmentList.get(0);
 			} 
 		} else {
-			if (!moduleList.isEmpty()) {
+			if (!moduleList.isEmpty() && moduleList.get(0) != null) {
 				ModuleVO moduleVO = moduleList.get(0);
 				nodeVO = systemPropertyService.filterModulesNodesWithStudyAgents(moduleVO);
-			} else if (!fragmentList.isEmpty()) {
+			} else if (!fragmentList.isEmpty() && fragmentList.get(0) != null) {
 				FragmentVO fragmentVO = fragmentList.get(0);
 				nodeVO = systemPropertyService.filterFragmentNodesWithStudyAgents(fragmentVO);
 			} 

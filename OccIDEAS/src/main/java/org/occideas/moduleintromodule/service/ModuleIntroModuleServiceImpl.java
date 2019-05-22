@@ -50,7 +50,7 @@ public class ModuleIntroModuleServiceImpl implements ModuleIntroModuleService{
 		List<FragmentVO> fragmentVOList = new ArrayList<>();
 		for(ModuleFragmentVO vo:moduleFragmentList){
 			List<FragmentVO> resultList = fragmentService.findById(vo.getFragmentId());
-			if(!resultList.isEmpty()){
+			if(!resultList.isEmpty() && resultList.get(0) != null){
 				FragmentVO fragmentVO = resultList.get(0);
 				fragmentVOList.add(fragmentVO);
 			}

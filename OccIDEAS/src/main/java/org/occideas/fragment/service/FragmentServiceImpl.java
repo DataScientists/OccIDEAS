@@ -69,8 +69,7 @@ public class FragmentServiceImpl implements FragmentService {
 		Fragment module = dao.get(id);
 		FragmentVO moduleVO = mapper.convertToFragmentVO(module, true);
 		List<FragmentVO> list = new ArrayList<FragmentVO>();
-		if (moduleVO != null)
-			list.add(moduleVO);
+		list.add(moduleVO);
 		return list;
 	}
 
