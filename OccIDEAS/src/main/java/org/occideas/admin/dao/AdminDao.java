@@ -61,6 +61,7 @@ public class AdminDao implements IAdminDao
 	@Override
 	public void deleteAllInterviews() {
 		final Session session = sessionFactory.getCurrentSession();
+		session.createSQLQuery("truncate table Interview").executeUpdate();
 		session.createSQLQuery("truncate table Interview_Answer").executeUpdate();
 		session.createSQLQuery("truncate table Interview_AutoAssessedRules").executeUpdate();
 		session.createSQLQuery("truncate table Interview_Display").executeUpdate();
