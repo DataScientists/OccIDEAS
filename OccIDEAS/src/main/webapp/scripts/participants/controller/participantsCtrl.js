@@ -5,10 +5,10 @@
 	ParticipantsCtrl.$inject = [ 'ParticipantsService', 'NgTableParams',
 			'$state', '$scope', '$filter', 'data', 'InterviewsService',
 			'$resource','NotesService','$mdDialog', '$sessionStorage'
-			,'$translate','NodeLanguageService','AuthenticationService'];
+			,'$translate','NodeLanguageService','AuthenticationService','ngToast'];
 	function ParticipantsCtrl(ParticipantsService, NgTableParams, $state,
 			$scope, $filter, data, InterviewsService, $resource,NotesService,
-			$mdDialog, $sessionStorage,$translate,NodeLanguageService,auth) {
+			$mdDialog, $sessionStorage,$translate,NodeLanguageService,auth, ngToast) {
 		var self = this;
 		$scope.data = data;
 		$scope.$root.tabsLoading = false;
@@ -246,11 +246,20 @@
 										$scope.addInterviewTabInterviewers(-1,
 												$scope.searchAWESID);
 									} else {
-										alert("Error occured during checkReferenceNumberExists.");
+										var msg = "Error occured during checkReferenceNumberExists.";
+										ngToast.create({
+											className: 'danger',
+											content: msg,
+											animation:'slide'
+										});
 									}
 								})
 			} else {
-				alert("You need to add a valid AWES ID before you can start.");
+				ngToast.create({
+					className: 'danger',
+					content: 'You need to add a valid AWES ID before you can start',
+					animation:'slide'
+				});
 			}
 		}
 		function cancel(row, rowForm) {
@@ -397,7 +406,11 @@
 						$scope.status = 'You cancelled the dialog.';
 					});
 			}else{
-				alert("No notes for this interview.");
+				ngToast.create({
+					className: 'danger',
+					content: 'No notes for this interview',
+					animation:'slide'
+				});
 			}
 			}
 			});

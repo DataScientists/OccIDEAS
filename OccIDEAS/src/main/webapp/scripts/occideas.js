@@ -214,8 +214,13 @@ angular
             	   }
                }
                else if(response.status == 403){
-      	        	var state = $injector.get('$state');       
-      	          	alert("Occideas is in READ-ONLY mode, update/delete action is not premitted.");
+      	        	var state = $injector.get('$state');
+      	        	var msg = "Occideas is in READ-ONLY mode, update/delete action is not premitted.";
+                 ngToast.create({
+                   className: 'danger',
+                   content: msg,
+                   animation:'slide'
+                 });
       	       }else if(response.status == '417'){
       	    	 var errorMessages = [];
           	   if(response.data){
@@ -251,10 +256,15 @@ angular
             	   if($rootScope['addErrorTab']){
             		   $rootScope.addErrorTab(errorMessages);
             	   }else{
-            		   alert("Response Status returned:"
+            		   var msg = "Response Status returned:"
           	            		+response.status+" "
            	            		+response.statusText+" "
-           	            		+response.data);
+           	            		+response.data;
+                   ngToast.create({
+                     className: 'danger',
+                     content: msg,
+                     animation:'slide'
+                   });
             	   }
                }
                return response;

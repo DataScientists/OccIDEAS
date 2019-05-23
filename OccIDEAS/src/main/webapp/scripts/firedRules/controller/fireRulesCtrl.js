@@ -1510,7 +1510,11 @@
 			
 			if(!$scope.rulesLoaded || !$scope.manualAssessmentLoaded ||	!$scope.autoAssessmentLoaded){
 				if($scope.retryCount > 3){
-					alert('Rules has not been completely loaded yet. Please try again later.');
+					ngToast.create({
+						className: 'danger',
+						content: "Rules has not been completely loaded yet. Please try again later.",
+						animation:'slide'
+					});
 					$scope.retryCount = 0;
 					$scope.assessmentStatus = $scope.originalInterview.assessedStatus;
 					return;

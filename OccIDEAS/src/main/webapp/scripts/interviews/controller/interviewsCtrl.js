@@ -18,13 +18,13 @@
 			'$anchorScroll', '$location', '$mdMedia', '$window', '$state',
 			'$rootScope', '$compile', '$timeout', '$log', 'updateData',
 			'startWithReferenceNumber','$filter','$translate','NodeLanguageService',
-			'$sessionStorage','treeView'];
+			'$sessionStorage','treeView', 'ngToast'];
 	function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
 			QuestionsService, ModulesService, InterviewsService,
 			ParticipantsService, AssessmentsService, $anchorScroll, $location,
 			$mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
 			updateData,startWithReferenceNumber,$filter,$translate,NodeLanguageService,
-			$sessionStorage,treeView) {
+			$sessionStorage,treeView, ngToast) {
 		var self = this;
 		
 		if(updateData){
@@ -75,7 +75,11 @@
 					$scope.inProgress = false;
 				} else if (response.status === 401) {
 					$log.error("Inside updateData of tabs.interviewresume tabs.js could not find interview with "+idInterview);
-					alert("Could not reset please close tab and resume from the participants list");
+					ngToast.create({
+						className: 'danger',
+						content: "Could not reset please close tab and resume from the participants list",
+						animation:'slide'
+					});
 					return;
 				}
 			});
@@ -167,7 +171,11 @@
 					}else{
 						var errorMsg = "Error getting question "+question.questionId;
 						console.error(errorMsg);
-						alert(errorMsg);
+						ngToast.create({
+							className: 'danger',
+							content: errorMsg,
+							animation:'slide'
+						});
 					}
 				});	
 			}else{
@@ -176,7 +184,11 @@
 				}else{
 					var msg = "Could not queue next question, please check study agent configuration settings.";
 					console.error(msg);
-					alert(msg);
+					ngToast.create({
+						className: 'danger',
+						content: msg,
+						animation:'slide'
+					});
 					endInterview();
 				}
 				
@@ -339,7 +351,11 @@
 					if(!newAnswer){
 						var msg = "OOPS! lost the actual question in buildAndEditFrequency, please take a screenshot showing AWES ID and log this issue.";
 						console.error(msg);
-						alert(msg);	
+						ngToast.create({
+							className: 'danger',
+							content: msg,
+							animation:'slide'
+						});
 					}						
 					newAnswer.answerFreetext = answerValue;			
 					newAnswer.name = answerValue;						
@@ -485,7 +501,11 @@
 				}else{
 					var msg = "Failed to updateFreeTextAnswer";
 					console.error(msg);
-					alert(msg)
+					ngToast.create({
+						className: 'danger',
+						content: msg,
+						animation:'slide'
+					});
 				}
 			});
 		}
@@ -569,7 +589,11 @@
 			if(!newQuestionAsked){
 				var msg = "OOPS! lost the newQuestion in buildAndEditQuestionNew";
 				console.error(msg);
-				alert(msg);				
+				ngToast.create({
+					className: 'danger',
+					content: msg,
+					animation:'slide'
+				});
 			}
 			var bDeleteAnswersRequired = false;
 			var bSaveAnswersRequired = false;
@@ -600,7 +624,11 @@
 											}else{
 												var msg = "Could not find free text answer to update";
 												console.error(msg);
-												alert(msg);
+												ngToast.create({
+													className: 'danger',
+													content: msg,
+													animation:'slide'
+												});
 											}	
 										}
 									});	
@@ -651,7 +679,11 @@
 					if(!oldAnswerlisted){
 						var msg = "Could not find answer to remove";
 						console.error(msg);
-						alert(msg);
+						ngToast.create({
+							className: 'danger',
+							content: msg,
+							animation:'slide'
+						});
 					}
 					findChildQuestionsToDelete(oldAnswerlisted);
 					bDeleteAnswersRequired = true;
@@ -707,7 +739,11 @@
 				});																	
 			}else{
 				if(!bIsFreeText){
-					alert("Nothing was changed");
+					ngToast.create({
+						className: 'warning',
+						content: "Nothing was changed",
+						animation:'slide'
+					});
 				}	
 			}		
 		}
@@ -720,7 +756,11 @@
 			if(!newQuestionAsked){
 				var msg = "OOPS! lost the newQuestion in buildAndEditQuestionNew";
 				console.error(msg);
-				alert(msg);				
+				ngToast.create({
+					className: 'danger',
+					content: msg,
+					animation:'slide'
+				});
 			}
 			if(newQuestionAsked.questionId == $scope.iq.questionId){
 				newQuestionAsked.answers = $scope.iq.answers;
@@ -749,7 +789,11 @@
 									}else{
 										var msg = "Could not find free text answer to update";
 										console.error(msg);
-										alert(msg);
+										ngToast.create({
+											className: 'danger',
+											content: msg,
+											animation:'slide'
+										});
 									}	
 								}
 							});					
@@ -795,7 +839,11 @@
 											
 			}else{
 				if(!bIsFreeText){
-					alert("Nothing was changed");
+					ngToast.create({
+						className: 'warning',
+						content: "Nothing was changed",
+						animation:'slide'
+					});
 				}				
 			}		
 		}
@@ -810,7 +858,11 @@
 			if(!newQuestionAsked){
 				var msg = "OOPS! lost the newQuestion in buildAndSaveQuestionNew";
 				console.error(msg);
-				alert(msg);				
+				ngToast.create({
+					className: 'danger',
+					content: msg,
+					animation:'slide'
+				});
 			}
 			$scope.displayQuestions = [];
 			for(var i=0;i<interview.questionHistory.length;i++){
@@ -1001,7 +1053,11 @@
 		}
 		$scope.saveAnswerQuestionNew = function(node) {
 			if (!(validateIfAnswerSelected(node))) {
-				alert("Please select an answer.");
+				ngToast.create({
+					className: 'danger',
+					content: "Please select an answer",
+					animation:'slide'
+				});
 				return;
 			}
 			$scope.inProgress = true;		
@@ -1015,7 +1071,12 @@
 					processInterviewQuestionNew(interview, node);
 				}
 			}else{
-				alert("OOPS! Lost the Scope Interview, Please take a screen shot and submit a issue ticket");
+				var msg = "OOPS! Lost the Scope Interview, Please take a screen shot and submit a issue ticket";
+				ngToast.create({
+					className: 'danger',
+					content: msg,
+					animation:'slide'
+				});
 			}
 				
 		}
@@ -1152,12 +1213,21 @@
 													}else{
 														var errorMsg = "Error getting question "+question.questionId;
 														console.error(errorMsg);
-														alert(errorMsg);
+														ngToast.create({
+															className: 'danger',
+															content: errorMsg,
+															animation:'slide'
+														});
 													}
 												});	
 											}else{
-												console.error("Could not queue next question, please check study agent configuration settings.");
-												alert("Could not queue next question, please check study agent configuration settings.");
+												var msg = "Could not queue next question, please check study agent configuration settings.";
+												ngToast.create({
+													className: 'danger',
+													content: msg,
+													animation:'slide'
+												});
+												console.log(msg);
 											}
 										}
 									});
@@ -1671,7 +1741,11 @@
 								}else{
 									var errorMsg = "Error getting question "+question.questionId;
 									console.error(errorMsg);
-									alert(errorMsg);
+									ngToast.create({
+										className: 'danger',
+										content: errorMsg,
+										animation:'slide'
+									});
 								}
 							});	
 						}else{
@@ -1692,7 +1766,11 @@
 			if(possibleCircularRefHandle>200){
 				var msg = "Error! Possible Circular reference";
 				console.error(msg);
-				alert(msg);
+				ngToast.create({
+					className: 'danger',
+					content: msg,
+					animation:'slide'
+				});
 			}
 			var firstLinkIntervewQuestion = populateInteviewQuestionJsonByLinkedQuestion($scope.interview,linkeQuestion);
 			firstLinkIntervewQuestion.processed = true;
@@ -1745,15 +1823,24 @@
 										}else{
 											var errorMsg = "Error getting question "+question.questionId;
 											console.error(errorMsg);
-											alert(errorMsg);
+											ngToast.create({
+												className: 'danger',
+												content: errorMsg,
+												animation:'slide'
+											});
 										}
 									});	
 								}else{ //this is a link
 									processLinkingQuestionNew(question);
 								}
 							}else{
-								console.error("Could not queue next question, please check study agent configuration settings.");
-								alert("Could not queue next question, please check study agent configuration settings.");
+								var msg = "Could not queue next question, please check study agent configuration settings.";
+								ngToast.create({
+									className: 'danger',
+									content: msg,
+									animation:'slide'
+								});
+								console.log(msg);
 							}
 						}
 					});
@@ -1816,7 +1903,11 @@
 		}
 		function saveEditQuestion(node){
 			if (!(validateIfAnswerEdited(node))) {
-				alert("Nothing to update.");
+				ngToast.create({
+					className: 'warning',
+					content: 'Nothing to update',
+					animation:'slide'
+				});
 				return;
 			}
 			var interview = $scope.interview;
@@ -1829,7 +1920,12 @@
 					processEditInterviewQuestionNew(interview, node);
 				}
 			}else{
-				alert("OOPS! Lost the Scope Interview, Please take a screen shot and submit a issue ticket");
+				var msg = "OOPS! Lost the Scope Interview, Please take a screen shot and submit a issue ticket";
+				ngToast.create({
+					className: 'danger',
+					content: msg,
+					animation:'slide'
+				});
 			}
 			$scope.editModeOn = false; 
 			

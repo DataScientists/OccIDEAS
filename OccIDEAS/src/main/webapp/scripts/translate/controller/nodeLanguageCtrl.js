@@ -39,7 +39,11 @@
 			}
 			NodeLanguageService.addLanguage(data).then(function(response){
 				if(response.status == '200'){
-					alert("Save was successful");
+					$ngToast.create({
+						className: 'success',
+						content: "Save was successful",
+						animation:'slide'
+					});
 					$scope.getAllLanguage();
 					$scope.cancel();
 				}
@@ -130,7 +134,11 @@
 		
 		vm.add = function() {
 			if(!$scope.selectLanguage){
-				alert("No language available.");
+				$ngToast.create({
+					className: 'danger',
+					content: "No language available",
+					animation:'slide'
+				});
 				return;
 			}
 			
@@ -157,7 +165,11 @@
 			NodeLanguageService.save(row).then(function(response){
 				if(response.status === 200){
 					vm.tableParams.shouldGetData = true;
-					alert("save was successful");
+					$ngToast.create({
+						className: 'success',
+						content: "Save was successful",
+						animation:'slide'
+					});
 					vm.tableParams.reload();
 				}
 			});

@@ -661,7 +661,12 @@
 				  for(var k=0;k<noiseRules.length;k++){
 					  var noiseRule = noiseRules[k];
 					  if(noiseRule.ruleAdditionalfields == undefined){
-						  alert("Error on Noise rule:"+noiseRule.idRule);
+						  var msg = "Error on Noise rule:"+noiseRule.idRule;
+							$ngToast.create({
+								className: 'danger',
+								content: msg,
+								animation:'slide'
+							});
 						  break;
 					  }
 					  if(noiseRule.type=='BACKGROUND'){

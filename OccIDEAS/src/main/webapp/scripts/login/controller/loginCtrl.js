@@ -181,7 +181,11 @@
   		
   		$scope.changePasswordBtn = function(){
   			if(vm.passwordVO.newPassword != vm.passwordVO.retypeNewPassword){
-  				alert("New Password and Retype Password is not the same.");
+					ngToast.create({
+						className: 'danger',
+						content: 'Password does not match',
+						animation:'slide'
+					});
   				return;
   			}
   			var passwordJson = {
@@ -191,7 +195,11 @@
   			}
   			loginService.changePassword(passwordJson).then(function(response){
   				if(response.status == 200){
-  					alert("Password change was successful.");
+						ngToast.create({
+							className: 'success',
+							content: 'Password changed successfully',
+							animation:'slide'
+						});
   					$mdDialog.cancel();
   				}
   			});

@@ -1149,7 +1149,11 @@
 		$scope.saveEdit = function(scope) {
 			if(scope.$modelValue.type == 'P_freetext'){
 				if(!contains(scope.$modelValue.name,'freetext')){
-					alert("this answer should have the word freetext, adding it for your convenience.");
+					ngToast.create({
+						className: 'warning',
+						content: "this answer should have the word freetext, adding it for your convenience.",
+						animation:'slide'
+					});
 					scope.$modelValue.name = scope.$modelValue.name + " [Freetext]"
 				}
 			}
@@ -1449,12 +1453,20 @@
 					  console.log('Success on save Ajsm: ' + module.name);
 					  
 					}, function(reason) {
-						  alert('Failed: ' + reason);
+						ngToast.create({
+							className: 'danger',
+							content: 'Failed: ' + reason,
+							animation:'slide'
+						});
 					}, function(update) {
 					  console.log('Got notification: ' + update);
 					});
 				}, function(reason) {
-					  alert('Failed: ' + reason);
+					ngToast.create({
+						className: 'danger',
+						content: 'Failed: ' + reason,
+						animation:'slide'
+					});
 				}, function(update) {
 				  console.log('Got notification: ' + update);
 				});
@@ -1468,12 +1480,20 @@
 					  console.log('Success on save Module: ' + module.name);
 					  
 					}, function(reason) {
-						  alert('Failed: ' + reason);
+						ngToast.create({
+							className: 'danger',
+							content: 'Failed: ' + reason,
+							animation:'slide'
+						});
 					}, function(update) {
 					  console.log('Got notification: ' + update);
 					});
 				}, function(reason) {
-					  alert('Failed: ' + reason);
+					ngToast.create({
+						className: 'danger',
+						content: 'Failed: ' + reason,
+						animation:'slide'
+					});
 				}, function(update) {
 				  console.log('Got notification: ' + update);
 				});
@@ -1484,7 +1504,11 @@
 				  console.log('Success on process Module: ' + module.name);
 				  return module;
 				}, function(reason) {
-					  alert('Failed: ' + reason);
+					ngToast.create({
+						className: 'danger',
+						content: 'Failed: ' + reason,
+						animation:'slide'
+					});
 				}, function(update) {
 				  console.log('Got notification: ' + update);
 				});
@@ -1736,7 +1760,11 @@
 						  +' as active intro module?')) {
 				  ModulesService.setActiveIntroModule($itemScope.$modelValue)
 				  		.then(function(response){
-					  alert("success");
+								ngToast.create({
+									className: 'success',
+									content: 'Active intro module set successfully',
+									animation:'slide'
+								});
 				  });
 				  }
 			  }]
@@ -1976,7 +2004,11 @@
 									}
 									});
 								}else{
-									  alert("Try reload");
+									ngToast.create({
+										className: 'warning',
+										content: 'Try reload',
+										animation:'slide'
+									});
 								}
 	    				}
 	    			});
@@ -2605,7 +2637,11 @@
         	ModulesService.getModuleFilterStudyAgent(copyData[0].idNode).then(function(response){
         		if(response.status == '200'){
         			if(response.data[0] == null){
-        				alert("Warning: No study agent exist.");
+								ngToast.create({
+									className: 'warning',
+									content: 'Warning: No study agent exist.',
+									animation:'slide'
+								});
         				return;
         			}
         			
@@ -2835,11 +2871,19 @@
 	    				$scope.addInterviewTabInterviewers(-1,$scope.searchAWESID);
 	    				$mdDialog.cancel();
 	    			}else{
-	    				alert("Error occured during checkReferenceNumberExists.");
+							ngToast.create({
+								className: 'danger',
+								content: "Error occured during checkReferenceNumberExists.",
+								animation:'slide'
+							});
 	    			}
 	    		})
 	    	}else{
-	    		alert("You need to add a valid AWES ID before you can start.");
+					ngToast.create({
+						className: 'danger',
+						content: "You need to add a valid AWES ID before you can start.",
+						animation:'slide'
+					});
 	    	}
         }
         function awesIdIsValid(awesId){
@@ -2862,7 +2906,11 @@
         	ModulesService.getModuleFilterStudyAgent(moduleIdNode).then(function(response){
         		if(response.status == '200'){
         			if(response.data[0] == null){
-        				alert("Warning: No study agent exist.");
+								ngToast.create({
+									className: 'warning',
+									content: "Warning: No study agent exist.",
+									animation:'slide'
+								});
         				return;
         			}
         			var studyAgentData = response.data;
@@ -2875,7 +2923,11 @@
         					});
         					$q.all(promises).then(function () {
         						if(studyAgentData[0].nodes.length < 1 && fragments.length < 1){
-        	        				alert("There is no study specific node for this tree, check the link ajsm.");
+											ngToast.create({
+												className: 'danger',
+												content: "There is no study specific node for this tree, check the link ajsm.",
+												animation:'slide'
+											});
         	        				return;
         	        			}
         						for(var i=0;i<fragments.length;i++){
@@ -2962,7 +3014,11 @@
        	ModulesService.getModuleFilterAgent(moduleIdNode,idAgent).then(function(response){
        		if(response.status == '200'){
        			if(response.data[0] == null){
-       				alert("Warning: No agent rule exist for this module.");
+							ngToast.create({
+								className: 'warning',
+								content: "Warning: No agent rule exist for this module",
+								animation:'slide'
+							});
        				return;
        			}
        			var agentData = response.data;
@@ -2995,7 +3051,11 @@
        					});
        					$q.all(promises).then(function () {
        						if(agentData[0].nodes.length < 1 && fragments.length < 1){
-       	        				alert("There is no study specific node for this tree, check the link ajsm.");
+										ngToast.create({
+											className: 'danger',
+											content: "There is no study specific node for this tree, check the link ajsm.",
+											animation:'slide'
+										});
        	        				return;
        	        			}
        						for(var i=0;i<fragments.length;i++){
