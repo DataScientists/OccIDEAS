@@ -1,7 +1,10 @@
 .idea
 lib
-OccIDEAS/pom.xml
-OccIDEAS/logs
-OccIDEAS/.settings
-OccIDEAS/occideas.iml
+logs
+.settings
+occideas.iml
 .DS_Store
+target/
+.classpath
+bin/
+.project

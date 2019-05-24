@@ -1,0 +1,44 @@
+<div ng-cloak style="height:1000px;overflow:scroll;">
+	<table class="table table-sm">
+		<tbody>
+			<tr>
+				<td colspan="2"><h3>Modules Summary</h3></td>
+			</tr>
+			<table class="table table-sm">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Module Id</th>
+						<th>Module Name</th>
+						<th>Questions</th>
+						<th>Answers</th>
+						<th>Rules</th>
+						<th>Issues</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in allModuleValidationReport">
+						<td>{{$index}}</td>	
+						<td>{{item.vo.idNode}}</td>	
+						<td>
+						<a style="cursor: pointer;" href
+							ng-click="addModuleTab(item.vo)">{{item.vo.name}}</a>
+						</td>				
+						<td>{{item.totalQuestions}}</td>						
+						<td>{{item.totalAnswers}}</td>
+						<td>{{item.totalRules}}</td>
+						<td> 						
+							<a ng-if="item.issues" style="color:red;cursor:pointer" 
+								tabindex="0" 
+								class="glyphicon glyphicon-warning-sign" 
+								uib-popover-template="issuePopOver.templateUrl"
+								popover-popup-delay="100"  
+								popover-trigger="focus">
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</tbody>
+	</table>
+</div>

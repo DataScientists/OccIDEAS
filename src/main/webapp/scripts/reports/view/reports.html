@@ -1,0 +1,90 @@
+<div ng-cloak>
+<button class="btn btn-default"
+			ng-click="newExportCSVButton()">Export Interviews</button>
+		
+		<button class="btn btn-default" permission="['ROLE_ASSESSOR','ROLE_ADMIN']"
+			ng-click="newExportAssessmentCSVButton()">Export Assessments</button>
+			
+		<button class="btn btn-default"
+			ng-click="newExportAssessmentNoiseCSVButton()" permission="['ROLE_ASSESSOR','ROLE_ADMIN']">Export Noise Assessments</button>
+		<button class="btn btn-default"
+			ng-click="newExportAssessmentVibrationCSVButton()" permission="['ROLE_ASSESSOR','ROLE_ADMIN']">Export Vibration Assessments</button> 
+		
+			
+		<button class="btn btn-default" permission="['ROLE_ASSESSOR','ROLE_ADMIN']" 
+			ng-click="exportNotesCSVButton()">Export Notes</button>
+			
+		<button class="btn btn-default" permission="['ROLE_ASSESSOR','ROLE_ADMIN']" 
+			ng-click="exportInterviewRulesButton()">Export Fired Rules</button>	
+		
+		<!-- 
+		<button class="btn btn-default"
+			ng-click="newExportAssessmentNoiseCSVButton()">Export Noise Assessments</button>
+			
+		<button class="btn btn-default"
+			ng-click="newExportAssessmentVibrationCSVButton()">Export Vibration Assessments</button> 
+		-->
+		
+	<table ng-table="vm.tableParams" class="table table-condensed table-bordered table-striped" show-filter="true">
+		<tr ng-repeat="reports in $data">
+			<td title="'Id'" filter="{id: 'text'}" sortable="'id'">  
+				{{reports.id}}</td>
+			<td title="'Name'" filter="{name: 'text'}" sortable="'name'">
+				{{reports.name}}</td>
+			<td title="'Type'" filter="{type: 'text'}" sortable="'type'">
+				{{reports.type}}</td>
+			<td title="'Requestor'" filter="{requestor: 'text'}"
+				sortable="'requestor'">{{reports.requestor}}</td>
+			<td title="'Start Date'" filter="{startDt: 'text'}" sortable="'startDt'">
+				{{reports.startDt | date:'MM/dd/yy HH:mm'}}</td>
+			<td title="'End Date'" filter="{endDt: 'text'}" sortable="'endDt'">
+				{{reports.endDt | date:'MM/dd/yy HH:mm'}}</td>
+			<td title="'Rec Count'" filter="{recordCount: 'text'}" sortable="'recordCount'">
+				{{reports.recordCount}}</td>
+			<td title="'Progress'">		
+				<span ng-if="reports.progress != 100 && reports.estDuration !=0">~ {{reports.duration}}m </span>			
+				<span ng-if="reports.progress != 100 && reports.estDuration == 0">Estimating... </span>
+				<uib-progressbar value="reports.progress" max="100"> {{reports.progress}} % </uib-progressbar> 
+			</td>
+			<td title="'Status'" filter="{status: 'text'}" sortable="'status'">
+				{{reports.status}}</td>
+			<td title="'Download'">
+				<button type="button"
+				    ng-if="reports.type == 'Module JSON (Export)'" 
+					ng-csv="getArray(reports.jsonData)"
+					filename="export_module_json.csv"
+					lazy-load="true"
+					field-separator=","
+					class="btn btn-default"
+					aria-label="Left Align"
+					ng-disabled="">
+					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+				</button>
+				<button type="button"
+				    ng-if="reports.type != 'Module JSON (Export)'" 
+					class="btn btn-default"
+					aria-label="Left Align"
+					ng-disabled="reports.status != 'Completed'"
+					ng-click="downloadReport(reports)">
+					<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+				</button> 
+				<button type="button"
+				    ng-if="reports.type != 'Module JSON (Export)' && 
+				    	   reports.type != 'Notes (Export)' &&
+				    	   reports.type != 'Interview Fired Rules'" 
+					class="btn btn-default"
+					aria-label="Left Align"
+					ng-disabled="reports.status != 'Completed'"
+					ng-click="downloadLookup(reports)">
+					<span class="glyphicon glyphicon-book" title="Lookup" aria-hidden="true"></span>
+				</button> 
+			</td>
+			<td title="'Delete'">
+				<button class="btn btn-danger btn-sm" ng-click="del(reports)"
+					confirm="Delete file permanently {{reports.name}}?">
+					<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+				</button> 
+			</td>
+		</tr>
+	</table>
+</div>

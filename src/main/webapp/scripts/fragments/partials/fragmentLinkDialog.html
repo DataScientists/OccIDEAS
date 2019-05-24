@@ -1,0 +1,19 @@
+<md-dialog aria-label="Validate Fragments"
+	style="margin:0 0 0 0;padding:0 0 0 0;" ng-cloak> <!-- <pre>{{data | json}}</pre> -->
+<form>
+	<md-dialog-content>
+	<div class="md-dialog-content">
+		<div layout="column" ng-cloak class="md-inline-form">
+			<md-content>
+			<div class="row" ng-if="fragmentLinkProgress"
+				style="text-align: center;">
+				<div>Loading table ...</div>
+				<md-progress-circular md-mode="indeterminate"
+					class="col-md-offset-5"> </md-progress-circular>
+			</div>
+			</md-content>
+		</div>
+	</div>
+	</md-dialog-content>
+</form>
+</md-dialog>

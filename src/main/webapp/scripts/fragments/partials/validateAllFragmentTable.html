@@ -1,0 +1,41 @@
+<div ng-cloak style="height:1000px;overflow:scroll;">
+	<table class="table table-sm">
+		<tbody>
+			<tr>
+				<td colspan="2"><h3>Fragments Summary</h3></td>
+			</tr>
+			<table class="table table-sm">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Fragment Id</th>
+						<th>Fragment Name</th>
+						<th>Questions</th>
+						<th>Answers</th>
+						<th>Rules</th>
+						<th>Issues</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in allFragmentValidationReport">
+						<td>{{$index}}</td>	
+						<td>{{item.vo.idNode}}</td>
+						<td class="linkStyle" ng-click="addFragmentTab(item.vo)" style="cursor: pointer;">{{item.vo.name}}</td>						
+						<td>{{item.totalQuestions}}</td>						
+						<td>{{item.totalAnswers}}</td>
+						<td>{{item.totalRules}}</td>
+						<td> 						
+							<a ng-if="item.issues" style="color:red;cursor:pointer" 
+								tabindex="0" 
+								class="glyphicon glyphicon-warning-sign" 
+								uib-popover-template="issuePopOver.templateUrl"
+								popover-popup-delay="100"  
+								popover-trigger="focus">
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</tbody>
+	</table>
+</div>

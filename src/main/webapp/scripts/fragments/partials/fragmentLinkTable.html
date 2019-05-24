@@ -1,0 +1,30 @@
+<div ng-cloak style="height: 1000px; overflow: scroll;">
+	<table class="table table-sm">
+		<tbody>
+			<tr>
+				<td colspan="2"><h3>Fragment Links</h3></td>
+			</tr>
+			<table class="table table-sm">
+				<thead>
+					<tr>
+						<th>Module Id</th>
+						<th>Module Name</th>
+						<th>Node Number</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in linkData">
+						<td>
+						<a style="cursor: pointer;" href
+							ng-click="addModuleTab(item)">{{item.idNode}}</a>
+						</td>
+						<td>{{item.name}}</td>
+						<td><a style="cursor: pointer;" href
+							ng-click="addModuleTab(item, item.originalId)">{{item.number}}</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</tbody>
+	</table>
+</div>
