@@ -12,7 +12,7 @@
         Duplicates
       </button>
       <button class="btn btn-default" ng-click='validateAllBtn(true)' permission="['ROLE_ADMIN']" type="button">
-        Validate Modules
+        Validate Job Modules
       </button>
       <button class="btn btn-default" ng-click='unfilterValidateItems()'
               ng-if="vm.tableParams.filter().isDuplicate == true"
@@ -24,7 +24,7 @@
       </button>
       <button class="btn btn-default"
               ng-click="vm.add('M_Module')" ng-if="vm.originalData.length == 0"
-              type="button">Add Module <span class="glyphicon glyphicon-plus">
+              type="button">Add Job Module <span class="glyphicon glyphicon-plus">
 			</span></button>
     </div>
     <table class="table table-bordered table-hover
@@ -131,7 +131,7 @@
                     ng-click="addIntroTab(row)" ng-if="!row.isEditing && row.type === 'M_IntroModule'">
               <span class="glyphicon glyphicon-list-alt" title="Click for more detail"></span>
             </button>
-            <button class="btn btn-danger btn-sm" confirm="Delete module {{row.name}}?" id="id_{{row.name}}_delete"
+            <button class="btn btn-danger btn-sm" confirm="Delete job module {{row.name}}?" id="id_{{row.name}}_delete"
                     ng-click="vm.del(row)" ng-if="vm.isDeleting">
               <span class="glyphicon glyphicon-trash"></span>
             </button>

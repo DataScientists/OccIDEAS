@@ -1,12 +1,12 @@
 <div class="ui-widget" id="fragdropcontainer" ng-class="rightNav" ng-if="data[0].type != 'M_IntroModule'">
   <div class="frag-contain">
-    <div class="fragmentSticker" ng-click="toggleRight()" style="cursor: pointer;">Fragments</div>
+    <div class="fragmentSticker" ng-click="toggleRight()" style="cursor: pointer;">Task Modules</div>
 
-    <label class="fraglabel" for="fragmentsdragdrop">Drag Drop Fragments: </label>
+    <label class="fraglabel" for="fragmentsdragdrop">Drag Drop Task Modules: </label>
     <div id="fragmentsdragdrop">
       <ul></ul>
       <div>
-        <h5>Fragment List</h5>
+        <h5>Task Module List</h5>
         <md-progress-circular md-diameter="100%" md-mode="indeterminate"
                               ng-if="fragmentsLoading"></md-progress-circular>
         <uib-accordion close-others="oneAtATime" ng-if="!fragmentsLoading">
