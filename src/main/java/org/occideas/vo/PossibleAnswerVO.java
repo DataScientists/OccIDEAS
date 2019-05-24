@@ -1,94 +1,90 @@
 package org.occideas.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.occideas.utilities.CommonUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.occideas.utilities.CommonUtil;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswerVO> {
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+  @JsonInclude(Include.NON_NULL)
+  @JsonProperty(value = "nodes")
+  private List<QuestionVO> childNodes;
+  private QuestionVO parent;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswerVO>{
+  public PossibleAnswerVO() {
+  }
 
-	@JsonInclude(Include.NON_NULL)
-	@JsonProperty(value = "nodes")
-	private List<QuestionVO> childNodes;
+  public PossibleAnswerVO(long idNode) {
+    this.idNode = idNode;
+  }
 
-	public PossibleAnswerVO() {
-	}
-	
-	public PossibleAnswerVO(long idNode) {
-		this.idNode = idNode;
-	}
-	
-	private QuestionVO parent;
-		
-	public List<QuestionVO> getChildNodes() {
-		if(childNodes == null){
-			childNodes = new ArrayList<QuestionVO>();
-		}
-		return childNodes;
-	}
+  public List<QuestionVO> getChildNodes() {
+    if (childNodes == null) {
+      childNodes = new ArrayList<QuestionVO>();
+    }
+    return childNodes;
+  }
 
-	public void setChildNodes(List<QuestionVO> childNodes) {
-		this.childNodes = childNodes;
-	}
+  public void setChildNodes(List<QuestionVO> childNodes) {
+    this.childNodes = childNodes;
+  }
 
-	public QuestionVO getParent() {
-		return parent;
-	}
+  public QuestionVO getParent() {
+    return parent;
+  }
 
-	public void setParent(QuestionVO parent) {
-		this.parent = parent;
-	}
-	@Override
-	public int compareTo(PossibleAnswerVO o) {
-		if(o==null){
-			return 1;
-		}else{
-			String nodeNumberA=o.getNumber();
-			String nodeNumberB=this.getNumber();
-			if( (CommonUtil.isNumeric(nodeNumberA)) && (CommonUtil.isNumeric(nodeNumberB)) ){
-				Integer iNodeNumberA = Integer.valueOf(nodeNumberA);
-				Integer iNodeNumberB = Integer.valueOf(nodeNumberB);			
-				return iNodeNumberB.compareTo(iNodeNumberA);			
-			}else{
-				return nodeNumberB.compareTo(nodeNumberA);
-			} 
-		}		
-	}
+  public void setParent(QuestionVO parent) {
+    this.parent = parent;
+  }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = (int) (prime * result + ((idNode == 0) ? 0 : idNode));
-		return result;
-	}
+  @Override
+  public int compareTo(PossibleAnswerVO o) {
+    if (o == null) {
+      return 1;
+    } else {
+      String nodeNumberA = o.getNumber();
+      String nodeNumberB = this.getNumber();
+      if ((CommonUtil.isNumeric(nodeNumberA)) && (CommonUtil.isNumeric(nodeNumberB))) {
+        Integer iNodeNumberA = Integer.valueOf(nodeNumberA);
+        Integer iNodeNumberB = Integer.valueOf(nodeNumberB);
+        return iNodeNumberB.compareTo(iNodeNumberA);
+      } else {
+        return nodeNumberB.compareTo(nodeNumberA);
+      }
+    }
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PossibleAnswerVO other = (PossibleAnswerVO) obj;
-		if (idNode == 0) {
-			if (other.idNode != 0)
-				return false;
-		} else if (!(idNode == (other.idNode)))
-			return false;
-		return true;
-	}
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = (int) (prime * result + (idNode));
+    return result;
+  }
 
-	@Override
-	public String getNodeType() {
-		return "Answer";
-	}	
-	
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    PossibleAnswerVO other = (PossibleAnswerVO) obj;
+    if (idNode == 0) {
+      return other.idNode == 0;
+    } else return idNode == (other.idNode);
+  }
+
+  @Override
+  public String getNodeType() {
+    return "Answer";
+  }
+
 }

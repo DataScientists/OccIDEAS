@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class GenericNodeDao {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+  @Autowired
+  private SessionFactory sessionFactory;
 
-	public GenericNode get(Long id) {
-		return (GenericNode) sessionFactory.getCurrentSession().get(GenericNode.class, id);
-	}
+  public GenericNode get(Long id) {
+    return (GenericNode) sessionFactory.getCurrentSession().get(GenericNode.class, id);
+  }
 }

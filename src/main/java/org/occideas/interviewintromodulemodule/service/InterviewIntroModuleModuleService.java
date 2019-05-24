@@ -1,15 +1,19 @@
 package org.occideas.interviewintromodulemodule.service;
 
-import java.util.List;
-
 import org.occideas.vo.InterviewIntroModuleModuleVO;
+
+import java.util.List;
 
 public interface InterviewIntroModuleModuleService {
 
-	public List<InterviewIntroModuleModuleVO> findInterviewByModuleId(long idModule);
-	public List<InterviewIntroModuleModuleVO> findModulesByInterviewId(long idInterview);
-	public List<InterviewIntroModuleModuleVO> getDistinctModules();
-	public List<InterviewIntroModuleModuleVO> findInterviewIdByModuleId(long idModule);
-	public List<InterviewIntroModuleModuleVO> findNonIntroById(Long valueOf);
-	
+  List<InterviewIntroModuleModuleVO> findInterviewByModuleId(long idModule);
+
+  List<InterviewIntroModuleModuleVO> findModulesByInterviewId(long idInterview);
+
+  List<InterviewIntroModuleModuleVO> getDistinctModules();
+
+  List<InterviewIntroModuleModuleVO> findInterviewIdByModuleId(long idModule);
+
+  List<InterviewIntroModuleModuleVO> findNonIntroById(Long valueOf);
+
 }

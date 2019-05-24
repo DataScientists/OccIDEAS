@@ -4,12 +4,11 @@ import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 
-public interface INodeService
-{
+public interface INodeService {
 
-    ModuleVO getModule(Long idNode);
+  ModuleVO getModule(Long idNode);
 
-    QuestionVO getQuestion(Long idNode);
-    
-    NodeVO getNode(Long idNode);
+  QuestionVO getQuestion(Long idNode);
+
+  NodeVO getNode(Long idNode);
 }

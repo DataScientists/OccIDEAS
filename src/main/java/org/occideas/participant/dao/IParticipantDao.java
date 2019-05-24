@@ -1,46 +1,46 @@
 package org.occideas.participant.dao;
 
-import java.math.BigInteger;
-import java.util.List;
-
 import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
 import org.occideas.vo.GenericFilterVO;
 
+import java.math.BigInteger;
+import java.util.List;
+
 public interface IParticipantDao {
 
-	Long save(Participant participant);
+  Long save(Participant participant);
 
-	String getMaxReferenceNumber();
+  String getMaxReferenceNumber();
 
-	Long getMaxParticipantId();
+  Long getMaxParticipantId();
 
-	BigInteger getParticipantWithModTotalCount(GenericFilterVO filter);
+  BigInteger getParticipantWithModTotalCount(GenericFilterVO filter);
 
-	List<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber, int size, GenericFilterVO filter);
+  List<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber, int size, GenericFilterVO filter);
 
-	BigInteger getPaginatedParticipantTotalCount(GenericFilterVO filter);
+  BigInteger getPaginatedParticipantTotalCount(GenericFilterVO filter);
 
-	List<ParticipantIntMod> getPaginatedParticipantList(int pageNumber, int size, GenericFilterVO filter);
+  List<ParticipantIntMod> getPaginatedParticipantList(int pageNumber, int size, GenericFilterVO filter);
 
-	List<Participant> getAll();
+  List<Participant> getAll();
 
-	void saveOrUpdate(Participant participant);
+  void saveOrUpdate(Participant participant);
 
-	Participant merge(Interview participant);
+  Participant merge(Interview participant);
 
-	Participant get(Long id);
+  Participant get(Long id);
 
-	void delete(Participant participant);
+  void delete(Participant participant);
 
-	List<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size, GenericFilterVO filter);
+  List<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size, GenericFilterVO filter);
 
-	BigInteger getAsssessmentWithModTotalCount(GenericFilterVO filter);
+  BigInteger getAsssessmentWithModTotalCount(GenericFilterVO filter);
 
-	Participant getByReferenceNumber(String referenceNumber);
+  Participant getByReferenceNumber(String referenceNumber);
 
-	void deleteAll();
+  void deleteAll();
 
 }

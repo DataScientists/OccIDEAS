@@ -5,6 +5,6 @@ import org.occideas.vo.NoteVO;
 
 import java.util.List;
 
-public interface NoteService extends BaseService<NoteVO>{
-    List<NoteVO> getListByInterview(long interviewId);
+public interface NoteService extends BaseService<NoteVO> {
+  List<NoteVO> getListByInterview(long interviewId);
 }

@@ -1,77 +1,69 @@
 package org.occideas.nodelanguage.dao;
 
-import java.util.List;
+import org.occideas.entity.*;
 
-import org.occideas.entity.Fragment;
-import org.occideas.entity.Language;
-import org.occideas.entity.LanguageFragBreakdown;
-import org.occideas.entity.LanguageModBreakdown;
-import org.occideas.entity.Module;
-import org.occideas.entity.NodeLanguage;
-import org.occideas.entity.NodeNodeLanguageFrag;
-import org.occideas.entity.NodeNodeLanguageMod;
-import org.occideas.entity.Translate;
+import java.util.List;
 
 public interface INodeLanguageDao {
 
-	NodeLanguage getNodeLanguageByWordAndLanguage(String word, long languageId);
+  NodeLanguage getNodeLanguageByWordAndLanguage(String word, long languageId);
 
-	NodeNodeLanguageMod getNodeNodeLanguageMod(long idNode, String flag);
+  NodeNodeLanguageMod getNodeNodeLanguageMod(long idNode, String flag);
 
-	List<NodeNodeLanguageMod> getNodeNodeLanguageListMod();
+  List<NodeNodeLanguageMod> getNodeNodeLanguageListMod();
 
-	Language getLanguageById(Long id);
+  Language getLanguageById(Long id);
 
-	List<Language> getDistinctLanguage(List<Long> ids);
+  List<Language> getDistinctLanguage(List<Long> ids);
 
-	List<Long> getDistinctNodeLanguageId();
+  List<Long> getDistinctNodeLanguageId();
 
-	NodeLanguage getNodesByLanguageAndWord(Long language, String word);
+  NodeLanguage getNodesByLanguageAndWord(Long language, String word);
 
-	List<NodeLanguage> getNodesByLanguage(String language);
+  List<NodeLanguage> getNodesByLanguage(String language);
 
-	List<NodeLanguage> getNodeLanguageById(Long id);
+  List<NodeLanguage> getNodeLanguageById(Long id);
 
-	NodeLanguage get(Long id);
+  NodeLanguage get(Long id);
 
-	void delete(NodeLanguage entity);
+  void delete(NodeLanguage entity);
 
-	void save(NodeLanguage entity);
+  void save(NodeLanguage entity);
 
-	List<Language> getAllLanguage();
+  List<Language> getAllLanguage();
 
-	void addLanguage(Language entity);
+  void addLanguage(Language entity);
 
-	List<Module> getUntranslatedModules(String flag);
+  List<Module> getUntranslatedModules(String flag);
 
-	Integer getTotalUntranslatedModule();
+  Integer getTotalUntranslatedModule();
 
-	Integer getTotalModuleCount();
+  Integer getTotalModuleCount();
 
-	List<NodeNodeLanguageFrag> getNodeNodeLanguageListFrag();
+  List<NodeNodeLanguageFrag> getNodeNodeLanguageListFrag();
 
-	Integer getTotalFragmentCount();
+  Integer getTotalFragmentCount();
 
-	List<Fragment> getUntranslatedFragments(String flag);
+  List<Fragment> getUntranslatedFragments(String flag);
 
-	Integer getTotalUntranslatedFragment();
+  Integer getTotalUntranslatedFragment();
 
-	List<LanguageModBreakdown> getLanguageModBreakdown(String flag);
+  List<LanguageModBreakdown> getLanguageModBreakdown(String flag);
 
-	List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag);
+  List<LanguageFragBreakdown> getLanguageFragBreakdown(String flag);
 
-	void batchSave(List<NodeLanguage> entityList);
+  void batchSave(List<NodeLanguage> entityList);
 
-    List<NodeLanguage> getNodeLanguageByIdandLanguage(Long id, Long languageid);
+  List<NodeLanguage> getNodeLanguageByIdandLanguage(Long id, Long languageid);
 
-    void saveTranslate(Translate entity);
+  void saveTranslate(Translate entity);
 
-    List<String> getNodeLanguageWordsByIdOrderByWord(Long id);
+  List<String> getNodeLanguageWordsByIdOrderByWord(Long id);
 
-    List<Module> getModulesIdNodeSQL();
+  List<Module> getModulesIdNodeSQL();
 
-    List<Fragment> getFragmentIdNodeSQL();
+  List<Fragment> getFragmentIdNodeSQL();
 
-	void deleteAll();
+  void deleteAll();
 
 }

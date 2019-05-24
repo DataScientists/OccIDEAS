@@ -1,78 +1,77 @@
 package org.occideas.interview.service;
 
-import java.math.BigInteger;
-import java.util.List;
-
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Interview;
 import org.occideas.vo.InterviewVO;
-import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RandomInterviewReport;
 
+import java.math.BigInteger;
+import java.util.List;
+
 public interface InterviewService extends BaseService<InterviewVO> {
-	void merge(InterviewVO o);
+  void merge(InterviewVO o);
 
-	List<InterviewVO> listAssessments();
+  List<InterviewVO> listAssessments();
 
-	List<InterviewVO> listAllWithAnswers();
+  List<InterviewVO> listAllWithAnswers();
 
-	List<Interview> listAllWithRules(String[] modules);
-	
-	List<InterviewVO> listAllWithRulesVO(String type);
-	
-	Long getAllWithRulesCount(String[] modules);
+  List<Interview> listAllWithRules(String[] modules);
 
-	List<InterviewVO> findByIdWithRules(Long id);
-	
-	List<InterviewVO> findByReferenceNumber(String referenceNumber);
-	
-	List<InterviewVO> getInterview(long idinterview);
+  List<InterviewVO> listAllWithRulesVO(String type);
 
-	List<Long> getInterviewIdlist();
+  Long getAllWithRulesCount(String[] modules);
 
-	List<InterviewVO> listAllInterviewsWithoutAnswers();
+  List<InterviewVO> findByIdWithRules(Long id);
 
-	List<Interview> getInterviewQuestionAnswer(long idinterview);
-	
-	List<Interview> getInterviewsQuestionAnswer(Long[] ids);
-	
-	List<InterviewVO> getInterviewQuestionAnswerVO(long idinterview);
+  List<InterviewVO> findByReferenceNumber(String referenceNumber);
 
-	List<InterviewVO> getUnprocessedQuestions(Long id);
+  List<InterviewVO> getInterview(long idinterview);
 
-	InterviewVO findInterviewWithFiredRulesById(Long id);
+  List<Long> getInterviewIdlist();
 
-	List<Interview> listAllWithAssessments(String[] modules);
+  List<InterviewVO> listAllInterviewsWithoutAnswers();
 
-	List<InterviewVO> findByIdWithRules(Long id, boolean isIncludeAnswer);
+  List<Interview> getInterviewQuestionAnswer(long idinterview);
 
-	InterviewVO getQuestionHistory(Long id);
+  List<Interview> getInterviewsQuestionAnswer(Long[] ids);
 
-	BigInteger listAllWithRuleCount(String assessmentStatus);
+  List<InterviewVO> getInterviewQuestionAnswerVO(long idinterview);
 
-	boolean isQuestionAnswered(Long interviewId, Long nodeId);
+  List<InterviewVO> getUnprocessedQuestions(Long id);
 
-	Long getIntroModuleId(Long interviewId);
+  InterviewVO findInterviewWithFiredRulesById(Long id);
 
-	Long checkFragmentProcessed(long idFragment, long primaryKey);
-	
-	List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers, String[] filterModule);
+  List<Interview> listAllWithAssessments(String[] modules);
 
-	List<Interview> listAssessmentsForNotes(String[] filterModule);
+  List<InterviewVO> findByIdWithRules(Long id, boolean isIncludeAnswer);
 
-	List<String> getNoteTypes();
+  InterviewVO getQuestionHistory(Long id);
 
-	List<QuestionVO> getLinksByModule(Long id);
+  BigInteger listAllWithRuleCount(String assessmentStatus);
 
-	void preloadActiveIntro();
+  boolean isQuestionAnswered(Long interviewId, Long nodeId);
 
-	void preloadAllModules();
+  Long getIntroModuleId(Long interviewId);
 
-	List<InterviewVO> listAllInterviewsNotAssessed();
+  Long checkFragmentProcessed(long idFragment, long primaryKey);
 
-	List<InterviewVO> listAllInterviewsAssessed();
+  List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers, String[] filterModule);
 
-	void cleanDeletedAnswers(Long id);
+  List<Interview> listAssessmentsForNotes(String[] filterModule);
+
+  List<String> getNoteTypes();
+
+  List<QuestionVO> getLinksByModule(Long id);
+
+  void preloadActiveIntro();
+
+  void preloadAllModules();
+
+  List<InterviewVO> listAllInterviewsNotAssessed();
+
+  List<InterviewVO> listAllInterviewsAssessed();
+
+  void cleanDeletedAnswers(Long id);
 
 }

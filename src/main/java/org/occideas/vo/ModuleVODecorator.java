@@ -2,32 +2,32 @@ package org.occideas.vo;
 
 public class ModuleVODecorator {
 
-	private ModuleVO moduleVO;
-	private boolean created;
+  private ModuleVO moduleVO;
+  private boolean created;
 
-	public ModuleVODecorator() {
-	}
-	
-	public ModuleVODecorator(ModuleVO moduleVO, boolean created) {
-		super();
-		this.moduleVO = moduleVO;
-		this.created = created;
-	}
+  public ModuleVODecorator() {
+  }
 
-	public ModuleVO getModuleVO() {
-		return moduleVO;
-	}
+  public ModuleVODecorator(ModuleVO moduleVO, boolean created) {
+    super();
+    this.moduleVO = moduleVO;
+    this.created = created;
+  }
 
-	public void setModuleVO(ModuleVO moduleVO) {
-		this.moduleVO = moduleVO;
-	}
+  public ModuleVO getModuleVO() {
+    return moduleVO;
+  }
 
-	public boolean isCreated() {
-		return created;
-	}
+  public void setModuleVO(ModuleVO moduleVO) {
+    this.moduleVO = moduleVO;
+  }
 
-	public void setCreated(boolean created) {
-		this.created = created;
-	}
+  public boolean isCreated() {
+    return created;
+  }
+
+  public void setCreated(boolean created) {
+    this.created = created;
+  }
 
 }

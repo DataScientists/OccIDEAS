@@ -1,113 +1,113 @@
 package org.occideas.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ParticipantVO {
 
-	private long idParticipant;
-	
-	private List<InterviewVO> interviews;
-	private List<NoteVO> notes;
-	private int status;
-	private String reference;
-	private String statusDescription;
-	private Date lastUpdated;
-	private Integer deleted;
+  private long idParticipant;
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  private List<InterviewVO> interviews;
+  private List<NoteVO> notes;
+  private int status;
+  private String reference;
+  private String statusDescription;
+  private Date lastUpdated;
+  private Integer deleted;
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public Integer getDeleted() {
-		return deleted;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public void setDeleted(Integer deleted) {
-		this.deleted = deleted;
-	}
+  public Integer getDeleted() {
+    return deleted;
+  }
 
-	public long getIdParticipant() {
-		return idParticipant;
-	}
+  public void setDeleted(Integer deleted) {
+    this.deleted = deleted;
+  }
 
-	public void setIdParticipant(long idParticipant) {
-		this.idParticipant = idParticipant;
-	}
+  public long getIdParticipant() {
+    return idParticipant;
+  }
 
-	public List<InterviewVO> getInterviews() {
-		return interviews;
-	}
+  public void setIdParticipant(long idParticipant) {
+    this.idParticipant = idParticipant;
+  }
 
-	public void setInterviews(List<InterviewVO> interviews) {
-		this.interviews = interviews;
-	}
+  public List<InterviewVO> getInterviews() {
+    return interviews;
+  }
 
-	public int getStatus() {
-		return status;
-	}
+  public void setInterviews(List<InterviewVO> interviews) {
+    this.interviews = interviews;
+  }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+  public int getStatus() {
+    return status;
+  }
 
-	public String getReference() {
-		return reference;
-	}
+  public void setStatus(int status) {
+    this.status = status;
+  }
 
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+  public String getReference() {
+    return reference;
+  }
 
-	public String getStatusDescription() {
-		
-		if(status==0){
-			statusDescription = "Running";
-		} else if(status==1){
-			statusDescription = "Partial";
-		} else if(status==2){
-			statusDescription = "Completed";
-		} else if(status == 3){
-			statusDescription = "To be excluded";
-		}
-		return statusDescription;
-	}
+  public void setReference(String reference) {
+    this.reference = reference;
+  }
 
-	public void setStatusDescription(String statusDescription) {
-		this.statusDescription = statusDescription;
-	}
+  public String getStatusDescription() {
 
-	public List<NoteVO> getNotes() {
-		if(notes==null){
-			ArrayList<NoteVO> allnotes = new ArrayList<NoteVO>();
-			if(this.getInterviews()!=null){
-				for(InterviewVO interview: this.getInterviews()){
-					allnotes.addAll(interview.getNotes());
-				}
-			}		
-			this.notes = allnotes;
-		}
-		
-		return notes;
-	}
+    if (status == 0) {
+      statusDescription = "Running";
+    } else if (status == 1) {
+      statusDescription = "Partial";
+    } else if (status == 2) {
+      statusDescription = "Completed";
+    } else if (status == 3) {
+      statusDescription = "To be excluded";
+    }
+    return statusDescription;
+  }
 
-	public void setNotes(List<NoteVO> notes) {
-		this.notes = notes;
-	}
+  public void setStatusDescription(String statusDescription) {
+    this.statusDescription = statusDescription;
+  }
 
-	@Override
-	public String toString() {
-		return "ParticipantVO [idParticipant=" + idParticipant + ", status=" + status + ", reference=" + reference
-				+ ", statusDescription=" + statusDescription + "]";
-	}
-	
-	
+  public List<NoteVO> getNotes() {
+    if (notes == null) {
+      ArrayList<NoteVO> allnotes = new ArrayList<NoteVO>();
+      if (this.getInterviews() != null) {
+        for (InterviewVO interview : this.getInterviews()) {
+          allnotes.addAll(interview.getNotes());
+        }
+      }
+      this.notes = allnotes;
+    }
+
+    return notes;
+  }
+
+  public void setNotes(List<NoteVO> notes) {
+    this.notes = notes;
+  }
+
+  @Override
+  public String toString() {
+    return "ParticipantVO [idParticipant=" + idParticipant + ", status=" + status + ", reference=" + reference
+      + ", statusDescription=" + statusDescription + "]";
+  }
+
+
 }

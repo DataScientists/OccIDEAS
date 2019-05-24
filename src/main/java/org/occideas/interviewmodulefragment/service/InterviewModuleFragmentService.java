@@ -1,13 +1,13 @@
 package org.occideas.interviewmodulefragment.service;
 
-import java.util.List;
-
 import org.occideas.vo.InterviewModuleFragmentVO;
+
+import java.util.List;
 
 public interface InterviewModuleFragmentService {
 
-	public List<InterviewModuleFragmentVO> findInterviewByFragmentId(long id);
+  List<InterviewModuleFragmentVO> findInterviewByFragmentId(long id);
 
-	List<InterviewModuleFragmentVO> findFragmentByInterviewId(long id);
-	
+  List<InterviewModuleFragmentVO> findFragmentByInterviewId(long id);
+
 }

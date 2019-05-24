@@ -1,77 +1,77 @@
 package org.occideas.vo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class QuestionVO extends NodeVO implements Cloneable, Comparable<QuestionVO>{
+import java.util.ArrayList;
+import java.util.List;
 
-	@JsonInclude(Include.NON_NULL)
-	@JsonProperty(value = "nodes")
-	private List<PossibleAnswerVO> childNodes;
-	
-	private PossibleAnswerVO parent;
-	
-	private QuestionVO linkingQuestion;
-	
-	private Long activeInterviewId;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class QuestionVO extends NodeVO implements Cloneable, Comparable<QuestionVO> {
 
-	
-	public List<PossibleAnswerVO> getChildNodes() {
-		if(childNodes == null){
-			childNodes = new ArrayList<PossibleAnswerVO>();
-		}
-		return childNodes;
-	}
+  @JsonInclude(Include.NON_NULL)
+  @JsonProperty(value = "nodes")
+  private List<PossibleAnswerVO> childNodes;
 
-	public void setChildNodes(List<PossibleAnswerVO> childNodes) {
-		this.childNodes = childNodes;
-	}
+  private PossibleAnswerVO parent;
 
-	public PossibleAnswerVO getParent() {
-		return parent;
-	}
+  private QuestionVO linkingQuestion;
 
-	public void setParent(PossibleAnswerVO parent) {
-		this.parent = parent;
-	}
+  private Long activeInterviewId;
 
-	public QuestionVO getLinkingQuestion() {
-		return linkingQuestion;
-	}
 
-	public void setLinkingQuestion(QuestionVO linkingQuestion) {
-		this.linkingQuestion = linkingQuestion;
-	}
+  public List<PossibleAnswerVO> getChildNodes() {
+    if (childNodes == null) {
+      childNodes = new ArrayList<PossibleAnswerVO>();
+    }
+    return childNodes;
+  }
 
-	@Override 
-	public QuestionVO clone() {
-        try {
-            final QuestionVO result = (QuestionVO) super.clone();
-            return result;
-        } catch (final CloneNotSupportedException ex) {
-            throw new AssertionError();
-        }
-	}
+  public void setChildNodes(List<PossibleAnswerVO> childNodes) {
+    this.childNodes = childNodes;
+  }
 
-	public Long getActiveInterviewId() {
-		return activeInterviewId;
-	}
+  public PossibleAnswerVO getParent() {
+    return parent;
+  }
 
-	public void setActiveInterviewId(Long activeInterviewId) {
-		this.activeInterviewId = activeInterviewId;
-	}
+  public void setParent(PossibleAnswerVO parent) {
+    this.parent = parent;
+  }
 
-	@Override
-	public int compareTo(QuestionVO o) {
-		if(o==null){
-			return -1; 
-		}else{
+  public QuestionVO getLinkingQuestion() {
+    return linkingQuestion;
+  }
+
+  public void setLinkingQuestion(QuestionVO linkingQuestion) {
+    this.linkingQuestion = linkingQuestion;
+  }
+
+  @Override
+  public QuestionVO clone() {
+    try {
+      final QuestionVO result = (QuestionVO) super.clone();
+      return result;
+    } catch (final CloneNotSupportedException ex) {
+      throw new AssertionError();
+    }
+  }
+
+  public Long getActiveInterviewId() {
+    return activeInterviewId;
+  }
+
+  public void setActiveInterviewId(Long activeInterviewId) {
+    this.activeInterviewId = activeInterviewId;
+  }
+
+  @Override
+  public int compareTo(QuestionVO o) {
+    if (o == null) {
+      return -1;
+    } else {
 			/*String nodeNumberA=o.getNumber();
 			String nodeNumberB=this.getNumber();
 			if( (CommonUtil.isNumeric(nodeNumberA)) && (CommonUtil.isNumeric(nodeNumberB)) ){
@@ -81,18 +81,18 @@ public class QuestionVO extends NodeVO implements Cloneable, Comparable<Question
 			}else{
 				return nodeNumberB.compareTo(nodeNumberA);
 			} */
-			
-			return  o.getSequence() - this.getSequence(); //descending
-		}	
-	}
 
-	@Override
-	public String getNodeType() {
-		if(this.link > 0L) {
-			return "Question Linked";
-		}
-		return "Question";
-	}
-	
-	
+      return o.getSequence() - this.getSequence(); //descending
+    }
+  }
+
+  @Override
+  public String getNodeType() {
+    if (this.link > 0L) {
+      return "Question Linked";
+    }
+    return "Question";
+  }
+
+
 }

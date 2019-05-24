@@ -1,56 +1,56 @@
 package org.occideas.vo;
 
-import java.sql.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+import java.sql.Date;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LanguageVO {
 
-	private long id;
-	private String language;
-	private String description;
-	private Date lastUpdated;
-	private String flag;
+  private long id;
+  private String language;
+  private String description;
+  private Date lastUpdated;
+  private String flag;
 
-	public long getId() {
-		return id;
-	}
+  public long getId() {
+    return id;
+  }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
-	public String getLanguage() {
-		return language;
-	}
+  public String getLanguage() {
+    return language;
+  }
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+  public void setLanguage(String language) {
+    this.language = language;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public String getFlag() {
-		return flag;
-	}
+  public String getFlag() {
+    return flag;
+  }
 
-	public void setFlag(String flag) {
-		this.flag = flag;
-	}
+  public void setFlag(String flag) {
+    this.flag = flag;
+  }
 
 }

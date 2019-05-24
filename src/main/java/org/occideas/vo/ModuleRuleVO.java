@@ -5,104 +5,105 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties({"conditions"})
 public class ModuleRuleVO {
 
-	private long idModule;
-	private String moduleName;
-	private long idRule;
-	private String ruleLevel;
-	private RuleVO rule;
-	private long idAgent;
-	private String agentName;
-	private long idNode;
-	private String nodeNumber;
-	
-	public String getAgentName() {
-		return agentName;
-	}
+  private long idModule;
+  private String moduleName;
+  private long idRule;
+  private String ruleLevel;
+  private RuleVO rule;
+  private long idAgent;
+  private String agentName;
+  private long idNode;
+  private String nodeNumber;
 
-	public void setAgentName(String agentName) {
-		this.agentName = agentName;
-	}
+  public String getAgentName() {
+    return agentName;
+  }
 
-	public String getNodeNumber() {
-		return nodeNumber;
-	}
+  public void setAgentName(String agentName) {
+    this.agentName = agentName;
+  }
 
-	public void setNodeNumber(String nodeNumber) {
-		this.nodeNumber = nodeNumber;
-	}
+  public String getNodeNumber() {
+    return nodeNumber;
+  }
 
-	public long getIdModule() {
-		return idModule;
-	}
+  public void setNodeNumber(String nodeNumber) {
+    this.nodeNumber = nodeNumber;
+  }
 
-	public void setIdModule(long idModule) {
-		this.idModule = idModule;
-	}
+  public long getIdModule() {
+    return idModule;
+  }
 
-	public long getIdRule() {
-		return idRule;
-	}
+  public void setIdModule(long idModule) {
+    this.idModule = idModule;
+  }
 
-	public void setIdRule(long idRule) {
-		this.idRule = idRule;
-	}
+  public long getIdRule() {
+    return idRule;
+  }
 
-	public long getIdAgent() {
-		return idAgent;
-	}
+  public void setIdRule(long idRule) {
+    this.idRule = idRule;
+  }
 
-	public void setIdAgent(long idAgent) {
-		this.idAgent = idAgent;
-	}
+  public long getIdAgent() {
+    return idAgent;
+  }
 
-	public long getIdNode() {
-		return idNode;
-	}
+  public void setIdAgent(long idAgent) {
+    this.idAgent = idAgent;
+  }
 
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
-	}
+  public long getIdNode() {
+    return idNode;
+  }
 
-	public String getModuleName() {
-		return moduleName;
-	}
+  public void setIdNode(long idNode) {
+    this.idNode = idNode;
+  }
 
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
-	public String getRuleLevel() {
-		if(ruleLevel!=null){
-			//if(this.getRule()!=null){
-			//	ruleLevel = this.getRule().getLevel();
-				if(ruleLevel.equalsIgnoreCase("0")){
-					ruleLevel = "probHigh";
-				}else if(ruleLevel.equalsIgnoreCase("1")){
-					ruleLevel = "probMedium";
-				}else if(ruleLevel.equalsIgnoreCase("2")){
-					ruleLevel = "probLow";
-				}else if(ruleLevel.equalsIgnoreCase("3")){
-					ruleLevel = "probUnknown";
-				}else if(ruleLevel.equalsIgnoreCase("4")){
-					ruleLevel = "possUnknown";
-				}else if(ruleLevel.equalsIgnoreCase("5")){
-					ruleLevel = "noExposure";
-				}
-			//}
-		}
-		return ruleLevel;
-	}
+  public String getModuleName() {
+    return moduleName;
+  }
 
-	public void setRuleLevel(String ruleLevel) {
-		this.ruleLevel = ruleLevel;
-	}
+  public void setModuleName(String moduleName) {
+    this.moduleName = moduleName;
+  }
 
-	public RuleVO getRule() {
-		return rule;
-	}
+  public String getRuleLevel() {
+    if (ruleLevel != null) {
+      //if(this.getRule()!=null){
+      //	ruleLevel = this.getRule().getLevel();
+      if (ruleLevel.equalsIgnoreCase("0")) {
+        ruleLevel = "probHigh";
+      } else if (ruleLevel.equalsIgnoreCase("1")) {
+        ruleLevel = "probMedium";
+      } else if (ruleLevel.equalsIgnoreCase("2")) {
+        ruleLevel = "probLow";
+      } else if (ruleLevel.equalsIgnoreCase("3")) {
+        ruleLevel = "probUnknown";
+      } else if (ruleLevel.equalsIgnoreCase("4")) {
+        ruleLevel = "possUnknown";
+      } else if (ruleLevel.equalsIgnoreCase("5")) {
+        ruleLevel = "noExposure";
+      }
+      //}
+    }
+    return ruleLevel;
+  }
 
-	public void setRule(RuleVO rule) {
-		this.rule = rule;
-	}
+  public void setRuleLevel(String ruleLevel) {
+    this.ruleLevel = ruleLevel;
+  }
 
-	
+  public RuleVO getRule() {
+    return rule;
+  }
+
+  public void setRule(RuleVO rule) {
+    this.rule = rule;
+  }
+
+
 }

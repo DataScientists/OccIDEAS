@@ -1,22 +1,22 @@
 package org.occideas.mapper;
 
-import java.util.List;
-
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.vo.InterviewAnswerVO;
 
+import java.util.List;
+
 public interface InterviewAnswerMapper {
 
-	InterviewAnswerVO convertToInterviewAnswerVO(InterviewAnswer answer);
+  InterviewAnswerVO convertToInterviewAnswerVO(InterviewAnswer answer);
 
-	List<InterviewAnswerVO> convertToInterviewAnswerVOList(List<InterviewAnswer> answer);
+  List<InterviewAnswerVO> convertToInterviewAnswerVOList(List<InterviewAnswer> answer);
 
-	InterviewAnswer convertToInterviewAnswer(InterviewAnswerVO answerVO);
-	
-	List<InterviewAnswer> convertToInterviewAnswerList(List<InterviewAnswerVO> answerVOList);
+  InterviewAnswer convertToInterviewAnswer(InterviewAnswerVO answerVO);
 
-	InterviewAnswerVO convertToInterviewAnswerWithRulesVO(InterviewAnswer answer);
+  List<InterviewAnswer> convertToInterviewAnswerList(List<InterviewAnswerVO> answerVOList);
 
-	List<InterviewAnswerVO> convertToInterviewAnswerWithRulesVOList(List<InterviewAnswer> answerList);
-	
+  InterviewAnswerVO convertToInterviewAnswerWithRulesVO(InterviewAnswer answer);
+
+  List<InterviewAnswerVO> convertToInterviewAnswerWithRulesVOList(List<InterviewAnswer> answerList);
+
 }

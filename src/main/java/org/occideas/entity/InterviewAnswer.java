@@ -1,21 +1,12 @@
 package org.occideas.entity;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Interview_Answer")
@@ -24,196 +15,194 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @SelectBeforeUpdate(value = true)
 public class InterviewAnswer implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id
-	@GeneratedValue
-	private long id;
-	@Column(name = "idinterview")
-	private long idInterview;
-	@Column(name = "interviewQuestionId")
-	private long interviewQuestionId;
-	@Column(name = "topNodeId")
-	private long topNodeId;
-	@Column(name = "parentQuestionId")
-	private long parentQuestionId;
-	@Column(name = "answerId")
-	private long answerId;
-	@Column(name = "name")
-	private String name;
-	@Column(name = "description")
-	private String description;
-	@Column(name = "answerFreetext")
-	private String answerFreetext;
-	@Column(name = "nodeClass")
-	private String nodeClass;
-	@Column(name = "number")
-	private String number;
-	@Column(name = "type")
-	private String type;
-	@Column(name = "link")
-	private long link;
-	@Column(name = "isProcessed")
-	private boolean isProcessed;
-	@Column(name = "modCount")
-	private Integer modCount;
-	@Column(name = "deleted")
-	private Integer deleted;
-	@Column(name = "lastUpdated")
-	private Date lastUpdated;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+  @Id
+  @GeneratedValue
+  private long id;
+  @Column(name = "idinterview")
+  private long idInterview;
+  @Column(name = "interviewQuestionId")
+  private long interviewQuestionId;
+  @Column(name = "topNodeId")
+  private long topNodeId;
+  @Column(name = "parentQuestionId")
+  private long parentQuestionId;
+  @Column(name = "answerId")
+  private long answerId;
+  @Column(name = "name")
+  private String name;
+  @Column(name = "description")
+  private String description;
+  @Column(name = "answerFreetext")
+  private String answerFreetext;
+  @Column(name = "nodeClass")
+  private String nodeClass;
+  @Column(name = "number")
+  private String number;
+  @Column(name = "type")
+  private String type;
+  @Column(name = "link")
+  private long link;
+  @Column(name = "isProcessed")
+  private boolean isProcessed;
+  @Column(name = "modCount")
+  private Integer modCount;
+  @Column(name = "deleted")
+  private Integer deleted;
+  @Column(name = "lastUpdated")
+  private Date lastUpdated;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumns({ @JoinColumn(name = "idNode", referencedColumnName = "answerId",insertable=false,updatable=false)})
-	private List<ModuleRule> rules;
+  @OneToMany(fetch = FetchType.LAZY)
+  @JoinColumns({@JoinColumn(name = "idNode", referencedColumnName = "answerId", insertable = false, updatable = false)})
+  private List<ModuleRule> rules;
 
-	public long getId() {
-		return id;
-	}
+  public long getId() {
+    return id;
+  }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
-	public long getIdInterview() {
-		return idInterview;
-	}
+  public long getIdInterview() {
+    return idInterview;
+  }
 
-	public void setIdInterview(long idInterview) {
-		this.idInterview = idInterview;
-	}
-	
+  public void setIdInterview(long idInterview) {
+    this.idInterview = idInterview;
+  }
 
-	
-	public long getParentQuestionId() {
-		return parentQuestionId;
-	}
 
-	public void setParentQuestionId(long parentQuestionId) {
-		this.parentQuestionId = parentQuestionId;
-	}
+  public long getParentQuestionId() {
+    return parentQuestionId;
+  }
 
-	public long getAnswerId() {
-		return answerId;
-	}
+  public void setParentQuestionId(long parentQuestionId) {
+    this.parentQuestionId = parentQuestionId;
+  }
 
-	public void setAnswerId(long answerId) {
-		this.answerId = answerId;
-	}
+  public long getAnswerId() {
+    return answerId;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public void setAnswerId(long answerId) {
+    this.answerId = answerId;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getNodeClass() {
-		return nodeClass;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public void setNodeClass(String nodeClass) {
-		this.nodeClass = nodeClass;
-	}
+  public String getNodeClass() {
+    return nodeClass;
+  }
 
-	public String getNumber() {
-		return number;
-	}
+  public void setNodeClass(String nodeClass) {
+    this.nodeClass = nodeClass;
+  }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+  public String getNumber() {
+    return number;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public void setNumber(String number) {
+    this.number = number;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public Integer getDeleted() {
-		return deleted;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public void setDeleted(Integer deleted) {
-		this.deleted = deleted;
-	}
+  public Integer getDeleted() {
+    return deleted;
+  }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  public void setDeleted(Integer deleted) {
+    this.deleted = deleted;
+  }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public String getAnswerFreetext() {
-		return answerFreetext;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public void setAnswerFreetext(String answerFreetext) {
-		this.answerFreetext = answerFreetext;
-	}
+  public String getAnswerFreetext() {
+    return answerFreetext;
+  }
 
-	public long getLink() {
-		return link;
-	}
+  public void setAnswerFreetext(String answerFreetext) {
+    this.answerFreetext = answerFreetext;
+  }
 
-	public void setLink(long link) {
-		this.link = link;
-	}
+  public long getLink() {
+    return link;
+  }
 
-	public List<ModuleRule> getRules() {
-		return rules;
-	}
+  public void setLink(long link) {
+    this.link = link;
+  }
 
-	public void setRules(List<ModuleRule> rules) {
-		this.rules = rules;
-	}
+  public List<ModuleRule> getRules() {
+    return rules;
+  }
 
-	public boolean isProcessed() {
-		return isProcessed;
-	}
+  public void setRules(List<ModuleRule> rules) {
+    this.rules = rules;
+  }
 
-	public void setProcessed(boolean isProcessed) {
-		this.isProcessed = isProcessed;
-	}
+  public boolean isProcessed() {
+    return isProcessed;
+  }
 
-	public Integer getModCount() {
-		return modCount;
-	}
+  public void setProcessed(boolean isProcessed) {
+    this.isProcessed = isProcessed;
+  }
 
-	public void setModCount(Integer modCount) {
-		this.modCount = modCount;
-	}
+  public Integer getModCount() {
+    return modCount;
+  }
 
-	public long getTopNodeId() {
-		return topNodeId;
-	}
+  public void setModCount(Integer modCount) {
+    this.modCount = modCount;
+  }
 
-	public void setTopNodeId(long topNodeId) {
-		this.topNodeId = topNodeId;
-	}
+  public long getTopNodeId() {
+    return topNodeId;
+  }
 
-	public long getInterviewQuestionId() {
-		return interviewQuestionId;
-	}
+  public void setTopNodeId(long topNodeId) {
+    this.topNodeId = topNodeId;
+  }
 
-	public void setInterviewQuestionId(long interviewQuestionId) {
-		this.interviewQuestionId = interviewQuestionId;
-	}
-	
-	
+  public long getInterviewQuestionId() {
+    return interviewQuestionId;
+  }
+
+  public void setInterviewQuestionId(long interviewQuestionId) {
+    this.interviewQuestionId = interviewQuestionId;
+  }
+
 
 }

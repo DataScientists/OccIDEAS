@@ -1,14 +1,13 @@
 package org.occideas.entity;
 
-import java.io.Serializable;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
+import java.io.Serializable;
 
 @Entity
 @DynamicUpdate(value = true)
@@ -17,68 +16,68 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @Table(name = "InterviewIntroModule_Module")
 public class InterviewIntroModuleModule implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
-	@Id
-	private String primaryKey;
-	private long idModule;
-	private String introModuleNodeName;
-	private long interviewPrimaryKey;
-	private long interviewId;
-	private String interviewModuleName;
-	//private String linkName;
-	//private Long linkId;
+  @Id
+  private String primaryKey;
+  private long idModule;
+  private String introModuleNodeName;
+  private long interviewPrimaryKey;
+  private long interviewId;
+  private String interviewModuleName;
+  //private String linkName;
+  //private Long linkId;
 
-	public long getIdModule() {
-		return idModule;
-	}
+  public long getIdModule() {
+    return idModule;
+  }
 
-	public void setIdModule(long idModule) {
-		this.idModule = idModule;
-	}
+  public void setIdModule(long idModule) {
+    this.idModule = idModule;
+  }
 
-	public String getIntroModuleNodeName() {
-		return introModuleNodeName;
-	}
+  public String getIntroModuleNodeName() {
+    return introModuleNodeName;
+  }
 
-	public void setIntroModuleNodeName(String introModuleNodeName) {
-		this.introModuleNodeName = introModuleNodeName;
-	}
+  public void setIntroModuleNodeName(String introModuleNodeName) {
+    this.introModuleNodeName = introModuleNodeName;
+  }
 
-	public long getInterviewId() {
-		return interviewId;
-	}
+  public long getInterviewId() {
+    return interviewId;
+  }
 
-	public void setInterviewId(long interviewId) {
-		this.interviewId = interviewId;
-	}
+  public void setInterviewId(long interviewId) {
+    this.interviewId = interviewId;
+  }
 
-	public String getInterviewModuleName() {
-		return interviewModuleName;
-	}
+  public String getInterviewModuleName() {
+    return interviewModuleName;
+  }
 
-	public void setInterviewModuleName(String interviewModuleName) {
-		this.interviewModuleName = interviewModuleName;
-	}
+  public void setInterviewModuleName(String interviewModuleName) {
+    this.interviewModuleName = interviewModuleName;
+  }
 
-	public String getPrimaryKey() {
-		return primaryKey;
-	}
+  public String getPrimaryKey() {
+    return primaryKey;
+  }
 
-	public void setPrimaryKey(String primaryKey) {
-		this.primaryKey = primaryKey;
-	}
+  public void setPrimaryKey(String primaryKey) {
+    this.primaryKey = primaryKey;
+  }
 
-	public long getInterviewPrimaryKey() {
-		return interviewPrimaryKey;
-	}
+  public long getInterviewPrimaryKey() {
+    return interviewPrimaryKey;
+  }
 
-	public void setInterviewPrimaryKey(long interviewPrimaryKey) {
-		this.interviewPrimaryKey = interviewPrimaryKey;
-	}
+  public void setInterviewPrimaryKey(long interviewPrimaryKey) {
+    this.interviewPrimaryKey = interviewPrimaryKey;
+  }
 
 	/*public String getLinkName() {
 		return linkName;

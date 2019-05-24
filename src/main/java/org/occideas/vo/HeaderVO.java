@@ -1,41 +1,35 @@
 package org.occideas.vo;
 
-public class HeaderVO
-{
+public class HeaderVO {
 
-    private String headerName;
-    private String value;
-
-
-    public HeaderVO(String headerName, String value)
-    {
-        super();
-        this.headerName = headerName;
-        this.value = value;
-    }
+  private String headerName;
+  private String value;
 
 
-    public String getHeaderName()
-    {
-        return headerName;
-    }
+  public HeaderVO(String headerName, String value) {
+    super();
+    this.headerName = headerName;
+    this.value = value;
+  }
 
 
-    public void setHeaderName(String headerName)
-    {
-        this.headerName = headerName;
-    }
+  public String getHeaderName() {
+    return headerName;
+  }
 
 
-    public String getValue()
-    {
-        return value;
-    }
+  public void setHeaderName(String headerName) {
+    this.headerName = headerName;
+  }
 
 
-    public void setValue(String value)
-    {
-        this.value = value;
-    }
+  public String getValue() {
+    return value;
+  }
+
+
+  public void setValue(String value) {
+    this.value = value;
+  }
 
 }

@@ -2,45 +2,45 @@ package org.occideas.vo;
 
 public class RuleAdditionalFieldVO {
 
-	private Long idRuleAdditionalField;
+  private Long idRuleAdditionalField;
 
-	private AdditionalFieldVO additionalfield;
-	
-	private String value;
+  private AdditionalFieldVO additionalfield;
 
-	private long idRule;
-	
-	public Long getIdRuleAdditionalField() {
-		return idRuleAdditionalField;
-	}
+  private String value;
 
-	public void setIdRuleAdditionalField(Long idRuleAdditionalField) {
-		this.idRuleAdditionalField = idRuleAdditionalField;
-	}
+  private long idRule;
 
-	public String getValue() {
-		return value;
-	}
+  public Long getIdRuleAdditionalField() {
+    return idRuleAdditionalField;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setIdRuleAdditionalField(Long idRuleAdditionalField) {
+    this.idRuleAdditionalField = idRuleAdditionalField;
+  }
 
-	public AdditionalFieldVO getAdditionalfield() {
-		return additionalfield;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setAdditionalfield(AdditionalFieldVO additionalfield) {
-		this.additionalfield = additionalfield;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	public long getIdRule() {
-		return idRule;
-	}
+  public AdditionalFieldVO getAdditionalfield() {
+    return additionalfield;
+  }
 
-	public void setIdRule(long idRule) {
-		this.idRule = idRule;
-	}
-	
-	
+  public void setAdditionalfield(AdditionalFieldVO additionalfield) {
+    this.additionalfield = additionalfield;
+  }
+
+  public long getIdRule() {
+    return idRule;
+  }
+
+  public void setIdRule(long idRule) {
+    this.idRule = idRule;
+  }
+
+
 }

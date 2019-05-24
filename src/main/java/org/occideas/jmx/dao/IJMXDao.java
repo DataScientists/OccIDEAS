@@ -1,22 +1,21 @@
 package org.occideas.jmx.dao;
 
-import java.util.List;
-
 import org.occideas.entity.JMXLog;
 
-public interface IJMXDao
-{
+import java.util.List;
 
-    JMXLog save(JMXLog entity);
+public interface IJMXDao {
 
-    void deleteSoft(JMXLog entity);
+  JMXLog save(JMXLog entity);
 
-    void deleteHard(JMXLog entity);
+  void deleteSoft(JMXLog entity);
 
-    List<JMXLog> find(String searchName, Object searchVal);
+  void deleteHard(JMXLog entity);
 
-    List<JMXLog> list();
+  List<JMXLog> find(String searchName, Object searchVal);
 
-    List<JMXLog> listDeleted();
+  List<JMXLog> list();
+
+  List<JMXLog> listDeleted();
 
 }

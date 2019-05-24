@@ -1,21 +1,21 @@
 package org.occideas.agent.service;
 
-import java.util.List;
-
 import org.occideas.base.service.BaseService;
 import org.occideas.vo.AgentGroupVO;
 import org.occideas.vo.AgentVO;
 import org.occideas.vo.SystemPropertyVO;
 
-public interface AgentService extends BaseService<AgentVO>{
+import java.util.List;
 
-	void updateStudyAgents(AgentVO json);
+public interface AgentService extends BaseService<AgentVO> {
 
-	List<SystemPropertyVO> loadStudyAgents();
+  void updateStudyAgents(AgentVO json);
 
-	void deleteStudyAgents(SystemPropertyVO vo);
+  List<SystemPropertyVO> loadStudyAgents();
 
-	List<AgentVO> getStudyAgents();
+  void deleteStudyAgents(SystemPropertyVO vo);
 
-	void saveAgentGroup(AgentGroupVO json);
+  List<AgentVO> getStudyAgents();
+
+  void saveAgentGroup(AgentGroupVO json);
 }

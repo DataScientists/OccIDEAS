@@ -1,21 +1,7 @@
 package org.occideas.systemproperty.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import org.occideas.entity.SystemProperty;
-import org.occideas.mapper.SystemPropertyMapper;
-import org.occideas.systemproperty.dao.SystemPropertyDao;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.ModuleRuleVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.SystemPropertyVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional

@@ -5,8 +5,9 @@ import org.occideas.vo.RuleVO;
 
 import java.util.List;
 
-public interface RuleService extends BaseService<RuleVO>{
+public interface RuleService extends BaseService<RuleVO> {
 
-	void saveOrUpdate(RuleVO o);
-    List<RuleVO> findByAgentId(long agentId);
+  void saveOrUpdate(RuleVO o);
+
+  List<RuleVO> findByAgentId(long agentId);
 }

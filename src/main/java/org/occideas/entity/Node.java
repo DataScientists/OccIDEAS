@@ -1,30 +1,17 @@
 package org.occideas.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
-import org.hibernate.annotations.Where;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.*;
+
+import javax.persistence.Entity;
+import javax.persistence.OrderBy;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -34,209 +21,201 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
 public class Node<T extends Node> implements Cloneable {
-	@Id
-	private long idNode;
+  @Column(length = 2048)
+  protected String name;
+  @Column(length = 2048)
+  protected String description;
+  protected String type;
+  protected int sequence;
+  protected String number;
+  @Column(name = "parent_idNode")
+  protected String parentId;
+  protected long link;
+  protected long topNodeId;
+  protected Date lastUpdated;
+  @Column(name = "node_discriminator", insertable = false, updatable = false)
+  protected String nodeDiscriminator;
+  @OneToMany(mappedBy = "node", fetch = FetchType.LAZY)
+  @JsonInclude(Include.NON_EMPTY)
+  protected List<Note> notes;
+  protected long originalId;
+  protected int deleted;
+  protected String nodeclass;
+  @OneToMany(mappedBy = "parentId", targetEntity = Node.class)
+  @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.PERSIST})
+  @Where(clause = "deleted = 0")
+  @OrderBy("sequence ASC")
+  protected List<T> childNodes;
+  @Id
+  private long idNode;
 
-	@Column(length = 2048)
-	protected String name;
+  public Node() {
+    super();
+  }
 
-	@Column(length = 2048)
-	protected String description;
+  public Node(Node node) {
+    this.idNode = node.getIdNode();
+    this.name = node.getName();
+    this.description = node.getDescription();
+    this.type = node.getType();
+    this.sequence = node.getSequence();
+    this.number = node.getNumber();
+    this.parentId = node.getParentId();
 
-	protected String type;
-	protected int sequence;
-	protected String number;
+    this.link = node.getLink();
+    this.topNodeId = node.getTopNodeId();
+    this.lastUpdated = node.getLastUpdated();
+    this.originalId = node.getOriginalId();
+    this.deleted = node.getDeleted();
 
-	@Column(name = "parent_idNode")
-	protected String parentId;
+  }
 
-	protected long link;
-	protected long topNodeId;
-	protected Date lastUpdated;
+  public Node(String idNode) {
+    super();
+    this.setIdNode(Long.parseLong(idNode));
+  }
 
-	@Column(name = "node_discriminator",insertable = false, updatable = false)
-	protected String nodeDiscriminator;
+  public Node(long idNode) {
+    super();
+    this.setIdNode(idNode);
+  }
 
-	@OneToMany(mappedBy = "node", fetch = FetchType.LAZY)
-	@JsonInclude(Include.NON_EMPTY)
-	protected List<Note> notes;
-	protected long originalId;
-	protected int deleted;
-	protected String nodeclass;
+  public void addNote(Note note) {
+    note.setNode(this);
+    this.setNotes(this.getNotes() == null ? new ArrayList<Note>() : this.getNotes());
+    this.getNotes().add(note);
+  }
 
-	@OneToMany(mappedBy = "parentId", targetEntity = Node.class)
-	@Cascade(value = { CascadeType.SAVE_UPDATE, CascadeType.PERSIST })
-	@Where(clause = "deleted = 0")
-	@OrderBy("sequence ASC")
-	protected List<T> childNodes;
+  public long getIdNode() {
+    return idNode;
+  }
 
-	public Node() {
-		super();
-	}
+  public void setIdNode(long idNode) {
+    this.idNode = idNode;
+  }
 
-	public Node(Node node) {
-		this.idNode = node.getIdNode();
-		this.name = node.getName();
-		this.description = node.getDescription();
-		this.type = node.getType();
-		this.sequence = node.getSequence();
-		this.number = node.getNumber();
-		this.parentId = node.getParentId();
+  public String getName() {
+    return name;
+  }
 
-		this.link = node.getLink();
-		this.topNodeId = node.getTopNodeId();
-		this.lastUpdated = node.getLastUpdated();
-		this.originalId = node.getOriginalId();
-		this.deleted = node.getDeleted();
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void addNote(Note note) {
-		note.setNode(this);
-		this.setNotes(this.getNotes() == null ? new ArrayList<Note>() : this.getNotes());
-		this.getNotes().add(note);
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public Node(String idNode) {
-		super();
-		this.setIdNode(Long.parseLong(idNode));
-	}
+  public String getType() {
+    /*
+     * if (type == null) { type = "Module"; } else if (type.equalsIgnoreCase("")) {
+     * type = "Module"; }
+     */
+    return type;
+  }
 
-	public Node(long idNode) {
-		super();
-		this.setIdNode(idNode);
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public long getIdNode() {
-		return idNode;
-	}
+  public int getSequence() {
+    return sequence;
+  }
 
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
-	}
+  public void setSequence(int sequence) {
+    this.sequence = sequence;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getParentId() {
+    return parentId;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public String getType() {
-		/*
-		 * if (type == null) { type = "Module"; } else if (type.equalsIgnoreCase("")) {
-		 * type = "Module"; }
-		 */
-		return type;
-	}
+  public String getNumber() {
+    return number;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setNumber(String number) {
+    this.number = number;
+  }
 
-	public int getSequence() {
-		return sequence;
-	}
+  public long getLink() {
+    return link;
+  }
 
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
+  public void setLink(long link) {
+    this.link = link;
+  }
 
-	public String getParentId() {
-		return parentId;
-	}
+  public long getTopNodeId() {
+    return topNodeId;
+  }
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
+  public void setTopNodeId(long topNodeId) {
+    this.topNodeId = topNodeId;
+  }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  public long getOriginalId() {
+    return originalId;
+  }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  public void setOriginalId(long originalId) {
+    this.originalId = originalId;
+  }
 
-	public String getNumber() {
-		return number;
-	}
+  public int getDeleted() {
+    return deleted;
+  }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+  public void setDeleted(int deleted) {
+    this.deleted = deleted;
+  }
 
-	public long getLink() {
-		return link;
-	}
+  public String getNodeclass() {
+    return nodeclass;
+  }
 
-	public void setLink(long link) {
-		this.link = link;
-	}
+  public void setNodeclass(String nodeclass) {
+    this.nodeclass = nodeclass;
+  }
 
-	public long getTopNodeId() {
-		return topNodeId;
-	}
+  public String getNodeDiscriminator() {
+    return nodeDiscriminator;
+  }
 
-	public void setTopNodeId(long topNodeId) {
-		this.topNodeId = topNodeId;
-	}
+  public void setNodeDiscriminator(String nodeDiscriminator) {
+    this.nodeDiscriminator = nodeDiscriminator;
+  }
 
-	public long getOriginalId() {
-		return originalId;
-	}
+  public List<Note> getNotes() {
+    return notes;
+  }
 
-	public void setOriginalId(long originalId) {
-		this.originalId = originalId;
-	}
+  public void setNotes(List<Note> notes) {
+    this.notes = notes;
+  }
 
-	public int getDeleted() {
-		return deleted;
-	}
+  public List<T> getChildNodes() {
+    return childNodes;
+  }
 
-	public void setDeleted(int deleted) {
-		this.deleted = deleted;
-	}
-
-	public String getNodeclass() {
-		return nodeclass;
-	}
-
-	public String getNodeDiscriminator() {
-		return nodeDiscriminator;
-	}
-
-	public void setNodeDiscriminator(String nodeDiscriminator) {
-		this.nodeDiscriminator = nodeDiscriminator;
-	}
-
-	public void setNodeclass(String nodeclass) {
-		this.nodeclass = nodeclass;
-	}
-
-	public List<Note> getNotes() {
-		return notes;
-	}
-
-	public void setNotes(List<Note> notes) {
-		this.notes = notes;
-	}
-
-	public List<T> getChildNodes() {
-		return childNodes;
-	}
-
-	public void setChildNodes(List<T> childNodes) {
-		this.childNodes = childNodes;
-	}
+  public void setChildNodes(List<T> childNodes) {
+    this.childNodes = childNodes;
+  }
 
 }

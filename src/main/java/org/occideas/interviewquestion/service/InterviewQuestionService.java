@@ -1,38 +1,38 @@
 package org.occideas.interviewquestion.service;
 
-import java.util.List;
-
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.vo.InterviewQuestionVO;
 
+import java.util.List;
+
 public interface InterviewQuestionService extends BaseService<InterviewQuestionVO> {
-	
-	void updateModuleNameForInterviewId(long idInterview,String newName);
-	
-	List<InterviewQuestionVO> findByInterviewId(Long id);
-	
-	InterviewQuestionVO findIntQuestion(long idInterview,long questionId);
 
-	InterviewQuestionVO updateIntQ(InterviewQuestionVO o);
+  void updateModuleNameForInterviewId(long idInterview, String newName);
 
-	InterviewQuestionVO updateInterviewLinkAndQueueQuestions(InterviewQuestionVO o);
+  List<InterviewQuestionVO> findByInterviewId(Long id);
 
-	List<InterviewQuestionVO> updateIntQs(List<InterviewQuestionVO> o);
-	
-	Long getMaxIntQuestionSequence(long idInterview);
-	
-	List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule);
-	
-	Long getUniqueInterviewQuestionCount(String[] filterModule);
+  InterviewQuestionVO findIntQuestion(long idInterview, long questionId);
 
-	List<InterviewQuestionVO> findById(Long questionId, Long interviewId);
+  InterviewQuestionVO updateIntQ(InterviewQuestionVO o);
 
-	List<InterviewQuestionVO> findQuestionsByNodeId(Long questionId);
-	
-	List<InterviewQuestionVO> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview);
+  InterviewQuestionVO updateInterviewLinkAndQueueQuestions(InterviewQuestionVO o);
 
-	InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview);
-	
+  List<InterviewQuestionVO> updateIntQs(List<InterviewQuestionVO> o);
+
+  Long getMaxIntQuestionSequence(long idInterview);
+
+  List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule);
+
+  Long getUniqueInterviewQuestionCount(String[] filterModule);
+
+  List<InterviewQuestionVO> findById(Long questionId, Long interviewId);
+
+  List<InterviewQuestionVO> findQuestionsByNodeId(Long questionId);
+
+  List<InterviewQuestionVO> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview);
+
+  InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview);
+
 }

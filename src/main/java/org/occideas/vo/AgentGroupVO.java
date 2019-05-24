@@ -1,81 +1,81 @@
 package org.occideas.vo;
 
+import org.occideas.entity.Agent;
+
 import java.util.Date;
 import java.util.List;
 
-import org.occideas.entity.Agent;
-
 public class AgentGroupVO {
 
-	private long idAgent;
-	private String name;
-	private String description;
-	private List<Agent> agents;
-	private Date lastUpdated;
-	private Integer total = 0;
-	private Integer deleted = 0;
+  private long idAgent;
+  private String name;
+  private String description;
+  private List<Agent> agents;
+  private Date lastUpdated;
+  private Integer total = 0;
+  private Integer deleted = 0;
 
-	public AgentGroupVO() {
-	}
+  public AgentGroupVO() {
+  }
 
-	public AgentGroupVO(long idAgent){
-		this.idAgent = idAgent;
-	}
-	
-	public long getIdAgent() {
-		return idAgent;
-	}
+  public AgentGroupVO(long idAgent) {
+    this.idAgent = idAgent;
+  }
 
-	public void setIdAgent(long idAgent) {
-		this.idAgent = idAgent;
-	}
+  public long getIdAgent() {
+    return idAgent;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public void setIdAgent(long idAgent) {
+    this.idAgent = idAgent;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public Integer getDeleted() {
-		return deleted;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public void setDeleted(Integer deleted) {
-		this.deleted = deleted;
-	}
+  public Integer getDeleted() {
+    return deleted;
+  }
 
-	public Integer getTotal() {
-		return total;
-	}
+  public void setDeleted(Integer deleted) {
+    this.deleted = deleted;
+  }
 
-	public void setTotal(Integer total) {
-		this.total = total;
-	}
+  public Integer getTotal() {
+    return total;
+  }
 
-	public List<Agent> getAgents() {
-		return agents;
-	}
+  public void setTotal(Integer total) {
+    this.total = total;
+  }
 
-	public void setAgents(List<Agent> agents) {
-		this.agents = agents;
-	}
+  public List<Agent> getAgents() {
+    return agents;
+  }
+
+  public void setAgents(List<Agent> agents) {
+    this.agents = agents;
+  }
 
 }

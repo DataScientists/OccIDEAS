@@ -1,12 +1,5 @@
 package org.occideas.security.config;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.occideas.jmx.filter.JMXFilter;
 import org.occideas.security.filter.AuthenticationFilter;
 import org.occideas.security.filter.ReadOnlyFilter;
 import org.occideas.security.handler.TokenManager;
@@ -33,6 +26,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @Configuration
 @EnableWebSecurity
 @Order(2)
@@ -40,76 +38,76 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-	@Value("${backend.admin.role}")
-	private String backendAdminRole;
+  @Value("${backend.admin.role}")
+  private String backendAdminRole;
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests().antMatchers(actuatorEndpoints()).hasRole(backendAdminRole).anyRequest()
-				.authenticated().and().anonymous().disable().exceptionHandling()
-				.authenticationEntryPoint(unauthorizedEntryPoint());
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+      .authorizeRequests().antMatchers(actuatorEndpoints()).hasRole(backendAdminRole).anyRequest()
+      .authenticated().and().anonymous().disable().exceptionHandling()
+      .authenticationEntryPoint(unauthorizedEntryPoint());
 
-		http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
-				.addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
-	}
+    http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
+      .addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
+  }
 
-	@Bean
-	public TokenManager tokenManager() {
-		return new TokenManager();
-	}
+  @Bean
+  public TokenManager tokenManager() {
+    return new TokenManager();
+  }
 
-	@Bean
-	public AuthenticationEntryPoint unauthorizedEntryPoint() {
-		return new AuthenticationEntryPoint() {
-			@Override
-			public void commence(HttpServletRequest request, HttpServletResponse response,
-					AuthenticationException authException) throws IOException, ServletException {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-			}
-		};
-	}
+  @Bean
+  public AuthenticationEntryPoint unauthorizedEntryPoint() {
+    return new AuthenticationEntryPoint() {
+      @Override
+      public void commence(HttpServletRequest request, HttpServletResponse response,
+                           AuthenticationException authException) throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+      }
+    };
+  }
 
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
-	}
+  @Bean
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
 
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(domainUsernamePasswordAuthenticationProvider())
-				.authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider())
-				.authenticationProvider(tokenAuthenticationProvider());
-	}
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.authenticationProvider(domainUsernamePasswordAuthenticationProvider())
+      .authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider())
+      .authenticationProvider(tokenAuthenticationProvider());
+  }
 
-	private String[] actuatorEndpoints() {
-		return new String[] { "/web", "/mobile", "/desktop" };
-	}
+  private String[] actuatorEndpoints() {
+    return new String[]{"/web", "/mobile", "/desktop"};
+  }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-	@Bean
-	public ExternalServiceAuthenticator getExternalServiceAuthenticator() {
-		return new DaoServiceAuthenticator();
-	}
+  @Bean
+  public ExternalServiceAuthenticator getExternalServiceAuthenticator() {
+    return new DaoServiceAuthenticator();
+  }
 
-	@Bean
-	public AuthenticationProvider domainUsernamePasswordAuthenticationProvider() {
-		return new DomainUsernamePasswordAuthenticationProvider(getExternalServiceAuthenticator(), tokenManager());
-	}
+  @Bean
+  public AuthenticationProvider domainUsernamePasswordAuthenticationProvider() {
+    return new DomainUsernamePasswordAuthenticationProvider(getExternalServiceAuthenticator(), tokenManager());
+  }
 
-	@Bean
-	public AuthenticationProvider backendAdminUsernamePasswordAuthenticationProvider() {
-		return new BackendAdminUsernamePasswordAuthenticationProvider();
-	}
+  @Bean
+  public AuthenticationProvider backendAdminUsernamePasswordAuthenticationProvider() {
+    return new BackendAdminUsernamePasswordAuthenticationProvider();
+  }
 
-	@Bean
-	public AuthenticationProvider tokenAuthenticationProvider() {
-		return new TokenAuthenticationProvider(tokenManager());
-	}
-	
+  @Bean
+  public AuthenticationProvider tokenAuthenticationProvider() {
+    return new TokenAuthenticationProvider(tokenManager());
+  }
+
 }

@@ -1,20 +1,20 @@
 package org.occideas.mapper;
 
-import java.util.List;
-
 import org.mapstruct.Mapper;
 import org.occideas.entity.ModuleRule;
 import org.occideas.vo.ModuleRuleVO;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ModuleRuleMapper {
 
-	ModuleRuleVO convertToModuleRuleVO(ModuleRule moduleRuleEntity);
-	
-	List<ModuleRuleVO> convertToModuleRuleVOList(List<ModuleRule> moduleRuleEntities);
+  ModuleRuleVO convertToModuleRuleVO(ModuleRule moduleRuleEntity);
 
-	ModuleRule convertToModuleRule(ModuleRuleVO moduleRuleVO);
+  List<ModuleRuleVO> convertToModuleRuleVOList(List<ModuleRule> moduleRuleEntities);
 
-	List<ModuleRule> convertToModuleRuleList(List<ModuleRuleVO> moduleRuleVO);
-	
+  ModuleRule convertToModuleRule(ModuleRuleVO moduleRuleVO);
+
+  List<ModuleRule> convertToModuleRuleList(List<ModuleRuleVO> moduleRuleVO);
+
 }

@@ -6,7 +6,7 @@ import org.occideas.vo.PageVO;
 
 public interface AssessmentService {
 
-	PageVO<AssessmentAnswerSummary> getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter);
-	
-	
+  PageVO<AssessmentAnswerSummary> getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter);
+
+
 }

@@ -1,11 +1,11 @@
 package org.occideas.modulefragment.service;
 
-import java.util.List;
-
 import org.occideas.vo.ModuleFragmentVO;
+
+import java.util.List;
 
 public interface ModuleFragmentService {
 
-	List<ModuleFragmentVO> getModuleFragmentByModuleId(long moduleId);
-	
+  List<ModuleFragmentVO> getModuleFragmentByModuleId(long moduleId);
+
 }

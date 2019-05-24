@@ -1,15 +1,15 @@
 package org.occideas.security.service;
 
-import java.util.List;
-
 import org.occideas.security.model.UserProfile;
+
+import java.util.List;
 
 public interface UserProfileService {
 
-	List<UserProfile> findAll();
-    
-    UserProfile findByType(String type);
-     
-    UserProfile findById(int id);
-	
+  List<UserProfile> findAll();
+
+  UserProfile findByType(String type);
+
+  UserProfile findById(int id);
+
 }
