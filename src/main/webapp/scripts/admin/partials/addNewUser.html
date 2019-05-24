@@ -1,76 +1,79 @@
-<md-dialog aria-label="Add User" style="margin:0 0 0 0;padding:0 0 0 0;"
-	ng-cloak> <!-- <pre>{{data | json}}</pre> -->
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Add User</h2>
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()"> <span
-			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content style="width:510px;">
-	<div class="md-dialog-content">
-		<div layout="column" ng-cloak class="md-inline-form">
-			<md-content>
-			<form name="newUserForm" class="navbar-form navbar-left" id="newUserForm"
-				ng-submit="newUserForm.$valid && addUserBtn(vm.newUser)">  
-				 <div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>*Username</label> <input required 
-						maxlength="20" name="ssoId"
-						ng-model="vm.newUser.ssoId" /> </md-input-container>
-					<div flex="5" hide-xs hide-sm>
-						<!-- Spacer //-->
-					</div>
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>*Password</label> <input type="password" required 
-						maxlength="20" name="password"
-						ng-model="vm.newUser.password" />
-					</md-input-container>
-				</div>  	
-				<div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>Firstname</label> <input
-						maxlength="100" name="firstName"
-						ng-model="vm.newUser.firstName" /> </md-input-container>
-					<div flex="5" hide-xs hide-sm>
-						<!-- Spacer //-->
-					</div>
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>Lastname</label> 
-					<input
-						maxlength="100" name="lastName"
-						ng-model="vm.newUser.lastName" />
-					</md-input-container>
-				</div>
-			    <div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>Email</label> <input minlength="10"
-						maxlength="100" ng-pattern="/^.+@.+\..+$/" name="email"
-						ng-model="vm.newUser.email" /> </md-input-container>
-					<div flex="5" hide-xs hide-sm>
-						<!-- Spacer //-->
-					</div>
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>*State</label> <md-select required ng-model="vm.newUser.state">
-					<md-option ng-repeat="state in vm.states" 
-					value="{{state.name}}">
-					{{state.name}} </md-option> </md-select>
-					</md-input-container>
-				</div>
-				<multi-select ng-model="vm.newUser.roles"
-					available="vm.roleList" selected-label="Current roles"
-					available-label="Available roles" display-attr="type">
-				</multi-select>
-				<md-dialog-actions layout="row">
-					<md-button ng-click="cancel()" class="md-raised">Cancel</md-button>
-					<md-button type="submit" ng-click="addUserBtn(vm.newUser)" class="md-raised">Submit</md-button>
-				</md-dialog-actions>
-			</form>
-			</md-content>
-		</div>
-	</div>
-	</md-dialog-content>
-</form>
+<md-dialog aria-label="Add User" ng-cloak
+           style="margin:0 0 0 0;padding:0 0 0 0;"> <!-- <pre>{{data | json}}</pre> -->
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Add User</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()"> <span
+          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="width:510px;">
+      <div class="md-dialog-content">
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content>
+            <form class="navbar-form navbar-left" id="newUserForm" name="newUserForm"
+                  ng-submit="newUserForm.$valid && addUserBtn(vm.newUser)">
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>*Username</label> <input maxlength="20"
+                                                  name="ssoId" ng-model="vm.newUser.ssoId"
+                                                  required/></md-input-container>
+                <div flex="5" hide-sm hide-xs>
+                  <!-- Spacer //-->
+                </div>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>*Password</label> <input maxlength="20" name="password"
+                                                  ng-model="vm.newUser.password" required
+                                                  type="password"/>
+                </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Firstname</label> <input
+                  maxlength="100" name="firstName"
+                  ng-model="vm.newUser.firstName"/></md-input-container>
+                <div flex="5" hide-sm hide-xs>
+                  <!-- Spacer //-->
+                </div>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Lastname</label>
+                  <input
+                    maxlength="100" name="lastName"
+                    ng-model="vm.newUser.lastName"/>
+                </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>Email</label> <input maxlength="100"
+                                              minlength="10" name="email" ng-model="vm.newUser.email"
+                                              ng-pattern="/^.+@.+\..+$/"/></md-input-container>
+                <div flex="5" hide-sm hide-xs>
+                  <!-- Spacer //-->
+                </div>
+                <md-input-container class="md-block" flex-gt-sm>
+                  <label>*State</label>
+                  <md-select ng-model="vm.newUser.state" required>
+                    <md-option ng-repeat="state in vm.states"
+                               value="{{state.name}}">
+                      {{state.name}}
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+              </div>
+              <multi-select available="vm.roleList"
+                            available-label="Available roles" display-attr="type"
+                            ng-model="vm.newUser.roles" selected-label="Current roles">
+              </multi-select>
+              <md-dialog-actions layout="row">
+                <md-button class="md-raised" ng-click="cancel()">Cancel</md-button>
+                <md-button class="md-raised" ng-click="addUserBtn(vm.newUser)" type="submit">Submit</md-button>
+              </md-dialog-actions>
+            </form>
+          </md-content>
+        </div>
+      </div>
+    </md-dialog-content>
+  </form>
 </md-dialog>

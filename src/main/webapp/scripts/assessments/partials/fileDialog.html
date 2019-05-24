@@ -1,29 +1,29 @@
 <md-dialog aria-label="Filter Module"
-	style="margin:0 0 0 0;padding:0 0 0 0;width:500px;" ng-cloak> <!-- <pre>{{data | json}}</pre> -->
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Filename</h2>
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+           ng-cloak style="margin:0 0 0 0;padding:0 0 0 0;width:500px;"> <!-- <pre>{{data | json}}</pre> -->
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Filename</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
         </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content>
-	<div class="md-dialog-content">
-		<div layout="column" ng-cloak class="md-inline-form">
-			<md-content>
-			<p>
-				<label>Filename:</label> 
-				<input type="text" ng-model="fileName" maxlength="20"/>
-			</p>
-			</md-content>
-		</div>
-	</div>
-	</md-dialog-content>
-	<md-dialog-actions layout="row">
-       <span flex></span>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content>
+            <p>
+              <label>Filename:</label>
+              <input maxlength="20" ng-model="fileName" type="text"/>
+            </p>
+          </md-content>
+        </div>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
       <md-button ng-click="exportInterviewRules(fileName)">
         Submit
       </md-button>
@@ -31,5 +31,5 @@
         Cancel
       </md-button>
     </md-dialog-actions>
-</form>
+  </form>
 </md-dialog>

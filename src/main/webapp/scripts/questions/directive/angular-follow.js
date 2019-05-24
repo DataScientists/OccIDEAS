@@ -1,70 +1,70 @@
-(function () {
+(function() {
 
-angular.module('occIDEASApp.Questions')
-    .directive('angularFollow', ['$window', function ($window) {
-        return {
-            scope: {
-                followPoint: '=followPoint'
-            },
-            link: function(scope, element, attrs) {
+  angular.module('occIDEASApp.Questions')
+    .directive('angularFollow', ['$window', function($window) {
+      return {
+        scope: {
+          followPoint: '=followPoint'
+        },
+        link: function(scope, element, attrs) {
 
-                scope.scrolling = false;
+          scope.scrolling = false;
 
-                //fix point- the place in the scroll position when the item becomes fixed
+          //fix point- the place in the scroll position when the item becomes fixed
 
-                //first, must check if element is at the fix point
-                angular.element($window).bind('scroll', function () {
+          //first, must check if element is at the fix point
+          angular.element($window).bind('scroll', function() {
 
-                    element.each(function (index, elem) {
+            element.each(function(index, elem) {
 
-                        var followPoint = 0;
+              var followPoint = 0;
 
-                        if (attrs['followPoint'] && attrs['followPoint'] != '') {
-                            followPoint = parseInt(attrs['followPoint']);
-                        }
+              if(attrs['followPoint'] && attrs['followPoint'] != '') {
+                followPoint = parseInt(attrs['followPoint']);
+              }
 
-                        if (!scope.scrolling) {
+              if(!scope.scrolling) {
 
-                            rect = elem.getBoundingClientRect();
+                rect = elem.getBoundingClientRect();
 
-                            if (rect.top < followPoint) {
-                                if (!scope.scrolling) {
+                if(rect.top < followPoint) {
+                  if(!scope.scrolling) {
 
-                                    scope.oldPosition = element.css("position");
-                                    scope.oldTop = element.css("top");
+                    scope.oldPosition = element.css("position");
+                    scope.oldTop = element.css("top");
 
-                                    scope.clone = element.clone();
-                                    scope.clone.css("visibility", "hidden");
-                                    element.after(scope.clone);
+                    scope.clone = element.clone();
+                    scope.clone.css("visibility", "hidden");
+                    element.after(scope.clone);
 
-                                    element.css("position", "fixed");
-                                    element.css("top", followPoint);
-                                    element.css("width",rect.width);
+                    element.css("position", "fixed");
+                    element.css("top", followPoint);
+                    element.css("width", rect.width);
 
-                                    scope.scrolling = true;
-                                }
-                            }
-                        } else {
+                    scope.scrolling = true;
+                  }
+                }
+              } else {
 
-                            rect = scope.clone[0].getBoundingClientRect();
+                rect = scope.clone[0].getBoundingClientRect();
 
-                            if (rect.top >= followPoint) {
+                if(rect.top >= followPoint) {
 
-                                element.css("position", scope.oldPosition);
-                                element.css("top", scope.oldTop);
-                                element.css("width","");
-                                scope.clone.remove();
+                  element.css("position", scope.oldPosition);
+                  element.css("top", scope.oldTop);
+                  element.css("width", "");
+                  scope.clone.remove();
 
-                                scope.scrolling = false;
-                            }
+                  scope.scrolling = false;
+                }
 
-                        }
-                    });
+              }
+            });
 
-                });
+          });
 
-            }
         }
+      }
     }]);
 
 }).call(this);

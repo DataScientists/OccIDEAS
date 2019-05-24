@@ -1,34 +1,36 @@
-<div id="agentDropContainer" ng-class="leftNav" class="ui-widget">
-<div class="agent-contain">
-<div class="agentSticker" ng-click="toggleLeft()" style="cursor: pointer;">Agents</div> 
-<label for="agentDragDrop" class="fraglabel">Study Agents List: </label>
-<div id="agentDragDrop"><ul></ul>
-<div>
-	<div class="panel panel-default"">
-		<div class="panel-heading">
-    		<h4 class="panel-title">Study Agents List</h4>
-  		</div>
-  		<div class="panel-body">
-  		 
-		<uib-accordion ng-repeat="agentGroup in agentsData">
-     	 <uib-accordion-group is-open="agentGroup.isOpened">
-     	 	<uib-accordion-heading >
-     	 	<span ng-click="openedAgentGroup(agentGroup)" >{{agentGroup.key}}</span>
-     	 		 <span class="badge pull-right" ng-click="toggleAgentView(agentGroup)">{{agentGroup.total || 0}}</span> 
-     	 	</uib-accordion-heading>
-     	 		<div>
-					<ul class="list-group">
-						<li class="list-group-item" ng-repeat="agent in agentGroup.value " ng-click="toggleAgentView(agent)">
-							<span class="{{agent.style}}">{{agent.name}}</span> 
-							<span class="badge pull-right">{{agent.total || 0}}</span> 
-						</li>
-					</ul>
-				</div>
-     	 </uib-accordion-group>
-     	 </uib-accordion>
-     	 </div>
-	</div>
-</div>
-</div>
+<div class="ui-widget" id="agentDropContainer" ng-class="leftNav">
+  <div class="agent-contain">
+    <div class="agentSticker" ng-click="toggleLeft()" style="cursor: pointer;">Agents</div>
+    <label class="fraglabel" for="agentDragDrop">Study Agents List: </label>
+    <div id="agentDragDrop">
+      <ul></ul>
+      <div>
+        <div class="panel panel-default"
+        ">
+        <div class="panel-heading">
+          <h4 class="panel-title">Study Agents List</h4>
+        </div>
+        <div class="panel-body">
+
+          <uib-accordion ng-repeat="agentGroup in agentsData">
+            <uib-accordion-group is-open="agentGroup.isOpened">
+              <uib-accordion-heading>
+                <span ng-click="openedAgentGroup(agentGroup)">{{agentGroup.key}}</span>
+                <span class="badge pull-right" ng-click="toggleAgentView(agentGroup)">{{agentGroup.total || 0}}</span>
+              </uib-accordion-heading>
+              <div>
+                <ul class="list-group">
+                  <li class="list-group-item" ng-click="toggleAgentView(agent)" ng-repeat="agent in agentGroup.value ">
+                    <span class="{{agent.style}}">{{agent.name}}</span>
+                    <span class="badge pull-right">{{agent.total || 0}}</span>
+                  </li>
+                </ul>
+              </div>
+            </uib-accordion-group>
+          </uib-accordion>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>

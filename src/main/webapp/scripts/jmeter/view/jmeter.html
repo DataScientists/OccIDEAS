@@ -1,29 +1,34 @@
 <div ng-cloak>
-	<button class="btn btn-default" aria-label="Left Align" ng-click="vm.exportJMX()">
-		<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
-		Export JMX File
-	</button>
-	<div>
-		<table ng-table="vm.tableParams" ng-cloak
-			class="table table-bordered table-hover 
-  table-condensed editable-table"
-			show-filter="true">
-			<tr ng-repeat="logs in $data">
-				<td width="1%" style="text-align: left" header="'ng-table/headers/checkbox.html'">
-						<input type="checkbox" style="position:static;" ng-model="checkboxes.items[logs.id]" />
-				</td>
-				<td width="15%" title="'Session Id'" filter="{ sessionId: 'text'}"
-					sortable="'sessionId'">{{logs.sessionId}}</td>
-				<td width="15%" title="'Username'" filter="{ userId:'text'}"
-					sortable="'userId'">{{logs.userId}}</td>
-				<td width="10%" title="'Function'" filter="{ function:'text'}"
-					sortable="'function'">{{logs.function}}</td>
-				<td width="10%" title="'Created Date'" filter="{ state:'text'}"
-					sortable="'createdDate'">{{logs.createdDate | date:'yyyy/MM/dd hh:mm:ss'}}</td>
-			</tr>
-		</table>
-	</div>
+  <button aria-label="Left Align" class="btn btn-default" ng-click="vm.exportJMX()">
+    <span aria-hidden="true" class="glyphicon glyphicon-export"></span>
+    Export JMX File
+  </button>
+  <div>
+    <table class="table table-bordered table-hover
+  table-condensed editable-table" ng-cloak
+           ng-table="vm.tableParams"
+           show-filter="true">
+      <tr ng-repeat="logs in $data">
+        <td header="'ng-table/headers/checkbox.html'" style="text-align: left" width="1%">
+          <input ng-model="checkboxes.items[logs.id]" style="position:static;" type="checkbox"/>
+        </td>
+        <td filter="{ sessionId: 'text'}" sortable="'sessionId'" title="'Session Id'"
+            width="15%">{{logs.sessionId}}
+        </td>
+        <td filter="{ userId:'text'}" sortable="'userId'" title="'Username'"
+            width="15%">{{logs.userId}}
+        </td>
+        <td filter="{ function:'text'}" sortable="'function'" title="'Function'"
+            width="10%">{{logs.function}}
+        </td>
+        <td filter="{ state:'text'}" sortable="'createdDate'" title="'Created Date'"
+            width="10%">{{logs.createdDate | date:'yyyy/MM/dd hh:mm:ss'}}
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>
-<script type="text/ng-template" id="ng-table/headers/checkbox.html">
-     <input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value="" />
+<script id="ng-table/headers/checkbox.html" type="text/ng-template">
+  <input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox"
+         value=""/>
 </script>

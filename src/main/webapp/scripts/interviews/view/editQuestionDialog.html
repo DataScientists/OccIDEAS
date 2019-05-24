@@ -1,121 +1,127 @@
-<md-dialog aria-label="Edit" style="margin:0 0 0 0;padding:0 0 0 0;"  ng-cloak>
-<!-- <pre>{{data | json}}</pre> -->
+<md-dialog aria-label="Edit" ng-cloak style="margin:0 0 0 0;padding:0 0 0 0;">
+  <!-- <pre>{{data | json}}</pre> -->
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>{{questionBeingEdited.name}}</h2>
         <span flex></span>
         <md-button aria-label="Cancel" class="md-icon-button" ng-click="cancel()">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
         </md-button>
       </div>
     </md-toolbar>
     <md-dialog-content>
       <div class="md-dialog-content">
-      	<div layout="column" ng-cloak class="md-inline-form">
-  		<md-content layout-gt-sm="row" layout-padding>
-    		<ul >
-			
-			<div ng-if="questionBeingEdited.type == 'Q_multiple'">
-				<div ng-repeat="node in questionBeingEdited.nodes">
-					<md-checkbox aria-label="{{node.name}}" ng-model="node.isSelected" ng-click="multiToggle(node, multiSelected)" 
-					 class="green" select-free-text-on-click> 
-					 <span ng-if="node.type!='P_freetext'">{{node.name}}</span> 
-					 <md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
-						<label>Free Text</label> 
-							<input style="width: 270px;" ng-model="node.name" ng-keyup="allowSpaceOnFreeText($event,node)"> 
-					 </md-input-container> 
-					 </md-checkbox>
-				</div>
-			</div>
-			
-			
-			<div ng-if="questionBeingEdited.type == 'Q_frequency'">
-				<div ng-repeat="node in questionBeingEdited.nodes">
-					<div ng-switch="node.type">
-						<div ng-switch-when="P_frequencyseconds">
-							<div>Frequency Value:{{currentFrequencyValue}}</div>
-								<label>Seconds</label>
-								<select ng-model="node.name"> 
-									<option ng-repeat="second in seconds" value="{{second}}">{{second}}</option> 
-								</select> 
-							
-						</div>
-						<div ng-switch-when="P_frequencyweeks">
-							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
-								<label>Weeks</label> 
-								<select ng-model="node.name"> 
-									<option ng-repeat="week in weeks" value="{{week}}">{{week}} </option> 
-								</select> 
-							
-						</div>
-						<div ng-switch-when="P_frequencyhours">
-							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
-								<label>Hours</label> 
-								<select ng-model="node.name"> 
-									<option ng-repeat="hour in hoursPerWeekArray" value="{{hour}}">{{hour}} </option> 
-								</select> 
-							
-						</div>
-						<div ng-switch-when="P_frequencyshifthours">
-							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
-								<label>Hours</label> 
-								<select ng-model="questionBeingEdited.hours"> 
-									<option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}} </option> 
-								</select> 
-							
-							
-								<label>Minutes</label>
-								<select ng-model="questionBeingEdited.minutes"> 
-									<option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}} </option> 
-								</select> 
-							
-						</div>
-						<div ng-switch-when="P_frequencyhoursminute">
-							<div>Current Frequency Value:{{currentFrequencyValue}}</div><p>&nbsp;</p>
-								<label>Hours</label> 
-								<select ng-model="questionBeingEdited.hours"> 
-								<option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}} </option> 
-								</select> 
-							
-							
-								<label>Minutes</label>
-								<select ng-model="questionBeingEdited.minutes"> 
-									<option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}} </option> 
-								</select>
-							
-						</div>
-						<div ng-switch-default>Unknown Frequency Type:{{node.type}}</div>
-					</div>
-				</div>
-			</div>
-			 
-			 
-			<div ng-if="questionBeingEdited.type == 'Q_single' || questionBeingEdited.type == 'Q_simple'">
-			 
-				<md-radio-group ng-model="questionBeingEdited.selectedAnswer">
-				<div ng-repeat='node in questionBeingEdited.nodes'>
-					<div flex layout-align="start center">
-						<md-radio-button flex ng-value="node" class="md-primary interview-radio-button" select-free-text-on-click> 
-							<span ng-if="node.type!='P_freetext'">{{node.name}}</span> 
-							<md-input-container ng-if="node.type=='P_freetext'" md-no-float class="md-block">
-								<label>Free Text</label> 
-								<input  style="width: 270px;" ng-model="node.name">
-							</md-input-container> 
-						</md-radio-button>
-					</div>
-				</div>
-				</md-radio-group>
-			</div>
-		</ul>  		
-  		</md-content>
-  		</div>
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content layout-gt-sm="row" layout-padding>
+            <ul>
+
+              <div ng-if="questionBeingEdited.type == 'Q_multiple'">
+                <div ng-repeat="node in questionBeingEdited.nodes">
+                  <md-checkbox aria-label="{{node.name}}" class="green"
+                               ng-click="multiToggle(node, multiSelected)"
+                               ng-model="node.isSelected" select-free-text-on-click>
+                    <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
+                    <md-input-container class="md-block" md-no-float ng-if="node.type=='P_freetext'">
+                      <label>Free Text</label>
+                      <input ng-keyup="allowSpaceOnFreeText($event,node)" ng-model="node.name" style="width: 270px;">
+                    </md-input-container>
+                  </md-checkbox>
+                </div>
+              </div>
+
+
+              <div ng-if="questionBeingEdited.type == 'Q_frequency'">
+                <div ng-repeat="node in questionBeingEdited.nodes">
+                  <div ng-switch="node.type">
+                    <div ng-switch-when="P_frequencyseconds">
+                      <div>Frequency Value:{{currentFrequencyValue}}</div>
+                      <label>Seconds</label>
+                      <select ng-model="node.name">
+                        <option ng-repeat="second in seconds" value="{{second}}">{{second}}</option>
+                      </select>
+
+                    </div>
+                    <div ng-switch-when="P_frequencyweeks">
+                      <div>Current Frequency Value:{{currentFrequencyValue}}</div>
+                      <p>&nbsp;</p>
+                      <label>Weeks</label>
+                      <select ng-model="node.name">
+                        <option ng-repeat="week in weeks" value="{{week}}">{{week}}</option>
+                      </select>
+
+                    </div>
+                    <div ng-switch-when="P_frequencyhours">
+                      <div>Current Frequency Value:{{currentFrequencyValue}}</div>
+                      <p>&nbsp;</p>
+                      <label>Hours</label>
+                      <select ng-model="node.name">
+                        <option ng-repeat="hour in hoursPerWeekArray" value="{{hour}}">{{hour}}</option>
+                      </select>
+
+                    </div>
+                    <div ng-switch-when="P_frequencyshifthours">
+                      <div>Current Frequency Value:{{currentFrequencyValue}}</div>
+                      <p>&nbsp;</p>
+                      <label>Hours</label>
+                      <select ng-model="questionBeingEdited.hours">
+                        <option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}}</option>
+                      </select>
+
+
+                      <label>Minutes</label>
+                      <select ng-model="questionBeingEdited.minutes">
+                        <option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}}</option>
+                      </select>
+
+                    </div>
+                    <div ng-switch-when="P_frequencyhoursminute">
+                      <div>Current Frequency Value:{{currentFrequencyValue}}</div>
+                      <p>&nbsp;</p>
+                      <label>Hours</label>
+                      <select ng-model="questionBeingEdited.hours">
+                        <option ng-repeat="hour in hoursArray" value="{{hour}}">{{hour}}</option>
+                      </select>
+
+
+                      <label>Minutes</label>
+                      <select ng-model="questionBeingEdited.minutes">
+                        <option ng-repeat="minute in minutesArray" value="{{minute}}">{{minute}}</option>
+                      </select>
+
+                    </div>
+                    <div ng-switch-default>Unknown Frequency Type:{{node.type}}</div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div ng-if="questionBeingEdited.type == 'Q_single' || questionBeingEdited.type == 'Q_simple'">
+
+                <md-radio-group ng-model="questionBeingEdited.selectedAnswer">
+                  <div ng-repeat='node in questionBeingEdited.nodes'>
+                    <div flex layout-align="start center">
+                      <md-radio-button class="md-primary interview-radio-button" flex ng-value="node"
+                                       select-free-text-on-click>
+                        <span ng-if="node.type!='P_freetext'">{{node.name}}</span>
+                        <md-input-container class="md-block" md-no-float ng-if="node.type=='P_freetext'">
+                          <label>Free Text</label>
+                          <input ng-model="node.name" style="width: 270px;">
+                        </md-input-container>
+                      </md-radio-button>
+                    </div>
+                  </div>
+                </md-radio-group>
+              </div>
+            </ul>
+          </md-content>
+        </div>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
       <span flex></span>
       <md-button ng-click="saveEditQuestionButton(questionBeingEdited)">
-       Save
+        Save
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">
         Cancel

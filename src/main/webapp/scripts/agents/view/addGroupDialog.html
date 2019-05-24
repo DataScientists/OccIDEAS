@@ -1,57 +1,57 @@
-<md-dialog aria-label="Note" style="margin:0 0 0 0;padding:0 0 0 0;"  ng-cloak>
-<!-- <pre>{{data | json}}</pre> -->
-  <form name="agentForm" id="agentForm" ng-submit="saveNewGroupButton(groupName, groupDesc, agentName, agentDesc)">
+<md-dialog aria-label="Note" ng-cloak style="margin:0 0 0 0;padding:0 0 0 0;">
+  <!-- <pre>{{data | json}}</pre> -->
+  <form id="agentForm" name="agentForm" ng-submit="saveNewGroupButton(groupName, groupDesc, agentName, agentDesc)">
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>New Agent Group</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
         </md-button>
       </div>
     </md-toolbar>
     <md-dialog-content>
       <div class="md-dialog-content">
-      	<div layout="column" ng-cloak class="md-inline-form">
-  		<md-content layout-padding="">		
-		 		<md-input-container class="md-block">
-		      	<label>Agent Group Name*</label>
-		        <input type="text" data-ng-model="groupName" name="groupName" required=""/>
-		         <div ng-messages="agentForm.groupName.$error">
-		          <div ng-message="required">This is required.</div>
-		        </div>
-		      </md-input-container>
-		
-		      <md-input-container class="md-block">
-		      	<label>Agent Group Description</label>
-		        <input type="text" data-ng-model="groupDesc" name="groupDesc" />
-		      </md-input-container>		
-		
-			 <div>
-			  Please supply the details for the first agent for this group.
-			 </div> 
-			 
-		      <md-input-container class="md-block">
-		      	<label>Agent Name*</label>
-		        <input type="text" data-ng-model="agentName" name="agentName" required=""/>
-		         <div ng-messages="agentForm.agentName.$error">
-		          <div ng-message="required">This is required.</div>
-	        	 </div>
-		      </md-input-container>
-		
-		      <md-input-container class="md-block">
-		      	<label>Agent Description</label>
-		        <input type="text" data-ng-model="agentDesc" name="agentDesc" />
-		      </md-input-container>		
-		   
-  		</md-content>
-  		</div>
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content layout-padding="">
+            <md-input-container class="md-block">
+              <label>Agent Group Name*</label>
+              <input data-ng-model="groupName" name="groupName" required="" type="text"/>
+              <div ng-messages="agentForm.groupName.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label>Agent Group Description</label>
+              <input data-ng-model="groupDesc" name="groupDesc" type="text"/>
+            </md-input-container>
+
+            <div>
+              Please supply the details for the first agent for this group.
+            </div>
+
+            <md-input-container class="md-block">
+              <label>Agent Name*</label>
+              <input data-ng-model="agentName" name="agentName" required="" type="text"/>
+              <div ng-messages="agentForm.agentName.$error">
+                <div ng-message="required">This is required.</div>
+              </div>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label>Agent Description</label>
+              <input data-ng-model="agentDesc" name="agentDesc" type="text"/>
+            </md-input-container>
+
+          </md-content>
+        </div>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button type="submit" >
-       Save
+      <md-button type="submit">
+        Save
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">
         Cancel

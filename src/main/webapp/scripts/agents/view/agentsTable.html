@@ -1,97 +1,100 @@
 <div ng-cloak>
-	<div>
-		<table ng-table="vm.tableParams"
-			class="table table-bordered table-hover 
+  <div>
+    <table class="table table-bordered table-hover
   table-condensed editable-table moduleTable"
-			ng-form="tableForm" disable-filter="vm.isAdding"
-			demo-tracked-table="vm.tableTracker" id="addAgentId">
-			<div class="pull-left" style="padding:2px 2px 2px 2px;">
-				<button type="button" ng-click='vm.addGroup()' class="btn btn-default"> Add Agent Group</button>
-			</div>
-			<tbody ng-repeat="group in $groups">
-				<tr class="ng-table-group">
-					<td colspan="{{$columns.length}}"><a href=""
-						ng-click="group.$hideRows = !group.$hideRows"> <span
-							class="glyphicon"
-							ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-							<strong> {{ group.value }}</strong>
-					</a>
-						<div class="brn-group pull-right">
-							<button class="btn btn-default" ng-click="vm.add(group)">
-								<span class="glyphicon glyphicon-plus"></span>
-							</button>
-							<button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
-								<span class="glyphicon glyphicon-trash"></span>
-							</button>
-						</div></td>
-						
-				</tr>
-				<tr ng-hide="group.$hideRows" ng-repeat="row in group.data"
-					ng-form="rowForm" demo-tracked-table-row="row">
-					
-					<td data-title="'Agent Group'" groupable="'agentGroup.name'"
-						ng-if="false">{{row.agentGroup}}</td>
-					<td title="'Name'" filter="{name: 'text'}"
-						ng-switch="row.isEditing"
-						ng-class="name.$dirty ? 'bg-warning' : ''" ng-form="name"
-						demo-tracked-table-cell>
-						<div ng-click="row.isEditing = true">
-							<span ng-switch-default class="editable-text">{{row.name}}</span>
-							<div class="controls"
-								ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
-								ng-switch-when="true">
-								<input type="text" name="name" ng-model="row.name"
-									class="editable-input form-control input-sm" required />
-							</div>
-						</div>
-					</td>
-					<td title="'Description'" filter="{description: 'text'}"
-						ng-switch="row.isEditing"
-						ng-class="description.$dirty ? 'bg-warning' : ''"
-						ng-form="description" demo-tracked-table-cell>
-						<div ng-click="row.isEditing = true">
-							<span ng-switch-default class="editable-text">{{row.description}}</span>
-							<div class="controls"
-								ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"
-								ng-switch-when="true">
-								<input type="text" name="description" ng-model="row.description"
-									class="editable-input form-control input-sm" required />
-							</div>
-						</div>
-					</td>
-					<td title="'Study'" filter="{isChecked: 'text'}" width="30" style="text-align: center;"> {{row.isChecked}}
-						<input permission="['ROLE_ADMIN']"
-						type="checkbox" style="position: static;"
-						ng-model="checkboxes.items[row.idAgent]" 
-						ng-checked="row.isChecked"
-						ng-click="toggleStudyAgent(row)"/></td>
-					<td>
-						<button class="btn btn-primary btn-sm"
-							ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
-							ng-disabled="rowForm.$pristine || rowForm.$invalid">
-							<span class="glyphicon glyphicon-ok"></span>
-						</button>
-						<button class="btn btn-default btn-sm"
-							ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
-							<span class="glyphicon glyphicon-remove"></span>
-						</button>
-						<button class="btn btn-default btn-sm"
-							ng-click="vm.checkAndAddAgentRulesTab(row)"
-							ng-if="!row.isEditing">
-							<span class="glyphicon glyphicon-list-alt"></span>
-						</button>
-						<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
-							id="delete_{{row.name}}"
-							ng-if="vm.isDeleting" confirm="Delete agent {{row.name}}?">
-							<span class="glyphicon glyphicon-trash"></span>
-						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<script type="text/ng-template" id="ng-table/headers/checkbox.html">
-        	Study Agent	
-			<input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value="" />
-    	</script>
-	</div>
+           demo-tracked-table="vm.tableTracker"
+           disable-filter="vm.isAdding" id="addAgentId"
+           ng-form="tableForm" ng-table="vm.tableParams">
+      <div class="pull-left" style="padding:2px 2px 2px 2px;">
+        <button class="btn btn-default" ng-click='vm.addGroup()' type="button"> Add Agent Group</button>
+      </div>
+      <tbody ng-repeat="group in $groups">
+        <tr class="ng-table-group">
+          <td colspan="{{$columns.length}}"><a href=""
+                                               ng-click="group.$hideRows = !group.$hideRows"> <span
+            class="glyphicon"
+            ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+            <strong> {{ group.value }}</strong>
+          </a>
+            <div class="brn-group pull-right">
+              <button class="btn btn-default" ng-click="vm.add(group)">
+                <span class="glyphicon glyphicon-plus"></span>
+              </button>
+              <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </div>
+          </td>
+
+        </tr>
+        <tr demo-tracked-table-row="row" ng-form="rowForm"
+            ng-hide="group.$hideRows" ng-repeat="row in group.data">
+
+          <td data-title="'Agent Group'" groupable="'agentGroup.name'"
+              ng-if="false">{{row.agentGroup}}
+          </td>
+          <td demo-tracked-table-cell filter="{name: 'text'}"
+              ng-class="name.$dirty ? 'bg-warning' : ''"
+              ng-form="name" ng-switch="row.isEditing"
+              title="'Name'">
+            <div ng-click="row.isEditing = true">
+              <span class="editable-text" ng-switch-default>{{row.name}}</span>
+              <div class="controls"
+                   ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
+                   ng-switch-when="true">
+                <input class="editable-input form-control input-sm" name="name" ng-model="row.name"
+                       required type="text"/>
+              </div>
+            </div>
+          </td>
+          <td demo-tracked-table-cell filter="{description: 'text'}"
+              ng-class="description.$dirty ? 'bg-warning' : ''"
+              ng-form="description"
+              ng-switch="row.isEditing" title="'Description'">
+            <div ng-click="row.isEditing = true">
+              <span class="editable-text" ng-switch-default>{{row.description}}</span>
+              <div class="controls"
+                   ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"
+                   ng-switch-when="true">
+                <input class="editable-input form-control input-sm" name="description" ng-model="row.description"
+                       required type="text"/>
+              </div>
+            </div>
+          </td>
+          <td filter="{isChecked: 'text'}" style="text-align: center;" title="'Study'" width="30"> {{row.isChecked}}
+            <input ng-checked="row.isChecked"
+                   ng-click="toggleStudyAgent(row)" ng-model="checkboxes.items[row.idAgent]"
+                   permission="['ROLE_ADMIN']"
+                   style="position: static;"
+                   type="checkbox"/></td>
+          <td>
+            <button class="btn btn-primary btn-sm"
+                    ng-click="vm.save(row, rowForm)" ng-disabled="rowForm.$pristine || rowForm.$invalid"
+                    ng-if="row.isEditing">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+            <button class="btn btn-default btn-sm"
+                    ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <button class="btn btn-default btn-sm"
+                    ng-click="vm.checkAndAddAgentRulesTab(row)"
+                    ng-if="!row.isEditing">
+              <span class="glyphicon glyphicon-list-alt"></span>
+            </button>
+            <button class="btn btn-danger btn-sm" confirm="Delete agent {{row.name}}?"
+                    id="delete_{{row.name}}"
+                    ng-click="vm.del(row)" ng-if="vm.isDeleting">
+              <span class="glyphicon glyphicon-trash"></span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <script id="ng-table/headers/checkbox.html" type="text/ng-template">
+      Study Agent
+      <input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all"
+             name="filter-checkbox" value=""/>
+    </script>
+  </div>
 </div>

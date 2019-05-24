@@ -1,27 +1,27 @@
-<div ng-cloak bs-loading-overlay>
-  <md-content style="width:100%;" class="md-padding hiddenscrollbars">
-    <md-tabs md-selected="selectedIndex" class="hiddenscrollbars" md-border-bottom md-autoselect md-dynamic-height
-      md-enable-disconnect='true'>
-      <md-tab ng-repeat="tab in tabs" ng-disabled="tab.disabled" layout-fill>
+<div bs-loading-overlay ng-cloak>
+  <md-content class="md-padding hiddenscrollbars" style="width:100%;">
+    <md-tabs class="hiddenscrollbars" md-autoselect md-border-bottom md-dynamic-height md-enable-disconnect='true'
+             md-selected="selectedIndex">
+      <md-tab layout-fill ng-disabled="tab.disabled" ng-repeat="tab in tabs">
         <md-tab-label>
           <span context-menu="tabMenu(tab)">{{tab.title}}</span>
 
           <span
+            class="glyphicon glyphicon-warning-sign"
             ng-if="(tab.title.indexOf('Resume Interview') > -1 || tab.title.indexOf('Assessment ') > -1) && !tab.isSameIntroModule"
-            uib-popover="This interview is not using the configured Intro Module"
-            popover-placement="right" popover-append-to-body="true"
-            popover-trigger="mouseenter" popover-popup-delay="300"
-            class="glyphicon glyphicon-warning-sign" style="color:red;">
+            popover-append-to-body="true" popover-placement="right"
+            popover-popup-delay="300" popover-trigger="mouseenter"
+            style="color:red;" uib-popover="This interview is not using the configured Intro Module">
           </span>
 
           <span ng-click="removeTab(tab)" ng-if="tab.canClose">
             <span class="glyphicon glyphicon-remove" style="margin-left:3px"/>
           </span>
         </md-tab-label>
-        <md-tab-body ng-cloak ng-class="tab.style" layout="column" layout-fill>
+        <md-tab-body layout="column" layout-fill ng-class="tab.style" ng-cloak>
           <div class="tab{{$index%4}}">
-            <md-progress-circular ng-if="tabsLoading" md-mode="indeterminate"></md-progress-circular>
-            <ng-view ng-cloak ui-view="{{tab.viewName}}" ng-if="tab.viewName != null">
+            <md-progress-circular md-mode="indeterminate" ng-if="tabsLoading"></md-progress-circular>
+            <ng-view ng-cloak ng-if="tab.viewName != null" ui-view="{{tab.viewName}}">
             </ng-view>
           </div>
         </md-tab-body>

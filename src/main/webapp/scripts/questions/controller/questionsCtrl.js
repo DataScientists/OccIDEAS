@@ -1,8 +1,8 @@
-(function () {
+(function() {
   angular.module('occIDEASApp.Questions')
     .controller('QuestionsCtrl', QuestionsCtrl)
-    .filter('reverse', function () {
-      return function (items) {
+    .filter('reverse', function() {
+      return function(items) {
         return items.slice().reverse();
       };
     });
@@ -36,14 +36,14 @@
     function reduceNodeDetails(node) {
       var result = angular.copy(node);
       result[indexCount].nodes = [];
-      if (totalIndexCount > 0) {
+      if(totalIndexCount > 0) {
         result[indexCount].nodes.push(self.data[indexCount].nodes[indexCount]);
       }
       indexCount++;
       return result;
     }
 
-    if (self.lang) {
+    if(self.lang) {
       $sessionStorage.idNode = self.node[0].idNode;
       $translate.refresh();
       $translate.use(self.lang.language);
@@ -52,12 +52,12 @@
       $scope.selectedLanguage = self.lang;
     }
 
-    if (scrollTo > 0) {
-      $scope.$watch(function () {
+    if(scrollTo > 0) {
+      $scope.$watch(function() {
         return $('#node-' + scrollTo).offset() != null
           && $('#node-' + scrollTo).offset().top
-      }, function () {
-        if (!$('#' + scrollTo).hasClass('highlight-rulenode')
+      }, function() {
+        if(!$('#' + scrollTo).hasClass('highlight-rulenode')
           && $('#node-' + scrollTo).offset() != null
           && $('#node-' + scrollTo).offset().top != 0) {
           $('#' + scrollTo).addClass('highlight-rulenode');
@@ -66,10 +66,10 @@
       });
     }
 
-    if (self.lang) {
+    if(self.lang) {
       $scope.flagUsed = 'flag-icon-' + self.lang.flag.split(/[- ]+/).pop().toLowerCase();
-      if ($sessionStorage.languages) {
-        var lang = _.find($sessionStorage.languages, function (o) {
+      if($sessionStorage.languages) {
+        var lang = _.find($sessionStorage.languages, function(o) {
           return o.flag == self.lang.flag;
         });
         $scope.flagDescription = lang.description;
@@ -77,18 +77,18 @@
     }
 
     $scope.languageNameList = [];
-    self.editTranslation = function () {
+    self.editTranslation = function() {
       self.editTranslateNode = true;
     };
 
 
-    $scope.saveAllLanguage = function () {
+    $scope.saveAllLanguage = function() {
       var listOfTranslatedNodes = [];
       var listOfLang = [];
       saveNodeTranslation(angular.copy(self.node[0]), listOfTranslatedNodes, listOfLang);
 
-      NodeLanguageService.batchSave(listOfLang).then(function (response) {
-        if (response.status == '200') {
+      NodeLanguageService.batchSave(listOfLang).then(function(response) {
+        if(response.status == '200') {
           $translate.refresh();
           $translate.use(self.lang.language);
         }
@@ -97,7 +97,7 @@
     };
 
     function saveNodeTranslation(node, listOfTranslatedNodes, listOfLang) {
-      if (node.translated != 'No available translation'
+      if(node.translated != 'No available translation'
         && !listOfTranslatedNodes.indexOf(node.name.toLowerCase().trim()) > -1) {
         listOfTranslatedNodes.push(node.name.toLowerCase().trim());
         var data = {
@@ -107,7 +107,7 @@
         };
         listOfLang.push(data);
       }
-      _.each(node.nodes, function (n) {
+      _.each(node.nodes, function(n) {
         saveNodeTranslation(n, listOfTranslatedNodes, listOfLang);
       });
     }
@@ -129,15 +129,15 @@
     $rootScope.studyModuleLinksCount = 0;
 
 
-    $rootScope.$on('$translateChangeSuccess', function () {
+    $rootScope.$on('$translateChangeSuccess', function() {
       translateNodes($scope.data[0]);
-      ModulesService.getModuleTranslationCurrentCount($scope.data[0].idNode, $scope.selectedLanguage.id).then(function (response) {
-        if (response.status == '200') {
+      ModulesService.getModuleTranslationCurrentCount($scope.data[0].idNode, $scope.selectedLanguage.id).then(function(response) {
+        if(response.status == '200') {
           $scope.currentLangCount = response.data;
         }
       });
-      ModulesService.getModuleTranslationTotalCount($scope.data[0].idNode).then(function (response) {
-        if (response.status == '200') {
+      ModulesService.getModuleTranslationTotalCount($scope.data[0].idNode).then(function(response) {
+        if(response.status == '200') {
           $scope.totalLangCount = response.data;
         }
       });
@@ -147,15 +147,15 @@
 
     function translateNodes(node) {
       node.translated = $translate.instant(node.name.toLowerCase());
-      if (node.idNode == $scope.data[0].idNode) {
+      if(node.idNode == $scope.data[0].idNode) {
         node.translated = node.name;
       }
 
-      if (node.translated.trim() == node.name.toLowerCase().trim() && node.idNode != $scope.data[0].idNode) {
+      if(node.translated.trim() == node.name.toLowerCase().trim() && node.idNode != $scope.data[0].idNode) {
         node.translated = 'No available translation';
       }
-      if (node.nodes) {
-        _.each(node.nodes, function (childNode) {
+      if(node.nodes) {
+        _.each(node.nodes, function(childNode) {
           return translateNodes(childNode);
         });
       }
@@ -165,64 +165,64 @@
 
     function refreshNodeLanguageCount(node) {
 
-      if (node.name && $scope.languageNameList.indexOf(node.name.toLowerCase()) == -1
+      if(node.name && $scope.languageNameList.indexOf(node.name.toLowerCase()) == -1
         && node.link == 0 && node.type != 'P_freetext' &&
         !node.type.match('frequency') && node.nodeclass != 'M' && node.nodeclass != 'F') {
-        if (node.translated.trim() != 'No available translation') {
+        if(node.translated.trim() != 'No available translation') {
           $scope.currentLangCount++;
         }
         $scope.languageNameList.push(node.name.toLowerCase());
       }
-      if (node.nodes) {
-        _.each(node.nodes, function (childNode) {
+      if(node.nodes) {
+        _.each(node.nodes, function(childNode) {
           return refreshNodeLanguageCount(childNode);
         });
       }
     }
 
-    $scope.translateSameNodeName = function (node) {
+    $scope.translateSameNodeName = function(node) {
       checkAndTranslateSameNode($scope.data[0], node.name, node.translated);
     };
 
     function checkAndTranslateSameNode(node, name, translation) {
-      if (node.name.toLowerCase() == name.toLowerCase() && node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')) {
-        if (translation.trim() != 'No available translation') {
+      if(node.name.toLowerCase() == name.toLowerCase() && node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')) {
+        if(translation.trim() != 'No available translation') {
           node.translated = translation;
         }
       }
-      if (node.nodes) {
-        _.each(node.nodes, function (childNode) {
+      if(node.nodes) {
+        _.each(node.nodes, function(childNode) {
           return checkAndTranslateSameNode(childNode, name, translation);
         });
       }
     }
 
-    $scope.setBgColor = function (node) {
-      if (node.deleted == 1) {
+    $scope.setBgColor = function(node) {
+      if(node.deleted == 1) {
         return {'background-color': 'rgba(255, 208, 208, 0.83)'};
       }
     };
 
-    $scope.$on('QuestionsCtrl:scrollTo', function (event, elId) {
+    $scope.$on('QuestionsCtrl:scrollTo', function(event, elId) {
       $scope.scrollWithTimeout(elId);
     });
 
-    $scope.scrollWithTimeout = function (elId) {
-      $timeout(function () {
+    $scope.scrollWithTimeout = function(elId) {
+      $timeout(function() {
         $scope.highlightNode(elId);
       }, 1000);
     };
 
     $scope.nodePopover = {
       templateUrl: 'scripts/questions/partials/nodePopover.html',
-      open: function (x, idRule) {
-        if (x.info) {
-          if (x.info["Node" + x.idNode + idRule].nodePopover.isOpen) {
+      open: function(x, idRule) {
+        if(x.info) {
+          if(x.info["Node" + x.idNode + idRule].nodePopover.isOpen) {
             return;
           }
         }
         var nodeclass = 'P';
-        if (angular.isUndefined(x.info)) {
+        if(angular.isUndefined(x.info)) {
           x.info = [];
         }
         x.info["Node" + x.idNode + idRule] = {
@@ -236,13 +236,13 @@
         var nodeInPopup = x.info["Node" + x.idNode + idRule];
         nodeInPopup.nodePopoverInProgress = true;
         var deffered = $q.defer();
-        QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function (data) {
+        QuestionsService.findPossibleAnswer(nodeInPopup.idNode).then(function(data) {
           nodeInPopup.data = data.data[0];
           nodeInPopup.idRule = idRule;
           nodeInPopup.nodePopoverInProgress = false;
           deffered.resolve();
         });
-        deffered.promise.then(function () {
+        deffered.promise.then(function() {
           nodeInPopup.nodePopover.isOpen = true;
         })
       },
@@ -253,18 +253,18 @@
     $scope.studyAgent = [];
 
     function initStudyAgent() {
-      AgentsService.getStudyAgents().then(function (agent) {
-        if (agent) {
+      AgentsService.getStudyAgents().then(function(agent) {
+        if(agent) {
           $scope.studyAgent = agent;
         }
       });
     }
 
-    $scope.checkIfStudyAgent = function (idAgent) {
+    $scope.checkIfStudyAgent = function(idAgent) {
       var retValue = false;
-      for (var i = 0; i < $scope.studyAgent.length; i++) {
+      for(var i = 0; i < $scope.studyAgent.length; i++) {
         var agent = $scope.studyAgent[i];
-        if (agent.idAgent == idAgent || agent.agentGroup.name == idAgent) {
+        if(agent.idAgent == idAgent || agent.agentGroup.name == idAgent) {
           retValue = true;
           break;
         }
@@ -276,20 +276,20 @@
 
     function initAgentData() {
       initStudyAgent();
-      AgentsService.get().then(function (agent) {
-        var group = _.groupBy(agent, function (b) {
+      AgentsService.get().then(function(agent) {
+        var group = _.groupBy(agent, function(b) {
           return b.agentGroup.name;
         });
-        if ($scope.data[0].moduleRule) {
-          _.forOwn(group, function (x, key) {
+        if($scope.data[0].moduleRule) {
+          _.forOwn(group, function(x, key) {
             var totalVal = 0;
-            _.forEach(x, function (v, k) {
-              var ruleArray = _.filter($scope.data[0].moduleRule, function (r) {
+            _.forEach(x, function(v, k) {
+              var ruleArray = _.filter($scope.data[0].moduleRule, function(r) {
                 return v.idAgent === r.idAgent;
               });
-              var uniqueArray = _.map(_.groupBy(ruleArray, function (item) {
+              var uniqueArray = _.map(_.groupBy(ruleArray, function(item) {
                 return item.rule.idRule;
-              }), function (grouped) {
+              }), function(grouped) {
                 return grouped[0];
               });
               v.total = uniqueArray.length;
@@ -308,21 +308,21 @@
 
     function initFragmentData() {
       $scope.fragmentsLoading = true;
-      FragmentsService.get().then(function (data) {
+      FragmentsService.get().then(function(data) {
         var object = {};
         var ajsms = [];
         var templates = [];
         var frequencies = [];
-        for (var i = 0; i < data.length; i++) {
+        for(var i = 0; i < data.length; i++) {
           var node = data[i];
           //node.idNode = "";
           node.nodeclass = "Q";
-          if (node.type == 'F_ajsm') {
+          if(node.type == 'F_ajsm') {
             node.type = "Q_linkedajsm";
             ajsms.push(node);
-          } else if (node.type == 'F_template') {
+          } else if(node.type == 'F_template') {
             templates.push(node);
-          } else if (node.type == 'F_frequency') {
+          } else if(node.type == 'F_frequency') {
             frequencies.push(node);
           }
         }
@@ -337,25 +337,25 @@
 
     function setOrder(obj) {
       var out = [];
-      _.forEach(obj, function (value, key) {
+      _.forEach(obj, function(value, key) {
         out.push({key: key, value: value, total: value.total});
       });
       return out;
     }
 
-    $scope.toggleRulesObj = function (agents) {
-      if (_.findIndex($scope.rulesObj, function (o) {
+    $scope.toggleRulesObj = function(agents) {
+      if(_.findIndex($scope.rulesObj, function(o) {
         return o.idAgent === agents.idAgent;
       }) != -1) {
-        $scope.safeApply(function () {
-          $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function (o) {
+        $scope.safeApply(function() {
+          $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) {
             return o.idAgent === agents.idAgent;
           }), 1)[0];
         });
         agents.style = "";
         var dialogRules = angular.element(".note");
-        _.each(dialogRules, function (e) {
-          if (_.includes(e.id, '-' + agents.idAgent + '-')) {
+        _.each(dialogRules, function(e) {
+          if(_.includes(e.id, '-' + agents.idAgent + '-')) {
             e.remove();
           }
         })
@@ -365,9 +365,9 @@
       }
 
     };
-    $scope.getRulesIfAny = function (node, agents) {
+    $scope.getRulesIfAny = function(node, agents) {
       var filteredAgent = _.filter(node.moduleRule, _.matches({'idAgent': agents.idAgent}));
-      if (filteredAgent.length > 0) {
+      if(filteredAgent.length > 0) {
         return filteredAgent;
       }
       return null;
@@ -387,11 +387,11 @@
     $window.afterNode = [];
     $scope.undoEnable = false;
 
-    $scope.isCollapsableNode = function (node) {
-      if (node) {
-        if (((node.nodeclass === 'M') || (node.nodeclass === 'F'))) {
+    $scope.isCollapsableNode = function(node) {
+      if(node) {
+        if(((node.nodeclass === 'M') || (node.nodeclass === 'F'))) {
           return false;
-        } else if (node.nodes.length == 0) {
+        } else if(node.nodes.length == 0) {
           return false;
         } else {
           return true;
@@ -400,19 +400,19 @@
         return false;
       }
     };
-    $scope.isModuleHeaderNode = function (node) {
-      if (node) {
-        if (node.type.indexOf('M_Module') > -1) {
+    $scope.isModuleHeaderNode = function(node) {
+      if(node) {
+        if(node.type.indexOf('M_Module') > -1) {
           return true;
-        } else if (node.type.indexOf('M_Module_') > -1) {
+        } else if(node.type.indexOf('M_Module_') > -1) {
           return true;
-        } else if (node.type.indexOf('M_Module__') > -1) {
+        } else if(node.type.indexOf('M_Module__') > -1) {
           return true;
-        } else if (node.type.indexOf('M_IntroModule') > -1) {
+        } else if(node.type.indexOf('M_IntroModule') > -1) {
           return true;
-        } else if (node.type.indexOf('F_template') > -1) {
+        } else if(node.type.indexOf('F_template') > -1) {
           return true;
-        } else if (node.type.indexOf('F_ajsm') > -1) {
+        } else if(node.type.indexOf('F_ajsm') > -1) {
           return true;
         } else {
           return false;
@@ -422,30 +422,30 @@
       }
     };
 
-    $scope.setNodeType = function (node, type) {
-      if (type == 'Prod') {
-        if (node.nodeclass == 'M') {
+    $scope.setNodeType = function(node, type) {
+      if(type == 'Prod') {
+        if(node.nodeclass == 'M') {
           node.type = 'M_Module';
         }
-      } else if (type == 'Dev') {
-        if (node.nodeclass == 'M') {
+      } else if(type == 'Dev') {
+        if(node.nodeclass == 'M') {
           node.type = 'M_Module_';
         }
-      } else if (type == 'Test') {
-        if (node.nodeclass == 'M') {
+      } else if(type == 'Test') {
+        if(node.nodeclass == 'M') {
           node.type = 'M_Module__';
         }
-      } else if (type == 'Intro') {
-        if (node.nodeclass == 'M') {
+      } else if(type == 'Intro') {
+        if(node.nodeclass == 'M') {
           node.type = 'M_IntroModule';
         }
       }
       saveModuleWithoutReload();
     };
-    $scope.setRuleType = function (rule, type) {
+    $scope.setRuleType = function(rule, type) {
       rule.type = type;
-      if ((type == 'NOISE') || (type == 'BACKGROUND')) {
-        if (rule.ruleAdditionalfields == null) {
+      if((type == 'NOISE') || (type == 'BACKGROUND')) {
+        if(rule.ruleAdditionalfields == null) {
           rule.ruleAdditionalfields = [];
           rule.ruleAdditionalfields.push(
             {
@@ -458,7 +458,7 @@
               }
             });
 
-        } else if (rule.ruleAdditionalfields.length == 0) {
+        } else if(rule.ruleAdditionalfields.length == 0) {
           rule.ruleAdditionalfields.push(
             {
               idRule: rule.idRule,
@@ -471,8 +471,8 @@
             });
 
         }
-      } else if ((type == 'VIBRATION')) {
-        if (rule.ruleAdditionalfields == null) {
+      } else if((type == 'VIBRATION')) {
+        if(rule.ruleAdditionalfields == null) {
           rule.ruleAdditionalfields = [];
           rule.ruleAdditionalfields.push(
             {
@@ -485,7 +485,7 @@
               }
             });
 
-        } else if (rule.ruleAdditionalfields.length == 0) {
+        } else if(rule.ruleAdditionalfields.length == 0) {
           rule.ruleAdditionalfields.push(
             {
               idRule: rule.idRule,
@@ -502,40 +502,40 @@
     };
 
     $scope.aJsmTreeOptions = {
-      accept: function (sourceNodeScope, destNodesScope, destIndex) {
+      accept: function(sourceNodeScope, destNodesScope, destIndex) {
 
         return true;
       },
-      dragStart: function (event) {
+      dragStart: function(event) {
         $scope.undoEnable = false;
       },
-      beforeDrag: function (sourceNodeScope) {
+      beforeDrag: function(sourceNodeScope) {
         $scope.isDragging = true;
 
         return true;
       },
-      beforeDrop: function (event) {
+      beforeDrop: function(event) {
         var sourceNode = event.source.nodeScope.node;
         var destNode = event.dest.nodesScope.node;
         $log.info("source" + sourceNode.type);
 
 
-        if (!destNode) {
+        if(!destNode) {
           $scope.isDragging = false;
           return false;
         } else {
-          if (sourceNode.nodeclass == 'Q') {
-            if (destNode.nodeclass == 'Q') {
+          if(sourceNode.nodeclass == 'Q') {
+            if(destNode.nodeclass == 'Q') {
               sourceNode.warning = '';
               $scope.isDragging = false;
               return false;
             }
-          } else if (sourceNode.nodeclass == 'P') {
-            if (destNode.nodeclass == 'P') {
+          } else if(sourceNode.nodeclass == 'P') {
+            if(destNode.nodeclass == 'P') {
               sourceNode.warning = '';
               $scope.isDragging = false;
               return false;
-            } else if (destNode.nodeclass == 'M') {
+            } else if(destNode.nodeclass == 'M') {
               sourceNode.warning = '';
               $scope.isDragging = false;
               return false;
@@ -561,14 +561,14 @@
         }
 
       },
-      dropped: function (event) {
+      dropped: function(event) {
         $scope.isDragging = false;
         var sourceNode = event.source.nodeScope.node;
         sourceNode.warning = null;
         var destNode = event.dest.nodesScope.node;
 
         $log.info("source" + sourceNode.type);
-        if (!destNode) {
+        if(!destNode) {
           $log.warning("Node is dropped on the wrong spot -"
             + ": source" + sourceNode + "dest:" + destNode);
         } else {
@@ -580,33 +580,33 @@
       }
     };
     $scope.templateTreeOptions = {
-      accept: function (sourceNodeScope, destNodesScope, destIndex) {
+      accept: function(sourceNodeScope, destNodesScope, destIndex) {
 
         return true;
       },
-      dragStart: function (event) {
+      dragStart: function(event) {
         $scope.undoEnable = false;
       },
-      beforeDrop: function (event) {
+      beforeDrop: function(event) {
         var sourceNode = event.source.nodeScope.node;
         var destNode = event.dest.nodesScope.node;
         $log.info("source" + sourceNode.type);
-        if (!destNode) {
+        if(!destNode) {
           $scope.isDragging = false;
           return false;
         }
-        if (sourceNode.nodeclass == 'Q') {
-          if (destNode.nodeclass == 'Q') {
+        if(sourceNode.nodeclass == 'Q') {
+          if(destNode.nodeclass == 'Q') {
             sourceNode.warning = '';
             $scope.isDragging = false;
             return false;
           }
-        } else if (sourceNode.nodeclass == 'P') {
-          if (destNode.nodeclass == 'P') {
+        } else if(sourceNode.nodeclass == 'P') {
+          if(destNode.nodeclass == 'P') {
             sourceNode.warning = '';
             $scope.isDragging = false;
             return false;
-          } else if (destNode.nodeclass == 'M') {
+          } else if(destNode.nodeclass == 'M') {
             sourceNode.warning = '';
             $scope.isDragging = false;
             return false;
@@ -616,7 +616,7 @@
         $scope.isDragging = false;
         var deferred = $q.defer();
 
-        return FragmentsService.findFragmentChildNodes(sourceNode.idNode).then(function (fragmentData) {
+        return FragmentsService.findFragmentChildNodes(sourceNode.idNode).then(function(fragmentData) {
 
           cascadeTemplateNullIds(fragmentData);
 
@@ -633,25 +633,25 @@
           return false;
         });
       },
-      beforeDrag: function (sourceNodeScope) {
+      beforeDrag: function(sourceNodeScope) {
         $scope.isDragging = true;
 
         return true;
       },
-      dropped: function (event) {
+      dropped: function(event) {
       }
     };
     $scope.moduleTreeOptions = {
-      accept: function (sourceNodeScope, destNodesScope, destIndex) {
+      accept: function(sourceNodeScope, destNodesScope, destIndex) {
         var sourceNode = sourceNodeScope.node;
         var destNode = destNodesScope.node;
         var placeholder = document.getElementsByClassName("angular-ui-tree-placeholder");
         var wrappedplaceholder = angular.element(placeholder);
-        if (!destNode) {
+        if(!destNode) {
           sourceNode.warning = 'warning';
         } else {
-          if (sourceNode.nodeclass == 'Q' && sourceNode.type != 'Q_linkedmodule') {
-            if (destNode.nodeclass == 'Q') {
+          if(sourceNode.nodeclass == 'Q' && sourceNode.type != 'Q_linkedmodule') {
+            if(destNode.nodeclass == 'Q') {
               $log.info("Hovering Q on Q");
 
               wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
@@ -660,8 +660,8 @@
               wrappedplaceholder.removeClass('angular-ui-tree-placeholder-warning');
               sourceNode.warning = '';
             }
-          } else if (sourceNode.nodeclass == 'Q' && sourceNode.type == 'Q_linkedmodule') {
-            if (destNode.nodeclass != 'P') {
+          } else if(sourceNode.nodeclass == 'Q' && sourceNode.type == 'Q_linkedmodule') {
+            if(destNode.nodeclass != 'P') {
               $log.info("Hovering Q_linkedmodule on a non P node");
 
               wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
@@ -670,12 +670,12 @@
               wrappedplaceholder.removeClass('angular-ui-tree-placeholder-warning');
               sourceNode.warning = '';
             }
-          } else if (sourceNode.nodeclass == 'P') {
-            if (destNode.nodeclass == 'P') {
+          } else if(sourceNode.nodeclass == 'P') {
+            if(destNode.nodeclass == 'P') {
               $log.info("Hovering P on P");
               wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
               sourceNode.warning = 'warning';
-            } else if (destNode.nodeclass == 'M') {
+            } else if(destNode.nodeclass == 'M') {
               $log.info("Hovering P on M");
               wrappedplaceholder.addClass('angular-ui-tree-placeholder-warning');
               sourceNode.warning = 'warning';
@@ -690,7 +690,7 @@
         }
         return true;
       },
-      beforeDrop: function (event) {
+      beforeDrop: function(event) {
         var sourceNode = event.source.nodeScope.node;
         var destNode = event.dest.nodesScope.node;
         //if(event.source.index != event.dest.index){
@@ -698,26 +698,26 @@
         //}
         $scope.isDragging = false;
         var retValue = true;
-        if (!destNode) {
+        if(!destNode) {
           $scope.isDragging = false;
           retValue = false;
           sourceNode.warning = '';
         } else {
-          if (sourceNode.nodeclass == 'Q') {
-            if (destNode.nodeclass == 'Q') {
+          if(sourceNode.nodeclass == 'Q') {
+            if(destNode.nodeclass == 'Q') {
               $log.info("dropped Q on Q");
               retValue = false;
-            } else if (sourceNode.type == 'Q_linkedmodule') {
-              if (destNode.nodeclass != 'P') {
+            } else if(sourceNode.type == 'Q_linkedmodule') {
+              if(destNode.nodeclass != 'P') {
                 $log.info("dropped Q_linkedmodule on a non P node");
                 retValue = false;
               }
             }
-          } else if (sourceNode.nodeclass == 'P') {
-            if (destNode.nodeclass == 'P') {
+          } else if(sourceNode.nodeclass == 'P') {
+            if(destNode.nodeclass == 'P') {
               $log.info("Dropped P on P");
               retValue = false;
-            } else if (destNode.nodeclass == 'M') {
+            } else if(destNode.nodeclass == 'M') {
               $log.info("Dropped P on M");
               retValue = false;
             } else {
@@ -729,32 +729,32 @@
         }
         return retValue;
       },
-      beforeDrag: function (sourceNodeScope) {
+      beforeDrag: function(sourceNodeScope) {
         $scope.isDragging = true;
-        if (sourceNodeScope.node.classtype === 'M') {
+        if(sourceNodeScope.node.classtype === 'M') {
           $scope.isDragging = false;
           return false;
-        } else if (sourceNodeScope.node.classtype === 'F') {
+        } else if(sourceNodeScope.node.classtype === 'F') {
           $scope.isDragging = false;
           return false;
         } else {
           return true;
         }
       },
-      dragStop: function (event) {
+      dragStop: function(event) {
 
       },
-      dropped: function (event) {
+      dropped: function(event) {
 
         var sourceNode = event.source.nodeScope.node;
         sourceNode.warning = null;
         var destNode = event.dest.nodesScope.node;
-        if ($scope.isClonable) {
+        if($scope.isClonable) {
           $log.info("Just cloned so turning undo off ");
           $scope.undoEnable = false;
         }
         $log.info("source" + sourceNode.type);
-        if (!destNode) {
+        if(!destNode) {
           sourceNode.warning = 'warning';
           $log.warning("Node is dropped on the wrong spot -"
             + ": source" + sourceNode + "dest:" + destNode);
@@ -762,8 +762,8 @@
           $log.info("dest " + destNode.type);
         }
         $scope.isDragging = false;
-        if (sourceNode.warning != 'warning') {
-          if ($scope.isClonable) {
+        if(sourceNode.warning != 'warning') {
+          if($scope.isClonable) {
             $scope.isClonable = false;
             safeDigest($scope.isClonable);
             reorderSequence($scope.data);
@@ -780,10 +780,10 @@
 
 
     function updateRuleDialogIfExist(sourceNode) {
-      if (sourceNode.moduleRule && sourceNode.moduleRule.length > 0) {
+      if(sourceNode.moduleRule && sourceNode.moduleRule.length > 0) {
         var ruleDialogId = sourceNode.idNode + '-' + sourceNode.moduleRule[0].idAgent + '-'
           + sourceNode.moduleRule[0].rule.idRule;
-        if (angular.element("#" + ruleDialogId)) {
+        if(angular.element("#" + ruleDialogId)) {
           angular.element("#" + ruleDialogId).remove();
         }
       }
@@ -791,10 +791,10 @@
 
     function reorderSequence(arrayList) {
       var seq = 0;
-      _.each(arrayList, function (data) {
+      _.each(arrayList, function(data) {
         data.sequence = seq;
         seq++;
-        if (data.nodes.length > 0) {
+        if(data.nodes.length > 0) {
           reorderSequence(data.nodes);
         }
       });
@@ -804,15 +804,15 @@
     function cascadeTemplateNullIds(nodes) {
       var seq = 1;
       var parentId = parentId;
-      _.each(nodes, function (data) {
+      _.each(nodes, function(data) {
         data.sequence = seq++;
 
         data.originalId = data.idNode;
         data.idNode = null;
         data.parentId = null;
 
-        if (data.nodes) {
-          if (data.nodes.length > 0) {
+        if(data.nodes) {
+          if(data.nodes.length > 0) {
             cascadeTemplateNullIds(data.nodes);
           }
         } else {
@@ -825,18 +825,18 @@
 
 
     $scope.rightNav = "slideFrag";
-    $scope.toggleRight = function () {
-      if ($scope.rightNav === "slideFrag") {
+    $scope.toggleRight = function() {
+      if($scope.rightNav === "slideFrag") {
         $scope.rightNav = "";
       } else {
         $scope.rightNav = "slideFrag";
       }
-      if (data[0].type != 'M_IntroModule' && (angular.isUndefined($scope.templateData) || angular.isUndefined($scope.aJSMData)
+      if(data[0].type != 'M_IntroModule' && (angular.isUndefined($scope.templateData) || angular.isUndefined($scope.aJSMData)
         || angular.isUndefined($scope.frequencyData))) {
         initFragmentData();
       } else {
-        ModulesService.getActiveModules().then(function (data) {
-          for (var i = 0; i < data.length; i++) {
+        ModulesService.getActiveModules().then(function(data) {
+          for(var i = 0; i < data.length; i++) {
             var node = data[i];
             node.type = "Q_linkedmodule";
             node.nodeclass = "Q";
@@ -847,30 +847,30 @@
     };
 
     $scope.leftNav = "slideFragLeft";
-    $scope.toggleLeft = function () {
-      if ($scope.leftNav === "slideFragLeft") {
+    $scope.toggleLeft = function() {
+      if($scope.leftNav === "slideFragLeft") {
         $scope.leftNav = "";
       } else {
         $scope.leftNav = "slideFragLeft";
       }
-      if ((angular.isUndefined($scope.agentsData)) || ($scope.agentsData == null)) {
+      if((angular.isUndefined($scope.agentsData)) || ($scope.agentsData == null)) {
         $scope.agentsLoading = true;
         initAgentData();
       }
     };
 
-    $scope.toggle = function (scope) {
+    $scope.toggle = function(scope) {
       scope.toggle();
     };
 
-    $scope.toggleMultipleChoice = function (scope) {
+    $scope.toggleMultipleChoice = function(scope) {
       recordAction($scope.data);
 
       var nodeExists = false;
       $scope.interviewExist = false;
       $scope.validationInProgress = true;
 
-      if (scope.$modelValue) {
+      if(scope.$modelValue) {
 
         $mdDialog.show({
           scope: $scope,
@@ -879,10 +879,10 @@
           clickOutsideToClose: false
         });
         //Check if node exists in interview
-        InterviewsService.findQuestionsByNodeId(scope.$modelValue.idNode).then(function (response) {
-          if (response.status == 200) {
+        InterviewsService.findQuestionsByNodeId(scope.$modelValue.idNode).then(function(response) {
+          if(response.status == 200) {
             $scope.validationInProgress = false;
-            if (response.data.length > 0) {
+            if(response.data.length > 0) {
               $scope.interviewExist = true;
               $scope.nodesForUpdate = response.data;
               $scope.nodeScope = scope;
@@ -896,17 +896,17 @@
       }
     };
 
-    $scope.cancelChanges = function () {
+    $scope.cancelChanges = function() {
       $mdDialog.cancel();
     };
 
-    $scope.updateInterviewNodes = function () {
+    $scope.updateInterviewNodes = function() {
 
-      if ($scope.nodesForUpdate) {
+      if($scope.nodesForUpdate) {
 
         //Update the type
-        _.forEach($scope.nodesForUpdate, function (node) {
-          if (node.type == 'Q_multiple') {
+        _.forEach($scope.nodesForUpdate, function(node) {
+          if(node.type == 'Q_multiple') {
             node.type = 'Q_single';
           } else {
             node.type = 'Q_multiple';
@@ -914,20 +914,20 @@
         });
 
         InterviewsService.saveQuestions($scope.nodesForUpdate)
-          .then(function (response) {
-            if (response.status == 200) {
+          .then(function(response) {
+            if(response.status == 200) {
               console.log("Node type update done.");
             }
           });
 
-        if ($scope.nodeScope) {
+        if($scope.nodeScope) {
           updateScope($scope.nodeScope);
         }
       }
     };
 
     function updateScope(scope) {
-      if (scope.$modelValue.type == 'Q_multiple') {
+      if(scope.$modelValue.type == 'Q_multiple') {
         scope.$modelValue.type = 'Q_single';
       } else {
         scope.$modelValue.type = 'Q_multiple';
@@ -936,10 +936,10 @@
       $mdDialog.cancel();
     }
 
-    $scope.deleteNode = function (scope) {
-      if (!checkIfRulesExist(scope.$modelValue)) {
+    $scope.deleteNode = function(scope) {
+      if(!checkIfRulesExist(scope.$modelValue)) {
         recordAction($scope.data);
-        if (scope.$modelValue.deleted) {
+        if(scope.$modelValue.deleted) {
           scope.$modelValue.deleted = 0;
           cascadeDelete(scope.$modelValue.nodes, 0);
         } else {
@@ -949,7 +949,7 @@
 
         var deffered = $q.defer();
         saveModuleWithoutReload('', deffered);
-        deffered.promise.then(function (resolve) {
+        deffered.promise.then(function(resolve) {
           saveModuleWithoutReload();
           searchAndRemoveNode($scope.data, scope);
         });
@@ -957,10 +957,10 @@
     };
 
     function checkIfRulesExist(node) {
-      if (node.moduleRule && node.moduleRule.length > 0) {
+      if(node.moduleRule && node.moduleRule.length > 0) {
         var rules = node.moduleRule;
         var msg = "This node (" + node.number + ") has rules on agents ";
-        for (var i = 0; i < rules.length; i++) {
+        for(var i = 0; i < rules.length; i++) {
           msg += rules[i].agentName + " ";
         }
         msg += "please remove the rules first";
@@ -973,9 +973,9 @@
         return true;
       }
 
-      if (node.nodes) {
-        for (var i in node.nodes) {
-          if (checkIfRulesExist(node.nodes[i])) {
+      if(node.nodes) {
+        for(var i in node.nodes) {
+          if(checkIfRulesExist(node.nodes[i])) {
             return true;
           }
         }
@@ -983,10 +983,10 @@
     }
 
     function checkAnswerIfRulesExist(scope) {
-      if (scope.$modelValue.moduleRule && scope.$modelValue.moduleRule.length > 0) {
+      if(scope.$modelValue.moduleRule && scope.$modelValue.moduleRule.length > 0) {
         var rules = scope.$modelValue.moduleRule;
         var msg = "This node (" + scope.$modelValue.number + ") has rules on agents ";
-        for (var i = 0; i < rules.length; i++) {
+        for(var i = 0; i < rules.length; i++) {
           msg += rules[i].agentName + " ";
         }
         msg += "please remove the rules first";
@@ -998,7 +998,7 @@
         });
       } else {
         recordAction($scope.data);
-        if (scope.$modelValue.deleted) {
+        if(scope.$modelValue.deleted) {
           scope.$modelValue.deleted = 0;
           cascadeDelete(scope.$modelValue.nodes, 0);
         } else {
@@ -1008,7 +1008,7 @@
 
         var deffered = $q.defer();
         saveModuleWithoutReload('', deffered);
-        deffered.promise.then(function (resolve) {
+        deffered.promise.then(function(resolve) {
           saveModuleWithoutReload();
           searchAndRemoveNode($scope.data, scope);
         });
@@ -1016,13 +1016,13 @@
     }
 
     function searchAndRemoveNode(objSearch, scope) {
-      var index = _.findIndex(objSearch, function (o) {
-        if (o.$$hashKey === scope.$modelValue.$$hashKey) {
+      var index = _.findIndex(objSearch, function(o) {
+        if(o.$$hashKey === scope.$modelValue.$$hashKey) {
           return o.number;
         }
-        if (!angular.isUndefined(o.nodes) && o.nodes.length > 0) {
+        if(!angular.isUndefined(o.nodes) && o.nodes.length > 0) {
           var x = searchAndRemoveNode(o.nodes, scope);
-          if (x > -1) {
+          if(x > -1) {
             o.nodes.splice(x, 1)[0];
 
           }
@@ -1032,14 +1032,14 @@
     }
 
     function cascadeIdCleanse(arrayInp) {
-      if (arrayInp.length > 0) {
-        _.each(arrayInp, function (obj) {
-          _.each(obj, function (value, key) {
-            if (key === 'idNode') {
+      if(arrayInp.length > 0) {
+        _.each(arrayInp, function(obj) {
+          _.each(obj, function(value, key) {
+            if(key === 'idNode') {
               obj[key] = "";
             }
           });
-          if (obj.nodes.length > 0) {
+          if(obj.nodes.length > 0) {
             cascadeIdCleanse(obj.nodes);
           }
         });
@@ -1048,14 +1048,14 @@
     }
 
     function cascadeDelete(arrayInp, deleteFlag) {
-      if (arrayInp.length > 0) {
-        _.each(arrayInp, function (obj) {
-          _.each(obj, function (value, key) {
-            if (key === 'deleted') {
+      if(arrayInp.length > 0) {
+        _.each(arrayInp, function(obj) {
+          _.each(obj, function(value, key) {
+            if(key === 'deleted') {
               obj[key] = deleteFlag;
             }
           });
-          if (obj.nodes.length > 0) {
+          if(obj.nodes.length > 0) {
             cascadeDelete(obj.nodes, deleteFlag);
           }
         });
@@ -1064,26 +1064,26 @@
     }
 
 
-    $scope.moveLastToTheBeginning = function () {
+    $scope.moveLastToTheBeginning = function() {
       var a = $scope.data.pop();
       $scope.data.splice(0, 0, a);
     };
-    $scope.getNodeId = function (scope) {
+    $scope.getNodeId = function(scope) {
       var nodeId = 0;
-      if (scope.anchorId) {
+      if(scope.anchorId) {
         nodeId = scope.anchorId;
       } else {
         nodeId = scope.idNode;
       }
     };
-    $scope.newSubItem = function (scope) {
+    $scope.newSubItem = function(scope) {
       $scope.undoEnable = false;
       var nodeData = scope.$modelValue;
       var locationId = nodeData.idNode * 10 + nodeData.nodes.length;
-      if (!nodeData.nodes) {
+      if(!nodeData.nodes) {
         nodeData.nodes = [];
       }
-      if (nodeData.type == 'P_simple') {
+      if(nodeData.type == 'P_simple') {
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Question",
@@ -1095,10 +1095,10 @@
           nodeclass: "Q",
           nodes: []
         });
-      } else if (nodeData.type == 'Q_single') {
+      } else if(nodeData.type == 'Q_single') {
         var type = "P_simple";
         var defaultText = "New Possible Answer";
-        if (scope.isFreeText) {
+        if(scope.isFreeText) {
           type = "P_freetext";
           defaultText = "[Freetext]";
         }
@@ -1111,10 +1111,10 @@
           nodeclass: "P",
           nodes: []
         });
-      } else if (nodeData.type == 'Q_multiple') {
+      } else if(nodeData.type == 'Q_multiple') {
         var type = "P_simple";
         var defaultText = "New Possible Answer";
-        if (scope.isFreeText) {
+        if(scope.isFreeText) {
           type = "P_freetext";
           defaultText = "[Freetext]";
         }
@@ -1128,10 +1128,10 @@
           nodeclass: "P",
           nodes: []
         });
-      } else if (nodeData.type == 'Q_simple') {
+      } else if(nodeData.type == 'Q_simple') {
         var type = "P_simple";
         var defaultText = "New Possible Answer";
-        if (scope.isFreeText) {
+        if(scope.isFreeText) {
           type = "P_freetext";
           defaultText = "[Freetext]";
         }
@@ -1145,7 +1145,7 @@
           nodeclass: "P",
           nodes: []
         });
-      } else if (nodeData.type == 'M_Module') {
+      } else if(nodeData.type == 'M_Module') {
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Question",
@@ -1156,7 +1156,7 @@
           nodeclass: "Q",
           nodes: []
         });
-      } else if (nodeData.type == 'M_Module_') {
+      } else if(nodeData.type == 'M_Module_') {
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Question",
@@ -1167,7 +1167,7 @@
           nodeclass: "Q",
           nodes: []
         });
-      } else if (nodeData.type == 'M_Module__') {
+      } else if(nodeData.type == 'M_Module__') {
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Question",
@@ -1178,7 +1178,7 @@
           nodeclass: "Q",
           nodes: []
         });
-      } else if (nodeData.type == 'M_IntroModule') {
+      } else if(nodeData.type == 'M_IntroModule') {
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Question",
@@ -1189,7 +1189,7 @@
           nodeclass: "Q",
           nodes: []
         });
-      } else if (nodeData.type == 'F_ajsm') {
+      } else if(nodeData.type == 'F_ajsm') {
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Question",
@@ -1200,7 +1200,7 @@
           nodeclass: "Q",
           nodes: []
         });
-      } else if (nodeData.type.indexOf('P') == 0) { //P is first character
+      } else if(nodeData.type.indexOf('P') == 0) { //P is first character
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Question",
@@ -1211,7 +1211,7 @@
           nodeclass: "Q",
           nodes: []
         });
-      } else if (nodeData.type.indexOf('Q') == 0) { //Q is first character
+      } else if(nodeData.type.indexOf('Q') == 0) { //Q is first character
         nodeData.nodes.push({
           anchorId: locationId,
           name: "New Possible Answer",
@@ -1239,33 +1239,33 @@
       saveModuleWithoutReload(locationId);
     };
 
-    $scope.collapseAll = function () {
+    $scope.collapseAll = function() {
       $scope.$broadcast('collapseAll');
     };
 
-    $scope.expandAll = function () {
+    $scope.expandAll = function() {
       $scope.$broadcast('expandAll');
     };
 
-    $scope.saveEdit = function (scope) {
-      if (scope.$modelValue.type == 'P_freetext') {
-        if (!contains(scope.$modelValue.name, 'freetext')) {
+    $scope.saveEdit = function(scope) {
+      if(scope.$modelValue.type == 'P_freetext') {
+        if(!contains(scope.$modelValue.name, 'freetext')) {
           ngToast.create({
             className: 'danger',
             content: "this answer should have the word freetext, adding it for your convenience.",
-            animation:'slide'
+            animation: 'slide'
           });
           scope.$modelValue.name = scope.$modelValue.name + " [Freetext]"
         }
       }
 
-      if (!scope.$modelValue.name) {
+      if(!scope.$modelValue.name) {
         scope.$modelValue.name = 'Blank';
       }
-      if (!scope.$modelValue.number) {
+      if(!scope.$modelValue.number) {
         scope.$modelValue.nodeclass = 'Q';
       }
-      $scope.safeApply(function () {
+      $scope.safeApply(function() {
         scope.$modelValue.editEnabled = false;
       });
 //			var val = _.find($scope.$parent.$parent.$parent.tabs, function(el, index){
@@ -1278,50 +1278,50 @@
       saveModuleWithoutReload();
     };
 
-    $scope.enable = function (node) {
+    $scope.enable = function(node) {
       var canEdit = true;
-      if (node.nodeclass == 'M') {
+      if(node.nodeclass == 'M') {
         canEdit = false;
-      } else if (node.nodeclass == 'F') {
-        canEdit = false;
-      }
-      if (node.type == 'Q_linkedajsm') {
-        canEdit = false;
-      } else if (node.type == 'Q_linkedmodule') {
+      } else if(node.nodeclass == 'F') {
         canEdit = false;
       }
-      if (canEdit) {
+      if(node.type == 'Q_linkedajsm') {
+        canEdit = false;
+      } else if(node.type == 'Q_linkedmodule') {
+        canEdit = false;
+      }
+      if(canEdit) {
         recordAction($scope.data);
-        $scope.safeApply(function () {
+        $scope.safeApply(function() {
           node.editEnabled = true;
-          if (node.name == 'New Question') {
+          if(node.name == 'New Question') {
             node.name = "";
-          } else if (node.name == 'New Possible Answer') {
+          } else if(node.name == 'New Possible Answer') {
             node.name = "";
           }
         });
       }
     };
-    $scope.safeApply = function (fn) {
+    $scope.safeApply = function(fn) {
       var phase = this.$root.$$phase;
-      if (phase == '$apply' || phase == '$digest') {
-        if (fn && (typeof (fn) === 'function')) {
+      if(phase == '$apply' || phase == '$digest') {
+        if(fn && (typeof (fn) === 'function')) {
           fn();
         }
       } else {
         this.$apply(fn);
       }
     };
-    $scope.showRulesMenu = function (scope) {
+    $scope.showRulesMenu = function(scope) {
       return $scope.rulesMenuOptions;
     };
-    $scope.showRulesTopMenu = function (scope) {
+    $scope.showRulesTopMenu = function(scope) {
       return $scope.rulesTopMenuOptions;
     };
-    $scope.showMenu = function (node) {
-      if (node.nodeclass == 'M') {
+    $scope.showMenu = function(node) {
+      if(node.nodeclass == 'M') {
         var menu = $scope.moduleMenuOptions;
-        if (node.type != 'M_IntroModule') {
+        if(node.type != 'M_IntroModule') {
           _.remove(menu, {
             0: 'Run Interview'
           });
@@ -1329,24 +1329,24 @@
         return menu;
 
 
-      } else if (node.nodeclass == 'F') {
+      } else if(node.nodeclass == 'F') {
         var menu = $scope.moduleMenuOptions;
         _.remove(menu, {
           0: 'Run Interview'
         });
         return menu;
-      } else if (node.nodeclass == 'Q') {
+      } else if(node.nodeclass == 'Q') {
         $scope.selectedNode = node;
         var menuOptions;
-        if (node.type == 'Q_linkedmodule') {
+        if(node.type == 'Q_linkedmodule') {
           menuOptions = $scope.linkedModuleMenuOptions;
-        } else if (node.type == 'Q_linkedajsm') {
+        } else if(node.type == 'Q_linkedajsm') {
           menuOptions = $scope.linkedAjsmMenuOptions;
         } else {
           menuOptions = $scope.questionMenuOptions;
         }
         return menuOptions;
-      } else if (node.nodeclass == 'P') {
+      } else if(node.nodeclass == 'P') {
         return $scope.possibleAnswerMenuOptions;
       } else {
         return $scope.defauisReadOnlyEnabledltMenuOptions;
@@ -1354,14 +1354,14 @@
     };
 
 
-    var processAjsm = function (node) {
+    var processAjsm = function(node) {
       var deferred = $q.defer();
-      return QuestionsService.findQuestions(node.link, 'F').then(function (response) {
+      return QuestionsService.findQuestions(node.link, 'F').then(function(response) {
         var module = response.data[0];
         $rootScope.studyAjsmLinksCount = ($rootScope.studyAjsmLinksCount + 1);
-        if (module) {
+        if(module) {
           var studyNodes = getStudyNodes(module.nodes, module);
-          for (var i = 0; i < studyNodes.length; i++) {
+          for(var i = 0; i < studyNodes.length; i++) {
             var node = studyNodes[i];
             //cascade up parents remove deleted mark
             removeDeletedMarkFromParent(node.parentId, module);
@@ -1383,8 +1383,8 @@
       var parentNodeNumber = module.number;
       var topNodeId = module.idNode;
       generateIdNodeCascade(nodes, maxId, parentId, parentNodeNumber, topNodeId);
-      return QuestionsService.saveNode(module).then(function (response) {
-        if (response.status === 200) {
+      return QuestionsService.saveNode(module).then(function(response) {
+        if(response.status === 200) {
           $log.info('Study Module ' + module.name + ' Saved');
           deferred.resolve(module);
         } else {
@@ -1396,19 +1396,19 @@
 
     function removeDeletedMarkFromParentCheckChildNode(parentNodeId, node, module) {
       var nodes = node.nodes;
-      if (nodes.length > 0) {
+      if(nodes.length > 0) {
         var i = 0;
-        _.each(nodes, function (cnode) {
-          if (cnode.idNode == parentNodeId) {
+        _.each(nodes, function(cnode) {
+          if(cnode.idNode == parentNodeId) {
             cnode.deleted = 0;
-            if (cnode.nodes) {
-              if (cnode.nodes.length > 0) {
-                _.each(cnode.nodes, function (ccnode) {
+            if(cnode.nodes) {
+              if(cnode.nodes.length > 0) {
+                _.each(cnode.nodes, function(ccnode) {
                   ccnode.deleted = 0;
                 });
               }
             }
-            if (cnode.parentId) {
+            if(cnode.parentId) {
               removeDeletedMarkFromParent(cnode.parentId, module);
             }
           } else {
@@ -1421,19 +1421,19 @@
 
     function removeDeletedMarkFromParent(parentNodeId, module) {
       var nodes = module.nodes;
-      if (nodes.length > 0) {
+      if(nodes.length > 0) {
         var i = 0;
-        _.each(nodes, function (cnode) {
-          if (cnode.idNode == parentNodeId) {
+        _.each(nodes, function(cnode) {
+          if(cnode.idNode == parentNodeId) {
             cnode.deleted = 0;
-            if (cnode.nodes) {
-              if (cnode.nodes.length > 0) {
-                _.each(cnode.nodes, function (ccnode) {
+            if(cnode.nodes) {
+              if(cnode.nodes.length > 0) {
+                _.each(cnode.nodes, function(ccnode) {
                   ccnode.deleted = 0;
                 });
               }
             }
-            if (cnode.parentId) {
+            if(cnode.parentId) {
               removeDeletedMarkFromParent(cnode.parentId, module);
             }
           } else {
@@ -1445,31 +1445,31 @@
     }
 
     function getStudyNodes(nodes, module) {
-      SystemPropertyService.getAll().then(function (response) {
+      SystemPropertyService.getAll().then(function(response) {
         var sysprops = response.data;
-        var ssagents = _.find(sysprops, function (sysprop) {
+        var ssagents = _.find(sysprops, function(sysprop) {
           return sysprop.type == 'studyagent';
         });
         var agents = [];
-        _.each(ssagents, function (ssagent) {
+        _.each(ssagents, function(ssagent) {
           agents.push(ssagent.value)
         });
         var studyNodes = [];
-        if (nodes.length > 0) {
+        if(nodes.length > 0) {
           var i = 0;
-          _.each(nodes, function (node) {
-            var found = _.find(node.moduleRule, function (o) {
-              var bFound = _.find(agents, function (agentId) {
+          _.each(nodes, function(node) {
+            var found = _.find(node.moduleRule, function(o) {
+              var bFound = _.find(agents, function(agentId) {
                 return o.idAgent == agentId;
               });
-              if (bFound) {
+              if(bFound) {
                 console.log("Found rule on " + node.idNode);
               }
               return bFound;
             });
-            if (!found) {
-              if (node.type.indexOf('frequency') == -1) {//not a frequency
-                if (node.type.indexOf('linked') == -1) {//not a link
+            if(!found) {
+              if(node.type.indexOf('frequency') == -1) {//not a frequency
+                if(node.type.indexOf('linked') == -1) {//not a link
                   node.deleted = 1;
                 } else {
                   studyNodes.push(node);
@@ -1478,10 +1478,10 @@
             } else {
               studyNodes.push(node);
             }
-            if (node.nodes) {
-              if (node.nodes.length > 0) {
+            if(node.nodes) {
+              if(node.nodes.length > 0) {
                 var sNodes = getStudyNodes(node.nodes, module);
-                for (var i = 0; i < sNodes.length; i++) {
+                for(var i = 0; i < sNodes.length; i++) {
                   studyNodes.push(sNodes[i]);
                 }
               }
@@ -1494,32 +1494,32 @@
     }
 
     function findAjsms(nodes) {
-      if (nodes.length > 0) {
+      if(nodes.length > 0) {
         var i = 0;
-        _.each(nodes, function (node) {
-          if (node.link) {
-            if (node.type == 'Q_linkedajsm') {
+        _.each(nodes, function(node) {
+          if(node.link) {
+            if(node.type == 'Q_linkedajsm') {
               var moduleLinks = $rootScope.studyAjsmLinks;
-              if (moduleLinks.length == 0) {
+              if(moduleLinks.length == 0) {
                 moduleLinks.push(node);
                 processAndSaveStudyAjsm(node);
               } else {
                 var bFound = false;
-                for (var i = 0; i < moduleLinks.length; i++) {
-                  if (moduleLinks[i].link === node.link) {
+                for(var i = 0; i < moduleLinks.length; i++) {
+                  if(moduleLinks[i].link === node.link) {
                     bFound = true;
                     break;
                   }
                 }
-                if (!bFound) {
+                if(!bFound) {
                   moduleLinks.push(node);
                   processAndSaveStudyAjsm(node);
                 }
               }
             }
           } else {
-            if (node.nodes) {
-              if (node.nodes.length > 0) {
+            if(node.nodes) {
+              if(node.nodes.length > 0) {
                 findAjsms(node.nodes);
               }
             }
@@ -1529,15 +1529,15 @@
       }
     }
 
-    var processModuleAndChildAjsms = function (node) {
+    var processModuleAndChildAjsms = function(node) {
       var deferred = $q.defer();
-      return QuestionsService.findQuestions(node.link, 'M').then(function (response) {
+      return QuestionsService.findQuestions(node.link, 'M').then(function(response) {
         var module = response.data[0];
         $rootScope.studyModuleLinksCount = ($rootScope.studyModuleLinksCount + 1);
-        if (module) {
+        if(module) {
           findAjsms(module.nodes);
           var studyNodes = getStudyNodes(module.nodes, module);
-          for (var i = 0; i < studyNodes.length; i++) {
+          for(var i = 0; i < studyNodes.length; i++) {
             var node = studyNodes[i];
             //cascade up parents remove deleted mark
             removeDeletedMarkFromParent(node.parentId, module);
@@ -1552,103 +1552,103 @@
 
     function processAndSaveStudyAjsm(node) {
       var promise = processAjsm(node);
-      promise.then(function (module) {
+      promise.then(function(module) {
         console.log('Success on process Ajsm: ' + module.name);
         var promise1 = saveStudyModule(module);
-        promise1.then(function (module) {
+        promise1.then(function(module) {
           console.log('Success on save Ajsm: ' + module.name);
 
-        }, function (reason) {
+        }, function(reason) {
           ngToast.create({
             className: 'danger',
             content: 'Failed: ' + reason,
-            animation:'slide'
+            animation: 'slide'
           });
-        }, function (update) {
+        }, function(update) {
           console.log('Got notification: ' + update);
         });
-      }, function (reason) {
+      }, function(reason) {
         ngToast.create({
           className: 'danger',
           content: 'Failed: ' + reason,
-          animation:'slide'
+          animation: 'slide'
         });
-      }, function (update) {
+      }, function(update) {
         console.log('Got notification: ' + update);
       });
     }
 
     function processAndSaveStudyModule(node) {
       var promise = processModuleAndChildAjsms(node);
-      promise.then(function (module) {
+      promise.then(function(module) {
         console.log('Success on process Module: ' + module.name);
         var promise1 = saveStudyModule(module);
-        promise1.then(function (module) {
+        promise1.then(function(module) {
           console.log('Success on save Module: ' + module.name);
 
-        }, function (reason) {
+        }, function(reason) {
           ngToast.create({
             className: 'danger',
             content: 'Failed: ' + reason,
-            animation:'slide'
+            animation: 'slide'
           });
-        }, function (update) {
+        }, function(update) {
           console.log('Got notification: ' + update);
         });
-      }, function (reason) {
+      }, function(reason) {
         ngToast.create({
           className: 'danger',
           content: 'Failed: ' + reason,
-          animation:'slide'
+          animation: 'slide'
         });
-      }, function (update) {
+      }, function(update) {
         console.log('Got notification: ' + update);
       });
     }
 
     function processStudyModule(node) {
       var promise = processModuleAndChildAjsms(node);
-      promise.then(function (module) {
+      promise.then(function(module) {
         console.log('Success on process Module: ' + module.name);
         return module;
-      }, function (reason) {
+      }, function(reason) {
         ngToast.create({
           className: 'danger',
           content: 'Failed: ' + reason,
-          animation:'slide'
+          animation: 'slide'
         });
-      }, function (update) {
+      }, function(update) {
         console.log('Got notification: ' + update);
       });
     }
 
     function findModules(nodes) {
-      if (nodes.length > 0) {
+      if(nodes.length > 0) {
         var i = 0;
-        _.each(nodes, function (node) {
-          if (node.link) {
-            if (node.type == 'Q_linkedmodule') {
+        _.each(nodes, function(node) {
+          if(node.link) {
+            if(node.type == 'Q_linkedmodule') {
               var moduleLinks = $rootScope.studyModuleLinks;
-              if (moduleLinks.length == 0) {
+              if(moduleLinks.length == 0) {
                 moduleLinks.push(node);
                 processAndSaveStudyModule(node);
               } else {
                 var bFound = false;
-                for (var i = 0; i < moduleLinks.length; i++) {
-                  if (moduleLinks[i].link === node.link) {
+                for(var i = 0; i < moduleLinks.length; i++) {
+                  if(moduleLinks[i].link === node.link) {
                     bFound = true;
                     break;
                   }
                 }
-                if (!bFound) {
+                if(!bFound) {
                   moduleLinks.push(node);
                   processAndSaveStudyModule(node);
                 }
               }
             }
           } else {
-            if (node.nodes) {
-              if (node.nodes.length > 0) {
+            if(node.nodes) {
+              if(node.nodes.length > 0) {
                 findModules(node.nodes);
               }
             }
@@ -1660,27 +1660,27 @@
 
     $scope.moduleMenuOptions =
       [
-        ['Show Rules', function ($itemScope) {
+        ['Show Rules', function($itemScope) {
           $scope.addRulesTab($itemScope);
         }
         ],
-        ['Add Question', function ($itemScope) {
+        ['Add Question', function($itemScope) {
           $scope.addingQuestion = true;
           $scope.newSubItem($itemScope);
         }
         ],
-        ['Show/Hide Children', function ($itemScope) {
+        ['Show/Hide Children', function($itemScope) {
 
-          var collapseOrExpand = function (scope) {
+          var collapseOrExpand = function(scope) {
             var i, subScope,
               nodes = scope.childNodes();
-            for (i = 0; i < nodes.length; i++) {
+            for(i = 0; i < nodes.length; i++) {
               var node = nodes[i];
-              if (node.childNodes().length > 0) {
+              if(node.childNodes().length > 0) {
                 var collapsed = node.collapsed;
                 !collapsed ? nodes[i].collapse() : nodes[i].expand();
                 subScope = nodes[i].$childNodesScope;
-                if (subScope) {
+                if(subScope) {
                   collapseOrExpand(subScope);
                 }
               }
@@ -1689,14 +1689,14 @@
           collapseOrExpand($itemScope);
         }
         ], null, // Divider
-        ['Run Interview', function ($itemScope) {
-          SystemPropertyService.getByName("activeIntro").then(function (response) {
-            if (response.status == '200') {
-              if (response.data == "") {
-                if (confirm("This module is not an active intro module. Should we set this as active intro module?")) {
+        ['Run Interview', function($itemScope) {
+          SystemPropertyService.getByName("activeIntro").then(function(response) {
+            if(response.status == '200') {
+              if(response.data == "") {
+                if(confirm("This module is not an active intro module. Should we set this as active intro module?")) {
                   ModulesService.setActiveIntroModule($scope.data[0])
-                    .then(function (response) {
-                      if (response.status == '200') {
+                    .then(function(response) {
+                      if(response.status == '200') {
                         var newScope = $itemScope.$new();
                         $mdDialog.show({
                           scope: newScope,
@@ -1704,14 +1704,14 @@
                           parent: angular.element(document.body),
                           clickOutsideToClose: true
                         })
-                          .then(function (answer) {
-                          }, function () {
+                          .then(function(answer) {
+                          }, function() {
                           });
                       }
                     });
                 }
-              } else if (response.data.value) {
-                if (response.data.value == moduleIdNode) {
+              } else if(response.data.value) {
+                if(response.data.value == moduleIdNode) {
                   var newScope = $itemScope.$new();
                   $mdDialog.show({
                     scope: newScope,
@@ -1719,14 +1719,14 @@
                     parent: angular.element(document.body),
                     clickOutsideToClose: true
                   })
-                    .then(function (answer) {
-                    }, function () {
+                    .then(function(answer) {
+                    }, function() {
                     });
                 } else {
-                  if (confirm("This module is not an active intro module. Should we set this as active intro module?")) {
+                  if(confirm("This module is not an active intro module. Should we set this as active intro module?")) {
                     ModulesService.setActiveIntroModule($scope.data[0])
-                      .then(function (response) {
-                        if (response.status == '200') {
+                      .then(function(response) {
+                        if(response.status == '200') {
                           var newScope = $itemScope.$new();
                           $mdDialog.show({
                             scope: newScope,
@@ -1734,8 +1734,8 @@
                             parent: angular.element(document.body),
                             clickOutsideToClose: true
                           })
-                            .then(function (answer) {
-                            }, function () {
+                            .then(function(answer) {
+                            }, function() {
                             });
                         }
                       });
@@ -1746,7 +1746,7 @@
           });
         }
         ], null, // Divider
-        ['Save Module As', function ($itemScope) {
+        ['Save Module As', function($itemScope) {
           var newScope = $itemScope.$new();
           newScope.name = $itemScope.$modelValue.name + "(Copy)";
           newScope.includeRules = true;
@@ -1759,16 +1759,16 @@
             parent: angular.element(document.body),
             clickOutsideToClose: true
           })
-            .then(function (answer) {
+            .then(function(answer) {
               $scope.status = 'You said the information was "' + answer + '".';
-            }, function () {
+            }, function() {
               $scope.status = 'You cancelled the dialog.';
             });
         }
         ], null, // Divider
-        ['Export to Word', function ($itemScope) {
+        ['Export to Word', function($itemScope) {
           var newUrl = '';
-          if (confirm('Should we filter it by study agent?Ok for Yes and Cancel to run without filter.')) {
+          if(confirm('Should we filter it by study agent?Ok for Yes and Cancel to run without filter.')) {
             newUrl = 'web/rest/module/exportToWord?idNode=' + data[0].idNode + '&filterStudyAgent=true';
           } else {
             newUrl = 'web/rest/module/exportToWord?idNode=' + data[0].idNode + '&filterStudyAgent=false';
@@ -1783,7 +1783,7 @@
 //					    'Authorization': "Bearer " + $rootScope.userInfo.access_token,
               'Access-Control-Allow-Origin': '*'
             }
-          }).then(function (data) {
+          }).then(function(data) {
             var octetStreamMime = 'application/octet-stream';
             var success = false;
 
@@ -1834,7 +1834,7 @@
         //   }
         // }
         // ],
-        ['Export to PDF', function ($itemScope) {
+        ['Export to PDF', function($itemScope) {
 
           var doc = new jsPDF('p', 'pt', 'a4');
           var options = {
@@ -1844,7 +1844,7 @@
           // get node count
           totalNodeCount = 0;
           var count = $(".tree-node").length;
-          if (count > 250) {
+          if(count > 250) {
             // shrink nodes
             $(".tree-node").css({'font-size': '8px'});
             $(".tree-node").css({'height': '50px'});
@@ -1852,7 +1852,7 @@
           }
           var loc = $("#tree-root").get(0);
 //				  		loc.style.height = '30000px';
-          doc.addHTML(loc, 0, 0, options, function () {
+          doc.addHTML(loc, 0, 0, options, function() {
             doc.save($itemScope.$modelValue.name + '.pdf');
             $(".tree-node").css({'font-size': '14px'});
             $(".tree-node").css({'height': 'auto'});
@@ -1866,49 +1866,49 @@
 //            	  printPdf(data[0],pdf,count,$itemScope.$modelValue.name);
         }
         ],
-        ['Set Active Intro Module', function ($itemScope) {
-          if (confirm('Are you sure you want to set  ' + $itemScope.$modelValue.name
+        ['Set Active Intro Module', function($itemScope) {
+          if(confirm('Are you sure you want to set  ' + $itemScope.$modelValue.name
             + ' as active intro module?')) {
             ModulesService.setActiveIntroModule($itemScope.$modelValue)
-              .then(function (response) {
+              .then(function(response) {
                 ngToast.create({
                   className: 'success',
                   content: 'Active intro module set successfully.',
-                  animation:'slide'
+                  animation: 'slide'
                 });
               });
           }
         }]
       ];
-    if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
-      $scope.moduleMenuOptions.unshift(['View Study Specific', function ($itemScope) {
+    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+      $scope.moduleMenuOptions.unshift(['View Study Specific', function($itemScope) {
         previewStudySpecific();
       }
       ]);
     }
     $scope.questionMenuOptions =
-      [['Add Possible Answer', function ($itemScope) {
+      [['Add Possible Answer', function($itemScope) {
         $scope.newSubItem($itemScope);
       }
       ],
-        ['Add Free Text Possible Answer', function ($itemScope) {
+        ['Add Free Text Possible Answer', function($itemScope) {
           $itemScope.isFreeText = true;
           $scope.newSubItem($itemScope);
           $itemScope.isFreeText = false;
         }
         ],
 
-        ['Multiple Choice (Toggle)', function ($itemScope) {
+        ['Multiple Choice (Toggle)', function($itemScope) {
           $scope.toggleMultipleChoice($itemScope);
         }
         ],
-        ['Interview Display (Toggle)', function ($itemScope) {
+        ['Interview Display (Toggle)', function($itemScope) {
           $itemScope.$modelValue.description = $itemScope.$modelValue.description == 'display' ? '' : 'display';
           saveModuleWithoutReload();
         }
         ],
 
-        ['Save as Fragment', function ($itemScope) {
+        ['Save as Fragment', function($itemScope) {
 
           $mdDialog.show({
             //scope: $scope,
@@ -1920,27 +1920,27 @@
             parent: angular.element(document.body),
             clickOutsideToClose: true
           })
-            .then(function (answer) {
+            .then(function(answer) {
               $scope.status = 'You said the information was "' + answer + '".';
-            }, function () {
+            }, function() {
               $scope.status = 'You cancelled the dialog.';
             });
         }
         ],
-        ['Remove (Toggle)', function ($itemScope) {
+        ['Remove (Toggle)', function($itemScope) {
           $scope.deleteNode($itemScope);
         }
         ],
-        ['Show/Hide Children', function ($itemScope) {
+        ['Show/Hide Children', function($itemScope) {
 
-          var toggleChildren = function (scope) {
+          var toggleChildren = function(scope) {
             var i, subScope,
               nodes = scope.childNodes();
-            for (i = 0; i < nodes.length; i++) {
+            for(i = 0; i < nodes.length; i++) {
               subScope = nodes[i].$childNodesScope;
-              if (subScope) {
+              if(subScope) {
                 var collapsed = !subScope.collapsed;
-                for (i = 0; i < nodes.length; i++) {
+                for(i = 0; i < nodes.length; i++) {
                   collapsed ? nodes[i].collapse() : nodes[i].expand();
                 }
               }
@@ -1952,13 +1952,13 @@
       ];
     $scope.linkedAjsmMenuOptions =
       [
-        ['Remove (Toggle)', function ($itemScope) {
+        ['Remove (Toggle)', function($itemScope) {
           $scope.deleteNode($itemScope);
         }
         ],
-        ['Open as aJSM', function ($itemScope) {
-          FragmentsService.checkExists($itemScope.node.link).then(function (response) {
-            if (response) {
+        ['Open as aJSM', function($itemScope) {
+          FragmentsService.checkExists($itemScope.node.link).then(function(response) {
+            if(response) {
               var node = angular.copy($itemScope.node);
               node.idNode = node.link;
               node.type = 'F_ajsm';
@@ -1973,10 +1973,10 @@
       ];
 
     function clone(obj) {
-      if (null == obj || "object" != typeof obj) return obj;
+      if(null == obj || "object" != typeof obj) return obj;
       var copy = obj.constructor();
-      for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+      for(var attr in obj) {
+        if(obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
       }
       return copy;
     }
@@ -1984,11 +1984,11 @@
 
     $scope.linkedModuleMenuOptions =
       [
-        ['Remove (Toggle)', function ($itemScope) {
+        ['Remove (Toggle)', function($itemScope) {
           $scope.deleteNode($itemScope);
         }
         ],
-        ['Open as Module', function ($itemScope) {
+        ['Open as Module', function($itemScope) {
           var node = angular.copy($itemScope.node);
           node.idNode = node.link;
           node.type = 'M_Module';
@@ -1999,7 +1999,7 @@
       ];
 
     function addPopoverInfo(x, idRule) {
-      if (angular.isUndefined(x[0].info)) {
+      if(angular.isUndefined(x[0].info)) {
         x[0].info = [];
       }
       x[0].info["Node" + x[0].idNode + idRule] = {
@@ -2014,17 +2014,17 @@
     }
 
     function populateChildNodesOfFragment(data, fragments) {
-      return FragmentsService.findFragment(data.fragmentId).then(function (response) {
-        if (response.length > 0) {
+      return FragmentsService.findFragment(data.fragmentId).then(function(response) {
+        if(response.length > 0) {
           fragments.push(response[0]);
         }
       });
     }
 
     function populateChildNodesOfModules(data, modules) {
-      return ModulesService.getWithFragments(data.moduleLinkId).then(function (response) {
-        if (response.status == '200' && response.data.length > 0) {
-          if (response.data.length > 0) {
+      return ModulesService.getWithFragments(data.moduleLinkId).then(function(response) {
+        if(response.status == '200' && response.data.length > 0) {
+          if(response.data.length > 0) {
             modules.push(response.data[0]);
           }
         }
@@ -2032,8 +2032,8 @@
     }
 
     function getUpdatedModuleRule(model, deffered) {
-      ModuleRuleService.getModuleRule(model.idNode).then(function (data) {
-        if (data.data) {
+      ModuleRuleService.getModuleRule(model.idNode).then(function(data) {
+        if(data.data) {
           deffered.resolve(data.data);
         }
       });
@@ -2042,8 +2042,8 @@
 
     function getUpdatedModuleRulesForWholeModuleForThisAgent(agentId, deffered) {
       var moduleId = $scope.data[0].idNode;
-      ModuleRuleService.getModuleRulesFromModuleForAgent(moduleId, agentId).then(function (response) {
-        if (response.data) {
+      ModuleRuleService.getModuleRulesFromModuleForAgent(moduleId, agentId).then(function(response) {
+        if(response.data) {
           deffered.resolve(response.data);
         }
       });
@@ -2053,15 +2053,15 @@
 
     $scope.rulesMenuOptions =
       [
-        ['Show Rules', function ($itemScope, $event, model) {
+        ['Show Rules', function($itemScope, $event, model) {
           var deffered = $q.defer();
           var promise = getUpdatedModuleRule(model, deffered);
-          promise.then(function (data) {
-            var mRules = _.filter(data, function (r) {
+          promise.then(function(data) {
+            var mRules = _.filter(data, function(r) {
               return $itemScope.$parent.obj.idAgent === r.idAgent;
             });
-            if (mRules.length > 0) {
-              for (var i = 0; i < mRules.length; i++) {
+            if(mRules.length > 0) {
+              for(var i = 0; i < mRules.length; i++) {
                 var scope = $itemScope.$new();
                 scope.model = model;
                 scope.rule = mRules[i].rule;
@@ -2076,17 +2076,17 @@
           });
         }
         ],
-        ['Add Rule', function ($itemScope, $event, model) {
+        ['Add Rule', function($itemScope, $event, model) {
           var conditions = [];
           conditions.push(model);
           $itemScope.model = model;
           var rule = {agentId: $itemScope.$parent.obj.idAgent, conditions: conditions, level: 'noExposure'};
-          RulesService.create(rule).then(function (response) {
-            if (response.status === 200) {
-              if (response.data.idRule) {
-                ModuleRuleService.getModuleRule(model.idNode).then(function (response) {
+          RulesService.create(rule).then(function(response) {
+            if(response.status === 200) {
+              if(response.data.idRule) {
+                ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
 
-                  if (response.status === 200) {
+                  if(response.status === 200) {
                     var result = response.data[response.data.length - 1];
                     $itemScope.rule = result.rule;
                     $itemScope.agentName = result.agentName;
@@ -2094,21 +2094,21 @@
                     addPopoverInfo(x, $itemScope.rule.idRule);
                     newNote($event.currentTarget.parentElement, $itemScope, $compile);
                     $scope.activeRule = result.rule;
-                    if ($itemScope.rules == null) {
+                    if($itemScope.rules == null) {
                       $itemScope.rules = [];
                     }
-                    if (angular.isUndefined(model.moduleRule)) {
+                    if(angular.isUndefined(model.moduleRule)) {
                       model.moduleRule = [];
                     }
 
                     _.merge(model.moduleRule, response.data);
-                    if (!model.moduleRule.$$phase) {
+                    if(!model.moduleRule.$$phase) {
                       try {
                         model.moduleRule.$digest();
-                      } catch (e) {
+                      } catch(e) {
                       }
                     }
-                    if (!$scope.data[0].moduleRule) {
+                    if(!$scope.data[0].moduleRule) {
                       $scope.data[0].moduleRule = [];
                     }
                     $scope.data[0].moduleRule.push(result);
@@ -2119,7 +2119,7 @@
                 ngToast.create({
                   className: 'danger',
                   content: 'Try reload',
-                  animation:'slide'
+                  animation: 'slide'
                 });
               }
             }
@@ -2130,25 +2130,25 @@
       ];
     $scope.rulesTopMenuOptions =
       [
-        ['Show Rules', function ($itemScope, $event, model) {
+        ['Show Rules', function($itemScope, $event, model) {
           var agentId = $event.target.id;
           var deffered = $q.defer();
           var promise = getUpdatedModuleRulesForWholeModuleForThisAgent(agentId, deffered);
-          promise.then(function (data) {
+          promise.then(function(data) {
             var mRules = data;
-            if (mRules.length > 0) {
+            if(mRules.length > 0) {
               $scope.scrollToTop();
               var uniqueRules = [];
-              for (var i = 0; i < mRules.length; i++) {
+              for(var i = 0; i < mRules.length; i++) {
                 var theRule = mRules[i].rule;
                 var bFound = false;
-                for (var j = 0; j < uniqueRules.length; j++) {
+                for(var j = 0; j < uniqueRules.length; j++) {
                   uRule = uniqueRules[j];
-                  if (uRule.idRule == theRule.idRule) {
+                  if(uRule.idRule == theRule.idRule) {
                     bFound = true;
                   }
                 }
-                if (!bFound) {
+                if(!bFound) {
                   uniqueRules.push(theRule);
                   var scope = $itemScope.$new();
                   scope.model = model;
@@ -2178,23 +2178,23 @@
 
 
     $scope.possibleAnswerMenuOptions =
-      [['Add Question', function ($itemScope) {
+      [['Add Question', function($itemScope) {
         $scope.newSubItem($itemScope);
       }
       ],
-        ['Remove (Toggle)', function ($itemScope) {
+        ['Remove (Toggle)', function($itemScope) {
           $scope.deleteNode($itemScope);
         }
         ],
-        ['Show/Hide Children', function ($itemScope) {
+        ['Show/Hide Children', function($itemScope) {
 
-          var toggleChildren = function (nodes) {
+          var toggleChildren = function(nodes) {
             //var nodes = $itemScope.childNodes();
-            for (var i = 0; i < nodes.length; i++) {
+            for(var i = 0; i < nodes.length; i++) {
               var subScope = nodes[i].$childNodesScope;
-              if (subScope) {
+              if(subScope) {
                 var collapsed = !subScope.collapsed;
-                for (i = 0; i < nodes.length; i++) {
+                for(i = 0; i < nodes.length; i++) {
                   collapsed ? nodes[i].collapse() : nodes[i].expand();
                 }
               }
@@ -2206,28 +2206,28 @@
       ];
     $scope.defaultMenuOptions =
       [
-        ['Remove (Toggle)', function ($itemScope) {
+        ['Remove (Toggle)', function($itemScope) {
           $scope.deleteNode($itemScope);
         }
         ]
       ];
 
     function saveModuleAndReload(locationId) {
-      QuestionsService.getMaxId().then(function (response) {
-        if (response.status === 200) {
+      QuestionsService.getMaxId().then(function(response) {
+        if(response.status === 200) {
           var nodes = $scope.data[0].nodes;
           var maxId = response.data;
           var parentId = $scope.data[0].idNode;
           var parentNodeNumber = $scope.data[0].number;
           var topNodeId = $scope.data[0].idNode;
           generateIdNodeCascade(nodes, maxId, parentId, parentNodeNumber, topNodeId);
-          QuestionsService.saveNode($scope.data[0]).then(function (response) {
-            if (response.status === 200) {
+          QuestionsService.saveNode($scope.data[0]).then(function(response) {
+            if(response.status === 200) {
               $log.info('Save was Successful Now Reloading!');
-              QuestionsService.findQuestions($scope.data[0].idNode, $scope.data[0].nodeclass).then(function (data) {
+              QuestionsService.findQuestions($scope.data[0].idNode, $scope.data[0].nodeclass).then(function(data) {
 
                 $scope.data = data.data;
-                if (locationId) {
+                if(locationId) {
                   //$scope.scrollTo(locationId);
                 }
               });
@@ -2244,8 +2244,8 @@
     }
 
     function saveModuleWithoutReload(locationId, deffered) {
-      QuestionsService.getMaxId().then(function (response) {
-        if (response.status === 200) {
+      QuestionsService.getMaxId().then(function(response) {
+        if(response.status === 200) {
           var node_data = $scope.data[0];
           var nodes = node_data.nodes;
           var maxId = response.data;
@@ -2253,20 +2253,20 @@
           var parentNodeNumber = node_data.number;
           var topNodeId = node_data.idNode;
           generateIdNodeCascade(nodes, maxId, parentId, parentNodeNumber, topNodeId);
-          QuestionsService.saveNode(node_data).then(function (response) {
-            if (response.status === 200) {
+          QuestionsService.saveNode(node_data).then(function(response) {
+            if(response.status === 200) {
               $log.info('Save was Successful! Not Reloading ' + node_data.name);
-              if (deffered) {
+              if(deffered) {
                 deffered.resolve();
               }
-              if ($scope.addingQuestion) {
+              if($scope.addingQuestion) {
                 $scope.scrollTo(locationId);
                 $scope.highlight(locationId);
                 $scope.addingQuestion = false;
               }
             } else {
               $log.error('ERROR on Save!' + response.status.message);
-              if (deffered) {
+              if(deffered) {
                 deffered.reject();
                 throw response;
               }
@@ -2274,7 +2274,7 @@
           });
         } else {
           $log.error('ERROR on Get max ID!' + response.status.message);
-          if (deffered) {
+          if(deffered) {
             deffered.reject();
             throw response;
           }
@@ -2283,23 +2283,23 @@
     }
 
     function saveModuleWithReloadDeff(locationId, deffered) {
-      QuestionsService.getMaxId().then(function (response) {
-        if (response.status === 200) {
+      QuestionsService.getMaxId().then(function(response) {
+        if(response.status === 200) {
           var nodes = $scope.data[0].nodes;
           var maxId = response.data;
           var parentId = $scope.data[0].idNode;
           var parentNodeNumber = $scope.data[0].number;
           var topNodeId = $scope.data[0].idNode;
           generateIdNodeCascade(nodes, maxId, parentId, parentNodeNumber, topNodeId);
-          QuestionsService.saveNode($scope.data[0]).then(function (response) {
-            if (response.status === 200) {
+          QuestionsService.saveNode($scope.data[0]).then(function(response) {
+            if(response.status === 200) {
               $log.info('Save was Successful Now Reloading!');
 //							$state.reload();
 //							$state.go($state.current, {row: $scope.data[0].idNode}, {reload: true});
               $scope.reloadTab($scope.data[0]);
             } else {
               $log.error('ERROR on Save!' + response.status.message);
-              if (deffered) {
+              if(deffered) {
                 deffered.reject();
                 throw response;
               }
@@ -2307,7 +2307,7 @@
           });
         } else {
           $log.error('ERROR on Get max ID!' + response.status.message);
-          if (deffered) {
+          if(deffered) {
             deffered.reject();
             throw response;
           }
@@ -2317,8 +2317,8 @@
 
 
     function saveAsFragment(data, mydata) {
-      QuestionsService.getMaxId().then(function (response) {
-        if (response.status === 200) {
+      QuestionsService.getMaxId().then(function(response) {
+        if(response.status === 200) {
           var maxId = response.data + 1;
           destNode = {
             idNode: maxId,
@@ -2345,36 +2345,36 @@
 
 
           var deffered = $q.defer();
-          FragmentsService.createFragment(destNode).then(function (response) {
-            if (response.status === 200) {
+          FragmentsService.createFragment(destNode).then(function(response) {
+            if(response.status === 200) {
               $log.info("Fragment saved");
-              FragmentsService.getByType('F_template').then(function (template) {
-                for (var i = 0; i < template.length; i++) {
+              FragmentsService.getByType('F_template').then(function(template) {
+                for(var i = 0; i < template.length; i++) {
                   var node = template[i];
                   node.nodeclass = "Q";
                 }
-                if ($scope.templateData != null) {
+                if($scope.templateData != null) {
                   _.merge($scope.templateData, template);
                 }
                 deffered.resolve();
               });
-              FragmentsService.getByType('F_ajsm').then(function (data) {
-                for (var i = 0; i < data.length; i++) {
+              FragmentsService.getByType('F_ajsm').then(function(data) {
+                for(var i = 0; i < data.length; i++) {
                   var node = data[i];
                   node.type = "Q_linkedajsm";
                   node.nodeclass = "Q";
                 }
-                if ($scope.aJSMData != null) {
+                if($scope.aJSMData != null) {
                   _.merge($scope.aJSMData, data);
                 }
                 deffered.resolve();
               });
-              FragmentsService.getByType('F_frequency').then(function (data) {
-                for (var i = 0; i < data.length; i++) {
+              FragmentsService.getByType('F_frequency').then(function(data) {
+                for(var i = 0; i < data.length; i++) {
                   var node = data[i];
                   node.nodeclass = "Q";
                 }
-                if ($scope.frequencyData != null) {
+                if($scope.frequencyData != null) {
                   _.merge($scope.frequencyData, data);
                 }
                 deffered.resolve();
@@ -2386,7 +2386,7 @@
               throw response.status.message;
             }
           });
-          deffered.promise.then(function () {
+          deffered.promise.then(function() {
             $mdDialog.hide();
           });
         }
@@ -2397,21 +2397,21 @@
 
     function generateIdNodeCascadeFragment(arrayInp, maxId, parentId) {
       increment = maxId;
-      if (arrayInp.length > 0) {
+      if(arrayInp.length > 0) {
         var i = 0;
-        _.each(arrayInp, function (node) {
+        _.each(arrayInp, function(node) {
 
           node.sequence = i;
-          if (!node.idNode) {
+          if(!node.idNode) {
             increment = (increment + 1);
             node.idNode = increment;
 
-            if (parentId) {
+            if(parentId) {
               node.parentId = parentId;
             }
           }
-          if (node.nodes) {
-            if (node.nodes.length > 0) {
+          if(node.nodes) {
+            if(node.nodes.length > 0) {
               generateIdNodeCascadeFragment(node.nodes, increment, node.idNode);
             }
           }
@@ -2427,18 +2427,18 @@
     function generateIdNodeCascade(arrayInp, maxId, parentId, parentNodeNumber, topNodeId) {
       maxIdIncrement = maxId;
 
-      if (arrayInp.length > 0) {
+      if(arrayInp.length > 0) {
         var i = 0;
-        _.each(arrayInp, function (node) {
+        _.each(arrayInp, function(node) {
 
           node.parentId = parentId;
           node.sequence = i;
           node.topNodeId = topNodeId;
-          if (node.nodeclass == 'Q') {
+          if(node.nodeclass == 'Q') {
             node.number = parentNodeNumber + (i + 1);
-          } else if (node.nodeclass == 'P') {
-            if (!isNaN(parentNodeNumber)) {
-              if (i > 26) {
+          } else if(node.nodeclass == 'P') {
+            if(!isNaN(parentNodeNumber)) {
+              if(i > 26) {
                 var character = String.fromCharCode('A'.charCodeAt() + (i - 27));
                 node.number = parentNodeNumber + 'Z' + $scope.getNextKey(character);
               } else {
@@ -2449,8 +2449,8 @@
             } else {
               var length = parentNodeNumber.length;
               var lastCharacter = parentNodeNumber.substring(length - 1);
-              if (!isNaN(lastCharacter)) {
-                if (i > 26) {
+              if(!isNaN(lastCharacter)) {
+                if(i > 26) {
                   var character = String.fromCharCode('A'.charCodeAt() + (i - 27));
                   node.number = parentNodeNumber + 'Z' + $scope.getNextKey(character);
                 } else {
@@ -2462,12 +2462,12 @@
             }
 
           }
-          if (!node.idNode) {
+          if(!node.idNode) {
             maxIdIncrement = (maxIdIncrement + 1);
             node.idNode = maxIdIncrement;
           }
-          if (node.nodes) {
-            if (node.nodes.length > 0) {
+          if(node.nodes) {
+            if(node.nodes.length > 0) {
               generateIdNodeCascade(node.nodes, maxIdIncrement, node.idNode, node.number, topNodeId);
             }
           }
@@ -2476,8 +2476,8 @@
       }
     }
 
-    $scope.getNextKey = function (key) {
-      if (/^Z+$/.test(key)) {
+    $scope.getNextKey = function(key) {
+      if(/^Z+$/.test(key)) {
         // If all z's, replace all with a's
         key = key + 'A';
       } else {
@@ -2486,15 +2486,15 @@
       }
       return key;
     };
-    $scope.saveModule = function () {
+    $scope.saveModule = function() {
       saveModuleAndReload();
     };
 
-    $scope.saveAsFragment = function (data, mydata) {
+    $scope.saveAsFragment = function(data, mydata) {
       saveAsFragment(data, mydata);
     };
 
-    $scope.cancel = function () {
+    $scope.cancel = function() {
       $mdDialog.cancel();
     };
 
@@ -2503,18 +2503,18 @@
       $scope.undoEnable = true;
     }
 
-    $scope.undo = function ($itemScope) {
+    $scope.undo = function($itemScope) {
       $log.info("Undo is being processed ........");
-      QuestionsService.getMaxId().then(function (response) {
-        if (response.status === 200) {
+      QuestionsService.getMaxId().then(function(response) {
+        if(response.status === 200) {
           var nodes = $window.beforeNode[0].nodes;
           var maxId = response.data;
           var parentId = $window.beforeNode[0].idNode;
           var parentNodeNumber = $window.beforeNode[0].number;
           var topNodeId = $window.beforeNode[0].idNode;
           generateIdNodeCascade(nodes, maxId, parentId, parentNodeNumber, topNodeId);
-          QuestionsService.saveNode($window.beforeNode[0]).then(function (response) {
-            if (response.status === 200) {
+          QuestionsService.saveNode($window.beforeNode[0]).then(function(response) {
+            if(response.status === 200) {
               ngToast.create({
                 className: 'success',
                 content: 'Undo successful ' + $window.beforeNode[0].name,
@@ -2544,17 +2544,17 @@
     };
 
     $scope.isClonable = false;
-    $scope.copy = function (event, $treeScope) {
-      if (event.ctrlKey) {
+    $scope.copy = function(event, $treeScope) {
+      if(event.ctrlKey) {
         $scope.isClonable = true;
         $treeScope.cloneEnabled = true;
         safeDigest($treeScope);
       }
     };
 
-    $scope.scrollTo = function (target) {
+    $scope.scrollTo = function(target) {
       //var scrollPane = $("body");
-      if ((target == "") || (target == undefined))
+      if((target == "") || (target == undefined))
         return;
       var scrollTarget = $('#' + target);
       var scrollY = scrollTarget.offset().top - 150;
@@ -2565,26 +2565,26 @@
       }, 2000, 'swing');
     };
 
-    $scope.highlightNode = function (idNode) {
+    $scope.highlightNode = function(idNode) {
       var elementId = 'node-' + idNode;
       $scope.scrollTo(elementId);
       $('#' + elementId).toggleClass('highlight');
     };
 
-    $scope.highlight = function (idNode) {
+    $scope.highlight = function(idNode) {
       $('#' + idNode).toggleClass('highlight');
     };
 
     function getObject(array, idNode) {
       var object = _.find(array, _.matchesProperty('idNode', idNode));
-      if (object != null && !angular.isUndefined(object)) {
+      if(object != null && !angular.isUndefined(object)) {
         return object;
       }
       var obj;
-      _.forEach(array, function (v, k) {
-        if (v.nodes) {
+      _.forEach(array, function(v, k) {
+        if(v.nodes) {
           obj = getObject(v.nodes, idNode);
-          if (obj != null) {
+          if(obj != null) {
             return false;
           }
         }
@@ -2594,7 +2594,7 @@
 
     $rootScope.tabsLoading = false;
 
-    $scope.closeRuleDialog = function (elem, $event) {
+    $scope.closeRuleDialog = function(elem, $event) {
       $($event.target).closest('.note').remove();
       $scope.activeRuleDialog = '';
       $scope.activeRuleCell = '';
@@ -2602,9 +2602,9 @@
       safeDigest($scope.activeRuleCell);
     };
 
-    $scope.setActiveRule = function (rule, el) {
+    $scope.setActiveRule = function(rule, el) {
       var firstRuleNodeId = el.model.idNode;
-      if (!firstRuleNodeId) {
+      if(!firstRuleNodeId) {
         el.model.idNode = rule.conditions[0].idNode;
         firstRuleNodeId = rule.conditions[0].idNode;
       }
@@ -2612,35 +2612,35 @@
       $scope.activeRuleCell = el.model.idNode + rule.agentId;
       $scope.activeRuleEl = el;
       $scope.activeRule = rule;
-      if (!$scope.activeRuleDialog.$$phase) {
+      if(!$scope.activeRuleDialog.$$phase) {
         try {
           $scope.activeRuleDialog.$digest();
-        } catch (e) {
+        } catch(e) {
         }
       }
     };
-    $scope.addToActiveRule = function (node, rules) {
+    $scope.addToActiveRule = function(node, rules) {
 
       var rule = $scope.activeRule;
       var bAlreadyInRule = false;
       var nodeNumbers = [];
-      for (var i = 0; i < rule.conditions.length; i++) {
+      for(var i = 0; i < rule.conditions.length; i++) {
         var iCondition = rule.conditions[i];
-        if (iCondition.idNode == node.idNode) {
+        if(iCondition.idNode == node.idNode) {
           bAlreadyInRule = true;
           break;
         }
-        if (iCondition.number) {
+        if(iCondition.number) {
           nodeNumbers.push(iCondition.number);
         }
       }
-      for (var i = 0; i < nodeNumbers.length; i++) {
-        if (_.startsWith(nodeNumbers[i], node.number)) {
+      for(var i = 0; i < nodeNumbers.length; i++) {
+        if(_.startsWith(nodeNumbers[i], node.number)) {
           bAlreadyInRule = true;
           break;
         }
       }
-      if (bAlreadyInRule) {
+      if(bAlreadyInRule) {
         ngToast.create({
           className: 'warning',
           content: 'Child node already has this rule.',
@@ -2650,28 +2650,28 @@
         return;
       }
 
-      if (!bAlreadyInRule) {
+      if(!bAlreadyInRule) {
         rule.conditions.push(node);
-        if (rules.rules == null) {
+        if(rules.rules == null) {
           rules.rules = [];
         }
         rules.rules.push({
           idNode: node.idNode
         });
-        RulesService.save(rule).then(function (response) {
-          if (response.status === 200) {
+        RulesService.save(rule).then(function(response) {
+          if(response.status === 200) {
             $log.info('Rule Save was Successful!' + rule);
-            ModuleRuleService.getModuleRule(node.idNode).then(function (response) {
-              if (response.status === 200) {
+            ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
+              if(response.status === 200) {
                 var result = response.data[response.data.length - 1];
-                if (angular.isUndefined(node.moduleRule)) {
+                if(angular.isUndefined(node.moduleRule)) {
                   node.moduleRule = [];
                 }
                 _.merge(node.moduleRule, response.data);
-                if (!node.moduleRule.$$phase) {
+                if(!node.moduleRule.$$phase) {
                   try {
                     node.moduleRule.$digest();
-                  } catch (e) {
+                  } catch(e) {
                   }
                 }
 //    			    			resize();
@@ -2699,16 +2699,16 @@
       document.getElementById($scope.activeRuleDialog).style.height = height;
     }
 
-    $scope.saveRule = function (rule) {
-      RulesService.save(rule).then(function (response) {
-        if (response.status === 200) {
+    $scope.saveRule = function(rule) {
+      RulesService.save(rule).then(function(response) {
+        if(response.status === 200) {
           $log.info('Rule Save was Successful!' + rule);
-          _.each(rule.conditions, function (v, k) {
-            ModuleRuleService.getModuleRule(v.idNode).then(function (response) {
-              if (response.status === 200) {
+          _.each(rule.conditions, function(v, k) {
+            ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
+              if(response.status === 200) {
                 var node = getObject($scope.data[0].nodes, v.idNode);
-                if (!angular.isUndefined(node)) {
-                  if (angular.isUndefined(node.moduleRule)) {
+                if(!angular.isUndefined(node)) {
+                  if(angular.isUndefined(node.moduleRule)) {
                     node.moduleRule = [];
                   }
                   _.merge(node.moduleRule, response.data);
@@ -2722,30 +2722,30 @@
 
     };
 
-    var safeDigest = function (obj) {
-      if (!obj.$$phase) {
+    var safeDigest = function(obj) {
+      if(!obj.$$phase) {
         try {
           obj.$digest();
-        } catch (e) {
+        } catch(e) {
         }
       }
     };
 
-    $scope.updateRule = function (rule, model) {
-      RulesService.update(rule).then(function (response) {
-        if (response.status === 200) {
+    $scope.updateRule = function(rule, model) {
+      RulesService.update(rule).then(function(response) {
+        if(response.status === 200) {
           $log.info('Rule Save was Successful!' + rule);
-          ModuleRuleService.getModuleRule(model.idNode).then(function (response) {
-            if (response.status === 200) {
+          ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
+            if(response.status === 200) {
               var result = response.data[response.data.length - 1];
-              if (angular.isUndefined(model.moduleRule)) {
+              if(angular.isUndefined(model.moduleRule)) {
                 model.moduleRule = [];
               }
               _.merge(model.moduleRule, response.data);
-              if (!model.moduleRule.$$phase) {
+              if(!model.moduleRule.$$phase) {
                 try {
                   model.moduleRule.$digest();
-                } catch (e) {
+                } catch(e) {
                 }
               }
             }
@@ -2754,44 +2754,44 @@
       });
 
     };
-    $scope.removeNodeFromRule = function (node) {
+    $scope.removeNodeFromRule = function(node) {
       var rule = $scope.activeRule;
 
-      for (var i = 0; i < rule.conditions.length; i++) {
+      for(var i = 0; i < rule.conditions.length; i++) {
         var iCondition = rule.conditions[i];
-        if (iCondition.idNode == node.idNode) {
+        if(iCondition.idNode == node.idNode) {
           rule.conditions.splice(i, 1);
         }
       }
-      RulesService.save(rule).then(function (response) {
-        if (response.status === 200) {
+      RulesService.save(rule).then(function(response) {
+        if(response.status === 200) {
           $log.info('Rule Save was Successful!' + rule);
-          ModuleRuleService.getModuleRule(node.idNode).then(function (response) {
-            if (response.status === 200) {
+          ModuleRuleService.getModuleRule(node.idNode).then(function(response) {
+            if(response.status === 200) {
               var result = response.data[response.data.length - 1];
-              if (angular.isUndefined(node.moduleRule)) {
+              if(angular.isUndefined(node.moduleRule)) {
                 node.moduleRule = [];
               }
-              _.each(node.moduleRule, function (mr) {
+              _.each(node.moduleRule, function(mr) {
                 var isExist = false;
-                _.each(response.data, function (dt) {
-                  if (mr.rule) {
-                    if (mr.rule.idRule === dt.rule.idRule) {
+                _.each(response.data, function(dt) {
+                  if(mr.rule) {
+                    if(mr.rule.idRule === dt.rule.idRule) {
                       isExist = true;
                     }
                   }
                 });
-                if (isExist == false) {
+                if(isExist == false) {
                   var index = node.moduleRule.indexOf(mr);
-                  if (index > -1) {
+                  if(index > -1) {
                     node.moduleRule.splice(index, 1);
                   }
                 }
               });
-              if (!node.moduleRule.$$phase) {
+              if(!node.moduleRule.$$phase) {
                 try {
                   model.moduleRule.$digest();
-                } catch (e) {
+                } catch(e) {
                 }
               }
             }
@@ -2802,15 +2802,15 @@
     };
     $scope.newModName = null;
     $scope.includeRuleInMod = null;
-    $scope.saveAsModule = function (vo, name, includeRules, includeLinks) {
+    $scope.saveAsModule = function(vo, name, includeRules, includeLinks) {
       var copyVO = {
         vo: angular.copy(vo),
         name: name,
         includeRules: includeRules,
         includeLinks: includeLinks
       };
-      if ('F' == vo.nodeclass) {
-        FragmentsService.copyModule(copyVO).then(function (data) {
+      if('F' == vo.nodeclass) {
+        FragmentsService.copyModule(copyVO).then(function(data) {
           var row = {};
           row.name = name;
           row.idNode = data.data;
@@ -2819,8 +2819,8 @@
 
         });
       }
-      if ('M' == vo.nodeclass) {
-        ModulesService.copyModule(copyVO).then(function (data) {
+      if('M' == vo.nodeclass) {
+        ModulesService.copyModule(copyVO).then(function(data) {
           var row = {};
           row.name = name;
           row.idNode = data.data;
@@ -2835,22 +2835,22 @@
       // get modules from modules view
       var modules = [];
       var promises = [];
-      ModulesService.getModuleIntroModuleByModuleId(copyData[0].idNode).then(function (response) {
-        if (response.status == '200') {
+      ModulesService.getModuleIntroModuleByModuleId(copyData[0].idNode).then(function(response) {
+        if(response.status == '200') {
           // loop each module get details for each
-          _.each(response.data, function (data) {
-            if (includeLinks) {
+          _.each(response.data, function(data) {
+            if(includeLinks) {
               promises.push(populateChildNodesOfModules(data, modules));
             }
           });
-          $q.all(promises).then(function () {
+          $q.all(promises).then(function() {
             console.log('finish creating the JSON.. exporting in progress.');
             copyData[0].modules = modules;
             var blob = new Blob([JSON.stringify(copyData)], {
               type: "application/json;charset=" + "utf-8" + ";"
             });
 
-            if (window.navigator.msSaveOrOpenBlob) {
+            if(window.navigator.msSaveOrOpenBlob) {
               navigator.msSaveBlob(blob, name);
             } else {
               var downloadContainer = angular.element('<div data-tap-disabled="true"><a></a></div>');
@@ -2860,7 +2860,7 @@
               downloadLink.attr('target', '_blank');
 
               $document.find('body').append(downloadContainer);
-              $timeout(function () {
+              $timeout(function() {
                 downloadLink[0].click();
                 downloadLink.remove();
               }, null);
@@ -2875,33 +2875,33 @@
       var fragments = [];
       var promises = [];
       //get filtered module
-      ModulesService.getModuleFilterStudyAgent(copyData[0].idNode).then(function (response) {
-        if (response.status == '200') {
-          if (response.data[0] == null) {
+      ModulesService.getModuleFilterStudyAgent(copyData[0].idNode).then(function(response) {
+        if(response.status == '200') {
+          if(response.data[0] == null) {
             ngToast.create({
               className: 'danger',
               content: 'Warning: No study agent exist.',
-              animation:'slide'
+              animation: 'slide'
             });
             return;
           }
 
           var studyAgentData = response.data;
           //get list of ajsm
-          ModulesService.getModuleFragmentByModuleId(studyAgentData[0].idNode).then(function (response) {
-            if (response.status == '200') {
+          ModulesService.getModuleFragmentByModuleId(studyAgentData[0].idNode).then(function(response) {
+            if(response.status == '200') {
               // loop each fragment get details for each, filter study agents
-              _.each(response.data, function (data) {
+              _.each(response.data, function(data) {
                 promises.push(populateChildNodesOfFragmentFilterStudyAgents(data, fragments));
               });
-              $q.all(promises).then(function () {
+              $q.all(promises).then(function() {
                 console.log('finish creating the JSON.. exporting in progress.');
                 studyAgentData[0].fragments = fragments;
                 var blob = new Blob([JSON.stringify(studyAgentData)], {
                   type: "application/json;charset=" + "utf-8" + ";"
                 });
 
-                if (window.navigator.msSaveOrOpenBlob) {
+                if(window.navigator.msSaveOrOpenBlob) {
                   navigator.msSaveBlob(blob, name);
                 } else {
 
@@ -2912,7 +2912,7 @@
                   downloadLink.attr('target', '_blank');
 
                   $document.find('body').append(downloadContainer);
-                  $timeout(function () {
+                  $timeout(function() {
                     downloadLink[0].click();
                     downloadLink.remove();
                   }, null);
@@ -2927,11 +2927,11 @@
 
     function populateChildNodesOfFragmentFilterStudyAgents(data, fragments) {
       // todo filtering by study agent
-      return FragmentsService.getFilterStudyAgents(data.fragmentId).then(function (response) {
-        if (response[0] == null) {
+      return FragmentsService.getFilterStudyAgents(data.fragmentId).then(function(response) {
+        if(response[0] == null) {
           return;
         }
-        if (response.length > 0) {
+        if(response.length > 0) {
           fragments.push(response[0]);
         }
       });
@@ -2939,11 +2939,11 @@
 
     function populateChildNodesOfFragmentFilterAgents(data, fragments, idAgent) {
       // todo filtering by study agent
-      return FragmentsService.getFilterAgents(data.fragmentId, idAgent).then(function (response) {
-        if (response[0] == null) {
+      return FragmentsService.getFilterAgents(data.fragmentId, idAgent).then(function(response) {
+        if(response[0] == null) {
           return;
         }
-        if (response.length > 0) {
+        if(response.length > 0) {
           fragments.push(response[0]);
         }
       });
@@ -2951,11 +2951,11 @@
 
     function populateChildNodesOfModuleFilterAgents(data, fragments, idAgent) {
       // todo filtering by study agent
-      return ModulesService.getModuleFilterAgent(data.moduleLinkId, idAgent).then(function (response) {
-        if (response[0] == null) {
+      return ModulesService.getModuleFilterAgent(data.moduleLinkId, idAgent).then(function(response) {
+        if(response[0] == null) {
           return;
         }
-        if (response.length > 0) {
+        if(response.length > 0) {
           fragments.push(response[0]);
         }
       });
@@ -2965,22 +2965,22 @@
       var fragments = [];
       var promises = [];
       // get from module fragment view
-      ModulesService.getModuleFragmentByModuleId(copyData[0].idNode).then(function (response) {
-        if (response.status == '200') {
+      ModulesService.getModuleFragmentByModuleId(copyData[0].idNode).then(function(response) {
+        if(response.status == '200') {
           // loop each fragment get details for each
-          _.each(response.data, function (data) {
-            if (includeLinks) {
+          _.each(response.data, function(data) {
+            if(includeLinks) {
               promises.push(populateChildNodesOfFragment(data, fragments));
             }
           });
-          $q.all(promises).then(function () {
+          $q.all(promises).then(function() {
             console.log('finish creating the JSON.. exporting in progress.');
             copyData[0].fragments = fragments;
             var blob = new Blob([JSON.stringify(copyData)], {
               type: "application/json;charset=" + "utf-8" + ";"
             });
 
-            if (window.navigator.msSaveOrOpenBlob) {
+            if(window.navigator.msSaveOrOpenBlob) {
               navigator.msSaveBlob(blob, name);
             } else {
 
@@ -2991,7 +2991,7 @@
               downloadLink.attr('target', '_blank');
 
               $document.find('body').append(downloadContainer);
-              $timeout(function () {
+              $timeout(function() {
                 downloadLink[0].click();
                 downloadLink.remove();
               }, null);
@@ -3006,59 +3006,59 @@
       var fragments = [];
       var promises = [];
       // get from module fragment view
-      ModulesService.getModuleFragmentByModuleId(module.idNode).then(function (response) {
-        if (response.status == '200') {
+      ModulesService.getModuleFragmentByModuleId(module.idNode).then(function(response) {
+        if(response.status == '200') {
           // loop each fragment get details for each
-          _.each(response.data, function (data) {
+          _.each(response.data, function(data) {
             promises.push(populateChildNodesOfFragment(data, fragments));
           });
-          $q.all(promises).then(function () {
+          $q.all(promises).then(function() {
             module.fragments = fragments;
           });
         }
       });
     }
 
-    $scope.exportToJSON = function (name, includeLinks, filterOnStudyAgents) {
+    $scope.exportToJSON = function(name, includeLinks, filterOnStudyAgents) {
       var copyData = angular.copy($scope.data);
       var counter = 0;
 
 //        	var ssmodule = copyData[0];
-      if (filterOnStudyAgents) {
+      if(filterOnStudyAgents) {
 //        		ssmodule = processStudyModule(copyData[0]);
         exportToJsonFilterStudyAgents(copyData, name);
         return;
       }
 
-      if (copyData[0].type == 'M_IntroModule') {
+      if(copyData[0].type == 'M_IntroModule') {
         exportJsonForIntroModule(copyData, name, includeLinks);
       } else {
         exportJsonForModule(copyData, name, includeLinks);
       }
     };
 
-    $scope.deleteRule = function (rule, model, $event) {
+    $scope.deleteRule = function(rule, model, $event) {
       $scope.closeRuleDialog(model, $event);
-      RulesService.remove(rule).then(function (response) {
-        if (response.status === 200) {
+      RulesService.remove(rule).then(function(response) {
+        if(response.status === 200) {
           $log.info('Rule Save was Successful!' + rule);
-          _.each(rule.conditions, function (v, k) {
-            ModuleRuleService.getModuleRule(v.idNode).then(function (response) {
-              if (response.status === 200) {
+          _.each(rule.conditions, function(v, k) {
+            ModuleRuleService.getModuleRule(v.idNode).then(function(response) {
+              if(response.status === 200) {
                 var node = getObject($scope.data[0].nodes, v.idNode);
-                if (!angular.isUndefined(node)) {
-                  var moduleRuleIndex = _.findIndex($scope.data[0].moduleRule, function (item) {
+                if(!angular.isUndefined(node)) {
+                  var moduleRuleIndex = _.findIndex($scope.data[0].moduleRule, function(item) {
                     return item.idNode === v.idNode && item.idAgent === rule.agentId
                   });
-                  if (response.data.length < 1) {
+                  if(response.data.length < 1) {
                     node.moduleRule = [];
                     safeDigest(node.moduleRule);
-                    if (moduleRuleIndex != -1) {
+                    if(moduleRuleIndex != -1) {
                       $scope.data[0].moduleRule.splice(moduleRuleIndex, 1);
                     }
                   } else {
                     node.moduleRule = response.data;
-                    if (moduleRuleIndex != -1) {
+                    if(moduleRuleIndex != -1) {
                       $scope.data[0].moduleRule.splice(moduleRuleIndex, 1);
                     }
                     safeDigest(node.moduleRule);
@@ -3077,18 +3077,18 @@
     $scope.reference = null;
     $scope.awesIdMaxSize = 7;
     $scope.awesIdSize = 0;
-    $scope.filterAndValidate = function (event) {
+    $scope.filterAndValidate = function(event) {
       var elem = angular.element(document.querySelector('#awesid'));
       var counter = angular.element(document.querySelector('#awesidcounter'));
       var label = angular.element(document.querySelector('#awesidlabel'));
-      if (event.which === 13 || event.which === 32) {
-        if (awesIdIsValid(elem.val())) {
+      if(event.which === 13 || event.which === 32) {
+        if(awesIdIsValid(elem.val())) {
           self.add();
         } else {
           counter.append("Please enter a valid AWES ID");
         }
       } else {
-        if (!awesIdIsValid(elem.val())) {
+        if(!awesIdIsValid(elem.val())) {
           elem.addClass("awesidwarning");
           label.addClass("awesidwarning");
           counter.addClass("awesidwarning");
@@ -3100,22 +3100,22 @@
       }
     };
 
-    $scope.runInterview = function (reference) {
-      if (awesIdIsValid($scope.searchAWESID)) {
-        InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function (data) {
-          if (data.status == 200) {
-            if (confirm("This AWES ID has already been used. Would you like to add a duplicate?")) {
+    $scope.runInterview = function(reference) {
+      if(awesIdIsValid($scope.searchAWESID)) {
+        InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
+          if(data.status == 200) {
+            if(confirm("This AWES ID has already been used. Would you like to add a duplicate?")) {
               $scope.addInterviewTabInterviewers(-1, $scope.searchAWESID);
               $mdDialog.cancel();
             }
-          } else if (data.status == 204) {
+          } else if(data.status == 204) {
             $scope.addInterviewTabInterviewers(-1, $scope.searchAWESID);
             $mdDialog.cancel();
           } else {
             ngToast.create({
               className: 'danger',
               content: 'Error occured during checkReferenceNumberExists',
-              animation:'slide'
+              animation: 'slide'
             });
           }
         })
@@ -3123,7 +3123,7 @@
         ngToast.create({
           className: 'danger',
           content: 'You need to add a valid AWES ID before you can start.',
-          animation:'slide'
+          animation: 'slide'
         });
       }
     };
@@ -3132,8 +3132,8 @@
       $scope.searchAWESID = '';
       var retValue = false;
       $scope.awesIdSize = awesId.length;
-      if ($scope.awesIdSize == $scope.awesIdMaxSize) {
-        if (_.startsWith(awesId, 'H')) {
+      if($scope.awesIdSize == $scope.awesIdMaxSize) {
+        if(_.startsWith(awesId, 'H')) {
           retValue = true;
           $scope.searchAWESID = awesId;
         }
@@ -3145,34 +3145,34 @@
       angular.element(document).find('.incl_expjson').removeClass('incl_expjson');
       var fragments = [];
       var promises = [];
-      ModulesService.getModuleFilterStudyAgent(moduleIdNode).then(function (response) {
-        if (response.status == '200') {
-          if (response.data[0] == null) {
+      ModulesService.getModuleFilterStudyAgent(moduleIdNode).then(function(response) {
+        if(response.status == '200') {
+          if(response.data[0] == null) {
             ngToast.create({
               className: 'danger',
               content: "Warning: No study agent exist.",
-              animation:'slide'
+              animation: 'slide'
             });
             return;
           }
           var studyAgentData = response.data;
           highlightStudySpecificNode(studyAgentData[0].nodes);
-          ModulesService.getModuleFragmentByModuleId(studyAgentData[0].idNode).then(function (response) {
-            if (response.status == '200') {
+          ModulesService.getModuleFragmentByModuleId(studyAgentData[0].idNode).then(function(response) {
+            if(response.status == '200') {
               // loop each fragment get details for each, filter study agents
-              _.each(response.data, function (data) {
+              _.each(response.data, function(data) {
                 promises.push(populateChildNodesOfFragmentFilterStudyAgents(data, fragments));
               });
-              $q.all(promises).then(function () {
-                if (studyAgentData[0].nodes.length < 1 && fragments.length < 1) {
+              $q.all(promises).then(function() {
+                if(studyAgentData[0].nodes.length < 1 && fragments.length < 1) {
                   ngToast.create({
                     className: 'danger',
                     content: "There is no study specific node for this tree, check the link ajsm.",
-                    animation:'slide'
+                    animation: 'slide'
                   });
                   return;
                 }
-                for (var i = 0; i < fragments.length; i++) {
+                for(var i = 0; i < fragments.length; i++) {
                   higlightAjsms(fragments[i].idNode, $scope.data[0].nodes);
                 }
               });
@@ -3183,42 +3183,42 @@
     }
 
     function higlightAjsms(fragmentIdNode, childNodes) {
-      _.each(childNodes, function (item) {
-        if (item.link == fragmentIdNode) {
+      _.each(childNodes, function(item) {
+        if(item.link == fragmentIdNode) {
           angular.element("#node-" + item.idNode).addClass("incl_expjson");
         }
-        if (item.nodes.length > 0) {
+        if(item.nodes.length > 0) {
           higlightAjsms(fragmentIdNode, item.nodes);
         }
       });
     }
 
     function highlightStudySpecificNode(childNodes) {
-      for (var i = 0; i < childNodes.length; i++) {
+      for(var i = 0; i < childNodes.length; i++) {
         var node = childNodes[i];
         angular.element("#node-" + node.idNode).addClass("incl_expjson");
-        if (node.nodes) {
+        if(node.nodes) {
           highlightStudySpecificNode(node.nodes);
         }
       }
     }
 
     $scope.currentToggledNodeWithAgent = undefined;
-    $scope.toggleNodesWithAgent = function (agent, $event) {
+    $scope.toggleNodesWithAgent = function(agent, $event) {
       $event.stopPropagation();
-      var resultRuleObj = _.find($scope.rulesObj, function (ro) {
+      var resultRuleObj = _.find($scope.rulesObj, function(ro) {
         return ro.idAgent == agent.idAgent;
       });
-      if ($scope.currentToggledNodeWithAgent == agent.idAgent) {
+      if($scope.currentToggledNodeWithAgent == agent.idAgent) {
         agent.active = false;
         angular.element(document).find('.nodeAgentEnabledBase').removeClass('nodeAgentEnabledBase');
         angular.element(document).find('.nodeAgentEnabledLinked').removeClass('nodeAgentEnabledLinked');
         angular.element(document).find('.nodeAgentEnabledDerived').removeClass('nodeAgentEnabledDerived');
         angular.element(document).find('.activeNodeAgentEnabled').removeClass('activeNodeAgentEnabled');
         $scope.currentToggledNodeWithAgent = undefined;
-        if (agent.style == "agent-shown" && resultRuleObj) {
-          $scope.safeApply(function () {
-            $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function (o) {
+        if(agent.style == "agent-shown" && resultRuleObj) {
+          $scope.safeApply(function() {
+            $scope.rulesObj.splice(_.findIndex($scope.rulesObj, function(o) {
               return o.idAgent === agent.idAgent;
             }), 1)[0];
           });
@@ -3230,7 +3230,7 @@
       angular.element(document).find('.nodeAgentEnabledLinked').removeClass('nodeAgentEnabledLinked');
       angular.element(document).find('.nodeAgentEnabledDerived').removeClass('nodeAgentEnabledDerived');
       agent.active = true;
-      if (!resultRuleObj) {
+      if(!resultRuleObj) {
         $scope.rulesObj.push(agent);
         agent.style = "agent-shown";
       }
@@ -3254,13 +3254,13 @@
       var fragments = [];
       var modules = [];
       var promises = [];
-      ModulesService.getModuleFilterAgent(moduleIdNode, idAgent).then(function (response) {
-        if (response.status == '200') {
-          if (response.data[0] == null) {
+      ModulesService.getModuleFilterAgent(moduleIdNode, idAgent).then(function(response) {
+        if(response.status == '200') {
+          if(response.data[0] == null) {
             ngToast.create({
               className: 'warning',
               content: "Warning: No agent rule exist for this module.",
-              animation:'slide'
+              animation: 'slide'
             });
             return;
           }
@@ -3286,22 +3286,22 @@
 //       					}
 //       				});
 //    			}else{
-          ModulesService.getModuleFragmentByModuleId(agentData[0].idNode).then(function (response) {
-            if (response.status == '200') {
+          ModulesService.getModuleFragmentByModuleId(agentData[0].idNode).then(function(response) {
+            if(response.status == '200') {
               // loop each fragment get details for each, filter agents
-              _.each(response.data, function (data) {
+              _.each(response.data, function(data) {
                 promises.push(populateChildNodesOfFragmentFilterAgents(data, fragments, idAgent));
               });
-              $q.all(promises).then(function () {
-                if (agentData[0].nodes.length < 1 && fragments.length < 1) {
+              $q.all(promises).then(function() {
+                if(agentData[0].nodes.length < 1 && fragments.length < 1) {
                   ngToast.create({
                     className: 'danger',
                     content: "There is no study specific node for this tree, check the link ajsm.",
-                    animation:'slide'
+                    animation: 'slide'
                   });
                   return;
                 }
-                for (var i = 0; i < fragments.length; i++) {
+                for(var i = 0; i < fragments.length; i++) {
                   higlightAgentAjsms(fragments[i].idNode, $scope.data[0].nodes);
                 }
               });
@@ -3313,11 +3313,11 @@
     }
 
     function higlightAgentAjsms(fragmentIdNode, childNodes) {
-      _.each(childNodes, function (item) {
-        if (item.link == fragmentIdNode) {
+      _.each(childNodes, function(item) {
+        if(item.link == fragmentIdNode) {
           angular.element("#node-" + item.idNode).addClass("nodeAgentEnabledLinked");
         }
-        if (item.nodes.length > 0) {
+        if(item.nodes.length > 0) {
           higlightAgentAjsms(fragmentIdNode, item.nodes);
         }
       });
@@ -3325,13 +3325,13 @@
 
     function highlightParentNodeWithAgent(idNode) {
       var nodeResult = findNodeById(idNode, $scope.data[0]);
-      if (nodeResult) {
-        if (nodeResult.idNode == $scope.data[0].idNode) {
+      if(nodeResult) {
+        if(nodeResult.idNode == $scope.data[0].idNode) {
           return;
         }
-        if (nodeResult.type.match('Q_')) {
+        if(nodeResult.type.match('Q_')) {
           //highlight all child
-          _.each(nodeResult.nodes, function (n) {
+          _.each(nodeResult.nodes, function(n) {
             highlightChildNodeWithAgent(n.idNode);
           });
         }
@@ -3345,11 +3345,11 @@
     }
 
     function highlightAgentSpecificNode(childNodes) {
-      for (var i = 0; i < childNodes.length; i++) {
+      for(var i = 0; i < childNodes.length; i++) {
         var node = childNodes[i];
-        if (!node.link) {
+        if(!node.link) {
           angular.element("#node-" + node.idNode).addClass("nodeAgentEnabledBase");
-          if (node.nodes) {
+          if(node.nodes) {
             highlightAgentSpecificNode(node.nodes);
           }
         }
@@ -3357,11 +3357,11 @@
     }
 
     function higlightNodesWithAgentAjsms(fragmentIdNode, childNodes) {
-      _.each(childNodes, function (item) {
-        if (item.link == fragmentIdNode) {
+      _.each(childNodes, function(item) {
+        if(item.link == fragmentIdNode) {
           angular.element("#node-" + item.idNode).addClass("nodeAgentEnabledLinked");
         }
-        if (item.nodes.length > 0) {
+        if(item.nodes.length > 0) {
           higlightNodesWithAgentAjsms(fragmentIdNode, item.nodes);
         }
       });
@@ -3369,17 +3369,17 @@
 
     function findNodeById(idNode, node) {
       var result = undefined;
-      if (node.idNode == idNode) {
+      if(node.idNode == idNode) {
         result = node;
       }
 
-      if (result) {
+      if(result) {
         return result;
       } else {
-        if (node.nodes) {
-          for (var i = 0; i < node.nodes.length; i++) {
+        if(node.nodes) {
+          for(var i = 0; i < node.nodes.length; i++) {
             result = findNodeById(idNode, node.nodes[i]);
-            if (result) {
+            if(result) {
               return result;
             }
           }
@@ -3388,10 +3388,10 @@
     }
 
     function fn(obj, key) {
-      if (_.has(obj, key)) // or just (key in obj)
+      if(_.has(obj, key)) // or just (key in obj)
         return [obj];
       // elegant:
-      return _.flatten(_.map(obj, function (v) {
+      return _.flatten(_.map(obj, function(v) {
         return v instanceof Array ? fn(v, key) : [];
       }), true);
 
@@ -3425,18 +3425,18 @@
     function printChildNode(node, pdf, count, endNode, name, lastChildNode,
                             rootChildNodes, rootIndex, deepChildNode, deepChildNodeIndex) {
       var loc = $("#node-" + node.idNode).get(0);
-      if (node.nodes.length > 0) {
+      if(node.nodes.length > 0) {
         var ln = getLastNode(node);
       }
       var lastChildNode = lastChildNode;
-      if (ln) {
+      if(ln) {
         lastChildNode = ln.idNode;
       }
-      if (processedPdfNode.indexOf(node.idNode) > -1 && node.parentId) {
+      if(processedPdfNode.indexOf(node.idNode) > -1 && node.parentId) {
         var parentNode = findNodeById(node.parentId, data[0]);
         var unprocessedFound = false;
-        for (var i = 0; i < parentNode.nodes.length; i++) {
-          if (processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1) {
+        for(var i = 0; i < parentNode.nodes.length; i++) {
+          if(processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1) {
             unprocessedFound = true;
             return printChildNode(parentNode.nodes[i], pdf,
               count, endNode, name, lastChildNode,
@@ -3445,14 +3445,14 @@
             break;
           }
         }
-        if (!unprocessedFound) {
+        if(!unprocessedFound) {
           return printChildNode(parentNode, pdf,
             count, endNode, name, lastChildNode,
             rootChildNodes, rootIndex,
             deepChildNode, deepChildNodeIndex)
         }
       }
-      html2pdf(loc, pdf, function (pdf) {
+      html2pdf(loc, pdf, function(pdf) {
         var elementId = 'node-' + node.idNode;
         processedPdfNode.push(node.idNode);
         console.log(processedPdfNode[processedPdfNode.length - 1]);
@@ -3464,30 +3464,30 @@
 //    		  if(count % 30 == 0){
 //    			  pdf.addPage();
 //    		  }
-        if (count % 35 == 0) {
-          _.each(processedPdfNode, function (idNode) {
+        if(count % 35 == 0) {
+          _.each(processedPdfNode, function(idNode) {
             $("#node-" + idNode).hide();
           });
           pdf.addPage();
         }
-        if (endNode == node.idNode) {
+        if(endNode == node.idNode) {
           pdf.save(name + '.pdf');
           return;
         }
-        if (node.idNode == data[0].idNode) {
-          if (node.nodes.length > 0) {
+        if(node.idNode == data[0].idNode) {
+          if(node.nodes.length > 0) {
             rootChildNodes = node.nodes;
             return printChildNode(node.nodes[0], pdf,
               count, endNode, name, lastChildNode,
               rootChildNodes, 0,
               deepChildNode, deepChildNodeIndex);
           }
-        } else if (node.idNode == lastChildNode) {
+        } else if(node.idNode == lastChildNode) {
           //get parent
           var parentNode = findNodeById(node.parentId, data[0]);
           var unprocessedFound = false;
-          for (var i = 0; i < parentNode.nodes.length; i++) {
-            if (processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1) {
+          for(var i = 0; i < parentNode.nodes.length; i++) {
+            if(processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1) {
               unprocessedFound = true;
               return printChildNode(parentNode.nodes[i], pdf,
                 count, endNode, name, lastChildNode,
@@ -3496,14 +3496,14 @@
               break;
             }
           }
-          if (!unprocessedFound) {
+          if(!unprocessedFound) {
             return printChildNode(parentNode, pdf,
               count, endNode, name, lastChildNode,
               rootChildNodes, rootIndex,
               deepChildNode, deepChildNodeIndex)
           }
 
-        } else if (node.nodes.length > 0) {
+        } else if(node.nodes.length > 0) {
           //check if node has child nodes
           var deepChildNode = node.nodes;
           var deepChildNodeIndex = 0;
@@ -3514,8 +3514,8 @@
         } else {
           var parentNode = findNodeById(node.parentId, data[0]);
           var unprocessedFound = false;
-          for (var i = 0; i < parentNode.nodes.length; i++) {
-            if (processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1) {
+          for(var i = 0; i < parentNode.nodes.length; i++) {
+            if(processedPdfNode.indexOf(parentNode.nodes[i].idNode) == -1) {
               unprocessedFound = true;
               return printChildNode(parentNode.nodes[i], pdf,
                 count, endNode, name, lastChildNode,
@@ -3524,7 +3524,7 @@
               break;
             }
           }
-          if (!unprocessedFound) {
+          if(!unprocessedFound) {
             return printChildNode(parentNode, pdf,
               count, endNode, name, lastChildNode,
               rootChildNodes, rootIndex,
@@ -3535,10 +3535,10 @@
     }
 
     function getLastNode(node) {
-      if (node.nodes) {
+      if(node.nodes) {
         //get last child node
         var lastNode = node.nodes[node.nodes.length - 1];
-        if (lastNode.nodes.length > 0) {
+        if(lastNode.nodes.length > 0) {
           return getLastNode(lastNode);
         } else {
           return lastNode;
@@ -3548,40 +3548,40 @@
       }
     }
 
-    $(window).scroll(function () {
-      if ($(this).scrollTop() > 50) {
+    $(window).scroll(function() {
+      if($(this).scrollTop() > 50) {
         $('#back-to-top').fadeIn();
       } else {
         $('#back-to-top').fadeOut();
       }
     });
     // scroll body to 0px on click
-    $scope.scrollToTop = function () {
+    $scope.scrollToTop = function() {
       $('body,html').animate({
         scrollTop: 0
       }, 800);
     };
 
-    var loadNodes = function () {
+    var loadNodes = function() {
       bsLoadingOverlayService.start();
-      for (var i = 1; i < totalIndexCount; i++) {
-        (function (i) {
-          $timeout(function () {
+      for(var i = 1; i < totalIndexCount; i++) {
+        (function(i) {
+          $timeout(function() {
             loadChildNodes(i);
           }, 0);
         })(i)
       }
-      if (totalIndexCount < 1) {
+      if(totalIndexCount < 1) {
         bsLoadingOverlayService.stop();
       }
     };
 
-    var loadChildNodes = function (i) {
-      $scope.safeApply(function () {
+    var loadChildNodes = function(i) {
+      $scope.safeApply(function() {
         self.node[0].nodes.push(self.data[0].nodes[i]);
         indexCount++;
         var childLength = getNumberOfChildNode(self.data[0].nodes[i], 0);
-        if (i >= self.data[0].nodes.length - 1) {
+        if(i >= self.data[0].nodes.length - 1) {
           bsLoadingOverlayService.stop();
         }
 
@@ -3590,7 +3590,7 @@
 
     function getNumberOfChildNode(n, count) {
       count = count + n.nodes.length;
-      _.each(n.nodes, function (x) {
+      _.each(n.nodes, function(x) {
         count = getNumberOfChildNode(x, count);
       });
       return count;

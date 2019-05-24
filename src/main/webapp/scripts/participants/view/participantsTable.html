@@ -1,80 +1,89 @@
 <div ng-cloak>
-	<div>
-		<div class="row">
-			<md-input-container class="col-md-2" style="margin-left: 20px;"> <label id="awesidlabel">Study ID</label>
-				<input id="awesid" type="text" class="form-control"
-					placeholder="{{awesIdPrefix}}______" required
-					ng-model="vm.tableParams.filter().reference"
-					ng-keyup="filterAndValidate($event,this)" />
-				<div id="awesidcounter" class="md-errors-spacer">
-					<div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
-				</div>
-			</md-input-container>
-			<div ng-if="$storage.langEnabled" class="col-md-4" style="display: inline-block;margin-top: 20px;">
-		<label>Language</label>
-		<!-- 	<select ng-change="vm.changeLanguage()" ng-model="selectLanguage" -->
-		<!-- 		ng-options="option.language for option in languages track by option.id"> -->
-		<!--    </select> -->
-		<ui-select ng-model="selectLanguage.selected" ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2" ng-disabled="disabled" style="min-width: 150px;">
-    	<ui-select-match><i class="glyphicon {{$select.selected.flag}}"></i> {{$select.selected.description}}</ui-select-match>
-    	<ui-select-choices repeat="lang in languages | propsFilter: {language: $select.search}">
-		<!--       <img ng-src="{{ lang.url }}" /> -->
-      	<i class="glyphicon {{lang.flag}}"></i>
-      	<div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
-   		 </ui-select-choices>
-  		</ui-select>
-		</div>
-			<div style="display: inline-block;margin-top: 18px;margin-right: -150px;" class="col-md-4">
-				<button class="btn btn-default" ng-click="vm.add(selectLanguage)">
-					<span>Start</span>
-				</button>
-			</div>
-		</div>
-		<div>Total Records:{{totalSize}}</div>
-		<table ng-table="vm.tableParams"
-			class="table table-bordered table-hover table-condensed editable-table"
-			show-filter="true" template-pagination="templatePagination.html">
-			
-			<tr ng-repeat="participant in $data">
-				<td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
-				<td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
-				<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
-				<td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">{{participant.statusDescription}}</td>
-				<td title="'Notes'" style="max-width: 200px;">
-					 <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
-          					<span class="glyphicon glyphicon-comment"></span>
-       				 </button>
-				</td>
-				<td title="'Resume'" >
-					<button ng-if="participant.statusDescription=='Running'"
-						class="btn btn-default btn-sm"
-						ng-click="addInterviewTabInterviewersEdit(participant)">
-						<span class="glyphicon glyphicon-play"></span>
-					</button>
-					<button ng-if="participant.statusDescription=='Partial'"
-						class="btn btn-default btn-sm"
-						ng-click="addInterviewTabInterviewersEdit(participant)">
-						<span class="glyphicon glyphicon-pause"></span>
-					</button>
-					<button ng-if="participant.statusDescription=='Completed'"
-						class="btn btn-default btn-sm"
-						ng-click="addInterviewTabInterviewersEdit(participant)">
-						<span class="glyphicon glyphicon-stop"></span>
-					</button>
-				</td>
-				<td title="'Del'" ng-if="vm.showDelColumn">				
-					<button class="btn btn-default" ng-click="vm.deletePrompt(participant)">
-						<span class="glyphicon glyphicon-trash"></span>
-					</button>
-				</td>
-			</tr>
-		</table>
-	</div>
-	<script type="text/ng-template" id="templatePagination.html">
+  <div>
+    <div class="row">
+      <md-input-container class="col-md-2" style="margin-left: 20px;"><label id="awesidlabel">Study ID</label>
+        <input class="form-control" id="awesid" ng-keyup="filterAndValidate($event,this)"
+               ng-model="vm.tableParams.filter().reference" placeholder="{{awesIdPrefix}}______"
+               required
+               type="text"/>
+        <div class="md-errors-spacer" id="awesidcounter">
+          <div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
+        </div>
+      </md-input-container>
+      <div class="col-md-4" ng-if="$storage.langEnabled" style="display: inline-block;margin-top: 20px;">
+        <label>Language</label>
+        <!-- 	<select ng-change="vm.changeLanguage()" ng-model="selectLanguage" -->
+        <!-- 		ng-options="option.language for option in languages track by option.id"> -->
+        <!--    </select> -->
+        <ui-select ng-change="vm.changeNodeLanguage(selectLanguage)" ng-disabled="disabled"
+                   ng-model="selectLanguage.selected"
+                   style="min-width: 150px;" theme="select2">
+          <ui-select-match><i class="glyphicon {{$select.selected.flag}}"></i> {{$select.selected.description}}
+          </ui-select-match>
+          <ui-select-choices repeat="lang in languages | propsFilter: {language: $select.search}">
+            <!--       <img ng-src="{{ lang.url }}" /> -->
+            <i class="glyphicon {{lang.flag}}"></i>
+            <div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+      <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
+        <button class="btn btn-default" ng-click="vm.add(selectLanguage)">
+          <span>Start</span>
+        </button>
+      </div>
+    </div>
+    <div>Total Records:{{totalSize}}</div>
+    <table class="table table-bordered table-hover table-condensed editable-table"
+           ng-table="vm.tableParams"
+           show-filter="true" template-pagination="templatePagination.html">
+
+      <tr ng-repeat="participant in $data">
+        <td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
+        <td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
+        <td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
+        <td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
+          {{participant.statusDescription}}
+        </td>
+        <td style="max-width: 200px;" title="'Notes'">
+          <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
+            <span class="glyphicon glyphicon-comment"></span>
+          </button>
+        </td>
+        <td title="'Resume'">
+          <button class="btn btn-default btn-sm"
+                  ng-click="addInterviewTabInterviewersEdit(participant)"
+                  ng-if="participant.statusDescription=='Running'">
+            <span class="glyphicon glyphicon-play"></span>
+          </button>
+          <button class="btn btn-default btn-sm"
+                  ng-click="addInterviewTabInterviewersEdit(participant)"
+                  ng-if="participant.statusDescription=='Partial'">
+            <span class="glyphicon glyphicon-pause"></span>
+          </button>
+          <button class="btn btn-default btn-sm"
+                  ng-click="addInterviewTabInterviewersEdit(participant)"
+                  ng-if="participant.statusDescription=='Completed'">
+            <span class="glyphicon glyphicon-stop"></span>
+          </button>
+        </td>
+        <td ng-if="vm.showDelColumn" title="'Del'">
+          <button class="btn btn-default" ng-click="vm.deletePrompt(participant)">
+            <span class="glyphicon glyphicon-trash"></span>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <script id="templatePagination.html" type="text/ng-template">
     <div>
-		<ul class="pagination ng-table-pagination pull-right">
-		<li ><span style="height: 33px;">&nbsp; Go To Page: <input type="text" ng-keyup="params.goTo($event); $event.stopPropagation();"  ng-model="params.goToPageNumber" style="width:30px;margin-top: -2px;"/></span></li>
-        <li ng-class="{'disabled': !page.active && !page.current, 'active': page.current}" ng-repeat="page in pages" ng-switch="page.type">
+      <ul class="pagination ng-table-pagination pull-right">
+        <li><span style="height: 33px;">&nbsp; Go To Page: <input type="text"
+                                                                  ng-keyup="params.goTo($event); $event.stopPropagation();"
+                                                                  ng-model="params.goToPageNumber"
+                                                                  style="width:30px;margin-top: -2px;"/></span></li>
+        <li ng-class="{'disabled': !page.active && !page.current, 'active': page.current}" ng-repeat="page in pages"
+            ng-switch="page.type">
           <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
           <a ng-switch-when="first" ng-click="params.page(page.number)" href="">
             <span ng-bind="page.number"></span>
@@ -87,6 +96,6 @@
           </a> <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a>
         </li>
       </ul>
-	</div>
-  	</script>
+    </div>
+  </script>
 </div>

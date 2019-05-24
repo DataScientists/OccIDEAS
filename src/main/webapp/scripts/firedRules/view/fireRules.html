@@ -1,230 +1,238 @@
 <ng-include src="'scripts/firedRules/partials/agentSlider.html'"></ng-include>
 <div ng-cloak>
-<div class="col-md-8"  >
-	<div id="assessmentWrapper"  class="assessmentWrapper" >
-	<div class="firedRulesScroller">
-		<div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">	     	
-	     	<div class="verticalagents">
-				<div class="agentcontainer" >
-					<span class="rotatedagenttext"></span>
-				</div>
-			</div>
-			<div style="height:{{data.height+10}}px">			
-			<div class="verticalrules">
-				<div class="rulescontainer">
-					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
-						Fired Rules
-					</div>
-				</div>
-			</div>			
-			</div>
-			<div class="verticalrules">
-				<div class="rulescontainer">
-					<div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
-						Auto 
-					</div>
-				</div>
-			</div>			
-			<div class="verticalrules">
-				<div class="rulescontainer">
-					<div class="assessmentDescription" prevent-right-click >
-						Manual 
-					</div>
-				</div>
-			</div>
-		</div>
-		<div ng-repeat="agent in agents" 
-			class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
-	     	
-	     	<div class="verticalagents">
-				<div class="agentcontainer" >
-					<span class="rotatedagenttext">{{agent.name}}</span>
-				</div>
-			</div>
-			
-			<div style="height:{{data.height+10}}px">
-			<div class="verticalrules">
-				<div class="rulescontainer">
-					<div class="agentACell" style="height:{{data.height}}px" 
-						id="{{agent.idAgent}}" context-menu="vm.showRulesMenu(this)" model="data">
-						<span class="cell-lable" ng-repeat="mrule in data.firedRules" >
+  <div class="col-md-8">
+    <div class="assessmentWrapper" id="assessmentWrapper">
+      <div class="firedRulesScroller">
+        <div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
+          <div class="verticalagents">
+            <div class="agentcontainer">
+              <span class="rotatedagenttext"></span>
+            </div>
+          </div>
+          <div style="height:{{data.height+10}}px">
+            <div class="verticalrules">
+              <div class="rulescontainer">
+                <div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
+                  Fired Rules
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="verticalrules">
+            <div class="rulescontainer">
+              <div class="assessmentDescription" context-menu="vm.showAssessmentsMenu(this)" model="data">
+                Auto
+              </div>
+            </div>
+          </div>
+          <div class="verticalrules">
+            <div class="rulescontainer">
+              <div class="assessmentDescription" prevent-right-click>
+                Manual
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pull-right"
+             ng-repeat="agent in agents" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
+
+          <div class="verticalagents">
+            <div class="agentcontainer">
+              <span class="rotatedagenttext">{{agent.name}}</span>
+            </div>
+          </div>
+
+          <div style="height:{{data.height+10}}px">
+            <div class="verticalrules">
+              <div class="rulescontainer">
+                <div class="agentACell" context-menu="vm.showRulesMenu(this)"
+                     id="{{agent.idAgent}}" model="data" style="height:{{data.height}}px">
+						<span class="cell-lable" ng-repeat="mrule in data.firedRules">
 							<div class="{{mrule.level}} {{mrule.type}} " ng-if="(mrule.agentId == agent.idAgent)"></div>
 						</span>
-					</div>
-				</div>
-			</div>
-			</div>
-			
-			<div class="verticalrules">
-				<div class="rulescontainer">
-					<div class="agentACell" id="{{agent.idAgent}}" prevent-right-click >
-						<span class="cell-lable" ng-repeat="mrule in data.autoAssessedRules" >
-							<div ng-class="mrule.level" class="assessment" ng-if="((!mrule.deleted)&&(mrule.agentId == agent.idAgent))"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="verticalrules">
+            <div class="rulescontainer">
+              <div class="agentACell" id="{{agent.idAgent}}" prevent-right-click>
+						<span class="cell-lable" ng-repeat="mrule in data.autoAssessedRules">
+							<div class="assessment" ng-class="mrule.level"
+                   ng-if="((!mrule.deleted)&&(mrule.agentId == agent.idAgent))"></div>
 						</span>
-					</div>
-				</div>
-			</div>
-			
-			<div class="verticalrules">
-				<div class="rulescontainer">
-					<div class="agentACell" id="{{agent.idAgent}}" context-menu="vm.showEditAssessmentMenu(this)" model="data">
-						<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules" >
-							<div ng-class="mrule.level" class="assessment" ng-if="((!mrule.deleted)&&(mrule.agentId == agent.idAgent))"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="verticalrules">
+            <div class="rulescontainer">
+              <div class="agentACell" context-menu="vm.showEditAssessmentMenu(this)" id="{{agent.idAgent}}"
+                   model="data">
+						<span class="cell-lable" ng-repeat="mrule in data.manualAssessedRules">
+							<div class="assessment" ng-class="mrule.level"
+                   ng-if="((!mrule.deleted)&&(mrule.agentId == agent.idAgent))"></div>
 						</span>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		
-	</div>
-	</div>
-	<div class="noiseAssessmentWrapper" ng-if="noiseRows.length>0">
-		<div>Shift Hours: {{shiftHours}}</div>
-		<div>If there is an asterisk(*) before and after the noise values this means that the value has been adjusted for a shift length longer than {{shiftHours}} hours</div>
-		<table class="table table-bordered ">
-		<thead>
-		<tr>
-			<td>Module Name</td>
-			<td>Node Number</td>
-			<td>Answer</td>
-			<td>dB</td>
-			<td>Hours</td>
-			<td>Partial Exposure</td>
-		</tr>
-		</thead> 
-		
-		<tr ng-repeat="noiseRow in noiseRows" class={{noiseRow.type}}>	
-			<td>{{noiseRow.moduleName}}</td>
-			<td ng-click="highlightNode(noiseRow.idNode,noiseRow)">{{noiseRow.nodeNumber}}</td>
-			<td>{{noiseRow.nodeText}}</td>
-			<td>{{noiseRow.dB}}</td>
-			<td>{{noiseRow.backgroundhours}}</td>
-			<td>{{noiseRow.partialExposure | number : 4}}</td>
-		</tr>
-		</table>
-		
-		<div>Total Partial Exposure: {{totalPartialExposure | number : 4}}</div>
-		<div>Auto Exposure Level: {{autoExposureLevel | number : 4}}</div>
-		<div>Peak Noise: {{peakNoise | number : 4}}</div>
-		
-	</div>
-	<div class="vibrationAssessmentWrapper" ng-if="vibrationRows.length>0">
-		
-		<table class="table table-bordered ">
-		<thead>
-		<tr>
-			<td>Module Name</td>
-			<td>Node Number</td>
-			<td>Answer</td>
-			<td>vibMag</td>
-			<td>Hours</td>
-			<td>Partial Exposure</td>
-		</tr>
-		</thead> 
-		
-		<tr ng-repeat="noiseRow in vibrationRows" class={{noiseRow.type}}>	
-			<td>{{noiseRow.moduleName}}</td>
-			<td ng-click="highlightNode(noiseRow.idNode,noiseRow)">{{noiseRow.nodeNumber}}</td>
-			<td>{{noiseRow.nodeText}}</td>
-			<td>{{noiseRow.vibMag}}</td>
-			<td>{{noiseRow.frequencyhours}}</td>
-			<td>{{noiseRow.partialExposure}}</td>
-			
-		</tr>
-		</table>
-		
-		<div>Daily Vibration: {{dailyVibration}}</div>
-		
-	</div>
-	<div id="interview-wrapper-{{interviewId}}">
-  		&nbsp;
-  	</div>
-  	<div ng-if="!linkedModule.nodes" role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
-		<button type="button" ng-click='expandAll()' class="btn btn-default">Show Questions</button>
-  	</div>
-  	<div  id="interview-question-list">
-  		<ng-include src="'scripts/assessments/partials/moduleTree.html'"></ng-include>
-  	</div>
-  
-</div>
-<div class="col-md-4">
-  <div class="panel panel-default">
-  <!-- Default panel contents -->
-  <div id="notesWrapper" class="panel-heading">Status and Notes</div> 
-  <div class="panel-body">
-    <div >
-  		<md-input-container style="margin-right: 10px;">
-        <label>Assessment Status:{{assessmentStatus}}</label>
-        <md-select ng-model="assessmentStatus" ng-change="onChangeSaveStatus()" >
-          <md-option ng-repeat="status in statuses" value="{{status}}" >{{status}}</md-option>
-        </md-select>
-      </md-input-container>
-      <md-input-container style="margin-right: 10px;">
-        <label>Participant Status:{{participantStatus}}</label>
-        <md-select ng-model="participantStatus" ng-change="onChangeSaveParticipantStatus()" >
-          <md-option ng-repeat="status in pstatuses" value="{{status}}" >{{status}}</md-option>
-        </md-select>
-      </md-input-container>
-  		<md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note </md-button>
-			<ol>
-				<li ng-if="note.type=='Interviewer'||note.type=='Assessor'" ng-repeat='note in interview.notes'>
-					<div class="pull-right">
-  						<span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="deleteNote(note,model,$event)"></span>
-					</div>
-					{{note.type}}:{{note.text}}
-				</li>
-			</ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
     </div>
-   </div>
-   </div>
-  <div class="panel panel-default">
-  <!-- Default panel contents -->
-  <div id="modulesWrapper" class="panel-heading">Modules</div> 
-  <div class="panel-body">
-    <div >
-    	<ul class="list-group">
-        <li class="list-group-item" ng-repeat="mod in vm.modulesInInterview">
-			<div>
-				<span class="badge">Module</span> {{mod.interviewModuleName}}
-			</div>					
-    	</li>
-  		</ul> 		
+    <div class="noiseAssessmentWrapper" ng-if="noiseRows.length>0">
+      <div>Shift Hours: {{shiftHours}}</div>
+      <div>If there is an asterisk(*) before and after the noise values this means that the value has been adjusted for
+        a shift length longer than {{shiftHours}} hours
+      </div>
+      <table class="table table-bordered ">
+        <thead>
+          <tr>
+            <td>Module Name</td>
+            <td>Node Number</td>
+            <td>Answer</td>
+            <td>dB</td>
+            <td>Hours</td>
+            <td>Partial Exposure</td>
+          </tr>
+        </thead>
+
+        <tr class={{noiseRow.type}} ng-repeat="noiseRow in noiseRows">
+          <td>{{noiseRow.moduleName}}</td>
+          <td ng-click="highlightNode(noiseRow.idNode,noiseRow)">{{noiseRow.nodeNumber}}</td>
+          <td>{{noiseRow.nodeText}}</td>
+          <td>{{noiseRow.dB}}</td>
+          <td>{{noiseRow.backgroundhours}}</td>
+          <td>{{noiseRow.partialExposure | number : 4}}</td>
+        </tr>
+      </table>
+
+      <div>Total Partial Exposure: {{totalPartialExposure | number : 4}}</div>
+      <div>Auto Exposure Level: {{autoExposureLevel | number : 4}}</div>
+      <div>Peak Noise: {{peakNoise | number : 4}}</div>
+
     </div>
-   </div>
-   </div>
-   
-   <div class="panel panel-default">
-  <!-- Default panel contents -->
-  <div class="panel-heading">AJSMs</div> 
-  <div class="panel-body">
-    <div >
-    	<ul class="list-group">
-        <li class="list-group-item" ng-repeat="mod in vm.fragmentsInInterview">
-			<div>
-				<span class="badge">Fragment</span>
-				
-				<a style="cursor: pointer;" href
-					ng-click="highlightFragment(mod)">{{mod.interviewFragmentName}}
-				</a>
-			</div>
-						
-    	</li>
-  		</ul>
+    <div class="vibrationAssessmentWrapper" ng-if="vibrationRows.length>0">
+
+      <table class="table table-bordered ">
+        <thead>
+          <tr>
+            <td>Module Name</td>
+            <td>Node Number</td>
+            <td>Answer</td>
+            <td>vibMag</td>
+            <td>Hours</td>
+            <td>Partial Exposure</td>
+          </tr>
+        </thead>
+
+        <tr class={{noiseRow.type}} ng-repeat="noiseRow in vibrationRows">
+          <td>{{noiseRow.moduleName}}</td>
+          <td ng-click="highlightNode(noiseRow.idNode,noiseRow)">{{noiseRow.nodeNumber}}</td>
+          <td>{{noiseRow.nodeText}}</td>
+          <td>{{noiseRow.vibMag}}</td>
+          <td>{{noiseRow.frequencyhours}}</td>
+          <td>{{noiseRow.partialExposure}}</td>
+
+        </tr>
+      </table>
+
+      <div>Daily Vibration: {{dailyVibration}}</div>
+
     </div>
-   </div>
-   </div>
-</div>
-<div class="row">
+    <div id="interview-wrapper-{{interviewId}}">
+      &nbsp;
+    </div>
+    <div aria-label="buttonGrp" ng-if="!linkedModule.nodes" role="group" style="padding:2px 2px 2px 2px;">
+      <button class="btn btn-default" ng-click='expandAll()' type="button">Show Questions</button>
+    </div>
+    <div id="interview-question-list">
+      <ng-include src="'scripts/assessments/partials/moduleTree.html'"></ng-include>
+    </div>
+
+  </div>
   <div class="col-md-4">
-  
-</div>
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading" id="notesWrapper">Status and Notes</div>
+      <div class="panel-body">
+        <div>
+          <md-input-container style="margin-right: 10px;">
+            <label>Assessment Status:{{assessmentStatus}}</label>
+            <md-select ng-change="onChangeSaveStatus()" ng-model="assessmentStatus">
+              <md-option ng-repeat="status in statuses" value="{{status}}">{{status}}</md-option>
+            </md-select>
+          </md-input-container>
+          <md-input-container style="margin-right: 10px;">
+            <label>Participant Status:{{participantStatus}}</label>
+            <md-select ng-change="onChangeSaveParticipantStatus()" ng-model="participantStatus">
+              <md-option ng-repeat="status in pstatuses" value="{{status}}">{{status}}</md-option>
+            </md-select>
+          </md-input-container>
+          <md-button class="md-primary md-raised interviewNotesButton" ng-click="showNotePrompt($event)"> Add Note
+          </md-button>
+          <ol>
+            <li ng-if="note.type=='Interviewer'||note.type=='Assessor'" ng-repeat='note in interview.notes'>
+              <div class="pull-right">
+                <span aria-hidden="true" class="glyphicon glyphicon-trash"
+                      ng-click="deleteNote(note,model,$event)"></span>
+              </div>
+              {{note.type}}:{{note.text}}
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading" id="modulesWrapper">Modules</div>
+      <div class="panel-body">
+        <div>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="mod in vm.modulesInInterview">
+              <div>
+                <span class="badge">Module</span> {{mod.interviewModuleName}}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">AJSMs</div>
+      <div class="panel-body">
+        <div>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="mod in vm.fragmentsInInterview">
+              <div>
+                <span class="badge">Fragment</span>
+
+                <a href ng-click="highlightFragment(mod)"
+                   style="cursor: pointer;">{{mod.interviewFragmentName}}
+                </a>
+              </div>
+
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-4">
+
+    </div>
+  </div>
+</div>
 </div>
 </div>
 <ng-include src="'scripts/assessments/partials/editAssessmentTemplate.html'"></ng-include>
 <ng-include src="'scripts/interviews/partials/intTemplate.html'"></ng-include>
 
-<a id="back-to-top" href="#" ng-click="scrollToTop();" class="btn btn-primary btn-lg back-to-top" role="button" ><span class="glyphicon glyphicon-chevron-up"></span></a>
+<a class="btn btn-primary btn-lg back-to-top" href="#" id="back-to-top" ng-click="scrollToTop();" role="button"><span
+  class="glyphicon glyphicon-chevron-up"></span></a>
 

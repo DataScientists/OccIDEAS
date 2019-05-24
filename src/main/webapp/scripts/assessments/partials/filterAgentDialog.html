@@ -1,43 +1,44 @@
 <md-dialog aria-label="Filter Module"
-	style="margin:0 0 0 0;padding:0 0 0 0;width:500px;" ng-cloak> <!-- <pre>{{data | json}}</pre> -->
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Filter Agent</h2>
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+           ng-cloak style="margin:0 0 0 0;padding:0 0 0 0;width:500px;"> <!-- <pre>{{data | json}}</pre> -->
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Filter Agent</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
         </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content>
-	<div class="md-dialog-content">
-		<div layout="column" ng-cloak class="md-inline-form">
-			<md-content>
-			<p>
-				<label>Filename:</label> 
-				<input type="text" ng-model="fileName" maxlength="20"/>
-			</p>
-			<table ng-table="vm.filterAgentTableParams"
-				class="table table-condensed table-bordered table-striped">
-				<tr ng-repeat="agent in $data track by $index">
-					<td width="30" style="text-align: left" header="'ng-table/headers/checkbox.html'">
-						<input type="checkbox" style="position:static;" ng-model="agentcheckboxes.items[agent.idAgent]" />
-					</td>
-					<td title="'Id'">{{agent.idAgent}}</td>
-					<td title="'Name'" filter="{name:'text'}">{{agent.name}}</td>
-					<td title="'Description'">{{agent.description}}</td>
-				</tr>
-			</table>
-			<script type="text/ng-template" id="ng-table/headers/checkbox.html">
-        		<input type="checkbox" style="position:static;" ng-model="agentcheckboxes.checked" id="select_all" name="filter-checkbox" value="" />
-    		</script>
-			</md-content>
-		</div>
-	</div>
-	</md-dialog-content>
-	<md-dialog-actions layout="row">
-       <span flex></span>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content>
+            <p>
+              <label>Filename:</label>
+              <input maxlength="20" ng-model="fileName" type="text"/>
+            </p>
+            <table class="table table-condensed table-bordered table-striped"
+                   ng-table="vm.filterAgentTableParams">
+              <tr ng-repeat="agent in $data track by $index">
+                <td header="'ng-table/headers/checkbox.html'" style="text-align: left" width="30">
+                  <input ng-model="agentcheckboxes.items[agent.idAgent]" style="position:static;" type="checkbox"/>
+                </td>
+                <td title="'Id'">{{agent.idAgent}}</td>
+                <td filter="{name:'text'}" title="'Name'">{{agent.name}}</td>
+                <td title="'Description'">{{agent.description}}</td>
+              </tr>
+            </table>
+            <script id="ng-table/headers/checkbox.html" type="text/ng-template">
+              <input type="checkbox" style="position:static;" ng-model="agentcheckboxes.checked" id="select_all"
+                     name="filter-checkbox" value=""/>
+            </script>
+          </md-content>
+        </div>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
       <md-button ng-click="exportInterviewRules(fileName)">
         Submit
       </md-button>
@@ -45,5 +46,5 @@
         Cancel
       </md-button>
     </md-dialog-actions>
-</form>
+  </form>
 </md-dialog>

@@ -1,3 +1,3 @@
-(function(){
-	angular.module('occIDEASApp.InterviewResults',[]);
+(function() {
+  angular.module('occIDEASApp.InterviewResults', []);
 })();

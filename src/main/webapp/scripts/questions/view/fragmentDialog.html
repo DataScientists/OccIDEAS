@@ -1,37 +1,37 @@
-<md-dialog aria-label="Fragment" style="margin:0 0 0 0;padding:0 0 0 0;"  ng-cloak>
-<!-- <pre>{{data | json}}</pre> -->
+<md-dialog aria-label="Fragment" ng-cloak style="margin:0 0 0 0;padding:0 0 0 0;">
+  <!-- <pre>{{data | json}}</pre> -->
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
         <h2>Fragment Information</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          <span aria-hidden="true" class="glyphicon glyphicon-remove"></span>
         </md-button>
       </div>
     </md-toolbar>
     <md-dialog-content>
       <div class="md-dialog-content">
-      		<div layout="column" ng-cloak class="md-inline-form">
-  <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
-    <div>
-      <md-input-container>
-        <label>Fragment Name</label>
-        <input type="text" data-ng-model="mydata.name"/>
-    <md-radio-group ng-model="mydata.group">
-      <md-radio-button value="F_ajsm" class="md-primary">AJSM</md-radio-button>
-      <md-radio-button value="F_template">Template </md-radio-button>
-      <md-radio-button value="F_frequency">Frequency</md-radio-button>
-    </md-radio-group>
-    </div>
-  </md-content>
-  </div>
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content layout-gt-sm="row" layout-padding md-theme="docs-dark">
+            <div>
+              <md-input-container>
+                <label>Fragment Name</label>
+                <input data-ng-model="mydata.name" type="text"/>
+                <md-radio-group ng-model="mydata.group">
+                  <md-radio-button class="md-primary" value="F_ajsm">AJSM</md-radio-button>
+                  <md-radio-button value="F_template">Template</md-radio-button>
+                  <md-radio-button value="F_frequency">Frequency</md-radio-button>
+                </md-radio-group>
+            </div>
+          </md-content>
+        </div>
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
       <span flex></span>
       <md-button ng-click="saveAsFragment(selectedNode,mydata)">
-       Save
+        Save
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">
         Cancel

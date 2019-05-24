@@ -1,3 +1,3 @@
-(function(){
-	angular.module('occIDEASApp.FiredRules',[]);
+(function() {
+  angular.module('occIDEASApp.FiredRules', []);
 })();

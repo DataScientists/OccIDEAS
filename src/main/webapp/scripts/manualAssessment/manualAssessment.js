@@ -1,3 +1,3 @@
-(function(){
-	angular.module('occIDEASApp.ManualAssessment',[]);
+(function() {
+  angular.module('occIDEASApp.ManualAssessment', []);
 })();

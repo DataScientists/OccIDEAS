@@ -1,102 +1,110 @@
 <div class="row " prog_tree>
-	<div class="col-sm-12">
-	<div class="panel panel-default">
- 	 <div class="panel-body">
-  	<div ui-tree="moduleTreeOptions" id="tree-root" >
-		<ol ui-tree-nodes ng-model="data">
-			<li ng-repeat="node in data" ui-tree-node
-				ng-include="'nodes_renderer.html'" id="moduleTreeBody"></li>
-		</ol>
-	</div>
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="tree-root" ui-tree="moduleTreeOptions">
+          <ol ng-model="data" ui-tree-nodes>
+            <li id="moduleTreeBody" ng-include="'nodes_renderer.html'"
+                ng-repeat="node in data" ui-tree-node></li>
+          </ol>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-	</div>
-</div>
-<script type="text/ng-template" id="nodes_renderer.html">
+<script id="nodes_renderer.html" type="text/ng-template">
   <div id="module-tree" class="angular-ui-tree" data-clone-enabled="false" ng-attr-data-nodrag="{{isReadOnly}}">
-     <div class="tree-node" id="{{node.anchorId}}">
-        <div data-nodrag class="pull-left {{node.type}}" ng-if="node.link != 0">
-          <span class="glyphicon glyphicon-list"></span>
-        </div>
-<!-- start content -->
-        <div data-nodrag style="height:auto !important" class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}} {{node.translated == 'No available translation' && node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')?'redBorder':'greenBorder'}}" ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"  scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
-	      <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
-	      <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-          <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
+    <div class="tree-node" id="{{node.anchorId}}">
+      <div data-nodrag class="pull-left {{node.type}}" ng-if="node.link != 0">
+        <span class="glyphicon glyphicon-list"></span>
+      </div>
+      <!-- start content -->
+      <div data-nodrag style="height:auto !important"
+           class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}} {{node.translated == 'No available translation' && node.link == 0 && node.type != 'P_freetext' && !node.type.match('frequency')?'redBorder':'greenBorder'}}"
+           ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"
+           scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
+        <span ng-if="node.deleted === 1" class="badge-deleted">deleted</span>
+        <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+        <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
 
-          <span class="treeNodeText" ng-if="!node.editEnabled"
-				event-focusq-id="editId_{{node.idNode}}" data-nodrag>
+        <span class="treeNodeText" ng-if="!node.editEnabled"
+              event-focusq-id="editId_{{node.idNode}}" data-nodrag>
 				{{node.name}} 
-<input type="button" class="btn btn-default btn-lg btn-save" value="Edit" 
-				ng-if="(node.nodeclass === 'M'||node.nodeclass === 'F') 
+<input type="button" class="btn btn-default btn-lg btn-save" value="Edit"
+       ng-if="(node.nodeclass === 'M'||node.nodeclass === 'F')
 				&& !vm.editTranslateNode" ng-click="vm.editTranslation()"
-				id="editTranslationId">
-   		<input type="button" class="btn btn-default btn-lg btn-save" 
-				value="Save" 
-				ng-if="(node.nodeclass === 'M'|| node.nodeclass === 'F') 
+       id="editTranslationId">
+   		<input type="button" class="btn btn-default btn-lg btn-save"
+             value="Save"
+             ng-if="(node.nodeclass === 'M'|| node.nodeclass === 'F')
 				&& vm.editTranslateNode" ng-click="saveAllLanguage()">	
 		<span style="font-size: 16px;" ng-if="node.nodeclass === 'M'|| node.nodeclass === 'F'" id="translatedSummary"><br/> Number of unique words translated {{currentLangCount}}/{{totalLangCount}}</span>
 <div class="editBox">
 		  <span class="treeNodeText" ng-if="!vm.editTranslateNode && 
 				node.type != 'P_freetext' && !node.type.match('frequency')
-				&& node.link == 0 && node.nodeclass != 'M' && node.nodeclass != 'F'" 
-				data-nodrag>
+				&& node.link == 0 && node.nodeclass != 'M' && node.nodeclass != 'F'"
+            data-nodrag>
 				<i>{{node.translated}}</i>
 		  </span>
 		  </div>
 		<div ng-if="node.nodeclass === 'M'||node.nodeclass === 'F'">
 			<span class="flag-icon {{flagUsed}} flag-icon-squared"
-				style="font-size: 70px;margin-bottom: 3px;margin-top: 3px;margin-left: 3px;"></span>
+            style="font-size: 70px;margin-bottom: 3px;margin-top: 3px;margin-left: 3px;"></span>
     		<span style="font-size: 50px;">{{flagDescription}}</span>
 		</div> 
 
           <div ng-if="vm.editTranslateNode && node.type != 'P_freetext' 
 					&& !node.type.match('frequency') 
-					&& node.link == 0 && node.nodeclass != 'M' && node.nodeclass != 'F'" 
-			  >
-      		<input type="text"  value="{{node.translated}}" 
-				class="form-control-edit form-control "
-				 ng-model="node.translated" ng-blur="translateSameNodeName(node)"
-             	data-nodrag	style="width:400px !important;"
-				>
+					&& node.link == 0 && node.nodeclass != 'M' && node.nodeclass != 'F'"
+          >
+      		<input type="text" value="{{node.translated}}"
+                 class="form-control-edit form-control "
+                 ng-model="node.translated" ng-blur="translateSameNodeName(node)"
+                 data-nodrag style="width:400px !important;"
+          >
      	  </div>
-		</div>
-		  </span>
-		   	
-			<div class="numberPosRight">
-			<div style="position:relative;">
-			<div class="agentheader expanded pull-right"
-			ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this,node)">
-				<div class="verticalagents">
-						<div class="agentcontainer" ng-repeat="agent in rulesObj ">
-								<span class="rotatedagenttext">{{agent.name}}</span>
-						</div>
-				</div>
-			</div>
-			<div class="pull-right" ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)" context-menu="showRulesMenu(this)" model="node"
-						style="height:40px;width: 27px;border-right: solid aliceblue 1px;position:relative;" ng-repeat="obj in rulesObj | orderBy:'':true">
-						<div class="verticalrules">
-							<div class="rulescontainer">
-								<div class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}" id="{{obj.idAgent}}">
-									<span class="cell-lable" ng-repeat="mrule in node.moduleRule" >
+      </div>
+      </span>
+
+      <div class="numberPosRight">
+        <div style="position:relative;">
+          <div class="agentheader expanded pull-right"
+               ng-if="((node.nodeclass === 'M')||(node.nodeclass === 'F')) && (rulesObj.length > 0)"
+               context-menu="showRulesMenu(this,node)">
+            <div class="verticalagents">
+              <div class="agentcontainer" ng-repeat="agent in rulesObj ">
+                <span class="rotatedagenttext">{{agent.name}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="pull-right" ng-if="((node.nodeclass === 'P')) && (rulesObj.length > 0)"
+               context-menu="showRulesMenu(this)" model="node"
+               style="height:40px;width: 27px;border-right: solid aliceblue 1px;position:relative;"
+               ng-repeat="obj in rulesObj | orderBy:'':true">
+            <div class="verticalrules">
+              <div class="rulescontainer">
+                <div class="agentACell {{activeRuleCell === node.idNode+obj.idAgent?'activeCell':''}}"
+                     id="{{obj.idAgent}}">
+									<span class="cell-lable" ng-repeat="mrule in node.moduleRule">
 										<div ng-class="mrule.rule.level" ng-if="(mrule.idAgent == obj.idAgent)"></div>
 									</span>
-								</div>
-							</div>
-						</div>
-			</div>
-			</div>
-				
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-		  <div class="form-group" ng-if="rulesObj.length < 1">
-    		<span class="badge">{{node.number}}</span>
-		  </div>
-		  </div>
-       </div> 
-<!-- end content -->
-     </div>
+
+        <div class="form-group" ng-if="rulesObj.length < 1">
+          <span class="badge">{{node.number}}</span>
+        </div>
+      </div>
+    </div>
+    <!-- end content -->
+  </div>
   </div>
   <div ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-    <div ng-repeat="node in node.nodes | orderBy:'sequence' " ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false"></div>
+    <div ng-repeat="node in node.nodes | orderBy:'sequence' " ui-tree-node ng-include="'nodes_renderer.html'"
+         class="angular-ui-tree-node" collapsed="false"></div>
   </div>
 </script>

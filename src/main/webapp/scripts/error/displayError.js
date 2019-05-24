@@ -1,9 +1,10 @@
-(function(){
-	
-	angular.module('occIDEASApp.DisplayError',['ui.router']).config(Config);
+(function() {
 
-    Config.$inject = ['$stateProvider'];
-    function Config($stateProvider){
-        
-    }
+  angular.module('occIDEASApp.DisplayError', ['ui.router']).config(Config);
+
+  Config.$inject = ['$stateProvider'];
+
+  function Config($stateProvider) {
+
+  }
 })();

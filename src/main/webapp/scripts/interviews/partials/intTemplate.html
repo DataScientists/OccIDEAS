@@ -1,41 +1,44 @@
 <script id="interview-template" type="text/x-custom-template">
-<div class="int-note activeRule fixedDialog" prevent-right-click >
-	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeIntDialog(this,$event)" aria-label="Left Align">
-		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-	</button>
-	<span ng-if="rule.deleted" class="badge-deleted" title="deleted">	&nbsp;</span>
-	<div class="title" id="rule-dialog-{{interviewId}}-{{rule.idRule}}">
-		<div class="{{rule.level}} {{rule.type}} "></div>
-		{{agentName}}
-	</div>
-	<ul class="list-group" style="margin: 0 0 0 0;">
-    			<li class="list-group-item nodeNumber" 
-					ng-repeat="node in rule.conditions" 
-					ng-click="highlightNode(node.idNode, node)" ng-mouseleave="nodePopover.close(node,rule.idRule)">
-					<span popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
-					popover-placement="left" popover-popup-delay="1000" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
-					uib-popover-template="nodePopover.templateUrl" style="font-size:1.5em;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-					<span style="margin-left:3px;">{{node.topModName}}&nbsp;{{node.number}}</span>
-				</li>
-  			</ul>
-			<ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
-    			<li class="list-group-item additionalField" 
-					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
-					>
-					<div>{{additionalFields.additionalfield.type}}</div>
-					<div class="pull-right">			
-						{{additionalFields.value}}
-					<div>
-				</li>
-  			</ul>
-			<ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
-    			<li class="list-group-item">
-					{{rule.level == 'probHigh'?'PROBABLE_HIGH'
-					:rule.level == 'probMedium'?'PROBABLE_MEDIUM'
-					:rule.level == 'probLow'?'PROBABLE_LOW'
-					:rule.level == 'probUnknown'?'PROBABLE_UNKNOWN'
-					:rule.level == 'possUnknown'?'POSSIBLE_UNKNOWN':'NO_EXPOSURE'}}
-				</li>
-  			</ul>
-</div>
+  <div class="int-note activeRule fixedDialog" prevent-right-click>
+    <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeIntDialog(this,$event)"
+            aria-label="Left Align">
+      <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+    </button>
+    <span ng-if="rule.deleted" class="badge-deleted" title="deleted">	&nbsp;</span>
+    <div class="title" id="rule-dialog-{{interviewId}}-{{rule.idRule}}">
+      <div class="{{rule.level}} {{rule.type}} "></div>
+      {{agentName}}
+    </div>
+    <ul class="list-group" style="margin: 0 0 0 0;">
+      <li class="list-group-item nodeNumber"
+          ng-repeat="node in rule.conditions"
+          ng-click="highlightNode(node.idNode, node)" ng-mouseleave="nodePopover.close(node,rule.idRule)">
+					<span popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen"
+                popover-placement="left" popover-popup-delay="1000" ng-mouseenter="nodePopover.open(node,rule.idRule)"
+                uib-popover-template="nodePopover.templateUrl" style="font-size:1.5em;"
+                class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        <span style="margin-left:3px;">{{node.topModName}}&nbsp;{{node.number}}</span>
+      </li>
+    </ul>
+    <ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group"
+        style="margin: 0 0 0 0;">
+      <li class="list-group-item additionalField"
+          ng-repeat="additionalFields in rule.ruleAdditionalfields"
+      >
+        <div>{{additionalFields.additionalfield.type}}</div>
+        <div class="pull-right">
+          {{additionalFields.value}}
+          <div>
+      </li>
+    </ul>
+    <ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
+      <li class="list-group-item">
+        {{rule.level == 'probHigh'?'PROBABLE_HIGH'
+        :rule.level == 'probMedium'?'PROBABLE_MEDIUM'
+        :rule.level == 'probLow'?'PROBABLE_LOW'
+        :rule.level == 'probUnknown'?'PROBABLE_UNKNOWN'
+        :rule.level == 'possUnknown'?'POSSIBLE_UNKNOWN':'NO_EXPOSURE'}}
+      </li>
+    </ul>
+  </div>
 </script>

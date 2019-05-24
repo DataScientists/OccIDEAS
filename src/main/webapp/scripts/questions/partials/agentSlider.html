@@ -1,36 +1,48 @@
-<div ng-if="$window.sliderVal.idNode.showAgentSlider" id="agentDropContainer" ng-class="leftNav" class="ui-widget">
-<div class="agent-contain">
-<div class="agentSticker" ng-click="toggleLeft()" style="cursor: pointer;">Agents</div> 
-<label for="agentDragDrop" class="fraglabel">Agents List: </label>
-<div id="agentDragDrop"><ul></ul>
-<div>
-	<div class="panel panel-default"">
-		<div class="panel-heading">
-    		<h4 class="panel-title">Agents List</h4>
-  		</div>
-  		<div class="panel-body">
-  		 <md-progress-circular ng-if="agentsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
-		<uib-accordion close-others="oneAtATime" ng-if="!agentsLoading" ng-repeat="agent in agentsData | orderBy:'-total' track by $index">
-     	 <uib-accordion-group>
-     	 	<uib-accordion-heading>
-     	 		<span ng-if="checkIfStudyAgent(agent.key)" title="This group has study agents" class="glyphicon glyphicon-tag" style="color: #c55d5d;font-size: 15px;margin-right: 5px;"></span>							
-     	 		{{agent.key}}
-     	 		<span class="badge pull-right">{{agent.total || 0}}</span>
-     	 	</uib-accordion-heading>
-     	 		<div>
-					<ul class="list-group">
-						<li class="list-group-item {{subNode.style}}" ng-repeat="subNode in agent.value | orderBy:'-total' track by $index " ng-click="toggleRulesObj(subNode)">
-							<span ng-if="subNode.total" title="This module is tagged, click view questions tagged with this agent" class="glyphicon glyphicon-tags filterAgent {{subNode.active?'activeNodeAgentEnabled':''}}" ng-click="toggleNodesWithAgent(subNode,$event)"></span>
-							<span ng-if="checkIfStudyAgent(subNode.idAgent)" title="This agent is configured as a study agent" class="glyphicon glyphicon-tag" style="color: #c55d5d;font-size: 15px;margin-right: 5px;"></span>
-							{{subNode.name}}
-							<span class="badge pull-right">{{subNode.total || 0}}</span></li>
-					</ul>
-				</div>
-     	 </uib-accordion-group>
-     	 </uib-accordion>
-     	 </div>
-	</div>
-</div>
-</div>
+<div class="ui-widget" id="agentDropContainer" ng-class="leftNav" ng-if="$window.sliderVal.idNode.showAgentSlider">
+  <div class="agent-contain">
+    <div class="agentSticker" ng-click="toggleLeft()" style="cursor: pointer;">Agents</div>
+    <label class="fraglabel" for="agentDragDrop">Agents List: </label>
+    <div id="agentDragDrop">
+      <ul></ul>
+      <div>
+        <div class="panel panel-default"
+        ">
+        <div class="panel-heading">
+          <h4 class="panel-title">Agents List</h4>
+        </div>
+        <div class="panel-body">
+          <md-progress-circular md-diameter="100%" md-mode="indeterminate" ng-if="agentsLoading"></md-progress-circular>
+          <uib-accordion close-others="oneAtATime" ng-if="!agentsLoading"
+                         ng-repeat="agent in agentsData | orderBy:'-total' track by $index">
+            <uib-accordion-group>
+              <uib-accordion-heading>
+                <span class="glyphicon glyphicon-tag" ng-if="checkIfStudyAgent(agent.key)"
+                      style="color: #c55d5d;font-size: 15px;margin-right: 5px;"
+                      title="This group has study agents"></span>
+                {{agent.key}}
+                <span class="badge pull-right">{{agent.total || 0}}</span>
+              </uib-accordion-heading>
+              <div>
+                <ul class="list-group">
+                  <li class="list-group-item {{subNode.style}}"
+                      ng-click="toggleRulesObj(subNode)"
+                      ng-repeat="subNode in agent.value | orderBy:'-total' track by $index ">
+                    <span class="glyphicon glyphicon-tags filterAgent {{subNode.active?'activeNodeAgentEnabled':''}}"
+                          ng-click="toggleNodesWithAgent(subNode,$event)"
+                          ng-if="subNode.total"
+                          title="This module is tagged, click view questions tagged with this agent"></span>
+                    <span class="glyphicon glyphicon-tag" ng-if="checkIfStudyAgent(subNode.idAgent)"
+                          style="color: #c55d5d;font-size: 15px;margin-right: 5px;"
+                          title="This agent is configured as a study agent"></span>
+                    {{subNode.name}}
+                    <span class="badge pull-right">{{subNode.total || 0}}</span></li>
+                </ul>
+              </div>
+            </uib-accordion-group>
+          </uib-accordion>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
