@@ -1,22 +1,21 @@
 package org.occideas.admin.dao;
 
-import java.util.List;
-
 import org.occideas.entity.Node;
 
-public interface IAdminDao
-{
+import java.util.List;
 
-    List<Node> getListOfOrphanNodes();
+public interface IAdminDao {
 
-    void deleteOrphanNodes();
+  List<Node> getListOfOrphanNodes();
 
-    void setDeletedFlagForListOfNodes(List<Node> listOfOrphanNodes);
+  void deleteOrphanNodes();
 
-    void setForeignKeyCheck(int flag);
+  void setDeletedFlagForListOfNodes(List<Node> listOfOrphanNodes);
 
-	void deleteAllInterviews();
+  void setForeignKeyCheck(int flag);
 
-	void deleteAllParticipants();
-    
+  void deleteAllInterviews();
+
+  void deleteAllParticipants();
+
 }

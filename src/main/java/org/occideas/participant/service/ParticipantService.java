@@ -1,32 +1,31 @@
 package org.occideas.participant.service;
 
-import java.util.List;
-
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.AssessmentIntMod;
-import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
 import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
 
+import java.util.List;
+
 public interface ParticipantService extends BaseService<ParticipantVO> {
 
-	List<ParticipantVO> findByIdForInterview(Long id);
+  List<ParticipantVO> findByIdForInterview(Long id);
 
-	 public List<ParticipantVO> listAllParticipantWithInt();
-	 
-	 public PageVO<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber,int size, GenericFilterVO filterVO);
-	 
-	 public PageVO<ParticipantIntMod> getPaginatedParticipantList(int pageNumber,int size, GenericFilterVO filterVO);
+  List<ParticipantVO> listAllParticipantWithInt();
 
-	Long getMaxParticipantId();
+  PageVO<ParticipantIntMod> getPaginatedParticipantWithModList(int pageNumber, int size, GenericFilterVO filterVO);
 
-	  public String getMaxReferenceNumber();
+  PageVO<ParticipantIntMod> getPaginatedParticipantList(int pageNumber, int size, GenericFilterVO filterVO);
 
-	void updateNewTransaction(ParticipantVO o);
+  Long getMaxParticipantId();
 
-	PageVO<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size, GenericFilterVO filterVO);
-	
-	public ParticipantVO getByReferenceNumber(String referenceNumber);
+  String getMaxReferenceNumber();
+
+  void updateNewTransaction(ParticipantVO o);
+
+  PageVO<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size, GenericFilterVO filterVO);
+
+  ParticipantVO getByReferenceNumber(String referenceNumber);
 }

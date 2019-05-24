@@ -9,17 +9,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class AuditDao implements IAuditDao{
+public class AuditDao implements IAuditDao {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+  @Autowired
+  private SessionFactory sessionFactory;
 
-	@Override
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public void save(AuditLog auditLog) {
-		final Session session = sessionFactory.getCurrentSession();
-		session.saveOrUpdate(auditLog);
-	}
-	
-	
+  @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void save(AuditLog auditLog) {
+    final Session session = sessionFactory.getCurrentSession();
+    session.saveOrUpdate(auditLog);
+  }
+
+
 }

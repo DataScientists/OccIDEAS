@@ -2,34 +2,33 @@ package org.occideas.exceptions;
 
 public class GenericException extends Throwable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String message;
-	private Throwable e;
-	
-	public GenericException(String message, Throwable e) {
-		this.message = message;
-		this.e = e;
-	}
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+  private String message;
+  private Throwable e;
 
-	public String getMessage() {
-		return message;
-	}
+  public GenericException(String message, Throwable e) {
+    this.message = message;
+    this.e = e;
+  }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+  public String getMessage() {
+    return message;
+  }
 
-	public Throwable getE() {
-		return e;
-	}
+  public void setMessage(String message) {
+    this.message = message;
+  }
 
-	public void setE(Throwable e) {
-		this.e = e;
-	}
-	
-	
+  public Throwable getE() {
+    return e;
+  }
+
+  public void setE(Throwable e) {
+    this.e = e;
+  }
+
 
 }

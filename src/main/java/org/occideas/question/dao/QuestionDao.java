@@ -1,7 +1,5 @@
 package org.occideas.question.dao;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -17,107 +15,108 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public class QuestionDao implements IQuestionDao {
 
-	@Autowired
-	private SessionFactory sessionFactory;
+  @Autowired
+  private SessionFactory sessionFactory;
 
-	@Autowired
-	private BaseDao baseDao;
+  @Autowired
+  private BaseDao baseDao;
+  private String getNodesWithAgentSQL = " select concat(r.idRule, ':',n.idNode, ':',a.idAgent)"
+    + " as primaryKey, r.idRule,n.idNode,a.idAgent from Node_Rule n,AgentInfo a, Rule r"
+    + " where n.idRule = r.idRule" + " and a.idAgent = r.agentId" + " and r.deleted = 0" + " and a.deleted = 0"
+    + " and a.idAgent = :param";
 
-	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void saveOrUpdate(Question question) {
-		sessionFactory.getCurrentSession().saveOrUpdate(question);
-	}
-	
-	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void saveOrUpdateIgnoreFK(Question question) {
-		sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
-		.executeUpdate();
-		sessionFactory.getCurrentSession().saveOrUpdate(question);
-	}
+  @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void saveOrUpdate(Question question) {
+    sessionFactory.getCurrentSession().saveOrUpdate(question);
+  }
 
-	public Question getQuestionByModuleIdAndNumber(String parentId, String number) {
-		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))
-				.add(Restrictions.eq("number", number)).add(Restrictions.eq("deleted", 0));
-		if (!crit.list().isEmpty()) {
-			return (Question) crit.list().get(0);
-		}
-		return null;
+  @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void saveOrUpdateIgnoreFK(Question question) {
+    sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
+      .executeUpdate();
+    sessionFactory.getCurrentSession().saveOrUpdate(question);
+  }
 
-	}
+  public Question getQuestionByModuleIdAndNumber(String parentId, String number) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))
+      .add(Restrictions.eq("number", number)).add(Restrictions.eq("deleted", 0));
+    if (!crit.list().isEmpty()) {
+      return (Question) crit.list().get(0);
+    }
+    return null;
 
-	public List<Question> getQuestionsByParentId(String parentId) {
-		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))
-				.add(Restrictions.eq("deleted", 0));
-		if (!crit.list().isEmpty()) {
-			return crit.list();
-		}
-		return null;
-	}
+  }
 
-	public List<Question> getAllMultipleQuestions() {
-		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("type", "Q_multiple"))
-				.add(Restrictions.eq("deleted", 0));
-		if (!crit.list().isEmpty()) {
-			return crit.list();
-		}
-		return null;
-	}
+  public List<Question> getQuestionsByParentId(String parentId) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))
+      .add(Restrictions.eq("deleted", 0));
+    if (!crit.list().isEmpty()) {
+      return crit.list();
+    }
+    return null;
+  }
 
-	public Module getModuleByParentId(Long idNode) {
-		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Module.class).add(Restrictions.eq("idNode", idNode))
-				.add(Restrictions.eq("deleted", 0));
-		if (!crit.list().isEmpty()) {
-			return (Module) crit.list().get(0);
-		}
-		return null;
-	}
+  public List<Question> getAllMultipleQuestions() {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("type", "Q_multiple"))
+      .add(Restrictions.eq("deleted", 0));
+    if (!crit.list().isEmpty()) {
+      return crit.list();
+    }
+    return null;
+  }
 
-	public Question findMultipleQuestion(long questionId) {
-		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("type", "Q_multiple"))
-				.add(Restrictions.eq("idNode", questionId)).add(Restrictions.eq("deleted", 0));
-		List list = crit.list();
-		if (!list.isEmpty()) {
-			return (Question) list.get(0);
-		}
-		return null;
-	}
+  public Module getModuleByParentId(Long idNode) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Module.class).add(Restrictions.eq("idNode", idNode))
+      .add(Restrictions.eq("deleted", 0));
+    if (!crit.list().isEmpty()) {
+      return (Module) crit.list().get(0);
+    }
+    return null;
+  }
 
-	public Node getTopModuleByTopNodeId(long topNodeId) {
-		final Session session = sessionFactory.getCurrentSession();
-		final Criteria crit = session.createCriteria(Node.class).add(Restrictions.eq("idNode", topNodeId));
-		List list = crit.list();
-		if (!list.isEmpty()) {
-			return (Node) list.get(0);
-		}
-		return null;
-	}
+  public Question findMultipleQuestion(long questionId) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("type", "Q_multiple"))
+      .add(Restrictions.eq("idNode", questionId)).add(Restrictions.eq("deleted", 0));
+    List list = crit.list();
+    if (!list.isEmpty()) {
+      return (Question) list.get(0);
+    }
+    return null;
+  }
 
-	private String getNodesWithAgentSQL = " select concat(r.idRule, ':',n.idNode, ':',a.idAgent)"
-			+ " as primaryKey, r.idRule,n.idNode,a.idAgent from Node_Rule n,AgentInfo a, Rule r"
-			+ " where n.idRule = r.idRule" + " and a.idAgent = r.agentId" + " and r.deleted = 0" + " and a.deleted = 0"
-			+ " and a.idAgent = :param";
+  public Node getTopModuleByTopNodeId(long topNodeId) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Node.class).add(Restrictions.eq("idNode", topNodeId));
+    List list = crit.list();
+    if (!list.isEmpty()) {
+      return (Node) list.get(0);
+    }
+    return null;
+  }
 
-	public List<NodesAgent> getNodesWithAgent(long agentId) {
-		final Session session = sessionFactory.getCurrentSession();
-		SQLQuery sqlQuery = session.createSQLQuery(getNodesWithAgentSQL).addEntity(NodesAgent.class);
-		sqlQuery.setParameter("param", agentId);
-		List<NodesAgent> list = sqlQuery.list();
-		return list;
-	}
+  public List<NodesAgent> getNodesWithAgent(long agentId) {
+    final Session session = sessionFactory.getCurrentSession();
+    SQLQuery sqlQuery = session.createSQLQuery(getNodesWithAgentSQL).addEntity(NodesAgent.class);
+    sqlQuery.setParameter("param", agentId);
+    List<NodesAgent> list = sqlQuery.list();
+    return list;
+  }
 
-	@Override
-	public Question get(Class<Question> type, Long id) {
-		return baseDao.get(type, id);
-	}
+  @Override
+  public Question get(Class<Question> type, Long id) {
+    return baseDao.get(type, id);
+  }
 
 }

@@ -1,59 +1,50 @@
 package org.occideas.vo;
 
-public class LanguageFragmentBreakdownVO
-{
+public class LanguageFragmentBreakdownVO {
 
-    private long idNode;
-    private String name;
-    private Integer current;
-    private Integer total;
-
-
-    public long getIdNode()
-    {
-        return idNode;
-    }
+  private long idNode;
+  private String name;
+  private Integer current;
+  private Integer total;
 
 
-    public void setIdNode(long idNode)
-    {
-        this.idNode = idNode;
-    }
+  public long getIdNode() {
+    return idNode;
+  }
 
 
-    public String getName()
-    {
-        return name;
-    }
+  public void setIdNode(long idNode) {
+    this.idNode = idNode;
+  }
 
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
 
-    public Integer getCurrent()
-    {
-        return current;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
 
-    public void setCurrent(Integer current)
-    {
-        this.current = current;
-    }
+  public Integer getCurrent() {
+    return current;
+  }
 
 
-    public Integer getTotal()
-    {
-        return total;
-    }
+  public void setCurrent(Integer current) {
+    this.current = current;
+  }
 
 
-    public void setTotal(Integer total)
-    {
-        this.total = total;
-    }
+  public Integer getTotal() {
+    return total;
+  }
+
+
+  public void setTotal(Integer total) {
+    this.total = total;
+  }
 
 }

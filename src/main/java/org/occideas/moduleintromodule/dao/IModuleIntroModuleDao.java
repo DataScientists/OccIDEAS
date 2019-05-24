@@ -1,11 +1,11 @@
 package org.occideas.moduleintromodule.dao;
 
-import java.util.List;
-
 import org.occideas.entity.ModuleIntroModule;
+
+import java.util.List;
 
 public interface IModuleIntroModuleDao {
 
-	List<ModuleIntroModule> getModuleIntroModuleByModuleId(long moduleId);
-	
+  List<ModuleIntroModule> getModuleIntroModuleByModuleId(long moduleId);
+
 }

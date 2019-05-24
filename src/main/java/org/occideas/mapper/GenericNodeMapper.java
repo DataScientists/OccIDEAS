@@ -5,6 +5,6 @@ import org.occideas.vo.GenericNodeVO;
 
 public interface GenericNodeMapper {
 
-	GenericNodeVO convertToGenNodeVO(GenericNode entity);
-	
+  GenericNodeVO convertToGenNodeVO(GenericNode entity);
+
 }

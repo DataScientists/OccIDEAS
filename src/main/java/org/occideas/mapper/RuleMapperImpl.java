@@ -1,8 +1,5 @@
 package org.occideas.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.PossibleAnswer;
@@ -16,203 +13,206 @@ import org.occideas.vo.RuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class RuleMapperImpl implements RuleMapper {
-	private Logger log = LogManager.getLogger(this.getClass());
+  private Logger log = LogManager.getLogger(this.getClass());
 
-	@Autowired
-	private PossibleAnswerMapper paMapper;
-	@Autowired
-	private AgentMapper agentMapper;
+  @Autowired
+  private PossibleAnswerMapper paMapper;
+  @Autowired
+  private AgentMapper agentMapper;
 
-	@Autowired
-	private RuleAdditionalFieldMapper additionalFieldMapper;
+  @Autowired
+  private RuleAdditionalFieldMapper additionalFieldMapper;
 
-	@Override
-	public RuleVO convertToRuleVO(Rule ruleEntity) {
-		if (ruleEntity == null) {
-			return null;
-		}
+  public static String getDescriptionByValue(int value) {
+    for (RuleLevelEnum x : RuleLevelEnum.values()) {
+      if (x.getValue() == value) {
+        return x.getDescription();
+      }
+    }
+    return "";
+  }
 
-		RuleVO ruleVO = new RuleVO();
+  @Override
+  public RuleVO convertToRuleVO(Rule ruleEntity) {
+    if (ruleEntity == null) {
+      return null;
+    }
 
-		ruleVO.setIdRule(ruleEntity.getIdRule());
-		ruleVO.setLastUpdated(ruleEntity.getLastUpdated());
-		ruleVO.setDeleted(ruleEntity.getDeleted());
-		ruleVO.setAgentId(ruleEntity.getAgentId());
-		ruleVO.setAgent(agentMapper.convertToAgentVO(ruleEntity.getAgent(), false));
-		ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
-		ruleVO.setLevel(getDescriptionByValue(ruleEntity.getLevel()));
-		ruleVO.setLevelValue(ruleEntity.getLevel());
-		ruleVO.setType(ruleEntity.getType());
-		List<PossibleAnswer> conditions = ruleEntity.getConditions();
-		if (!CommonUtil.isListEmpty(conditions)) {
-			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOList(conditions, false));
-		}
-		List<RuleAdditionalField> additionalFields = ruleEntity.getRuleAdditionalfields();
-		if (!CommonUtil.isListEmpty(additionalFields)) {
-			ruleVO.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldVOList(additionalFields));
-		}
-		return ruleVO;
-	}
+    RuleVO ruleVO = new RuleVO();
 
-	@Override
-	public List<RuleVO> convertToRuleVOList(List<Rule> ruleEntity) {
-		if (ruleEntity == null) {
-			return null;
-		}
+    ruleVO.setIdRule(ruleEntity.getIdRule());
+    ruleVO.setLastUpdated(ruleEntity.getLastUpdated());
+    ruleVO.setDeleted(ruleEntity.getDeleted());
+    ruleVO.setAgentId(ruleEntity.getAgentId());
+    ruleVO.setAgent(agentMapper.convertToAgentVO(ruleEntity.getAgent(), false));
+    ruleVO.setLegacyRuleId(ruleEntity.getLegacyRuleId());
+    ruleVO.setLevel(getDescriptionByValue(ruleEntity.getLevel()));
+    ruleVO.setLevelValue(ruleEntity.getLevel());
+    ruleVO.setType(ruleEntity.getType());
+    List<PossibleAnswer> conditions = ruleEntity.getConditions();
+    if (!CommonUtil.isListEmpty(conditions)) {
+      ruleVO.setConditions(paMapper.convertToPossibleAnswerVOList(conditions, false));
+    }
+    List<RuleAdditionalField> additionalFields = ruleEntity.getRuleAdditionalfields();
+    if (!CommonUtil.isListEmpty(additionalFields)) {
+      ruleVO.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldVOList(additionalFields));
+    }
+    return ruleVO;
+  }
 
-		List<RuleVO> list = new ArrayList<RuleVO>();
-		for (Rule rule : ruleEntity) {
-			list.add(convertToRuleVO(rule));
-		}
+  @Override
+  public List<RuleVO> convertToRuleVOList(List<Rule> ruleEntity) {
+    if (ruleEntity == null) {
+      return null;
+    }
 
-		return list;
-	}
+    List<RuleVO> list = new ArrayList<RuleVO>();
+    for (Rule rule : ruleEntity) {
+      list.add(convertToRuleVO(rule));
+    }
 
-	@Override
-	public Rule convertToRule(RuleVO ruleVO) {
-		if (ruleVO == null) {
-			return null;
-		}
-		Rule rule = new Rule();
-		rule.setIdRule(ruleVO.getIdRule());
-		rule.setDeleted(ruleVO.getDeleted());
-		rule.setAgentId(ruleVO.getAgentId());
-		rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(), false));
-		rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
-		int level = getValueByDescription(ruleVO.getLevel());
-		if (level == -1) {
-			log.warn("level returned -1:" + ruleVO.getLevel());
-		}
-		rule.setLevel(level);
-		rule.setType(ruleVO.getType());
-		List<PossibleAnswerVO> conditions = ruleVO.getConditions();
-		if (!CommonUtil.isListEmpty(conditions)) {
-			rule.setConditions(paMapper.convertToPossibleAnswerList(conditions));
-		}
-		List<RuleAdditionalFieldVO> ruleAdditionalfields = ruleVO.getRuleAdditionalfields();
-		if (!CommonUtil.isListEmpty(ruleAdditionalfields)) {
-			rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(ruleAdditionalfields));
-		}
-		return rule;
-	}
+    return list;
+  }
 
-	@Override
-	public Rule convertToRuleExcPa(RuleVO ruleVO) {
-		if (ruleVO == null) {
-			return null;
-		}
-		Rule rule = new Rule();
-		rule.setIdRule(ruleVO.getIdRule());
-		rule.setDeleted(ruleVO.getDeleted());
-		rule.setAgentId(ruleVO.getAgentId());
-		rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(), false));
-		rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
-		int level = getValueByDescription(ruleVO.getLevel());
-		if (level == -1) {
-			log.warn("level returned -1:" + ruleVO.getLevel());
-		}
-		rule.setLevel(level);
-		rule.setType(ruleVO.getType());
-		List<PossibleAnswerVO> conditions = ruleVO.getConditions();
-		if (!CommonUtil.isListEmpty(conditions)) {
-			rule.setConditions(paMapper.convertToPossibleAnswerExModRuleList(conditions));
-		}
-		List<RuleAdditionalFieldVO> additionalFields = ruleVO.getRuleAdditionalfields();
-		if (!CommonUtil.isListEmpty(additionalFields)) {
-			rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(additionalFields));
-		}
+  @Override
+  public Rule convertToRule(RuleVO ruleVO) {
+    if (ruleVO == null) {
+      return null;
+    }
+    Rule rule = new Rule();
+    rule.setIdRule(ruleVO.getIdRule());
+    rule.setDeleted(ruleVO.getDeleted());
+    rule.setAgentId(ruleVO.getAgentId());
+    rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(), false));
+    rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
+    int level = getValueByDescription(ruleVO.getLevel());
+    if (level == -1) {
+      log.warn("level returned -1:" + ruleVO.getLevel());
+    }
+    rule.setLevel(level);
+    rule.setType(ruleVO.getType());
+    List<PossibleAnswerVO> conditions = ruleVO.getConditions();
+    if (!CommonUtil.isListEmpty(conditions)) {
+      rule.setConditions(paMapper.convertToPossibleAnswerList(conditions));
+    }
+    List<RuleAdditionalFieldVO> ruleAdditionalfields = ruleVO.getRuleAdditionalfields();
+    if (!CommonUtil.isListEmpty(ruleAdditionalfields)) {
+      rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(ruleAdditionalfields));
+    }
+    return rule;
+  }
 
-		return rule;
-	}
+  @Override
+  public Rule convertToRuleExcPa(RuleVO ruleVO) {
+    if (ruleVO == null) {
+      return null;
+    }
+    Rule rule = new Rule();
+    rule.setIdRule(ruleVO.getIdRule());
+    rule.setDeleted(ruleVO.getDeleted());
+    rule.setAgentId(ruleVO.getAgentId());
+    rule.setAgent(agentMapper.convertToAgent(ruleVO.getAgent(), false));
+    rule.setLegacyRuleId(ruleVO.getLegacyRuleId());
+    int level = getValueByDescription(ruleVO.getLevel());
+    if (level == -1) {
+      log.warn("level returned -1:" + ruleVO.getLevel());
+    }
+    rule.setLevel(level);
+    rule.setType(ruleVO.getType());
+    List<PossibleAnswerVO> conditions = ruleVO.getConditions();
+    if (!CommonUtil.isListEmpty(conditions)) {
+      rule.setConditions(paMapper.convertToPossibleAnswerExModRuleList(conditions));
+    }
+    List<RuleAdditionalFieldVO> additionalFields = ruleVO.getRuleAdditionalfields();
+    if (!CommonUtil.isListEmpty(additionalFields)) {
+      rule.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldList(additionalFields));
+    }
 
-	@Override
-	public List<Rule> convertToRuleList(List<RuleVO> ruleVO) {
-		if (ruleVO == null) {
-			return null;
-		}
+    return rule;
+  }
 
-		List<Rule> list = new ArrayList<Rule>();
-		for (RuleVO ruleVO_ : ruleVO) {
-			list.add(convertToRule(ruleVO_));
-		}
+  @Override
+  public List<Rule> convertToRuleList(List<RuleVO> ruleVO) {
+    if (ruleVO == null) {
+      return null;
+    }
 
-		return list;
-	}
+    List<Rule> list = new ArrayList<Rule>();
+    for (RuleVO ruleVO_ : ruleVO) {
+      list.add(convertToRule(ruleVO_));
+    }
 
-	@Override
-	public RuleVO convertToRuleVOExcPa(Rule rule) {
-		if (rule == null) {
-			return null;
-		}
+    return list;
+  }
 
-		RuleVO ruleVO = new RuleVO();
+  @Override
+  public RuleVO convertToRuleVOExcPa(Rule rule) {
+    if (rule == null) {
+      return null;
+    }
 
-		ruleVO.setIdRule(rule.getIdRule());
-		ruleVO.setLastUpdated(rule.getLastUpdated());
-		ruleVO.setDeleted(rule.getDeleted());
-		ruleVO.setAgentId(rule.getAgentId());
-		ruleVO.setAgent(agentMapper.convertToAgentVO(rule.getAgent(), false));
-		ruleVO.setLegacyRuleId(rule.getLegacyRuleId());
-		ruleVO.setLevel(getDescriptionByValue(rule.getLevel()));
-		ruleVO.setLevelValue(rule.getLevel());
-		ruleVO.setType(rule.getType());
-		List<PossibleAnswer> conditions = rule.getConditions();
-		if (!CommonUtil.isListEmpty(conditions)) {
-			ruleVO.setConditions(paMapper.convertToPossibleAnswerVOExModRuleList(conditions));
-		}
-		List<RuleAdditionalField> additionalFields = rule.getRuleAdditionalfields();
-		if (!CommonUtil.isListEmpty(additionalFields)) {
-			ruleVO.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldVOList(additionalFields));
-		}
-		return ruleVO;
-	}
+    RuleVO ruleVO = new RuleVO();
 
-	@Override
-	public List<RuleVO> convertToRuleVOExcPaList(List<Rule> ruleEntity) {
-		if (ruleEntity == null) {
-			return null;
-		}
+    ruleVO.setIdRule(rule.getIdRule());
+    ruleVO.setLastUpdated(rule.getLastUpdated());
+    ruleVO.setDeleted(rule.getDeleted());
+    ruleVO.setAgentId(rule.getAgentId());
+    ruleVO.setAgent(agentMapper.convertToAgentVO(rule.getAgent(), false));
+    ruleVO.setLegacyRuleId(rule.getLegacyRuleId());
+    ruleVO.setLevel(getDescriptionByValue(rule.getLevel()));
+    ruleVO.setLevelValue(rule.getLevel());
+    ruleVO.setType(rule.getType());
+    List<PossibleAnswer> conditions = rule.getConditions();
+    if (!CommonUtil.isListEmpty(conditions)) {
+      ruleVO.setConditions(paMapper.convertToPossibleAnswerVOExModRuleList(conditions));
+    }
+    List<RuleAdditionalField> additionalFields = rule.getRuleAdditionalfields();
+    if (!CommonUtil.isListEmpty(additionalFields)) {
+      ruleVO.setRuleAdditionalfields(additionalFieldMapper.convertToRuleAdditionalFieldVOList(additionalFields));
+    }
+    return ruleVO;
+  }
 
-		List<RuleVO> list = new ArrayList<RuleVO>();
-		for (Rule rule : ruleEntity) {
-			list.add(convertToRuleVOExcPa(rule));
-		}
+  @Override
+  public List<RuleVO> convertToRuleVOExcPaList(List<Rule> ruleEntity) {
+    if (ruleEntity == null) {
+      return null;
+    }
 
-		return list;
-	}
+    List<RuleVO> list = new ArrayList<RuleVO>();
+    for (Rule rule : ruleEntity) {
+      list.add(convertToRuleVOExcPa(rule));
+    }
 
-	public static String getDescriptionByValue(int value) {
-		for (RuleLevelEnum x : RuleLevelEnum.values()) {
-			if (x.getValue() == value) {
-				return x.getDescription();
-			}
-		}
-		return "";
-	}
+    return list;
+  }
 
-	private int getValueByDescription(String description) {
-		for (RuleLevelEnum x : RuleLevelEnum.values()) {
-			if (x.getDescription().equals(description)) {
-				return x.getValue();
-			}
-		}
-		return -1;
-	}
+  private int getValueByDescription(String description) {
+    for (RuleLevelEnum x : RuleLevelEnum.values()) {
+      if (x.getDescription().equals(description)) {
+        return x.getValue();
+      }
+    }
+    return -1;
+  }
 
-	@Override
-	public List<Rule> convertToRuleExcPaList(List<RuleVO> ruleVO) {
-		if (ruleVO == null) {
-			return null;
-		}
+  @Override
+  public List<Rule> convertToRuleExcPaList(List<RuleVO> ruleVO) {
+    if (ruleVO == null) {
+      return null;
+    }
 
-		List<Rule> list = new ArrayList<Rule>();
-		for (RuleVO ruleVO_ : ruleVO) {
-			list.add(convertToRuleExcPa(ruleVO_));
-		}
+    List<Rule> list = new ArrayList<Rule>();
+    for (RuleVO ruleVO_ : ruleVO) {
+      list.add(convertToRuleExcPa(ruleVO_));
+    }
 
-		return list;
-	}
+    return list;
+  }
 
 }

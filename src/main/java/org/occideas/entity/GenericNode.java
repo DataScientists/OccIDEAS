@@ -1,176 +1,161 @@
 package org.occideas.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
-@Table(name="Node")
+@Table(name = "Node")
 public class GenericNode implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1901018915031736717L;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1901018915031736717L;
+  @Id
+  protected long idNode;
+  @Column(length = 2048)
+  protected String name;
+  @Column(length = 2048)
+  protected String description;
+  protected String type;
+  protected int sequence;
+  protected String number;
+  @Column(name = "parent_idNode")
+  protected String parentId;
+  protected long link;
+  protected long topNodeId;
+  protected Date lastUpdated;
+  @OneToMany(mappedBy = "node", fetch = FetchType.LAZY)
+  @JsonInclude(Include.NON_EMPTY)
+  protected List<Note> notes;
+  protected long originalId;
+  protected Integer deleted = 0;
+  protected String nodeclass;
+  public GenericNode() {
+    super();
+  }
 
-	public GenericNode() {
-		super();
-	}
+  public long getIdNode() {
+    return idNode;
+  }
 
-	@Id
-	protected long idNode;
+  public void setIdNode(long idNode) {
+    this.idNode = idNode;
+  }
 
-	@Column(length = 2048)
-	protected String name;
+  public String getName() {
+    return name;
+  }
 
-	@Column(length = 2048)
-	protected String description;
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	protected String type;
-	protected int sequence;
-	protected String number;
+  public String getDescription() {
+    return description;
+  }
 
-	@Column(name = "parent_idNode")
-	protected String parentId;
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	protected long link;
-	protected long topNodeId;
-	protected Date lastUpdated;
+  public String getType() {
+    return type;
+  }
 
-	@OneToMany(mappedBy = "node", fetch = FetchType.LAZY)
-	@JsonInclude(Include.NON_EMPTY)
-	protected List<Note> notes;
-	protected long originalId;
-	protected Integer deleted = 0;
-	protected String nodeclass;
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public long getIdNode() {
-		return idNode;
-	}
+  public int getSequence() {
+    return sequence;
+  }
 
-	public void setIdNode(long idNode) {
-		this.idNode = idNode;
-	}
+  public void setSequence(int sequence) {
+    this.sequence = sequence;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getNumber() {
+    return number;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setNumber(String number) {
+    this.number = number;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getParentId() {
+    return parentId;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setParentId(String parentId) {
+    this.parentId = parentId;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public long getLink() {
+    return link;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setLink(long link) {
+    this.link = link;
+  }
 
-	public int getSequence() {
-		return sequence;
-	}
+  public long getTopNodeId() {
+    return topNodeId;
+  }
 
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
+  public void setTopNodeId(long topNodeId) {
+    this.topNodeId = topNodeId;
+  }
 
-	public String getNumber() {
-		return number;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public String getParentId() {
-		return parentId;
-	}
+  public List<Note> getNotes() {
+    return notes;
+  }
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
+  public void setNotes(List<Note> notes) {
+    this.notes = notes;
+  }
 
-	public long getLink() {
-		return link;
-	}
+  public long getOriginalId() {
+    return originalId;
+  }
 
-	public void setLink(long link) {
-		this.link = link;
-	}
+  public void setOriginalId(long originalId) {
+    this.originalId = originalId;
+  }
 
-	public long getTopNodeId() {
-		return topNodeId;
-	}
+  public Integer getDeleted() {
+    return deleted;
+  }
 
-	public void setTopNodeId(long topNodeId) {
-		this.topNodeId = topNodeId;
-	}
+  public void setDeleted(Integer deleted) {
+    this.deleted = deleted;
+  }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  public String getNodeclass() {
+    return nodeclass;
+  }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
-
-	public List<Note> getNotes() {
-		return notes;
-	}
-
-	public void setNotes(List<Note> notes) {
-		this.notes = notes;
-	}
-
-	public long getOriginalId() {
-		return originalId;
-	}
-
-	public void setOriginalId(long originalId) {
-		this.originalId = originalId;
-	}
-
-	public Integer getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Integer deleted) {
-		this.deleted = deleted;
-	}
-
-	public String getNodeclass() {
-		return nodeclass;
-	}
-
-	public void setNodeclass(String nodeclass) {
-		this.nodeclass = nodeclass;
-	}
+  public void setNodeclass(String nodeclass) {
+    this.nodeclass = nodeclass;
+  }
 
 }

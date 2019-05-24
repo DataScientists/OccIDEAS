@@ -1,18 +1,18 @@
 package org.occideas.mapper;
 
-import java.util.List;
-
 import org.occideas.entity.InterviewModule;
 import org.occideas.vo.InterviewModuleVO;
 
+import java.util.List;
+
 public interface InterviewModuleMapper {
 
-	List<InterviewModuleVO> convertToInterviewModuleVOList(List<InterviewModule> entity);
+  List<InterviewModuleVO> convertToInterviewModuleVOList(List<InterviewModule> entity);
 
-	InterviewModule convertToInterviewModule(InterviewModuleVO vo);
-	
-	List<InterviewModule> convertToInterviewModuleList(List<InterviewModuleVO> voList);
+  InterviewModule convertToInterviewModule(InterviewModuleVO vo);
 
-	InterviewModuleVO convertToInterviewModuleVO(InterviewModule entity);
-	
+  List<InterviewModule> convertToInterviewModuleList(List<InterviewModuleVO> voList);
+
+  InterviewModuleVO convertToInterviewModuleVO(InterviewModule entity);
+
 }

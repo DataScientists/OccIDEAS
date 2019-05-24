@@ -4,10 +4,14 @@ import java.util.List;
 
 public interface BaseService<T> {
 
-	public List<T> listAll();
-	public List<T> findById(Long id);
-	public T create(T o);
-	public void update(T o);
-	public void delete(T o);
-	
+  List<T> listAll();
+
+  List<T> findById(Long id);
+
+  T create(T o);
+
+  void update(T o);
+
+  void delete(T o);
+
 }

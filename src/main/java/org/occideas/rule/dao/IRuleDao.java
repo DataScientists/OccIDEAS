@@ -1,30 +1,30 @@
 package org.occideas.rule.dao;
 
-import java.util.List;
-
 import org.occideas.entity.Rule;
 import org.occideas.entity.RulePlain;
 
+import java.util.List;
+
 public interface IRuleDao {
 
-	Long save(Rule rule);
+  Long save(Rule rule);
 
-	void delete(Rule rule);
-	
-	void deleteAll();
+  void delete(Rule rule);
 
-	Rule get(Long id);
+  void deleteAll();
 
-	Rule merge(Rule rule);
+  Rule get(Long id);
 
-	void saveOrUpdate(Rule rule);
+  Rule merge(Rule rule);
 
-	List<Rule> getAll();
+  void saveOrUpdate(Rule rule);
 
-	List<Rule> findByAgentId(long agentId);
+  List<Rule> getAll();
 
-	Long getMaxRuleId();
+  List<Rule> findByAgentId(long agentId);
 
-	void saveBatchRule(List<RulePlain> rules);
+  Long getMaxRuleId();
+
+  void saveBatchRule(List<RulePlain> rules);
 
 }

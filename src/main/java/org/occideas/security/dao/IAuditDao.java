@@ -4,6 +4,6 @@ import org.occideas.security.model.AuditLog;
 
 public interface IAuditDao {
 
-	void save(AuditLog auditLog);
+  void save(AuditLog auditLog);
 
 }

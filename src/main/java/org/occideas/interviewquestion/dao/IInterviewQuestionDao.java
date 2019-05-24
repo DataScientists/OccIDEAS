@@ -1,66 +1,66 @@
 package org.occideas.interviewquestion.dao;
 
-import java.util.List;
-
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 
+import java.util.List;
+
 public interface IInterviewQuestionDao {
 
-	Long checkFragmentProcessed(long link, long id);
+  Long checkFragmentProcessed(long link, long id);
 
-	Long getIntroModuleId(Long interviewId);
+  Long getIntroModuleId(Long interviewId);
 
-	List<InterviewQuestion> getQuestionsByNodeId(Long questionId);
+  List<InterviewQuestion> getQuestionsByNodeId(Long questionId);
 
-	InterviewQuestion getByQuestionId(Long questionId, Long interviewId);
+  InterviewQuestion getByQuestionId(Long questionId, Long interviewId);
 
-	Long getUniqueInterviewQuestionCount(String[] filterModule);
+  Long getUniqueInterviewQuestionCount(String[] filterModule);
 
-	Long getMaxIntQuestionSequence(long idInterview);
+  Long getMaxIntQuestionSequence(long idInterview);
 
-	InterviewQuestion findIntQuestion(long idInterview, long questionId);
+  InterviewQuestion findIntQuestion(long idInterview, long questionId);
 
-	List<InterviewQuestion> findByInterviewId(Long interviewId);
+  List<InterviewQuestion> findByInterviewId(Long interviewId);
 
-	List<InterviewQuestion> getAllActive();
+  List<InterviewQuestion> getAllActive();
 
-	List<InterviewQuestion> getAll();
+  List<InterviewQuestion> getAll();
 
-	InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq);
+  InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq);
 
-	List<InterviewQuestion> saveOrUpdate(List<InterviewQuestion> iqs);
+  List<InterviewQuestion> saveOrUpdate(List<InterviewQuestion> iqs);
 
-	InterviewQuestion saveOrUpdate(InterviewQuestion iq);
+  InterviewQuestion saveOrUpdate(InterviewQuestion iq);
 
-	InterviewQuestion merge(InterviewQuestion iq);
+  InterviewQuestion merge(InterviewQuestion iq);
 
-	InterviewQuestion get(Long id);
+  InterviewQuestion get(Long id);
 
-	void delete(InterviewQuestion iq);
+  void delete(InterviewQuestion iq);
 
-	InterviewQuestion save(InterviewQuestion iq);
+  InterviewQuestion save(InterviewQuestion iq);
 
-	void updateModuleNameForInterviewId(long id, String newName);
+  void updateModuleNameForInterviewId(long id, String newName);
 
-	List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule);
+  List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule);
 
-	void preloadActiveIntro();
+  void preloadActiveIntro();
 
-	void preloadAllModules();
+  void preloadAllModules();
 
-	List<InterviewQuestion> getAllDeleted();
+  List<InterviewQuestion> getAllDeleted();
 
-	InterviewQuestion saveOrUpdateSingleTransaction(InterviewQuestion iq);
+  InterviewQuestion saveOrUpdateSingleTransaction(InterviewQuestion iq);
 
-	List<InterviewQuestion> getAllDeleted(Long idInterview);
+  List<InterviewQuestion> getAllDeleted(Long idInterview);
 
-	List<InterviewQuestion> getAllChildInterviewQuestions(Long idAnswer, Long idInterview);
+  List<InterviewQuestion> getAllChildInterviewQuestions(Long idAnswer, Long idInterview);
 
-	List<InterviewQuestion> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview);
+  List<InterviewQuestion> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview);
 
-	InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview);
+  InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview);
 
-	void deleteAll();
+  void deleteAll();
 
 }

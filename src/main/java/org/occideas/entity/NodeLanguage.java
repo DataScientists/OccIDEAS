@@ -1,20 +1,12 @@
 package org.occideas.entity;
 
-import java.io.Serializable;
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.sql.Date;
 
 @Entity
 @Table(name = "Node_Language")
@@ -23,69 +15,69 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 @SelectBeforeUpdate(value = true)
 public class NodeLanguage implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue
-	private long id;
-	private long languageId;
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumns({
-			@JoinColumn(name = "languageId", referencedColumnName = "id", insertable = false, updatable = false) })
-	private Language language;
-	private String word;
-	private String translation;
-	private Date lastUpdated;
+  @Id
+  @GeneratedValue
+  private long id;
+  private long languageId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumns({
+    @JoinColumn(name = "languageId", referencedColumnName = "id", insertable = false, updatable = false)})
+  private Language language;
+  private String word;
+  private String translation;
+  private Date lastUpdated;
 
-	public long getId() {
-		return id;
-	}
+  public long getId() {
+    return id;
+  }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
-	public Language getLanguage() {
-		return language;
-	}
+  public Language getLanguage() {
+    return language;
+  }
 
-	public void setLanguage(Language language) {
-		this.language = language;
-	}
+  public void setLanguage(Language language) {
+    this.language = language;
+  }
 
-	public String getWord() {
-		return word;
-	}
+  public String getWord() {
+    return word;
+  }
 
-	public void setWord(String word) {
-		this.word = word;
-	}
+  public void setWord(String word) {
+    this.word = word;
+  }
 
-	public String getTranslation() {
-		return translation;
-	}
+  public String getTranslation() {
+    return translation;
+  }
 
-	public void setTranslation(String translation) {
-		this.translation = translation;
-	}
+  public void setTranslation(String translation) {
+    this.translation = translation;
+  }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public long getLanguageId() {
-		return languageId;
-	}
+  public long getLanguageId() {
+    return languageId;
+  }
 
-	public void setLanguageId(long languageId) {
-		this.languageId = languageId;
-	}
+  public void setLanguageId(long languageId) {
+    this.languageId = languageId;
+  }
 
 }

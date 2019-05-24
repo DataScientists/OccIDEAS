@@ -1,14 +1,13 @@
 package org.occideas.admin.service;
 
-public interface IAdminService
-{
+public interface IAdminService {
 
-    void cleanOrphans();
+  void cleanOrphans();
 
-    boolean checkIfAllOrphanNodesAreRemoved();
+  boolean checkIfAllOrphanNodesAreRemoved();
 
-	void purgeParticipants();
+  void purgeParticipants();
 
-	void purgeModule();
-    
+  void purgeModule();
+
 }

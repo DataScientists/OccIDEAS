@@ -1,39 +1,40 @@
 package org.occideas.fragment.dao;
 
-import java.util.List;
-
 import org.occideas.entity.Fragment;
 import org.occideas.entity.Question;
 
+import java.util.List;
+
 public interface IFragmentDao {
 
-	void save(Fragment fragment);
+  void save(Fragment fragment);
 
-	List<Fragment> findByName(String name);
+  List<Fragment> findByName(String name);
 
-	List<Question> getLinkingNodeById(long idNode);
+  List<Question> getLinkingNodeById(long idNode);
 
-	void delete(Fragment fragment);
+  void delete(Fragment fragment);
 
-	Fragment get(Long id);
+  Fragment get(Long id);
 
-	Fragment merge(Fragment fragment);
+  Fragment merge(Fragment fragment);
 
-	void saveOrUpdate(Fragment fragment);
+  void saveOrUpdate(Fragment fragment);
 
-	List<Fragment> getAll();
+  List<Fragment> getAll();
 
-	List<Fragment> getAllActive();
+  List<Fragment> getAllActive();
 
-	/**
-	 * Get all with children nodes
-	 * @param isIncludeChild
-	 * @return
-	 */
-	List<Fragment> getAll(boolean isIncludeChild);
+  /**
+   * Get all with children nodes
+   *
+   * @param isIncludeChild
+   * @return
+   */
+  List<Fragment> getAll(boolean isIncludeChild);
 
-	List<Fragment> getFragmentParents(Long id);
+  List<Fragment> getFragmentParents(Long id);
 
-	void saveOrUpdateIgnoreFK(Fragment fragment);
+  void saveOrUpdateIgnoreFK(Fragment fragment);
 
 }

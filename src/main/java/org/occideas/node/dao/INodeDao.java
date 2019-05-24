@@ -1,19 +1,18 @@
 package org.occideas.node.dao;
 
-import java.util.List;
-
 import org.occideas.entity.Node;
 import org.occideas.entity.NodePlain;
 
-public interface INodeDao
-{
+import java.util.List;
 
-    public Node getNode(Long id);
+public interface INodeDao {
 
-	void deleteAll();
+  Node getNode(Long id);
 
-	void saveBatchNodes(List<Node> nodes);
+  void deleteAll();
 
-	public void saveBatchNodesPlain(List<NodePlain> nodes);
-    
+  void saveBatchNodes(List<Node> nodes);
+
+  void saveBatchNodesPlain(List<NodePlain> nodes);
+
 }

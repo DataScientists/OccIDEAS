@@ -4,13 +4,13 @@ import javax.ws.rs.core.Response;
 
 public interface BaseRestController<T> {
 
-    public Response listAll();
+  Response listAll();
 
-    public Response get(Long id);
-    
-    public Response create(T json);
+  Response get(Long id);
 
-    public Response update(T json);
+  Response create(T json);
 
-    public Response delete(T json);
+  Response update(T json);
+
+  Response delete(T json);
 }

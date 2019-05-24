@@ -1,101 +1,96 @@
 package org.occideas.entity;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-@Entity 
+@Entity
 public class Note implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Id @GeneratedValue
-	private long idNote;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	private Node node;
-	private String type;
-	
-	private long interviewId;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
+  @Id
+  @GeneratedValue
+  private long idNote;
 
-	@Column(length=2048)
-	private String text;
-	private Date lastUpdated;
-	private Integer deleted;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Node node;
+  private String type;
 
-	public Note() {
+  private long interviewId;
 
-	}
+  @Column(length = 2048)
+  private String text;
+  private Date lastUpdated;
+  private Integer deleted;
 
-	public Note(long idNote) {
-		this.idNote = idNote;
-	}
+  public Note() {
 
-	public Note(String text) {
-		this.text = text;
-	}
+  }
 
-	public long getIdNote() {
-		return idNote;
-	}
+  public Note(long idNote) {
+    this.idNote = idNote;
+  }
 
-	public void setIdNote(long idNote) {
-		this.idNote = idNote;
-	}
+  public Note(String text) {
+    this.text = text;
+  }
 
-	public String getText() {
-		return text;
-	}
+  public long getIdNote() {
+    return idNote;
+  }
 
-	public void setText(String text) {
-		this.text = text;
-	}
+  public void setIdNote(long idNote) {
+    this.idNote = idNote;
+  }
 
-	public Date getLastUpdated() {
-		return lastUpdated;
-	}
+  public String getText() {
+    return text;
+  }
 
-	public void setLastUpdated(Date lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  public void setText(String text) {
+    this.text = text;
+  }
 
-	public Integer getDeleted() {
-		return deleted;
-	}
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
-	public void setDeleted(Integer deleted) {
-		this.deleted = deleted;
-	}
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public Integer getDeleted() {
+    return deleted;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setDeleted(Integer deleted) {
+    this.deleted = deleted;
+  }
 
-	public Node getNode() {
-		return node;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public void setNode(Node node) {
-		this.node = node;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public long getInterviewId() {
-		return interviewId;
-	}
+  public Node getNode() {
+    return node;
+  }
 
-	public void setInterviewId(long interviewId) {
-		this.interviewId = interviewId;
-	}
+  public void setNode(Node node) {
+    this.node = node;
+  }
+
+  public long getInterviewId() {
+    return interviewId;
+  }
+
+  public void setInterviewId(long interviewId) {
+    this.interviewId = interviewId;
+  }
 
 }

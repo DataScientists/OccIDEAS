@@ -1,51 +1,46 @@
 package org.occideas.fragment.service;
 
-import java.util.List;
-
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Fragment;
-import org.occideas.vo.FragmentCopyVO;
-import org.occideas.vo.FragmentReportVO;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.LanguageFragmentBreakdownVO;
-import org.occideas.vo.NodeRuleHolder;
-import org.occideas.vo.QuestionVO;
+import org.occideas.vo.*;
+
+import java.util.List;
 
 public interface FragmentService extends BaseService<FragmentVO> {
-	
-	void createFragment(FragmentVO fragmentVO);
 
-	void merge(FragmentVO json);
+  void createFragment(FragmentVO fragmentVO);
 
-	boolean checkExists(Long id);
+  void merge(FragmentVO json);
 
-	List<FragmentVO> findByIdForInterview(Long id);
+  boolean checkExists(Long id);
 
-	NodeRuleHolder copyFragment(FragmentCopyVO vo, FragmentReportVO report);
+  List<FragmentVO> findByIdForInterview(Long id);
 
-	NodeRuleHolder deepCopyFragment(FragmentCopyVO vo, 
-			   FragmentReportVO report,
-			   Long parentIdNode,Long topNodeId);
+  NodeRuleHolder copyFragment(FragmentCopyVO vo, FragmentReportVO report);
 
-	List<QuestionVO> getLinkingNodes(Long id);
+  NodeRuleHolder deepCopyFragment(FragmentCopyVO vo,
+                                  FragmentReportVO report,
+                                  Long parentIdNode, Long topNodeId);
 
-	List<FragmentVO> getFilterStudyAgents(Long id);
+  List<QuestionVO> getLinkingNodes(Long id);
 
-	List<FragmentVO> getFilterStudyAgents(Long id, Long idAgent);
+  List<FragmentVO> getFilterStudyAgents(Long id);
 
-	List<Fragment> getAllFragments();
+  List<FragmentVO> getFilterStudyAgents(Long id, Long idAgent);
 
-	List<FragmentVO> getFragmentParents(Long id);
+  List<Fragment> getAllFragments();
 
-    Integer getFragmentTranslationTotalCount(String idNode);
+  List<FragmentVO> getFragmentParents(Long id);
 
-    Integer getFragmentTranslationCurrentCount(String idNode, Long languageId);
+  Integer getFragmentTranslationTotalCount(String idNode);
 
-    List<LanguageFragmentBreakdownVO> getFragmentLanguageBreakdown(Long languageId);
+  Integer getFragmentTranslationCurrentCount(String idNode, Long languageId);
 
-    Integer getTotalUntranslatedFragment(Long languageId);
+  List<LanguageFragmentBreakdownVO> getFragmentLanguageBreakdown(Long languageId);
 
-    Integer getFragmentWithTranslationCount(long languageId);
+  Integer getTotalUntranslatedFragment(Long languageId);
 
-    Integer getTotalTranslatedNodeByLanguage(long languageId);
+  Integer getFragmentWithTranslationCount(long languageId);
+
+  Integer getTotalTranslatedNodeByLanguage(long languageId);
 }

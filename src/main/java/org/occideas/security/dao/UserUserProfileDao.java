@@ -4,7 +4,8 @@ import org.occideas.security.model.UserUserProfile;
 
 public interface UserUserProfileDao {
 
-	public void save(UserUserProfile profile);
-	public void delete(int userId);
-	
+  void save(UserUserProfile profile);
+
+  void delete(int userId);
+
 }

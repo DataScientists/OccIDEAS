@@ -1,19 +1,19 @@
 package org.occideas.modulerule.service;
 
-import java.util.List;
-
 import org.occideas.base.service.BaseService;
 import org.occideas.vo.ModuleRuleVO;
 
-public interface ModuleRuleService extends BaseService<ModuleRuleVO>{
+import java.util.List;
 
-	List<ModuleRuleVO> findByModuleId(Long id);
+public interface ModuleRuleService extends BaseService<ModuleRuleVO> {
 
-	List<ModuleRuleVO> findByAgentId(Long id);
-	
-	List<ModuleRuleVO> findByIdNode(Long id);
+  List<ModuleRuleVO> findByModuleId(Long id);
 
-	Number getRuleCountById(Long id);
+  List<ModuleRuleVO> findByAgentId(Long id);
 
-	List<ModuleRuleVO> findByModuleIdAndAgentId(Long moduleId, Long agentId);
+  List<ModuleRuleVO> findByIdNode(Long id);
+
+  Number getRuleCountById(Long id);
+
+  List<ModuleRuleVO> findByModuleIdAndAgentId(Long moduleId, Long agentId);
 }

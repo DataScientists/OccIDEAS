@@ -1,55 +1,55 @@
 package org.occideas.module.dao;
 
-import java.util.List;
-
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 
+import java.util.List;
+
 public interface IModuleDao {
 
-	public Module save(Module module);
+  Module save(Module module);
 
-	public void saveCopy(Module module);
+  void saveCopy(Module module);
 
-	public void delete(Module module);
+  void delete(Module module);
 
-	public List<Module> findByName(String name);
+  List<Module> findByName(String name);
 
-	public Module get(Long id);
+  Module get(Long id);
 
-	public Module merge(Module module);
+  Module merge(Module module);
 
-	public void saveOrUpdate(Module module);
-	
-	public long create(Module module);
+  void saveOrUpdate(Module module);
 
-	public List<Module> getAll(boolean b);
+  long create(Module module);
 
-	public List<Module> getAllActive();
+  List<Module> getAll(boolean b);
 
-	public Long generateIdNode();
-	
-	public Node getNodeById(Long idNode);
-	
-	public List<? extends Node> getNodeByLinkAndModId(Long link, Long modId);
+  List<Module> getAllActive();
 
-	public Question getLinkingQuestionByModId(Long link, Long modId);
-	
-	public List<Question> getChildFrequencyNodes(String idNode);
+  Long generateIdNode();
 
-	String getNodeNameById(Long idNode);
+  Node getNodeById(Long idNode);
 
-	List<Question> getAllLinkingQuestionByModId(Long modId);
+  List<? extends Node> getNodeByLinkAndModId(Long link, Long modId);
 
-	List<Question> getChildLinkNodes(String idNode);
+  Question getLinkingQuestionByModId(Long link, Long modId);
 
-    List<? extends Node> getDistinctNodeNameByIdNode(String idNode);
+  List<Question> getChildFrequencyNodes(String idNode);
 
-    List<String> getNodeNameByIdNode(String idNode);
+  String getNodeNameById(Long idNode);
 
-    List<? extends Node> getNodeByType(String type);
+  List<Question> getAllLinkingQuestionByModId(Long modId);
 
-	void saveOrUpdateIgnoreFK(Module module);
+  List<Question> getChildLinkNodes(String idNode);
+
+  List<? extends Node> getDistinctNodeNameByIdNode(String idNode);
+
+  List<String> getNodeNameByIdNode(String idNode);
+
+  List<? extends Node> getNodeByType(String type);
+
+  void saveOrUpdateIgnoreFK(Module module);
 
 }

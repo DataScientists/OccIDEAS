@@ -1,77 +1,71 @@
 package org.occideas.entity;
 
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
+import java.util.List;
+
 @Entity
 @DiscriminatorValue("A")
-public class Agent extends AgentInfo{
+public class Agent extends AgentInfo {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@ManyToOne(fetch=FetchType.EAGER)
-	/*@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})*/
-	@Fetch(FetchMode.SELECT)
-	private AgentGroup agentGroup;
-	
-	@OneToMany(mappedBy="agent",fetch=FetchType.LAZY)
-	@Column(name="idAgent")	
-	private List<Rule> rules;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
-	public Agent() {
-		super();
-	}
+  @ManyToOne(fetch = FetchType.EAGER)
+  /*@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})*/
+  @Fetch(FetchMode.SELECT)
+  private AgentGroup agentGroup;
 
-	public Agent(String idAgent) {
-		super();
-		this.setIdAgent(Long.parseLong(idAgent));
-	}
+  @OneToMany(mappedBy = "agent", fetch = FetchType.LAZY)
+  @Column(name = "idAgent")
+  private List<Rule> rules;
 
-	public Agent(long idAgent) {
-		super();
-		this.setIdAgent(idAgent);
-	}
+  public Agent() {
+    super();
+  }
 
-	@JsonIgnore
-	public AgentGroup getGroup() {
-		return agentGroup;
-	}
+  public Agent(String idAgent) {
+    super();
+    this.setIdAgent(Long.parseLong(idAgent));
+  }
 
-	public void setGroup(AgentGroup group) {
-		this.agentGroup = group;
-	}
+  public Agent(long idAgent) {
+    super();
+    this.setIdAgent(idAgent);
+  }
 
-	public boolean equals(Object other) {
-		if ((this == other))
-			return true;
-		if ((other == null))
-			return false;
-		if (!(other instanceof Agent))
-			return false;
-		Agent castOther = (Agent) other;
+  @JsonIgnore
+  public AgentGroup getGroup() {
+    return agentGroup;
+  }
 
-		return (this.getIdAgent() == castOther.getIdAgent());
+  public void setGroup(AgentGroup group) {
+    this.agentGroup = group;
+  }
 
-	}
+  public boolean equals(Object other) {
+    if ((this == other))
+      return true;
+    if ((other == null))
+      return false;
+    if (!(other instanceof Agent))
+      return false;
+    Agent castOther = (Agent) other;
 
-	public List<Rule> getRules() {
-		return rules;
-	}
+    return (this.getIdAgent() == castOther.getIdAgent());
 
-	public void setRules(List<Rule> rules) {
-		this.rules = rules;
-	}
+  }
+
+  public List<Rule> getRules() {
+    return rules;
+  }
+
+  public void setRules(List<Rule> rules) {
+    this.rules = rules;
+  }
 }

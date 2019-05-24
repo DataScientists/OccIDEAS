@@ -1,102 +1,88 @@
 package org.occideas.entity;
 
-import java.sql.Date;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.sql.Date;
 
 //@Entity
 //@Table(name = "Translate")
 //@DynamicUpdate(value = true)
 //@DynamicInsert(value = true)
 //@SelectBeforeUpdate(value = true)
-public class Translate
-{
+public class Translate {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue
-    private long id;
-    private String language;
-    private String description;
-    private Date lastUpdated;
-    private String flag;
-    private String jdoc;
-
-
-    public long getId()
-    {
-        return id;
-    }
+  @Id
+  @GeneratedValue
+  private long id;
+  private String language;
+  private String description;
+  private Date lastUpdated;
+  private String flag;
+  private String jdoc;
 
 
-    public void setId(long id)
-    {
-        this.id = id;
-    }
+  public long getId() {
+    return id;
+  }
 
 
-    public String getLanguage()
-    {
-        return language;
-    }
+  public void setId(long id) {
+    this.id = id;
+  }
 
 
-    public void setLanguage(String language)
-    {
-        this.language = language;
-    }
+  public String getLanguage() {
+    return language;
+  }
 
 
-    public String getDescription()
-    {
-        return description;
-    }
+  public void setLanguage(String language) {
+    this.language = language;
+  }
 
 
-    public void setDescription(String description)
-    {
-        this.description = description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
 
-    public Date getLastUpdated()
-    {
-        return lastUpdated;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
 
-    public void setLastUpdated(Date lastUpdated)
-    {
-        this.lastUpdated = lastUpdated;
-    }
+  public Date getLastUpdated() {
+    return lastUpdated;
+  }
 
 
-    public String getFlag()
-    {
-        return flag;
-    }
+  public void setLastUpdated(Date lastUpdated) {
+    this.lastUpdated = lastUpdated;
+  }
 
 
-    public void setFlag(String flag)
-    {
-        this.flag = flag;
-    }
+  public String getFlag() {
+    return flag;
+  }
 
 
-    public String getJdoc()
-    {
-        return jdoc;
-    }
+  public void setFlag(String flag) {
+    this.flag = flag;
+  }
 
 
-    public void setJdoc(String jdoc)
-    {
-        this.jdoc = jdoc;
-    }
+  public String getJdoc() {
+    return jdoc;
+  }
+
+
+  public void setJdoc(String jdoc) {
+    this.jdoc = jdoc;
+  }
 
 }
