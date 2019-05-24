@@ -280,8 +280,8 @@
       self.isAdding = true;
 
       self.tableParams.settings().dataset.unshift({
-        name: "New Fragment",
-        placeholder: "New Fragment",
+        name: "New Task Module",
+        placeholder: "New Task Module",
         type: type,
         description: "New Description",
         isEditing: true

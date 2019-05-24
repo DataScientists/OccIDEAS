@@ -1,8 +1,6 @@
 package org.occideas.utilities;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVReader;
 import org.apache.commons.io.FilenameUtils;
@@ -177,6 +175,8 @@ public class StudyAgentUtil {
     String filePath = path + "/modules/";
     File dir = new File(filePath);
     File[] files = dir.listFiles();
+    if (files == null)
+      return;
     for (File file : files) {
       if ("csv".equals(FilenameUtils.getExtension(file.getName()))) {
         file.delete();

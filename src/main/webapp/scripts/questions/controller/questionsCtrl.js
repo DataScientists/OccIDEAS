@@ -1908,7 +1908,7 @@
         }
         ],
 
-        ['Save as Fragment', function($itemScope) {
+        ['Save as Task Module', function($itemScope) {
 
           $mdDialog.show({
             //scope: $scope,
@@ -1956,7 +1956,7 @@
           $scope.deleteNode($itemScope);
         }
         ],
-        ['Open as aJSM', function($itemScope) {
+        ['Open as Task Module', function($itemScope) {
           FragmentsService.checkExists($itemScope.node.link).then(function(response) {
             if(response) {
               var node = angular.copy($itemScope.node);
@@ -3167,7 +3167,7 @@
                 if(studyAgentData[0].nodes.length < 1 && fragments.length < 1) {
                   ngToast.create({
                     className: 'danger',
-                    content: "There is no study specific node for this tree, check the link ajsm.",
+                    content: "There is no study specific node for this tree, check the link task module.",
                     animation: 'slide'
                   });
                   return;
@@ -3296,7 +3296,7 @@
                 if(agentData[0].nodes.length < 1 && fragments.length < 1) {
                   ngToast.create({
                     className: 'danger',
-                    content: "There is no study specific node for this tree, check the link ajsm.",
+                    content: "There is no study specific node for this tree, check the link task module.",
                     animation: 'slide'
                   });
                   return;
