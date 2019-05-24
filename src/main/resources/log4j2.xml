@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration xmlns="http://logging.apache.org/log4j/2.0/config" 
-	status="WARN">
-	<Properties>
-		<Property name="rootPath">logs</Property>
-	</Properties>
-	<Appenders>
-		<Console name="STDOUT" target="SYSTEM_OUT">
-			<PatternLayout
-				pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n" />
-		</Console>
-		<RollingFile name="occideas" fileName="${rootPath}/occideas.log"
-			filePattern="${rootPath}/occideas.log.%d{MM-dd-yyyy}-%i.log"
-			immediateFlush="false" append="true">
-			<PatternLayout
-				pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n" />
-			 <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-			<Policies>
-    			<OnStartupTriggeringPolicy />
-				<TimeBasedTriggeringPolicy />
-				<SizeBasedTriggeringPolicy size="100 MB" />
-			</Policies>
-			<DefaultRolloverStrategy/>
-		</RollingFile>
-		<RollingFile name="occideas_error" fileName="${rootPath}/error.log"
-			filePattern="${rootPath}/error.log.%d{MM-dd-yyyy}-%i.log"
-			immediateFlush="false" append="true">
-			<PatternLayout
-				pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n" />
-			 <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-			<Policies>
-    			<OnStartupTriggeringPolicy />
-				<TimeBasedTriggeringPolicy />
-				<SizeBasedTriggeringPolicy size="100 MB" />
-			</Policies>
-			<DefaultRolloverStrategy/>
-		</RollingFile>
-	</Appenders>
+<Configuration xmlns="http://logging.apache.org/log4j/2.0/config"
+               status="WARN">
+  <Properties>
+    <Property name="rootPath">logs</Property>
+  </Properties>
+  <Appenders>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout
+        pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n"/>
+    </Console>
+    <RollingFile name="occideas" fileName="${rootPath}/occideas.log"
+                 filePattern="${rootPath}/occideas.log.%d{MM-dd-yyyy}-%i.log"
+                 immediateFlush="false" append="true">
+      <PatternLayout
+        pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n"/>
+      <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+      <Policies>
+        <OnStartupTriggeringPolicy/>
+        <TimeBasedTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy/>
+    </RollingFile>
+    <RollingFile name="occideas_error" fileName="${rootPath}/error.log"
+                 filePattern="${rootPath}/error.log.%d{MM-dd-yyyy}-%i.log"
+                 immediateFlush="false" append="true">
+      <PatternLayout
+        pattern="%-5p | %d{MM/dd/yyyy HH:mm:ss} | [%t] %C{10} (%F:%L) - %m%n"/>
+      <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+      <Policies>
+        <OnStartupTriggeringPolicy/>
+        <TimeBasedTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+      </Policies>
+      <DefaultRolloverStrategy/>
+    </RollingFile>
+  </Appenders>
 
-	<Loggers>
-		<AsyncLogger name="org.occideas" level="info"
-			includeLocation="true" additivity="false">
-			<AppenderRef ref="occideas" />
-			<AppenderRef ref="occideas_error" />
-			<AppenderRef ref="STDOUT" />
-		</AsyncLogger>
-		<AsyncLogger name="org.hibernate.SQL" level="info"
-			includeLocation="true" additivity="false">
-			<AppenderRef ref="occideas" />
-		</AsyncLogger>
-		<AsyncLogger name="org.hibernate.type" level="info"
-			includeLocation="true" additivity="false">
-			<AppenderRef ref="occideas" />
-		</AsyncLogger>
-		<Root level="info" includeLocation="true">
-			<AppenderRef ref="STDOUT" />
-		</Root>
-	</Loggers>
+  <Loggers>
+    <AsyncLogger name="org.occideas" level="info"
+                 includeLocation="true" additivity="false">
+      <AppenderRef ref="occideas"/>
+      <AppenderRef ref="occideas_error"/>
+      <AppenderRef ref="STDOUT"/>
+    </AsyncLogger>
+    <AsyncLogger name="org.hibernate.SQL" level="info"
+                 includeLocation="true" additivity="false">
+      <AppenderRef ref="occideas"/>
+    </AsyncLogger>
+    <AsyncLogger name="org.hibernate.type" level="info"
+                 includeLocation="true" additivity="false">
+      <AppenderRef ref="occideas"/>
+    </AsyncLogger>
+    <Root level="info" includeLocation="true">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
 
 </Configuration>
