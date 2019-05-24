@@ -1,42 +1,45 @@
-
-
-<div >
-      <p>
-<!-- LOGIN FORM -->
-<div class="text-center" style="padding:50px 0">
-	<div class="logo">Welcome to OccIDEAS, please sign in</div>
-	<!-- Main Form -->
-	<div id="errorMsgs" ng-show="vm.hasErrMsg">
-			<font color="red">{{vm.errMsg}}</font></td>
-	</div>
-	<div class="login-form-1">
-		<div id="login-form" class="text-left">
-			<div class="login-form-main-message"></div>
-			<div class="main-login-form">
-				<div class="login-group">
-					<div class="form-group">
-						<label for="lg_username" class="sr-only">Username</label>
-						<input type="text" class="form-control" id="lg_username" ng-model="vm.userId" name="lg_username" placeholder="username">
-					</div>
-					<div class="form-group">
-						<label for="lg_password" class="sr-only">Password</label>
-						<input type="password" ng-keyup="$event.keyCode == 13 && vm.login()" class="form-control" id="lg_password" ng-model="vm.password" name="lg_password" placeholder="password">
-					</div>
-					<div class="form-group login-group-checkbox">
-						<input type="checkbox" id="lg_remember" name="lg_remember">
-						<label for="lg_remember">remember</label>
-					</div>
-				</div>
-				<button type="submit" class="login-button" ng-click="vm.login()"><i class="fa fa-chevron-right"></i></button>
-			</div>
-			<div class="etc-login-form">
-				<p>forgot your password? <a href="#" onclick="alert('please email info@occideas.org')">click here</a></p>
-				<p>new user? <a href="#" onclick="alert('please email info@occideas.org')">create new account</a></p>
-			</div>
-	</div>
-	</div>
-	<!-- end:Main Form -->
+<div>
+  <p>
+    <!-- LOGIN FORM -->
+    <div class="text-center" style="padding:50px 0">
+      <div class="logo">Welcome to OccIDEAS, please sign in</div>
+      <!-- Main Form -->
+      <div id="errorMsgs" ng-show="vm.hasErrMsg">
+        <font color="red">{{vm.errMsg}}</font></td>
+      </div>
+      <div class="login-form-1">
+        <div class="text-left" id="login-form">
+          <div class="login-form-main-message"></div>
+          <div class="main-login-form">
+            <div class="login-group">
+              <div class="form-group">
+                <label class="sr-only" for="lg_username">Username</label>
+                <input class="form-control" id="lg_username" name="lg_username" ng-model="vm.userId"
+                       placeholder="username"
+                       type="text">
+              </div>
+              <div class="form-group">
+                <label class="sr-only" for="lg_password">Password</label>
+                <input class="form-control" id="lg_password" name="lg_password"
+                       ng-keyup="$event.keyCode == 13 && vm.login()" ng-model="vm.password" placeholder="password"
+                       type="password">
+              </div>
+              <div class="form-group login-group-checkbox">
+                <input id="lg_remember" name="lg_remember" type="checkbox">
+                <label for="lg_remember">remember</label>
+              </div>
+            </div>
+            <button class="login-button" ng-click="vm.login()" type="submit"><i class="fa fa-chevron-right"></i>
+            </button>
+          </div>
+          <div class="etc-login-form">
+  <p>forgot your password? <a href="#" onclick="alert('please email info@occideas.org')">click here</a></p>
+  <p>new user? <a href="#" onclick="alert('please email info@occideas.org')">create new account</a></p>
+</div>
+</div>
+</div>
+<!-- end:Main Form -->
 </div>
 
-      </p>
-      </div>
+</p>
+</div>

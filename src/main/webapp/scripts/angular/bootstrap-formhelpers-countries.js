@@ -17,7 +17,7 @@
  * limitations under the License.
  * ========================================================== */
 
-+function ($) {
++function($) {
 
   'use strict';
 
@@ -25,19 +25,19 @@
   /* COUNTRIES CLASS DEFINITION
    * ====================== */
 
-  var BFHCountries = function (element, options) {
+  var BFHCountries = function(element, options) {
     this.options = $.extend({}, $.fn.bfhcountries.defaults, options);
     this.$element = $(element);
 
-    if (this.$element.is('select')) {
+    if(this.$element.is('select')) {
       this.addCountries();
     }
 
-    if (this.$element.hasClass('bfh-selectbox')) {
+    if(this.$element.hasClass('bfh-selectbox')) {
       this.addBootstrapCountries();
     }
 
-    if (this.$element.is('span')) {
+    if(this.$element.is('span')) {
       this.displayCountry();
     }
   };
@@ -48,17 +48,17 @@
 
     getCountries: function() {
       var country,
-          countries;
+        countries;
 
-      if (this.options.available) {
-        if (typeof this.options.available === 'string') {
+      if(this.options.available) {
+        if(typeof this.options.available === 'string') {
           countries = [];
-  
+
           this.options.available = this.options.available.split(',');
-  
-          for (country in BFHCountriesList) {
-            if (BFHCountriesList.hasOwnProperty(country)) {
-              if ($.inArray(country, this.options.available) >= 0) {
+
+          for(country in BFHCountriesList) {
+            if(BFHCountriesList.hasOwnProperty(country)) {
+              if($.inArray(country, this.options.available) >= 0) {
                 countries[country] = BFHCountriesList[country];
               }
             }
@@ -73,22 +73,22 @@
       }
     },
 
-    addCountries: function () {
+    addCountries: function() {
       var value,
-          country,
-          countries;
+        country,
+        countries;
 
       value = this.options.country;
       countries = this.getCountries();
 
       this.$element.html('');
 
-      if (this.options.blank === true) {
+      if(this.options.blank === true) {
         this.$element.append('<option value=""></option>');
       }
 
-      for (country in countries) {
-        if (countries.hasOwnProperty(country)) {
+      for(country in countries) {
+        if(countries.hasOwnProperty(country)) {
           this.$element.append('<option value="' + country + '">' + countries[country] + '</option>');
         }
       }
@@ -98,11 +98,11 @@
 
     addBootstrapCountries: function() {
       var $input,
-          $toggle,
-          $options,
-          value,
-          country,
-          countries;
+        $toggle,
+        $options,
+        value,
+        country,
+        countries;
 
       value = this.options.country;
       $input = this.$element.find('input[type="hidden"]');
@@ -112,13 +112,13 @@
 
       $options.html('');
 
-      if (this.options.blank === true) {
+      if(this.options.blank === true) {
         $options.append('<li><a tabindex="-1" href="#" data-option=""></a></li>');
       }
 
-      for (country in countries) {
-        if (countries.hasOwnProperty(country)) {
-          if (this.options.flags === true) {
+      for(country in countries) {
+        if(countries.hasOwnProperty(country)) {
+          if(this.options.flags === true) {
             $options.append('<li><a tabindex="-1" href="#" data-option="' + country + '"><i class="glyphicon bfh-flag-' + country + '"></i>' + countries[country] + '</a></li>');
           } else {
             $options.append('<li><a tabindex="-1" href="#" data-option="' + country + '">' + countries[country] + '</a></li>');
@@ -129,12 +129,12 @@
       this.$element.val(value);
     },
 
-    displayCountry: function () {
+    displayCountry: function() {
       var value;
 
       value = this.options.country;
 
-      if (this.options.flags === true) {
+      if(this.options.flags === true) {
         this.$element.html('<i class="glyphicon bfh-flag-' + value + '"></i> ' + BFHCountriesList[value]);
       } else {
         this.$element.html(BFHCountriesList[value]);
@@ -149,20 +149,20 @@
 
   var old = $.fn.bfhcountries;
 
-  $.fn.bfhcountries = function (option) {
-    return this.each(function () {
+  $.fn.bfhcountries = function(option) {
+    return this.each(function() {
       var $this,
-          data,
-          options;
+        data,
+        options;
 
       $this = $(this);
       data = $this.data('bfhcountries');
       options = typeof option === 'object' && option;
 
-      if (!data) {
+      if(!data) {
         $this.data('bfhcountries', (data = new BFHCountries(this, options)));
       }
-      if (typeof option === 'string') {
+      if(typeof option === 'string') {
         data[option].call($this);
       }
     });
@@ -181,7 +181,7 @@
   /* COUNTRY NO CONFLICT
    * ========================== */
 
-  $.fn.bfhcountries.noConflict = function () {
+  $.fn.bfhcountries.noConflict = function() {
     $.fn.bfhcountries = old;
     return this;
   };
@@ -190,13 +190,13 @@
   /* COUNTRY DATA-API
    * ============== */
 
-  $(document).ready( function () {
-    $('form select.bfh-countries, span.bfh-countries, div.bfh-countries').each(function () {
+  $(document).ready(function() {
+    $('form select.bfh-countries, span.bfh-countries, div.bfh-countries').each(function() {
       var $countries;
 
       $countries = $(this);
 
-      if ($countries.hasClass('bfh-selectbox')) {
+      if($countries.hasClass('bfh-selectbox')) {
         $countries.bfhselectbox($countries.data());
       }
       $countries.bfhcountries($countries.data());

@@ -1,299 +1,337 @@
 <div id="interview-wrapper">
-	<div ng-if="storage.langEnabled">
+  <div ng-if="storage.langEnabled">
 		<span class="flag-icon {{flagUsed}} flag-icon-squared"
-				style="font-size: 30px;
+          style="font-size: 30px;
     margin-bottom: 3px;
     margin-top: 3px;"></span>
     <span style="font-size: 30px;">{{storage.chosenLang.description}}</span>
-	</div>
-	<div class="col-md-4">
-		<div>
-			<div>
-				<md-progress-linear ng-if="inProgress" md-mode="indeterminate"></md-progress-linear>
+  </div>
+  <div class="col-md-4">
+    <div>
+      <div>
+        <md-progress-linear md-mode="indeterminate" ng-if="inProgress"></md-progress-linear>
 
-				<div ng-repeat="displayq in displayQuestions ">
+        <div ng-repeat="displayq in displayQuestions ">
 
-					<div class="tree-node-content P_interviewresult"
-						ng-repeat="as in displayq.answers">
-						<div class="form-group pull-left"
-							style="margin-top: 5px; margin-left: -15px;">
-							
-							<i ng-if="storage.langEnabled" class="glyphicon {{as.answerFreetext?as.answerFreetext:as.name  |
-							translate | displayFlag:as:storage}}"></i>
-							<span class="badge">{{as.number}}</span>
-						</div>
-						<span ng-if="storage.langEnabled">{{as.answerFreetext?as.answerFreetext:as.name  |
+          <div class="tree-node-content P_interviewresult"
+               ng-repeat="as in displayq.answers">
+            <div class="form-group pull-left"
+                 style="margin-top: 5px; margin-left: -15px;">
+
+              <i class="glyphicon {{as.answerFreetext?as.answerFreetext:as.name  |
+							translate | displayFlag:as:storage}}" ng-if="storage.langEnabled"></i>
+              <span class="badge">{{as.number}}</span>
+            </div>
+            <span ng-if="storage.langEnabled">{{as.answerFreetext?as.answerFreetext:as.name  |
 							translate}} </span>
-						<span ng-if="!storage.langEnabled">{{as.answerFreetext?as.answerFreetext:as.name}} </span>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div ng-if="!inProgress">
-			<ul id="interviewing-{{interview.showedQuestion.idNode}}"
-				ng-if="interviewStarted">
-				<md-toolbar>
-					<span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
-					<span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span> 
-					<md-button id="numId" event-focus> 
-					<i ng-if="storage.langEnabled" class="glyphicon {{interview.showedQuestion.name  |
-							translate | displayFlag:interview.showedQuestion:storage}}"></i>
-					<span
-					class="badge">{{questionheader.name}}</span> 
-					<span class="badge">{{interview.showedQuestion.number}}</span>
+            <span ng-if="!storage.langEnabled">{{as.answerFreetext?as.answerFreetext:as.name}} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-if="!inProgress">
+      <ul id="interviewing-{{interview.showedQuestion.idNode}}"
+          ng-if="interviewStarted">
+        <md-toolbar>
+          <span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
+          <span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span>
+          <md-button event-focus id="numId">
+            <i class="glyphicon {{interview.showedQuestion.name  |
+							translate | displayFlag:interview.showedQuestion:storage}}" ng-if="storage.langEnabled"></i>
+            <span
+              class="badge">{{questionheader.name}}</span>
+            <span class="badge">{{interview.showedQuestion.number}}</span>
 
-				</md-button> </md-toolbar>
-				<div ng-if="interview.showedQuestion.nodes.length == 0">
-					<md-button ng-click="closeOnStopButton()" class="md-fab md-raised ">
-					<span>STOP</span> </md-button>
-				</div>
-				<div ng-if="interview.showedQuestion.nodes.length != 0">
-					<div ng-if="interview.showedQuestion.type == 'Q_multiple'">
-						<div ng-repeat="node in interview.showedQuestion.nodes">
-							<md-checkbox aria-label="{{node.name}}"
-								ng-model="node.isSelected"
-								ng-click="multiToggle(node, multiSelected)" class="green"
-								select-free-text-on-click> <span
-								ng-if="node.type!='P_freetext' && storage.langEnabled"><i ng-if="node.type!='P_freetext' && storage.langEnabled" 
-							class="glyphicon {{node.name  | translate 
-							| displayFlag:node:storage}}"></i>{{node.name  | translate}}</span>
-							<span
-								ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
-							<md-input-container ng-if="node.type=='P_freetext'" md-no-float
-								class="md-block"> <label>Free Text</label>
-							<input style="width: 270px;" ng-model="node.name"
-								ng-keyup="allowSpaceOnFreeText($event,node)"> </md-input-container> </md-checkbox>
-						</div>
-					</div>
-					<div ng-if="interview.showedQuestion.type == 'Q_frequency'">
-						<div ng-repeat="node in interview.showedQuestion.nodes">
-							<!-- <div>{{node.type}}</div> -->
-							<div ng-switch="node.type">
-								<div ng-switch-when="P_frequencyseconds">
-									<md-input-container> <label>Seconds</label>
-									<md-select ng-model="node.name"> <md-option
-										ng-repeat="second in seconds" value="{{second}}">
-									{{second}} </md-option> </md-select> </md-input-container>
-								</div>
-								<div ng-switch-when="P_frequencyweeks">
-									<md-input-container> <label>Weeks</label>
-									<md-select ng-model="node.name"> <md-option
-										ng-repeat="week in weeks" value="{{week}}">
-									{{week}} </md-option> </md-select> </md-input-container>
-								</div>
-								<div ng-switch-when="P_frequencyhours">
-									<md-input-container> <label>Hours</label>
-									<md-select ng-model="node.name"> <md-option
-										ng-repeat="hour in hoursPerWeekArray" value="{{hour}}">
-									{{hour}} </md-option> </md-select> </md-input-container>
-								</div>
-								<div ng-switch-when="P_frequencyshifthours">
-									<md-input-container> <label>Hours</label>
-									<md-select ng-model="interview.showedQuestion.hours">
-									<md-option ng-repeat="hour in getShiftHoursArray()" value="{{hour}}">
-									{{hour}} </md-option> </md-select> </md-input-container>
-									<md-input-container> <label>Minutes</label>
-									<md-select ng-model="interview.showedQuestion.minutes">
-									<md-option ng-repeat="minute in getShiftMinutesArray()"
-										value="{{minute}}"> {{minute}} </md-option> </md-select> </md-input-container>
-								</div>
-								<div ng-switch-when="P_frequencyhoursminute">
-									<md-input-container> <label>Hours</label>
-									<md-select ng-model="interview.showedQuestion.hours">
-									<md-option ng-repeat="hour in hoursArray" value="{{hour}}">
-									{{hour}} </md-option> </md-select> </md-input-container>
-									<md-input-container> <label>Minutes</label>
-									<md-select ng-model="interview.showedQuestion.minutes">
-									<md-option ng-repeat="minute in minutesArray"
-										value="{{minute}}"> {{minute}} </md-option> </md-select> </md-input-container>
-								</div>
-								<div ng-switch-default>Unknown Frequency
-									Type:{{node.type}}</div>
-							</div>
-						</div>
-					</div>
-					<div
-						ng-if="interview.showedQuestion.type == 'Q_single' || interview.showedQuestion.type == 'Q_simple'">
-						<md-radio-group ng-model="interview.showedQuestion.selectedAnswer">
-						<div ng-repeat='node in interview.showedQuestion.nodes'>
-							<div flex layout-align="start center">
-								<md-radio-button flex ng-value="node"
-									class="md-primary interview-radio-button"
-									select-free-text-on-click> 
-									<i style="margin-right:2px;" ng-if="node.type!='P_freetext' && storage.langEnabled" 
-							class="glyphicon {{node.name  |
-							translate | displayFlag:node:storage}}"></i><span
-									ng-if="node.type!='P_freetext' && storage.langEnabled">{{node.name  |
+          </md-button>
+        </md-toolbar>
+        <div ng-if="interview.showedQuestion.nodes.length == 0">
+          <md-button class="md-fab md-raised " ng-click="closeOnStopButton()">
+            <span>STOP</span></md-button>
+        </div>
+        <div ng-if="interview.showedQuestion.nodes.length != 0">
+          <div ng-if="interview.showedQuestion.type == 'Q_multiple'">
+            <div ng-repeat="node in interview.showedQuestion.nodes">
+              <md-checkbox aria-label="{{node.name}}"
+                           class="green"
+                           ng-click="multiToggle(node, multiSelected)" ng-model="node.isSelected"
+                           select-free-text-on-click> <span
+                ng-if="node.type!='P_freetext' && storage.langEnabled"><i
+                class="glyphicon {{node.name  | translate
+							| displayFlag:node:storage}}"
+                ng-if="node.type!='P_freetext' && storage.langEnabled"></i>{{node.name  | translate}}</span>
+                <span
+                  ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
+                <md-input-container class="md-block" md-no-float
+                                    ng-if="node.type=='P_freetext'"><label>Free Text</label>
+                  <input ng-keyup="allowSpaceOnFreeText($event,node)" ng-model="node.name"
+                         style="width: 270px;"></md-input-container>
+              </md-checkbox>
+            </div>
+          </div>
+          <div ng-if="interview.showedQuestion.type == 'Q_frequency'">
+            <div ng-repeat="node in interview.showedQuestion.nodes">
+              <!-- <div>{{node.type}}</div> -->
+              <div ng-switch="node.type">
+                <div ng-switch-when="P_frequencyseconds">
+                  <md-input-container><label>Seconds</label>
+                    <md-select ng-model="node.name">
+                      <md-option
+                        ng-repeat="second in seconds" value="{{second}}">
+                        {{second}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                </div>
+                <div ng-switch-when="P_frequencyweeks">
+                  <md-input-container><label>Weeks</label>
+                    <md-select ng-model="node.name">
+                      <md-option
+                        ng-repeat="week in weeks" value="{{week}}">
+                        {{week}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                </div>
+                <div ng-switch-when="P_frequencyhours">
+                  <md-input-container><label>Hours</label>
+                    <md-select ng-model="node.name">
+                      <md-option
+                        ng-repeat="hour in hoursPerWeekArray" value="{{hour}}">
+                        {{hour}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                </div>
+                <div ng-switch-when="P_frequencyshifthours">
+                  <md-input-container><label>Hours</label>
+                    <md-select ng-model="interview.showedQuestion.hours">
+                      <md-option ng-repeat="hour in getShiftHoursArray()" value="{{hour}}">
+                        {{hour}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                  <md-input-container><label>Minutes</label>
+                    <md-select ng-model="interview.showedQuestion.minutes">
+                      <md-option ng-repeat="minute in getShiftMinutesArray()"
+                                 value="{{minute}}"> {{minute}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                </div>
+                <div ng-switch-when="P_frequencyhoursminute">
+                  <md-input-container><label>Hours</label>
+                    <md-select ng-model="interview.showedQuestion.hours">
+                      <md-option ng-repeat="hour in hoursArray" value="{{hour}}">
+                        {{hour}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                  <md-input-container><label>Minutes</label>
+                    <md-select ng-model="interview.showedQuestion.minutes">
+                      <md-option ng-repeat="minute in minutesArray"
+                                 value="{{minute}}"> {{minute}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                </div>
+                <div ng-switch-default>Unknown Frequency
+                  Type:{{node.type}}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            ng-if="interview.showedQuestion.type == 'Q_single' || interview.showedQuestion.type == 'Q_simple'">
+            <md-radio-group ng-model="interview.showedQuestion.selectedAnswer">
+              <div ng-repeat='node in interview.showedQuestion.nodes'>
+                <div flex layout-align="start center">
+                  <md-radio-button class="md-primary interview-radio-button" flex
+                                   ng-value="node"
+                                   select-free-text-on-click>
+                    <i class="glyphicon {{node.name  |
+							translate | displayFlag:node:storage}}" ng-if="node.type!='P_freetext' && storage.langEnabled"
+                       style="margin-right:2px;"></i><span
+                    ng-if="node.type!='P_freetext' && storage.langEnabled">{{node.name  |
 									translate}}</span>
-									<span
-									ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
-									<md-input-container ng-if="node.type=='P_freetext'"
-									md-no-float class="md-block"> <label>Free
-									Text</label> <input style="width: 270px;" ng-model="node.name">
-								</md-input-container> </md-radio-button>
+                    <span
+                      ng-if="node.type!='P_freetext' && !storage.langEnabled">{{node.name}}</span>
+                    <md-input-container class="md-block"
+                                        md-no-float ng-if="node.type=='P_freetext'"><label>Free
+                      Text</label> <input ng-model="node.name" style="width: 270px;">
+                    </md-input-container>
+                  </md-radio-button>
 
-							</div>
-						</div>
-						</md-radio-group>
-					</div>
+                </div>
+              </div>
+            </md-radio-group>
+          </div>
 
-					<md-button ng-if="!editModeOn"
-						ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
-						class="md-fab md-raised"> <span>NEXT</span> </md-button>
+          <md-button class="md-fab md-raised"
+                     ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
+                     ng-if="!editModeOn"><span>NEXT</span></md-button>
 
-					<p>&nbsp;</p>
-					<p>&nbsp;</p>
-					<md-button class="md-primary md-raised interviewNotesButton"
-						ng-click="showNotePrompt($event)"> Add Note </md-button>
-					<ol>
-						<li ng-if="note.type=='Interviewer'"
-							ng-repeat='note in interview.notes'>{{note.text}}</li>
-					</ol>
-					<p>&nbsp;</p>
-					<p>&nbsp;</p>
-					<p>&nbsp;</p>
-					<p>&nbsp;</p>
-					<p>&nbsp;</p>
-					<md-button ng-click="stopInterview(interview.showedQuestion)"
-						class="md-fab md-raised"> <span>STOP</span> </md-button>
-				</div>
-			</ul>
-		</div>
-		<div ng-if="participant.status != 1">
-			<div ng-if="interviewEnded">
-				Thanks!
-				<p>The interview has now come to the end. Please add any final
-					interview notes and click FINISH to mark it as complete</p>
-				<md-input-container class="md-block"> <label>Final
-					Interview Notes</label> <textarea ng-model="interview.endNotes"
-					md-maxlength="1000" rows="5" md-select-on-focus></textarea> </md-input-container>
-				<md-button ng-click="finishInterview()" class="md-fab md-raised ">
-				<span>FINISH</span> </md-button>
-				<ol>
-					<li ng-if="note.type=='Interviewer'"
-						ng-repeat='note in interview.notes'>{{note.text}}</li>
-				</ol>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <md-button class="md-primary md-raised interviewNotesButton"
+                     ng-click="showNotePrompt($event)"> Add Note
+          </md-button>
+          <ol>
+            <li ng-if="note.type=='Interviewer'"
+                ng-repeat='note in interview.notes'>{{note.text}}
+            </li>
+          </ol>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <md-button class="md-fab md-raised"
+                     ng-click="stopInterview(interview.showedQuestion)"><span>STOP</span></md-button>
+        </div>
+      </ul>
+    </div>
+    <div ng-if="participant.status != 1">
+      <div ng-if="interviewEnded">
+        Thanks!
+        <p>The interview has now come to the end. Please add any final
+          interview notes and click FINISH to mark it as complete</p>
+        <md-input-container class="md-block"><label>Final
+          Interview Notes</label> <textarea md-maxlength="1000"
+                                            md-select-on-focus ng-model="interview.endNotes" rows="5"></textarea>
+        </md-input-container>
+        <md-button class="md-fab md-raised " ng-click="finishInterview()">
+          <span>FINISH</span></md-button>
+        <ol>
+          <li ng-if="note.type=='Interviewer'"
+              ng-repeat='note in interview.notes'>{{note.text}}
+          </li>
+        </ol>
 
-			</div>
-		</div>
-		<div ng-if="participant.status == 1">
-			<div ng-if="interviewEnded">
-				Interview Stopped!
-				<p>The interview is only partial complete. Please add some
-					interview notes about why it was stopped.</p>
-				<md-button ng-click="closeOnStopButton()" class="md-fab md-raised ">
-				<span>STOP</span> </md-button>
-				<p>&nbsp;</p>
-				<md-button class="md-primary md-raised interviewNotesButton"
-					ng-click="showNotePrompt($event)"> Add Note </md-button>
-				<ol>
-					<li ng-if="note.type=='Interviewer'"
-						ng-repeat='note in interview.notes'>{{note.text}}</li>
-				</ol>
-				<p>&nbsp;</p>
+      </div>
+    </div>
+    <div ng-if="participant.status == 1">
+      <div ng-if="interviewEnded">
+        Interview Stopped!
+        <p>The interview is only partial complete. Please add some
+          interview notes about why it was stopped.</p>
+        <md-button class="md-fab md-raised " ng-click="closeOnStopButton()">
+          <span>STOP</span></md-button>
+        <p>&nbsp;</p>
+        <md-button class="md-primary md-raised interviewNotesButton"
+                   ng-click="showNotePrompt($event)"> Add Note
+        </md-button>
+        <ol>
+          <li ng-if="note.type=='Interviewer'"
+              ng-repeat='note in interview.notes'>{{note.text}}
+          </li>
+        </ol>
+        <p>&nbsp;</p>
 
 
-			</div>
-		</div>
-	</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div ng-if="treeViewEnabled" class="col-md-8 moduleInterview" id="interview-question-tree">
-<button class="btn btn-default" 
-	ng-click="toggleView()">Switch to List View</button>
-		
-<ng-include src="'scripts/interviews/partials/intModuleTree.html'"></ng-include>
-<div>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-	</div>
+<div class="col-md-8 moduleInterview" id="interview-question-tree" ng-if="treeViewEnabled">
+  <button class="btn btn-default"
+          ng-click="toggleView()">Switch to List View
+  </button>
+
+  <ng-include src="'scripts/interviews/partials/intModuleTree.html'"></ng-include>
+  <div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+  </div>
 </div>
 <!-- Interview History list starts here -->
-<div ng-if="!treeViewEnabled" class="col-md-8 moduleInterview" id="interview-question-list">
-	
-	<button class="btn btn-default" 
-	ng-click="toggleView()">Switch to Tree View</button>
-	
-	<div ui-tree="" id="tree-root1_{{$index}}"
-		ng-repeat="element in displayHistoryNew | orderBy:'-'">
-		<div class="angular-ui-tree">
-			<div class="tree-node">
-				<div id="questionlist-{{element.questionId}}"
-					class="tree-node-content Q_interviewresult {{element.link ? 'Q_link':''}} {{element.processed ? 'Q_processed':''}}">
-					<div class="form-group pull-left"
-						style="margin-top: 5px; margin-left: -15px;">
-						<!-- 							<span ng-if="!element.processed" class="badge-unprocessed " title="scheduled"> -->
-						<!-- 								&nbsp; -->
-						<!-- 							</span> -->
-						<i class="glyphicon {{element.name  |
+<div class="col-md-8 moduleInterview" id="interview-question-list" ng-if="!treeViewEnabled">
+
+  <button class="btn btn-default"
+          ng-click="toggleView()">Switch to Tree View
+  </button>
+
+  <div id="tree-root1_{{$index}}" ng-repeat="element in displayHistoryNew | orderBy:'-'"
+       ui-tree="">
+    <div class="angular-ui-tree">
+      <div class="tree-node">
+        <div
+          class="tree-node-content Q_interviewresult {{element.link ? 'Q_link':''}} {{element.processed ? 'Q_processed':''}}"
+          id="questionlist-{{element.questionId}}">
+          <div class="form-group pull-left"
+               style="margin-top: 5px; margin-left: -15px;">
+            <!-- 							<span ng-if="!element.processed" class="badge-unprocessed " title="scheduled"> -->
+            <!-- 								&nbsp; -->
+            <!-- 							</span> -->
+            <i class="glyphicon {{element.name  |
 							translate | displayFlag:element:storage}}" ng-if="storage.langEnabled"></i>
-						<span ng-if="element.deleted" class="badge-deleted"
-							title="deleted"> &nbsp; </span> <span class="badge">
+            <span class="badge-deleted" ng-if="element.deleted"
+                  title="deleted"> &nbsp; </span> <span class="badge">
 							{{element.header}} </span> <span class="badge"
-							title="qid:{{element.questionId}}"> {{element.number}} </span> <span
-							class="badge"> {{element.lastUpdated | date : 'dd/MM/yyyy
-							HH:mm:ss'}} </span>
-					</div>
-					<span ng-if="!element.deleted && !element.link"
-						ng-click="showEditQuestionPrompt($event,element)"
-						class="glyphicon glyphicon-edit"
-						style="margin-top: 5px; margin-left: 2px;" aria-hidden="true"></span>
-					<span ng-if="storage.langEnabled" id="{{'IntResult'+element.idNode}}" data-toggle="tooltip"
-						data-placement="bottom" title="{{ element.name }}">{{
+                                               title="qid:{{element.questionId}}"> {{element.number}} </span> <span
+            class="badge"> {{element.lastUpdated | date : 'dd/MM/yyyy;
+							ss;'}} </span>
+          </div>
+          <span aria-hidden="true"
+                class="glyphicon glyphicon-edit"
+                ng-click="showEditQuestionPrompt($event,element)"
+                ng-if="!element.deleted && !element.link" style="margin-top: 5px; margin-left: 2px;"></span>
+          <span data-placement="bottom" data-toggle="tooltip" id="{{'IntResult'+element.idNode}}"
+                ng-if="storage.langEnabled" title="{{ element.name }}">{{
 						element.name  | translate}}</span>
-					<span ng-if="!storage.langEnabled" id="{{'IntResult'+element.idNode}}" data-toggle="tooltip"
-						data-placement="bottom" title="{{ element.name }}">{{
+          <span data-placement="bottom" data-toggle="tooltip" id="{{'IntResult'+element.idNode}}"
+                ng-if="!storage.langEnabled" title="{{ element.name }}">{{
 						element.name}}</span>
-				</div>
-				<!-- 			show answers -->
-				<div class="tree-node-content P_interviewresult"
-					ng-repeat="as in element.answers | orderBy:orderByNumber">
-					<span ng-if="as.deleted" class="badge-deleted" title="deleted">
+        </div>
+        <!-- 			show answers -->
+        <div class="tree-node-content P_interviewresult"
+             ng-repeat="as in element.answers | orderBy:orderByNumber">
+					<span class="badge-deleted" ng-if="as.deleted" title="deleted">
 						&nbsp; </span>
-					<div class="form-group pull-left"
-						style="margin-top: 5px; margin-left: -15px;">
-						<i ng-if="as.type!='P_freetext' && storage.langEnabled" class="glyphicon {{as.name  |
-							translate | displayFlag:as:storage}}"></i>
-						<span class="badge">{{as.number}}</span> <span
-							permission="['ROLE_ADMIN']" class="badge">
+          <div class="form-group pull-left"
+               style="margin-top: 5px; margin-left: -15px;">
+            <i class="glyphicon {{as.name  |
+							translate | displayFlag:as:storage}}" ng-if="as.type!='P_freetext' && storage.langEnabled"></i>
+            <span class="badge">{{as.number}}</span> <span
+            class="badge" permission="['ROLE_ADMIN']">
 							{{as.lastUpdated | date : 'dd/MM/yyyy HH:mm:ss'}} </span>
-					</div>
-					<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip"
-						data-placement="bottom" ng-if="storage.langEnabled"
-						title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext 
+          </div>
+          <span data-placement="bottom" data-toggle="tooltip"
+                id="{{'IntResult'+as.idNode}}" ng-if="storage.langEnabled"
+                title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext
 						| translate}} </span>
-					<span id="{{'IntResult'+as.idNode}}" data-toggle="tooltip"
-						data-placement="bottom" ng-if="!storage.langEnabled"
-						title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext}} </span>
-				</div>
-			</div>		
-		</div>	
-	</div>
-	<div>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p>
-	</div>
-	
+          <span data-placement="bottom" data-toggle="tooltip"
+                id="{{'IntResult'+as.idNode}}" ng-if="!storage.langEnabled"
+                title="{{as.answerFreetext?as.answerFreetext:as.name}}">{{as.answerFreetext}} </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+  </div>
+
 </div>
 <!-- Interview History list ends here -->

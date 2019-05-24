@@ -1,77 +1,83 @@
-<md-dialog aria-label="Create Random Interview" style="margin:0 0 0 0;padding:0 0 0 0;"
-	ng-cloak> <!-- <pre>{{data | json}}</pre> -->
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Create Random Interview</h2>
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()"> <span
-			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content style="width:510px;">
-	<div class="md-dialog-content">
-		<div layout="column" ng-cloak class="md-inline-form">
-			<md-content>
-			<div layout-gt-sm="row">
-				<md-input-container class="md-block" flex-gt-sm style="height: 10px;">
-				<label>Number of Interviews</label> <input required maxlength="20"
-					name="randomIntCount" ng-model="randomIntCount" /> </md-input-container>
-				<div flex="5" hide-xs hide-sm>
-					<!-- Spacer //-->
-				</div>
-			</div>
-        <div flex-gt-sm="50">
-          <md-checkbox ng-model="randomAnswerChecked" aria-label="Select Random Answers">
-  					Select Random Answers
-				</md-checkbox>
+<md-dialog aria-label="Create Random Interview" ng-cloak
+           style="margin:0 0 0 0;padding:0 0 0 0;"> <!-- <pre>{{data | json}}</pre> -->
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Create Random Interview</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()"> <span
+          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="width:510px;">
+      <div class="md-dialog-content">
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content>
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm style="height: 10px;">
+                <label>Number of Interviews</label> <input maxlength="20" name="randomIntCount"
+                                                           ng-model="randomIntCount" required/>
+              </md-input-container>
+              <div flex="5" hide-sm hide-xs>
+                <!-- Spacer //-->
+              </div>
+            </div>
+            <div flex-gt-sm="50">
+              <md-checkbox aria-label="Select Random Answers" ng-model="randomAnswerChecked">
+                Select Random Answers
+              </md-checkbox>
+            </div>
         </div>
+        <div layout-gt-sm="row" layout-wrap>
+          <div>
+            <table class="table table-condensed table-bordered table-striped"
+                   ng-table="vm.filterModTableParams">
+              <tr ng-repeat="mod in $data track by $index">
+                <td header="'ng-table/headers/checkbox.html'" style="text-align: left" width="30">
+                  <input ng-model="checkboxes.items[mod.link]" style="position:static;" type="checkbox"/>
+                </td>
+                <td title="'Module Id'">{{mod.link}}</td>
+                <td filter="{name:'text'}" title="'Module Name'">{{mod.name}}</td>
+              </tr>
+            </table>
+          </div>
         </div>
-        <div layout-wrap layout-gt-sm="row" >
-        <div>
-     	 	<table ng-table="vm.filterModTableParams"
-				class="table table-condensed table-bordered table-striped">
-				<tr ng-repeat="mod in $data track by $index">
-					<td width="30" style="text-align: left" header="'ng-table/headers/checkbox.html'">
-						<input type="checkbox" style="position:static;" ng-model="checkboxes.items[mod.link]" />
-					</td>
-					<td title="'Module Id'">{{mod.link}}</td>
-					<td title="'Module Name'" filter="{name:'text'}">{{mod.name}}</td>
-				</tr>
-			</table>
+      </div>
+      <div class="panel panel-default" ng-if="randomReport.length > 0">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Interviews Created Report</div>
+        <div class="panel-body">
+          <div>
+            <div class="row" ng-repeat="rep in randomReport">
+              <div><strong>Interview Id :</strong> {{rep.interviewId}}</div>
+              <div><strong>Reference Number :</strong> {{rep.referenceNumber}}</div>
+              <div class="col-sm-12">
+                <ul class="list-group">
+                  <li class="list-group-item" ng-repeat="q in rep.listQuestion">
+                    <span class="list-group-item-success">{{q.number}} - {{q.name}}</span>
+                    <span class="list-group-item-danger">{{q.answer.number}} - {{q.answer.name}}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-        </div>
-        </div>
-			<div class="panel panel-default" ng-if="randomReport.length > 0">
-				<!-- Default panel contents -->
-				<div class="panel-heading">Interviews Created Report</div>
-				<div class="panel-body">
-					<div>
-						<div class="row" ng-repeat="rep in randomReport">
-							<div><strong>Interview Id :</strong> {{rep.interviewId}}</div>
-							<div><strong>Reference Number :</strong> {{rep.referenceNumber}}</div>
-							<div class="col-sm-12">
-								<ul class="list-group">
-									<li ng-repeat="q in rep.listQuestion" class="list-group-item">
-										<span class="list-group-item-success">{{q.number}} - {{q.name}}</span>
-										<span class="list-group-item-danger">{{q.answer.number}} - {{q.answer.name}}</span>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-				</div>
-				<md-dialog-actions layout="row"> <md-button
-					ng-click="cancel()" class="md-raised">Cancel</md-button> <md-button
-					ng-click="vm.createRandomInterviews()" class="md-raised">Generate</md-button>
-				</md-dialog-actions>
-			</md-content>
-		</div>
-	</div>
-	</md-dialog-content>
-</form>
-<script type="text/ng-template" id="ng-table/headers/checkbox.html">
-        		<input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox" value="" />
-    		</script>
+      </div>
+      <md-dialog-actions layout="row">
+        <md-button
+          class="md-raised" ng-click="cancel()">Cancel
+        </md-button>
+        <md-button
+          class="md-raised" ng-click="vm.createRandomInterviews()">Generate
+        </md-button>
+      </md-dialog-actions>
+      </md-content>
+      </div>
+      </div>
+    </md-dialog-content>
+  </form>
+  <script id="ng-table/headers/checkbox.html" type="text/ng-template">
+    <input type="checkbox" style="position:static;" ng-model="checkboxes.checked" id="select_all" name="filter-checkbox"
+           value=""/>
+  </script>
 </md-dialog>

@@ -1,90 +1,93 @@
 <div ng-cloak style="height:500px;">
-	<div role="group" aria-label="buttonGrp" style="padding:2px 2px 2px 2px;">
-	<label>Language</label>
-  			<ui-select ng-model="selectLanguage.selected"
-				ng-change="vm.changeNodeLanguage(selectLanguage)" theme="select2"
-				ng-disabled="disabled" style="min-width: 300px;"> <ui-select-match>
-			<i class="glyphicon {{$select.selected.flag}}"></i>
-			{{$select.selected.description}}
-			<i ng-if="$select.selected.count > 0" class="glyphicon glyphicon-ok-circle " style="color:green;"></i>
-			<i ng-if="$select.selected.count == 0" class="glyphicon glyphicon-exclamation-sign " style="color:red;"></i>
-			</ui-select-match> <ui-select-choices
-				repeat="lang in languages | propsFilter: {language: $select.search}">
-			<!--       <img ng-src="{{ lang.url }}" /> --> <i
-				class="glyphicon {{lang.flag}}"></i>
-			<div ng-bind-html="lang.description | highlight: $select.search"
-				style="display: inline"></div>
-			<i ng-if="lang.count > 0" class="glyphicon glyphicon-ok-circle " style="color:green;"></i>
-			<i ng-if="lang.count == 0" class="glyphicon glyphicon-exclamation-sign " style="color:red;"></i>
-			</ui-select-choices> </ui-select>
-	</div>
-	<div>
-		<table ng-table="vm.tableParams" ng-cloak
-		class="table table-bordered table-hover 
-  			table-condensed editable-table"
-  			ng-form="tableForm"
-			demo-tracked-table="vm.tableTracker"
-			disable-filter="vm.isAdding">     
-        <tbody>
+  <div aria-label="buttonGrp" role="group" style="padding:2px 2px 2px 2px;">
+    <label>Language</label>
+    <ui-select ng-change="vm.changeNodeLanguage(selectLanguage)"
+               ng-disabled="disabled" ng-model="selectLanguage.selected"
+               style="min-width: 300px;" theme="select2">
+      <ui-select-match>
+        <i class="glyphicon {{$select.selected.flag}}"></i>
+        {{$select.selected.description}}
+        <i class="glyphicon glyphicon-ok-circle " ng-if="$select.selected.count > 0" style="color:green;"></i>
+        <i class="glyphicon glyphicon-exclamation-sign " ng-if="$select.selected.count == 0" style="color:red;"></i>
+      </ui-select-match>
+      <ui-select-choices
+        repeat="lang in languages | propsFilter: {language: $select.search}">
+        <!--       <img ng-src="{{ lang.url }}" /> --> <i
+        class="glyphicon {{lang.flag}}"></i>
+        <div ng-bind-html="lang.description | highlight: $select.search"
+             style="display: inline"></div>
+        <i class="glyphicon glyphicon-ok-circle " ng-if="lang.count > 0" style="color:green;"></i>
+        <i class="glyphicon glyphicon-exclamation-sign " ng-if="lang.count == 0" style="color:red;"></i>
+      </ui-select-choices>
+    </ui-select>
+  </div>
+  <div>
+    <table class="table table-bordered table-hover
+  			table-condensed editable-table" demo-tracked-table="vm.tableTracker"
+           disable-filter="vm.isAdding"
+           ng-cloak
+           ng-form="tableForm"
+           ng-table="vm.tableParams">
+      <tbody>
         <tr>
-            <td colspan="3">
-                <div class="brn-group pull-right">
-       				 <button class="btn btn-default" ng-click="vm.add()">
-          					<span class="glyphicon glyphicon-plus"></span>
-       				 </button>
-       				 <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
-          					<span class="glyphicon glyphicon-trash"></span>
-       				 </button>
-     			 </div>
-            </td>
+          <td colspan="3">
+            <div class="brn-group pull-right">
+              <button class="btn btn-default" ng-click="vm.add()">
+                <span class="glyphicon glyphicon-plus"></span>
+              </button>
+              <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </div>
+          </td>
         </tr>
-        <tr ng-repeat="row in $data" ng-form="rowForm" demo-tracked-table-row="row">  
-			<td filter="{word: 'text'}"
-				ng-switch="row.isEditing" ng-class="word.$dirty ? 'bg-warning' : ''"
-				ng-form="word" demo-tracked-table-cell>
-				<div ng-click="row.isEditing = true">
-					<span ng-switch-default class="editable-text">
+        <tr demo-tracked-table-row="row" ng-form="rowForm" ng-repeat="row in $data">
+          <td demo-tracked-table-cell
+              filter="{word: 'text'}" ng-class="word.$dirty ? 'bg-warning' : ''"
+              ng-form="word" ng-switch="row.isEditing">
+            <div ng-click="row.isEditing = true">
+					<span class="editable-text" ng-switch-default>
 						{{row.word}}
 					</span>
-					<div class="controls"
-						ng-class="word.$invalid && word.$dirty ? 'has-error' : ''"
-						ng-switch-when="true">
-						<input type="text" name="word" ng-model="row.word"
-							class="editable-input form-control input-sm" required />
-					</div>
-				</div>		
-			</td>
-			<td filter="{translation: 'text'}"
-				ng-switch="row.isEditing" ng-class="translation.$dirty ? 'bg-warning' : ''"
-				ng-form="translation" demo-tracked-table-cell>
-				<div ng-click="row.isEditing = true">
-					<span ng-switch-default class="editable-text">
+              <div class="controls"
+                   ng-class="word.$invalid && word.$dirty ? 'has-error' : ''"
+                   ng-switch-when="true">
+                <input class="editable-input form-control input-sm" name="word" ng-model="row.word"
+                       required type="text"/>
+              </div>
+            </div>
+          </td>
+          <td demo-tracked-table-cell
+              filter="{translation: 'text'}" ng-class="translation.$dirty ? 'bg-warning' : ''"
+              ng-form="translation" ng-switch="row.isEditing">
+            <div ng-click="row.isEditing = true">
+					<span class="editable-text" ng-switch-default>
 						{{row.translation}}
 					</span>
-					<div class="controls"
-						ng-class="translation.$invalid && translation.$dirty ? 'has-error' : ''"
-						ng-switch-when="true">
-						<input type="text" name="translation" ng-model="row.translation"
-							class="editable-input form-control input-sm" required />
-					</div>
-				</div>		
-			</td>
-			<td>
-				<button class="btn btn-primary btn-sm"
-					ng-click="vm.save(row, rowForm)"
-					ng-disabled="rowForm.$pristine || rowForm.$invalid">
-					<span class="glyphicon glyphicon-ok"></span>
-				</button>
-				<button class="btn btn-default btn-sm"
-					ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
-					<span class="glyphicon glyphicon-remove"></span>
-				</button>
-				<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
-					confirm="Delete module {{row.name}}?">
-					<span class="glyphicon glyphicon-trash"></span>
-				</button>
-			</td>
+              <div class="controls"
+                   ng-class="translation.$invalid && translation.$dirty ? 'has-error' : ''"
+                   ng-switch-when="true">
+                <input class="editable-input form-control input-sm" name="translation" ng-model="row.translation"
+                       required type="text"/>
+              </div>
+            </div>
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm"
+                    ng-click="vm.save(row, rowForm)"
+                    ng-disabled="rowForm.$pristine || rowForm.$invalid">
+              <span class="glyphicon glyphicon-ok"></span>
+            </button>
+            <button class="btn btn-default btn-sm"
+                    ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <button class="btn btn-danger btn-sm" confirm="Delete module {{row.name}}?"
+                    ng-click="vm.del(row)">
+              <span class="glyphicon glyphicon-trash"></span>
+            </button>
+          </td>
         </tr>
-    </tbody>
-	</table>
-</div>
+      </tbody>
+    </table>
+  </div>

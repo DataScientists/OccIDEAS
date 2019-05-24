@@ -1,12 +1,12 @@
 (function() {
-    angular.module('occIDEASApp.Logout',['ui.router','ngStorage']).config(Config);
+  angular.module('occIDEASApp.Logout', ['ui.router', 'ngStorage']).config(Config);
 
-    Config.$inject = ['$stateProvider'];
+  Config.$inject = ['$stateProvider'];
 
-    function Config($stateProvider){
-           $stateProvider
-        .state('logout', {
-            controller: 'LogoutCtrl'
-        });
-    }
+  function Config($stateProvider) {
+    $stateProvider
+      .state('logout', {
+        controller: 'LogoutCtrl'
+      });
+  }
 })();

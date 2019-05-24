@@ -1,6 +1,6 @@
-(function(){
-	angular
-	  .module('occIDEASApp.Reports',['ui.router']);
-	  
-	  
+(function() {
+  angular
+    .module('occIDEASApp.Reports', ['ui.router']);
+
+
 })();

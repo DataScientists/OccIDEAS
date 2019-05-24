@@ -1,55 +1,58 @@
-<div ng-if="data[0].type != 'M_IntroModule'" id="fragdropcontainer" ng-class="rightNav" class="ui-widget">
-		<div class="frag-contain">
-		<div class="fragmentSticker" ng-click="toggleRight()" style="cursor: pointer;">Fragments</div> 
-		
-<label for="fragmentsdragdrop" class="fraglabel">Drag Drop Fragments: </label>
-<div id="fragmentsdragdrop"><ul></ul>
-<div>
-    <h5>Fragment List</h5>
-    <md-progress-circular ng-if="fragmentsLoading" md-mode="indeterminate" md-diameter="100%"></md-progress-circular>
-    <uib-accordion close-others="oneAtATime" ng-if="!fragmentsLoading">
-     	 <uib-accordion-group heading="aJSMs" >
-				<div ui-tree="aJsmTreeOptions" id="fragmentTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="aJSMData">
-				<li ng-repeat="node in aJSMData track by $index" ui-tree-node  
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-    	<uib-accordion-group heading="Templates" >
-		<div ui-tree="templateTreeOptions" id="templateTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="templateData">
-				<li ng-repeat="node in templateData track by $index" ui-tree-node 
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-    	<uib-accordion-group heading="Frequencies" >
-		<div ui-tree="templateTreeOptions" id="frequencyTree-root" data-clone-enabled="true">
-			<ol ui-tree-nodes ng-model="frequencyData">
-				<li ng-repeat="node in frequencyData track by $index" ui-tree-node 
-				ng-include="'nodes_renderer2.html'"></li>
-			</ol>
-		</div>
-    	</uib-accordion-group>
-     </uib-accordion>
-     
+<div class="ui-widget" id="fragdropcontainer" ng-class="rightNav" ng-if="data[0].type != 'M_IntroModule'">
+  <div class="frag-contain">
+    <div class="fragmentSticker" ng-click="toggleRight()" style="cursor: pointer;">Fragments</div>
+
+    <label class="fraglabel" for="fragmentsdragdrop">Drag Drop Fragments: </label>
+    <div id="fragmentsdragdrop">
+      <ul></ul>
+      <div>
+        <h5>Fragment List</h5>
+        <md-progress-circular md-diameter="100%" md-mode="indeterminate"
+                              ng-if="fragmentsLoading"></md-progress-circular>
+        <uib-accordion close-others="oneAtATime" ng-if="!fragmentsLoading">
+          <uib-accordion-group heading="aJSMs">
+            <div data-clone-enabled="true" id="fragmentTree-root" ui-tree="aJsmTreeOptions">
+              <ol ng-model="aJSMData" ui-tree-nodes>
+                <li ng-include="'nodes_renderer2.html'" ng-repeat="node in aJSMData track by $index"
+                    ui-tree-node></li>
+              </ol>
+            </div>
+          </uib-accordion-group>
+          <uib-accordion-group heading="Templates">
+            <div data-clone-enabled="true" id="templateTree-root" ui-tree="templateTreeOptions">
+              <ol ng-model="templateData" ui-tree-nodes>
+                <li ng-include="'nodes_renderer2.html'" ng-repeat="node in templateData track by $index"
+                    ui-tree-node></li>
+              </ol>
+            </div>
+          </uib-accordion-group>
+          <uib-accordion-group heading="Frequencies">
+            <div data-clone-enabled="true" id="frequencyTree-root" ui-tree="templateTreeOptions">
+              <ol ng-model="frequencyData" ui-tree-nodes>
+                <li ng-include="'nodes_renderer2.html'" ng-repeat="node in frequencyData track by $index"
+                    ui-tree-node></li>
+              </ol>
+            </div>
+          </uib-accordion-group>
+        </uib-accordion>
+
+      </div>
+    </div>
   </div>
-</div>
-</div>
-	<script type="text/ng-template" id="nodes_renderer2.html">
-<div id="tree2-root" class="angular-ui-tree">
-     <div class="tree-node">
-        <div class="pull-left tree-handle angular-ui-tree-handle " ui-tree-handle=""  >
+  <script id="nodes_renderer2.html" type="text/ng-template">
+    <div id="tree2-root" class="angular-ui-tree">
+      <div class="tree-node">
+        <div class="pull-left tree-handle angular-ui-tree-handle " ui-tree-handle="">
           <span class="glyphicon glyphicon-list"></span>
         </div>
-<!-- start content -->
-        <div class="tree-node-content Q {{node.warning}}">        
-          <span ng-if="isDragging" class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>
+        <!-- start content -->
+        <div class="tree-node-content Q {{node.warning}}">
+          <span ng-if="isDragging"
+                class="badge">{{node.type}}:{{node.idNode}}:{{node.parentId}}:{{node.sequence}}</span>
           <span data-nodrag>{{node.name}}</span>
-       </div> 
-<!-- end content -->
-     </div>
-  </div>
-</script>
+        </div>
+        <!-- end content -->
+      </div>
+    </div>
+  </script>
 </div>

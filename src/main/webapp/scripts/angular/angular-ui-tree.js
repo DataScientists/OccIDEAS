@@ -3,7 +3,7 @@
  * (c) 2010-2016. https://github.com/angular-ui-tree/angular-ui-tree
  * License: MIT
  */
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree', [])
@@ -23,13 +23,13 @@
 
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
 
     .controller('TreeHandleController', ['$scope', '$element',
-      function ($scope, $element) {
+      function($scope, $element) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -40,12 +40,12 @@
     ]);
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
     .controller('TreeNodeController', ['$scope', '$element',
-      function ($scope, $element) {
+      function($scope, $element) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -59,7 +59,7 @@
         $scope.$$allowNodeDrop = false;
         $scope.collapsed = false;
 
-        $scope.init = function (controllersArr) {
+        $scope.init = function(controllersArr) {
           var treeNodesCtrl = controllersArr[0];
           $scope.$treeScope = controllersArr[1] ? controllersArr[1].scope : null;
 
@@ -70,121 +70,121 @@
           $scope.$parentNodesScope = treeNodesCtrl.scope;
           treeNodesCtrl.scope.initSubNode($scope); // init sub nodes
 
-          $element.on('$destroy', function () {
+          $element.on('$destroy', function() {
             treeNodesCtrl.scope.destroySubNode($scope); // destroy sub nodes
           });
         };
 
-        $scope.index = function () {
+        $scope.index = function() {
           return $scope.$parentNodesScope.$modelValue.indexOf($scope.$modelValue);
         };
 
-        $scope.dragEnabled = function () {
+        $scope.dragEnabled = function() {
           return !($scope.$treeScope && !$scope.$treeScope.dragEnabled);
         };
 
-        $scope.isSibling = function (targetNode) {
+        $scope.isSibling = function(targetNode) {
           return $scope.$parentNodesScope == targetNode.$parentNodesScope;
         };
 
-        $scope.isChild = function (targetNode) {
+        $scope.isChild = function(targetNode) {
           var nodes = $scope.childNodes();
           return nodes && nodes.indexOf(targetNode) > -1;
         };
 
-        $scope.prev = function () {
+        $scope.prev = function() {
           var index = $scope.index();
-          if (index > 0) {
+          if(index > 0) {
             return $scope.siblings()[index - 1];
           }
           return null;
         };
 
-        $scope.siblings = function () {
+        $scope.siblings = function() {
           return $scope.$parentNodesScope.childNodes();
         };
 
-        $scope.childNodesCount = function () {
+        $scope.childNodesCount = function() {
           return $scope.childNodes() ? $scope.childNodes().length : 0;
         };
 
-        $scope.hasChild = function () {
+        $scope.hasChild = function() {
           return $scope.childNodesCount() > 0;
         };
 
-        $scope.childNodes = function () {
+        $scope.childNodes = function() {
           return $scope.$childNodesScope && $scope.$childNodesScope.$modelValue ?
             $scope.$childNodesScope.childNodes() :
             null;
         };
 
-        $scope.accept = function (sourceNode, destIndex) {
+        $scope.accept = function(sourceNode, destIndex) {
           return $scope.$childNodesScope &&
             $scope.$childNodesScope.$modelValue &&
             $scope.$childNodesScope.accept(sourceNode, destIndex);
         };
 
-        $scope.remove = function () {
+        $scope.remove = function() {
           return $scope.$parentNodesScope.removeNode($scope);
         };
 
-        $scope.toggle = function () {
+        $scope.toggle = function() {
           $scope.collapsed = !$scope.collapsed;
         };
 
-        $scope.collapse = function () {
+        $scope.collapse = function() {
           $scope.collapsed = true;
         };
 
-        $scope.expand = function () {
+        $scope.expand = function() {
           $scope.collapsed = false;
         };
 
-        $scope.depth = function () {
+        $scope.depth = function() {
           var parentNode = $scope.$parentNodeScope;
-          if (parentNode) {
+          if(parentNode) {
             return parentNode.depth() + 1;
           }
           return 1;
         };
 
         /**
-        * Returns the depth of the deepest subtree under this node
-        * @param scope a TreeNodesController scope object
-        * @returns Depth of all nodes *beneath* this node. If scope belongs to a leaf node, the
-        *   result is 0 (it has no subtree).
-        */
+         * Returns the depth of the deepest subtree under this node
+         * @param scope a TreeNodesController scope object
+         * @returns Depth of all nodes *beneath* this node. If scope belongs to a leaf node, the
+         *   result is 0 (it has no subtree).
+         */
         function countSubTreeDepth(scope) {
           var thisLevelDepth = 0,
-              childNodes = scope.childNodes(),
-              childNode,
-              childDepth,
-              i;
-          if (!childNodes || childNodes.length === 0) {
+            childNodes = scope.childNodes(),
+            childNode,
+            childDepth,
+            i;
+          if(!childNodes || childNodes.length === 0) {
             return 0;
           }
-          for (i = childNodes.length - 1; i >= 0 ; i--) {
+          for(i = childNodes.length - 1; i >= 0; i--) {
             childNode = childNodes[i],
-            childDepth = 1 + countSubTreeDepth(childNode);
+              childDepth = 1 + countSubTreeDepth(childNode);
             thisLevelDepth = Math.max(thisLevelDepth, childDepth);
           }
           return thisLevelDepth;
         }
 
-        $scope.maxSubDepth = function () {
+        $scope.maxSubDepth = function() {
           return $scope.$childNodesScope ? countSubTreeDepth($scope.$childNodesScope) : 0;
         };
       }
     ]);
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
 
     .controller('TreeNodesController', ['$scope', '$element',
-      function ($scope, $element) {
+      function($scope, $element) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -198,40 +198,40 @@
         $scope.maxDepth = 0;
         $scope.cloneEnabled = false;
 
-        $scope.initSubNode = function (subNode) {
-          if (!subNode.$modelValue) {
+        $scope.initSubNode = function(subNode) {
+          if(!subNode.$modelValue) {
             return null;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = subNode;
         };
 
-        $scope.destroySubNode = function (subNode) {
-          if (!subNode.$modelValue) {
+        $scope.destroySubNode = function(subNode) {
+          if(!subNode.$modelValue) {
             return null;
           }
           $scope.$nodesMap[subNode.$modelValue.$$hashKey] = null;
         };
 
-        $scope.accept = function (sourceNode, destIndex) {
+        $scope.accept = function(sourceNode, destIndex) {
           return $scope.$treeScope.$callbacks.accept(sourceNode, $scope, destIndex);
         };
 
-        $scope.beforeDrag = function (sourceNode) {
+        $scope.beforeDrag = function(sourceNode) {
           return $scope.$treeScope.$callbacks.beforeDrag(sourceNode);
         };
 
-        $scope.isParent = function (node) {
+        $scope.isParent = function(node) {
           return node.$parentNodesScope == $scope;
         };
 
-        $scope.hasChild = function () {
+        $scope.hasChild = function() {
           return $scope.$modelValue.length > 0;
         };
 
-        $scope.safeApply = function (fn) {
+        $scope.safeApply = function(fn) {
           var phase = this.$root.$$phase;
-          if (phase == '$apply' || phase == '$digest') {
-            if (fn && (typeof (fn) === 'function')) {
+          if(phase == '$apply' || phase == '$digest') {
+            if(fn && (typeof (fn) === 'function')) {
               fn();
             }
           } else {
@@ -239,10 +239,10 @@
           }
         };
 
-        $scope.removeNode = function (node) {
+        $scope.removeNode = function(node) {
           var index = $scope.$modelValue.indexOf(node.$modelValue);
-          if (index > -1) {
-            $scope.safeApply(function () {
+          if(index > -1) {
+            $scope.safeApply(function() {
               $scope.$modelValue.splice(index, 1)[0];
             });
             return $scope.$treeScope.$callbacks.removed(node);
@@ -250,50 +250,50 @@
           return null;
         };
 
-        $scope.insertNode = function (index, nodeData) {
-          $scope.safeApply(function () {
+        $scope.insertNode = function(index, nodeData) {
+          $scope.safeApply(function() {
             $scope.$modelValue.splice(index, 0, nodeData);
           });
         };
-        
-        $scope.cascadeIdCleanse = function(arrayInp){
-			if(arrayInp.length > 0){
-				_.each(arrayInp, function(obj) {
-					  _.each(obj, function(value, key) {
-					    if(key === 'idNode') {
-					      obj[key] = "";				      
-					    }else if(key === 'moduleRule') {
-					      obj[key] = [];				      
-					    }
-					  });
-					if(obj.nodes.length > 0){
-						$scope.cascadeIdCleanse(obj.nodes);
-					}
-				});
-				
-			}
-		}
-        $scope.childNodes = function () {
+
+        $scope.cascadeIdCleanse = function(arrayInp) {
+          if(arrayInp.length > 0) {
+            _.each(arrayInp, function(obj) {
+              _.each(obj, function(value, key) {
+                if(key === 'idNode') {
+                  obj[key] = "";
+                } else if(key === 'moduleRule') {
+                  obj[key] = [];
+                }
+              });
+              if(obj.nodes.length > 0) {
+                $scope.cascadeIdCleanse(obj.nodes);
+              }
+            });
+
+          }
+        };
+        $scope.childNodes = function() {
           var i, nodes = [];
-          if ($scope.$modelValue) {
-            for (i = 0; i < $scope.$modelValue.length; i++) {
+          if($scope.$modelValue) {
+            for(i = 0; i < $scope.$modelValue.length; i++) {
               nodes.push($scope.$nodesMap[$scope.$modelValue[i].$$hashKey]);
             }
           }
           return nodes;
         };
 
-        $scope.depth = function () {
-          if ($scope.$nodeScope) {
+        $scope.depth = function() {
+          if($scope.$nodeScope) {
             return $scope.$nodeScope.depth();
           }
           return 0; // if it has no $nodeScope, it's root
         };
 
         // check if depth limit has reached
-        $scope.outOfDepth = function (sourceNode) {
+        $scope.outOfDepth = function(sourceNode) {
           var maxDepth = $scope.maxDepth || $scope.$treeScope.maxDepth;
-          if (maxDepth > 0) {
+          if(maxDepth > 0) {
             return $scope.depth() + sourceNode.maxSubDepth() + 1 > maxDepth;
           }
           return false;
@@ -303,13 +303,13 @@
     ]);
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
 
     .controller('TreeController', ['$scope', '$element',
-      function ($scope, $element) {
+      function($scope, $element) {
         this.scope = $scope;
 
         $scope.$element = $element;
@@ -326,19 +326,19 @@
         $scope.nodropEnabled = false;
 
         // Check if it's a empty tree
-        $scope.isEmpty = function () {
+        $scope.isEmpty = function() {
           return ($scope.$nodesScope && $scope.$nodesScope.$modelValue
-          && $scope.$nodesScope.$modelValue.length === 0);
+            && $scope.$nodesScope.$modelValue.length === 0);
         };
 
         // add placeholder to empty tree
-        $scope.place = function (placeElm) {
+        $scope.place = function(placeElm) {
           $scope.$nodesScope.$element.append(placeElm);
           $scope.$emptyElm.remove();
         };
 
-        this.resetEmptyElement = function () {
-          if ((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
+        this.resetEmptyElement = function() {
+          if((!$scope.$nodesScope.$modelValue || $scope.$nodesScope.$modelValue.length === 0) &&
             $scope.emptyPlaceholderEnabled) {
             $element.append($scope.$emptyElm);
           } else {
@@ -351,36 +351,36 @@
     ]);
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
     .directive('uiTree', ['treeConfig', '$window',
-      function (treeConfig, $window) {
+      function(treeConfig, $window) {
         return {
           restrict: 'A',
           scope: true,
           controller: 'TreeController',
-          link: function (scope, element, attrs, ctrl) {
+          link: function(scope, element, attrs, ctrl) {
             var callbacks = {
-              accept: null,
-              beforeDrag: null
-            },
+                accept: null,
+                beforeDrag: null
+              },
               config = {},
               tdElm,
               $trElm,
               emptyElmColspan;
 
             angular.extend(config, treeConfig);
-            if (config.treeClass) {
+            if(config.treeClass) {
               element.addClass(config.treeClass);
             }
 
-            if (element.prop('tagName').toLowerCase() === 'table') {
+            if(element.prop('tagName').toLowerCase() === 'table') {
               scope.$emptyElm = angular.element($window.document.createElement('tr'));
               $trElm = element.find('tr');
               // If we can find a tr, then we can use its td children as the empty element colspan.
-              if ($trElm.length > 0) {
+              if($trElm.length > 0) {
                 emptyElmColspan = angular.element($trElm).children().length;
               } else {
                 // If not, by setting a huge colspan we make sure it takes full width.
@@ -393,51 +393,51 @@
               scope.$emptyElm = angular.element($window.document.createElement('div'));
             }
 
-            if (config.emptyTreeClass) {
+            if(config.emptyTreeClass) {
               scope.$emptyElm.addClass(config.emptyTreeClass);
             }
 
-            scope.$watch('$nodesScope.$modelValue.length', function (val) {
-              if (!angular.isNumber(val)) {
+            scope.$watch('$nodesScope.$modelValue.length', function(val) {
+              if(!angular.isNumber(val)) {
                 return;
               }
 
               ctrl.resetEmptyElement();
             }, true);
 
-            scope.$watch(attrs.dragEnabled, function (val) {
-              if ((typeof val) == 'boolean') {
+            scope.$watch(attrs.dragEnabled, function(val) {
+              if((typeof val) == 'boolean') {
                 scope.dragEnabled = val;
               }
             });
 
-            scope.$watch(attrs.emptyPlaceholderEnabled, function (val) {
-              if ((typeof val) == 'boolean') {
+            scope.$watch(attrs.emptyPlaceholderEnabled, function(val) {
+              if((typeof val) == 'boolean') {
                 scope.emptyPlaceholderEnabled = val;
                 ctrl.resetEmptyElement();
               }
             });
 
-            scope.$watch(attrs.nodropEnabled, function (val) {
-              if ((typeof val) == 'boolean') {
+            scope.$watch(attrs.nodropEnabled, function(val) {
+              if((typeof val) == 'boolean') {
                 scope.nodropEnabled = val;
               }
             });
 
-            scope.$watch(attrs.cloneEnabled, function (val) {
-              if ((typeof val) == 'boolean') {
+            scope.$watch(attrs.cloneEnabled, function(val) {
+              if((typeof val) == 'boolean') {
                 scope.cloneEnabled = val;
               }
             });
 
-            scope.$watch(attrs.maxDepth, function (val) {
-              if ((typeof val) == 'number') {
+            scope.$watch(attrs.maxDepth, function(val) {
+              if((typeof val) == 'number') {
                 scope.maxDepth = val;
               }
             });
 
-            scope.$watch(attrs.dragDelay, function (val) {
-              if ((typeof val) == 'number') {
+            scope.$watch(attrs.dragDelay, function(val) {
+              if((typeof val) == 'number') {
                 scope.dragDelay = val;
               }
             });
@@ -454,15 +454,15 @@
              * @param destIndex Index in the destination nodes array where the source node will drop
              * @returns {boolean} True if the node is permitted to be dropped here
              */
-            callbacks.accept = function (sourceNodeScope, destNodesScope, destIndex) {
+            callbacks.accept = function(sourceNodeScope, destNodesScope, destIndex) {
               return !(destNodesScope.nodropEnabled || destNodesScope.$treeScope.nodropEnabled || destNodesScope.outOfDepth(sourceNodeScope));
             };
 
-            callbacks.beforeDrag = function (sourceNodeScope) {
+            callbacks.beforeDrag = function(sourceNodeScope) {
               return true;
             };
 
-            callbacks.removed = function (node) {
+            callbacks.removed = function(node) {
 
             };
 
@@ -470,7 +470,7 @@
              * Callback is fired when a node is successfully dropped in a new location
              * @param event
              */
-            callbacks.dropped = function (event) {
+            callbacks.dropped = function(event) {
 
             };
 
@@ -478,7 +478,7 @@
              * Callback is fired each time the user starts dragging a node
              * @param event
              */
-            callbacks.dragStart = function (event) {
+            callbacks.dragStart = function(event) {
 
             };
 
@@ -486,7 +486,7 @@
              * Callback is fired each time a dragged node is moved with the mouse/touch.
              * @param event
              */
-            callbacks.dragMove = function (event) {
+            callbacks.dragMove = function(event) {
 
             };
 
@@ -495,7 +495,7 @@
              * accepted or reverted.
              * @param event
              */
-            callbacks.dragStop = function (event) {
+            callbacks.dragStop = function(event) {
 
             };
 
@@ -507,14 +507,14 @@
              * @param event
              * @returns {Boolean|Promise} Truthy (or rejected Promise) to cancel node move; falsy (or resolved promise)
              */
-            callbacks.beforeDrop = function (event) {
+            callbacks.beforeDrop = function(event) {
 
             };
 
-            scope.$watch(attrs.uiTree, function (newVal, oldVal) {
-              angular.forEach(newVal, function (value, key) {
-                if (callbacks[key]) {
-                  if (typeof value === 'function') {
+            scope.$watch(attrs.uiTree, function(newVal, oldVal) {
+              angular.forEach(newVal, function(value, key) {
+                if(callbacks[key]) {
+                  if(typeof value === 'function') {
                     callbacks[key] = value;
                   }
                 }
@@ -530,25 +530,25 @@
     ]);
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
     .directive('uiTreeHandle', ['treeConfig',
-      function (treeConfig) {
+      function(treeConfig) {
         return {
           require: '^uiTreeNode',
           restrict: 'A',
           scope: true,
           controller: 'TreeHandleController',
-          link: function (scope, element, attrs, treeNodeCtrl) {
+          link: function(scope, element, attrs, treeNodeCtrl) {
             var config = {};
             angular.extend(config, treeConfig);
-            if (config.handleClass) {
+            if(config.handleClass) {
               element.addClass(config.handleClass);
             }
             // connect with the tree node.
-            if (scope != treeNodeCtrl.scope) {
+            if(scope != treeNodeCtrl.scope) {
               scope.$nodeScope = treeNodeCtrl.scope;
               treeNodeCtrl.scope.$handleScope = scope;
             }
@@ -558,18 +558,18 @@
     ]);
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
 
     .directive('uiTreeNode', ['treeConfig', 'UiTreeHelper', '$window', '$document', '$timeout', '$q', '$rootElement',
-      function (treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $rootElement) {
+      function(treeConfig, UiTreeHelper, $window, $document, $timeout, $q, $rootElement) {
         return {
           require: ['^uiTreeNodes', '^uiTree'],
           restrict: 'A',
           controller: 'TreeNodeController',
-          link: function (scope, element, attrs, controllersArr) {
+          link: function(scope, element, attrs, controllersArr) {
             // todo startPos is unused
             var config = {},
               hasTouch = 'ontouchstart' in window,
@@ -602,7 +602,7 @@
               el;
 
             angular.extend(config, treeConfig);
-            if (config.nodeClass) {
+            if(config.nodeClass) {
               element.addClass(config.nodeClass);
             }
             scope.init(controllersArr);
@@ -610,22 +610,22 @@
             scope.collapsed = !!UiTreeHelper.getNodeAttribute(scope, 'collapsed') || treeConfig.defaultCollapsed;
             scope.sourceOnly = scope.nodropEnabled || scope.$treeScope.nodropEnabled;
 
-            scope.$watch(attrs.collapsed, function (val) {
-              if ((typeof val) == 'boolean') {
+            scope.$watch(attrs.collapsed, function(val) {
+              if((typeof val) == 'boolean') {
                 scope.collapsed = val;
               }
             });
 
-            scope.$watch('collapsed', function (val) {
+            scope.$watch('collapsed', function(val) {
               UiTreeHelper.setNodeAttribute(scope, 'collapsed', val);
               attrs.$set('collapsed', val);
             });
 
-            scope.$on('angular-ui-tree:collapse-all', function () {
+            scope.$on('angular-ui-tree:collapse-all', function() {
               scope.collapsed = true;
             });
 
-            scope.$on('angular-ui-tree:expand-all', function () {
+            scope.$on('angular-ui-tree:expand-all', function() {
               scope.collapsed = false;
             });
 
@@ -633,14 +633,14 @@
              * Called when the user has grabbed a node and started dragging it
              * @param e
              */
-            dragStart = function (e) {
+            dragStart = function(e) {
               // disable right click
-              if (!hasTouch && (e.button === 2 || e.which === 3)) {
+              if(!hasTouch && (e.button === 2 || e.which === 3)) {
                 return;
               }
 
               // event has already fired in other scope
-              if (e.uiTreeDragging || (e.originalEvent && e.originalEvent.uiTreeDragging)) {
+              if(e.uiTreeDragging || (e.originalEvent && e.originalEvent.uiTreeDragging)) {
                 return;
               }
 
@@ -654,7 +654,7 @@
               // if the target element is a child element of a ui-tree-handle,
               // use the containing handle element as target element
               isHandleChild = UiTreeHelper.treeNodeHandlerContainerOfElement(eventElm);
-              if (isHandleChild) {
+              if(isHandleChild) {
                 eventElm = angular.element(isHandleChild);
               }
 
@@ -662,16 +662,16 @@
               isTreeNode = UiTreeHelper.elementIsTreeNode(eventElm);
               isTreeNodeHandle = UiTreeHelper.elementIsTreeNodeHandle(eventElm);
 
-              if (!isTreeNode && !isTreeNodeHandle) {
+              if(!isTreeNode && !isTreeNodeHandle) {
                 return;
               }
 
-              if (isTreeNode && UiTreeHelper.elementContainsTreeNodeHandler(eventElm)) {
+              if(isTreeNode && UiTreeHelper.elementContainsTreeNodeHandler(eventElm)) {
                 return;
               }
 
               eventElmTagName = eventElm.prop('tagName').toLowerCase();
-              if (eventElmTagName == 'input' ||
+              if(eventElmTagName == 'input' ||
                 eventElmTagName == 'textarea' ||
                 eventElmTagName == 'button' ||
                 eventElmTagName == 'select') { // if it's a input or button, ignore it
@@ -680,19 +680,19 @@
 
               // check if it or it's parents has a 'data-nodrag' attribute
               el = angular.element(e.target);
-              while (el && el[0] && el[0] !== element) {
-                if (UiTreeHelper.nodrag(el)) { // if the node mark as `nodrag`, DONOT drag it.
+              while(el && el[0] && el[0] !== element) {
+                if(UiTreeHelper.nodrag(el)) { // if the node mark as `nodrag`, DONOT drag it.
                   return;
                 }
                 el = el.parent();
               }
 
-              if (!scope.beforeDrag(scope)) {
+              if(!scope.beforeDrag(scope)) {
                 return;
               }
 
               e.uiTreeDragging = true; // stop event bubbling
-              if (e.originalEvent) {
+              if(e.originalEvent) {
                 e.originalEvent.uiTreeDragging = true;
               }
               e.preventDefault();
@@ -703,7 +703,7 @@
 
               tagName = element.prop('tagName');
 
-              if (tagName.toLowerCase() === 'tr') {
+              if(tagName.toLowerCase() === 'tr') {
                 placeElm = angular.element($window.document.createElement(tagName));
                 tdElm = angular.element($window.document.createElement('td'))
                   .addClass(config.placeholderClass)
@@ -714,7 +714,7 @@
                   .addClass(config.placeholderClass);
               }
               hiddenPlaceElm = angular.element($window.document.createElement(tagName));
-              if (config.hiddenClass) {
+              if(config.hiddenClass) {
                 hiddenPlaceElm.addClass(config.hiddenClass);
               }
 
@@ -728,21 +728,21 @@
 
               // Prevents cursor to change rapidly in Opera 12.16 and IE when dragging an element
               hStyle = (element[0].querySelector('.angular-ui-tree-handle') || element[0]).currentStyle;
-              if (hStyle) {
+              if(hStyle) {
                 document.body.setAttribute('ui-tree-cursor', $document.find('body').css('cursor') || '');
                 $document.find('body').css({'cursor': hStyle.cursor + '!important'});
               }
 
-              if (scope.sourceOnly) {
+              if(scope.sourceOnly) {
                 placeElm.css('display', 'none');
               }
               element.after(placeElm);
               element.after(hiddenPlaceElm);
-              if (dragInfo.isClone() && scope.sourceOnly) {
+              if(dragInfo.isClone() && scope.sourceOnly) {
                 dragElm.append(cloneElm);
-              } else if(dragInfo.isClone()){
-            	  dragElm.append(cloneElm);
-              }else {
+              } else if(dragInfo.isClone()) {
+                dragElm.append(cloneElm);
+              } else {
                 dragElm.append(element);
               }
 
@@ -759,7 +759,7 @@
 
               bindDragMoveEvents();
               // Fire dragStart callback
-              scope.$apply(function () {
+              scope.$apply(function() {
                 scope.$treeScope.$callbacks.dragStart(dragInfo.eventArgs(elements, pos));
               });
 
@@ -767,7 +767,7 @@
               document_width = Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
             };
 
-            dragMove = function (e) {
+            dragMove = function(e) {
               var eventObj = UiTreeHelper.eventObj(e),
                 prev,
                 next,
@@ -786,12 +786,12 @@
                 targetOffset,
                 targetBefore;
 
-              if (dragElm) {
+              if(dragElm) {
                 e.preventDefault();
 
-                if ($window.getSelection) {
+                if($window.getSelection) {
                   $window.getSelection().removeAllRanges();
-                } else if ($window.document.selection) {
+                } else if($window.document.selection) {
                   $window.document.selection.empty();
                 }
 
@@ -799,22 +799,22 @@
                 topElmPos = eventObj.pageY - pos.offsetY;
 
                 //dragElm can't leave the screen on the left
-                if (leftElmPos < 0) {
+                if(leftElmPos < 0) {
                   leftElmPos = 0;
                 }
 
                 //dragElm can't leave the screen on the top
-                if (topElmPos < 0) {
+                if(topElmPos < 0) {
                   topElmPos = 0;
                 }
 
                 //dragElm can't leave the screen on the bottom
-                if ((topElmPos + 10) > document_height) {
+                if((topElmPos + 10) > document_height) {
                   topElmPos = document_height - 10;
                 }
 
                 //dragElm can't leave the screen on the right
-                if ((leftElmPos + 10) > document_width) {
+                if((leftElmPos + 10) > document_width) {
                   leftElmPos = document_width - 10;
                 }
 
@@ -827,17 +827,17 @@
                 bottom_scroll = top_scroll + (window.innerHeight || $window.document.clientHeight || $window.document.clientHeight);
 
                 // to scroll down if cursor y-position is greater than the bottom position the vertical scroll
-                if (bottom_scroll < eventObj.pageY && bottom_scroll <= document_height) {
+                if(bottom_scroll < eventObj.pageY && bottom_scroll <= document_height) {
                   window.scrollBy(0, 10);
                 }
 
                 // to scroll top if cursor y-position is less than the top position the vertical scroll
-                if (top_scroll > eventObj.pageY) {
+                if(top_scroll > eventObj.pageY) {
                   window.scrollBy(0, -10);
                 }
 
                 UiTreeHelper.positionMoved(e, pos, firstMoving);
-                if (firstMoving) {
+                if(firstMoving) {
                   firstMoving = false;
                   return;
                 }
@@ -859,7 +859,7 @@
                 // Select the drag target. Because IE does not support CSS 'pointer-events: none', it will always
                 // pick the drag element itself as the target. To prevent this, we hide the drag element while
                 // selecting the target.
-                if (angular.isFunction(dragElm.hide)) {
+                if(angular.isFunction(dragElm.hide)) {
                   dragElm.hide();
                 } else {
                   displayElm = dragElm[0].style.display;
@@ -875,43 +875,43 @@
                 // if the target element is a child element of a ui-tree-handle,
                 // use the containing handle element as target element
                 isHandleChild = UiTreeHelper.treeNodeHandlerContainerOfElement(targetElm);
-                if (isHandleChild) {
+                if(isHandleChild) {
                   targetElm = angular.element(isHandleChild);
                 }
 
-                if (angular.isFunction(dragElm.show)) {
+                if(angular.isFunction(dragElm.show)) {
                   dragElm.show();
                 } else {
                   dragElm[0].style.display = displayElm;
                 }
 
                 outOfBounds = !UiTreeHelper.elementIsTreeNodeHandle(targetElm) &&
-                              !UiTreeHelper.elementIsTreeNode(targetElm) &&
-                              !UiTreeHelper.elementIsTreeNodes(targetElm) &&
-                              !UiTreeHelper.elementIsTree(targetElm) &&
-                              !UiTreeHelper.elementIsPlaceholder(targetElm);
+                  !UiTreeHelper.elementIsTreeNode(targetElm) &&
+                  !UiTreeHelper.elementIsTreeNodes(targetElm) &&
+                  !UiTreeHelper.elementIsTree(targetElm) &&
+                  !UiTreeHelper.elementIsPlaceholder(targetElm);
 
                 // Detect out of bounds condition, update drop target display, and prevent drop
-                if (outOfBounds) {
+                if(outOfBounds) {
 
                   // Remove the placeholder
                   placeElm.remove();
 
                   // If the target was an empty tree, replace the empty element placeholder
-                  if (treeScope) {
+                  if(treeScope) {
                     treeScope.resetEmptyElement();
                     treeScope = null;
                   }
                 }
 
                 // move horizontal
-                if (pos.dirAx && pos.distAxX >= config.levelThreshold) {
+                if(pos.dirAx && pos.distAxX >= config.levelThreshold) {
                   pos.distAxX = 0;
 
                   // increase horizontal level if previous sibling exists and is not collapsed
-                  if (pos.distX > 0) {
+                  if(pos.distX > 0) {
                     prev = dragInfo.prev();
-                    if (prev && !prev.collapsed
+                    if(prev && !prev.collapsed
                       && prev.accept(scope, prev.childNodesCount())) {
                       prev.$childNodesScope.$element.append(placeElm);
                       dragInfo.moveTo(prev.$childNodesScope, prev.childNodes(), prev.childNodesCount());
@@ -919,12 +919,12 @@
                   }
 
                   // decrease horizontal level
-                  if (pos.distX < 0) {
+                  if(pos.distX < 0) {
                     // we can't decrease a level if an item preceeds the current one
                     next = dragInfo.next();
-                    if (!next) {
+                    if(!next) {
                       target = dragInfo.parentNode(); // As a sibling of it's parent node
-                      if (target
+                      if(target
                         && target.$parentNodesScope.accept(scope, target.index() + 1)) {
                         target.$element.after(placeElm);
                         dragInfo.moveTo(target.$parentNodesScope, target.siblings(), target.index() + 1);
@@ -934,73 +934,73 @@
                 }
 
                 // move vertical
-                if (!pos.dirAx) {
-                  if (UiTreeHelper.elementIsTree(targetElm)) {
+                if(!pos.dirAx) {
+                  if(UiTreeHelper.elementIsTree(targetElm)) {
                     targetNode = targetElm.controller('uiTree').scope;
-                  } else if (UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
+                  } else if(UiTreeHelper.elementIsTreeNodeHandle(targetElm)) {
                     targetNode = targetElm.controller('uiTreeHandle').scope;
-                  } else if (UiTreeHelper.elementIsTreeNode(targetElm)) {
+                  } else if(UiTreeHelper.elementIsTreeNode(targetElm)) {
                     targetNode = targetElm.controller('uiTreeNode').scope;
-                  } else if (UiTreeHelper.elementIsTreeNodes(targetElm)) {
+                  } else if(UiTreeHelper.elementIsTreeNodes(targetElm)) {
                     targetNode = targetElm.controller('uiTreeNodes').scope;
-                  } else if (UiTreeHelper.elementIsPlaceholder(targetElm)) {
+                  } else if(UiTreeHelper.elementIsPlaceholder(targetElm)) {
                     targetNode = targetElm.controller('uiTreeNodes').scope;
-                  } else if (targetElm.controller('uiTreeNode')) {
+                  } else if(targetElm.controller('uiTreeNode')) {
                     // is a child element of a node
                     targetNode = targetElm.controller('uiTreeNode').scope;
                   }
 
                   // check it's new position
                   isEmpty = false;
-                  if (!targetNode) {
+                  if(!targetNode) {
                     return;
                   }
 
                   // Show the placeholder if it was hidden for nodrop-enabled and this is a new tree
-                  if (targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
+                  if(targetNode.$treeScope && !targetNode.$parent.nodropEnabled && !targetNode.$treeScope.nodropEnabled) {
                     placeElm.css('display', '');
                   }
 
-                  if (targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
+                  if(targetNode.$type == 'uiTree' && targetNode.dragEnabled) {
                     isEmpty = targetNode.isEmpty(); // Check if it's empty tree
                   }
 
-                  if (targetNode.$type == 'uiTreeHandle') {
+                  if(targetNode.$type == 'uiTreeHandle') {
                     targetNode = targetNode.$nodeScope;
                   }
 
-                  if (targetNode.$type != 'uiTreeNode'
+                  if(targetNode.$type != 'uiTreeNode'
                     && !isEmpty) { // Check if it is a uiTreeNode or it's an empty tree
                     return;
                   }
 
                   // if placeholder move from empty tree, reset it.
-                  if (treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
+                  if(treeScope && placeElm.parent()[0] != treeScope.$element[0]) {
                     treeScope.resetEmptyElement();
                     treeScope = null;
                   }
 
-                  if (isEmpty) { // it's an empty tree
+                  if(isEmpty) { // it's an empty tree
                     treeScope = targetNode;
-                    if (targetNode.$nodesScope.accept(scope, 0)) {
+                    if(targetNode.$nodesScope.accept(scope, 0)) {
                       targetNode.place(placeElm);
                       dragInfo.moveTo(targetNode.$nodesScope, targetNode.$nodesScope.childNodes(), 0);
                     }
-                  } else if (targetNode.dragEnabled()) { // drag enabled
+                  } else if(targetNode.dragEnabled()) { // drag enabled
                     targetElm = targetNode.$element; // Get the element of ui-tree-node
                     targetOffset = UiTreeHelper.offset(targetElm);
                     targetBefore = targetNode.horizontal ? eventObj.pageX < (targetOffset.left + UiTreeHelper.width(targetElm) / 2)
                       : eventObj.pageY < (targetOffset.top + UiTreeHelper.height(targetElm) / 2);
 
-                    if (targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
-                      if (targetBefore) {
+                    if(targetNode.$parentNodesScope.accept(scope, targetNode.index())) {
+                      if(targetBefore) {
                         targetElm[0].parentNode.insertBefore(placeElm[0], targetElm[0]);
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index());
                       } else {
                         targetElm.after(placeElm);
                         dragInfo.moveTo(targetNode.$parentNodesScope, targetNode.siblings(), targetNode.index() + 1);
                       }
-                    } else if (!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
+                    } else if(!targetBefore && targetNode.accept(scope, targetNode.childNodesCount())) { // we have to check if it can add the dragging node as a child
                       targetNode.$childNodesScope.$element.append(placeElm);
                       dragInfo.moveTo(targetNode.$childNodesScope, targetNode.childNodes(), targetNode.childNodesCount());
                     } else {
@@ -1009,86 +1009,86 @@
                   }
                 }
 
-                scope.$apply(function () {
+                scope.$apply(function() {
                   scope.$treeScope.$callbacks.dragMove(dragInfo.eventArgs(elements, pos));
                 });
               }
             };
 
-            dragEnd = function (e) {
+            dragEnd = function(e) {
               var dragEventArgs = dragInfo.eventArgs(elements, pos);
               e.preventDefault();
               unbindDragMoveEvents();
 
-              scope.$treeScope.$apply(function () {
+              scope.$treeScope.$apply(function() {
                 $q.when(scope.$treeScope.$callbacks.beforeDrop(dragEventArgs))
-                    // promise resolved (or callback didn't return false)
-                    .then(function (allowDrop) {
-                      if (allowDrop !== false && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
-                        dragInfo.apply();
-                        // fire the dropped callback only if the move was successful
-                        scope.$treeScope.$callbacks.dropped(dragEventArgs);
-                      } else { // drop canceled - revert the node to its original position
-                        bindDragStartEvents();
-                      }
-                    })
-                    // promise rejected - revert the node to its original position
-                    .catch(function () {
+                // promise resolved (or callback didn't return false)
+                  .then(function(allowDrop) {
+                    if(allowDrop !== false && scope.$$allowNodeDrop && !outOfBounds) { // node drop accepted)
+                      dragInfo.apply();
+                      // fire the dropped callback only if the move was successful
+                      scope.$treeScope.$callbacks.dropped(dragEventArgs);
+                    } else { // drop canceled - revert the node to its original position
                       bindDragStartEvents();
-                    })
-                    .finally(function () {
-                      hiddenPlaceElm.replaceWith(scope.$element);
-                      placeElm.remove();
+                    }
+                  })
+                  // promise rejected - revert the node to its original position
+                  .catch(function() {
+                    bindDragStartEvents();
+                  })
+                  .finally(function() {
+                    hiddenPlaceElm.replaceWith(scope.$element);
+                    placeElm.remove();
 
-                      if (dragElm) { // drag element is attached to the mouse pointer
-                        dragElm.remove();
-                        dragElm = null;
-                      }
-                      scope.$treeScope.$callbacks.dragStop(dragEventArgs);
-                      scope.$$allowNodeDrop = false;
-                      dragInfo = null;
+                    if(dragElm) { // drag element is attached to the mouse pointer
+                      dragElm.remove();
+                      dragElm = null;
+                    }
+                    scope.$treeScope.$callbacks.dragStop(dragEventArgs);
+                    scope.$$allowNodeDrop = false;
+                    dragInfo = null;
 
-                      // Restore cursor in Opera 12.16 and IE
-                      var oldCur = document.body.getAttribute('ui-tree-cursor');
-                      if (oldCur !== null) {
-                        $document.find('body').css({'cursor': oldCur});
-                        document.body.removeAttribute('ui-tree-cursor');
-                      }
-                    });
+                    // Restore cursor in Opera 12.16 and IE
+                    var oldCur = document.body.getAttribute('ui-tree-cursor');
+                    if(oldCur !== null) {
+                      $document.find('body').css({'cursor': oldCur});
+                      document.body.removeAttribute('ui-tree-cursor');
+                    }
+                  });
               });
             };
 
-            dragStartEvent = function (e) {
-              if (scope.dragEnabled()) {
+            dragStartEvent = function(e) {
+              if(scope.dragEnabled()) {
                 dragStart(e);
               }
             };
 
-            dragMoveEvent = function (e) {
+            dragMoveEvent = function(e) {
               dragMove(e);
             };
 
-            dragEndEvent = function (e) {
+            dragEndEvent = function(e) {
               scope.$$allowNodeDrop = true;
               dragEnd(e);
             };
 
-            dragCancelEvent = function (e) {
+            dragCancelEvent = function(e) {
               dragEnd(e);
             };
 
-            dragDelay = (function () {
+            dragDelay = (function() {
               var to;
 
               return {
-                exec: function (fn, ms) {
-                  if (!ms) {
+                exec: function(fn, ms) {
+                  if(!ms) {
                     ms = 0;
                   }
                   this.cancel();
                   to = $timeout(fn, ms);
                 },
-                cancel: function () {
+                cancel: function() {
                   $timeout.cancel(to);
                 }
               };
@@ -1097,13 +1097,13 @@
             /**
              * Binds the mouse/touch events to enable drag start for this node
              */
-            bindDragStartEvents = function () {
-              element.bind('touchstart mousedown', function (e) {
-                dragDelay.exec(function () {
+            bindDragStartEvents = function() {
+              element.bind('touchstart mousedown', function(e) {
+                dragDelay.exec(function() {
                   dragStartEvent(e);
                 }, scope.dragDelay || 0);
               });
-              element.bind('touchend touchcancel mouseup', function () {
+              element.bind('touchend touchcancel mouseup', function() {
                 dragDelay.cancel();
               });
             };
@@ -1112,7 +1112,7 @@
             /**
              * Binds mouse/touch events that handle moving/dropping this dragged node
              */
-            bindDragMoveEvents = function () {
+            bindDragMoveEvents = function() {
               angular.element($document).bind('touchend', dragEndEvent);
               angular.element($document).bind('touchcancel', dragEndEvent);
               angular.element($document).bind('touchmove', dragMoveEvent);
@@ -1124,7 +1124,7 @@
             /**
              * Unbinds mouse/touch events that handle moving/dropping this dragged node
              */
-            unbindDragMoveEvents = function () {
+            unbindDragMoveEvents = function() {
               angular.element($document).unbind('touchend', dragEndEvent);
               angular.element($document).unbind('touchcancel', dragEndEvent);
               angular.element($document).unbind('touchmove', dragMoveEvent);
@@ -1133,8 +1133,8 @@
               angular.element($document).unbind('mouseleave', dragCancelEvent);
             };
 
-            keydownHandler = function (e) {
-              if (e.keyCode == 27) {
+            keydownHandler = function(e) {
+              if(e.keyCode == 27) {
                 scope.$$allowNodeDrop = false;
                 dragEnd(e);
               }
@@ -1143,7 +1143,7 @@
             angular.element($window.document).bind('keydown', keydownHandler);
 
             //unbind handler that retains scope
-            scope.$on('$destroy', function () {
+            scope.$on('$destroy', function() {
               angular.element($window.document).unbind('keydown', keydownHandler);
             });
           }
@@ -1153,30 +1153,30 @@
 
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
     .directive('uiTreeNodes', ['treeConfig', '$window',
-      function (treeConfig) {
+      function(treeConfig) {
         return {
           require: ['ngModel', '?^uiTreeNode', '^uiTree'],
           restrict: 'A',
           scope: true,
           controller: 'TreeNodesController',
-          link: function (scope, element, attrs, controllersArr) {
+          link: function(scope, element, attrs, controllersArr) {
 
             var config = {},
-                ngModel = controllersArr[0],
-                treeNodeCtrl = controllersArr[1],
-                treeCtrl = controllersArr[2];
+              ngModel = controllersArr[0],
+              treeNodeCtrl = controllersArr[1],
+              treeCtrl = controllersArr[2];
 
             angular.extend(config, treeConfig);
-            if (config.nodesClass) {
+            if(config.nodesClass) {
               element.addClass(config.nodesClass);
             }
 
-            if (treeNodeCtrl) {
+            if(treeNodeCtrl) {
               treeNodeCtrl.scope.$childNodesScope = scope;
               scope.$nodeScope = treeNodeCtrl.scope;
             } else {
@@ -1185,29 +1185,29 @@
             }
             scope.$treeScope = treeCtrl.scope;
 
-            if (ngModel) {
-              ngModel.$render = function () {
+            if(ngModel) {
+              ngModel.$render = function() {
                 scope.$modelValue = ngModel.$modelValue;
               };
             }
 
-            scope.$watch(function () {
+            scope.$watch(function() {
               return attrs.maxDepth;
-            }, function (val) {
-              if ((typeof val) == 'number') {
+            }, function(val) {
+              if((typeof val) == 'number') {
                 scope.maxDepth = val;
               }
             });
 
-            scope.$watch(function () {
+            scope.$watch(function() {
               return attrs.nodropEnabled;
-            }, function (newVal) {
-              if ((typeof newVal) != 'undefined') {
+            }, function(newVal) {
+              if((typeof newVal) != 'undefined') {
                 scope.nodropEnabled = true;
               }
             }, true);
 
-            attrs.$observe('horizontal', function (val) {
+            attrs.$observe('horizontal', function(val) {
               scope.horizontal = ((typeof val) != 'undefined');
             });
 
@@ -1217,7 +1217,7 @@
     ]);
 })();
 
-(function () {
+(function() {
   'use strict';
 
   angular.module('ui.tree')
@@ -1232,7 +1232,7 @@
    * angular-ui-tree.
    */
     .factory('UiTreeHelper', ['$document', '$window', 'treeConfig',
-      function ($document, $window, treeConfig) {
+      function($document, $window, treeConfig) {
         return {
 
           /**
@@ -1241,24 +1241,24 @@
            */
           nodesData: {},
 
-          setNodeAttribute: function (scope, attrName, val) {
-            if (!scope.$modelValue) {
+          setNodeAttribute: function(scope, attrName, val) {
+            if(!scope.$modelValue) {
               return null;
             }
             var data = this.nodesData[scope.$modelValue.$$hashKey];
-            if (!data) {
+            if(!data) {
               data = {};
               this.nodesData[scope.$modelValue.$$hashKey] = data;
             }
             data[attrName] = val;
           },
 
-          getNodeAttribute: function (scope, attrName) {
-            if (!scope.$modelValue) {
+          getNodeAttribute: function(scope, attrName) {
+            if(!scope.$modelValue) {
               return null;
             }
             var data = this.nodesData[scope.$modelValue.$$hashKey];
-            if (data) {
+            if(data) {
               return data[attrName];
             }
             return null;
@@ -1270,8 +1270,8 @@
            * @param  {Object} targetElm angular element
            * @return {Bool} check if the node can be dragged.
            */
-          nodrag: function (targetElm) {
-            if (typeof targetElm.attr('data-nodrag') != 'undefined') {
+          nodrag: function(targetElm) {
+            if(typeof targetElm.attr('data-nodrag') != 'undefined') {
               return targetElm.attr('data-nodrag') !== 'false';
             }
             return false;
@@ -1282,17 +1282,17 @@
            * @param  {[type]} e [description]
            * @return {[type]}   [description]
            */
-          eventObj: function (e) {
+          eventObj: function(e) {
             var obj = e;
-            if (e.targetTouches !== undefined) {
+            if(e.targetTouches !== undefined) {
               obj = e.targetTouches.item(0);
-            } else if (e.originalEvent !== undefined && e.originalEvent.targetTouches !== undefined) {
+            } else if(e.originalEvent !== undefined && e.originalEvent.targetTouches !== undefined) {
               obj = e.originalEvent.targetTouches.item(0);
             }
             return obj;
           },
 
-          dragInfo: function (node) {
+          dragInfo: function(node) {
             return {
               source: node,
               sourceInfo: {
@@ -1306,15 +1306,15 @@
               parent: node.$parentNodesScope,
 
               // Move the node to a new position
-              moveTo: function (parent, siblings, index) {
+              moveTo: function(parent, siblings, index) {
                 this.parent = parent;
                 this.siblings = siblings.slice(0);
 
                 // If source node is in the target nodes
                 var i = this.siblings.indexOf(this.source);
-                if (i > -1) {
+                if(i > -1) {
                   this.siblings.splice(i, 1);
-                  if (this.source.index() < index) {
+                  if(this.source.index() < index) {
                     index--;
                   }
                 }
@@ -1323,44 +1323,44 @@
                 this.index = index;
               },
 
-              parentNode: function () {
+              parentNode: function() {
                 return this.parent.$nodeScope;
               },
 
-              prev: function () {
-                if (this.index > 0) {
+              prev: function() {
+                if(this.index > 0) {
                   return this.siblings[this.index - 1];
                 }
 
                 return null;
               },
 
-              next: function () {
-                if (this.index < this.siblings.length - 1) {
+              next: function() {
+                if(this.index < this.siblings.length - 1) {
                   return this.siblings[this.index + 1];
                 }
 
                 return null;
               },
 
-              isClone: function () {
+              isClone: function() {
                 return this.source.$treeScope.cloneEnabled === true;
               },
 
-              clonedNode: function (node) {
+              clonedNode: function(node) {
                 return angular.copy(node);
               },
 
-              isDirty: function () {
+              isDirty: function() {
                 return this.source.$parentNodesScope != this.parent ||
                   this.source.index() != this.index;
               },
 
-              isForeign: function () {
+              isForeign: function() {
                 return this.source.$treeScope !== this.parent.$treeScope;
               },
 
-              eventArgs: function (elements, pos) {
+              eventArgs: function(elements, pos) {
                 return {
                   source: this.sourceInfo,
                   dest: {
@@ -1372,33 +1372,33 @@
                 };
               },
 
-              apply: function () {
+              apply: function() {
 
                 var nodeData = this.source.$modelValue;
 
                 // nodrop enabled on tree or parent
-                if (this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled) {
+                if(this.parent.nodropEnabled || this.parent.$treeScope.nodropEnabled) {
                   return;
                 }
 
                 // node was dropped in the same place - do nothing
-                if (!this.isDirty() && !(this.isClone())) {
+                if(!this.isDirty() && !(this.isClone())) {
                   return;
                 }
 
                 // cloneEnabled and cross-tree so copy and do not remove from source
-                if (this.isClone() ) {
-                	var qType = this.sourceInfo.cloneModel.type;
-                	if((qType=='Q_linkedajsm')||(qType=='Q_linkedmodule')){
-                		this.sourceInfo.cloneModel.link = this.sourceInfo.cloneModel.idNode;
-                		this.sourceInfo.cloneModel.idNode = "";
-                	}else{
-                		this.sourceInfo.cloneModel.name = this.sourceInfo.cloneModel.name +'(Copy)';
-                        this.sourceInfo.cloneModel.idNode = "";
-                        if(this.parent){
-                        	this.parent.cascadeIdCleanse(this.sourceInfo.cloneModel.nodes);
-                        }
-                	} 
+                if(this.isClone()) {
+                  var qType = this.sourceInfo.cloneModel.type;
+                  if((qType == 'Q_linkedajsm') || (qType == 'Q_linkedmodule')) {
+                    this.sourceInfo.cloneModel.link = this.sourceInfo.cloneModel.idNode;
+                    this.sourceInfo.cloneModel.idNode = "";
+                  } else {
+                    this.sourceInfo.cloneModel.name = this.sourceInfo.cloneModel.name + '(Copy)';
+                    this.sourceInfo.cloneModel.idNode = "";
+                    if(this.parent) {
+                      this.parent.cascadeIdCleanse(this.sourceInfo.cloneModel.nodes);
+                    }
+                  }
                   this.parent.insertNode(this.index, this.sourceInfo.cloneModel);
                 } else { // Any other case, remove and reinsert
                   this.source.remove();
@@ -1419,7 +1419,7 @@
            * @param {Object} element Angular element.
            * @returns {String} Height
            */
-          height: function (element) {
+          height: function(element) {
             return element.prop('scrollHeight');
           },
 
@@ -1434,7 +1434,7 @@
            * @param {Object} element Angular element.
            * @returns {String} Width
            */
-          width: function (element) {
+          width: function(element) {
             return element.prop('scrollWidth');
           },
 
@@ -1449,7 +1449,7 @@
            * @param {Object} element Angular element.
            * @returns {Object} Object with properties width, height, top and left
            */
-          offset: function (element) {
+          offset: function(element) {
             var boundingClientRect = element[0].getBoundingClientRect();
 
             return {
@@ -1472,12 +1472,12 @@
            * @param {Object} target Target element
            * @returns {Object} Object with properties offsetX, offsetY, startX, startY, nowX and dirX.
            */
-          positionStarted: function (e, target) {
+          positionStarted: function(e, target) {
             var pos = {},
               pageX = e.pageX,
               pageY = e.pageY;
 
-            if (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) {
+            if(e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) {
               pageX = e.originalEvent.touches[0].pageX;
               pageY = e.originalEvent.touches[0].pageY;
             }
@@ -1490,11 +1490,11 @@
             return pos;
           },
 
-          positionMoved: function (e, pos, firstMoving) {
+          positionMoved: function(e, pos, firstMoving) {
             var pageX = e.pageX,
               pageY = e.pageY,
               newAx;
-            if (e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) {
+            if(e.originalEvent && e.originalEvent.touches && (e.originalEvent.touches.length > 0)) {
               pageX = e.originalEvent.touches[0].pageX;
               pageY = e.originalEvent.touches[0].pageY;
             }
@@ -1522,24 +1522,24 @@
             newAx = Math.abs(pos.distX) > Math.abs(pos.distY) ? 1 : 0;
 
             // do nothing on first move
-            if (firstMoving) {
+            if(firstMoving) {
               pos.dirAx = newAx;
               pos.moving = true;
               return;
             }
 
             // calc distance moved on this axis (and direction)
-            if (pos.dirAx !== newAx) {
+            if(pos.dirAx !== newAx) {
               pos.distAxX = 0;
               pos.distAxY = 0;
             } else {
               pos.distAxX += Math.abs(pos.distX);
-              if (pos.dirX !== 0 && pos.dirX !== pos.lastDirX) {
+              if(pos.dirX !== 0 && pos.dirX !== pos.lastDirX) {
                 pos.distAxX = 0;
               }
 
               pos.distAxY += Math.abs(pos.distY);
-              if (pos.dirY !== 0 && pos.dirY !== pos.lastDirY) {
+              if(pos.dirY !== 0 && pos.dirY !== pos.lastDirY) {
                 pos.distAxY = 0;
               }
             }
@@ -1547,26 +1547,26 @@
             pos.dirAx = newAx;
           },
 
-          elementIsTreeNode: function (element) {
+          elementIsTreeNode: function(element) {
             return typeof element.attr('ui-tree-node') !== 'undefined';
           },
 
-          elementIsTreeNodeHandle: function (element) {
+          elementIsTreeNodeHandle: function(element) {
             return typeof element.attr('ui-tree-handle') !== 'undefined';
           },
-          elementIsTree: function (element) {
+          elementIsTree: function(element) {
             return typeof element.attr('ui-tree') !== 'undefined';
           },
-          elementIsTreeNodes: function (element) {
+          elementIsTreeNodes: function(element) {
             return typeof element.attr('ui-tree-nodes') !== 'undefined';
           },
-          elementIsPlaceholder: function (element) {
+          elementIsPlaceholder: function(element) {
             return element.hasClass(treeConfig.placeholderClass);
           },
-          elementContainsTreeNodeHandler: function (element) {
+          elementContainsTreeNodeHandler: function(element) {
             return element[0].querySelectorAll('[ui-tree-handle]').length >= 1;
           },
-          treeNodeHandlerContainerOfElement: function (element) {
+          treeNodeHandlerContainerOfElement: function(element) {
             return findFirstParentElementWithAttribute('ui-tree-handle', element[0]);
           }
         };
@@ -1576,17 +1576,17 @@
   // TODO: optimize this loop
   function findFirstParentElementWithAttribute(attributeName, childObj) {
     // undefined if the mouse leaves the browser window
-    if (childObj === undefined) {
+    if(childObj === undefined) {
       return null;
     }
     var testObj = childObj.parentNode,
       count = 1,
       // check for setAttribute due to exception thrown by Firefox when a node is dragged outside the browser window
       res = (typeof testObj.setAttribute === 'function' && testObj.hasAttribute(attributeName)) ? testObj : null;
-    while (testObj && typeof testObj.setAttribute === 'function' && !testObj.hasAttribute(attributeName)) {
+    while(testObj && typeof testObj.setAttribute === 'function' && !testObj.hasAttribute(attributeName)) {
       testObj = testObj.parentNode;
       res = testObj;
-      if (testObj === document.documentElement) {
+      if(testObj === document.documentElement) {
         res = null;
         break;
       }

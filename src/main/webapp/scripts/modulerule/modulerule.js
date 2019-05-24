@@ -1,3 +1,3 @@
-(function(){
-	angular.module('occIDEASApp.ModuleRule',[]);
+(function() {
+  angular.module('occIDEASApp.ModuleRule', []);
 })();

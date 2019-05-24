@@ -1,18 +1,18 @@
 <div ng-if="loadingTree">
-	Loading tree...
+  Loading tree...
 </div>
-<div ng-if="linkedModule.nodes && linkedModule.nodes.length != 0" class="row " prog_tree>
-	<div class="col-sm-12">
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<div ui-tree="moduleTreeOptions" id="tree-root">
-					<ol ui-tree-nodes ng-model="linkedModule.nodes">
-						<li ng-repeat="node in linkedModule.nodes" ui-tree-node
-							ng-include="'scripts/assessments/partials/nodes_renderer.html'"
-							id="moduleTreeBody" collapsed="true"></li>
-					</ol>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="row " ng-if="linkedModule.nodes && linkedModule.nodes.length != 0" prog_tree>
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="tree-root" ui-tree="moduleTreeOptions">
+          <ol ng-model="linkedModule.nodes" ui-tree-nodes>
+            <li collapsed="true" id="moduleTreeBody"
+                ng-include="'scripts/assessments/partials/nodes_renderer.html'"
+                ng-repeat="node in linkedModule.nodes" ui-tree-node></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -1,72 +1,80 @@
 <script id="rules-template" type="text/x-custom-template">
-<div ng-attr-id="{{model.idNode+'-'+rule.agentId+'-'+rule.idRule}}" style="height:auto !important;" class="note {{activeRuleDialog === (model.idNode+'-'+rule.agentId+'-'+rule.idRule)?'activeRule':''}}" prevent-right-click ng-click="setActiveRule(rule,this)">
-	<button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleDialog(this,$event)" aria-label="Left Align">
-		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-	</button>
-	<div class="title">{{rule.idRule}} {{agentName}} </div>
-			<ul class="list-group" style="margin: 0 0 0 0;">
-    			<li  class="list-group-item nodeNumber" 
-					ng-repeat="node in rule.conditions" ng-style="setBgColor(node)"
-					ng-click="highlightNode(node.idNode)" ng-mouseleave="nodePopover.close(node,rule.idRule)">
-					<span popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen" 
-					popover-placement="left" popover-append-to-body="true" popover-popup-delay="1000" ng-mouseenter="nodePopover.open(node,rule.idRule)" 
-					uib-popover-template="nodePopover.templateUrl" style="font-size:1.5em;" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-					<span>{{node.number}}</span>
-					<div class="pull-right">
-						<span ng-if="$index>0" class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeNodeFromRule(node)"></span>
-					</div>
-				</li>
-  			</ul>
-			<ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group" style="margin: 0 0 0 0;">
-    			<li class="list-group-item additionalField" 
-					ng-repeat="additionalFields in rule.ruleAdditionalfields" 
-					>
-					<div>{{additionalFields.additionalfield.type}}</div>
-					<div class="pull-right">			
-					<input type="text" 
-             			ng-model="additionalFields.value" 
-             			ng-focus="focus=true;blur=false;" 
-             			class="form-control"  
-             			ng-keypress="(($event.which === 13))?updateRule(rule,model):0">
-					<div>
-				</li>
-  			</ul>
-			<ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
-    			<li class="list-group-item">
-	<select ng-model="rule.level" ng-change="saveRule(rule)">
-      <option value="probHigh">PROBABLE_HIGH</option>
-      <option value="probMedium">PROBABLE_MEDIUM</option>
-      <option value="probLow">PROBABLE_LOW</option>
-	  <option value="probUnknown">PROBABLE_UNKNOWN</option>
-	  <option value="possUnknown">POSSIBLE_UNKNOWN</option>
-	  <option value="noExposure">NO_EXPOSURE</option>
-    </select></li>
-  			</ul>
-		<div style="margin-left:2px;margin-top: 2px;">
-			<div class="pull-left">
-  				<span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="deleteRule(rule,model,$event)"></span>
-			</div>
-			<div  class="pull-right">
-				<md-fab-speed-dial md-open="model.isOpen" md-direction="right"
-                         ng-class="selectedMode">
-        		<md-fab-trigger>
-           	 		<span class="badge">Type:{{rule.type}}</span>
-        		</md-fab-trigger>
-        		<md-fab-actions>
-          		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'')" class="md-fab md-raised md-mini">
-            		<span>_</span>
-          		</md-button>
-          		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'VIBRATION')" class="md-fab md-raised md-mini">
-            	<span >V</span>
-          		</md-button><md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'NOISE')" class="md-fab md-raised md-mini">
-            	<span >N</span>
-          		</md-button>
-          		<md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'BACKGROUND')" class="md-fab md-raised md-mini">
-           		<span >BG</span>
-          		</md-button>
-        		</md-fab-actions>
-      			</md-fab-speed-dial>
-			</div>
-		</div>
-</div>
+  <div ng-attr-id="{{model.idNode+'-'+rule.agentId+'-'+rule.idRule}}" style="height:auto !important;"
+       class="note {{activeRuleDialog === (model.idNode+'-'+rule.agentId+'-'+rule.idRule)?'activeRule':''}}"
+       prevent-right-click ng-click="setActiveRule(rule,this)">
+    <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleDialog(this,$event)"
+            aria-label="Left Align">
+      <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+    </button>
+    <div class="title">{{rule.idRule}} {{agentName}}</div>
+    <ul class="list-group" style="margin: 0 0 0 0;">
+      <li class="list-group-item nodeNumber"
+          ng-repeat="node in rule.conditions" ng-style="setBgColor(node)"
+          ng-click="highlightNode(node.idNode)" ng-mouseleave="nodePopover.close(node,rule.idRule)">
+					<span popover-is-open="node.info['Node'+node.idNode+rule.idRule].nodePopover.isOpen"
+                popover-placement="left" popover-append-to-body="true" popover-popup-delay="1000"
+                ng-mouseenter="nodePopover.open(node,rule.idRule)"
+                uib-popover-template="nodePopover.templateUrl" style="font-size:1.5em;"
+                class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        <span>{{node.number}}</span>
+        <div class="pull-right">
+          <span ng-if="$index>0" class="glyphicon glyphicon-trash" aria-hidden="true"
+                ng-click="removeNodeFromRule(node)"></span>
+        </div>
+      </li>
+    </ul>
+    <ul ng-if="(rule.type=='VIBRATION')||(rule.type=='NOISE')||(rule.type=='BACKGROUND')" class="list-group"
+        style="margin: 0 0 0 0;">
+      <li class="list-group-item additionalField"
+          ng-repeat="additionalFields in rule.ruleAdditionalfields"
+      >
+        <div>{{additionalFields.additionalfield.type}}</div>
+        <div class="pull-right">
+          <input type="text"
+                 ng-model="additionalFields.value"
+                 ng-focus="focus=true;blur=false;"
+                 class="form-control"
+                 ng-keypress="(($event.which === 13))?updateRule(rule,model):0">
+          <div>
+      </li>
+    </ul>
+    <ul ng-if="!(rule.type)" class="list-group" style="margin: 0 0 0 0;">
+      <li class="list-group-item">
+        <select ng-model="rule.level" ng-change="saveRule(rule)">
+          <option value="probHigh">PROBABLE_HIGH</option>
+          <option value="probMedium">PROBABLE_MEDIUM</option>
+          <option value="probLow">PROBABLE_LOW</option>
+          <option value="probUnknown">PROBABLE_UNKNOWN</option>
+          <option value="possUnknown">POSSIBLE_UNKNOWN</option>
+          <option value="noExposure">NO_EXPOSURE</option>
+        </select></li>
+    </ul>
+    <div style="margin-left:2px;margin-top: 2px;">
+      <div class="pull-left">
+        <span class="glyphicon glyphicon-trash" aria-hidden="true" ng-click="deleteRule(rule,model,$event)"></span>
+      </div>
+      <div class="pull-right">
+        <md-fab-speed-dial md-open="model.isOpen" md-direction="right"
+                           ng-class="selectedMode">
+          <md-fab-trigger>
+            <span class="badge">Type:{{rule.type}}</span>
+          </md-fab-trigger>
+          <md-fab-actions>
+            <md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'')" class="md-fab md-raised md-mini">
+              <span>_</span>
+            </md-button>
+            <md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'VIBRATION')" class="md-fab md-raised md-mini">
+              <span>V</span>
+            </md-button>
+            <md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'NOISE')" class="md-fab md-raised md-mini">
+              <span>N</span>
+            </md-button>
+            <md-button ng-if="model.isOpen" ng-click="setRuleType(rule,'BACKGROUND')" class="md-fab md-raised md-mini">
+              <span>BG</span>
+            </md-button>
+          </md-fab-actions>
+        </md-fab-speed-dial>
+      </div>
+    </div>
+  </div>
 </script>

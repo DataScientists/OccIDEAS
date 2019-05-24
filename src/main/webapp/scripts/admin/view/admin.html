@@ -1,167 +1,182 @@
 <div ng-cloak>
-	<div class="panel panel-default">
-		<button type="button"
-			class="btn btn-default" 
-			ng-click="vm.listTranslations()">List Languages </button>
-			<button type="button" style="margin-left:3px;"
-			class="btn btn-default" 
-			ng-click="vm.showRandomInterviews()">Create Random Interviews</button>
-			<button type="button" style="margin-left:3px;"
-			class="btn btn-default" 
-			ng-click="vm.preloadActiveIntro()">Preload Study Agents</button>
-			<button type="button" style="margin-left:3px;"
-			class="btn btn-default" 
-			ng-click="vm.cleanOrphans()">Clean Orphans Nodes</button>
-			<button type="button" style="margin-left:3px;"
-			class="btn btn-default" 
-			ng-click="vm.purgeParticipants()">Purge Participants</button>
-			<button type="button" style="margin-left:3px;"
-			class="btn btn-default" 
-			ng-click="vm.purgeModule()">Purge Modules</button>
-			<button type="button" style="margin-left:3px;"
-			class="btn btn-default" 
-			ng-click="vm.importLibraryDialog()">Import Library</button>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">Configuration</div>
-		<div class="panel-body">
-			<button type="button"
-			class="btn btn-default" ng-if="vm.originalData.length == 0" 
-			ng-click="vm.addNewConfigBtn()">Add Config <span class="glyphicon glyphicon-plus">
+  <div class="panel panel-default">
+    <button class="btn btn-default"
+            ng-click="vm.listTranslations()"
+            type="button">List Languages
+    </button>
+    <button class="btn btn-default" ng-click="vm.showRandomInterviews()"
+            style="margin-left:3px;"
+            type="button">Create Random Interviews
+    </button>
+    <button class="btn btn-default" ng-click="vm.preloadActiveIntro()"
+            style="margin-left:3px;"
+            type="button">Preload Study Agents
+    </button>
+    <button class="btn btn-default" ng-click="vm.cleanOrphans()"
+            style="margin-left:3px;"
+            type="button">Clean Orphans Nodes
+    </button>
+    <button class="btn btn-default" ng-click="vm.purgeParticipants()"
+            style="margin-left:3px;"
+            type="button">Purge Participants
+    </button>
+    <button class="btn btn-default" ng-click="vm.purgeModule()"
+            style="margin-left:3px;"
+            type="button">Purge Modules
+    </button>
+    <button class="btn btn-default" ng-click="vm.importLibraryDialog()"
+            style="margin-left:3px;"
+            type="button">Import Library
+    </button>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">Configuration</div>
+    <div class="panel-body">
+      <button class="btn btn-default"
+              ng-click="vm.addNewConfigBtn()" ng-if="vm.originalData.length == 0"
+              type="button">Add Config <span class="glyphicon glyphicon-plus">
 			</span></button>
-			<table ng-table="vm.tableConfig" ng-cloak
-				class="table table-bordered table-hover 
-  					   table-condensed editable-table"
-				ng-form="tableForm" disable-filter="vm.isAdding"
-				demo-tracked-table="vm.tableTracker">
-				<tbody ng-repeat="group in $groups">
-				<tr class="ng-table-group">
-					<td colspan="{{$columns.length}}">
-						<a href=""
-						ng-click="group.$hideRows = !group.$hideRows"> <span
-							class="glyphicon"
-							ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-							<strong>{{group.value}}</strong>
-						</a>
-						<div class="brn-group pull-right">
-							<button class="btn btn-default" ng-click="vm.add(group.value)">
-								<span class="glyphicon glyphicon-plus"></span>
-							</button>
-							<button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
-								<span class="glyphicon glyphicon-trash"></span>
-							</button>
-						</div></td>
-				</tr>
-				<tr ng-hide="group.$hideRows" ng-repeat="row in group.data"
-						ng-form="rowForm" demo-tracked-table-row="row">
-						<td sortable="type" data-title="'Type'" groupable="'type'"
-							ng-if="false">{{row.type}}</td>
-						<td title="'Type'"
-							ng-switch="row.isEditing"
-							ng-class="type.$dirty ? 'bg-warning' : ''" ng-form="type"
-							demo-tracked-table-cell>
-							<div ng-click="row.isEditing = true">
-								<span ng-switch-default class="editable-text">{{row.type}}</span>
-								<div class="controls"
-									ng-class="type.$invalid && type.$dirty ? 'has-error' : ''"
-									ng-switch-when="true">
-									<input type="text" name="type" ng-model="row.type"
-										class="editable-input form-control input-sm" required />
-								</div>
-							</div>
-						</td>
-						<td title="'Name'" filter="{name: 'text'}"
-							ng-switch="row.isEditing"
-							ng-class="name.$dirty ? 'bg-warning' : ''" ng-form="name"
-							demo-tracked-table-cell>
-							<div ng-click="row.isEditing = true">
-								<span ng-switch-default class="editable-text">{{row.name}}</span>
-								<div class="controls"
-									ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
-									ng-switch-when="true">
-									<input type="text" name="name" ng-model="row.name"
-										class="editable-input form-control input-sm" required />
-								</div>
-							</div>
-						</td>
-						<td title="'Value'" filter="{value: 'text'}"
-							ng-switch="row.isEditing"
-							ng-class="value.$dirty ? 'bg-warning' : ''" ng-form="value"
-							demo-tracked-table-cell>
-							<div ng-click="row.isEditing = true">
-								<span ng-switch-default class="editable-text">{{row.value}}</span>
-								<div class="controls"
-									ng-class="value.$invalid && value.$dirty ? 'has-error' : ''"
-									ng-switch-when="true">
-									<input type="text" name="value" ng-model="row.value"
-										class="editable-input form-control input-sm" required />
-								</div>
-							</div>
-						</td>
-						<td title="'Updated By'" filter="{updatedBy: 'text'}">
-							{{row.updatedBy}}
-						</td>
-						<td title="'Updated Dt'" filter="{updatedDt: 'text'}">
-							{{row.updatedDt | date}}
-						</td>
-						<td>
-							<button class="btn btn-primary btn-sm"
-								ng-click="vm.save(row, rowForm)" ng-if="row.isEditing"
-								ng-disabled="rowForm.$pristine || rowForm.$invalid">
-								<span class="glyphicon glyphicon-ok"></span>
-							</button>
-							<button class="btn btn-default btn-sm"
-								ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
-								<span class="glyphicon glyphicon-remove"></span>
-							</button>
-							<button class="btn btn-danger btn-sm" ng-click="vm.del(row)"
-								ng-if="vm.isDeleting" confirm="Delete config for {{row.name}}?">
-								<span class="glyphicon glyphicon-trash"></span>
-							</button>
-						</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div style="margin-top: 2px; margin-bottom: 2px;">
-		<button ng-click="vm.showAddUserDialog()" class="btn btn-default"
-			aria-label="Left Align">
-			<span class="glyphicon glyphicon-user" aria-hidden="true"></span> Add
-			User
-		</button>
-	</div>
-	<div>
-		<table ng-table="vm.tableParams" ng-cloak
-			class="table table-bordered table-hover 
-  table-condensed editable-table"
-			show-filter="true">
-			<tr ng-repeat="user in $data">
-				<td width="15%" title="'Username'" filter="{ ssoId: 'text'}"
-					sortable="'ssoId'">{{user.ssoId}}</td>
-				<td width="15%" title="'Firstname'" filter="{ firstName:'text'}"
-					sortable="'firstName'">{{user.firstName}}</td>
-				<td width="15%" title="'Lastname'" filter="{ lastName:'text'}"
-					sortable="'lastName'">{{user.lastName}}</td>
-				<td width="10%" title="'Email'" filter="{ email:'text'}"
-					sortable="'email'">{{user.email}}</td>
-				<td width="10%" title="'State'" filter="{ state:'text'}"
-					sortable="'state'">{{user.state}}</td>
-				<td width="25%" title="'Role'" filter="{ rolesStr:'text'}" 
-					sortable="'rolesStr'">{{user.rolesStr}}</td>
-				<td width="20%">
-					<button type="button" class="btn btn-default" aria-label="Edit"
-						ng-click="vm.showEditUserDialog(user)">
-						<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-					</button>
-					<button type="button" class="btn btn-default"
-						aria-label="Change Password"
-						ng-click="vm.showChangePasswordDialog(user)">
-						<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-					</button>
-				</td>
-			</tr>
-		</table>
-	</div>
-	
+      <table class="table table-bordered table-hover
+  					   table-condensed editable-table" demo-tracked-table="vm.tableTracker"
+             disable-filter="vm.isAdding"
+             ng-cloak ng-form="tableForm"
+             ng-table="vm.tableConfig">
+        <tbody ng-repeat="group in $groups">
+          <tr class="ng-table-group">
+            <td colspan="{{$columns.length}}">
+              <a href=""
+                 ng-click="group.$hideRows = !group.$hideRows"> <span
+                class="glyphicon"
+                ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                <strong>{{group.value}}</strong>
+              </a>
+              <div class="brn-group pull-right">
+                <button class="btn btn-default" ng-click="vm.add(group.value)">
+                  <span class="glyphicon glyphicon-plus"></span>
+                </button>
+                <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr demo-tracked-table-row="row" ng-form="rowForm"
+              ng-hide="group.$hideRows" ng-repeat="row in group.data">
+            <td data-title="'Type'" groupable="'type'" ng-if="false"
+                sortable="type">{{row.type}}
+            </td>
+            <td demo-tracked-table-cell
+                ng-class="type.$dirty ? 'bg-warning' : ''"
+                ng-form="type" ng-switch="row.isEditing"
+                title="'Type'">
+              <div ng-click="row.isEditing = true">
+                <span class="editable-text" ng-switch-default>{{row.type}}</span>
+                <div class="controls"
+                     ng-class="type.$invalid && type.$dirty ? 'has-error' : ''"
+                     ng-switch-when="true">
+                  <input class="editable-input form-control input-sm" name="type" ng-model="row.type"
+                         required type="text"/>
+                </div>
+              </div>
+            </td>
+            <td demo-tracked-table-cell filter="{name: 'text'}"
+                ng-class="name.$dirty ? 'bg-warning' : ''"
+                ng-form="name" ng-switch="row.isEditing"
+                title="'Name'">
+              <div ng-click="row.isEditing = true">
+                <span class="editable-text" ng-switch-default>{{row.name}}</span>
+                <div class="controls"
+                     ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
+                     ng-switch-when="true">
+                  <input class="editable-input form-control input-sm" name="name" ng-model="row.name"
+                         required type="text"/>
+                </div>
+              </div>
+            </td>
+            <td demo-tracked-table-cell filter="{value: 'text'}"
+                ng-class="value.$dirty ? 'bg-warning' : ''"
+                ng-form="value" ng-switch="row.isEditing"
+                title="'Value'">
+              <div ng-click="row.isEditing = true">
+                <span class="editable-text" ng-switch-default>{{row.value}}</span>
+                <div class="controls"
+                     ng-class="value.$invalid && value.$dirty ? 'has-error' : ''"
+                     ng-switch-when="true">
+                  <input class="editable-input form-control input-sm" name="value" ng-model="row.value"
+                         required type="text"/>
+                </div>
+              </div>
+            </td>
+            <td filter="{updatedBy: 'text'}" title="'Updated By'">
+              {{row.updatedBy}}
+            </td>
+            <td filter="{updatedDt: 'text'}" title="'Updated Dt'">
+              {{row.updatedDt | date}}
+            </td>
+            <td>
+              <button class="btn btn-primary btn-sm"
+                      ng-click="vm.save(row, rowForm)" ng-disabled="rowForm.$pristine || rowForm.$invalid"
+                      ng-if="row.isEditing">
+                <span class="glyphicon glyphicon-ok"></span>
+              </button>
+              <button class="btn btn-default btn-sm"
+                      ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+              <button class="btn btn-danger btn-sm" confirm="Delete config for {{row.name}}?"
+                      ng-click="vm.del(row)" ng-if="vm.isDeleting">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div style="margin-top: 2px; margin-bottom: 2px;">
+    <button aria-label="Left Align" class="btn btn-default"
+            ng-click="vm.showAddUserDialog()">
+      <span aria-hidden="true" class="glyphicon glyphicon-user"></span> Add
+      User
+    </button>
+  </div>
+  <div>
+    <table class="table table-bordered table-hover
+  table-condensed editable-table" ng-cloak
+           ng-table="vm.tableParams"
+           show-filter="true">
+      <tr ng-repeat="user in $data">
+        <td filter="{ ssoId: 'text'}" sortable="'ssoId'" title="'Username'"
+            width="15%">{{user.ssoId}}
+        </td>
+        <td filter="{ firstName:'text'}" sortable="'firstName'" title="'Firstname'"
+            width="15%">{{user.firstName}}
+        </td>
+        <td filter="{ lastName:'text'}" sortable="'lastName'" title="'Lastname'"
+            width="15%">{{user.lastName}}
+        </td>
+        <td filter="{ email:'text'}" sortable="'email'" title="'Email'"
+            width="10%">{{user.email}}
+        </td>
+        <td filter="{ state:'text'}" sortable="'state'" title="'State'"
+            width="10%">{{user.state}}
+        </td>
+        <td filter="{ rolesStr:'text'}" sortable="'rolesStr'" title="'Role'"
+            width="25%">{{user.rolesStr}}
+        </td>
+        <td width="20%">
+          <button aria-label="Edit" class="btn btn-default" ng-click="vm.showEditUserDialog(user)"
+                  type="button">
+            <span aria-hidden="true" class="glyphicon glyphicon-edit"></span>
+          </button>
+          <button aria-label="Change Password" class="btn btn-default"
+                  ng-click="vm.showChangePasswordDialog(user)"
+                  type="button">
+            <span aria-hidden="true" class="glyphicon glyphicon-lock"></span>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+
 </div>

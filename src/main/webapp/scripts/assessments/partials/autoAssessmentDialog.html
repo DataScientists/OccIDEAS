@@ -1,40 +1,40 @@
 <md-dialog aria-label="Export CSV"
-	style="margin:0 0 0 0;padding:0 0 0 0;" ng-cloak> <!-- <pre>{{data | json}}</pre> -->
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Would you like to proceed with Update Auto Assessment?</h2>
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()"> <span
-			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content>
-	<div class="md-dialog-content">
-		<div layout="column" ng-cloak class="md-inline-form">
-			<md-content>
-			<div>
-				<p>Estimated duration: {{estimatedDuration}} minutes </p>
-				<p>You will be	prompted once auto assessment is completed.</p>
-				 <md-progress-linear ng-if="processAutoAssessment" md-mode="indeterminate"></md-progress-linear>
-			</div>
-			</md-content>
-			<md-dialog-actions ng-if="showButtons"><!-- ngIf: dialog.$type === 'confirm' || dialog.$type === 'prompt' -->
-			<button
-				class="md-primary md-cancel-button md-button ng-scope md-default-theme md-ink-ripple"
-				type="button" 
-				ng-click="updateButton(status)" style="">
-				<span class="ng-binding ng-scope">Yes</span>
-			</button>
-			<button
-				class="md-primary md-confirm-button md-button md-ink-ripple md-default-theme"
-				type="button" ng-click="cancel()"
-				>
-				<span class="ng-binding ng-scope">No</span>
-			</button>
-			</md-dialog-actions>
-		</div>
-	</div>
-	</md-dialog-content>
-</form>
+           ng-cloak style="margin:0 0 0 0;padding:0 0 0 0;"> <!-- <pre>{{data | json}}</pre> -->
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Would you like to proceed with Update Auto Assessment?</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()"> <span
+          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content>
+            <div>
+              <p>Estimated duration: {{estimatedDuration}} minutes </p>
+              <p>You will be prompted once auto assessment is completed.</p>
+              <md-progress-linear md-mode="indeterminate" ng-if="processAutoAssessment"></md-progress-linear>
+            </div>
+          </md-content>
+          <md-dialog-actions ng-if="showButtons"><!-- ngIf: dialog.$type === 'confirm' || dialog.$type === 'prompt' -->
+            <button
+              class="md-primary md-cancel-button md-button ng-scope md-default-theme md-ink-ripple"
+              ng-click="updateButton(status)"
+              style="" type="button">
+              <span class="ng-binding ng-scope">Yes</span>
+            </button>
+            <button
+              class="md-primary md-confirm-button md-button md-ink-ripple md-default-theme"
+              ng-click="cancel()" type="button"
+            >
+              <span class="ng-binding ng-scope">No</span>
+            </button>
+          </md-dialog-actions>
+        </div>
+      </div>
+    </md-dialog-content>
+  </form>
 </md-dialog>

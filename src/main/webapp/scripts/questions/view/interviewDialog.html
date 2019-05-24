@@ -1,29 +1,33 @@
 <md-dialog aria-label="" ng-cloak>
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Interview Information</h2>
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()"> <span
-			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content>
-	<div class="md-dialog-content">
-		<md-input-container> <label id="awesidlabel">AWES
-			ID</label> <input id="awesid" type="text" class="form-control"
-			placeholder="H______" required
-			ng-model="reference"
-			ng-keyup="filterAndValidate($event,this)" />
-		<div id="awesidcounter" class="md-errors-spacer">
-			<div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
-		</div>
-		</md-input-container>
-	</div>
-	</md-dialog-content>
-	<md-dialog-actions layout="row"> <span flex></span>
-	<md-button ng-click="runInterview(reference)">
-	Start </md-button> <md-button ng-click="cancel()" style="margin-right:20px;">
-	Cancel </md-button> </md-dialog-actions>
-</form>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Interview Information</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()"> <span
+          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <md-input-container><label id="awesidlabel">AWES
+          ID</label> <input class="form-control" id="awesid" ng-keyup="filterAndValidate($event,this)"
+                            ng-model="reference" placeholder="H______"
+                            required
+                            type="text"/>
+          <div class="md-errors-spacer" id="awesidcounter">
+            <div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
+          </div>
+        </md-input-container>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row"><span flex></span>
+      <md-button ng-click="runInterview(reference)">
+        Start
+      </md-button>
+      <md-button ng-click="cancel()" style="margin-right:20px;">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+  </form>
 </md-dialog>

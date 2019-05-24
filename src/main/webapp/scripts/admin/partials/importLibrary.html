@@ -1,51 +1,52 @@
-<md-dialog aria-label="Import Library" style="margin:0 0 0 0;padding:0 0 0 0;"
-	ng-cloak> 
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Import Library</h2>
-		<span flex></span>
-		<md-button  class="md-icon-button" ng-disabled="importLibraryDisabled" ng-click="cancel()"> <span
-			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content style="width:510px;">
-	<div class="md-dialog-content">
-		<div layout="column" ng-cloak class="md-inline-form">
-			<md-content>
-				 <div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>*Host</label> <input id="dbhost" required 
-						maxlength="1000" placeholder="jdbc:mysql://localhost:3306/occideas"
-						ng-model="dbConnect.host" /> </md-input-container>
-				</div>  	
-				<div layout-gt-sm="row">
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>*DBUsername</label> <input id="dbuser" required 
-						maxlength="50" value=""
-						ng-model="dbConnect.username" /> </md-input-container>
-					<div flex="5" hide-xs hide-sm>
-						<!-- Spacer //-->
-					</div>
-					<md-input-container class="md-block" flex-gt-sm>
-					<label>*DBPassword</label> 
-					<input id="dbpword" type="password"
-						maxlength="50" value=""
-						ng-model="dbConnect.password" />
-					</md-input-container>
-				</div>
-				<md-progress-linear ng-if="importLibraryProgress" md-mode="indeterminate"></md-progress-linear>	
-				<md-dialog-actions layout="row">
-					<md-button ng-click="cancel()" ng-disabled="importLibraryDisabled" class="md-raised">Cancel</md-button>
-					<md-button id="importLibrary" 
-							   type="submit" 
-							   ng-disabled="importLibraryDisabled"
-							   ng-click="vm.importLibrary()" 
-							   class="md-raised">Submit</md-button>
-				</md-dialog-actions>
-			</md-content>
-		</div>
-	</div>
-	</md-dialog-content>
-</form>
+<md-dialog aria-label="Import Library" ng-cloak
+           style="margin:0 0 0 0;padding:0 0 0 0;">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Import Library</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()" ng-disabled="importLibraryDisabled"> <span
+          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="width:510px;">
+      <div class="md-dialog-content">
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content>
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>*Host</label> <input id="dbhost" maxlength="1000"
+                                            ng-model="dbConnect.host" placeholder="jdbc:mysql://localhost:3306/occideas"
+                                            required/></md-input-container>
+            </div>
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>*DBUsername</label> <input id="dbuser" maxlength="50"
+                                                  ng-model="dbConnect.username" required
+                                                  value=""/></md-input-container>
+              <div flex="5" hide-sm hide-xs>
+                <!-- Spacer //-->
+              </div>
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>*DBPassword</label>
+                <input id="dbpword" maxlength="50"
+                       ng-model="dbConnect.password" type="password"
+                       value=""/>
+              </md-input-container>
+            </div>
+            <md-progress-linear md-mode="indeterminate" ng-if="importLibraryProgress"></md-progress-linear>
+            <md-dialog-actions layout="row">
+              <md-button class="md-raised" ng-click="cancel()" ng-disabled="importLibraryDisabled">Cancel</md-button>
+              <md-button class="md-raised"
+                         id="importLibrary"
+                         ng-click="vm.importLibrary()"
+                         ng-disabled="importLibraryDisabled"
+                         type="submit">Submit
+              </md-button>
+            </md-dialog-actions>
+          </md-content>
+        </div>
+      </div>
+    </md-dialog-content>
+  </form>
 </md-dialog>

@@ -1,44 +1,47 @@
 <md-dialog aria-label="" ng-cloak>
-<form>
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2>Import JSON</h2>
-		<span flex></span>
-		<md-button class="md-icon-button" ng-click="cancel()"> <span
-			class="glyphicon glyphicon-remove" aria-hidden="true"></span> </md-button>
-	</div>
-	</md-toolbar>
-	<md-dialog-content>
-	<div class="md-dialog-content" style="height: 300px; width: 300px;">
-		<div layout="column" ng-cloak class="md-inline-form">
-			<md-content>
-			<div class="row" style="text-align: center;">
-				<h4>
-					<i>Upload JSON File.</i>
-				</h4>
-				<button type="file" ngf-select="uploadFiles($file, $invalidFiles)"
-					accept="*.json" ngf-max-height="1000" ngf-max-size="10MB">
-					Select File</button>
-			</div>
-			<div class="row" style="text-align: center;">
-				File:
-				<div style="font: smaller">
-					{{f.name}} {{errFile.name}} {{errFile.$error}}
-					{{errFile.$errorParam}} <span class="progress"
-						ng-show="f.progress >= 0">
-						<div style="width: {{f.progress" ng-bind="f.progress + '%'"></div>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Import JSON</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()"> <span
+          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content" style="height: 300px; width: 300px;">
+        <div class="md-inline-form" layout="column" ng-cloak>
+          <md-content>
+            <div class="row" style="text-align: center;">
+              <h4>
+                <i>Upload JSON File.</i>
+              </h4>
+              <button accept="*.json" ngf-max-height="1000"
+                      ngf-max-size="10MB" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
+                Select File
+              </button>
+            </div>
+            <div class="row" style="text-align: center;">
+              File:
+              <div style="font: smaller">
+                {{f.name}} {{errFile.name}} {{errFile.$error}}
+                {{errFile.$errorParam}} <span class="progress"
+                                              ng-show="f.progress >= 0">
+						<div ng-bind="f.progress + '%'" style="width: {{f.progress"></div>
 					</span>
-				</div>
-				</div>
-			</md-content>
-			<md-dialog-actions>
-				<md-button
-				ng-click="cancel()" class="md-raised">Cancel</md-button> 
-				<md-button
-				type="submit" ng-click="importJsonBtn()" class="md-raised">Submit</md-button>
-			</md-dialog-actions>
-		</div>
-	</div>
-	</md-dialog-content>
-</form>
+              </div>
+            </div>
+          </md-content>
+          <md-dialog-actions>
+            <md-button
+              class="md-raised" ng-click="cancel()">Cancel
+            </md-button>
+            <md-button
+              class="md-raised" ng-click="importJsonBtn()" type="submit">Submit
+            </md-button>
+          </md-dialog-actions>
+        </div>
+      </div>
+    </md-dialog-content>
+  </form>
 </md-dialog>

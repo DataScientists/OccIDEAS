@@ -1,86 +1,86 @@
 <div ng-cloak>
-	<table class="table table-sm">
-		<tbody>
-			<tr>
-				<td colspan="2"><h3>Successful Upload - Report</h3></td>
-			</tr>
-			<tr>
-				<td>Module Id</td>
-				<td><a style="cursor: pointer;" href
-					ng-click="addModuleTab(importJsonValidationReport.vo)">{{importJsonValidationReport.vo.idNode}}</a></td>
-			</tr>
-			<tr>
-				<td>Module Name</td>
-				<td>{{importJsonValidationReport.vo.name}}</td>
-			</tr>
-			<tr>
-				<td>Number of Questions Imported</td>
-				<td>{{importJsonValidationReport.totalQuestions}}</td>
-			</tr>
-			<tr>
-				<td>Number of Answers Imported</td>
-				<td>{{importJsonValidationReport.totalAnswers}}</td>
-			</tr>
-			<tr>
-				<td>Number of Rules Imported</td>
-				<td>{{importJsonValidationReport.totalRules}}</td>
-			</tr>
-		</tbody>
-	</table>
-	<div class="divider"></div>
-	<table class="table table-sm">
-		<tbody>
-			<tr>
-				<td colspan="2"><h3>Modules Summary</h3></td>
-			</tr>
-			<table class="table table-sm">
-				<thead>
-					<tr>
-						<th>Module Id</th>
-						<th>Module Name</th>
-						<th>Created</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						ng-repeat="item in importJsonValidationReport.moduleVODecoratorList">
-						<td>{{item.moduleVO.idNode}}</td>
-						<td>{{item.moduleVO.name}}</td>
-						<td>
-						<span ng-if="item.created" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-						<span ng-if="!item.created">Already Exist</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</tbody>
-	</table>
-	<div class="divider"></div>
-	<table class="table table-sm">
-		<tbody>
-			<tr>
-				<td colspan="2"><h3>Fragments Summary</h3></td>
-			</tr>
-			<table class="table table-sm">
-				<thead>
-					<tr>
-						<th>Fragment Id</th>
-						<th>Fragment Name</th>
-						<th>Created</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr
-						ng-repeat="item in importJsonValidationReport.fragmentVODecoratorList">
-						<td>{{item.fragmentVO.idNode}}</td>
-						<td>{{item.fragmentVO.name}}</td>
-						<td>
-						<span ng-if="item.created" class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-						<span ng-if="!item.created">Already Exist</span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</tbody>
-	</table>
+  <table class="table table-sm">
+    <tbody>
+      <tr>
+        <td colspan="2"><h3>Successful Upload - Report</h3></td>
+      </tr>
+      <tr>
+        <td>Module Id</td>
+        <td><a href ng-click="addModuleTab(importJsonValidationReport.vo)"
+               style="cursor: pointer;">{{importJsonValidationReport.vo.idNode}}</a></td>
+      </tr>
+      <tr>
+        <td>Module Name</td>
+        <td>{{importJsonValidationReport.vo.name}}</td>
+      </tr>
+      <tr>
+        <td>Number of Questions Imported</td>
+        <td>{{importJsonValidationReport.totalQuestions}}</td>
+      </tr>
+      <tr>
+        <td>Number of Answers Imported</td>
+        <td>{{importJsonValidationReport.totalAnswers}}</td>
+      </tr>
+      <tr>
+        <td>Number of Rules Imported</td>
+        <td>{{importJsonValidationReport.totalRules}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="divider"></div>
+  <table class="table table-sm">
+    <tbody>
+      <tr>
+        <td colspan="2"><h3>Modules Summary</h3></td>
+      </tr>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Module Id</th>
+            <th>Module Name</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            ng-repeat="item in importJsonValidationReport.moduleVODecoratorList">
+            <td>{{item.moduleVO.idNode}}</td>
+            <td>{{item.moduleVO.name}}</td>
+            <td>
+              <span aria-hidden="true" class="glyphicon glyphicon-ok" ng-if="item.created"></span>
+              <span ng-if="!item.created">Already Exist</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </tbody>
+  </table>
+  <div class="divider"></div>
+  <table class="table table-sm">
+    <tbody>
+      <tr>
+        <td colspan="2"><h3>Fragments Summary</h3></td>
+      </tr>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Fragment Id</th>
+            <th>Fragment Name</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            ng-repeat="item in importJsonValidationReport.fragmentVODecoratorList">
+            <td>{{item.fragmentVO.idNode}}</td>
+            <td>{{item.fragmentVO.name}}</td>
+            <td>
+              <span aria-hidden="true" class="glyphicon glyphicon-ok" ng-if="item.created"></span>
+              <span ng-if="!item.created">Already Exist</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </tbody>
+  </table>
 </div>

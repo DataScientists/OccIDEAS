@@ -1,31 +1,32 @@
 <div class="row ">
-    <div class="col-sm-12">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div ui-tree="moduleTreeOptions" id="tree-root-interviewing">
-                    <ol ui-tree-nodes ng-model="linkedModule">
-                        <li ng-repeat="node in linkedModule" ui-tree-node ng-include="'nodes_renderer.html'"></li>
-                    </ol>
-                </div>
-            </div>
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="tree-root-interviewing" ui-tree="moduleTreeOptions">
+          <ol ng-model="linkedModule" ui-tree-nodes>
+            <li ng-include="'nodes_renderer.html'" ng-repeat="node in linkedModule" ui-tree-node></li>
+          </ol>
         </div>
+      </div>
     </div>
+  </div>
 </div>
-<script type="text/ng-template" id="nodes_renderer.html">
-    <div id="interview-tree" class="angular-ui-tree">
-        <div class="tree-node" id="{{node.anchorId}}" data-nodrag>
-            <!-- start content -->
-            <div class="tree-node-content {{node.nodeclass}}" id="interviewnode-{{node.idNode}}">    
-				<div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
-                   <span class="badge">{{node.number}}</span>
-                </div>         
-                <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
-                <span>{{node.name}}</span>
-            </div>
-            <!-- end content -->
+<script id="nodes_renderer.html" type="text/ng-template">
+  <div id="interview-tree" class="angular-ui-tree">
+    <div class="tree-node" id="{{node.anchorId}}" data-nodrag>
+      <!-- start content -->
+      <div class="tree-node-content {{node.nodeclass}}" id="interviewnode-{{node.idNode}}">
+        <div class="form-group pull-left" style="margin-top: 5px;margin-left: -15px;">
+          <span class="badge">{{node.number}}</span>
         </div>
+        <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+        <span>{{node.name}}</span>
+      </div>
+      <!-- end content -->
     </div>
-    <ol ui-tree-nodes="" ng-model="node.nodes">
-        <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node" collapsed="false" ></li>
-    </ol>
+  </div>
+  <ol ui-tree-nodes="" ng-model="node.nodes">
+    <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'" class="angular-ui-tree-node"
+        collapsed="false"></li>
+  </ol>
 </script>
