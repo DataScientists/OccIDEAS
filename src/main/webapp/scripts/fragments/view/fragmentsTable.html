@@ -3,7 +3,7 @@
 
     <div aria-label="buttonGrp" role="group" style="padding:2px 2px 2px 2px;">
       <button class="btn btn-default" ng-click='validateAllBtn(true)' permission="['ROLE_ADMIN']" type="button">
-        Validate Fragments
+        Validate Task Modules
       </button>
     </div>
 
@@ -92,7 +92,7 @@
                     ng-click="addFragmentTab(row)" ng-if="!row.isEditing">
               <span class="glyphicon glyphicon-list-alt" title="Click for more detail"></span>
             </button>
-            <button class="btn btn-danger btn-sm" confirm="Delete fragment {{row.name}}?"
+            <button class="btn btn-danger btn-sm" confirm="Delete task module {{row.name}}?"
                     id="delete_{{row.name}}" ng-click="vm.del(row)" ng-if="vm.isDeleting">
               <span class="glyphicon glyphicon-trash"></span>
             </button>
@@ -103,7 +103,7 @@
             </button>
             <button class="btn btn-default btn-sm" ng-click="showLinkPopup(row)"
                     ng-if="!vm.isDeleting && !row.isEditing" ng-if="!row.isEditing">
-              <span class="glyphicon glyphicon-link" title="Click for linking with module"></span>
+              <span class="glyphicon glyphicon-link" title="Click for linking with job module"></span>
             </button>
           </td>
         </tr>
