@@ -232,7 +232,7 @@
     };
 
     $scope.openModuleLanguageTab = function(lang, row) {
-      var tabTitle = "Module Language-" + row.idNode + "-" + lang;
+      var tabTitle = "Job Module Language-" + row.idNode + "-" + lang;
       var state = "tabs.moduleLanguage";
       $stickyState.reset(state);
       if(!checkIfTabIsOpen(tabs, tabTitle)) {
@@ -332,7 +332,7 @@
 
     $scope.addAllModuleValidationTab = function(response) {
       tabs.push({
-        title: "Validation Report - All Modules",
+        title: "Validation Report - All Job Modules",
         viewName: 'allModuleValidation@tabs',
         canClose: true,
         disabled: false
