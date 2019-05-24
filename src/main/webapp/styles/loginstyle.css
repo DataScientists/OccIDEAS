@@ -189,10 +189,10 @@ label.form-invalid:after {
   cursor: pointer;
 }
 /* checkbox aspect */
-[type="checkbox"]:not(:checked) + label:before,
-[type="checkbox"]:checked + label:before,
-[type="radio"]:not(:checked) + label:before,
-[type="radio"]:checked + label:before {
+.login-group-checkbox > [type="checkbox"]:not(:checked) + label:before,
+.login-group-checkbox > [type="checkbox"]:checked + label:before,
+.login-group-checkbox > [type="radio"]:not(:checked) + label:before,
+.login-group-checkbox > [type="radio"]:checked + label:before {
   content: '';
   position: absolute;
   left: 0;
@@ -263,8 +263,8 @@ label:hover:before {
   border-radius: 35px;
 }
 /* selected mark aspect */
-[type="checkbox"]:not(:checked) + label:after,
-[type="checkbox"]:checked + label:after {
+.login-group-checkbox > [type="checkbox"]:not(:checked) + label:after,
+.login-group-checkbox > [type="checkbox"]:checked + label:after {
   content: '✔';
   top: 0;
   left: 2px;

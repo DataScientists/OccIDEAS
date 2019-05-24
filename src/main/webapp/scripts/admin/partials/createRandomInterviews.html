@@ -15,17 +15,17 @@
           <md-content>
             <div layout-gt-sm="row">
               <md-input-container class="md-block" flex-gt-sm style="height: 10px;">
-                <label>Number of Interviews</label> <input maxlength="20" name="randomIntCount"
-                                                           ng-model="randomIntCount" required/>
+                <label>Number of Interviews</label>
+                <input maxlength="20" name="randomIntCount" ng-model="randomIntCount" required/>
               </md-input-container>
               <div flex="5" hide-sm hide-xs>
                 <!-- Spacer //-->
               </div>
             </div>
-            <div flex-gt-sm="50">
-              <md-checkbox aria-label="Select Random Answers" ng-model="randomAnswerChecked">
-                Select Random Answers
-              </md-checkbox>
+            <div flex-gt-sm="50" style="padding: 40px 0 10px 10px">
+              <input type="checkbox" id="random" style="position: static" aria-label="Select Random Answers"
+                     ng-model="randomAnswerChecked">
+              <label for="random" style="color: gray;">Select Random Answers</label>
             </div>
         </div>
         <div layout-gt-sm="row" layout-wrap>
@@ -71,9 +71,6 @@
           class="md-raised" ng-click="vm.createRandomInterviews()">Generate
         </md-button>
       </md-dialog-actions>
-      </md-content>
-      </div>
-      </div>
     </md-dialog-content>
   </form>
   <script id="ng-table/headers/checkbox.html" type="text/ng-template">
