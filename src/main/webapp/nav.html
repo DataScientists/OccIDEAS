@@ -1,49 +1,48 @@
 <div ng-controller="LoginCtrl as vm">
-<div ng-if="vm.isAuthenticated" ng-cloak>
-<ul class="nav nav-pills pull-right">
-  <li>
-  	Welcome {{vm.userId}}
-  	<md-menu>
-      <md-button aria-label="Open phone interactions menu" 
-      				class="md-icon-button" 
-      				ng-click="vm.openMenu($mdOpenMenu, $event)">
-        <span class="glyphicon glyphicon-user"></span>
-      </md-button>
-      <md-menu-content width="4">
-         <md-menu-item >
-          <md-button id="languageId" ng-click="showLanguageDialog()">
-           <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
-            Languages
+  <div ng-cloak ng-if="vm.isAuthenticated">
+    <ul class="nav nav-pills pull-right">
+      <li>
+        Welcome {{vm.userId}}
+        <md-menu>
+          <md-button aria-label="Open phone interactions menu"
+                     class="md-icon-button"
+                     ng-click="vm.openMenu($mdOpenMenu, $event)">
+            <span class="glyphicon glyphicon-user"></span>
           </md-button>
-        </md-menu-item>
-        <md-menu-item>
-          <md-button ng-click="vm.showChangePasswordDialog()">
-           <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
-            Change Password
-          </md-button>
-        </md-menu-item>
-        <md-menu-item>
-          <md-button ui-sref="logout">
-            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-            &nbsp;
-            Sign Out
-          </md-button>
-        </md-menu-item>
-      </md-menu-content>
-    </md-menu>
-<!--   	<a ui-sref="logout" >Sign out {{vm.userId}}</a> -->
-  	</li>
-</ul>
-<h3 class="text-muted">OccIDEAS Version 3.9.0
-	<span permission="['ROLE_READONLY']" class="badge btn-warning">
+          <md-menu-content width="4">
+            <md-menu-item>
+              <md-button id="languageId" ng-click="showLanguageDialog()">
+                <span aria-hidden="true" class="glyphicon glyphicon-flag"></span>
+                Languages
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ng-click="vm.showChangePasswordDialog()">
+                <span aria-hidden="true" class="glyphicon glyphicon-lock"></span>
+                Change Password
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ui-sref="logout">
+                <span aria-hidden="true" class="glyphicon glyphicon-log-out"></span>
+                &nbsp;
+                Sign Out
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
+        <!--   	<a ui-sref="logout" >Sign out {{vm.userId}}</a> -->
+      </li>
+    </ul>
+    <h3 class="text-muted">OccIDEAS Version 3.9.0
+      <span class="badge btn-warning" permission="['ROLE_READONLY']">
 		READ-ONLY MODE
-	</span>	
-</h3>
-</div>
-<div ng-if="!vm.isAuthenticated" ng-cloak>
-	<div ng-include="'scripts/login/view/login.html'"></div>
-</div>
-
+	</span>
+    </h3>
+  </div>
+  <div ng-cloak ng-if="!vm.isAuthenticated">
+    <div ng-include="'scripts/login/view/login.html'"></div>
+  </div>
 
 
 </div>

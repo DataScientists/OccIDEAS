@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>OccIDEAS</title>
+  <meta charset="UTF-8"/>
+  <title>OccIDEAS</title>
 </head>
 <body>
-	<toast></toast>
-	<div class="container">
-		<header ng-include="'nav.html'" ng-cloak></header>
-		<div ui-view></div>
-		<footer ng-include="'footer.html'"></footer>
-	</div>
-	<script src="scripts/angular/require.js" data-main="scripts/main.js"></script>
+<toast></toast>
+<div class="container">
+  <header ng-cloak ng-include="'nav.html'"></header>
+  <div ui-view></div>
+  <footer ng-include="'footer.html'"></footer>
+</div>
+<script data-main="scripts/main.js" src="scripts/angular/require.js"></script>
 </body>
 </html>
