@@ -206,7 +206,11 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response preloadActiveIntro() {
     try {
-      service.preloadActiveIntro();
+      SystemPropertyVO systemPropertyVO = service.preloadActiveIntro();
+      if (systemPropertyVO == null) {
+        log.error("You should set filterStudyAgent as true");
+        return Response.status(Status.EXPECTATION_FAILED).type("text/plain").entity("You should set filterStudyAgent as true in admin config").build();
+      }
 //			this.testStudySpecificModules();
     } catch (Throwable e) {
       e.printStackTrace();
