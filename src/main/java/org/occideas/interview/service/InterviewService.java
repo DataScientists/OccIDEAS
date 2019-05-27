@@ -5,6 +5,7 @@ import org.occideas.entity.Interview;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RandomInterviewReport;
+import org.occideas.vo.SystemPropertyVO;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -64,7 +65,7 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   List<QuestionVO> getLinksByModule(Long id);
 
-  void preloadActiveIntro();
+  SystemPropertyVO preloadActiveIntro();
 
   void preloadAllModules();
 

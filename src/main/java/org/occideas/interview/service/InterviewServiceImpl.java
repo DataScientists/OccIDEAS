@@ -63,8 +63,8 @@ public class InterviewServiceImpl implements InterviewService {
   private InterviewAnswerMapper intAnswerMapper;
 
   @Override
-  public void preloadActiveIntro() {
-    interviewQuestionDao.preloadActiveIntro();
+  public SystemPropertyVO preloadActiveIntro() {
+    return interviewQuestionDao.preloadActiveIntro();
   }
 
   @Override

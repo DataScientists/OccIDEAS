@@ -135,13 +135,13 @@
 
     self.preloadActiveIntro = function() {
       InterviewsService.preloadActiveIntro().then(function(response) {
-        if(response.status == '200') {
+        if(response.status === 200) {
           $ngToast.create({
             className: 'success',
             content: 'Preload study agents successful',
             animation: 'slide'
           });
-        } else {
+        } else if(response.status !== 417) {
           $ngToast.create({
             className: 'danger',
             content: 'Preload study agents failed, check the logs.',
