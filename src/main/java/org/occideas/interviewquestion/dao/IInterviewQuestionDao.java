@@ -2,6 +2,7 @@ package org.occideas.interviewquestion.dao;
 
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
+import org.occideas.vo.SystemPropertyVO;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public interface IInterviewQuestionDao {
 
   List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule);
 
-  void preloadActiveIntro();
+  SystemPropertyVO preloadActiveIntro();
 
   void preloadAllModules();
 
