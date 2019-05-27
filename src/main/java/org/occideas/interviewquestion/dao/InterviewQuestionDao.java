@@ -158,7 +158,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
-  public void preloadActiveIntro() {
+  public SystemPropertyVO preloadActiveIntro() {
     SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
     if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
       // get intro id
@@ -170,6 +170,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
         generateCSVForChildAJSMandModule(node);
       }
     }
+    return filterStudyAgentFlag;
   }
 
   private void generateCSVForChildAJSMandModule(Node node) {
