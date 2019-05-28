@@ -10,7 +10,7 @@
         <md-progress-circular md-diameter="100%" md-mode="indeterminate"
                               ng-if="fragmentsLoading"></md-progress-circular>
         <uib-accordion close-others="oneAtATime" ng-if="!fragmentsLoading">
-          <uib-accordion-group heading="aJSMs">
+          <uib-accordion-group heading="Task Modules">
             <div data-clone-enabled="true" id="fragmentTree-root" ui-tree="aJsmTreeOptions">
               <ol ng-model="aJSMData" ui-tree-nodes>
                 <li ng-include="'nodes_renderer2.html'" ng-repeat="node in aJSMData track by $index"
