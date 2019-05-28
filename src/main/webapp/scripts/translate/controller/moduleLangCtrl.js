@@ -1465,10 +1465,10 @@
     function processAndSaveStudyAjsm(node) {
       var promise = processAjsm(node);
       promise.then(function(module) {
-        console.log('Success on process Ajsm: ' + module.name);
+        console.log('Success on process Task Module: ' + module.name);
         var promise1 = saveStudyModule(module);
         promise1.then(function(module) {
-          console.log('Success on save Ajsm: ' + module.name);
+          console.log('Success on save Task Module: ' + module.name);
 
         }, function(reason) {
           ngToast.create({
