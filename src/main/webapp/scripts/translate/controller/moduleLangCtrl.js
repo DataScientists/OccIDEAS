@@ -2017,9 +2017,9 @@
                       try {
                         model.moduleRule.$digest();
                       } catch(e) {
-                      }
+
                     }
-                    if(!$scope.data[0].moduleRule) {
+                    }if(!$scope.data[0].moduleRule) {
                       $scope.data[0].moduleRule = [];
                     }
                     $scope.data[0].moduleRule.push(result);
@@ -2214,7 +2214,6 @@
           var topNodeId = destNode.idNode;
           //generateIdNodeCascadeFragment(nodes,maxId,parentId);
           generateIdNodeCascade(nodes, maxId, parentId, parentNodeNumber, topNodeId);
-
 
           var deffered = $q.defer();
           FragmentsService.createFragment(destNode).then(function(response) {
@@ -3021,7 +3020,6 @@
       highlightNodesWithAgent(agent.idAgent);
       $scope.currentToggledNodeWithAgent = agent.idAgent;
     };
-
 //       function highlightNodesWithAgent(nodeAgentData){
 //       		for(var i=0;i<nodeAgentData.length;i++){
 //       			var node = nodeAgentData[i];
