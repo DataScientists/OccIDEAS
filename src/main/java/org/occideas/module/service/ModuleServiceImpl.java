@@ -409,6 +409,7 @@ public class ModuleServiceImpl implements ModuleService {
 
   @Override
   public List<String> getFilterStudyAgent(Long id) {
+    System.out.println("Node Id for preloading study agent is: " + id);
     Node node = dao.getNodeById(id);
     NodeVO vo = convertToModuleOrFragment(node);
     return sysPropService.filterNodesWithStudyAgents(vo);
