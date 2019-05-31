@@ -52,4 +52,5 @@ public interface IModuleDao {
 
   void saveOrUpdateIgnoreFK(Module module);
 
+  List getLinkByTopNodeId(long idNode);
 }
