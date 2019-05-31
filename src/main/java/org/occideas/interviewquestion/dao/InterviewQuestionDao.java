@@ -174,51 +174,14 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
   private void generateCSVForChildAJSMandModule(Node node) {
-    if (node instanceof Fragment) {
-      if (node.getLink() > 0) {
-        generateCSVFile(node);
-        Node linkNode = moduleDao.getNodeById(Long.valueOf(node.getLink()));
-        generateCSVForChildAJSMandModule(linkNode);
-      }
-    } else if (node instanceof Question) {
-      if (node.getLink() > 0) {
-        generateCSVFile(node);
-        Node linkNode = moduleDao.getNodeById(Long.valueOf(node.getLink()));
-        generateCSVForChildAJSMandModule(linkNode);
-      }
+    List<BigInteger> links = moduleDao.getLinkByTopNodeId(node.getIdNode());
+    for (BigInteger link : links) {
+      generateCSVFile(Long.valueOf(link.toString()));
     }
-
-    if (node instanceof Module) {
-      for (Question question : ((Module) node).getChildNodes()) {
-        generateCSVForChildAJSMandModule(question);
-      }
-    } else if (node instanceof Fragment) {
-      List<Question> childNodes = ((Fragment) node).getChildNodes();
-      if (!childNodes.isEmpty()) {
-        for (Question question : childNodes) {
-          generateCSVForChildAJSMandModule(question);
-        }
-      }
-    } else if (node instanceof Question) {
-      List<PossibleAnswer> childNodes = ((Question) node).getChildNodes();
-      if (!childNodes.isEmpty()) {
-        for (PossibleAnswer answer : childNodes) {
-          generateCSVForChildAJSMandModule(answer);
-        }
-      }
-    } else if (node instanceof PossibleAnswer) {
-      List<Question> childNodes = ((PossibleAnswer) node).getChildNodes();
-      if (!childNodes.isEmpty()) {
-        for (Question question : childNodes) {
-          generateCSVForChildAJSMandModule(question);
-        }
-      }
-    }
-
   }
 
-  private void generateCSVFile(Node node) {
-    String moduleId = String.valueOf(node.getLink());
+  private void generateCSVFile(Long link) {
+    String moduleId = String.valueOf(link);
     List<String> listOfIdNodes = moduleService.getFilterStudyAgent(Long.valueOf(moduleId));
     try {
       if (listOfIdNodes != null && !listOfIdNodes.isEmpty()) {
