@@ -128,6 +128,16 @@ public class ModuleDao implements IModuleDao {
     return crit.list();
   }
 
+  @Override
+  public List getLinkByTopNodeId(long idNode) {
+    final Session session = sessionFactory.getCurrentSession();
+    String GET_NODE_BY_TOP_NODE_ID = "select distinct link from Node where topNodeId = :topNodeId and " +
+      "link > 0 and deleted = 0";
+    SQLQuery sqlQuery = session.createSQLQuery(GET_NODE_BY_TOP_NODE_ID);
+    sqlQuery.setParameter("topNodeId", idNode);
+    return sqlQuery.list();
+  }
+
   @SuppressWarnings("unchecked")
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Long generateIdNode() {
