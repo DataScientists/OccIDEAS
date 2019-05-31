@@ -41,7 +41,7 @@ public class ParticipantDao implements IParticipantDao {
     + " and p.status like :status"
     + " and coalesce(i.assessedStatus, '%%') like coalesce(:assessedStatus, '%%')"
     + " and i.idinterview like :idinterview" + " and im.interviewModuleName like :interviewModuleName"
-    + " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
+    + " and im.moduleType != 'M_IntroModule'"
     + " and p.deleted = 0";
   private final String participantCountWithModule = "select count(*) from Participant p "
     + " join Interview i join InterviewIntroModule_Module im " + " where p.idParticipant = i.idParticipant "
@@ -52,7 +52,7 @@ public class ParticipantDao implements IParticipantDao {
     + " and coalesce(i.idinterview, '%%') like coalesce(:idinterview, '%%')"
     + " and coalesce(i.assessedStatus, '%%') like coalesce(:assessedStatus, '%%')"
     + " and coalesce(im.interviewModuleName, '%%') like coalesce(:interviewModuleName, '%%')"
-    + " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
+    + " and im.moduleType != 'M_IntroModule'"
     + " and p.deleted = 0";
   @Autowired
   private SessionFactory sessionFactory;

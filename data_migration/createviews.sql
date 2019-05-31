@@ -22,6 +22,7 @@ SELECT
 concat(m.idNode,':',iq.id) AS 
 primaryKey,
 m.idNode as idModule, 
+m.type as moduleType, 
 m.name as introModuleNodeName, 
 iq.id as interviewPrimaryKey,
 iq.idInterview as interviewId,
@@ -88,4 +89,4 @@ and i.idinterview = im.interviewId
 and i.idParticipant = p.idParticipant 
 and p.deleted = 0
 and ia.deleted = 0
-and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1);
+and im.moduleType != 'M_IntroModule';

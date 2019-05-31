@@ -24,7 +24,7 @@ public class InterviewDao implements IInterviewDao {
       + " join Interview i join InterviewIntroModule_Module im"
       + " where p.idParticipant = i.idParticipant"
       + " and i.idinterview = im.interviewId"
-      + " and im.idModule != (select value from SYS_CONFIG where name = 'activeintro' limit 1)"
+      + " and im.moduleType != 'M_IntroModule'"
       + " and p.deleted = 0";
 
   private final String NOT_ASSESSED_COUNT =
