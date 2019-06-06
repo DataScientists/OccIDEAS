@@ -25,7 +25,7 @@
       <button class="btn btn-default"
               ng-click="vm.add('M_Module')" ng-if="vm.originalData.length == 0"
               type="button">Add Job Module <span class="glyphicon glyphicon-plus">
-			</span></button>
+      </span></button>
     </div>
     <table class="table table-bordered table-hover
   table-condensed editable-table moduleTable" demo-tracked-table="vm.tableTracker"
@@ -38,9 +38,9 @@
             <a href="" ng-click="group.$hideRows = !group.$hideRows">
               <span class="glyphicon"
                     ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-              <strong ng-if="group.value == 'M_IntroModule'">Intro</strong>
-              <strong ng-if="group.value == 'M_Module_'">Development</strong>
-              <strong ng-if="group.value == 'M_Module'">Production</strong>
+              <strong ng-if="group.value == 'M_IntroModule'">Introductory questions</strong>
+              <strong ng-if="group.value == 'M_Module_'">Under construction</strong>
+              <strong ng-if="group.value == 'M_Module'">Job Modules</strong>
               <strong ng-if="group.value == 'M_Module__'">Tests</strong>
             </a>
             <div class="brn-group pull-right">
@@ -58,23 +58,23 @@
             {{row.type}}
           </td>
           <td>
-          		<span class="glyphicon glyphicon-warning-sign"
-                    ng-if="row.isDuplicate"
-                    ng-mouseenter="validatePopOver.open(row)"
-                    ng-mouseleave="validatePopOver.close(row)"
-                    popover-append-to-body="true"
-                    popover-is-open="row.info['Mod'+row.idNode].modPopover.isOpen" popover-placement="right"
-                    popover-popup-delay="1000"
-                    style="color:red;"
-                    uib-popover-template="validatePopOver.templateUrl"></span>
+            <span class="glyphicon glyphicon-warning-sign"
+                  ng-if="row.isDuplicate"
+                  ng-mouseenter="validatePopOver.open(row)"
+                  ng-mouseleave="validatePopOver.close(row)"
+                  popover-append-to-body="true"
+                  popover-is-open="row.info['Mod'+row.idNode].modPopover.isOpen" popover-placement="right"
+                  popover-popup-delay="1000"
+                  style="color:red;"
+                  uib-popover-template="validatePopOver.templateUrl"></span>
           </td>
           <td demo-tracked-table-cell filter="{name: 'text'}"
               id="id_{{row.idNode}}" ng-class="name.$dirty ? 'bg-warning' : ''"
               ng-form="name" ng-switch="row.isEditing">
             <div ng-click="row.isEditing = true">
-					<span class="editable-text" ng-switch-default>
-						{{row.name}}
-					</span>
+              <span class="editable-text" ng-switch-default>
+                {{row.name}}
+              </span>
               <span ng-if="row.type == 'M_IntroModule'" permission="['ROLE_ADMIN']">{{row.idNode}}</span>
 
               <div class="controls"
@@ -101,17 +101,17 @@
           </td>
           <td permission="['ROLE_ADMIN']">
             <div>
-					<span>
-						<span class="badge" ng-click="showRuleCount(row,$event)" ng-if="row.ruleCount == undefined"
-                  title="Click for Rule Count">&nbsp;</span>
-						<span class="badge" ng-if="row.ruleCount >= 0">{{row.ruleCount}}</span>
-					</span>
+              <span>
+                <span class="badge" ng-click="showRuleCount(row,$event)" ng-if="row.ruleCount == undefined"
+                      title="Click for Rule Count">&nbsp;</span>
+                <span class="badge" ng-if="row.ruleCount >= 0">{{row.ruleCount}}</span>
+              </span>
             </div>
           </td>
           <td ng-if="$storage.langEnabled" permission="['ROLE_ADMIN','ROLE_CONTDEV']" style="width:100px;">
-				<span class="{{lang.current == lang.total?'greenBorder':'redBorder'}}" ng-repeat="lang in row.flags">
-				<i class="glyphicon {{lang.flag}}" ng-click="openModuleLanguageByFlagIcon(lang)"></i>
-				</span>
+            <span class="{{lang.current == lang.total?'greenBorder':'redBorder'}}" ng-repeat="lang in row.flags">
+              <i class="glyphicon {{lang.flag}}" ng-click="openModuleLanguageByFlagIcon(lang)"></i>
+            </span>
           </td>
           <td>
             <button class="btn btn-primary btn-sm" id="saveBtn"

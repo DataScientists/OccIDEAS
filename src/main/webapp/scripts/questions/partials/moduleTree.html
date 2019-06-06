@@ -106,20 +106,20 @@
                              ng-class="selectedMode">
             <md-fab-trigger>
               <md-button aria-label="menu">
-                <span class="badge" ng-if="node.type == 'M_IntroModule'">Type:Intro</span>
-                <span class="badge" ng-if="node.type == 'M_Module_'">Type:Development</span>
-                <span class="badge" ng-if="node.type == 'M_Module'">Type:Production</span>
+                <span class="badge" ng-if="node.type == 'M_IntroModule'">Type:Introductory questions</span>
+                <span class="badge" ng-if="node.type == 'M_Module_'">Type:Under construction</span>
+                <span class="badge" ng-if="node.type == 'M_Module'">Type:Job Modules</span>
                 <span class="badge" ng-if="node.type == 'M_Module__'">Type:Tests</span>
               </md-button>
             </md-fab-trigger>
             <md-fab-actions>
               <md-button ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')"
                          class="md-fab md-raised md-mini">
-                <span>Prod</span>
+                <span>Job Modules</span>
               </md-button>
               <md-button ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')"
                          class="md-fab md-raised md-mini">
-                <span>Dev</span>
+                <span>Under construction</span>
               </md-button>
               <md-button ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')"
                          class="md-fab md-raised md-mini">
@@ -127,7 +127,7 @@
               </md-button>
               <md-button ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')"
                          class="md-fab md-raised md-mini">
-                <span>Intro</span>
+                <span>Introductory questions</span>
               </md-button>
             </md-fab-actions>
           </md-fab-speed-dial>

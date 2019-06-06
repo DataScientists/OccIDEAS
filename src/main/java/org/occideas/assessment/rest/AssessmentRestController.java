@@ -33,10 +33,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -151,7 +149,13 @@ public class AssessmentRestController {
         updateProgress(uniqueInterviews.size(), reportHistoryVO, currentCount, elapsedTime, msPerInterview);
 
         File file = new File(tempFolder + iCount + ".csv");
-        CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
+        CSVWriter writer = new CSVWriter(
+          new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8),
+          ',',
+          CSVWriter.DEFAULT_QUOTE_CHARACTER,
+          CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+          CSVWriter.DEFAULT_LINE_END
+        );
         List<InterviewAnswerVO> answers = interviewAnswerService.findByInterviewId(interview.getIdinterview());
         List<InterviewQuestionVO> questions = interviewQuestionService
           .findByInterviewId(interview.getIdinterview());
@@ -252,7 +256,13 @@ public class AssessmentRestController {
         }
       }
       File fileOut = new File(fullPath);
-      CSVWriter writer = new CSVWriter(new FileWriter(fileOut), ',');
+      CSVWriter writer = new CSVWriter(
+        new OutputStreamWriter(new FileOutputStream(fileOut), StandardCharsets.UTF_8),
+        ',',
+        CSVWriter.DEFAULT_QUOTE_CHARACTER,
+        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+        CSVWriter.DEFAULT_LINE_END
+      );
       // Collections.sort(fullHeaderList);
       writer.writeNext(fullHeaderList.toArray(new String[fullHeaderList.size()]));
       for (File rfile : listOfFiles) {
@@ -323,7 +333,13 @@ public class AssessmentRestController {
         csvDirFile.mkdir();
       }
       File file = new File(fullPath);
-      writer = new CSVWriter(new FileWriter(file), ',');
+      writer = new CSVWriter(
+        new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8),
+        ',',
+        CSVWriter.DEFAULT_QUOTE_CHARACTER,
+        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+        CSVWriter.DEFAULT_LINE_END
+      );
       // feed in your array (or convert your data to an array)
       String[] headers = Arrays.copyOf(csvVO.getHeaders().toArray(), csvVO.getHeaders().toArray().length,
         String[].class);
@@ -369,7 +385,13 @@ public class AssessmentRestController {
 
     // Write lookup file
     File fileLookup = new File(fullPath.substring(0, fullPath.length() - 4) + "-Lookup.csv");
-    CSVWriter lookupWriter = new CSVWriter(new FileWriter(fileLookup), ',');
+    CSVWriter lookupWriter = new CSVWriter(
+      new OutputStreamWriter(new FileOutputStream(fileLookup), StandardCharsets.UTF_8),
+      ',',
+      CSVWriter.DEFAULT_QUOTE_CHARACTER,
+      CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+      CSVWriter.DEFAULT_LINE_END
+    );
 
     String[] lookupHeader = new String[]{"Id", "Name"};
     lookupWriter.writeNext(lookupHeader);
@@ -411,7 +433,13 @@ public class AssessmentRestController {
 
     // Write lookup file
     File fileLookup = new File(fullPath.substring(0, fullPath.length() - 4) + "-Lookup.csv");
-    CSVWriter lookupWriter = new CSVWriter(new FileWriter(fileLookup), ',');
+    CSVWriter lookupWriter = new CSVWriter(
+      new OutputStreamWriter(new FileOutputStream(fileLookup), StandardCharsets.UTF_8),
+      ',',
+      CSVWriter.DEFAULT_QUOTE_CHARACTER,
+      CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+      CSVWriter.DEFAULT_LINE_END
+    );
 
     String[] lookupHeader = new String[]{"Id", "Name"};
     lookupWriter.writeNext(lookupHeader);
@@ -515,7 +543,13 @@ public class AssessmentRestController {
 
     try {
       File file = new File(fullPath);
-      CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
+      CSVWriter writer = new CSVWriter(
+        new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8),
+        ',',
+        CSVWriter.DEFAULT_QUOTE_CHARACTER,
+        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+        CSVWriter.DEFAULT_LINE_END
+      );
       Set<String> headers = new LinkedHashSet<>();
       headers.add("InterviewID");
       headers.add("ParticipantID");
@@ -795,7 +829,12 @@ public class AssessmentRestController {
 
     try {
       File file = new File(fullPath);
-      CSVWriter writer = new CSVWriter(new FileWriter(file), ',');
+      CSVWriter writer = new CSVWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8),
+        ',',
+        CSVWriter.DEFAULT_QUOTE_CHARACTER,
+        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+        CSVWriter.DEFAULT_LINE_END
+      );
       Set<String> headers = new LinkedHashSet<>();
       headers.add("InterviewID");
       headers.add("ParticipantID");
@@ -1955,7 +1994,6 @@ public class AssessmentRestController {
    *
    * @param size
    * @param reportHistoryVO
-   * @param msPerInterview
    * @return
    */
   private long getMsPerInterview(int size, ReportHistoryVO reportHistoryVO, String type, double progress) {
@@ -1978,7 +2016,6 @@ public class AssessmentRestController {
    * @param reportHistoryVO
    * @param currentCount
    * @param elapsedTime
-   * @param progress
    * @param msPerInterview  - Estimate from latest completed record
    */
   private void updateProgress(int interviewSize, ReportHistoryVO reportHistoryVO, int currentCount, long elapsedTime,
