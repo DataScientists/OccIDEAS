@@ -16,9 +16,9 @@
         <tr class="ng-table-group">
           <td colspan="{{$columns.length}}">
             <a href="" ng-click="group.$hideRows = !group.$hideRows">
-                        <span class="glyphicon"
-                              ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
-              <strong> {{ group.value }}</strong>
+              <span class="glyphicon"
+                    ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+              <strong> {{ group.value == 'F_ajsm' ? 'Task Modules' : group.value }}</strong>
             </a>
             <div class="brn-group pull-right">
               <button class="btn btn-default" id="add_{{group.value}}" ng-click="vm.add(group.value)">
@@ -65,17 +65,17 @@
           </td>
           <td permission="['ROLE_ADMIN']">
             <div>
-					<span>
-						<span class="badge" ng-click="showRuleCount(row,$event)" ng-if="row.ruleCount == undefined"
-                  title="Click for Rule Count">&nbsp;</span>
-						<span class="badge" ng-if="row.ruleCount >= 0">{{row.ruleCount}}</span>
-					</span>
+              <span>
+                <span class="badge" ng-click="showRuleCount(row,$event)" ng-if="row.ruleCount == undefined"
+                      title="Click for Rule Count">&nbsp;</span>
+                <span class="badge" ng-if="row.ruleCount >= 0">{{row.ruleCount}}</span>
+              </span>
             </div>
           </td>
           <td ng-if="$storage.langEnabled" permission="['ROLE_ADMIN','ROLE_CONTDEV']" style="width:100px;">
-				<span class="{{lang.current == lang.total?'greenBorder':'redBorder'}}" ng-repeat="lang in row.flags">
-				<i class="glyphicon {{lang.flag}}" ng-click="openModuleLanguageByFlagIcon(lang)"></i>
-				</span>
+            <span class="{{lang.current == lang.total?'greenBorder':'redBorder'}}" ng-repeat="lang in row.flags">
+              <i class="glyphicon {{lang.flag}}" ng-click="openModuleLanguageByFlagIcon(lang)"></i>
+            </span>
           </td>
           <td>
             <button class="btn btn-primary btn-sm"

@@ -250,10 +250,6 @@
               self.tableParams.shouldGetData = true;
             }
           }
-          data.map(function(x) {
-            if(x.type === 'F_ajsm')
-              x['type'] = " Task Modules";
-          });
           return data;
         });
       },

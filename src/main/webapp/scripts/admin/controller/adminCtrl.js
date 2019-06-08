@@ -139,7 +139,9 @@
           $ngToast.create({
             className: 'success',
             content: 'Preload study agents successful',
-            animation: 'slide'
+            animation: 'slide',
+            dismissOnTimeout: false,
+            dismissButton: true
           });
         } else if(response.status !== 417) {
           $ngToast.create({
