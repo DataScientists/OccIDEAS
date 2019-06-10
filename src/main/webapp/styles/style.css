@@ -16,6 +16,11 @@
 .F_template{
 	display: none !important;
 }
+
+.ng-table-group-toggle {
+  display: none !important;
+}
+
 .Q_linkedajsm{
 	border: 2px solid #80ADDA !important;
 	background: #92DAEA !important;

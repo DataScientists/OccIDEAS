@@ -10,8 +10,7 @@
       </div>
       <tbody ng-repeat="group in $groups">
         <tr class="ng-table-group">
-          <td colspan="{{$columns.length}}"><a href=""
-                                               ng-click="group.$hideRows = !group.$hideRows"> <span
+          <td colspan="{{$columns.length}}"><a href=""> <span
             class="glyphicon"
             ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
             <strong> {{ group.value }}</strong>
