@@ -1,13 +1,13 @@
 <div class="ui-widget" id="fragdropcontainer" ng-class="rightNav" ng-if="data[0].type == 'M_IntroModule'">
   <div class="frag-contain">
-    <div class="fragmentSticker" ng-click="toggleRight()">Modules</div>
-    <label class="fraglabel" for="fragmentsdragdrop">Drag Drop Modules: </label>
+    <div class="fragmentSticker" ng-click="toggleRight()">Job Modules</div>
+    <label class="fraglabel" for="fragmentsdragdrop">Drag Drop Job Modules: </label>
     <div id="fragmentsdragdrop">
       <ul></ul>
       <div>
         <h5>Production Module List</h5>
         <uib-accordion close-others="oneAtATime">
-          <uib-accordion-group heading="Module" is-open="true">
+          <uib-accordion-group heading="Job Module" is-open="true">
             <div data-clone-enabled="true" id="templateTree-root" ui-tree="aJsmTreeOptions">
               <ol ng-model="moduleSlider" ui-tree-nodes>
                 <li ng-include="'nodes_renderer3.html'" ng-repeat="node in moduleSlider"

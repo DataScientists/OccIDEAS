@@ -4,7 +4,7 @@
   <form>
     <md-toolbar>
       <div class="md-toolbar-tools">
-        <h2>List of Modules</h2>
+        <h2>List of Job Modules</h2>
         <span flex></span>
         <md-button class="md-icon-button" ng-click="cancel()"> <span
           aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
@@ -16,15 +16,14 @@
           <md-content>
             <div class="panel panel-default">
               <!-- Default panel contents -->
-              <div class="panel-heading">Modules</div>
+              <div class="panel-heading">Job Modules</div>
               <div class="panel-body">
                 <div>
                   <ul class="list-group">
                     <li class="list-group-item"
-                        ng-if="vm.modulesInInterview.length < 1"
-                    >
+                        ng-if="vm.modulesInInterview.length < 1">
                       <div>
-                        No modules found
+                        No Job modules found
                       </div>
                     </li>
                     <li class="list-group-item"

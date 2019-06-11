@@ -368,7 +368,7 @@
 
     $scope.addFragmentsLinkTab = function(response) {
       tabs.push({
-        title: "Fragment Links",
+        title: "Task Module Links",
         viewName: 'fragmentLinks@tabs',
         canClose: true,
         disabled: false
