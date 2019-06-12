@@ -129,7 +129,7 @@ public class InterviewQuestionRestController implements BaseRestController<Inter
   @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
   public Response saveLinkAndQueueQuestions(InterviewQuestionVO vo) {
     InterviewQuestionVO interviewQuestionVO = service.updateInterviewLinkAndQueueQuestions(vo);
-    if (interviewQuestionVO.getDescription().equals("Not preloaded")) {
+    if (interviewQuestionVO.getDescription() != null && interviewQuestionVO.getDescription().equals("Not preloaded")) {
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity("Study agents not preloaded, please contact administrator").build();
     } else {
       return Response.ok(interviewQuestionVO).build();

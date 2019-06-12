@@ -173,12 +173,53 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     return filterStudyAgentFlag;
   }
 
+  /*==============================================================================================*/
+  /* @author: TD */
+  /*==============================================================================================*/
+  private List<Long> links = new ArrayList<>();
+
   private void generateCSVForChildAJSMandModule(Node node) {
-    List<BigInteger> links = moduleDao.getLinkByTopNodeId(node.getIdNode());
-    for (BigInteger link : links) {
-      generateCSVFile(Long.valueOf(link.toString()));
+    Module module = moduleDao.get(node.getIdNode());
+
+    getLinks(module);
+
+    for (Long link : links) {
+      generateCSVFile(link);
+    }
+
+    links = new ArrayList<>();
+  }
+
+  private void getLinks(Node node) {
+    for (Object obj : node.getChildNodes()) {
+      if (obj instanceof Question) {
+        Long link = ((Node) obj).getLink();
+        if (link > 0) {
+          addToLinkList(link);
+          processFragmentQuestion(link);
+        }
+      }
+      getLinks((Node) obj);
     }
   }
+
+  private void processFragmentQuestion(Long link) {
+    Module module = moduleDao.get(link);
+    if (module != null) {
+      for (Question question : module.getChildNodes()) {
+        if (question.getLink() > 0) {
+          addToLinkList(question.getLink());
+        }
+      }
+    }
+  }
+
+  private void addToLinkList(Long val) {
+    if (!links.contains(val)) {
+      links.add(val);
+    }
+  }
+  /*==============================================================================================*/
 
   private void generateCSVFile(Long link) {
     String moduleId = String.valueOf(link);
