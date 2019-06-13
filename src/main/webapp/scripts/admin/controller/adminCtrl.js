@@ -465,14 +465,7 @@
 
     $scope.addUserBtn = function(newUser) {
       if(!newUser.state) {
-        $ngToast.create({
-          className: 'danger',
-          content: 'State is a required field.',
-          dismissButton: true,
-          dismissOnClick: false,
-          animation: 'slide'
-        });
-        return;
+        newUser.state = 'Active';
       }
       if(newUser.roles.length == 0) {
         $ngToast.create({

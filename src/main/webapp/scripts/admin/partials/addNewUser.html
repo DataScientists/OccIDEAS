@@ -41,36 +41,27 @@
               </div>
               <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
-                  <label>Firstname</label> <input
+                  <label>Firstname (optional)</label> <input
                   maxlength="100" name="firstName"
                   ng-model="vm.newUser.firstName"/></md-input-container>
                 <div flex="5" hide-sm hide-xs>
                   <!-- Spacer //-->
                 </div>
                 <md-input-container class="md-block" flex-gt-sm>
-                  <label>Lastname</label>
-                  <input
-                    maxlength="100" name="lastName"
-                    ng-model="vm.newUser.lastName"/>
+                  <label>Lastname (optional)</label>
+                  <input maxlength="100" name="lastName"
+                         ng-model="vm.newUser.lastName"/>
                 </md-input-container>
               </div>
               <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
-                  <label>Email</label> <input maxlength="100"
-                                              minlength="10" name="email" ng-model="vm.newUser.email"
-                                              ng-pattern="/^.+@.+\..+$/"/></md-input-container>
+                  <label>Email (optional)</label>
+                  <input maxlength="100"
+                         minlength="10" name="email" ng-model="vm.newUser.email"
+                         ng-pattern="/^.+@.+\..+$/"/></md-input-container>
                 <div flex="5" hide-sm hide-xs>
                   <!-- Spacer //-->
                 </div>
-                <md-input-container class="md-block" flex-gt-sm>
-                  <label>*State</label>
-                  <md-select ng-model="vm.newUser.state" required>
-                    <md-option ng-repeat="state in vm.states"
-                               value="{{state.name}}">
-                      {{state.name}}
-                    </md-option>
-                  </md-select>
-                </md-input-container>
               </div>
               <div layout-gt-sm="row">
                 <md-dialog-actions layout="row">
