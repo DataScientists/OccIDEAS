@@ -244,14 +244,11 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     sessionFactory.getCurrentSession().saveOrUpdate(iq);
     int intQuestionSequence = iq.getIntQuestionSequence();
     long parentModuleId = iq.getLink();
-    boolean preLoaded = loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
-    if (!preLoaded) {
-      iq.setDescription("Not preloaded");
-    }
+    loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
     return iq;
   }
 
-  private boolean loopChildQuestionsAndQueue(InterviewQuestion iq, int intQuestionSequence, long parentModuleId) {
+    private void loopChildQuestionsAndQueue(InterviewQuestion iq, int intQuestionSequence, long parentModuleId) {
     List<QuestionVO> queueQuestions = new ArrayList<>();
     queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
     Collections.sort(queueQuestions);
@@ -271,35 +268,29 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
       iqQueue.setTopNodeId(question.getTopNodeId());
       iqQueue.setIntQuestionSequence(++intQuestionSequence);
       iqQueue.setDeleted(0);
-
-      int status = shouldQueueQuestion(iq, filterStudyAgentFlag, iqQueue);
-      if (status == 2) {
-        return false;
-      } else if (status == 0) {
+      if (shouldQueueQuestion(iq, filterStudyAgentFlag, iqQueue)) {
         sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
       }
     }
-    return true;
   }
 
-  private int shouldQueueQuestion(InterviewQuestion iq, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue) {
+    private boolean shouldQueueQuestion(InterviewQuestion iq, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue) {
     if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
       SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
       if (introModule == null) {
         log.error("no intro module set");
-        return 1;
+        return false;
       }
 
       try {
 
         if (introModule.getValue().equals(String.valueOf(iq.getLink()))) {
-          return 0;
+          return true;
         } else {
           boolean filterAndCreateCSV = false;
           try {
             if (!studyAgentUtil.doesStudyAgentCSVExist(String.valueOf(iq.getLink()))) {
               filterAndCreateCSV = true;
-              return 2;
             }
           } catch (IOException e1) {
             log.error("Unable to access file id node " + iq.getLink(), e1);
@@ -316,17 +307,17 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
           if (listOfIdNodes.length < 1) {
             emptyLinkFoundDoNotQueue(iq);
-            return 1;
+            return false;
           } else {
-            return isQuestionIdStudyAgent(iqQueue, listOfIdNodes) ? 0 : 1;
+            return isQuestionIdStudyAgent(iqQueue, listOfIdNodes);
           }
         }
       } catch (Exception e) {
         log.error("Error on saveInterviewLinkAndQueueQuestions ", e);
-        return 1;
+        return false;
       }
     }
-    return 0;
+    return true;
   }
 
   private boolean isQuestionIdStudyAgent(InterviewQuestion iqQueue, String[] listOfIdNodes) {
@@ -538,4 +529,38 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_Question").executeUpdate();
   }
 
+  @Override
+  public Boolean checkIfStudyAgentPreLoaded() {
+    SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+    if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
+      // get intro id
+      SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+      if (introModule == null) {
+        log.error("no intro module set");
+        return false;
+      } else {
+        Node node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
+        generateLinks(node);
+
+        Boolean preLoaded = isPreLoaded();
+
+        links = new ArrayList<>();
+        return preLoaded;
+      }
+    }
+    return true;
+  }
+
+  private Boolean isPreLoaded() {
+    try {
+      for (Long link : links) {
+        if (!studyAgentUtil.doesStudyAgentCSVExist(String.valueOf(link))) {
+          return false;
+        }
+      }
+    } catch (IOException e) {
+      log.error("Error while reading file", e);
+    }
+    return true;
+  }
 }
