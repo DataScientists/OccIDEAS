@@ -28,4 +28,6 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
   PageVO<AssessmentIntMod> getPaginatedAssessmentWithModList(int pageNumber, int size, GenericFilterVO filterVO);
 
   ParticipantVO getByReferenceNumber(String referenceNumber);
+
+  Boolean checkIfStudyAgentPreLoaded();
 }

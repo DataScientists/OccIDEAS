@@ -14,6 +14,7 @@ import org.occideas.mapper.QuestionMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.StudyAgentUtil;
@@ -54,6 +55,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   private QuestionService questionService;
   @Autowired
   private SystemPropertyService systemPropertyService;
+  @Autowired
+  private SystemPropertyDao systemPropertyDao;
   @Autowired
   private ModuleService moduleService;
   @Autowired
@@ -248,7 +251,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     return iq;
   }
 
-    private void loopChildQuestionsAndQueue(InterviewQuestion iq, int intQuestionSequence, long parentModuleId) {
+  private void loopChildQuestionsAndQueue(InterviewQuestion iq, int intQuestionSequence, long parentModuleId) {
     List<QuestionVO> queueQuestions = new ArrayList<>();
     queueQuestions = questionService.getQuestionsWithParentId(String.valueOf(parentModuleId));
     Collections.sort(queueQuestions);
@@ -274,7 +277,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     }
   }
 
-    private boolean shouldQueueQuestion(InterviewQuestion iq, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue) {
+  private boolean shouldQueueQuestion(InterviewQuestion iq, SystemPropertyVO filterStudyAgentFlag, InterviewQuestion iqQueue) {
     if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
       SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
       if (introModule == null) {
@@ -533,8 +536,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   public Boolean checkIfStudyAgentPreLoaded() {
     SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
     if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
-      // get intro id
       SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+
       if (introModule == null) {
         log.error("no intro module set");
         return false;
@@ -542,7 +545,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
         Node node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
         generateLinks(node);
 
-        Boolean preLoaded = isPreLoaded();
+        Boolean preLoaded = isPreLoaded(introModule);
 
         links = new ArrayList<>();
         return preLoaded;
@@ -551,11 +554,17 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     return true;
   }
 
-  private Boolean isPreLoaded() {
+  private Boolean isPreLoaded(SystemPropertyVO introModule) {
     try {
       for (Long link : links) {
-        if (!studyAgentUtil.doesStudyAgentCSVExist(String.valueOf(link))) {
-          return false;
+        if (!introModule.getValue().equals(String.valueOf(link))) {
+          if (!studyAgentUtil.doesStudyAgentCSVExist(String.valueOf(link))) {
+            Node node = moduleDao.getNodeById(link);
+            List<PossibleAnswer> possibleAnswers = systemPropertyDao.getPosAnsWithStudyAgentsByIdMod(node.getIdNode());
+            if (!possibleAnswers.isEmpty()) {
+              return false;
+            }
+          }
         }
       }
     } catch (IOException e) {

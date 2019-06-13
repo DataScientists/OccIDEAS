@@ -64,4 +64,5 @@ public interface IInterviewQuestionDao {
 
   void deleteAll();
 
+  Boolean checkIfStudyAgentPreLoaded();
 }

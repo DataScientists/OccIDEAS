@@ -3,6 +3,7 @@ package org.occideas.participant.service;
 import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
+import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.mapper.ParticipantMapper;
 import org.occideas.participant.dao.IParticipantDao;
 import org.occideas.utilities.PageUtil;
@@ -23,6 +24,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Autowired
   private IParticipantDao participantDao;
+
+  @Autowired
+  private IInterviewQuestionDao interviewQuestionDao;
 
   @Autowired
   private ParticipantMapper mapper;
@@ -133,5 +137,10 @@ public class ParticipantServiceImpl implements ParticipantService {
       return mapper.convertToParticipantVOonly(participant);
     }
     return null;
+  }
+
+  @Override
+  public Boolean checkIfStudyAgentPreLoaded() {
+    return interviewQuestionDao.checkIfStudyAgentPreLoaded();
   }
 }

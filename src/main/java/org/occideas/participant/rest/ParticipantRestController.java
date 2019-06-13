@@ -196,6 +196,12 @@ public class ParticipantRestController implements BaseRestController<Participant
     }
   }
 
+  @GET
+  @Path(value = "/checkIfStudyAgentPreLoaded")
+  public Boolean checkIfStudyAgentPreLoaded() {
+    return service.checkIfStudyAgentPreLoaded();
+  }
+
   private void determineFiredRules(InterviewVO interview) {
     ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
     ArrayList<RuleVO> rules = new ArrayList<RuleVO>();

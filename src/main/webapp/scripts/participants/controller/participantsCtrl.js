@@ -237,11 +237,15 @@
             $translate.use('GB');
           }
         }
-
-        InterviewsService
-          .checkReferenceNumberExists($scope.searchAWESID)
-          .then(
-            function(data) {
+        ParticipantsService.checkIfStudyAgentPreLoaded().then(function(res) {
+          if(res.data !== 'true') {
+            ngToast.create({
+              className: 'danger',
+              content: 'Study agents not preloaded, please contact administrator',
+              animation: 'slide'
+            });
+          } else {
+            InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
               if(data.status == 200) {
                 if(confirm("This AWES ID has already been used. Would you like to add a duplicate?")) {
                   $scope.addInterviewTabInterviewers(
@@ -259,6 +263,8 @@
                 });
               }
             })
+          }
+        });
       } else {
         ngToast.create({
           className: 'danger',

@@ -121,6 +121,15 @@
       return request.then(handleSuccess1, handleError);
     }
 
+    function checkIfStudyAgentPreLoaded() {
+      var url = 'web/rest/participant/checkIfStudyAgentPreLoaded';
+      var request = $http({
+        method: 'GET',
+        url: url
+      });
+      return request.then(handleSuccess1, handleError);
+    }
+
     return {
       getNextQuestion: getNextQuestion,
       checkExists: checkExists,
@@ -133,7 +142,8 @@
       getPaginatedParticipantWithModList: getPaginatedParticipantWithModList,
       getPaginatedParticipantList: getPaginatedParticipantList,
       getPaginatedAssessmentWithModList: getPaginatedAssessmentWithModList,
-      getByReferenceNumber: getByReferenceNumber
+      getByReferenceNumber: getByReferenceNumber,
+      checkIfStudyAgentPreLoaded: checkIfStudyAgentPreLoaded
     };
 
     function handleError(response) {
