@@ -464,9 +464,11 @@
     };
 
     $scope.addUserBtn = function(newUser) {
-      if(!newUser.state) {
-        newUser.state = 'Active';
-      }
+      newUser.state = 'Active';
+      newUser.email = '';
+      newUser.firstName = '';
+      newUser.lastName = '';
+
       if(newUser.roles.length == 0) {
         $ngToast.create({
           className: 'danger',
@@ -480,26 +482,32 @@
 
       AdminService.addUser(newUser).then(function(response) {
         if(response.status == 200) {
-          console.log('User was successfully added');
-          if(response.status == '200') {
-            // time to add the roles
-            var profiles = [];
-            _.each(newUser.roles, function(role) {
-              var profile = {
-                userId: response.data.id,
-                userProfileId: role.id
-              };
-              profiles.push(profile);
-            });
-            AdminService.saveUserProfileList(profiles).then(function(response) {
-              if(response.status == 200) {
-                self.tableParams.reload();
-                $mdDialog.cancel();
-              }
-            });
-          } else {
-            $mdDialog.cancel();
-          }
+          let msg = 'User was successfully added';
+          console.log(msg);
+          $ngToast.create({
+            className: 'success',
+            content: msg,
+            dismissButton: true,
+            dismissOnClick: false,
+            animation: 'slide'
+          });
+
+          // time to add the roles
+          var profiles = [];
+          _.each(newUser.roles, function(role) {
+            var profile = {
+              userId: response.data.id,
+              userProfileId: role.id
+            };
+            profiles.push(profile);
+          });
+          AdminService.saveUserProfileList(profiles).then(function(response) {
+            if(response.status == 200) {
+              self.tableParams.reload();
+              $mdDialog.cancel();
+            }
+          });
+
         } else {
           $mdDialog.cancel();
         }
