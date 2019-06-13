@@ -208,10 +208,10 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     Node node = moduleDao.getNodeById(link);
     if (node != null) {
       for (Object object : node.getChildNodes()) {
-        if (((Question) object).getLink() > 0) {
+        if (object instanceof Question && ((Question) object).getLink() > 0) {
           addToLinkList(((Question) object).getLink());
         }
-        generateLinks((Node) object);
+//        generateLinks((Node) object);
       }
     }
   }
