@@ -5,7 +5,7 @@
       <div class="md-toolbar-tools">
         <h2>Add User</h2>
         <span flex></span>
-        <md-button class="md-icon-button" ng-click="cancel()"> <span
+        <md-button class="md-icon-button" ng-click="cancel()"><span
           aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
       </div>
     </md-toolbar>
@@ -28,6 +28,16 @@
                                                   ng-model="vm.newUser.password" required
                                                   type="password"/>
                 </md-input-container>
+              </div>
+              <div layout-gt-sm="row">
+                <div class="col-md-12">
+                  <div class="col-md-12">
+                    <multi-select available="vm.roleList"
+                                  available-label="Available roles" display-attr="type"
+                                  ng-model="vm.newUser.roles" selected-label="*Current roles">
+                    </multi-select>
+                  </div>
+                </div>
               </div>
               <div layout-gt-sm="row">
                 <md-input-container class="md-block" flex-gt-sm>
@@ -62,14 +72,12 @@
                   </md-select>
                 </md-input-container>
               </div>
-              <multi-select available="vm.roleList"
-                            available-label="Available roles" display-attr="type"
-                            ng-model="vm.newUser.roles" selected-label="Current roles">
-              </multi-select>
-              <md-dialog-actions layout="row">
-                <md-button class="md-raised" ng-click="cancel()">Cancel</md-button>
-                <md-button class="md-raised" ng-click="addUserBtn(vm.newUser)" type="submit">Submit</md-button>
-              </md-dialog-actions>
+              <div layout-gt-sm="row">
+                <md-dialog-actions layout="row">
+                  <md-button class="md-raised" ng-click="cancel()">Cancel</md-button>
+                  <md-button class="md-raised" ng-click="addUserBtn(vm.newUser)" type="submit">Submit</md-button>
+                </md-dialog-actions>
+              </div>
             </form>
           </md-content>
         </div>
