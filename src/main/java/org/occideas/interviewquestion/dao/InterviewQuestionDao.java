@@ -179,9 +179,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   private List<Long> links = new ArrayList<>();
 
   private void generateCSVForChildAJSMandModule(Node node) {
-    Module module = moduleDao.get(node.getIdNode());
-
-    generateLinks(module);
+    generateLinks(node);
 
     for (Long link : links) {
       generateCSVFile(link);
@@ -204,12 +202,13 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
   private void processFragmentQuestion(Long link) {
-    Module module = moduleDao.get(link);
-    if (module != null) {
-      for (Question question : module.getChildNodes()) {
-        if (question.getLink() > 0) {
-          addToLinkList(question.getLink());
+    Node node = moduleDao.getNodeById(link);
+    if (node != null) {
+      for (Object object : node.getChildNodes()) {
+        if (((Question) object).getLink() > 0) {
+          addToLinkList(((Question) object).getLink());
         }
+        generateLinks((Node) object);
       }
     }
   }
