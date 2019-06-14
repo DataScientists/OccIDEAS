@@ -465,9 +465,12 @@
 
     $scope.addUserBtn = function(newUser) {
       newUser.state = 'Active';
-      newUser.email = '';
-      newUser.firstName = '';
-      newUser.lastName = '';
+      if(newUser.email === undefined)
+        newUser.email = '';
+      if(newUser.firstName === undefined)
+        newUser.firstName = '';
+      if(newUser.lastName === undefined)
+        newUser.lastName = '';
 
       if(newUser.roles.length == 0) {
         $ngToast.create({
