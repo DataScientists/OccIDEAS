@@ -17,15 +17,15 @@ public class LanguageDao implements ILanguageDao {
   @Override
   public void batchSave(List<Language> languages) {
     for (Language language : languages) {
-      sessionFactory.getCurrentSession().saveOrUpdate(language);
+      sessionFactory.getCurrentSession().save(language);
     }
   }
 
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAll() {
-    sessionFactory.getCurrentSession().createSQLQuery("SET FOREIGN_KEY_CHECKS=0").executeUpdate();
+    sessionFactory.getCurrentSession().createSQLQuery("set foreign_key_checks=0").executeUpdate();
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Language").executeUpdate();
-    sessionFactory.getCurrentSession().createSQLQuery("SET FOREIGN_KEY_CHECKS=1").executeUpdate();
+    sessionFactory.getCurrentSession().createSQLQuery("set foreign_key_checks=1").executeUpdate();
   }
 }
