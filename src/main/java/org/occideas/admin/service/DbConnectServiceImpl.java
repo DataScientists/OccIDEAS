@@ -10,6 +10,7 @@ import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
+import org.occideas.language.dao.ILanguageDao;
 import org.occideas.mapper.*;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.node.dao.INodeDao;
@@ -109,7 +110,13 @@ public class DbConnectServiceImpl implements IDbConnectService {
   private INodeLanguageDao nodeLanguageDao;
 
   @Autowired
+  private ILanguageDao languageDao;
+
+  @Autowired
   private NodeLanguageMapper nodeLanguageMapper;
+
+  @Autowired
+  private LanguageMapper languageMapper;
 
   @Autowired
   private ApplicationContext context;
@@ -134,6 +141,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
     deleteNodeRules();
     deleteAgents();
     deleteNodeLanguage();
+    deleteLanguage();
     deleteInterview();
     deleteNodes();
     deleteRules();
@@ -150,6 +158,8 @@ public class DbConnectServiceImpl implements IDbConnectService {
     System.out.println("Importing node rules");
     saveBatchNodeRules(copyNodeRuleFromDB(connectToDb));
     System.out.println("Importing languages");
+    saveBatchLanguage(copyLanguageFromDB(connectToDb));
+    System.out.println("Importing Node languages");
     saveBatchNodeLanguage(copyNodeLanguageFromDB(connectToDb));
     System.out.println("Import from Library Done!");
     return nodesFromDB;
@@ -203,6 +213,10 @@ public class DbConnectServiceImpl implements IDbConnectService {
     nodeLanguageDao.batchSave(nodeLanguageMapper.convertToNodeLanguageList(list));
   }
 
+  private void saveBatchLanguage(List<LanguageVO> list) {
+    languageDao.batchSave(languageMapper.convertToLanguageList(list));
+  }
+
   private void saveNodeRules(List<NodeRuleVO> list) {
     for (NodeRuleVO nodeRuleVO : list) {
       nodeRuleDao.saveOrUpdate(nodeRuleMapper.convertToNodeRule(nodeRuleVO));
@@ -223,6 +237,10 @@ public class DbConnectServiceImpl implements IDbConnectService {
 
   private void deleteNodeLanguage() {
     nodeLanguageDao.deleteAll();
+  }
+
+  private void deleteLanguage() {
+    languageDao.deleteAll();
   }
 
   private void deleteNodes() {
@@ -351,6 +369,27 @@ public class DbConnectServiceImpl implements IDbConnectService {
       if (stmt != null) {
         stmt.close();
       }
+    }
+    return null;
+  }
+
+  private List<LanguageVO> copyLanguageFromDB(Connection connect) throws SQLException {
+    String query = "select * from Language";
+    try (Statement stmt = connect.createStatement()) {
+      ResultSet rs = stmt.executeQuery(query);
+      List<LanguageVO> list = new ArrayList<>();
+      while (rs.next()) {
+        LanguageVO language = new LanguageVO();
+        language.setId(rs.getLong("id"));
+        language.setLanguage(rs.getString("language"));
+        language.setDescription(rs.getString("description"));
+        language.setFlag(rs.getString("flag"));
+        language.setLastUpdated(rs.getDate("lastUpdated"));
+        list.add(language);
+      }
+      return list;
+    } catch (SQLException e) {
+      log.error(e.getMessage(), e);
     }
     return null;
   }
