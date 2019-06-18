@@ -484,7 +484,7 @@
       }
 
       AdminService.addUser(newUser).then(function(response) {
-        if(response.status == 200) {
+        if(response.status === 200) {
           let msg = 'User was successfully added';
           console.log(msg);
           $ngToast.create({
@@ -505,7 +505,7 @@
             profiles.push(profile);
           });
           AdminService.saveUserProfileList(profiles).then(function(response) {
-            if(response.status == 200) {
+            if(response.status === 200) {
               self.tableParams.reload();
               $mdDialog.cancel();
             }

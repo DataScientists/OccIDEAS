@@ -105,7 +105,7 @@ public class AdminRestController {
   public Response addUser(UserVO vo) {
     // check if user already exist before save
     if (service.findBySso(vo.getSsoId()) != null) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain").entity("User already exist.").build();
+      return Response.status(Status.EXPECTATION_FAILED).type("text/plain").entity("User already exist.").build();
     }
     try {
       UserVO userVO = service.save(vo);
