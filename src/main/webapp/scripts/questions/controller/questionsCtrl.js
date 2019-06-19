@@ -628,7 +628,8 @@
             nodeclass: fragmentData[0].nodeclass,
             nodes: fragmentData[0].nodes
           });
-          saveModuleAndReload();
+          reorderSequence($scope.data);
+          saveModuleWithoutReload();
           deferred.resolve();
           return false;
         });
