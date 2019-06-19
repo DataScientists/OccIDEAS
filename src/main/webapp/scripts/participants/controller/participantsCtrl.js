@@ -237,34 +237,24 @@
             $translate.use('GB');
           }
         }
-        ParticipantsService.checkIfStudyAgentPreLoaded().then(function(res) {
-          if(res.data !== 'true') {
+        InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
+          if(data.status == 200) {
+            if(confirm("This AWES ID has already been used. Would you like to add a duplicate?")) {
+              $scope.addInterviewTabInterviewers(
+                -1, $scope.searchAWESID);
+            }
+          } else if(data.status == 204) {
+            $scope.addInterviewTabInterviewers(-1,
+              $scope.searchAWESID);
+          } else {
+            var msg = "Error occured during checkReferenceNumberExists.";
             ngToast.create({
               className: 'danger',
-              content: 'Study agents not preloaded, please contact administrator',
+              content: msg,
               animation: 'slide'
             });
-          } else {
-            InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
-              if(data.status == 200) {
-                if(confirm("This AWES ID has already been used. Would you like to add a duplicate?")) {
-                  $scope.addInterviewTabInterviewers(
-                    -1, $scope.searchAWESID);
-                }
-              } else if(data.status == 204) {
-                $scope.addInterviewTabInterviewers(-1,
-                  $scope.searchAWESID);
-              } else {
-                var msg = "Error occured during checkReferenceNumberExists.";
-                ngToast.create({
-                  className: 'danger',
-                  content: msg,
-                  animation: 'slide'
-                });
-              }
-            })
           }
-        });
+        })
       } else {
         ngToast.create({
           className: 'danger',
