@@ -39,7 +39,7 @@ public class UserMapperImpl implements UserMapper {
     vo.setFirstName(entity.getFirstName());
     vo.setId(entity.getId());
     vo.setLastName(entity.getLastName());
-    // vo.setPassword(entity.getPassword());
+    vo.setPassword(entity.getPassword());
     vo.setSsoId(entity.getSsoId());
     vo.setState(entity.getState());
     vo.setUserProfiles(convertToUserProfileVO(entity.getUserProfiles()));

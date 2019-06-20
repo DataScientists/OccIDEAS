@@ -590,7 +590,15 @@
       AdminService.updateUser(existingUser).then(function(response) {
         if(response.status == 200) {
           var userId = response.data.id;
-          console.log('User was successfully added');
+          let msg = 'User was successfully updated';
+          console.log(msg);
+          $ngToast.create({
+            className: 'success',
+            content: msg,
+            dismissButton: true,
+            dismissOnClick: false,
+            animation: 'slide'
+          });
           // delete all roles for user id
           AdminService.deleteUserProfile(userId)
             .then(function(response) {
