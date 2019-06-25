@@ -129,7 +129,7 @@
               }
             });
             $sessionStorage.isAuthenticated = true;
-            if(auth.userHasPermission(['ROLE_INTERVIEWER'])) {
+            if(auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_SELFINTERVIEWER'])) {
               $state.go('tabs.participants');
             } else if(auth.userHasPermission(['ROLE_CONTDEV'])) {
               $state.go('tabs.assessments');

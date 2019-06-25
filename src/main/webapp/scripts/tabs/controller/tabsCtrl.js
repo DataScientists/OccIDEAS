@@ -31,7 +31,7 @@
         data: ""
       });
     }
-    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_ADMIN'])) {
+    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_ADMIN','ROLE_SELFINTERVIEWER'])) {
       $scope.tabOptions.push({
         state: "tabs.participants",
         data: ""
@@ -78,7 +78,7 @@
         } else {
           if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
             state = "tabs.modules";
-          } else if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER'])) {
+          } else if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER','ROLE_SELFINTERVIEWER'])) {
             state = "tabs.participants";
           } else if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR'])) {
             state = "tabs.assessments";
@@ -95,9 +95,9 @@
       } else {
         if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
           state = "tabs.modules";
-        } else if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER'])) {
+        } else if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER','ROLE_SELFINTERVIEWER'])) {
           state = "tabs.participants";
-        } else if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR'])) {
+        }else if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR'])) {
           state = "tabs.assessments";
         }
       }
@@ -140,7 +140,7 @@
         viewName: 'agents@tabs'
       });
     }
-    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_ADMIN'])) {
+    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_ADMIN', 'ROLE_SELFINTERVIEWER'])) {
       tabs.push({
         title: 'Participants',
         viewName: 'participants@tabs'

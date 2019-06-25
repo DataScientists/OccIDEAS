@@ -1,0 +1,1 @@
+INSERT INTO `occideas`.`USER_PROFILE` (`type`) VALUES ('SELFINTERVIEWER');

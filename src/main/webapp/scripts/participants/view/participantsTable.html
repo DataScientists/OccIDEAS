@@ -1,4 +1,4 @@
-<div ng-cloak>
+<div ng-cloak  >
   <div>
     <div class="row">
       <md-input-container class="col-md-2" style="margin-left: 20px;"><label id="awesidlabel">Study ID</label>
@@ -33,8 +33,8 @@
         </button>
       </div>
     </div>
-    <div>Total Records:{{totalSize}}</div>
-    <table class="table table-bordered table-hover table-condensed editable-table"
+    <div ng-if="vm.isSelfInterviewer === 'false'">Total Records:{{totalSize}}</div>
+    <table ng-if="vm.isSelfInterviewer === 'false'" class="table table-bordered table-hover table-condensed editable-table"
            ng-table="vm.tableParams"
            show-filter="true" template-pagination="templatePagination.html">
 
@@ -75,8 +75,8 @@
       </tr>
     </table>
   </div>
-  <script id="templatePagination.html" type="text/ng-template">
-    <div>
+  <script  id="templatePagination.html" type="text/ng-template">    
+<div ng-if="vm.isSelfInterviewer === 'false'">
       <ul class="pagination ng-table-pagination pull-right">
         <li><span style="height: 33px;">&nbsp; Go To Page: <input type="text"
                                                                   ng-keyup="params.goTo($event); $event.stopPropagation();"

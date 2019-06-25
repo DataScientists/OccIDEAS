@@ -156,6 +156,12 @@
       self.showDelColumn = true;
     }
 
+    if(auth.userHasPermission(['ROLE_SELFINTERVIEWER'])) {
+        //Show the delete column for admin only
+        self.isSelfInterviewer = true;
+      }else{
+          self.isSelfInterviewer = false;    	  
+      }
     self.tableParams = new NgTableParams(
       {
         page: 1,
@@ -188,14 +194,15 @@
           $scope.participantFilter.size = params.count();
           params.goToPageNumber = null;
           var participantFilter = $scope.participantFilter;
-          if(!self.tableParams.settings().dataset
+          if((!self.tableParams.settings().dataset
             || (participantFilter.pageNumber != currentPage)
             || participantFilter.idParticipant
             || participantFilter.interviewId
             || participantFilter.reference
             || participantFilter.status
             || (participantFilter.status === 0)
-            || ifEmptyFilter(params.filter())) {
+            || ifEmptyFilter(params.filter()))
+            && !self.isSelfInterviewer) {
             return ParticipantsService.getPaginatedParticipantList(participantFilter).then(function(response) {
               if(response.status == '200') {
                 var data = response.data.content;
