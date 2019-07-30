@@ -494,6 +494,28 @@ public class AssessmentRestController {
     ExportCSVVO csvVO = populateAssessmentCSV(uniqueInterviews, reportHistoryVO, msPerInterview,
       filterModuleVO.getFilterModule());
     writeReport(fullPath, reportHistoryVO, csvVO);
+    List<InterviewAnswerVO> allAnswers = new ArrayList<InterviewAnswerVO>();
+    List<InterviewQuestionVO> allQuestions = new ArrayList<InterviewQuestionVO>();
+    for (Interview interview : uniqueInterviews) {
+    	List<InterviewAnswerVO> answers = interviewAnswerService.findByInterviewId(interview.getIdinterview());
+        List<InterviewQuestionVO> questions = interviewQuestionService
+          .findByInterviewId(interview.getIdinterview());
+        allAnswers.addAll(answers);
+        allQuestions.addAll(questions);
+    }
+    Map<Long, NodeVO> nodeVoList = new HashMap<>();
+    String[] modules = filterModuleVO.getFilterModule();
+    // Initialize map to prevent multiple re-queries
+    for (String module : modules) {
+      nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));
+    }
+    try {
+		writeLookupNew(fullPath, allAnswers, nodeVoList, allQuestions);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    
     return Response.ok().build();
   }
 
