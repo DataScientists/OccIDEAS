@@ -33,8 +33,9 @@
         </button>
       </div>
     </div>
-    <div ng-if="vm.isSelfInterviewer === 'false'">Total Records:{{totalSize}}</div>
-    <table ng-if="vm.isSelfInterviewer === 'false'" class="table table-bordered table-hover table-condensed editable-table"
+    <div ng-if="vm.isSelfInterviewer === false">Total Records:{{totalSize}}</div>
+    <div ng-if="vm.isSelfInterviewer === false" >
+    <table class="table table-bordered table-hover table-condensed editable-table"
            ng-table="vm.tableParams"
            show-filter="true" template-pagination="templatePagination.html">
 
@@ -74,6 +75,8 @@
         </td>
       </tr>
     </table>
+    </div>
+    
   </div>
   <script  id="templatePagination.html" type="text/ng-template">    
 <div ng-if="vm.isSelfInterviewer === 'false'">
