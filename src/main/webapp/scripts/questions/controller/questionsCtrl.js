@@ -2178,33 +2178,116 @@
       ];
 
 
-    $scope.possibleAnswerMenuOptions =
-      [['Add Question', function($itemScope) {
-        $scope.newSubItem($itemScope);
-      }
-      ],
-        ['Remove (Toggle)', function($itemScope) {
-          $scope.deleteNode($itemScope);
-        }
-        ],
-        ['Show/Hide Children', function($itemScope) {
+		    $scope.possibleAnswerMenuOptions = [
+				[ 'Add Question', function($itemScope) {
+					$scope.newSubItem($itemScope);
+				} ],
+				[ 'Remove (Toggle)', function($itemScope) {
+					$scope.deleteNode($itemScope);
+				} ],
+				[
+						'Show/Hide Children',
+						function($itemScope) {
 
-          var toggleChildren = function(nodes) {
-            //var nodes = $itemScope.childNodes();
-            for(var i = 0; i < nodes.length; i++) {
-              var subScope = nodes[i].$childNodesScope;
-              if(subScope) {
-                var collapsed = !subScope.collapsed;
-                for(i = 0; i < nodes.length; i++) {
-                  collapsed ? nodes[i].collapse() : nodes[i].expand();
-                }
-              }
-            }
-          };
-          toggleChildren($itemScope.childNodes());
-        }
-        ]
-      ];
+							var toggleChildren = function(nodes) {
+								// var nodes = $itemScope.childNodes();
+								for (var i = 0; i < nodes.length; i++) {
+									var subScope = nodes[i].$childNodesScope;
+									if (subScope) {
+										var collapsed = !subScope.collapsed;
+										for (i = 0; i < nodes.length; i++) {
+											collapsed ? nodes[i].collapse()
+													: nodes[i].expand();
+										}
+									}
+								}
+							};
+							toggleChildren($itemScope.childNodes());
+						} ] ];
+		
+	
+	
+	$scope.addFragmentAsChild = function(selected,destination){
+		var node = {
+
+				name : selected.name,
+				description : selected.description,
+				topNodeId : selected.idNode,
+				type : 'Q_linkedajsm',
+				nodeclass : selected.nodeclass,
+				link : selected.idNode,
+				parentId : destination.$modelValue.idNode,
+				nodes : []
+		};
+		destination.$modelValue.nodes.push(node);
+        reorderSequence($scope.data);
+        saveModuleWithoutReload();
+        updateRuleDialogIfExist(node);
+		$scope.cancel();
+	}	    
+
+	var displayModuleSelectDialog = function(type,$itemScope){
+		$scope.moduleDialog = {
+				source:$itemScope,
+				modules:[],
+				loadFragmentModule:true,
+				type:type==0?'Job Module':'Task Module'
+		};
+		
+		if (type == 0) {
+			 FragmentsService.get().then(function(data) {
+			        var object = {};
+			        var ajsms = [];
+			        for(var i = 0; i < data.length; i++) {
+			          var node = data[i];
+			          //node.idNode = "";
+			          node.nodeclass = "Q";
+			          if(node.type == 'F_ajsm') {
+			            node.type = "Q_linkedajsm";
+			            ajsms.push(node);
+			          }
+			        }
+			        $scope.moduleDialog.modules = ajsms;
+			        $scope.moduleDialog.loadFragmentModule = false;
+			});
+		} else {
+			ModulesService.getActiveModules().then(function(data) {
+				for (var i = 0; i < data.length; i++) {
+					var node = data[i];
+					node.type = "Q_linkedmodule";
+					node.nodeclass = "Q";
+				}
+				$scope.moduleDialog.modules = data;
+				$scope.moduleDialog.loadFragmentModule = false;
+			});
+		}
+		
+		$mdDialog.show({
+	          scope: $scope,
+	          preserveScope: true,
+	          templateUrl: 'scripts/questions/partials/moduleSelectDialog.html',
+	          clickOutsideToClose: false
+	    });
+		
+	}
+		    
+	var addMenuToPossibleAnswer = function(){
+		if($scope.data[0].type == 'M_IntroModule') {
+			$scope.possibleAnswerMenuOptions.push(
+					[ 'Add Job Module', function($itemScope) {
+						displayModuleSelectDialog(0,$itemScope);
+					} ]);
+		}else{
+			$scope.possibleAnswerMenuOptions.push(
+				[ 'Add Task Module', function($itemScope) {
+					displayModuleSelectDialog(1,$itemScope);
+				} ]);
+		}
+	}	    
+	addMenuToPossibleAnswer();
+	
+	
+		    
     $scope.defaultMenuOptions =
       [
         ['Remove (Toggle)', function($itemScope) {

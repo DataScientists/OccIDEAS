@@ -1,0 +1,38 @@
+<md-dialog aria-label="Fragment Module">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Select {{moduleDialog.type}}</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <div class="md-dialog-content">
+			<div class="row" ng-if="moduleDialog.loadFragmentModule" style="text-align:center;">
+              <md-progress-circular class="col-md-offset-5" md-mode="indeterminate">
+              </md-progress-circular>
+            </div>
+            <div class="row" ng-if="!moduleDialog.loadFragmentModule">
+              <md-input-container class="md-block" flex-gt-sm>
+					<label>{{moduleDialog.type}}</label> <md-select required 
+						ng-model="moduleDialog.selected">
+					<md-option ng-repeat="modules in moduleDialog.modules" 
+					ng-value="modules">
+					{{modules.name}} </md-option> </md-select>
+					</md-input-container>
+            </div>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row"><span flex></span>
+      <md-button ng-click="addFragmentAsChild(moduleDialog.selected, moduleDialog.source)">
+       Add
+      </md-button>
+      <md-button ng-click="cancel()">
+        Cancel
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
+
