@@ -2231,7 +2231,7 @@
 				source:$itemScope,
 				modules:[],
 				loadFragmentModule:true,
-				type:type==0?'Job Module':'Task Module'
+				type:type==0?'Task Module':'Job Module'
 		};
 		
 		if (type == 0) {
@@ -2275,12 +2275,12 @@
 		if($scope.data[0].type == 'M_IntroModule') {
 			$scope.possibleAnswerMenuOptions.push(
 					[ 'Add Job Module', function($itemScope) {
-						displayModuleSelectDialog(0,$itemScope);
+						displayModuleSelectDialog(1,$itemScope);
 					} ]);
 		}else{
 			$scope.possibleAnswerMenuOptions.push(
 				[ 'Add Task Module', function($itemScope) {
-					displayModuleSelectDialog(1,$itemScope);
+					displayModuleSelectDialog(0,$itemScope);
 				} ]);
 		}
 	}	    
