@@ -84,28 +84,44 @@ public class MSWordGenerator {
     List<ModuleVO> moduleList = moduleService.findById(idNodeLong);
     List<FragmentVO> fragmentList = fragmentService.findById(idNodeLong);
 
-    if (!filterStudyAgent) {
+ //   if (!filterStudyAgent) {
       if (!moduleList.isEmpty() && moduleList.get(0) != null) {
         nodeVO = moduleList.get(0);
       } else if (!fragmentList.isEmpty()) {
         nodeVO = fragmentList.get(0);
       }
-    } else {
-      if (!moduleList.isEmpty() && moduleList.get(0) != null) {
-        ModuleVO moduleVO = moduleList.get(0);
-        nodeVO = systemPropertyService.filterModulesNodesWithStudyAgents(moduleVO);
-      } else if (!fragmentList.isEmpty() && fragmentList.get(0) != null) {
-        FragmentVO fragmentVO = fragmentList.get(0);
-        nodeVO = systemPropertyService.filterFragmentNodesWithStudyAgents(fragmentVO);
-      }
-    }
-
+  //  } else {
+  //    if (!moduleList.isEmpty() && moduleList.get(0) != null) {
+  //      ModuleVO moduleVO = moduleList.get(0);
+  //      nodeVO = systemPropertyService.filterModulesNodesWithStudyAgents(moduleVO);
+  //    } else if (!fragmentList.isEmpty() && fragmentList.get(0) != null) {
+   //     FragmentVO fragmentVO = fragmentList.get(0);
+   //     nodeVO = systemPropertyService.filterFragmentNodesWithStudyAgents(fragmentVO);
+  //    }
+ //   }
+    
     if (nodeVO == null) {
       log.info("Can't generate document for null object");
     } else {
-      generateRowForNodes(nodeVO, table, 1);
-      document.write(out);
-      log.info("doc report created in " + file.getAbsolutePath() + " successfully.");
+		
+		try {
+			if (filterStudyAgent) {
+				String[] listOfIdNodes;
+				listOfIdNodes = studyAgentUtil.getStudyAgentCSV(String.valueOf(nodeVO.getIdNode()));
+				generateRowForNodes(nodeVO, table, 1,listOfIdNodes);  
+			}else {
+				generateRowForNodes(nodeVO, table, 1);
+			}
+		  
+		} catch (Exception e) {
+		  log.error("Error getting study nodes from csv " + nodeVO.getTopNodeId() + " ", e);
+		  System.out.println("Printing full Module");
+		  generateRowForNodes(nodeVO, table, 1);
+		}
+		
+	  
+	  document.write(out);
+	  log.info("doc report created in " + file.getAbsolutePath() + " successfully.");
     }
 
     document.close();
@@ -119,20 +135,26 @@ public class MSWordGenerator {
   }
 
   private void generateRowForNodes(NodeVO vo, XWPFTable table, int row, String[] listOfIds) {
-    if (listOfIds != null && !containsInArray(listOfIds, String.valueOf(vo.getIdNode()))) {
-      return;
+    if (listOfIds != null && containsInArray(listOfIds, String.valueOf(vo.getIdNode()))) {
+    	XWPFTableRow tablerow = table.createRow();
+        tablerow.getCell(0).setText(vo.getNumber());
+        tablerow.getCell(1).setText(vo.getNodeType());
+        tablerow.getCell(2).setText(vo.getName());
+        tablerow.getCell(3).setText(vo.getDescription());
+        row++;
+        if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
+          for (NodeVO nodes : vo.getChildNodes()) {
+            generateRowForNodes(nodes, table, row,listOfIds);
+          }
+        }
+    }else {
+    	if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
+          for (NodeVO nodes : vo.getChildNodes()) {
+            generateRowForNodes(nodes, table, row,listOfIds);
+          }
+        }
     }
-    XWPFTableRow tablerow = table.createRow();
-    tablerow.getCell(0).setText(vo.getNumber());
-    tablerow.getCell(1).setText(vo.getNodeType());
-    tablerow.getCell(2).setText(vo.getName());
-    tablerow.getCell(3).setText(vo.getDescription());
-    row++;
-    if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
-      for (NodeVO nodes : vo.getChildNodes()) {
-        generateRowForNodes(nodes, table, row);
-      }
-    }
+    
 
   }
 
@@ -154,12 +176,13 @@ public class MSWordGenerator {
     }
   }
 
-  private void generateRowForNodes(NodeVO vo, XWPFTable table, int row) {
+  private void generateRowForNodes(NodeVO vo, XWPFTable table, int row) {	  
     XWPFTableRow tablerow = table.createRow();
     tablerow.getCell(0).setText(vo.getNumber());
     tablerow.getCell(1).setText(vo.getNodeType());
     tablerow.getCell(2).setText(vo.getName());
-    tablerow.getCell(3).setText(vo.getDescription());
+    //tablerow.getCell(3).setText(vo.getDescription());
+    System.out.println(vo.getNumber());
     row++;
     if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
       for (NodeVO nodes : vo.getChildNodes()) {
