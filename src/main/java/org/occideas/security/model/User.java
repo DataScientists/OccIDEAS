@@ -1,7 +1,9 @@
 package org.occideas.security.model;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.hibernate.validator.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,7 +20,7 @@ public class User implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int id;
 
   @Column(name = "SSO_ID")
@@ -36,7 +38,7 @@ public class User implements Serializable {
   @Column(name = "EMAIL")
   private String email;
 
-  @NotEmpty
+  @JsonInclude(Include.NON_EMPTY)
   @Column(name = "STATE")
   private String state = State.ACTIVE.getState();
 

@@ -11,7 +11,7 @@
 	<name>occideas</name>
 
 	<properties>
-		<spring.version>4.3.5.RELEASE</spring.version>
+		<spring.version>5.1.9.RELEASE</spring.version>
 		<org.mapstruct.version>1.0.0.CR2</org.mapstruct.version>
 	</properties>
 
@@ -87,13 +87,13 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.6.11</version>
+			<version>1.8.5</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.6.11</version>
+			<version>1.8.5</version>
 		</dependency>
 		<!-- <dependency> -->
 		<!-- <groupId>org.hibernate</groupId> -->
@@ -102,10 +102,10 @@
 		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>4.3.11.Final</version>
+			<artifactId>hibernate-agroal</artifactId>
+			<version>5.3.11.Final</version>
+			<type>pom</type>
 		</dependency>
-
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -206,6 +206,10 @@
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>bean-validator</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

@@ -13,7 +13,7 @@ public class AgentInfo implements Serializable {
 
   private static final long serialVersionUID = 1L;
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private long idAgent;
   private String name;
   private String description;
