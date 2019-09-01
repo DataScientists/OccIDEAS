@@ -209,7 +209,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
       SystemPropertyVO systemPropertyVO = service.preloadActiveIntro();
       if (systemPropertyVO == null || systemPropertyVO.getValue().toLowerCase().trim().equals("false")) {
         log.error("You should set filterStudyAgent as true");
-        return Response.status(Status.EXPECTATION_FAILED).type("text/plain").entity("You should set filterStudyAgent as true in admin config").build();
+        return Response.status(Status.BAD_REQUEST).type("text/plain").entity("You should set filterStudyAgent as true in admin config").build();
       }
 //			this.testStudySpecificModules();
     } catch (Throwable e) {
