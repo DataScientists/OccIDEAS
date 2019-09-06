@@ -157,10 +157,10 @@ public class DbConnectServiceImpl implements IDbConnectService {
     saveBatchRules(copyRulesFromDB(connectToDb));
     System.out.println("Importing node rules");
     saveBatchNodeRules(copyNodeRuleFromDB(connectToDb));
-    System.out.println("Importing languages");
-    saveBatchLanguage(copyLanguageFromDB(connectToDb));
-    System.out.println("Importing Node languages");
-    saveBatchNodeLanguage(copyNodeLanguageFromDB(connectToDb));
+    //System.out.println("Importing languages");
+    //saveBatchLanguage(copyLanguageFromDB(connectToDb));
+    //System.out.println("Importing Node languages");
+    //saveBatchNodeLanguage(copyNodeLanguageFromDB(connectToDb));
     System.out.println("Import from Library Done!");
     return nodesFromDB;
   }

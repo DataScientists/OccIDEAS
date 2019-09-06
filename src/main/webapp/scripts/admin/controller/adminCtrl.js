@@ -22,7 +22,7 @@
     $scope.randomIntCount = 0;
     $scope.randomAnswerChecked = true;
     $scope.dbConnect = {
-      host: 'jdbc:mysql://localhost:3306/occideas',
+      host: 'jdbc:mysql://o3library.occideas.org:3306/occideas',
       username: '',
       password: ''
     };
