@@ -34,10 +34,10 @@ public class InterviewFiredRules implements Serializable {
     @JoinColumn(name = "idRule", referencedColumnName = "idRule", insertable = false, updatable = false)})
   private List<Rule> rules;
 
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumns({
-    @JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)})
-  private List<Interview> interviews;
+  //@OneToMany(fetch = FetchType.LAZY)
+  //@JoinColumns({
+  //  @JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)})
+  //private List<Interview> interviews;
 
   public long getId() {
     return id;
@@ -70,7 +70,7 @@ public class InterviewFiredRules implements Serializable {
   public void setRules(List<Rule> rules) {
     this.rules = rules;
   }
-
+/*
   public List<Interview> getInterviews() {
     return interviews;
   }
@@ -78,5 +78,5 @@ public class InterviewFiredRules implements Serializable {
   public void setInterviews(List<Interview> interviews) {
     this.interviews = interviews;
   }
-
+*/
 }
