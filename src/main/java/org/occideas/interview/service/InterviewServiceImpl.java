@@ -288,7 +288,7 @@ public class InterviewServiceImpl implements InterviewService {
       } else {
         log.info("adding child answer to be deleted:" + ia + " for questions " + iq.getId() + " for interview " + iq.getIdInterview());
         ia.setDeleted(1);
-        needsUpdate = true;
+        needsUpdate = false;
       }
       List<InterviewQuestion> qstodelete = interviewQuestionDao.getAllChildInterviewQuestions(ia.getAnswerId(), iq.getIdInterview());
       this.deleteChildQuestions(qstodelete);
