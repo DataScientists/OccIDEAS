@@ -17,11 +17,11 @@
             <div>
               <md-input-container>
                 <label>Task Module Name</label>
-                <input data-ng-model="mydata.name" type="text"/>
+                <input id="inputTaskModuleId" data-ng-model="mydata.name" type="text"/>
                 <md-radio-group ng-model="mydata.group">
-                  <md-radio-button class="md-primary" value="F_ajsm">Task Module</md-radio-button>
-                  <md-radio-button value="F_template">Template</md-radio-button>
-                  <md-radio-button value="F_frequency">Frequency</md-radio-button>
+                  <md-radio-button id="radioTaskModuleId" class="md-primary" value="F_ajsm">Task Module</md-radio-button>
+                  <md-radio-button id="radioTemplateId" value="F_template">Template</md-radio-button>
+                  <md-radio-button id="radioFrequencyId" value="F_frequency">Frequency</md-radio-button>
                 </md-radio-group>
             </div>
           </md-content>
@@ -30,7 +30,7 @@
     </md-dialog-content>
     <md-dialog-actions layout="row">
       <span flex></span>
-      <md-button ng-click="saveAsFragment(selectedNode,mydata)">
+      <md-button id="saveAsFragmentId" ng-click="saveAsFragment(selectedNode,mydata)">
         Save
       </md-button>
       <md-button ng-click="cancel()" style="margin-right:20px;">

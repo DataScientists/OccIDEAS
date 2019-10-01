@@ -22,7 +22,7 @@
               ng-if="vm.tableParams.filter().isDuplicate == false"
               permission="['ROLE_ADMIN']" type="button"> Filter Items With Warnings
       </button>
-      <button class="btn btn-default"
+      <button id="addModule1" class="btn btn-default"
               ng-click="vm.add('M_Module')" ng-if="vm.originalData.length == 0"
               type="button">Add Job Module <span class="glyphicon glyphicon-plus">
       </span></button>
@@ -123,19 +123,19 @@
                     ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
               <span class="glyphicon glyphicon-remove"></span>
             </button>
-            <button class="btn btn-default btn-sm" id="id_{{row.name}}_openmodule"
+            <button class="btn btn-default btn-sm" id="id_{{row.idNode}}_openmodule"
                     ng-click="addModuleTab(row)" ng-if="!row.isEditing && row.type != 'M_IntroModule'">
               <span class="glyphicon glyphicon-list-alt"></span>
             </button>
-            <button class="btn btn-default btn-sm" id="id_{{row.name}}_openmodule"
+            <button class="btn btn-default btn-sm" id="id_{{row.idNode}}_openmodule"
                     ng-click="addIntroTab(row)" ng-if="!row.isEditing && row.type === 'M_IntroModule'">
               <span class="glyphicon glyphicon-list-alt" title="Click for more detail"></span>
             </button>
-            <button class="btn btn-danger btn-sm" confirm="Delete job module {{row.name}}?" id="id_{{row.name}}_delete"
+            <button class="btn btn-danger btn-sm" confirm="Delete job module {{row.name}}?" id="id_{{row.idNode}}_delete"
                     ng-click="vm.del(row)" ng-if="vm.isDeleting">
               <span class="glyphicon glyphicon-trash"></span>
             </button>
-            <button class="btn btn-danger btn-sm" id="id_{{row.name}}_flag"
+            <button class="btn btn-danger btn-sm" id="id_{{row.idNode}}_flag"
                     ng-click="vm.displayNodeLanguage(row)"
                     ng-if="!row.isEditing && $storage.langEnabled">
               <span class="glyphicon glyphicon-flag"></span>
