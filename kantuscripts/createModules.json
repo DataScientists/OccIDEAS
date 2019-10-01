@@ -1,0 +1,256 @@
+{
+  "Name": "create module",
+  "CreationDate": "2019-10-1",
+  "Commands": [
+    {
+      "Command": "click",
+      "Target": "xpath=//md-tab-item//span[contains(text(),'Job Modules')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//button[@id=\"addModule1\"]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@ng-model='row.name']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@ng-model='row.name']",
+      "Value": "Test Intro"
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@ng-model='row.description']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@ng-model='row.description']",
+      "Value": "Test Introduction Module Description"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//button[@id='saveBtn']",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//input[@name='name'])[2]",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=(//input[@name='name'])[2]",
+      "Value": "Test Intro"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=id_1_openmodule",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "id=node-1",
+      "Value": "#right"
+    },
+    {
+      "Command": "click",
+      "Target": "link=Add Question",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=preEditSpan_2",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=editId_2",
+      "Value": "Question 1"
+    },
+    {
+      "Command": "pause",
+      "Target": "3000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "id=node-1",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "id=node-2",
+      "Value": "#right"
+    },
+    {
+      "Command": "click",
+      "Target": "link=Add Possible Answer",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "3000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=preEditSpan_3",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=editId_3",
+      "Value": "Answer 1"
+    },
+    {
+      "Command": "XClick",
+      "Target": "id=node-2",
+      "Value": "#right"
+    },
+    {
+      "Command": "click",
+      "Target": "link=Add Possible Answer",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=preEditSpan_4",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=editId_4",
+      "Value": "Answer 2"
+    },
+    {
+      "Command": "XClick",
+      "Target": "id=node-2",
+      "Value": "#right"
+    },
+    {
+      "Command": "click",
+      "Target": "link=Add Possible Answer",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=preEditSpan_5",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=editId_5",
+      "Value": "Answer 3"
+    },
+    {
+      "Command": "click",
+      "Target": "id=node-1",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "id=node-2",
+      "Value": "#right"
+    },
+    {
+      "Command": "click",
+      "Target": "link=Save as Task Module",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "2000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=radioTaskModuleId",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=inputTaskModuleId",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=inputTaskModuleId",
+      "Value": "Test Fragement"
+    },
+    {
+      "Command": "click",
+      "Target": "id=saveAsFragmentId",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    }
+  ]
+}

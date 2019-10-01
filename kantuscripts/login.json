@@ -1,0 +1,36 @@
+{
+  "Name": "Login",
+  "CreationDate": "2019-10-1",
+  "Commands": [
+    {
+      "Command": "open",
+      "Target": "http://localhost:8080/occideas/#/",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@id='lg_username']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@id='lg_username']",
+      "Value": "admin"
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@id='lg_password']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@id='lg_password']",
+      "Value": "P@ssw0rd"
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//button[@type='submit']",
+      "Value": ""
+    }
+  ]
+}
