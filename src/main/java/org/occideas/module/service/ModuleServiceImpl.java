@@ -110,13 +110,13 @@ public class ModuleServiceImpl implements ModuleService {
   }
 
   public long update(ModuleVO module) {
-    if (module.getIdNode() != 0) {
+//    if (module.getIdNode() != 0) {
       dao.saveOrUpdate(mapper.convertToModule(module, true));
       studyAgentUtil.createStudyAgentForUpdatedNode(module.getIdNode(), module.getName());
       return module.getIdNode();
-    } else {
-      return dao.create(mapper.convertToModule(module, true));
-    }
+//    } else {
+//      return dao.create(mapper.convertToModule(module, true));
+//    }
   }
 
   public long save(ModuleVO module) {
