@@ -34,7 +34,7 @@
                    ng-table="vm.filterModTableParams">
               <tr ng-repeat="mod in $data track by $index">
                 <td header="'ng-table/headers/checkbox.html'" style="text-align: left" width="30">
-                  <input ng-model="checkboxes.items[mod.link]" style="position:static;" type="checkbox"/>
+                  <input id="{{mod.name | trim}}" ng-model="checkboxes.items[mod.link]" style="position:static;" type="checkbox"/>
                 </td>
                 <td title="'Job Module Id'">{{mod.link}}</td>
                 <td filter="{name:'text'}" title="'Job Module Name'">{{mod.name}}</td>
@@ -64,10 +64,10 @@
         </div>
       </div>
       <md-dialog-actions layout="row">
-        <md-button
+        <md-button id="id_cancel"
           class="md-raised" ng-click="cancel()">Cancel
         </md-button>
-        <md-button
+        <md-button id="id_randominterview"
           class="md-raised" ng-click="vm.createRandomInterviews()">Generate
         </md-button>
       </md-dialog-actions>

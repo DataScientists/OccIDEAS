@@ -6,7 +6,8 @@
         <md-menu>
           <md-button aria-label="Open phone interactions menu"
                      class="md-icon-button"
-                     ng-click="vm.openMenu($mdOpenMenu, $event)">
+                     ng-click="vm.openMenu($mdOpenMenu, $event)"
+                     id="userMenu">
             <span class="glyphicon glyphicon-user"></span>
           </md-button>
           <md-menu-content width="4">
@@ -25,7 +26,6 @@
             <md-menu-item>
               <md-button ui-sref="logout">
                 <span aria-hidden="true" class="glyphicon glyphicon-log-out"></span>
-                &nbsp;
                 Sign Out
               </md-button>
             </md-menu-item>

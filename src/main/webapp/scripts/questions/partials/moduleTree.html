@@ -113,19 +113,19 @@
               </md-button>
             </md-fab-trigger>
             <md-fab-actions>
-              <md-button ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')"
+              <md-button id="id_jobmod" ng-if="vm.isOpen && node.type!='M_Module'" ng-click="setNodeType(node,'Prod')"
                          class="md-fab md-raised md-mini">
                 <span>Job Modules</span>
               </md-button>
-              <md-button ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')"
+              <md-button id="id_underConst" ng-if="vm.isOpen && node.type!='M_Module_'" ng-click="setNodeType(node,'Dev')"
                          class="md-fab md-raised md-mini">
                 <span>Under construction</span>
               </md-button>
-              <md-button ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')"
+              <md-button id="id_tests" ng-if="vm.isOpen && node.type!='M_Module__'" ng-click="setNodeType(node,'Test')"
                          class="md-fab md-raised md-mini">
                 <span>Test</span>
               </md-button>
-              <md-button ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')"
+              <md-button id="id_intro" ng-if="vm.isOpen && node.type!='M_IntroModule'" ng-click="setNodeType(node,'Intro')"
                          class="md-fab md-raised md-mini">
                 <span>Introductory questions</span>
               </md-button>

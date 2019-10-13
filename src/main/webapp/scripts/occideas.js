@@ -90,7 +90,11 @@
     })
     .service(service)
     .factory('TokenRefreshInterceptor', TokenRefreshInterceptor)
-    .factory('ErrorHandler', ErrorHandler);
+    .factory('ErrorHandler', ErrorHandler)
+    .filter('trim', function() {
+  return function(str) {
+    return str.replace(/ /g,'');
+  }});
 
   configureDefaults.$inject = ['ngTableDefaults', '$state', '$rootScope', 'AuthenticationService', 'dataBeanService', '$window', '$sessionStorage', 'bsLoadingOverlayService'];
 

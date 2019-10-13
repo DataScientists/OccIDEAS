@@ -1872,6 +1872,7 @@
             + ' as active intro module?')) {
             ModulesService.setActiveIntroModule($itemScope.$modelValue)
               .then(function(response) {
+//            	$scope.data[0].type = 'M_IntroModule';
                 ngToast.create({
                   className: 'success',
                   content: 'Active intro module set successfully.',

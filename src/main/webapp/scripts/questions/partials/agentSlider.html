@@ -34,7 +34,7 @@
                     <span class="glyphicon glyphicon-tag" ng-if="checkIfStudyAgent(subNode.idAgent)"
                           style="color: #c55d5d;font-size: 15px;margin-right: 5px;"
                           title="This agent is configured as a study agent"></span>
-                    {{subNode.name}}
+                    <span id="{{subNode.name | trim}}">{{subNode.name}}</span>
                     <span class="badge pull-right">{{subNode.total || 0}}</span></li>
                 </ul>
               </div>
