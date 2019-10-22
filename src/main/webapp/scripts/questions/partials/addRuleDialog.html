@@ -1,0 +1,52 @@
+<md-dialog aria-label="Add Rule">
+<form ng-cloak>
+	<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>Add Rule for "ID-{{answer.info.idNode}} ->
+			{{answer.info.name}}"</h2>
+		<span flex></span>
+		<md-button class="md-icon-button" ng-click="cancel()"> <span
+			aria-hidden="true" class="glyphicon glyphicon-remove"></span> </md-button>
+	</div>
+	</md-toolbar>
+
+	<md-dialog-content>
+	<div class="md-dialog-content">
+		<div class="row" ng-if="answer.loadAgents" style="text-align: center;">
+			<md-progress-circular class="col-md-offset-5" md-mode="indeterminate">
+			</md-progress-circular>
+		</div>
+		<div class="row" ng-if="!answer.loadAgents">
+			<md-input-container class="md-block" flex-gt-sm>
+			<label>Agent Group</label> <md-select required
+				ng-model="answer.selectedAgentGrp" id="agentGrpId"> <md-option
+				ng-repeat="grp in answer.agentGrp" ng-value="grp">
+			{{grp.key}} </md-option> </md-select> </md-input-container>
+		</div>
+		<div class="row" ng-if="!answer.loadAgents && answer.selectedAgentGrp">
+			<md-input-container class="md-block" flex-gt-sm>
+			<label>Agent</label> <md-select required id="agentId"
+				ng-model="answer.selectedAgent"> <md-option
+				ng-repeat="agent in answer.selectedAgentGrp.value" ng-value="agent">
+			{{agent.name}} </md-option> </md-select> </md-input-container>
+		</div>
+		<div class="row" ng-if="!answer.loadAgents && answer.selectedAgentGrp && answer.selectedAgent">
+			<select ng-model="answer.level" id="levelId">
+          		<option value="probHigh">PROBABLE_HIGH</option>
+          		<option value="probMedium">PROBABLE_MEDIUM</option>
+          		<option value="probLow">PROBABLE_LOW</option>
+          		<option value="probUnknown">PROBABLE_UNKNOWN</option>
+          		<option value="possUnknown">POSSIBLE_UNKNOWN</option>
+          		<option value="noExposure">NO_EXPOSURE</option>
+        	</select>		
+		</div>
+	</div>
+	</md-dialog-content>
+
+	<md-dialog-actions layout="row">
+	<span flex></span> <md-button
+		ng-click="addRule()" id="submitAddRule">
+	Add </md-button> <md-button ng-click="cancel()"> Cancel </md-button> </md-dialog-actions>
+</form>
+</md-dialog>
+

@@ -2183,6 +2183,116 @@
 				[ 'Add Question', function($itemScope) {
 					$scope.newSubItem($itemScope);
 				} ],
+				[ 'Add Rule', function($itemScope) {
+					var newScope = $itemScope.$new();
+					newScope.answer = {
+						info:$itemScope.$modelValue,
+						agentGrp:[],
+						loadAgents:true
+					}
+					
+					AgentsService.get().then(function(agent) {
+				        var group = _.groupBy(agent, function(b) {
+				          return b.agentGroup.name;
+				        });
+				        if($scope.data[0].moduleRule) {
+				          _.forOwn(group, function(x, key) {
+				            var totalVal = 0;
+				            _.forEach(x, function(v, k) {
+				              var ruleArray = _.filter($scope.data[0].moduleRule, function(r) {
+				                return v.idAgent === r.idAgent;
+				              });
+				              var uniqueArray = _.map(_.groupBy(ruleArray, function(item) {
+				                return item.rule.idRule;
+				              }), function(grouped) {
+				                return grouped[0];
+				              });
+				              v.total = uniqueArray.length;
+				              totalVal = totalVal + v.total;
+				            });
+				            x.total = totalVal;
+				          });
+				        }
+				        group = setOrder(group);
+				        newScope.answer.agentGrp = group;
+				        newScope.answer.loadAgents = false;
+					});
+					
+					newScope.addRule = function(){
+						
+						//validate
+						if (!newScope.answer.info || !newScope.answer.selectedAgent
+								|| !newScope.answer.level) {
+							ngToast.create({
+				                  className: 'danger',
+				                  content: 'All fields are required.',
+				                  animation: 'slide'
+				            });
+							return;
+						}
+						
+						//process
+						var conditions = [];
+				          conditions.push(newScope.answer.info);
+				          var rule = {agentId: newScope.answer.selectedAgent.idAgent, 
+				        		  conditions: conditions, level: newScope.answer.level};
+				          RulesService.create(rule).then(function(response) {
+				            if(response.status === 200) {
+				            	ngToast.create({
+					                  className: 'success',
+					                  content: 'Rule added successfully.',
+					                  animation: 'slide'
+					            });
+				              if(response.data.idRule) {
+				                ModuleRuleService.getModuleRule(newScope.answer.info.idNode).then(function(response) {
+
+				                  if(response.status === 200) {
+				                    var result = response.data[response.data.length - 1];
+				                    newScope.answer.rule = result.rule;
+				                    newScope.answer.agentName = result.agentName;
+				                    var x = newScope.answer.rule.conditions;
+				                    $scope.activeRule = result.rule;
+				                    if(newScope.answer.rules == null) {
+				                    	newScope.answer.rules = [];
+				                    }
+				                    if(angular.isUndefined(newScope.answer.info.moduleRule)) {
+				                    	newScope.answer.info.moduleRule = [];
+				                    }
+
+				                    _.merge(newScope.answer.info.moduleRule, response.data);
+				                    if(!newScope.answer.info.moduleRule.$$phase) {
+				                      try {
+				                    	  newScope.answer.info.moduleRule.$digest();
+				                      } catch(e) {
+				                      }
+				                    }
+				                    if(!$scope.data[0].moduleRule) {
+				                      $scope.data[0].moduleRule = [];
+				                    }
+				                    $scope.data[0].moduleRule.push(result);
+				                    initAgentData();
+				                  }
+				                });
+				              } else {
+				                ngToast.create({
+				                  className: 'danger',
+				                  content: 'Error contacting server',
+				                  animation: 'slide'
+				                });
+				              }
+				            }
+				            $mdDialog.cancel();
+				          });
+					}
+					
+					$mdDialog.show({
+				       scope: newScope,
+				       preserveScope: true,
+				       templateUrl: 'scripts/questions/partials/addRuleDialog.html',
+				       clickOutsideToClose: false
+				    });
+					
+				} ],
 				[ 'Remove (Toggle)', function($itemScope) {
 					$scope.deleteNode($itemScope);
 				} ],
