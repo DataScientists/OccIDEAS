@@ -1,0 +1,81 @@
+{
+  "Name": "dev_admin_create_agentgrp",
+  "CreationDate": "2019-10-23",
+  "Commands": [
+    {
+      "Command": "click",
+      "Target": "xpath=/html/body",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=/html/body/div[2]/div/div/md-content/md-tabs/md-tabs-wrapper/md-tabs-canvas/md-pagination-wrapper/md-tab-item[4]/span",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//span[contains(text(),'Agents')]",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//button[contains(text(),'Add Agent Group')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@name='groupName']",
+      "Value": "sample agent group 1"
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@name='groupDesc']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@name='groupDesc']",
+      "Value": "this is for test purposes"
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@name='agentName']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@name='agentName']",
+      "Value": "sample agent 1"
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@name='agentDesc']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@name='agentDesc']",
+      "Value": "sample agent description "
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//button/span[contains(text(),'Save')]",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//input[@name='name']",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@name='name']",
+      "Value": "sample agent 1"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "Name": "pause3000",
+  "CreationDate": "2019-10-23",
+  "Commands": [
+    {
+      "Command": "pause",
+      "Target": "3000",
+      "Value": ""
+    }
+  ]
+}

@@ -31,14 +31,20 @@
 			{{agent.name}} </md-option> </md-select> </md-input-container>
 		</div>
 		<div class="row" ng-if="!answer.loadAgents && answer.selectedAgentGrp && answer.selectedAgent">
-			<select ng-model="answer.level" id="levelId">
-          		<option value="probHigh">PROBABLE_HIGH</option>
-          		<option value="probMedium">PROBABLE_MEDIUM</option>
-          		<option value="probLow">PROBABLE_LOW</option>
-          		<option value="probUnknown">PROBABLE_UNKNOWN</option>
-          		<option value="possUnknown">POSSIBLE_UNKNOWN</option>
-          		<option value="noExposure">NO_EXPOSURE</option>
-        	</select>		
+			<md-input-container class="md-block" flex-gt-sm>
+			<label>Level</label> <md-select required id="levelId"
+				ng-model="answer.level"> <md-option
+				ng-repeat="level in answer.levels" ng-value="level">
+			{{level.name}} </md-option> </md-select> </md-input-container>
+			
+<!-- 			<select ng-model="answer.level" id="levelId"> -->
+<!--           		<option value="probHigh">PROBABLE_HIGH</option> -->
+<!--           		<option value="probMedium">PROBABLE_MEDIUM</option> -->
+<!--           		<option value="probLow">PROBABLE_LOW</option> -->
+<!--           		<option value="probUnknown">PROBABLE_UNKNOWN</option> -->
+<!--           		<option value="possUnknown">POSSIBLE_UNKNOWN</option> -->
+<!--           		<option value="noExposure">NO_EXPOSURE</option> -->
+<!--         	</select>		 -->
 		</div>
 	</div>
 	</md-dialog-content>

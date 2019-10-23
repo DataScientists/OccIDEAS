@@ -1,0 +1,61 @@
+{
+  "Name": "runrandominterviews",
+  "CreationDate": "2019-10-23",
+  "Commands": [
+    {
+      "Command": "click",
+      "Target": "xpath=//md-tab-item//span[contains(text(),'Admin')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//button[contains(text(),'Create Random Interviews')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "xpath=//input[@name='randomIntCount']",
+      "Value": "10"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=TestIntroJobModule",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=id_randominterview",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "5000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=id_cancel",
+      "Value": ""
+    }
+  ]
+}

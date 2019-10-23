@@ -2188,7 +2188,15 @@
 					newScope.answer = {
 						info:$itemScope.$modelValue,
 						agentGrp:[],
-						loadAgents:true
+						loadAgents:true,
+						levels:[
+							{id:"probHigh",name:"PROBABLE_HIGH"},
+			          		{id:"probMedium",name:"PROBABLE_MEDIUM"},
+			          		{id:"probLow",name:"PROBABLE_LOW"},
+			          		{id:"probUnknown",name:"PROBABLE_UNKNOWN"},
+			          		{id:"possUnknown",name:"POSSIBLE_UNKNOWN"},
+			          		{id:"noExposure",name:"NO_EXPOSURE"}
+						]
 					}
 					
 					AgentsService.get().then(function(agent) {
@@ -2235,7 +2243,7 @@
 						var conditions = [];
 				          conditions.push(newScope.answer.info);
 				          var rule = {agentId: newScope.answer.selectedAgent.idAgent, 
-				        		  conditions: conditions, level: newScope.answer.level};
+				        		  conditions: conditions, level: newScope.answer.level.id};
 				          RulesService.create(rule).then(function(response) {
 				            if(response.status === 200) {
 				            	ngToast.create({

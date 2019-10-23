@@ -1,0 +1,76 @@
+{
+  "Name": "linkJobToIntroModule",
+  "CreationDate": "2019-10-23",
+  "Commands": [
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//md-tab-item//span[contains(text(),'Job Modules')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=id_1_openmodule",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "xpath=(//span[contains(text(),'Answer 3')])",
+      "Value": "#right"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "link=Add Job Module",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=(//span[contains(@class,'md-select-icon')])",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//div[contains(text(),'Test Intro Job Module')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//span[contains(text(),'Add')]",
+      "Value": ""
+    }
+  ]
+}

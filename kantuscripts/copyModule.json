@@ -1,0 +1,131 @@
+{
+  "Name": "copyModule",
+  "CreationDate": "2019-10-23",
+  "Commands": [
+    {
+      "Command": "click",
+      "Target": "xpath=//span[@ng-click='removeTab(tab)']",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//md-tab-item//span[contains(text(),'Job Modules')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=id_1_openmodule",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "xpath=//div[@id='module-tree']//span[contains(text(),'Test Intro')]",
+      "Value": "#right"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "link=Save Module As",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=saveAsModuleName",
+      "Value": ""
+    },
+    {
+      "Command": "type",
+      "Target": "id=saveAsModuleName",
+      "Value": "Test Intro Job Module"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=saveBtn",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "xpath=//div[@id='module-tree']//span[contains(text(),'Test Intro')]",
+      "Value": "#right"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//md-tab-item//span[contains(text(),'Test Intro')]",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "XClick",
+      "Target": "xpath=//div[@id='module-tree']//span[contains(text(),'Test Intro')]",
+      "Value": "#right"
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "link=Set Active Intro Module",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "xpath=//md-fab-trigger",
+      "Value": ""
+    },
+    {
+      "Command": "pause",
+      "Target": "1000",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "id=id_intro",
+      "Value": ""
+    }
+  ]
+}

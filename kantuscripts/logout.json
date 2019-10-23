@@ -1,0 +1,16 @@
+{
+  "Name": "logout",
+  "CreationDate": "2019-10-23",
+  "Commands": [
+    {
+      "Command": "click",
+      "Target": "id=userMenu",
+      "Value": ""
+    },
+    {
+      "Command": "click",
+      "Target": "link=Sign Out",
+      "Value": ""
+    }
+  ]
+}

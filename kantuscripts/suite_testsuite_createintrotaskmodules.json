@@ -1,0 +1,50 @@
+{
+  "creationDate": "2019-10-23",
+  "name": "testsuite_createintrotaskmodules",
+  "macros": [
+    {
+      "macro": "login.json",
+      "loops": 1
+    },
+    {
+      "macro": "createModules.json",
+      "loops": 1
+    },
+    {
+      "macro": "copyModule.json",
+      "loops": 1
+    },
+    {
+      "macro": "logout.json",
+      "loops": 1
+    },
+    {
+      "macro": "pause3000.json",
+      "loops": 1
+    },
+    {
+      "macro": "login.json",
+      "loops": 1
+    },
+    {
+      "macro": "linkJobToIntroModule.json",
+      "loops": 1
+    },
+    {
+      "macro": "dev_admin_create_agentgrp.json",
+      "loops": 1
+    },
+    {
+      "macro": "addRule.json",
+      "loops": 1
+    },
+    {
+      "macro": "runrandominterviews.json",
+      "loops": 1
+    },
+    {
+      "macro": "logout.json",
+      "loops": 1
+    }
+  ]
+}
