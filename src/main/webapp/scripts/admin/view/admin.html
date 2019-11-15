@@ -1,32 +1,35 @@
 <div ng-cloak>
   <div class="panel panel-default">
-    <button class="btn btn-default"
-            ng-click="vm.listTranslations()"
-            type="button">List Languages
-    </button>
+<!--     <button class="btn btn-default" -->
+<!--             ng-click="vm.listTranslations()" -->
+<!--             type="button">List Languages -->
+<!--     </button> -->
     <button class="btn btn-default" ng-click="vm.showRandomInterviews()"
             style="margin-left:3px;"
             type="button">Create Random Interviews
     </button>
     <button class="btn btn-default" ng-click="vm.preloadActiveIntro()"
-            style="margin-left:3px;"
+            style="margin-left:3px;" 
+            data-toggle="tooltip"
+            title="Filter modules by agents to create study specific modules"
             type="button">Preload Study Agents
     </button>
-    <button class="btn btn-default" ng-click="vm.cleanOrphans()"
-            style="margin-left:3px;"
-            type="button">Clean Orphans Nodes
-    </button>
     <button class="btn btn-default" ng-click="vm.purgeParticipants()"
-            style="margin-left:3px;"
+            style="margin-left:3px;" data-toggle="tooltip"
+            title="This will permanently delete all participants and assessments"
             type="button">Purge Participants
     </button>
-    <button class="btn btn-default" ng-click="vm.purgeModule()"
-            style="margin-left:3px;"
+    <button class="btn btn-default" ng-click="vm.purgeModule()" data-toggle="tooltip"
+            style="margin-left:3px;" title="Removes study specific modules."
             type="button">Purge Modules
     </button>
     <button class="btn btn-default" ng-click="vm.importLibraryDialog()"
-            style="margin-left:3px;"
+            style="margin-left:3px;" data-toggle="tooltip" title="Import library from another database."
             type="button">Import Library
+    </button>
+    <button class="btn btn-default" ng-click="vm.cleanOrphans()"
+            style="margin-left:3px;"
+            type="button" data-toggle="tooltip" title="Used to delete questions/answers without parent module/question.">Clean Orphans Nodes
     </button>
   </div>
   <div class="panel panel-default">
