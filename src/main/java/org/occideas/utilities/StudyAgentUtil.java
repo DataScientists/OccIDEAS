@@ -8,6 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
+import org.occideas.qsf.ApplicationQSF;
+import org.occideas.qsf.SurveyEntry;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,14 @@ public class StudyAgentUtil {
     return modVO;
   }
 
+  public ApplicationQSF moduleToApplicationQSF(ModuleVO module){
+      ApplicationQSF applicationQSF = new ApplicationQSF();
+      applicationQSF.setSurveyEntry(new SurveyEntry("SV_3W2wSyxLDan2ZPD","SimpleSurvey",null,
+              "UR_es2Gulf6I7xN6p7","curtin",null,"EN","RS_cMiHcMFlPoWrvyl","Inactive","0000-00-00 00:00:00",
+              "0000-00-00 00:00:00","2019-11-22 02:22:39","UR_es2Gulf6I7xN6p7","2019-11-22 02:25:12","0000-00-00 00:00:00",
+              "0000-00-00 00:00:00",null));
+      return applicationQSF;
+  }
 
   public boolean isStudyAgentJsonExist(Long idNode)
     throws IOException {
@@ -56,15 +66,6 @@ public class StudyAgentUtil {
     File file = new File(path + "/modules/" + idNode + ".json");
     return file.exists();
   }
-
-
-  public String convertModuleStudyAgentToJsonString(ModuleVO studyAgent) throws JsonProcessingException {
-    ObjectMapper mapper = new ObjectMapper();
-    // Object to JSON in String
-    String jsonInString = mapper.writeValueAsString(studyAgent);
-    return jsonInString;
-  }
-
 
   public void createStudyAgentJson(String idNode, NodeVO vo, boolean override)
     throws IOException {
