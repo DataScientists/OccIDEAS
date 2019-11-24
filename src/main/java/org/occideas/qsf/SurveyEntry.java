@@ -1,6 +1,8 @@
 package org.occideas.qsf;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SurveyEntry {
 
@@ -207,7 +209,14 @@ public class SurveyEntry {
 
     @Override
     public String toString() {
-        return "\"SurveyEntry\":{" +
+        String results = null;
+        try {
+            results = new ObjectMapper().writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return results;
+        /*return "\"SurveyEntry\":{" +
                 "\"SurveyID\":"+ encloseQuote(surveyId) +
                 ",\"SurveyName\":" + encloseQuote(surveyName) +
                 ",\"SurveyDescription\":" + encloseQuote(surveyDescription) +
@@ -225,6 +234,6 @@ public class SurveyEntry {
                 ",\"LastAccessed\":" + encloseQuote(lastAccessed) +
                 ",\"LastActivated\":" + encloseQuote(lastActivated) +
                 ",\"Deleted\":" + encloseQuote(deleted)  +
-                '}';
+                '}';*/
     }
 }
