@@ -24,6 +24,16 @@ public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswe
     this.idNode = idNode;
   }
 
+  public PossibleAnswerVO(String number, String name) {
+    this.number = number;
+    this.name = name;
+  }
+
+  public PossibleAnswerVO(List<QuestionVO> childNodes, QuestionVO parent) {
+    this.childNodes = childNodes;
+    this.parent = parent;
+  }
+
   public List<QuestionVO> getChildNodes() {
     if (childNodes == null) {
       childNodes = new ArrayList<QuestionVO>();

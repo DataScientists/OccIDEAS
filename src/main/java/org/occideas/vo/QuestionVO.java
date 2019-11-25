@@ -21,6 +21,21 @@ public class QuestionVO extends NodeVO implements Cloneable, Comparable<Question
 
   private Long activeInterviewId;
 
+  public QuestionVO() {
+  }
+
+  public QuestionVO(String number, String name, List<PossibleAnswerVO> childNodes) {
+    this.number = number;
+    this.name = name;
+    this.childNodes = childNodes;
+  }
+
+  public QuestionVO(List<PossibleAnswerVO> childNodes, PossibleAnswerVO parent, QuestionVO linkingQuestion, Long activeInterviewId) {
+    this.childNodes = childNodes;
+    this.parent = parent;
+    this.linkingQuestion = linkingQuestion;
+    this.activeInterviewId = activeInterviewId;
+  }
 
   public List<PossibleAnswerVO> getChildNodes() {
     if (childNodes == null) {

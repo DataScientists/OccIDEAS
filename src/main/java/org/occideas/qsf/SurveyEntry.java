@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class SurveyEntry {
+public class SurveyEntry extends BaseQSF{
 
     @JsonProperty(value = "SurveyID")
     private String surveyId;
@@ -207,33 +207,4 @@ public class SurveyEntry {
         return null;
     }
 
-    @Override
-    public String toString() {
-        String results = null;
-        try {
-            results = new ObjectMapper().writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return results;
-        /*return "\"SurveyEntry\":{" +
-                "\"SurveyID\":"+ encloseQuote(surveyId) +
-                ",\"SurveyName\":" + encloseQuote(surveyName) +
-                ",\"SurveyDescription\":" + encloseQuote(surveyDescription) +
-                ",\"SurveyOwnerID\":" + encloseQuote(surveyOwnerID) +
-                ",\"SurveyBrandID\":" + encloseQuote(surveyBrandID) +
-                ",\"DivisionID\":" + encloseQuote(divisionID) +
-                ",\"SurveyLanguage\":" + encloseQuote(surveyLanguage) +
-                ",\"SurveyActiveResponseSet\":" + encloseQuote(surveyActiveResponseSet) +
-                ",\"SurveyStatus\":" + encloseQuote(surveyStatus) +
-                ",\"SurveyStartDate\":" + encloseQuote(surveyStartDate) +
-                ",\"SurveyExpirationDate\":" + encloseQuote(surveyExpirationDate) +
-                ",\"SurveyCreationDate\":" + encloseQuote(surveyCreationDate) +
-                ",\"CreatorID\":" + encloseQuote(creatorID) +
-                ",\"LastModified\":" + encloseQuote(lastModified) +
-                ",\"LastAccessed\":" + encloseQuote(lastAccessed) +
-                ",\"LastActivated\":" + encloseQuote(lastActivated) +
-                ",\"Deleted\":" + encloseQuote(deleted)  +
-                '}';*/
-    }
 }

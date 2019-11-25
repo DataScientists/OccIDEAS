@@ -1,10 +1,12 @@
 package org.occideas.qsf;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.occideas.qsf.payload.Payload;
 
 import java.util.List;
 
-public class SurveyElements {
+public class SurveyElement extends BaseQSF{
 
     @JsonProperty(value = "SurveyID")
     private String surveyID;
@@ -16,8 +18,21 @@ public class SurveyElements {
     private String secondaryAttribute;
     @JsonProperty(value = "TertiaryAttribute")
     private String tertiaryAttribute;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value = "Payload")
-    private List<Payload> payload;
+    private Object payload;
+
+    public SurveyElement() {
+    }
+
+    public SurveyElement(String surveyID, String element, String primaryAttribute, String secondaryAttribute, String tertiaryAttribute, Object payload) {
+        this.surveyID = surveyID;
+        this.element = element;
+        this.primaryAttribute = primaryAttribute;
+        this.secondaryAttribute = secondaryAttribute;
+        this.tertiaryAttribute = tertiaryAttribute;
+        this.payload = payload;
+    }
 
     public String getSurveyID() {
         return surveyID;
@@ -59,11 +74,11 @@ public class SurveyElements {
         this.tertiaryAttribute = tertiaryAttribute;
     }
 
-    public List<Payload> getPayload() {
+    public Object getPayload() {
         return payload;
     }
 
-    public void setPayload(List<Payload> payload) {
+    public void setPayload(Object payload) {
         this.payload = payload;
     }
 }

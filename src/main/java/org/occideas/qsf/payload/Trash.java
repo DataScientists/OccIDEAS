@@ -1,19 +1,26 @@
-package org.occideas.qsf;
+package org.occideas.qsf.payload;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.occideas.qsf.BaseQSF;
+import org.occideas.qsf.payload.Payload;
 
-import java.util.List;
-
-public class Payload {
+public class Trash extends BaseQSF implements Payload {
 
     @JsonProperty(value = "Type")
-    private String type;
+    private String type = "Trash";
     @JsonProperty(value = "Description")
     private String description;
     @JsonProperty(value = "ID")
     private String id;
-    @JsonProperty(value = "BlockElements")
-    private List<BlockElement> blockElements;
+
+    public Trash() {
+    }
+    
+    public Trash(String type, String description, String id) {
+        this.type = type;
+        this.description = description;
+        this.id = id;
+    }
 
     public String getType() {
         return type;
@@ -37,13 +44,5 @@ public class Payload {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public List<BlockElement> getBlockElements() {
-        return blockElements;
-    }
-
-    public void setBlockElements(List<BlockElement> blockElements) {
-        this.blockElements = blockElements;
     }
 }
