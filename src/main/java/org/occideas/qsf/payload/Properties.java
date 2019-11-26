@@ -8,4 +8,10 @@ public class Properties extends BaseQSF implements Payload {
     @JsonProperty(value = "Count")
     private int count;
 
+    public Properties() {
+    }
+
+    public Properties(int count) {
+        this.count = count;
+    }
 }

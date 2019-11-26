@@ -9,6 +9,8 @@ public class SubPayload extends BaseQSF implements Payload {
 
     @JsonProperty(value = "Flow")
     private List<Flow> flows;
+    @JsonProperty(value = "Properties")
+    private Properties properties;
     @JsonProperty(value = "FlowID")
     private String flowId;
     @JsonProperty(value = "Type")
@@ -17,10 +19,11 @@ public class SubPayload extends BaseQSF implements Payload {
     public SubPayload() {
     }
 
-    public SubPayload(List<Flow> flows, String flowId, String type) {
+    public SubPayload(List<Flow> flows,Properties properties, String flowId, String type) {
         this.flows = flows;
         this.flowId = flowId;
         this.type = type;
+        this.properties = properties;
     }
 
     public List<Flow> getFlows() {
@@ -29,6 +32,14 @@ public class SubPayload extends BaseQSF implements Payload {
 
     public void setFlows(List<Flow> flows) {
         this.flows = flows;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 
     public String getFlowId() {

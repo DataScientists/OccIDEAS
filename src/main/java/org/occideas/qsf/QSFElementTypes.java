@@ -4,7 +4,7 @@ public enum QSFElementTypes {
 
     BLOCK("BL","Survey Blocks"),FLOW("FL","Survey Flow"),OPTIONS("SO","Survey Options"),
     SCORING("SCO","Scoring"),PROJECT("PROJ","CORE"),STATISTICS("STAT","Survey Statistics"),
-    QUESTIONCOUNT("QC","Survey Question Count"),RESPONSESET("RS","Response Set"),
+    QUESTIONCOUNT("QC","Survey Question Count"),RESPONSESET("RS","Default Response Set"),
     QUESTION("SQ","Survey Question");
 
     QSFElementTypes(String abbr,String desc) {

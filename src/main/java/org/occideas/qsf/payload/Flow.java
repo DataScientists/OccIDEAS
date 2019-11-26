@@ -12,6 +12,15 @@ public class Flow extends BaseQSF {
     @JsonProperty(value = "FlowID")
     private String flowId;
 
+    public Flow() {
+    }
+
+    public Flow(String id, String type, String flowId) {
+        this.id = id;
+        this.type = type;
+        this.flowId = flowId;
+    }
+
     public String getId() {
         return id;
     }
