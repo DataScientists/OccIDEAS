@@ -2,77 +2,80 @@ package org.occideas.module.service;
 
 import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
+import org.occideas.qsf.ApplicationQSF;
 import org.occideas.vo.*;
 
 import java.util.List;
 
 public interface ModuleService {
-  void merge(ModuleVO module);
+	void merge(ModuleVO module);
 
-  Long getMaxId();
+	Long getMaxId();
 
-  List<ModuleVO> findByIdForInterview(Long id);
+	List<ModuleVO> findByIdForInterview(Long id);
 
-  List<ModuleVO> findByIdNoRules(Long id);
+	List<ModuleVO> findByIdNoRules(Long id);
 
-  NodeRuleHolder copyModule(ModuleCopyVO json);
+	NodeRuleHolder copyModule(ModuleCopyVO json);
 
-  NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO json, ModuleReportVO report);
+	NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO json, ModuleReportVO report);
 
-  void copyRules(NodeRuleHolder idNodeHolder);
+	void copyRules(NodeRuleHolder idNodeHolder);
 
-  NodeRuleHolder copyModule(ModuleCopyVO vo, ModuleReportVO report);
+	NodeRuleHolder copyModule(ModuleCopyVO vo, ModuleReportVO report);
 
-  void addNodeRules(NodeRuleHolder idNodeHolder);
+	void addNodeRules(NodeRuleHolder idNodeHolder);
 
-  ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO reportVO);
+	ModuleReportVO copyRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO reportVO);
 
-  void addNodeRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO report);
+	void addNodeRulesValidateAgent(NodeRuleHolder idNodeHolder, ModuleReportVO report);
 
-  void updateMissingLinks(NodeVO nodeVO);
+	void updateMissingLinks(NodeVO nodeVO);
 
-  NodeRuleHolder copyModuleAutoGenerateModule(ModuleCopyVO copyVo, ModuleReportVO report);
+	NodeRuleHolder copyModuleAutoGenerateModule(ModuleCopyVO copyVo, ModuleReportVO report);
 
-  NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo, ModuleReportVO report,
-																								 NodeRuleHolder idNodeRuleHolder);
+	NodeRuleHolder copyModuleAutoGenerateFragments(ModuleCopyVO vo, ModuleReportVO report,
+			NodeRuleHolder idNodeRuleHolder);
 
-  void setActiveIntroModule(ModuleVO vo);
+	void setActiveIntroModule(ModuleVO vo);
 
-  NodeVO getModuleFilterStudyAgent(Long id);
+	NodeVO getModuleFilterStudyAgent(Long id);
 
-  NodeVO getModuleFilterAgent(Long id, Long idAgent);
+	NodeVO getModuleFilterAgent(Long id, Long idAgent);
 
-  List<Module> getAllModules();
+	List<Module> getAllModules();
 
-  NodeVO getNodeNameById(Long idNode);
+	NodeVO getNodeNameById(Long idNode);
 
-  List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(Long theId);
+	List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(Long theId);
 
-  ModuleVO getStudyAgentJSON(Long id);
+	ModuleVO getStudyAgentJSON(Long id);
 
-  Integer getModuleTranslationTotalCount(String idNode);
+	Integer getModuleTranslationTotalCount(String idNode);
 
-  Integer getModuleTranslationCurrentCount(String idNode, Long languageId);
+	Integer getModuleTranslationCurrentCount(String idNode, Long languageId);
 
-  List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId);
+	List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId);
 
-  Integer getTotalUntranslatedModule(Long languageId);
+	Integer getTotalUntranslatedModule(Long languageId);
 
-  Integer getTotalTranslatedNodeByLanguage(long languageId);
+	Integer getTotalTranslatedNodeByLanguage(long languageId);
 
-  Integer getModulesWithTranslationCount(long languageId);
+	Integer getModulesWithTranslationCount(long languageId);
 
-  List<String> getFilterStudyAgent(Long id);
+	List<String> getFilterStudyAgent(Long id);
 
-  long update(ModuleVO vo);
+	long update(ModuleVO vo);
 
-  long save(ModuleVO module);
+	long save(ModuleVO module);
 
-  ModuleVO create(ModuleVO module);
+	ModuleVO create(ModuleVO module);
 
-  void delete(ModuleVO module);
+	void delete(ModuleVO module);
 
-  List<ModuleVO> findById(Long id);
+	List<ModuleVO> findById(Long id);
 
-  List<ModuleVO> listAll();
+	List<ModuleVO> listAll();
+
+	ApplicationQSF convertToApplicationQSF(Long id);
 }

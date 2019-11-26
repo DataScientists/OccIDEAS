@@ -1,12 +1,19 @@
 package org.occideas.module.service;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.IAgentDao;
 import org.occideas.base.service.IQuestionCopier;
-import org.occideas.entity.*;
+import org.occideas.entity.Agent;
+import org.occideas.entity.Constant;
+import org.occideas.entity.Fragment;
+import org.occideas.entity.Module;
+import org.occideas.entity.Node;
+import org.occideas.entity.PossibleAnswer;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
@@ -15,6 +22,7 @@ import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
 import org.occideas.noderule.dao.INodeRuleDao;
+import org.occideas.qsf.ApplicationQSF;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.IRuleDao;
 import org.occideas.security.handler.TokenManager;
@@ -22,14 +30,27 @@ import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.StudyAgentUtil;
-import org.occideas.vo.*;
+import org.occideas.vo.AgentVO;
+import org.occideas.vo.FragmentVO;
+import org.occideas.vo.FragmentVODecorator;
+import org.occideas.vo.LanguageModBreakdownVO;
+import org.occideas.vo.ModuleCopyVO;
+import org.occideas.vo.ModuleReportVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.ModuleVODecorator;
+import org.occideas.vo.NodeRuleHolder;
+import org.occideas.vo.NodeRuleVO;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.QuestionVO;
+import org.occideas.vo.RuleVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 @Service
 @Transactional
@@ -470,6 +491,20 @@ public class ModuleServiceImpl implements ModuleService {
   public ModuleVO getStudyAgentJSON(Long id) {
     try {
       return studyAgentUtil.getStudyAgentJson(String.valueOf(id));
+    } catch (JsonGenerationException e) {
+      log.error(e.getMessage(), e);
+    } catch (JsonMappingException e) {
+      log.error(e.getMessage(), e);
+    } catch (IOException e) {
+      log.error(e.getMessage(), e);
+    }
+    return null;
+  }
+  
+  @Override
+  public ApplicationQSF convertToApplicationQSF(Long id) {
+    try {
+      return studyAgentUtil.convertToApplicationQSF(String.valueOf(id));
     } catch (JsonGenerationException e) {
       log.error(e.getMessage(), e);
     } catch (JsonMappingException e) {

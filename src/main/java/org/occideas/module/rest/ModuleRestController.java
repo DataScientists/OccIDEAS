@@ -1,28 +1,54 @@
 package org.occideas.module.rest;
 
-import com.fasterxml.jackson.core.JsonParser.Feature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.glassfish.jersey.media.multipart.FormDataBodyPart;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.occideas.base.rest.BaseRestController;
-import org.occideas.entity.*;
-import org.occideas.module.service.ModuleService;
-import org.occideas.node.service.INodeService;
-import org.occideas.systemproperty.service.SystemPropertyService;
-import org.occideas.utilities.MSWordGenerator;
-import org.occideas.vo.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang3.math.NumberUtils;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.occideas.base.rest.BaseRestController;
+import org.occideas.entity.Constant;
+import org.occideas.entity.Module;
+import org.occideas.entity.ModuleRule;
+import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
+import org.occideas.module.service.ModuleService;
+import org.occideas.node.service.INodeService;
+import org.occideas.qsf.ApplicationQSF;
+import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.MSWordGenerator;
+import org.occideas.vo.FragmentVO;
+import org.occideas.vo.LanguageModBreakdownVO;
+import org.occideas.vo.ModuleCopyVO;
+import org.occideas.vo.ModuleReportVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeRuleHolder;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.QuestionVO;
+import org.occideas.vo.SystemPropertyVO;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/module")
 public class ModuleRestController implements BaseRestController<ModuleVO> {
@@ -86,7 +112,20 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     }
     return Response.ok(modvo).build();
   }
-
+  
+  @GET
+  @Path(value = "/convertModuleToApplicationQSF")
+  @Produces(value = MediaType.APPLICATION_JSON)
+  public Response convertModuleToApplicationQSF(@QueryParam("id") Long id) {
+    ApplicationQSF applicationQSF = null;
+	try {
+      applicationQSF = service.convertToApplicationQSF(id);
+    } catch (Throwable e) {
+      e.printStackTrace();
+      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+    }
+    return Response.ok(applicationQSF).build();
+  }
 
   @GET
   @Path(value = "/get")

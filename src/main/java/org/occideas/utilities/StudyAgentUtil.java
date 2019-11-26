@@ -41,6 +41,10 @@ public class StudyAgentUtil {
         ModuleVO modVO = mapper.readValue(file, ModuleVO.class);
         return modVO;
     }
+    
+    public ApplicationQSF convertToApplicationQSF(String idNode) throws IOException{
+    	return moduleToApplicationQSF(getStudyAgentJson(idNode));
+    }
 
 
     public FragmentVO getStudyAgentFragmentJson(String idNode) throws IOException {
