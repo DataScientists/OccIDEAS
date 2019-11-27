@@ -67,8 +67,8 @@ public class StudyAgentUtil {
                 , QSFElementTypes.BLOCK.getDesc(), null, null,
                 buildPayload(
                         new Default("Default", "Default Question Block", "BL_agDgwnIMsiB1KJL",
-                                buildBlockElements(module.getChildNodes(), module.getName())),
-                        new Trash("Trash", "Trash / Unused Question", "BL_41380AxUd3s3gt7")));
+                                buildBlockElements(module.getChildNodes(), module.getName()))
+                        ));
 
         List<Flow> flows = new ArrayList<>();
         flows.add(new Flow("BL_agDgwnIMsiB1KJL", "Block", "FL_2"));
@@ -151,10 +151,10 @@ public class StudyAgentUtil {
         List<BlockElement> blockElements = new ArrayList<>();
         int count = 0;
         for (QuestionVO question : childNodes) {
-            blockElements.add(new BlockElement("Question", name.substring(0, 4) + "-" + question.getNumber()));
-            if (count < childNodes.size() - 1) {
-                blockElements.add(new BlockElement("Page Break", null));
-            }
+            blockElements.add(new BlockElement("Question", "QID" + (count+1)));
+            
+            blockElements.add(new BlockElement("Page Break", null));
+            
             count++;
         }
         return blockElements;
