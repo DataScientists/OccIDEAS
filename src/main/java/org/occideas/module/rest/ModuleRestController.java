@@ -119,7 +119,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
   public Response convertModuleToApplicationQSF(@QueryParam("id") Long id) {
     ApplicationQSF applicationQSF = null;
 	try {
-      applicationQSF = service.convertToApplicationQSF(id);
+		  applicationQSF = service.convertToApplicationQSF(id);  
     } catch (Throwable e) {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

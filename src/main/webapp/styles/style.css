@@ -1396,3 +1396,6 @@ li.borderless {
    opacity: 0.6;
 }        
 
+pre, code{
+    white-space:normal;
+}

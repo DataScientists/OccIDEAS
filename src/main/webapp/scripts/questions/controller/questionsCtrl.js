@@ -1867,6 +1867,21 @@
 //            	  printPdf(data[0],pdf,count,$itemScope.$modelValue.name);
         }
         ],
+        ['View QSF', function($itemScope) {
+        	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
+        		.then(function(response){
+        			if(response.status == '200'){
+        				var newScope = $itemScope.$new();
+        				newScope.json = response.data;
+        				$mdDialog.show({
+        					scope: newScope,
+        					preserveScope: true,
+        					templateUrl: 'scripts/questions/partials/qsfViewDialog.html',
+        					clickOutsideToClose: false
+        				});
+        			}
+        		});
+        }],
         ['Set Active Intro Module', function($itemScope) {
           if(confirm('Are you sure you want to set  ' + $itemScope.$modelValue.name
             + ' as active intro module?')) {

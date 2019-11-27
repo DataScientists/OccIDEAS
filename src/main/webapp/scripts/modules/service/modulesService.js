@@ -9,6 +9,16 @@
     var modulesUrl = apiUrl + 'module';
     var apiKey = '';
 
+    function convertModuleToApplicationQSF(idNode) {
+        var restUrl = 'web/rest/module/convertModuleToApplicationQSF?id=' + idNode;
+
+        var request = $http({
+          method: 'GET',
+          url: restUrl
+        });
+        return request.then(handleSuccess, handleError);
+      }
+    
     function getModuleById(idNode) {
       var restUrl = 'web/rest/module/getModuleById?id=' + idNode;
 
@@ -301,7 +311,8 @@
       getTotalTranslatedNodeByLanguage: getTotalTranslatedNodeByLanguage,
       getModulesWithTranslationCount: getModulesWithTranslationCount,
       getModuleById: getModuleById,
-      getNodeById: getNodeById
+      getNodeById: getNodeById,
+      convertModuleToApplicationQSF:convertModuleToApplicationQSF
     };
   }
 
