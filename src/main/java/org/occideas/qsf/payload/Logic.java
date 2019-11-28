@@ -1,15 +1,26 @@
 package org.occideas.qsf.payload;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Logic {
 
+    @JsonProperty(value = "LogicType")
     private String logicType;
+    @JsonProperty(value = "QuestionID")
     private String questionId;
+    @JsonProperty(value = "QuestionsInLoop")
     private String questionIsInLoop;
+    @JsonProperty(value = "ChoiceLocator")
     private String choiceLocator;
+    @JsonProperty(value = "Operator")
     private String operator;
+    @JsonProperty(value = "QuestionIDFromLocator")
     private String questionIdFromLocator;
+    @JsonProperty(value = "LeftOperand")
     private String leftOperand;
+    @JsonProperty(value = "Type")
     private String type;
+    @JsonProperty(value = "Description")
     private String description;
 
     public Logic() {

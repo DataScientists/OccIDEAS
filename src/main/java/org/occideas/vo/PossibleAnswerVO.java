@@ -28,6 +28,12 @@ public class PossibleAnswerVO extends NodeVO implements Comparable<PossibleAnswe
     this.number = number;
     this.name = name;
   }
+  
+  public PossibleAnswerVO(String number, String name,List<QuestionVO> childNodes) {
+	    this.number = number;
+	    this.name = name;
+	    this.childNodes = childNodes;
+	  }
 
   public PossibleAnswerVO(List<QuestionVO> childNodes, QuestionVO parent) {
     this.childNodes = childNodes;

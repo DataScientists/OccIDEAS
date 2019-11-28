@@ -61,7 +61,9 @@ public class StudyAgentUtilTest {
         answerVOList1.add(new PossibleAnswerVO("3A","3"));
         List<PossibleAnswerVO> answerVOList2 = new ArrayList<>();
         answerVOList2.add(new PossibleAnswerVO("4A","4"));
-        answerVOList2.add(new PossibleAnswerVO("5A","5"));
+        List<QuestionVO> childQuestion = new ArrayList<>();
+        childQuestion.add(new QuestionVO("99A","Child Question",new ArrayList<>()));
+        answerVOList2.add(new PossibleAnswerVO("5A","5",childQuestion));
         answerVOList2.add(new PossibleAnswerVO("6A","6"));
         List<PossibleAnswerVO> answerVOList3 = new ArrayList<>();
         answerVOList3.add(new PossibleAnswerVO("7A","7"));

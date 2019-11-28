@@ -1,5 +1,6 @@
 package org.occideas.qsf.payload;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.occideas.qsf.BaseQSF;
 
@@ -35,11 +36,14 @@ public class QuestionPayload extends BaseQSF implements Payload {
     private int nextAnswerId;
     @JsonProperty(value = "QuestionID")
     private String questionId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty(value = "DisplayLogic")
+    private DisplayLogic logic;
 
     public QuestionPayload() {
     }
 
-    public QuestionPayload(String questionText, String dataExportTag, String questionType, String selector, String subSelector, Configuration configuration, String questionDescription, List<Choice> choicesList, String[] choiceOrderList, Validation validation, List<Language> languageList, int nextChoiceId, int nextAnswerId, String questionId) {
+    public QuestionPayload(String questionText, String dataExportTag, String questionType, String selector, String subSelector, Configuration configuration, String questionDescription, List<Choice> choicesList, String[] choiceOrderList, Validation validation, List<Language> languageList, int nextChoiceId, int nextAnswerId, String questionId,DisplayLogic logic) {
         this.questionText = questionText;
         this.dataExportTag = dataExportTag;
         this.questionType = questionType;
@@ -54,6 +58,7 @@ public class QuestionPayload extends BaseQSF implements Payload {
         this.nextChoiceId = nextChoiceId;
         this.nextAnswerId = nextAnswerId;
         this.questionId = questionId;
+        this.logic = logic;
     }
 
     public String getQuestionText() {
@@ -167,4 +172,13 @@ public class QuestionPayload extends BaseQSF implements Payload {
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
     }
+
+	public DisplayLogic getLogic() {
+		return logic;
+	}
+
+	public void setLogic(DisplayLogic logic) {
+		this.logic = logic;
+	}
+    
 }
