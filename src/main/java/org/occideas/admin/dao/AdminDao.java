@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class AdminDao implements IAdminDao {
 
-  private final String SELECT_ORPHAN_NODES = "Select * from Node where parent_idNode NOT IN (SELECT idNode FROM Node)";
+  private final String SELECT_ORPHAN_NODES = "Select * from Node where parent_idNode NOT IN (SELECT idNode FROM Node) OR (node_discriminator='P' and parent_idNode is null)";
   private final String DELETE_NODES_WITH_DELETEFLAG = " DELETE FROM Node WHERE deleted=1 AND idNode>0";
   private final String SET_FOREIGN_KEY = "SET FOREIGN_KEY_CHECKS=:flag";
 
