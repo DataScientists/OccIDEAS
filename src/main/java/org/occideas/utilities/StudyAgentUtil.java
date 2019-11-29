@@ -83,7 +83,7 @@ public class StudyAgentUtil {
 	}
 
 	public ApplicationQSF moduleToApplicationQSF(ModuleVO module) {
-		qidCount = new AtomicInteger(1);
+		qidCount = new AtomicInteger(0);
 		ApplicationQSF applicationQSF = new ApplicationQSF();
 		final String surveyId = "SV_3W2wSyxLDan2ZPD";
 		applicationQSF.setSurveyEntry(new SurveyEntry(surveyId, "SimpleSurvey", null, "UR_es2Gulf6I7xN6p7", "curtin",
@@ -92,6 +92,7 @@ public class StudyAgentUtil {
 				"0000-00-00 00:00:00", null));
 		List<SurveyElement> surveyElements = new ArrayList<>();
 
+		// new questions to be added to block elements - link modules
 		SurveyElement blockElement = new SurveyElement(surveyId, QSFElementTypes.BLOCK.getAbbr(),
 				QSFElementTypes.BLOCK.getDesc(), null, null,
 				buildPayload(new Default("Default", "Default Question Block", "BL_agDgwnIMsiB1KJL",
@@ -120,7 +121,7 @@ public class StudyAgentUtil {
 				buildPayload(new StatisticsPayload(true, "Survey Statistics")));
 
 		SurveyElement questionCountElement = new SurveyElement(surveyId, QSFElementTypes.QUESTIONCOUNT.getAbbr(),
-				QSFElementTypes.QUESTIONCOUNT.getDesc(), String.valueOf(module.getChildNodes().size()), null, null);
+				QSFElementTypes.QUESTIONCOUNT.getDesc(), String.valueOf(qidCount.intValue()), null, null);
 
 		SurveyElement defaultResponseElement = new SurveyElement(surveyId, QSFElementTypes.RESPONSESET.getAbbr(),
 				"RS_cMiHcMFIPoWrvyl", QSFElementTypes.RESPONSESET.getDesc(), null, null);
@@ -153,12 +154,12 @@ public class StudyAgentUtil {
 		Object payload = null;
 		if (logic == null) {
 			payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
-					new Configuration("Use Text"), qVO.getDescription(), buildChoices(qVO, module.getName()),
+					new Configuration("UseText"), qVO.getDescription(), buildChoices(qVO, module.getName()),
 					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(),
 					module.getChildNodes().size() + 1, 1, qidStrCount, logic));
 		} else {
 			payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
-					new Configuration("Use Text"), qVO.getDescription(), buildChoices(qVO, module.getName()),
+					new Configuration("UseText"), qVO.getDescription(), buildChoices(qVO, module.getName()),
 					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(),
 					module.getChildNodes().size() + 1, 1, qidStrCount, logic));
 		}
@@ -170,7 +171,7 @@ public class StudyAgentUtil {
 			if (!answer.getChildNodes().isEmpty()) {
 				for (QuestionVO childQuestionVO : answer.getChildNodes()) {
 					String childQidCount = "QID" + qidCount.incrementAndGet();
-					String choiceLocator = ":q://" + childQidCount + "/SelectableChoice/" + ansCount;
+					String choiceLocator = "q:\\/\\/" + childQidCount + "\\/SelectableChoice\\/" + ansCount;
 					createQuestion(module, surveyId, surveyElements, childQuestionVO,
 							new DisplayLogic("BooleanExpression", false,
 									new Condition(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
@@ -197,12 +198,15 @@ public class StudyAgentUtil {
 
 	private String[] buildChoiceOrder(QuestionVO qVO) {
 		String[] choiceOrder = new String[qVO.getChildNodes().size()];
+		int count = 1;
 		for (int i = 0; i < qVO.getChildNodes().size(); i++) {
-			choiceOrder[i] = String.valueOf(i);
+			choiceOrder[i] = String.valueOf(count);
+			count++;
 		}
 		return choiceOrder;
 	}
 
+	//choices should be object s of object and not array
 	private List<Choice> buildChoices(QuestionVO qVO, String name) {
 		List<Choice> choiceList = new ArrayList<>();
 		for (PossibleAnswerVO answerVO : qVO.getChildNodes()) {
