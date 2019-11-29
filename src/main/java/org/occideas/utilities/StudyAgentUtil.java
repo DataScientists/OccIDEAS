@@ -21,23 +21,7 @@ import org.occideas.qsf.BlockElement;
 import org.occideas.qsf.QSFElementTypes;
 import org.occideas.qsf.SurveyElement;
 import org.occideas.qsf.SurveyEntry;
-import org.occideas.qsf.payload.Choice;
-import org.occideas.qsf.payload.Condition;
-import org.occideas.qsf.payload.Configuration;
-import org.occideas.qsf.payload.Default;
-import org.occideas.qsf.payload.DisplayLogic;
-import org.occideas.qsf.payload.Flow;
-import org.occideas.qsf.payload.Logic;
-import org.occideas.qsf.payload.Payload;
-import org.occideas.qsf.payload.ProjectPayload;
-import org.occideas.qsf.payload.Properties;
-import org.occideas.qsf.payload.QuestionPayload;
-import org.occideas.qsf.payload.ScoringPayload;
-import org.occideas.qsf.payload.Setting;
-import org.occideas.qsf.payload.StatisticsPayload;
-import org.occideas.qsf.payload.SubPayload;
-import org.occideas.qsf.payload.SurveyOptionPayload;
-import org.occideas.qsf.payload.Validation;
+import org.occideas.qsf.payload.*;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
@@ -96,7 +80,7 @@ public class StudyAgentUtil {
 		SurveyElement blockElement = new SurveyElement(surveyId, QSFElementTypes.BLOCK.getAbbr(),
 				QSFElementTypes.BLOCK.getDesc(), null, null,
 				buildPayload(new Default("Default", "Default Question Block", "BL_agDgwnIMsiB1KJL",
-						buildBlockElements(module.getChildNodes(), module.getName()))));
+						buildBlockElements(module.getChildNodes(), module.getName())),new Trash("Trash","Trash \\/ Unused Questions","BL_4I380AxUd3s3gt7")));
 
 		List<Flow> flows = new ArrayList<>();
 		flows.add(new Flow("BL_agDgwnIMsiB1KJL", "Block", "FL_2"));
@@ -107,14 +91,14 @@ public class StudyAgentUtil {
 		SurveyElement surveyOptions = new SurveyElement(surveyId, QSFElementTypes.OPTIONS.getAbbr(),
 				QSFElementTypes.OPTIONS.getDesc(), null, null,
 				buildPayload(new SurveyOptionPayload("false", "true", "PublicSurvey", "false", "Yes", "true", "None",
-						"DefaultMessage", "", "", "None", "+1 week", "", "<-", "->", "curtin", "MQ", "curtin1", 1)));
+						"DefaultMessage", "", "", "None", "+1 week", "", "\\u2190", "\\u2192", "curtin", "MQ", "curtin1", 1)));
 
 		SurveyElement scoringElement = new SurveyElement(surveyId, QSFElementTypes.SCORING.getAbbr(),
 				QSFElementTypes.SCORING.getDesc(), null, null,
 				buildPayload(new ScoringPayload(new ArrayList<>(), new ArrayList<>(), null, 0, 0, null, null)));
 
 		SurveyElement projElement = new SurveyElement(surveyId, QSFElementTypes.PROJECT.getAbbr(),
-				QSFElementTypes.PROJECT.getDesc(), null, "1.0", buildPayload(new ProjectPayload("CORE", "1.1.0")));
+				QSFElementTypes.PROJECT.getDesc(), null, "1.1.0", buildPayload(new ProjectPayload("CORE", "1.1.0")));
 
 		SurveyElement statElement = new SurveyElement(surveyId, QSFElementTypes.STATISTICS.getAbbr(),
 				QSFElementTypes.STATISTICS.getDesc(), null, null,
@@ -124,8 +108,9 @@ public class StudyAgentUtil {
 				QSFElementTypes.QUESTIONCOUNT.getDesc(), String.valueOf(qidCount.intValue()), null, null);
 
 		SurveyElement defaultResponseElement = new SurveyElement(surveyId, QSFElementTypes.RESPONSESET.getAbbr(),
-				"RS_cMiHcMFIPoWrvyl", QSFElementTypes.RESPONSESET.getDesc(), null, null);
+				"RS_cMiHcMFlPoWrvyl", QSFElementTypes.RESPONSESET.getDesc(), null, null);
 
+		List<SurveyElement> questionElements = buildQuestions(module, surveyId);
 		surveyElements.add(blockElement);
 		surveyElements.add(flowElement);
 		surveyElements.add(surveyOptions);
@@ -134,17 +119,18 @@ public class StudyAgentUtil {
 		surveyElements.add(statElement);
 		surveyElements.add(questionCountElement);
 		surveyElements.add(defaultResponseElement);
-
-		buildQuestions(module, surveyId, surveyElements);
+		surveyElements.addAll(questionElements);
 
 		applicationQSF.setSurveyElementsList(surveyElements);
 		return applicationQSF;
 	}
 
-	private void buildQuestions(ModuleVO module, final String surveyId, List<SurveyElement> surveyElements) {
+	private List<SurveyElement> buildQuestions(ModuleVO module, final String surveyId) {
+		List<SurveyElement> surveyElements = new ArrayList<>();
 		for (QuestionVO qVO : module.getChildNodes()) {
 			createQuestion(module, surveyId, surveyElements, qVO, null);
 		}
+		return surveyElements;
 	}
 
 	private void createQuestion(ModuleVO module, final String surveyId, List<SurveyElement> surveyElements,
@@ -159,7 +145,7 @@ public class StudyAgentUtil {
 					module.getChildNodes().size() + 1, 1, qidStrCount, logic));
 		} else {
 			payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
-					new Configuration("UseText"), qVO.getDescription(), buildChoices(qVO, module.getName()),
+					new Configuration("UseText"), qVO.getName(), buildChoices(qVO, module.getName()),
 					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(),
 					module.getChildNodes().size() + 1, 1, qidStrCount, logic));
 		}
@@ -220,11 +206,10 @@ public class StudyAgentUtil {
 		List<BlockElement> blockElements = new ArrayList<>();
 		int count = 0;
 		for (QuestionVO question : childNodes) {
-			blockElements.add(new BlockElement("Question", "QID" + (count + 1)));
-
-			blockElements.add(new BlockElement("Page Break", null));
-
-			count++;
+			blockElements.add(new BlockElement("Question", "QID" + (++count)));
+			if(count != childNodes.size()) {
+				blockElements.add(new BlockElement("Page Break", null));
+			}
 		}
 		return blockElements;
 	}

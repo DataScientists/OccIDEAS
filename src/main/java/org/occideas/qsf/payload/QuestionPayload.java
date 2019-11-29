@@ -2,7 +2,9 @@ package org.occideas.qsf.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.BaseQSF;
+import org.occideas.qsf.serializer.ChoicesSerializer;
 
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class QuestionPayload extends BaseQSF implements Payload {
     @JsonProperty(value = "QuestionDescription")
     private String questionDescription;
     @JsonProperty(value = "Choices")
+    @JsonSerialize(using = ChoicesSerializer.class)
     private List<Choice> choicesList;
     @JsonProperty(value = "ChoiceOrder")
     private String[] choiceOrderList;

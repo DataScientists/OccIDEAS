@@ -18,7 +18,6 @@ public class SurveyElement extends BaseQSF{
     private String secondaryAttribute;
     @JsonProperty(value = "TertiaryAttribute")
     private String tertiaryAttribute;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value = "Payload")
     private Object payload;
 
