@@ -47,11 +47,11 @@ public class NodeServiceImpl implements INodeService {
 		Node node = dao.getNode(idNode);
 		if ("M".equals(node.getNodeclass())) {
 			Module module = (Module) node;
-			return moduleMapper.convertToModuleVOOnly(module);
+			return moduleMapper.convertToModuleVO(module,true);
 		}
 		if ("Q".equals(node.getNodeclass())) {
 			Question question = (Question) node;
-			return questionMapper.convertToQuestionVOOnly(question);
+			return questionMapper.convertToQuestionVO(question);
 		}
 		if ("P".equals(node.getNodeclass())) {
 			PossibleAnswer answer = (PossibleAnswer) node;

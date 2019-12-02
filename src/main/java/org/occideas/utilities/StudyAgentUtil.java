@@ -105,8 +105,8 @@ public class StudyAgentUtil {
 		SurveyElement surveyOptions = new SurveyElement(surveyId, QSFElementTypes.OPTIONS.getAbbr(),
 				QSFElementTypes.OPTIONS.getDesc(), null, null,
 				buildPayload(new SurveyOptionPayload("false", "true", "PublicSurvey", "false", "Yes", "true", "None",
-						"DefaultMessage", "", "", "None", "+1 week", "", "\u2190", "\u2192", "curtin", "MQ",
-						"curtin1", 1)));
+						"DefaultMessage", "", "", "None", "+1 week", "", "\u2190", "\u2192", "curtin", "MQ", "curtin1",
+						1)));
 
 		SurveyElement scoringElement = new SurveyElement(surveyId, QSFElementTypes.SCORING.getAbbr(),
 				QSFElementTypes.SCORING.getDesc(), null, null,
@@ -159,27 +159,30 @@ public class StudyAgentUtil {
 
 	private void createQuestion(NodeVO node, final String surveyId, List<SurveyElement> surveyElements, QuestionVO qVO,
 			DisplayLogic logic) {
-		String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
-		String qidStrCount = "QID" + qidCount.incrementAndGet();
-		Object payload = null;
-		if (logic == null) {
-			payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
-					new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), 0, 1,
-					qidStrCount, logic));
-		} else {
-			payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
-					new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), 0, 1,
-					qidStrCount, logic));
+		if (qVO.getLink() == 0L) {
+			String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
+			String qidStrCount = "QID" + qidCount.incrementAndGet();
+			Object payload = null;
+			if (logic == null) {
+				payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
+						new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+						buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), 0,
+						1, qidStrCount, logic));
+			} else {
+				payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
+						new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+						buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), 0,
+						1, qidStrCount, logic));
+			}
+			SurveyElement question = new SurveyElement(surveyId, QSFElementTypes.QUESTION.getAbbr(), qidStrCount,
+					questionTxt, null, payload);
+			surveyElements.add(question);
 		}
-		SurveyElement question = new SurveyElement(surveyId, QSFElementTypes.QUESTION.getAbbr(), qidStrCount,
-				questionTxt, null, payload);
-		surveyElements.add(question);
 		int ansCount = 1;
 		for (PossibleAnswerVO answer : qVO.getChildNodes()) {
 			if (!answer.getChildNodes().isEmpty()) {
 				for (QuestionVO childQuestionVO : answer.getChildNodes()) {
+					if(childQuestionVO.getLink() == 0L) {
 					String childQidCount = "QID" + qidCount.intValue();
 					String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 					createQuestion(node, surveyId, surveyElements, childQuestionVO,
@@ -187,11 +190,13 @@ public class StudyAgentUtil {
 									new Condition(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
 											childQidCount, choiceLocator, "Expression", childQuestionVO.getName()),
 											"If")));
-					if (childQuestionVO.getLink() != 0L) {
+					}else if (childQuestionVO.getLink() != 0L) {
 						NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
+						String childQidCount = "QID" + qidCount.intValue();
+						String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 						if ("F".equals(linkModule.getNodeclass())) {
 							for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
-								createQuestion(linkModule, surveyId, surveyElements, linkQuestion,
+								createQuestion(node, surveyId, surveyElements, linkQuestion,
 										new DisplayLogic("BooleanExpression", false,
 												new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
 														"Selected", childQidCount, choiceLocator, "Expression",
