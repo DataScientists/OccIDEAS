@@ -8,7 +8,7 @@ public class Logic {
     private String logicType;
     @JsonProperty(value = "QuestionID")
     private String questionId;
-    @JsonProperty(value = "QuestionsInLoop")
+    @JsonProperty(value = "QuestionIsInLoop")
     private String questionIsInLoop;
     @JsonProperty(value = "ChoiceLocator")
     private String choiceLocator;

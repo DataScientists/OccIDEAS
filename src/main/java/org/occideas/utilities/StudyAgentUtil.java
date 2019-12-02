@@ -16,12 +16,30 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
+import org.occideas.node.service.INodeService;
 import org.occideas.qsf.ApplicationQSF;
 import org.occideas.qsf.BlockElement;
 import org.occideas.qsf.QSFElementTypes;
 import org.occideas.qsf.SurveyElement;
 import org.occideas.qsf.SurveyEntry;
-import org.occideas.qsf.payload.*;
+import org.occideas.qsf.payload.Choice;
+import org.occideas.qsf.payload.Condition;
+import org.occideas.qsf.payload.Configuration;
+import org.occideas.qsf.payload.Default;
+import org.occideas.qsf.payload.DisplayLogic;
+import org.occideas.qsf.payload.Flow;
+import org.occideas.qsf.payload.Logic;
+import org.occideas.qsf.payload.Payload;
+import org.occideas.qsf.payload.ProjectPayload;
+import org.occideas.qsf.payload.Properties;
+import org.occideas.qsf.payload.QuestionPayload;
+import org.occideas.qsf.payload.ScoringPayload;
+import org.occideas.qsf.payload.Setting;
+import org.occideas.qsf.payload.StatisticsPayload;
+import org.occideas.qsf.payload.SubPayload;
+import org.occideas.qsf.payload.SurveyOptionPayload;
+import org.occideas.qsf.payload.Trash;
+import org.occideas.qsf.payload.Validation;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
@@ -45,6 +63,8 @@ public class StudyAgentUtil {
 	private SystemPropertyService systemPropertyService;
 	@Autowired
 	private ModuleService moduleService;
+	@Autowired
+	private INodeService nodeService;
 
 	private AtomicInteger qidCount;
 
@@ -76,12 +96,6 @@ public class StudyAgentUtil {
 				"0000-00-00 00:00:00", null));
 		List<SurveyElement> surveyElements = new ArrayList<>();
 
-		// new questions to be added to block elements - link modules
-		SurveyElement blockElement = new SurveyElement(surveyId, QSFElementTypes.BLOCK.getAbbr(),
-				QSFElementTypes.BLOCK.getDesc(), null, null,
-				buildPayload(new Default("Default", "Default Question Block", "BL_agDgwnIMsiB1KJL",
-						buildBlockElements(module.getChildNodes(), module.getName())),new Trash("Trash","Trash \\/ Unused Questions","BL_4I380AxUd3s3gt7")));
-
 		List<Flow> flows = new ArrayList<>();
 		flows.add(new Flow("BL_agDgwnIMsiB1KJL", "Block", "FL_2"));
 		SurveyElement flowElement = new SurveyElement(surveyId, QSFElementTypes.FLOW.getAbbr(),
@@ -91,7 +105,8 @@ public class StudyAgentUtil {
 		SurveyElement surveyOptions = new SurveyElement(surveyId, QSFElementTypes.OPTIONS.getAbbr(),
 				QSFElementTypes.OPTIONS.getDesc(), null, null,
 				buildPayload(new SurveyOptionPayload("false", "true", "PublicSurvey", "false", "Yes", "true", "None",
-						"DefaultMessage", "", "", "None", "+1 week", "", "\\u2190", "\\u2192", "curtin", "MQ", "curtin1", 1)));
+						"DefaultMessage", "", "", "None", "+1 week", "", "\u2190", "\u2192", "curtin", "MQ",
+						"curtin1", 1)));
 
 		SurveyElement scoringElement = new SurveyElement(surveyId, QSFElementTypes.SCORING.getAbbr(),
 				QSFElementTypes.SCORING.getDesc(), null, null,
@@ -104,19 +119,25 @@ public class StudyAgentUtil {
 				QSFElementTypes.STATISTICS.getDesc(), null, null,
 				buildPayload(new StatisticsPayload(true, "Survey Statistics")));
 
-		SurveyElement questionCountElement = new SurveyElement(surveyId, QSFElementTypes.QUESTIONCOUNT.getAbbr(),
-				QSFElementTypes.QUESTIONCOUNT.getDesc(), String.valueOf(qidCount.intValue()), null, null);
-
 		SurveyElement defaultResponseElement = new SurveyElement(surveyId, QSFElementTypes.RESPONSESET.getAbbr(),
 				"RS_cMiHcMFlPoWrvyl", QSFElementTypes.RESPONSESET.getDesc(), null, null);
 
 		List<SurveyElement> questionElements = buildQuestions(module, surveyId);
+		// new questions to be added to block elements - link modules
+		SurveyElement blockElement = new SurveyElement(surveyId, QSFElementTypes.BLOCK.getAbbr(),
+				QSFElementTypes.BLOCK.getDesc(), null, null,
+				buildPayload(
+						new Default("Default", "Default Question Block", "BL_agDgwnIMsiB1KJL",
+								buildBlockElements(qidCount.intValue(), module.getName())),
+						new Trash("Trash", "Trash \\/ Unused Questions", "BL_4I380AxUd3s3gt7")));
 		surveyElements.add(blockElement);
 		surveyElements.add(flowElement);
 		surveyElements.add(surveyOptions);
 		surveyElements.add(scoringElement);
 		surveyElements.add(projElement);
 		surveyElements.add(statElement);
+		SurveyElement questionCountElement = new SurveyElement(surveyId, QSFElementTypes.QUESTIONCOUNT.getAbbr(),
+				QSFElementTypes.QUESTIONCOUNT.getDesc(), String.valueOf(qidCount.intValue()), null, null);
 		surveyElements.add(questionCountElement);
 		surveyElements.add(defaultResponseElement);
 		surveyElements.addAll(questionElements);
@@ -130,24 +151,27 @@ public class StudyAgentUtil {
 		for (QuestionVO qVO : module.getChildNodes()) {
 			createQuestion(module, surveyId, surveyElements, qVO, null);
 		}
+		for (SurveyElement su : surveyElements) {
+			((QuestionPayload) su.getPayload()).setNextChoiceId(qidCount.intValue() + 1);
+		}
 		return surveyElements;
 	}
 
-	private void createQuestion(ModuleVO module, final String surveyId, List<SurveyElement> surveyElements,
-			QuestionVO qVO, DisplayLogic logic) {
-		String questionTxt = module.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
+	private void createQuestion(NodeVO node, final String surveyId, List<SurveyElement> surveyElements, QuestionVO qVO,
+			DisplayLogic logic) {
+		String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
 		String qidStrCount = "QID" + qidCount.incrementAndGet();
 		Object payload = null;
 		if (logic == null) {
 			payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
-					new Configuration("UseText"), qVO.getDescription(), buildChoices(qVO, module.getName()),
-					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(),
-					module.getChildNodes().size() + 1, 1, qidStrCount, logic));
+					new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), 0, 1,
+					qidStrCount, logic));
 		} else {
 			payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
-					new Configuration("UseText"), qVO.getName(), buildChoices(qVO, module.getName()),
-					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(),
-					module.getChildNodes().size() + 1, 1, qidStrCount, logic));
+					new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+					buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), 0, 1,
+					qidStrCount, logic));
 		}
 		SurveyElement question = new SurveyElement(surveyId, QSFElementTypes.QUESTION.getAbbr(), qidStrCount,
 				questionTxt, null, payload);
@@ -156,25 +180,33 @@ public class StudyAgentUtil {
 		for (PossibleAnswerVO answer : qVO.getChildNodes()) {
 			if (!answer.getChildNodes().isEmpty()) {
 				for (QuestionVO childQuestionVO : answer.getChildNodes()) {
-					String childQidCount = "QID" + qidCount.incrementAndGet();
-					String choiceLocator = "q:\\/\\/" + childQidCount + "\\/SelectableChoice\\/" + ansCount;
-					createQuestion(module, surveyId, surveyElements, childQuestionVO,
+					String childQidCount = "QID" + qidCount.intValue();
+					String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
+					createQuestion(node, surveyId, surveyElements, childQuestionVO,
 							new DisplayLogic("BooleanExpression", false,
 									new Condition(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
 											childQidCount, choiceLocator, "Expression", childQuestionVO.getName()),
 											"If")));
 					if (childQuestionVO.getLink() != 0L) {
-						List<ModuleVO> linkModules = moduleService.findById(childQuestionVO.getLink());
-						if (!linkModules.isEmpty()) {
-							ModuleVO mod = linkModules.get(0);
-							for (QuestionVO linkQuestion : mod.getChildNodes()) {
-								createQuestion(mod, surveyId, surveyElements, linkQuestion,
+						NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
+						if ("F".equals(linkModule.getNodeclass())) {
+							for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
+								createQuestion(linkModule, surveyId, surveyElements, linkQuestion,
+										new DisplayLogic("BooleanExpression", false,
+												new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
+														"Selected", childQidCount, choiceLocator, "Expression",
+														childQuestionVO.getName()), "If")));
+							}
+						} else {
+							for (QuestionVO linkQuestion : ((ModuleVO) linkModule).getChildNodes()) {
+								createQuestion(linkModule, surveyId, surveyElements, linkQuestion,
 										new DisplayLogic("BooleanExpression", false,
 												new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
 														"Selected", childQidCount, choiceLocator, "Expression",
 														childQuestionVO.getName()), "If")));
 							}
 						}
+
 					}
 				}
 			}
@@ -192,7 +224,7 @@ public class StudyAgentUtil {
 		return choiceOrder;
 	}
 
-	//choices should be object s of object and not array
+	// choices should be object s of object and not array
 	private List<Choice> buildChoices(QuestionVO qVO, String name) {
 		List<Choice> choiceList = new ArrayList<>();
 		for (PossibleAnswerVO answerVO : qVO.getChildNodes()) {
@@ -202,12 +234,12 @@ public class StudyAgentUtil {
 		return choiceList;
 	}
 
-	private List<BlockElement> buildBlockElements(List<QuestionVO> childNodes, String name) {
+	private List<BlockElement> buildBlockElements(int qidCount, String name) {
 		List<BlockElement> blockElements = new ArrayList<>();
 		int count = 0;
-		for (QuestionVO question : childNodes) {
+		while (count < qidCount) {
 			blockElements.add(new BlockElement("Question", "QID" + (++count)));
-			if(count != childNodes.size()) {
+			if (count != qidCount) {
 				blockElements.add(new BlockElement("Page Break", null));
 			}
 		}

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Validation {
 
-    @JsonProperty(value = "Setting")
+    @JsonProperty(value = "Settings")
     private Setting setting;
 
     public Validation() {
