@@ -1882,6 +1882,35 @@
         			}
         		});
         }],
+        ['Download QSF',function($itemScope){
+        	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
+    		.then(function(response){
+    			if(response.status == 200) {
+    		          //var qsfFile = new Blob([response.data], {type: 'application/octet-stream'});
+//    		          var qsfUrl = window.URL.createObjectURL(response.data);
+//    		          var a = document.createElement("a");
+//    		          document.body.appendChild(a);
+//    		          a.style = "display: none";
+//    		          a.href = qsfUrl;
+//    		          a.download = $itemScope.$modelValue.name+'.qsf';
+//    		          a.click();
+    				var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data));
+    			    var downloadAnchorNode = document.createElement('a');
+    			    downloadAnchorNode.setAttribute("href",     dataStr);
+    			    downloadAnchorNode.setAttribute("download", $itemScope.$modelValue.name+'.qsf');
+    			    document.body.appendChild(downloadAnchorNode); // required for firefox
+    			    downloadAnchorNode.click();
+    			    downloadAnchorNode.remove();
+    		        } else {
+    		          ngToast.create({
+    		            className: 'danger',
+    		            content: "response was " + response.status + " - Unable to download QSF."
+    		          });
+
+    		        }
+    		});
+        }
+        ],
         ['Set Active Intro Module', function($itemScope) {
           if(confirm('Are you sure you want to set  ' + $itemScope.$modelValue.name
             + ' as active intro module?')) {

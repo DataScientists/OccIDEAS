@@ -1,10 +1,6 @@
 package org.occideas.qsf;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.occideas.qsf.payload.Payload;
-
-import java.util.List;
 
 public class SurveyElement extends BaseQSF{
 

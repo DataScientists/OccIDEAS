@@ -5,6 +5,7 @@ import org.occideas.entity.PossibleAnswer;
 import org.occideas.qsf.ApplicationQSF;
 import org.occideas.vo.*;
 
+import java.io.File;
 import java.util.List;
 
 public interface ModuleService {
@@ -77,5 +78,5 @@ public interface ModuleService {
 
 	List<ModuleVO> listAll();
 
-	ApplicationQSF convertToApplicationQSF(Long id);
+	File convertToApplicationQSF(Long id);
 }

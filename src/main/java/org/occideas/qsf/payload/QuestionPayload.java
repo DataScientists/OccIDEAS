@@ -34,7 +34,7 @@ public class QuestionPayload extends BaseQSF implements Payload {
     @JsonProperty(value = "Language")
     private List<Language> languageList;
     @JsonProperty(value = "NextChoiceId")
-    private int nextChoiceId;
+    private int nextChoiceId = -999999;
     @JsonProperty(value = "NextAnswerId")
     private int nextAnswerId;
     @JsonProperty(value = "QuestionID")

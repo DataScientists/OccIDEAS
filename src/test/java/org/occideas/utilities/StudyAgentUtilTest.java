@@ -1,21 +1,19 @@
 package org.occideas.utilities;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.Ignore;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 public class StudyAgentUtilTest {
-
-    @Test
-    public void whenConvertToQSF_givenValidModule_returnQSF(){
+	
+    @Ignore
+    public void whenConvertToQSF_givenValidModule_returnQSF() throws IOException{
 
         StudyAgentUtil studyAgentUtil = new StudyAgentUtil();
 

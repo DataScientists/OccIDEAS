@@ -1,5 +1,6 @@
 package org.occideas.module.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -502,10 +503,14 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public ApplicationQSF convertToApplicationQSF(Long id) {
+	public File convertToApplicationQSF(Long id) {
 		List<ModuleVO> modules = this.findById(id);
 		if (!modules.isEmpty()) {
-			return studyAgentUtil.moduleToApplicationQSF(modules.get(0));
+			try {
+				return studyAgentUtil.moduleToApplicationQSF(modules.get(0));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
