@@ -38,6 +38,16 @@
       return request.then(handleSuccess, handleError);
     }
 
+    function uploadQSF(reportVo){
+      var restUploadQSFUrl = url + 'uploadQSF';
+      var request = $http({
+        method: 'POST',
+        url: restUploadQSFUrl,
+        data: reportVo
+      });
+      return request.then(handleSuccess, handleError);
+    }
+
     function downloadLookup(reportVo) {
       var restDownloadReportUrl = url + 'downloadLookup';
       var request = $http({
@@ -90,7 +100,8 @@
       save: save,
       deleteReport: deleteReport,
       downloadReport: downloadReport,
-      downloadLookup: downloadLookup
+      downloadLookup: downloadLookup,
+      uploadQSF:uploadQSF
     };
   }
 

@@ -94,6 +94,14 @@
                 type="button">
           <span aria-hidden="true" class="glyphicon glyphicon-book" title="Lookup"></span>
         </button>
+        <button aria-label="Left Align"
+                class="btn btn-default"
+                ng-click="uploadQSF(reports)"
+                ng-disabled="reports.status != 'Completed'"
+                ng-if="reports.type == 'QSF Format'"
+                type="button">
+          <span aria-hidden="true" class="glyphicon glyphicon-upload" title="Upload QSF"></span>
+        </button>
       </td>
       <td title="'Delete'">
         <button class="btn btn-danger btn-sm" confirm="Delete file permanently {{reports.name}}?"

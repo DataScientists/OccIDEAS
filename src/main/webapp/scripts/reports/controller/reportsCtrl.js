@@ -79,6 +79,23 @@
       });
     };
 
+    $scope.uploadQSF = function(reportHistoryVO) {
+      ReportsService.uploadQSF(reportHistoryVO).then(function(response) {
+        var data = response.data;
+        if(response.status == '200') {
+          ngToast.create({
+            className: 'success',
+            content: "QSF file uploaded. Check qualtrics to verify."
+          });
+        } else {
+          ngToast.create({
+            className: 'danger',
+            content: "Unable to upload. Contact IT."
+          });
+        }
+      });
+    };
+
     $scope.getArray = function(jsonData) {
       return JSON.parse(jsonData);
     };

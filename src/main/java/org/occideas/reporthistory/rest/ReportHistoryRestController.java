@@ -1,5 +1,20 @@
 package org.occideas.reporthistory.rest;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.occideas.reporthistory.service.ReportHistoryService;
 import org.occideas.vo.ReportHistoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +27,7 @@ import javax.ws.rs.core.StreamingOutput;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -159,6 +175,29 @@ public class ReportHistoryRestController {
     }
 
     return Response.status(Status.NO_CONTENT).type("text/plain").build();
+  }
+
+  @Path(value = "/uploadQSF")
+  @POST
+  @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+  public Response uploadQSF(ReportHistoryVO vo) throws IOException {
+    HttpClient client = HttpClients.custom().build();
+    HttpGet httpGet = new HttpGet("https://au1.qualtrics.com/API/v3/surveys");
+    httpGet.addHeader("X-API-TOKEN","TwWDAeQCPgsGmXdmSPdlwF1zvUu5txoSzzHGLRmV");
+    HttpParams params = new BasicHttpParams();
+    params.setParameter("name", "test");
+    params.setParameter("file", "@"+vo.getPath()+";type=application/vnd.qualtrics.survey.qsf");
+    httpGet.setParams(params);
+
+//    HttpClient client = HttpClients.custom().build();
+//    HttpUriRequest request = RequestBuilder.get()
+//            .setUri("https://au1.qualtrics.com/API/v3/surveys")
+//            .setHeader("X-API-TOKEN","TwWDAeQCPgsGmXdmSPdlwF1zvUu5txoSzzHGLRmV")
+//            .addParameters(new BasicNameValuePair("name", vo.getName().substring(0,vo.getName().indexOf("_"))),
+//                    new BasicNameValuePair("file","@"+vo.getPath()+";type=application/vnd.qualtrics.survey.qsf"))
+//            .build();
+    client.execute(httpGet);
+    return Response.ok().build();
   }
 
 }
