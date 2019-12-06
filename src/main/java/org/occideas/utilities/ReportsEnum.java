@@ -8,7 +8,8 @@ public enum ReportsEnum {
   REPORT_MODULE_JSON_EXPORT("Module JSON (Export)"),
   REPORT_VIBRATION_ASSESSMENT_EXPORT("Vibration_Assessment (Export Vibration Assessments)"),
   NOTES_EXPORT("Notes (Export)"),
-  INTERVIEW_FIREDRULES("Interview Fired Rules");
+  INTERVIEW_FIREDRULES("Interview Fired Rules"),
+  QSF_EXPORT("QSF Format");
 
   private String value;
 

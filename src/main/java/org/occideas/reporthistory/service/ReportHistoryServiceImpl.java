@@ -10,6 +10,7 @@ import org.occideas.reporthistory.dao.ReportHistoryDao;
 import org.occideas.vo.ReportHistoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public class ReportHistoryServiceImpl implements ReportHistoryService {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public ReportHistoryVO save(ReportHistoryVO vo) {
     return mapper.convertToReportHistoryVO(dao.save(mapper.
       convertToReportHistory(vo)));
@@ -98,6 +100,12 @@ public class ReportHistoryServiceImpl implements ReportHistoryService {
     beanToCsv.write(list);
     writer.flush();
     writer.close();
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public long getMaxId() {
+    return dao.getMaxId();
   }
 
 

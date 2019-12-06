@@ -78,5 +78,5 @@ public interface ModuleService {
 
 	List<ModuleVO> listAll();
 
-	File convertToApplicationQSF(Long id);
+	File convertToApplicationQSF(Long id, String user);
 }

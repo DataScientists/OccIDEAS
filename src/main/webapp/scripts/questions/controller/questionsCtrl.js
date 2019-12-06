@@ -1867,44 +1867,25 @@
 //            	  printPdf(data[0],pdf,count,$itemScope.$modelValue.name);
         }
         ],
-        ['View QSF', function($itemScope) {
-        	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
-        		.then(function(response){
-        			if(response.status == '200'){
-        				var newScope = $itemScope.$new();
-        				newScope.json = response.data;
-        				$mdDialog.show({
-        					scope: newScope,
-        					preserveScope: true,
-        					templateUrl: 'scripts/questions/partials/qsfViewDialog.html',
-        					clickOutsideToClose: false
-        				});
-        			}
-        		});
-        }],
         ['Download QSF',function($itemScope){
         	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
     		.then(function(response){
     			if(response.status == 200) {
-    		          //var qsfFile = new Blob([response.data], {type: 'application/octet-stream'});
-//    		          var qsfUrl = window.URL.createObjectURL(response.data);
-//    		          var a = document.createElement("a");
-//    		          document.body.appendChild(a);
-//    		          a.style = "display: none";
-//    		          a.href = qsfUrl;
-//    		          a.download = $itemScope.$modelValue.name+'.qsf';
-//    		          a.click();
-    				var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data));
-    			    var downloadAnchorNode = document.createElement('a');
-    			    downloadAnchorNode.setAttribute("href",     dataStr);
-    			    downloadAnchorNode.setAttribute("download", $itemScope.$modelValue.name+'.qsf');
-    			    document.body.appendChild(downloadAnchorNode); // required for firefox
-    			    downloadAnchorNode.click();
-    			    downloadAnchorNode.remove();
+    				// var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data));
+    			    // var downloadAnchorNode = document.createElement('a');
+    			    // downloadAnchorNode.setAttribute("href",     dataStr);
+    			    // downloadAnchorNode.setAttribute("download", $itemScope.$modelValue.name+'.qsf');
+    			    // document.body.appendChild(downloadAnchorNode); // required for firefox
+    			    // downloadAnchorNode.click();
+    			    // downloadAnchorNode.remove();
+                  ngToast.create({
+                    className: 'success',
+                    content: "QSF file is being generated , kindly check the report tab for its progress."
+                  });
     		        } else {
     		          ngToast.create({
     		            className: 'danger',
-    		            content: "response was " + response.status + " - Unable to download QSF."
+    		            content: "response was " + response.status + " - Unable to generate QSF file."
     		          });
 
     		        }

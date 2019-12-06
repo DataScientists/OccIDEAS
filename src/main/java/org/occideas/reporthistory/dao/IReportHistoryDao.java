@@ -21,4 +21,6 @@ public interface IReportHistoryDao {
 
   List<InterviewRuleReport> getInterviewRuleReportFilter(List<Long> agentIds);
 
+  long getMaxId() ;
+
 }

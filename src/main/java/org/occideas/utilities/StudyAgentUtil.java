@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -99,9 +102,10 @@ public class StudyAgentUtil {
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
-
+		DateFormat dateFormat = new SimpleDateFormat("ddMMyyyyHHmmss");
+		Date date = new Date();
 		File file = new File(
-				path + "/qsf/" + module.getName().substring(0, 4) + "_" + System.currentTimeMillis() + ".qsf");
+				path + "/qsf/" + module.getName().replaceAll("\\s+","") + "_" + dateFormat.format(date) + ".qsf");
 		if (!file.exists()) {
 			file.createNewFile();
 		}

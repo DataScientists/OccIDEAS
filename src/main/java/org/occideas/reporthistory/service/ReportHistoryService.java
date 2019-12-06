@@ -20,4 +20,6 @@ public interface ReportHistoryService {
 
   void generateInterviewRuleFilterReport(String filepath, List<Long> agentIds) throws Exception;
 
+  long getMaxId();
+
 }

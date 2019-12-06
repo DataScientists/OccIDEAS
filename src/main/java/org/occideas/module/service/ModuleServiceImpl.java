@@ -2,6 +2,8 @@ package org.occideas.module.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,35 +25,27 @@ import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
 import org.occideas.noderule.dao.INodeRuleDao;
-import org.occideas.qsf.ApplicationQSF;
 import org.occideas.question.service.QuestionService;
+import org.occideas.reporthistory.service.ReportHistoryService;
 import org.occideas.rule.dao.IRuleDao;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.ReportsEnum;
+import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.utilities.StudyAgentUtil;
-import org.occideas.vo.AgentVO;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.FragmentVODecorator;
-import org.occideas.vo.LanguageModBreakdownVO;
-import org.occideas.vo.ModuleCopyVO;
-import org.occideas.vo.ModuleReportVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.ModuleVODecorator;
-import org.occideas.vo.NodeRuleHolder;
-import org.occideas.vo.NodeRuleVO;
-import org.occideas.vo.NodeVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.RuleVO;
-import org.occideas.vo.SystemPropertyVO;
+import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.StreamingOutput;
 
 @Service
 @Transactional
@@ -89,6 +83,8 @@ public class ModuleServiceImpl implements ModuleService {
 	private StudyAgentUtil studyAgentUtil;
 	@Autowired
 	private INodeLanguageDao nodeLanguageDao;
+	@Autowired
+	private ReportHistoryService reportHistoryService;
 
 	@Override
 	public List<ModuleVO> listAll() {
@@ -503,16 +499,65 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public File convertToApplicationQSF(Long id) {
+	@Async
+	public File convertToApplicationQSF(Long id, String user) {
 		List<ModuleVO> modules = this.findById(id);
 		if (!modules.isEmpty()) {
 			try {
-				return studyAgentUtil.moduleToApplicationQSF(modules.get(0));
+				File file = studyAgentUtil.moduleToApplicationQSF(modules.get(0));
+				ReportHistoryVO reportHistoryVO = insertToReportHistorySuccess(file.getName(), file.getAbsolutePath(),
+						ReportsEnum.QSF_EXPORT.getValue(),user);
+				return file;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		return null;
+	}
+
+	private ReportHistoryVO insertToReportHistorySuccess(String name, String fullPath,
+														  String type, String user) {
+
+		ReportHistoryVO reportHistoryVO = new ReportHistoryVO();
+		reportHistoryVO.setName(name);
+		reportHistoryVO.setPath(fullPath);
+		reportHistoryVO.setRequestor(user);
+		reportHistoryVO.setStatus(ReportsStatusEnum.COMPLETED.getValue());
+		reportHistoryVO.setType(type);
+		reportHistoryVO.setUpdatedBy(user);
+		reportHistoryVO.setProgress("100%");
+		return reportHistoryService.save(reportHistoryVO);
+	}
+
+	private ReportHistoryVO insertToReportHistoryFailed(String name, String fullPath,
+														 String type, String user) {
+
+		ReportHistoryVO reportHistoryVO = new ReportHistoryVO();
+		reportHistoryVO.setName(name);
+		reportHistoryVO.setPath(fullPath);
+		reportHistoryVO.setRequestor(user);
+		reportHistoryVO.setStatus(ReportsStatusEnum.FAILED.getValue());
+		reportHistoryVO.setType(type);
+		reportHistoryVO.setUpdatedBy(user);
+		reportHistoryVO.setProgress("0%");
+		return reportHistoryService.save(reportHistoryVO);
+	}
+
+	private StreamingOutput getOut(final byte[] excelBytes, String pathStr) {
+		StreamingOutput fileStream = new StreamingOutput() {
+			@Override
+			public void write(java.io.OutputStream output) throws IOException, WebApplicationException {
+				try {
+					java.nio.file.Path path = Paths.get(pathStr);
+					byte[] data = Files.readAllBytes(path);
+					output.write(data);
+					output.flush();
+				} catch (Exception e) {
+					throw new WebApplicationException();
+				}
+			}
+		};
+		return fileStream;
 	}
 
 	@Override

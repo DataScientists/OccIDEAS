@@ -31,26 +31,19 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.occideas.base.rest.BaseRestController;
-import org.occideas.entity.Constant;
-import org.occideas.entity.Module;
-import org.occideas.entity.ModuleRule;
-import org.occideas.entity.PossibleAnswer;
-import org.occideas.entity.Question;
+import org.occideas.entity.*;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
+import org.occideas.reporthistory.service.ReportHistoryService;
+import org.occideas.security.handler.TokenManager;
+import org.occideas.security.model.TokenResponse;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.MSWordGenerator;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.LanguageModBreakdownVO;
-import org.occideas.vo.ModuleCopyVO;
-import org.occideas.vo.ModuleReportVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeRuleHolder;
-import org.occideas.vo.NodeVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.SystemPropertyVO;
+import org.occideas.utilities.ReportsEnum;
+import org.occideas.utilities.ReportsStatusEnum;
+import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonParser.Feature;
@@ -120,34 +113,21 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@GET
 	@Path(value = "/convertModuleToApplicationQSF")
 	@Consumes(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
-	@Produces(value = javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM)
-	public @ResponseBody byte[] convertModuleToApplicationQSF(@QueryParam("id") Long id) throws IOException {
-		File file = null;
+	@Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
+	public Response convertModuleToApplicationQSF(@QueryParam("id") Long id) throws IOException {
 		try {
-			file = service.convertToApplicationQSF(id);
+			service.convertToApplicationQSF(id,extractUserFromToken());
+			return Response.ok().build();
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return null;
 		}
-		FileInputStream in = new FileInputStream(file);
-		return IOUtils.toByteArray(in);
 	}
 
-	private StreamingOutput getOut(final byte[] excelBytes, String pathStr) {
-		StreamingOutput fileStream = new StreamingOutput() {
-			@Override
-			public void write(java.io.OutputStream output) throws IOException, WebApplicationException {
-				try {
-					java.nio.file.Path path = Paths.get(pathStr);
-					byte[] data = Files.readAllBytes(path);
-					output.write(data);
-					output.flush();
-				} catch (Exception e) {
-					throw new WebApplicationException();
-				}
-			}
-		};
-		return fileStream;
+	private String extractUserFromToken() {
+		TokenManager tokenManager = new TokenManager();
+		String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+		return tokenManager.parseUsernameFromToken(token);
 	}
 
 	@GET

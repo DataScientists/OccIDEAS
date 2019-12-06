@@ -4,13 +4,14 @@ import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.occideas.entity.InterviewRuleReport;
 import org.occideas.entity.ReportHistory;
 import org.occideas.utilities.ReportsStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -87,6 +88,21 @@ public class ReportHistoryDao implements IReportHistoryDao {
       .add(Restrictions.eq("status", ReportsStatusEnum.COMPLETED.getValue()));
 
     return (ReportHistory) crit.uniqueResult();
+  }
+
+  @Override
+  public long getMaxId() {
+    Session session = sessionFactory.getCurrentSession();
+    DetachedCriteria maxId = DetachedCriteria.forClass(ReportHistory.class)
+            .setProjection( Projections.max("id") );
+    final List<ReportHistory> reports = session.createCriteria(ReportHistory.class)
+            .add(Property.forName("id").eq(maxId))
+            .list();
+    if(!reports.isEmpty()){
+      ReportHistory reportHistory = reports.get(0);
+      return reportHistory.getId();
+    }
+    return 0L;
   }
 
   @Override

@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,6 +34,7 @@ import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
+@EnableAsync
 @Order(2)
 @ImportResource("/WEB-INF/spring/applicationContext.xml")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
