@@ -4,14 +4,32 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Test;
+import org.occideas.reporthistory.rest.ReportHistoryRestController;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
+import org.occideas.vo.ReportHistoryVO;
+
+import javax.ws.rs.core.Response;
 
 public class StudyAgentUtilTest {
-	
+
+    private ReportHistoryRestController reportHistoryRestController= new ReportHistoryRestController();
+
+    @Ignore
+    public void givenSurvey_whenUploadSurvey_thenResponseCodeOK() throws IOException {
+        ReportHistoryVO vo = new ReportHistoryVO();
+        vo.setName("NICE");
+        vo.setPath("/Users/jeda/Downloads/AAATROY_06122019160201.qsf");
+        Response response = reportHistoryRestController.uploadQSF(vo);
+        assertEquals(200,response.getStatus());
+    }
+
+
     @Ignore
     public void whenConvertToQSF_givenValidModule_returnQSF() throws IOException{
 

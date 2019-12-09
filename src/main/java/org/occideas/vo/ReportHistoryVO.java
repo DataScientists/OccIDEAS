@@ -19,6 +19,9 @@ public class ReportHistoryVO {
   private float duration;
   private long recordCount;
 
+  public ReportHistoryVO() {
+  }
+
   public long getId() {
     return id;
   }
