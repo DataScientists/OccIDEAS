@@ -4,6 +4,7 @@ import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.qsf.ApplicationQSF;
 import org.occideas.vo.*;
+import org.springframework.scheduling.annotation.Async;
 
 import java.io.File;
 import java.util.List;
@@ -52,7 +53,10 @@ public interface ModuleService {
 
 	ModuleVO getStudyAgentJSON(Long id);
 
-	Integer getModuleTranslationTotalCount(String idNode);
+    @Async
+    void manualBuildQSF(Long id, String user);
+
+    Integer getModuleTranslationTotalCount(String idNode);
 
 	Integer getModuleTranslationCurrentCount(String idNode, Long languageId);
 

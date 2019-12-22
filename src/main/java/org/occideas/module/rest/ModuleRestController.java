@@ -1,32 +1,7 @@
 package org.occideas.module.rest;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.StreamingOutput;
-
-import org.apache.commons.io.IOUtils;
+import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
@@ -34,20 +9,23 @@ import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.*;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
-import org.occideas.reporthistory.service.ReportHistoryService;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.MSWordGenerator;
-import org.occideas.utilities.ReportsEnum;
-import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.core.JsonParser.Feature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @Path("/module")
 public class ModuleRestController implements BaseRestController<ModuleVO> {
@@ -116,7 +94,8 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	public Response convertModuleToApplicationQSF(@QueryParam("id") Long id) throws IOException {
 		try {
-			service.convertToApplicationQSF(id,extractUserFromToken());
+			//service.convertToApplicationQSF(id,extractUserFromToken());
+			service.manualBuildQSF(id, extractUserFromToken());
 			return Response.ok().build();
 		} catch (Throwable e) {
 			e.printStackTrace();

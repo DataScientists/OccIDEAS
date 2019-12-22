@@ -1,10 +1,28 @@
 package org.occideas.reporthistory.rest;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.occideas.qsf.IQSFClient;
+import org.occideas.reporthistory.service.ReportHistoryService;
+import org.occideas.vo.ReportHistoryVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 //import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 //import org.apache.http.HttpResponse;
 //import org.apache.http.NameValuePair;
@@ -23,34 +41,6 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 //import org.apache.http.message.BasicNameValuePair;
 //import org.apache.http.params.BasicHttpParams;
 //import org.apache.http.params.HttpParams;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.MultiPart;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
-import org.occideas.qsf.response.QSFSurveyResponse;
-import org.occideas.reporthistory.service.ReportHistoryService;
-import org.occideas.vo.ReportHistoryVO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-
-import javax.ws.rs.*;
-import javax.ws.rs.client.*;
-import javax.ws.rs.core.*;
-import javax.ws.rs.core.Response.Status;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Path("/reportHistory")
 public class ReportHistoryRestController {
@@ -59,6 +49,8 @@ public class ReportHistoryRestController {
 
     @Autowired
     private ReportHistoryService service;
+    @Autowired
+    private IQSFClient iqsfClient;
 
     @Path(value = "/downloadReport")
     @POST
@@ -200,47 +192,8 @@ public class ReportHistoryRestController {
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     public Response uploadQSF(ReportHistoryVO vo) throws IOException {
-        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", "TwWDAeQCPgsGmXdmSPdlwF1zvUu5txoSzzHGLRmV");
-        headers.add("Content-type", "multipart/form-data");
-        ClientConfig clientConfig = new ClientConfig();
-        ObjectMapper JSON_MAPPER = new ObjectMapper();
-        JSON_MAPPER.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        JSON_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        JSON_MAPPER.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-        JSON_MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-        JSON_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        JSON_MAPPER.findAndRegisterModules();
-        clientConfig.register(new JacksonJsonProvider(JSON_MAPPER));
-
-        File file = new File(vo.getPath());
-        final FileDataBodyPart filePart = new FileDataBodyPart("file", new File(vo.getPath()));
-        filePart.type(new javax.ws.rs.core.MediaType("application","vnd.qualtrics.survey.qsf"));
-        MultiPart multiPart = new FormDataMultiPart()
-                .field("name", vo.getName().contains("_")?vo.getName().substring(0,
-                        vo.getName().indexOf("_")):vo.getName())
-                .bodyPart(filePart);
-
-        QSFSurveyResponse response = ClientBuilder.newBuilder()
-                .withConfig(clientConfig)
-                .register(MultiPartFeature.class)
-                .build()
-                .target("https://au1.qualtrics.com")
-                .path("API/v3/surveys")
-                .request()
-                .accept(javax.ws.rs.core.MediaType.APPLICATION_JSON)
-                .headers(headers)
-                .post(Entity.entity(multiPart,multiPart.getMediaType()))
-                .readEntity(QSFSurveyResponse.class);
-
-        if ("200 - OK".equals(response.getMeta().getHttpStatus())) {
-            log.info(response);
-            return Response.ok().build();
-        } else {
-            log.error(response.getMeta().getHttpStatus()+"->error:"+response.getMeta().getError().getErrorMessage());
-            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(response.getMeta().getHttpStatus()
-                    +"->error:"+response.getMeta().getError().getErrorMessage()).build();
-        }
+       return iqsfClient.uploadQSF(new File(vo.getPath()),vo.getName().contains("_")?vo.getName().substring(0,
+               vo.getName().indexOf("_")):vo.getName());
     }
 
 }

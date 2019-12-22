@@ -1,22 +1,12 @@
 package org.occideas.module.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.IAgentDao;
 import org.occideas.base.service.IQuestionCopier;
-import org.occideas.entity.Agent;
-import org.occideas.entity.Constant;
-import org.occideas.entity.Fragment;
-import org.occideas.entity.Module;
-import org.occideas.entity.Node;
-import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.*;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
@@ -41,11 +31,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -513,6 +506,15 @@ public class ModuleServiceImpl implements ModuleService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	@Async
+	public void manualBuildQSF(Long id, String user) {
+		List<ModuleVO> modules = this.findById(id);
+		if (!modules.isEmpty()) {
+			studyAgentUtil.manualBuildQSF(modules.get(0));
+		}
 	}
 
 	private ReportHistoryVO insertToReportHistorySuccess(String name, String fullPath,
