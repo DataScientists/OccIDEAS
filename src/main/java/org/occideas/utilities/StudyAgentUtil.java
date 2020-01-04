@@ -184,12 +184,12 @@ public class StudyAgentUtil {
             String qidStrCount = "QID" + qidCount.incrementAndGet();
             Object payload = null;
             if (logic == null) {
-                payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
+                payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
                         buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), -999999,
                         1, qidStrCount, logic));
             } else {
-                payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
+                payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
                         buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), -999999,
                         1, qidStrCount, logic));
@@ -252,11 +252,11 @@ public class StudyAgentUtil {
             String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
             SimpleQuestionPayload payload = null;
             if (logic == null) {
-                payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
+                payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
                         buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
             } else {
-                payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
+                payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
                         buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
             }
@@ -321,8 +321,7 @@ public class StudyAgentUtil {
     private List<Choice> buildChoices(QuestionVO qVO, String name) {
         List<Choice> choiceList = new ArrayList<>();
         for (PossibleAnswerVO answerVO : qVO.getChildNodes()) {
-            Choice choice = new Choice(name.substring(0, 4) + "_" + answerVO.getNumber() + "_" + answerVO.getName());
-            choiceList.add(choice);
+            choiceList.add(ChoiceFactory.create(answerVO,name));
         }
         return choiceList;
     }

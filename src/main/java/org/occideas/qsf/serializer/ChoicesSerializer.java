@@ -1,11 +1,8 @@
 package org.occideas.qsf.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.BeanSerializerFactory;
 import org.occideas.qsf.payload.Choice;
 
 import java.io.IOException;
@@ -23,6 +20,9 @@ public class ChoicesSerializer extends JsonSerializer<List<Choice>> {
             jsonGenerator.writeFieldId(index);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField("Display",choice.getDisplay());
+            if(choice.getTextEntry() != null){
+                jsonGenerator.writeStringField("TextEntry",choice.getTextEntry());
+            }
             jsonGenerator.writeEndObject();
         }
 
