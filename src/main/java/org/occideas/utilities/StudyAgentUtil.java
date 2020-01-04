@@ -11,6 +11,7 @@ import org.occideas.node.service.INodeService;
 import org.occideas.qsf.*;
 import org.occideas.qsf.dao.INodeQSFDao;
 import org.occideas.qsf.payload.*;
+import org.occideas.qsf.payload.Properties;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.response.SurveyCreateResponse;
 import org.occideas.systemproperty.service.SystemPropertyService;
@@ -23,9 +24,7 @@ import javax.ws.rs.core.Response;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -48,6 +47,8 @@ public class StudyAgentUtil {
 
     private AtomicInteger qidCount;
 
+    private Map<Long,String> idNodeQIDMap;
+
     public ModuleVO getStudyAgentJson(String idNode) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         File file = getJsonFile(idNode);
@@ -57,9 +58,9 @@ public class StudyAgentUtil {
 
     public void manualBuildQSF(ModuleVO moduleVO) {
         qidCount = new AtomicInteger(0);
-        String surveyId = nodeQSFDao.getByIdNode(moduleVO.getIdNode());
-        if (surveyId == null) {
-            Response response = iqsfClient.createSurvey(new SurveyCreateRequest(
+        idNodeQIDMap = new HashMap<>();
+        String surveyId = null;
+        Response response = iqsfClient.createSurvey(new SurveyCreateRequest(
                     moduleVO.getName().replaceAll("\\s+", ""),
                     "EN",
                     "CORE"
@@ -70,7 +71,6 @@ public class StudyAgentUtil {
                 surveyId = surveyCreateResponse.getResult().getSurveyId();
                 nodeQSFDao.save(surveyId, moduleVO.getIdNode());
             }
-        }
 
         List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
         for (QuestionVO qVO : moduleVO.getChildNodes()) {
@@ -243,9 +243,13 @@ public class StudyAgentUtil {
     private void createManualQuestion
             (NodeVO node, QuestionVO qVO, DisplayLogic logic,
              List<SimpleQuestionPayload> questionPayloads) {
+
+        if(!idNodeQIDMap.containsKey(qVO.getIdNode())){
+            String qidStrCount = "QID" + qidCount.incrementAndGet();
+            idNodeQIDMap.put(qVO.getIdNode(),qidStrCount);
+        }
         if (qVO.getLink() == 0L) {
             String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
-            String qidStrCount = "QID" + qidCount.incrementAndGet();
             SimpleQuestionPayload payload = null;
             if (logic == null) {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", "SAVR", "TX",
@@ -262,8 +266,12 @@ public class StudyAgentUtil {
         for (PossibleAnswerVO answer : qVO.getChildNodes()) {
             if (!answer.getChildNodes().isEmpty()) {
                 for (QuestionVO childQuestionVO : answer.getChildNodes()) {
+                    if(!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())){
+                        String qidStrCount = "QID" + qidCount.incrementAndGet();
+                        idNodeQIDMap.put(childQuestionVO.getIdNode(),qidStrCount);
+                    }
                     if (childQuestionVO.getLink() == 0L) {
-                        String childQidCount = "QID" + qidCount.intValue();
+                        String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
                         createManualQuestion(node, childQuestionVO,
                                 new DisplayLogic("BooleanExpression", false, new Condition(
@@ -272,7 +280,7 @@ public class StudyAgentUtil {
                                         "If")), questionPayloads);
                     } else if (childQuestionVO.getLink() != 0L) {
                         NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
-                        String childQidCount = "QID" + qidCount.intValue();
+                        String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
                         if ("F".equals(linkModule.getNodeclass())) {
                             for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
