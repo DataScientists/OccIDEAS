@@ -14,4 +14,9 @@ public interface IQSFClient {
 
     Response createQuestion(String surveyId, SimpleQuestionPayload questionPayload, String blockId);
 
+    Response publishSurvey(String surveyId);
+
+    Response activateSurvey(String surveyId);
+
+    String buildRedirectUrl(String surveyId);
 }

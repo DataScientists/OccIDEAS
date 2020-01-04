@@ -47,7 +47,7 @@ public class StudyAgentUtil {
 
     private AtomicInteger qidCount;
 
-    private Map<Long,String> idNodeQIDMap;
+    private Map<Long, String> idNodeQIDMap;
 
     public ModuleVO getStudyAgentJson(String idNode) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -61,23 +61,23 @@ public class StudyAgentUtil {
         idNodeQIDMap = new HashMap<>();
         String surveyId = null;
         Response response = iqsfClient.createSurvey(new SurveyCreateRequest(
-                    moduleVO.getName().replaceAll("\\s+", ""),
-                    "EN",
-                    "CORE"
-            ));
-            Object entity = response.getEntity();
-            if (entity instanceof SurveyCreateResponse) {
-                SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) entity;
-                surveyId = surveyCreateResponse.getResult().getSurveyId();
-                nodeQSFDao.save(surveyId, moduleVO.getIdNode());
-            }
+                moduleVO.getName().replaceAll("\\s+", ""),
+                "EN",
+                "CORE"
+        ));
+        Object entity = response.getEntity();
+        if (entity instanceof SurveyCreateResponse) {
+            SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) entity;
+            surveyId = surveyCreateResponse.getResult().getSurveyId();
+            nodeQSFDao.save(surveyId, moduleVO.getIdNode());
+        }
 
         List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
         for (QuestionVO qVO : moduleVO.getChildNodes()) {
             createManualQuestion(moduleVO, qVO, null, questionPayloads);
         }
         for (SimpleQuestionPayload payload : questionPayloads) {
-			iqsfClient.createQuestion(surveyId,payload,null);
+            iqsfClient.createQuestion(surveyId, payload, null);
         }
     }
 
@@ -244,9 +244,9 @@ public class StudyAgentUtil {
             (NodeVO node, QuestionVO qVO, DisplayLogic logic,
              List<SimpleQuestionPayload> questionPayloads) {
 
-        if(!idNodeQIDMap.containsKey(qVO.getIdNode())){
+        if (!idNodeQIDMap.containsKey(qVO.getIdNode())) {
             String qidStrCount = "QID" + qidCount.incrementAndGet();
-            idNodeQIDMap.put(qVO.getIdNode(),qidStrCount);
+            idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
         }
         if (qVO.getLink() == 0L) {
             String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
@@ -266,9 +266,9 @@ public class StudyAgentUtil {
         for (PossibleAnswerVO answer : qVO.getChildNodes()) {
             if (!answer.getChildNodes().isEmpty()) {
                 for (QuestionVO childQuestionVO : answer.getChildNodes()) {
-                    if(!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())){
+                    if (!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())) {
                         String qidStrCount = "QID" + qidCount.incrementAndGet();
-                        idNodeQIDMap.put(childQuestionVO.getIdNode(),qidStrCount);
+                        idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);
                     }
                     if (childQuestionVO.getLink() == 0L) {
                         String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
@@ -321,7 +321,7 @@ public class StudyAgentUtil {
     private List<Choice> buildChoices(QuestionVO qVO, String name) {
         List<Choice> choiceList = new ArrayList<>();
         for (PossibleAnswerVO answerVO : qVO.getChildNodes()) {
-            choiceList.add(ChoiceFactory.create(answerVO,name));
+            choiceList.add(ChoiceFactory.create(answerVO, name));
         }
         return choiceList;
     }

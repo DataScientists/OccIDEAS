@@ -15,7 +15,10 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.request.SurveyCreateRequest;
+import org.occideas.qsf.request.SurveyPublishRequest;
+import org.occideas.qsf.request.SurveyUpdateRequest;
 import org.occideas.qsf.response.SurveyCreateResponse;
+import org.occideas.qsf.response.SurveyPublishResponse;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -98,7 +101,7 @@ public class QSFClient implements IQSFClient {
 
             return handleResponse(response);
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
     }
@@ -125,13 +128,72 @@ public class QSFClient implements IQSFClient {
 
             return handleResponse(response);
         } catch (Exception e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
     }
 
+    @Override
+    public Response publishSurvey(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
 
-    private Response handleResponse(SurveyCreateResponse response) {
+        try {
+            String request = JSON_MAPPER.writeValueAsString(new SurveyPublishRequest("publish version via occideas"
+                    , true));
+            SurveyPublishResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/survey-definitions")
+                    .path(surveyId)
+                    .path("versions")
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .post(Entity.entity(request, MediaType.APPLICATION_JSON))
+                    .readEntity(SurveyPublishResponse.class);
+
+            return handleResponse(response);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response activateSurvey(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            String request = JSON_MAPPER.writeValueAsString(new SurveyUpdateRequest(true));
+            BaseResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/surveys")
+                    .path(surveyId)
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .put(Entity.entity(request, MediaType.APPLICATION_JSON))
+                    .readEntity(BaseResponse.class);
+
+            return handleResponse(response);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public String buildRedirectUrl(String surveyId){
+        return "http://curtin.au1.qualtrics.com/jfe/form/"+surveyId;
+    }
+
+
+    private Response handleResponse(BaseResponse response) {
         if ("200 - OK".equals(response.getMeta().getHttpStatus())) {
             log.info(response);
             return Response.ok(response).build();
@@ -143,16 +205,13 @@ public class QSFClient implements IQSFClient {
     }
 
 //    public static void main(String[] args){
+////        QSFClient qsfClient = new QSFClient();
+////        Response response = qsfClient.publishSurvey("SV_cZmHV4CgxGEyA3H");
+////        System.out.println(response.getEntity());
+//
 //        QSFClient qsfClient = new QSFClient();
-//        List< Choice > choicesList = new ArrayList<>();
-//        choicesList.add(new Choice("Choice created using Survey API!"));
-//        choicesList.add(new Choice("green"));
-//        choicesList.add(new Choice("blue"));
-//        qsfClient.createQuestion("SV_batkH4S8HXAiiix",new SimpleQuestionPayload("test question 2", "Q1",
-//                "MC", "SAVR", "TX", new Configuration("UseText"),
-//                "What is this", choicesList, new String[]{"1","2","3"},
-//                new Validation(new Setting("OFF","ON","None")),
-//                new ArrayList<>(),null),null);
+//        Response response = qsfClient.activateSurvey("SV_cZmHV4CgxGEyA3H");
+//        System.out.println(response.getEntity());
 //    }
 
 }

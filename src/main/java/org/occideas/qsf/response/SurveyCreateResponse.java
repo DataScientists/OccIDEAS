@@ -1,36 +1,27 @@
 package org.occideas.qsf.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.occideas.qsf.BaseQSF;
+import org.occideas.qsf.BaseResponse;
 
-public class SurveyCreateResponse extends BaseQSF {
+public class SurveyCreateResponse extends BaseResponse {
 
     @JsonProperty(value = "result")
-    private Result result;
-    @JsonProperty(value = "meta")
-    private Meta meta;
+    private SurveyCreateResult result;
 
     public SurveyCreateResponse() {
     }
 
-    public SurveyCreateResponse(Result result, Meta meta) {
+    public SurveyCreateResponse(SurveyCreateResult result, Meta meta) {
         this.result = result;
         this.meta = meta;
     }
 
-    public Result getResult() {
+    public SurveyCreateResult getResult() {
         return result;
     }
 
-    public void setResult(Result result) {
+    public void setResult(SurveyCreateResult result) {
         this.result = result;
     }
 
-    public Meta getMeta() {
-        return meta;
-    }
-
-    public void setMeta(Meta meta) {
-        this.meta = meta;
-    }
 }
