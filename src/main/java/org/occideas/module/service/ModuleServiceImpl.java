@@ -512,8 +512,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Async
 	public void manualBuildQSF(Long id, String user) {
 		List<ModuleVO> modules = this.findById(id);
-		if (!modules.isEmpty()) {
-			studyAgentUtil.manualBuildQSF(modules.get(0));
+		if (!modules.isEmpty()) { studyAgentUtil.buildQSF(modules.get(0));
 		}
 	}
 

@@ -10,9 +10,11 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
 import org.occideas.qsf.*;
 import org.occideas.qsf.dao.INodeQSFDao;
-import org.occideas.qsf.payload.*;
 import org.occideas.qsf.payload.Properties;
+import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
+import org.occideas.qsf.response.FlowResult;
+import org.occideas.qsf.response.GetFlowResponse;
 import org.occideas.qsf.response.SurveyCreateResponse;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
@@ -44,9 +46,6 @@ public class StudyAgentUtil {
     private INodeQSFDao nodeQSFDao;
     @Autowired
     private IQSFClient iqsfClient;
-
-    private AtomicInteger qidCount;
-
     private Map<Long, String> idNodeQIDMap;
 
     public ModuleVO getStudyAgentJson(String idNode) throws IOException {
@@ -56,10 +55,148 @@ public class StudyAgentUtil {
         return modVO;
     }
 
-    public void manualBuildQSF(ModuleVO moduleVO) {
-        qidCount = new AtomicInteger(0);
+    public String buildQSF(ModuleVO moduleVO) {
+        if ("M_IntroModule".equals(moduleVO.getType())) {
+            QSFClient qsfClient = new QSFClient();
+            String surveyId = createSurvey(moduleVO, null);
+//            publishJobModules(moduleVO.getChildNodes(), qsfClient, surveyId);
+
+            AtomicInteger qidCount = new AtomicInteger(0);
+            idNodeQIDMap = new HashMap<>();
+            List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
+            for (QuestionVO qVO : moduleVO.getChildNodes()) {
+                createManualQuestionIntro(moduleVO, qVO, null, questionPayloads,surveyId,qidCount);
+            }
+            for (SimpleQuestionPayload payload : questionPayloads) {
+                iqsfClient.createQuestion(surveyId, payload, null);
+            }
+            return surveyId;
+        } else {
+            return manualBuildQSF(moduleVO, null);
+        }
+    }
+
+    private String publishJobModules(ModuleVO moduleVO) {
+        AtomicInteger qidCount = new AtomicInteger(0);
+        String surveyId = createSurvey(moduleVO, null);
+        List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
+        for (QuestionVO qVO : moduleVO.getChildNodes()) {
+            createManualQuestion(moduleVO, qVO, null, questionPayloads,qidCount);
+        }
+        for (SimpleQuestionPayload payload : questionPayloads) {
+            iqsfClient.createQuestion(surveyId, payload, null);
+        }
+        iqsfClient.publishSurvey(surveyId);
+        iqsfClient.activateSurvey(surveyId);
+        return surveyId;
+    }
+
+    private void createManualQuestionIntro
+            (NodeVO node, QuestionVO qVO, DisplayLogic logic,
+             List<SimpleQuestionPayload> questionPayloads, String parentSurveyId, AtomicInteger qidCount) {
+
+        if (!idNodeQIDMap.containsKey(qVO.getIdNode())) {
+            String qidStrCount = "QID" + qidCount.incrementAndGet();
+            idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
+        }
+        if (qVO.getLink() == 0L) {
+            String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
+            SimpleQuestionPayload payload = null;
+            if (logic == null) {
+                payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+                        buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
+            } else {
+                payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+                        buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
+            }
+            questionPayloads.add(payload);
+        }
+        int ansCount = 1;
+        for (PossibleAnswerVO answer : qVO.getChildNodes()) {
+            if (!answer.getChildNodes().isEmpty()) {
+                for (QuestionVO childQuestionVO : answer.getChildNodes()) {
+                    if (!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())) {
+                        String qidStrCount = "QID" + qidCount.incrementAndGet();
+                        idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);
+                    }
+                    if (childQuestionVO.getLink() == 0L) {
+                        String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
+                        String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
+                        createManualQuestionIntro(node, childQuestionVO,
+                                new DisplayLogic("BooleanExpression", false, new Condition(
+                                        new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
+                                                childQidCount, choiceLocator, "Expression", childQuestionVO.getName()),
+                                        "If")), questionPayloads, parentSurveyId,qidCount);
+                    } else if (childQuestionVO.getLink() != 0L) {
+                        NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
+                        String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
+                        String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
+                        if ("F".equals(linkModule.getNodeclass())) {
+                            for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
+                                createManualQuestionIntro(node, linkQuestion,
+                                        new DisplayLogic("BooleanExpression", false,
+                                                new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
+                                                        "Selected", childQidCount, choiceLocator, "Expression",
+                                                        childQuestionVO.getName()), "If")), questionPayloads,
+                                                        parentSurveyId,qidCount);
+                            }
+                        } else {
+                            String linkModSurveyId = publishJobModules((ModuleVO)linkModule);
+                            String url = iqsfClient.buildRedirectUrl(linkModSurveyId);
+                            Response response = iqsfClient.getFlow(parentSurveyId);
+                            FlowResult flowResult = ((GetFlowResponse) response.getEntity()).getResult();
+                            List<Logic> introLogics = new ArrayList<>();
+                            Logic introLogic = new Logic("Question",
+                                    childQidCount, "no",
+                                    choiceLocator, "Selected",
+                                    childQidCount,
+                                    choiceLocator, "Expression", childQuestionVO.getName());
+                            introLogics.add(introLogic);
+                            List<Condition> conditions = new ArrayList<>();
+                            Condition condition = new Condition(introLogics, "If");
+                            conditions.add(condition);
+                            BranchLogic branchLogic = new BranchLogic(conditions, "BooleanExpression");
+                            List<Flow> flows = new ArrayList<>();
+                            int branchFlow =  flowResult.getFlows().size()+1;
+                            Flow flow = new Flow(null, "EndSurvey", "FL_"+(branchFlow+1),
+                                    null, null, "Advanced", new Options("true",
+                                    "Redirect", url), null);
+                            flows.add(flow);
+                            flowResult.getFlows().add(new Flow(null,
+                                    "Branch",
+                                    "FL_"+(branchFlow), branchLogic, flows, null, null, "New Branch"));
+                            Flow mainFlow = new Flow(null, "Root", flowResult.getFlowId(),
+                                    null, flowResult.getFlows(), null, null,
+                                    null);
+                            iqsfClient.updateFlow(parentSurveyId, mainFlow);
+                        }
+
+                    }
+                }
+            }
+            ansCount++;
+        }
+    }
+
+    public String manualBuildQSF(ModuleVO moduleVO, String surveyId) {
+        AtomicInteger qidCount = new AtomicInteger(0);
         idNodeQIDMap = new HashMap<>();
-        String surveyId = null;
+        if (surveyId == null) {
+            surveyId = createSurvey(moduleVO, surveyId);
+        }
+        List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
+        for (QuestionVO qVO : moduleVO.getChildNodes()) {
+            createManualQuestion(moduleVO, qVO, null, questionPayloads,qidCount);
+        }
+        for (SimpleQuestionPayload payload : questionPayloads) {
+            iqsfClient.createQuestion(surveyId, payload, null);
+        }
+        return surveyId;
+    }
+
+    private String createSurvey(ModuleVO moduleVO, String surveyId) {
         Response response = iqsfClient.createSurvey(new SurveyCreateRequest(
                 moduleVO.getName().replaceAll("\\s+", ""),
                 "EN",
@@ -71,18 +208,11 @@ public class StudyAgentUtil {
             surveyId = surveyCreateResponse.getResult().getSurveyId();
             nodeQSFDao.save(surveyId, moduleVO.getIdNode());
         }
-
-        List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
-        for (QuestionVO qVO : moduleVO.getChildNodes()) {
-            createManualQuestion(moduleVO, qVO, null, questionPayloads);
-        }
-        for (SimpleQuestionPayload payload : questionPayloads) {
-            iqsfClient.createQuestion(surveyId, payload, null);
-        }
+        return surveyId;
     }
 
     public File moduleToApplicationQSF(ModuleVO module) throws IOException {
-        qidCount = new AtomicInteger(0);
+        AtomicInteger qidCount = new AtomicInteger(0);
         String path = "/opt/data";
         File directory = new File(path + "/qsf");
         if (!directory.exists()) {
@@ -134,7 +264,7 @@ public class StudyAgentUtil {
         SurveyElement defaultResponseElement = new SurveyElement(surveyId, QSFElementTypes.RESPONSESET.getAbbr(),
                 "RS_cMiHcMFlPoWrvyl", QSFElementTypes.RESPONSESET.getDesc(), null, null);
 
-        String questions = buildQuestions(module, surveyId);
+        String questions = buildQuestions(module, surveyId, qidCount);
         // new questions to be added to block elements - link modules
         SurveyElement blockElement = new SurveyElement(surveyId, QSFElementTypes.BLOCK.getAbbr(),
                 QSFElementTypes.BLOCK.getDesc(), null, null,
@@ -169,16 +299,16 @@ public class StudyAgentUtil {
         return file;
     }
 
-    private String buildQuestions(ModuleVO module, final String surveyId) {
+    private String buildQuestions(ModuleVO module, final String surveyId, AtomicInteger qidCount) {
         StringBuilder sb = new StringBuilder();
         for (QuestionVO qVO : module.getChildNodes()) {
-            createQuestion(module, surveyId, qVO, sb, null);
+            createQuestion(module, surveyId, qVO, sb, null,qidCount);
         }
         return sb.toString().replace("-999999", String.valueOf(qidCount.intValue() + 1));
     }
 
     private void createQuestion(NodeVO node, final String surveyId, QuestionVO qVO, StringBuilder sb,
-                                DisplayLogic logic) {
+                                DisplayLogic logic, AtomicInteger qidCount) {
         if (qVO.getLink() == 0L) {
             String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
             String qidStrCount = "QID" + qidCount.incrementAndGet();
@@ -210,7 +340,7 @@ public class StudyAgentUtil {
                                 new DisplayLogic("BooleanExpression", false, new Condition(
                                         new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
                                                 childQidCount, choiceLocator, "Expression", childQuestionVO.getName()),
-                                        "If")));
+                                        "If")),qidCount);
                     } else if (childQuestionVO.getLink() != 0L) {
                         NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
                         String childQidCount = "QID" + qidCount.intValue();
@@ -221,7 +351,7 @@ public class StudyAgentUtil {
                                         new DisplayLogic("BooleanExpression", false,
                                                 new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
                                                         "Selected", childQidCount, choiceLocator, "Expression",
-                                                        childQuestionVO.getName()), "If")));
+                                                        childQuestionVO.getName()), "If")),qidCount);
                             }
                         } else {
                             for (QuestionVO linkQuestion : ((ModuleVO) linkModule).getChildNodes()) {
@@ -229,7 +359,7 @@ public class StudyAgentUtil {
                                         new DisplayLogic("BooleanExpression", false,
                                                 new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
                                                         "Selected", childQidCount, choiceLocator, "Expression",
-                                                        childQuestionVO.getName()), "If")));
+                                                        childQuestionVO.getName()), "If")),qidCount);
                             }
                         }
 
@@ -242,7 +372,7 @@ public class StudyAgentUtil {
 
     private void createManualQuestion
             (NodeVO node, QuestionVO qVO, DisplayLogic logic,
-             List<SimpleQuestionPayload> questionPayloads) {
+             List<SimpleQuestionPayload> questionPayloads,AtomicInteger qidCount) {
 
         if (!idNodeQIDMap.containsKey(qVO.getIdNode())) {
             String qidStrCount = "QID" + qidCount.incrementAndGet();
@@ -277,7 +407,7 @@ public class StudyAgentUtil {
                                 new DisplayLogic("BooleanExpression", false, new Condition(
                                         new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
                                                 childQidCount, choiceLocator, "Expression", childQuestionVO.getName()),
-                                        "If")), questionPayloads);
+                                        "If")), questionPayloads,qidCount);
                     } else if (childQuestionVO.getLink() != 0L) {
                         NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
                         String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
@@ -288,7 +418,7 @@ public class StudyAgentUtil {
                                         new DisplayLogic("BooleanExpression", false,
                                                 new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
                                                         "Selected", childQidCount, choiceLocator, "Expression",
-                                                        childQuestionVO.getName()), "If")), questionPayloads);
+                                                        childQuestionVO.getName()), "If")), questionPayloads,qidCount);
                             }
                         } else {
                             for (QuestionVO linkQuestion : ((ModuleVO) linkModule).getChildNodes()) {
@@ -296,7 +426,7 @@ public class StudyAgentUtil {
                                         new DisplayLogic("BooleanExpression", false,
                                                 new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
                                                         "Selected", childQidCount, choiceLocator, "Expression",
-                                                        childQuestionVO.getName()), "If")), questionPayloads);
+                                                        childQuestionVO.getName()), "If")), questionPayloads,qidCount);
                             }
                         }
 

@@ -1,5 +1,6 @@
 package org.occideas.qsf;
 
+import org.occideas.qsf.payload.Flow;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.request.SurveyCreateRequest;
 
@@ -14,9 +15,13 @@ public interface IQSFClient {
 
     Response createQuestion(String surveyId, SimpleQuestionPayload questionPayload, String blockId);
 
+    Response getFlow(String surveyId);
+
     Response publishSurvey(String surveyId);
 
     Response activateSurvey(String surveyId);
+
+    Response updateFlow(String surveyId, Flow flow);
 
     String buildRedirectUrl(String surveyId);
 }
