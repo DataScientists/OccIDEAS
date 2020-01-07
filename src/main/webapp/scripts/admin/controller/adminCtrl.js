@@ -73,6 +73,26 @@
       });
     };
 
+    self.deleteQSFSurveys = function(){
+      AdminService.deleteQSFSurveys().then(function(response) {
+        if (response.status == '200') {
+          $ngToast.create({
+            className: 'success',
+            content: 'Delete QSF Surveys successfull.',
+            animation: 'slide'
+          });
+        } else {
+          $ngToast.create({
+            className: 'danger',
+            content: 'Delete QSF Surveys failed, check the logs.',
+            dismissButton: true,
+            dismissOnClick: false,
+            animation: 'slide'
+          });
+        }
+      });
+    };
+
     self.purgeParticipants = function() {
       AdminService.purgeParticipants().then(function(response) {
         if(response.status == '200') {

@@ -20,6 +20,7 @@ import org.occideas.qsf.request.SurveyPublishRequest;
 import org.occideas.qsf.request.SurveyUpdateRequest;
 import org.occideas.qsf.response.GetFlowResponse;
 import org.occideas.qsf.response.SurveyCreateResponse;
+import org.occideas.qsf.response.SurveyListResponse;
 import org.occideas.qsf.response.SurveyPublishResponse;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +81,7 @@ public class QSFClient implements IQSFClient {
                 .post(Entity.entity(multiPart, multiPart.getMediaType()))
                 .readEntity(SurveyCreateResponse.class);
 
-        return handleResponse(response, file.getAbsolutePath(),"uploadQSF");
+        return handleResponse(response, file.getAbsolutePath(), "uploadQSF");
     }
 
     @Override
@@ -101,7 +102,7 @@ public class QSFClient implements IQSFClient {
                     .post(Entity.entity(request, MediaType.APPLICATION_JSON))
                     .readEntity(SurveyCreateResponse.class);
 
-            return handleResponse(response, request,"createSurvey");
+            return handleResponse(response, request, "createSurvey");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -128,7 +129,7 @@ public class QSFClient implements IQSFClient {
                     .post(Entity.entity(questionPayload.toString(), MediaType.APPLICATION_JSON))
                     .readEntity(SurveyCreateResponse.class);
 
-            return handleResponse(response, questionPayload.toString(),"createQuestion");
+            return handleResponse(response, questionPayload.toString(), "createQuestion");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -154,7 +155,7 @@ public class QSFClient implements IQSFClient {
                     .headers(headers)
                     .get(GetFlowResponse.class);
 
-            return handleResponse(response, surveyId+"/flow","getFlow");
+            return handleResponse(response, surveyId + "/flow", "getFlow");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -182,7 +183,7 @@ public class QSFClient implements IQSFClient {
                     .post(Entity.entity(request, MediaType.APPLICATION_JSON))
                     .readEntity(SurveyPublishResponse.class);
 
-            return handleResponse(response, request,"publishSurvey");
+            return handleResponse(response, request, "publishSurvey");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -208,12 +209,52 @@ public class QSFClient implements IQSFClient {
                     .put(Entity.entity(request, MediaType.APPLICATION_JSON))
                     .readEntity(BaseResponse.class);
 
-            return handleResponse(response,request,"activateSurvey");
+            return handleResponse(response, request, "activateSurvey");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
     }
+
+    @Override
+    public Response deleteSurvey(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        BaseResponse response = ClientBuilder.newBuilder()
+                .withConfig(clientConfig)
+                .build()
+                .target(QSF_PATH)
+                .path("API/v3/surveys")
+                .path(surveyId)
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .delete()
+                .readEntity(BaseResponse.class);
+        log.info("deleting survey "+surveyId);
+        return handleResponse(response, surveyId + "/delete", "deleteSurvey");
+    }
+
+    @Override
+    public Response listSurvey() {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        SurveyListResponse response = ClientBuilder.newBuilder()
+                .withConfig(clientConfig)
+                .build()
+                .target(QSF_PATH)
+                .path("API/v3/surveys")
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .get()
+                .readEntity(SurveyListResponse.class);
+
+        return handleResponse(response, "/list", "listSurvey");
+    }
+
 
     @Override
     public Response updateFlow(String surveyId, Flow flow) {
@@ -235,7 +276,7 @@ public class QSFClient implements IQSFClient {
                     .put(Entity.entity(request, MediaType.APPLICATION_JSON))
                     .readEntity(BaseResponse.class);
 
-            return handleResponse(response,request,"updateFlow");
+            return handleResponse(response, request, "updateFlow");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -243,54 +284,26 @@ public class QSFClient implements IQSFClient {
     }
 
     @Override
-    public String buildRedirectUrl(String surveyId){
-        return "http://curtin.au1.qualtrics.com/jfe/form/"+surveyId;
+    public String buildRedirectUrl(String surveyId) {
+        return "http://curtin.au1.qualtrics.com/jfe/form/" + surveyId;
     }
 
 
-    private Response handleResponse(BaseResponse response,String requestBody, String function) {
+    private Response handleResponse(BaseResponse response, String requestBody, String function) {
         if ("200 - OK".equals(response.getMeta().getHttpStatus())) {
             log.info(response);
             return Response.ok(response).build();
         } else {
-            log.error(function+":"+response.getMeta().getHttpStatus() + "->error:" + response.getMeta().getError().getErrorMessage()+" --> "+requestBody);
+            log.error(function + ":" + response.getMeta().getHttpStatus() + "->error:" + response.getMeta().getError().getErrorMessage() + " --> " + requestBody);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(response.getMeta().getHttpStatus()
                     + "->error:" + response.getMeta().getError().getErrorMessage()).build();
         }
     }
 
-    public static void main(String[] args){
-//        QSFClient qsfClient = new QSFClient();
-//        Response response = qsfClient.publishSurvey("SV_cZmHV4CgxGEyA3H");
-//        System.out.println(response.getEntity());
-
-//        QSFClient qsfClient = new QSFClient();
-//        Response response = qsfClient.activateSurvey("SV_cZmHV4CgxGEyA3H");
-//        System.out.println(response.getEntity());
-
-//        QSFClient qsfClient = new QSFClient();
-//        Response response = qsfClient.getFlow("SV_ab0sdmQVM2YCIi9");
-//        FlowResult flowResult = ((GetFlowResponse)response.getEntity()).getResult();
-//        List<Logic> logics = new ArrayList<>();
-//        Logic logic = new Logic("Question","QID1","no","q://QID1/SelectableChoice/1","Selected","QID1",
-//                "q://QID1/SelectableChoice/1","Expression","test desc");
-//        logics.add(logic);
-//        List<Condition> conditions = new ArrayList<>();
-//        Condition condition = new Condition(logics,"If");
-//        conditions.add(condition);
-//        BranchLogic branchLogic = new BranchLogic(conditions,"BooleanExpression");
-//        List<Flow> flows = new ArrayList<>();
-//        Flow flow = new Flow(null,"EndSurvey", "FL_4", null, null, "Advanced", new Options("true",
-//                "Redirect","http://www.occideas.com"),null);
-//        flows.add(flow);
-//        flowResult.getFlows().add(new Flow(null,
-//                "Branch",
-//                "FL_3",branchLogic,flows, null,null,"New Branch"));
-//        Flow mainFlow = new Flow(null,"Root",flowResult.getFlowId(),
-//                null, flowResult.getFlows(), null, null,
-//                null);
-//        Response updateResponse = qsfClient.updateFlow("SV_ab0sdmQVM2YCIi9",mainFlow);
-//        System.out.println(updateResponse.getEntity());
-    }
+//    public static void main(String[] args) {
+////        QSFClient qsfClient = new QSFClient();
+////        System.out.println(qsfClient.listSurvey());
+////        qsfClient.deleteSurvey("SV_aaTp4pm5eEkrgy1");
+//    }
 
 }

@@ -21,6 +21,10 @@ public interface IQSFClient {
 
     Response activateSurvey(String surveyId);
 
+    Response deleteSurvey(String surveyId);
+
+    Response listSurvey();
+
     Response updateFlow(String surveyId, Flow flow);
 
     String buildRedirectUrl(String surveyId);
