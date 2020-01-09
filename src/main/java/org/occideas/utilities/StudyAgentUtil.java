@@ -66,7 +66,9 @@ public class StudyAgentUtil {
             idNodeQIDMap = new HashMap<>();
             List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
             for (QuestionVO qVO : moduleVO.getChildNodes()) {
-                createManualQuestionIntro(moduleVO, qVO, null, questionPayloads,surveyId,qidCount);
+                if(qVO.getDeleted() == 0) {
+                    createManualQuestionIntro(moduleVO, qVO, null, questionPayloads, surveyId, qidCount);
+                }
             }
             for (SimpleQuestionPayload payload : questionPayloads) {
                 iqsfClient.createQuestion(surveyId, payload, null);
@@ -116,11 +118,19 @@ public class StudyAgentUtil {
         }
         int ansCount = 1;
         for (PossibleAnswerVO answer : qVO.getChildNodes()) {
+            if(answer.getDeleted() != 0) {
+                continue;
+            }
             if (!answer.getChildNodes().isEmpty()) {
                 for (QuestionVO childQuestionVO : answer.getChildNodes()) {
+                    if(childQuestionVO.getDeleted() != 0) {
+                        continue;
+                    }
                     if (!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())) {
-                        String qidStrCount = "QID" + qidCount.incrementAndGet();
-                        idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);
+                        if (childQuestionVO.getLink() == 0L) {
+                            String qidStrCount = "QID" + qidCount.incrementAndGet();
+                            idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);
+                        }
                     }
                     if (childQuestionVO.getLink() == 0L) {
                         String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
