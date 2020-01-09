@@ -1,5 +1,6 @@
 package org.occideas.qsf.payload;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -8,6 +9,7 @@ import org.occideas.qsf.serializer.BranchLogicSerializer;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Flow extends BaseQSF {
 
     @JsonProperty(value = "ID")

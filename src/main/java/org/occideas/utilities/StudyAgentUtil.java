@@ -47,6 +47,7 @@ public class StudyAgentUtil {
     @Autowired
     private IQSFClient iqsfClient;
     private Map<Long, String> idNodeQIDMap;
+    private FlowResult flowResult;
 
     public ModuleVO getStudyAgentJson(String idNode) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -145,8 +146,10 @@ public class StudyAgentUtil {
                         } else {
                             String linkModSurveyId = publishJobModules((ModuleVO)linkModule);
                             String url = iqsfClient.buildRedirectUrl(linkModSurveyId);
-                            Response response = iqsfClient.getFlow(parentSurveyId);
-                            FlowResult flowResult = ((GetFlowResponse) response.getEntity()).getResult();
+                            if(flowResult == null) {
+                                Response getFlowResponse = iqsfClient.getFlow(parentSurveyId);
+                                flowResult = ((GetFlowResponse) getFlowResponse.getEntity()).getResult();
+                            }
                             List<Logic> introLogics = new ArrayList<>();
                             Logic introLogic = new Logic("Question",
                                     childQidCount, "no",
