@@ -8,6 +8,7 @@ import org.occideas.qsf.BaseQSF;
 import org.occideas.qsf.serializer.BranchLogicSerializer;
 
 import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Flow extends BaseQSF {
@@ -54,6 +55,10 @@ public class Flow extends BaseQSF {
         this.flows = flows;
         this.endingType = endingType;
         this.options = options;
+        this.description = description;
+    }
+
+    public Flow(String description) {
         this.description = description;
     }
 
@@ -119,5 +124,18 @@ public class Flow extends BaseQSF {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Flow flow = (Flow) o;
+        return description.equals(flow.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description);
     }
 }

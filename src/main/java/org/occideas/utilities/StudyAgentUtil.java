@@ -154,36 +154,39 @@ public class StudyAgentUtil {
                                                         parentSurveyId,qidCount);
                             }
                         } else {
-                            String linkModSurveyId = publishJobModules((ModuleVO)linkModule);
-                            String url = iqsfClient.buildRedirectUrl(linkModSurveyId);
                             if(flowResult == null) {
                                 Response getFlowResponse = iqsfClient.getFlow(parentSurveyId);
                                 flowResult = ((GetFlowResponse) getFlowResponse.getEntity()).getResult();
                             }
-                            List<Logic> introLogics = new ArrayList<>();
-                            Logic introLogic = new Logic("Question",
-                                    childQidCount, "no",
-                                    choiceLocator, "Selected",
-                                    childQidCount,
-                                    choiceLocator, "Expression", childQuestionVO.getName());
-                            introLogics.add(introLogic);
-                            List<Condition> conditions = new ArrayList<>();
-                            Condition condition = new Condition(introLogics, "If");
-                            conditions.add(condition);
-                            BranchLogic branchLogic = new BranchLogic(conditions, "BooleanExpression");
-                            List<Flow> flows = new ArrayList<>();
-                            int branchFlow =  flowResult.getFlows().size()+1;
-                            Flow flow = new Flow(null, "EndSurvey", "FL_"+(branchFlow+1),
-                                    null, null, "Advanced", new Options("true",
-                                    "Redirect", url), null);
-                            flows.add(flow);
-                            flowResult.getFlows().add(new Flow(null,
-                                    "Branch",
-                                    "FL_"+(branchFlow), branchLogic, flows, null, null, "New Branch"));
-                            Flow mainFlow = new Flow(null, "Root", flowResult.getFlowId(),
-                                    null, flowResult.getFlows(), null, null,
-                                    null);
-                            iqsfClient.updateFlow(parentSurveyId, mainFlow);
+                            if(!flowResult.getFlows().contains(new Flow(String.valueOf(linkModule.getIdNode())))) {
+                                String linkModSurveyId = publishJobModules((ModuleVO) linkModule);
+                                String url = iqsfClient.buildRedirectUrl(linkModSurveyId);
+                                List<Logic> introLogics = new ArrayList<>();
+                                Logic introLogic = new Logic("Question",
+                                        childQidCount, "no",
+                                        choiceLocator, "Selected",
+                                        childQidCount,
+                                        choiceLocator, "Expression", childQuestionVO.getName());
+                                introLogics.add(introLogic);
+                                List<Condition> conditions = new ArrayList<>();
+                                Condition condition = new Condition(introLogics, "If");
+                                conditions.add(condition);
+                                BranchLogic branchLogic = new BranchLogic(conditions, "BooleanExpression");
+                                List<Flow> flows = new ArrayList<>();
+                                int branchFlow = flowResult.getFlows().size() + 1;
+                                Flow flow = new Flow(null, "EndSurvey", "FL_" + (branchFlow + 1),
+                                        null, null, "Advanced", new Options("true",
+                                        "Redirect", url), null);
+                                flows.add(flow);
+                                flowResult.getFlows().add(new Flow(null,
+                                        "Branch",
+                                        "FL_" + (branchFlow), branchLogic, flows, null, null,
+                                        String.valueOf(linkModule.getIdNode())));
+                                Flow mainFlow = new Flow(null, "Root", flowResult.getFlowId(),
+                                        null, flowResult.getFlows(), null, null,
+                                        null);
+                                iqsfClient.updateFlow(parentSurveyId, mainFlow);
+                            }
                         }
 
                     }
