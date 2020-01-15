@@ -1867,7 +1867,7 @@
 //            	  printPdf(data[0],pdf,count,$itemScope.$modelValue.name);
         }
         ],
-        ['Download QSF',function($itemScope){
+        ['Export to Qualtrics',function($itemScope){
         	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
     		.then(function(response){
     			if(response.status == 200) {
@@ -1880,7 +1880,7 @@
     			    // downloadAnchorNode.remove();
                   ngToast.create({
                     className: 'success',
-                    content: "QSF file is being generated , kindly check the report tab for its progress."
+                    content: "QSF file is being generated/uploaded and might take some time, kindly check Qualtrics in a few minutes."
                   });
     		        } else {
     		          ngToast.create({
