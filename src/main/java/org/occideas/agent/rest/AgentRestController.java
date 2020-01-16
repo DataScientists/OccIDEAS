@@ -81,12 +81,12 @@ public class AgentRestController implements BaseRestController<AgentVO> {
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response update(AgentVO json) {
     try {
-      service.update(json);
+      long id = service.updateAndGetId(json);
+      return Response.ok(id).build();
     } catch (Throwable e) {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
     }
-    return Response.ok().build();
   }
 
   @Path(value = "/saveAgentGroup")

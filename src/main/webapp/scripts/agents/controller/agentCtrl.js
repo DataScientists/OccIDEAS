@@ -167,7 +167,7 @@
       AgentsService.save(row).then(function(response) {
         if(response.status === 200) {
           console.log('Agent Save was Successful!');
-
+          row.idAgent = response.data;
         }
       });
     }

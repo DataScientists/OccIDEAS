@@ -18,7 +18,7 @@ public interface IAgentDao {
 
   List<Agent> getAll();
 
-  void saveOrUpdate(Agent module);
+  long saveOrUpdate(Agent module);
 
   Agent merge(Agent module);
 

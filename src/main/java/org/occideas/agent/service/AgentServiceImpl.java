@@ -63,6 +63,11 @@ public class AgentServiceImpl implements AgentService {
   }
 
   @Override
+  public long updateAndGetId(AgentVO o) {
+    return dao.saveOrUpdate(mapper.convertToAgent(o, false));
+  }
+
+  @Override
   public void delete(AgentVO o) {
     dao.delete(mapper.convertToAgent(o, false));
   }

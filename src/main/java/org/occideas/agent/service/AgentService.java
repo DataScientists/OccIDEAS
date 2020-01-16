@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface AgentService extends BaseService<AgentVO> {
 
+  long updateAndGetId(AgentVO o);
+
   void updateStudyAgents(AgentVO json);
 
   List<SystemPropertyVO> loadStudyAgents();
