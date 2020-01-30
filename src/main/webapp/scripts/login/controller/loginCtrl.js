@@ -135,6 +135,8 @@
               $state.go('tabs.assessments');
             } else if(auth.userHasPermission(['ROLE_ASSESSOR'])) {
               $state.go('tabs.modules');
+            } else if(auth.userHasPermission(['ROLE_STUDYMANAGER'])) {
+              $state.go('tabs.admin');
             } else if(auth.userHasPermission(['ROLE_ADMIN'])) {
               $state.go('tabs.admin');
             } else {
