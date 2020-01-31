@@ -1867,31 +1867,7 @@
 //            	  printPdf(data[0],pdf,count,$itemScope.$modelValue.name);
         }
         ],
-        ['Export to Qualtrics',function($itemScope){
-        	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
-    		.then(function(response){
-    			if(response.status == 200) {
-    				// var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data));
-    			    // var downloadAnchorNode = document.createElement('a');
-    			    // downloadAnchorNode.setAttribute("href",     dataStr);
-    			    // downloadAnchorNode.setAttribute("download", $itemScope.$modelValue.name+'.qsf');
-    			    // document.body.appendChild(downloadAnchorNode); // required for firefox
-    			    // downloadAnchorNode.click();
-    			    // downloadAnchorNode.remove();
-                  ngToast.create({
-                    className: 'success',
-                    content: "QSF file is being generated/uploaded and might take some time, kindly check Qualtrics in a few minutes."
-                  });
-    		        } else {
-    		          ngToast.create({
-    		            className: 'danger',
-    		            content: "response was " + response.status + " - Unable to generate QSF file."
-    		          });
-
-    		        }
-    		});
-        }
-        ],
+        
         ['Set Active Intro Module', function($itemScope) {
           if(confirm('Are you sure you want to set  ' + $itemScope.$modelValue.name
             + ' as active intro module?')) {
@@ -1913,6 +1889,33 @@
       }
       ]);
     }
+    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+        $scope.moduleMenuOptions.unshift(['Export to Qualtrics',function($itemScope){
+        	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
+    		.then(function(response){
+    			if(response.status == 200) {
+    				// var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data));
+    			    // var downloadAnchorNode = document.createElement('a');
+    			    // downloadAnchorNode.setAttribute("href",     dataStr);
+    			    // downloadAnchorNode.setAttribute("download", $itemScope.$modelValue.name+'.qsf');
+    			    // document.body.appendChild(downloadAnchorNode); // required for firefox
+    			    // downloadAnchorNode.click();
+    			    // downloadAnchorNode.remove();
+                  ngToast.create({
+                    className: 'success',
+                    content: "Qualtrics survey is being generated/uploaded and might take some time, kindly check Qualtrics in a few minutes."
+                  });
+    		        } else {
+    		          ngToast.create({
+    		            className: 'danger',
+    		            content: "response was " + response.status + " - Unable to export to Qualtrics"
+    		          });
+
+    		        }
+    		});
+        }
+        ]);
+      }
     $scope.questionMenuOptions =
       [['Add Possible Answer', function($itemScope) {
         $scope.newSubItem($itemScope);
