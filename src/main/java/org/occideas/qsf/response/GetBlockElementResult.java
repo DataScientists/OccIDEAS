@@ -1,39 +1,29 @@
-package org.occideas.qsf.payload;
+package org.occideas.qsf.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.occideas.qsf.BaseQSF;
 import org.occideas.qsf.BlockElement;
+import org.occideas.qsf.payload.Options;
 
 import java.util.List;
 
-public class Default extends BaseQSF implements Payload {
+public class GetBlockElementResult extends Result{
 
     @JsonProperty(value = "Type")
-    private String type = "Default";
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String type;
     @JsonProperty(value = "Description")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value = "ID")
-    private String id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String id;
     @JsonProperty(value = "BlockElements")
-    private List<BlockElement> blockElements;
-
-    public Default() {
-    }
-
-    public Default(String type, String description) {
-        this.type = type;
-        this.description = description;
-    }
-
-    public Default(String type, String description, String id, List<BlockElement> blockElements) {
-        this.type = type;
-        this.description = description;
-        this.id = id;
-        this.blockElements = blockElements;
-    }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<BlockElement> blockElement;
+    @JsonProperty(value = "Options")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Options options;
 
     public String getType() {
         return type;
@@ -51,6 +41,14 @@ public class Default extends BaseQSF implements Payload {
         this.description = description;
     }
 
+    public Options getOptions() {
+        return options;
+    }
+
+    public void setOptions(Options options) {
+        this.options = options;
+    }
+
     public String getId() {
         return id;
     }
@@ -59,11 +57,11 @@ public class Default extends BaseQSF implements Payload {
         this.id = id;
     }
 
-    public List<BlockElement> getBlockElements() {
-        return blockElements;
+    public List<BlockElement> getBlockElement() {
+        return blockElement;
     }
 
-    public void setBlockElements(List<BlockElement> blockElements) {
-        this.blockElements = blockElements;
+    public void setBlockElement(List<BlockElement> blockElement) {
+        this.blockElement = blockElement;
     }
 }

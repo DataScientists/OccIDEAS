@@ -1,8 +1,10 @@
 package org.occideas.qsf;
 
+import org.occideas.qsf.payload.Default;
 import org.occideas.qsf.payload.Flow;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.request.SurveyCreateRequest;
+import org.occideas.qsf.response.GetBlockElementResult;
 
 import javax.ws.rs.core.Response;
 import java.io.File;
@@ -14,6 +16,12 @@ public interface IQSFClient {
     Response createSurvey(SurveyCreateRequest surveyRequest);
 
     Response createQuestion(String surveyId, SimpleQuestionPayload questionPayload, String blockId);
+
+    Response createBlock(String surveyId, Default defaultElement);
+
+    Response updateBlock(String surveyId, String blockId, GetBlockElementResult defaultElement);
+
+    Response getBlock(String surveyId, String blockId);
 
     Response getFlow(String surveyId);
 

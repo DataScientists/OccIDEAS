@@ -13,9 +13,7 @@ import org.occideas.qsf.dao.INodeQSFDao;
 import org.occideas.qsf.payload.Properties;
 import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
-import org.occideas.qsf.response.FlowResult;
-import org.occideas.qsf.response.GetFlowResponse;
-import org.occideas.qsf.response.SurveyCreateResponse;
+import org.occideas.qsf.response.*;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +57,10 @@ public class StudyAgentUtil {
     public String buildQSF(ModuleVO moduleVO) {
         if ("M_IntroModule".equals(moduleVO.getType())) {
             QSFClient qsfClient = new QSFClient();
-            String surveyId = createSurvey(moduleVO, null);
+            SurveyCreateResult surveyCreateResult = createSurvey(moduleVO, null);
+            String surveyId = surveyCreateResult.getSurveyId();
 //            publishJobModules(moduleVO.getChildNodes(), qsfClient, surveyId);
+            String blockId = surveyCreateResult.getDefaultBlockId();
 
             AtomicInteger qidCount = new AtomicInteger(0);
             idNodeQIDMap = new HashMap<>();
@@ -70,9 +70,14 @@ public class StudyAgentUtil {
                     createManualQuestionIntro(moduleVO, qVO, null, questionPayloads, surveyId, qidCount);
                 }
             }
+
             for (SimpleQuestionPayload payload : questionPayloads) {
                 iqsfClient.createQuestion(surveyId, payload, null);
             }
+            GetBlockElementResult getBlockElementResult = getBlock(surveyId,blockId);
+            createPageBreaks(getBlockElementResult);
+//            getBlockElementResult.setBlockElement(buildBlockElements(questionPayloads.size(),moduleVO.getName()));
+            iqsfClient.updateBlock(surveyId,blockId,getBlockElementResult);
             return surveyId;
         } else {
             return manualBuildQSF(moduleVO, null);
@@ -81,17 +86,34 @@ public class StudyAgentUtil {
 
     private String publishJobModules(ModuleVO moduleVO) {
         AtomicInteger qidCount = new AtomicInteger(0);
-        String surveyId = createSurvey(moduleVO, null);
+        SurveyCreateResult result = createSurvey(moduleVO, null);
+        String surveyId = result.getSurveyId();
+        String blockId = result.getDefaultBlockId();
+
         List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
         for (QuestionVO qVO : moduleVO.getChildNodes()) {
             createManualQuestion(moduleVO, qVO, null, questionPayloads,qidCount);
         }
+
         for (SimpleQuestionPayload payload : questionPayloads) {
             iqsfClient.createQuestion(surveyId, payload, null);
         }
+        GetBlockElementResult getBlockElementResult = getBlock(surveyId,blockId);
+        createPageBreaks(getBlockElementResult);
+//        getBlockElementResult.setBlockElement(buildBlockElements(questionPayloads.size(),moduleVO.getName()));
+        iqsfClient.updateBlock(surveyId,blockId,getBlockElementResult);
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);
         return surveyId;
+    }
+
+    private void createPageBreaks(GetBlockElementResult getBlockElementResult) {
+        int size = getBlockElementResult.getBlockElement().size();
+        int x = 0;
+        for(int i =0;i < size;i++){
+            getBlockElementResult.getBlockElement().add(x+1,new BlockElement("Page Break", null));
+            x+=2;
+        }
     }
 
     private void createManualQuestionIntro
@@ -200,7 +222,8 @@ public class StudyAgentUtil {
         AtomicInteger qidCount = new AtomicInteger(0);
         idNodeQIDMap = new HashMap<>();
         if (surveyId == null) {
-            surveyId = createSurvey(moduleVO, surveyId);
+            SurveyCreateResult surveyCreateResult = createSurvey(moduleVO, surveyId);
+            surveyId = surveyCreateResult.getSurveyId();
         }
         List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
         for (QuestionVO qVO : moduleVO.getChildNodes()) {
@@ -212,7 +235,7 @@ public class StudyAgentUtil {
         return surveyId;
     }
 
-    private String createSurvey(ModuleVO moduleVO, String surveyId) {
+    private SurveyCreateResult createSurvey(ModuleVO moduleVO, String surveyId) {
         Response response = iqsfClient.createSurvey(new SurveyCreateRequest(
                 moduleVO.getName().replaceAll("\\s+", ""),
                 "EN",
@@ -221,10 +244,20 @@ public class StudyAgentUtil {
         Object entity = response.getEntity();
         if (entity instanceof SurveyCreateResponse) {
             SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) entity;
-            surveyId = surveyCreateResponse.getResult().getSurveyId();
-            nodeQSFDao.save(surveyId, moduleVO.getIdNode());
+            nodeQSFDao.save(surveyCreateResponse.getResult().getSurveyId(), moduleVO.getIdNode());
+            return surveyCreateResponse.getResult();
         }
-        return surveyId;
+        return null;
+    }
+
+    private GetBlockElementResult getBlock(String surveyId, String blockId) {
+        Response response = iqsfClient.getBlock(surveyId,blockId);
+        Object entity = response.getEntity();
+        if (entity instanceof GetBlockElementResponse) {
+            GetBlockElementResponse getBlockElementResponse = (GetBlockElementResponse) entity;
+            return getBlockElementResponse.getResult();
+        }
+        return null;
     }
 
     public File moduleToApplicationQSF(ModuleVO module) throws IOException {
@@ -477,9 +510,7 @@ public class StudyAgentUtil {
         int count = 0;
         while (count < qidCount) {
             blockElements.add(new BlockElement("Question", "QID" + (++count)));
-            if (count != qidCount) {
-                blockElements.add(new BlockElement("Page Break", null));
-            }
+            blockElements.add(new BlockElement("Page Break", null));
         }
         return blockElements;
     }
@@ -737,10 +768,5 @@ public class StudyAgentUtil {
             }
         }
     }
-
-    // public static void main(String[] args) {
-    // StudyAgentUtil studyAgentUtil = new StudyAgentUtil();
-    // studyAgentUtil.purgeStudyAgentFiles();
-    // }
 
 }

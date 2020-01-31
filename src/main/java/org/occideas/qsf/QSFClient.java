@@ -13,15 +13,13 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.occideas.qsf.payload.Default;
 import org.occideas.qsf.payload.Flow;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.request.SurveyPublishRequest;
 import org.occideas.qsf.request.SurveyUpdateRequest;
-import org.occideas.qsf.response.GetFlowResponse;
-import org.occideas.qsf.response.SurveyCreateResponse;
-import org.occideas.qsf.response.SurveyListResponse;
-import org.occideas.qsf.response.SurveyPublishResponse;
+import org.occideas.qsf.response.*;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -130,6 +128,88 @@ public class QSFClient implements IQSFClient {
                     .readEntity(SurveyCreateResponse.class);
 
             return handleResponse(response, questionPayload.toString(), "createQuestion");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response createBlock(String surveyId, Default defaultElement) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+//            String request = JSON_MAPPER.writeValueAsString(defaultElement);
+            BlockCreateResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/survey-definitions")
+                    .path(surveyId)
+                    .path("blocks")
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .post(Entity.entity(defaultElement.toString(), MediaType.APPLICATION_JSON))
+                    .readEntity(BlockCreateResponse.class);
+
+            return handleResponse(response, defaultElement.toString(), "createBlock");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response updateBlock(String surveyId, String blockId, GetBlockElementResult element) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+//            String request = JSON_MAPPER.writeValueAsString(defaultElement);
+            BaseResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/survey-definitions")
+                    .path(surveyId)
+                    .path("blocks")
+                    .path(blockId)
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .put(Entity.entity(element.toString(), MediaType.APPLICATION_JSON))
+                    .readEntity(BaseResponse.class);
+
+            return handleResponse(response, element.toString(), "updateBlock");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response getBlock(String surveyId, String blockId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            GetBlockElementResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/survey-definitions")
+                    .path(surveyId)
+                    .path("blocks")
+                    .path(blockId)
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .get()
+                    .readEntity(GetBlockElementResponse.class);
+
+            return handleResponse(response, "API/v3/survey-definitions/"+surveyId+"/blocks/"+blockId, "updateBlock");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
