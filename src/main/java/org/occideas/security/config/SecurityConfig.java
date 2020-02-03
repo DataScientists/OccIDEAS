@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,6 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.Executor;
 
 @Configuration
 @EnableWebSecurity
@@ -46,12 +48,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-      .authorizeRequests().antMatchers(actuatorEndpoints()).hasRole(backendAdminRole).anyRequest()
-      .authenticated().and().anonymous().disable().exceptionHandling()
-      .authenticationEntryPoint(unauthorizedEntryPoint());
+            .authorizeRequests().antMatchers(actuatorEndpoints()).hasRole(backendAdminRole).anyRequest()
+            .authenticated().and().anonymous().disable().exceptionHandling()
+            .authenticationEntryPoint(unauthorizedEntryPoint());
 
     http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
-      .addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
+            .addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
   }
 
   @Bean
@@ -79,8 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     auth.authenticationProvider(domainUsernamePasswordAuthenticationProvider())
-      .authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider())
-      .authenticationProvider(tokenAuthenticationProvider());
+            .authenticationProvider(backendAdminUsernamePasswordAuthenticationProvider())
+            .authenticationProvider(tokenAuthenticationProvider());
   }
 
   private String[] actuatorEndpoints() {
@@ -110,6 +112,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public AuthenticationProvider tokenAuthenticationProvider() {
     return new TokenAuthenticationProvider(tokenManager());
+  }
+
+  @Bean(name = "threadPoolTaskExecutor")
+  public Executor threadPoolTaskExecutor() {
+    return new ThreadPoolTaskExecutor();
   }
 
 }

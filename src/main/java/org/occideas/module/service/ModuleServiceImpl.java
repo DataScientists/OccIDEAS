@@ -509,18 +509,13 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	@Async
+	@Async("threadPoolTaskExecutor")
 	public void manualBuildQSFFilter(NodeVO nodeVO, String extractUserFromToken) {
-			try {
-				studyAgentUtil.moduleToApplicationQSF((ModuleVO)nodeVO);
-			} catch (IOException e) {
-				log.error(e.getMessage(),e);
-			}
-
+		studyAgentUtil.buildQSF(((ModuleVO)nodeVO));
 	}
 
 	@Override
-	@Async
+	@Async("threadPoolTaskExecutor")
 	public void manualBuildQSF(Long id, String user) {
 		List<ModuleVO> modules = this.findById(id);
 		if (!modules.isEmpty()) { studyAgentUtil.buildQSF(modules.get(0));
