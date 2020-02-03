@@ -1891,31 +1891,56 @@
     }
     if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
         $scope.moduleMenuOptions.unshift(['Export to Qualtrics',function($itemScope){
-        	ModulesService.convertModuleToApplicationQSF($itemScope.$modelValue.idNode)
-    		.then(function(response){
-    			if(response.status == 200) {
-    				// var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data));
-    			    // var downloadAnchorNode = document.createElement('a');
-    			    // downloadAnchorNode.setAttribute("href",     dataStr);
-    			    // downloadAnchorNode.setAttribute("download", $itemScope.$modelValue.name+'.qsf');
-    			    // document.body.appendChild(downloadAnchorNode); // required for firefox
-    			    // downloadAnchorNode.click();
-    			    // downloadAnchorNode.remove();
-                  ngToast.create({
-                    className: 'success',
-                    content: "Qualtrics survey is being generated/uploaded and might take some time, kindly check Qualtrics in a few minutes."
-                  });
-    		        } else {
-    		          ngToast.create({
-    		            className: 'danger',
-    		            content: "response was " + response.status + " - Unable to export to Qualtrics"
-    		          });
 
-    		        }
-    		});
+          $itemScope.triggerExport = ($modelValue) => {
+            ModulesService.convertModuleToApplicationQSF($modelValue.idNode,false)
+                .then(function(response){
+                  if(response.status == 200) {
+                    ngToast.create({
+                      className: 'success',
+                      content: "Qualtrics survey is being generated/uploaded, kindly check Qualtrics in a few minutes."
+                    });
+                  } else {
+                    ngToast.create({
+                      className: 'danger',
+                      content: "response was " + response.status + " - Unable to export to Qualtrics"
+                    });
+
+                  }
+                  $mdDialog.cancel();
+                });
+          };
+          $itemScope.triggerExportStudyAgent = ($modelValue) => {
+            ModulesService.convertModuleToApplicationQSF($modelValue.idNode,true)
+                .then(function(response){
+                  if(response.status == 200) {
+                    ngToast.create({
+                      className: 'success',
+                      content: "[Filter Study Agent] Qualtrics survey is being generated/uploaded, kindly check Qualtrics in a few minutes."
+                    });
+                  } else {
+                    ngToast.create({
+                      className: 'danger',
+                      content: "response was " + response.status + " - Unable to export to Qualtrics"
+                    });
+
+                  }
+                  $mdDialog.cancel();
+                });
+          };
+
+          $mdDialog.show({
+            scope: $itemScope,
+            preserveScope: true,
+            templateUrl: 'scripts/questions/partials/qsfViewDialog.html',
+            clickOutsideToClose: false
+          });
         }
         ]);
       }
+
+
+
     $scope.questionMenuOptions =
       [['Add Possible Answer', function($itemScope) {
         $scope.newSubItem($itemScope);

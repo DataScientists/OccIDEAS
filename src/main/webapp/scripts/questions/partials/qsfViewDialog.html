@@ -2,7 +2,7 @@
 <form ng-cloak>
 	<md-toolbar>
 	<div class="md-toolbar-tools">
-		<h2>QSF Format</h2>
+		<h2>Export to Qualtrics</h2>
 		<span flex></span>
 		<md-button class="md-icon-button" ng-click="cancel()"> <span
 			aria-hidden="true" class="glyphicon glyphicon-remove"></span> </md-button>
@@ -11,19 +11,18 @@
 
 	<md-dialog-content>
 	<div class="md-dialog-content">
-		<a href="" class="btn btn-primary btn-lg" role="button" copy-to-clipboard="{{json}}">Copy to Clipboard</a>
-		<div class="row" ng-if="json">
-			<pre>
-			<code>
-			{{json}}
-			</code>
-			</pre>
-		</div>
+			Choose option to Export {{$modelValue.idNode}}-{{$modelValue.name}} to Qualtrics
 	</div>
 	</md-dialog-content>
 
-	<md-dialog-actions layout="row"> <span flex></span>
-	<md-button ng-click="cancel()"> Cancel </md-button> </md-dialog-actions>
+	<md-dialog-actions layout="row">
+		<span flex></span>
+		<md-button ng-click="triggerExport($modelValue)"> Export </md-button>
+		<span flex></span>
+		<md-button ng-click="triggerExportStudyAgent($modelValue)"> Export Filter Study Agent</md-button>
+		<span flex></span>
+		<md-button ng-click="cancel()"> Cancel </md-button>
+	</md-dialog-actions>
 </form>
 </md-dialog>
 

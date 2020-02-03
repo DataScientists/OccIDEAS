@@ -92,10 +92,19 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 	@Path(value = "/convertModuleToApplicationQSF")
 	@Consumes(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
 	@Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
-	public Response convertModuleToApplicationQSF(@QueryParam("id") Long id) throws IOException {
+	public Response convertModuleToApplicationQSF(@QueryParam("id") Long id,
+												  @QueryParam("filter") boolean filterStudy) throws IOException {
 		try {
 			//service.convertToApplicationQSF(id,extractUserFromToken());
-			service.manualBuildQSF(id, extractUserFromToken());
+			if(filterStudy) {
+				NodeVO nodeVO = service.getModuleFilterStudyAgent(id);
+				if(nodeVO == null){
+					return Response.status(Status.BAD_REQUEST.getStatusCode(),"No study agent exist for this module.").build();
+				}
+				service.manualBuildQSFFilter(nodeVO, extractUserFromToken());
+			}else {
+				service.manualBuildQSF(id, extractUserFromToken());
+			}
 			return Response.ok().build();
 		} catch (Throwable e) {
 			e.printStackTrace();

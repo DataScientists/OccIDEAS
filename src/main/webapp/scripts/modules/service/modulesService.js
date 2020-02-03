@@ -9,8 +9,8 @@
     var modulesUrl = apiUrl + 'module';
     var apiKey = '';
 
-    function convertModuleToApplicationQSF(idNode) {
-        var restUrl = 'web/rest/module/convertModuleToApplicationQSF?id=' + idNode;
+    function convertModuleToApplicationQSF(idNode,filterStudyAgent) {
+        var restUrl = 'web/rest/module/convertModuleToApplicationQSF?id=' + idNode+'&filter='+filterStudyAgent;
 
         var request = $http({
           method: 'GET',

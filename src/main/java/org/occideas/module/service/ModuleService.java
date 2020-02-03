@@ -2,7 +2,6 @@ package org.occideas.module.service;
 
 import org.occideas.entity.Module;
 import org.occideas.entity.PossibleAnswer;
-import org.occideas.qsf.ApplicationQSF;
 import org.occideas.vo.*;
 import org.springframework.scheduling.annotation.Async;
 
@@ -83,4 +82,7 @@ public interface ModuleService {
 	List<ModuleVO> listAll();
 
 	File convertToApplicationQSF(Long id, String user);
+
+	@Async
+	void manualBuildQSFFilter(NodeVO nodeVO, String extractUserFromToken);
 }
