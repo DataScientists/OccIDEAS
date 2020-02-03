@@ -509,6 +509,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
+	@Async
 	public void manualBuildQSFFilter(NodeVO nodeVO, String extractUserFromToken) {
 			try {
 				studyAgentUtil.moduleToApplicationQSF((ModuleVO)nodeVO);
