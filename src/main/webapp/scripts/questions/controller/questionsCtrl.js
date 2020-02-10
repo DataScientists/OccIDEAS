@@ -1690,7 +1690,7 @@
           collapseOrExpand($itemScope);
         }
         ], null, // Divider
-        ['Run Interview', function($itemScope) {
+      /*  ['Run Interview', function($itemScope) {
           SystemPropertyService.getByName("activeIntro").then(function(response) {
             if(response.status == '200') {
               if(response.data == "") {
@@ -1746,7 +1746,7 @@
             }
           });
         }
-        ], null, // Divider
+        ], null, // Divider */
         ['Save Module As', function($itemScope) {
           var newScope = $itemScope.$new();
           newScope.name = $itemScope.$modelValue.name + "(Copy)";
