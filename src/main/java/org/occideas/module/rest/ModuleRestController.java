@@ -99,7 +99,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 			if(filterStudy) {
 				NodeVO nodeVO = service.getModuleFilterStudyAgent(id);
 				if(nodeVO == null){
-					return Response.status(Status.BAD_REQUEST.getStatusCode(),"No study agent exist for this module.").build();
+					return Response.status(Status.BAD_REQUEST.getStatusCode()).build();
 				}
 				service.manualBuildQSFFilter(nodeVO, extractUserFromToken());
 			}else {
