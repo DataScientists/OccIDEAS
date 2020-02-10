@@ -11,7 +11,7 @@ public enum ChoiceFactory {
         @Override
         public Choice apply(AnswerDecorator answerDecorator) {
             Choice choice = new Choice(answerDecorator.getName().substring(0, 4) + "_" +
-                    answerDecorator.answerVO.getNumber() + "_" + answerDecorator.answerVO.getName());
+                    answerDecorator.answerVO.getNumber() + " " + answerDecorator.answerVO.getName());
             choice.setTextEntry("true");
             return choice;
         }
@@ -19,7 +19,7 @@ public enum ChoiceFactory {
         @Override
         public Choice apply(AnswerDecorator answerDecorator) {
             Choice choice = new Choice(answerDecorator.getName().substring(0, 4) + "_" +
-                    answerDecorator.answerVO.getNumber() + "_" + answerDecorator.answerVO.getName());
+                    answerDecorator.answerVO.getNumber() + " " + answerDecorator.answerVO.getName());
             choice.setTextEntry("true");
             return choice;
         }
@@ -27,7 +27,7 @@ public enum ChoiceFactory {
         @Override
         public Choice apply(AnswerDecorator answerDecorator) {
             Choice choice = new Choice(answerDecorator.getName().substring(0, 4) + "_" +
-                    answerDecorator.answerVO.getNumber() + "_" + answerDecorator.answerVO.getName());
+                    answerDecorator.answerVO.getNumber() + " " + answerDecorator.answerVO.getName());
             choice.setTextEntry("true");
             return choice;
         }
@@ -35,7 +35,7 @@ public enum ChoiceFactory {
         @Override
         public Choice apply(AnswerDecorator answerDecorator) {
             Choice choice = new Choice(answerDecorator.getName().substring(0, 4) + "_" +
-                    answerDecorator.answerVO.getNumber() + "_" + answerDecorator.answerVO.getName());
+                    answerDecorator.answerVO.getNumber() + " " + answerDecorator.answerVO.getName());
             choice.setTextEntry("true");
             return choice;
         }
@@ -82,7 +82,7 @@ public enum ChoiceFactory {
             }
         }
         return new Choice(name.substring(0, 4) + "_" +
-                answerVO.getNumber() + "_" + answerVO.getName());
+                answerVO.getNumber() + " " + answerVO.getName());
     }
 
 }
