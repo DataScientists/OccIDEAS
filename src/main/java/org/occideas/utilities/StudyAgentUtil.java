@@ -71,8 +71,12 @@ public class StudyAgentUtil {
                 }
             }
 
+            int i=0;
+            int size = questionPayloads.size();
             for (SimpleQuestionPayload payload : questionPayloads) {
                 iqsfClient.createQuestion(surveyId, payload, null);
+                System.out.println(i+ " of "+ size);
+                i++;
             }
             GetBlockElementResult getBlockElementResult = getBlock(surveyId,blockId);
             createPageBreaks(getBlockElementResult);
@@ -95,9 +99,15 @@ public class StudyAgentUtil {
             createManualQuestion(moduleVO, qVO, null, questionPayloads,qidCount);
         }
 
+        int i=0;
+        int iSize = questionPayloads.size();
         for (SimpleQuestionPayload payload : questionPayloads) {
+        	System.out.println(payload.getQuestionText());
+        	System.out.println(i + " of " +iSize);
             iqsfClient.createQuestion(surveyId, payload, null);
+            i++;
         }
+        idNodeQIDMap = new HashMap<>();
         GetBlockElementResult getBlockElementResult = getBlock(surveyId,blockId);
         createPageBreaks(getBlockElementResult);
 //        getBlockElementResult.setBlockElement(buildBlockElements(questionPayloads.size(),moduleVO.getName()));
@@ -120,11 +130,11 @@ public class StudyAgentUtil {
             (NodeVO node, QuestionVO qVO, DisplayLogic logic,
              List<SimpleQuestionPayload> questionPayloads, String parentSurveyId, AtomicInteger qidCount) {
 
-        if (!idNodeQIDMap.containsKey(qVO.getIdNode())) {
-            String qidStrCount = "QID" + qidCount.incrementAndGet();
-            idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
-        }
         if (qVO.getLink() == 0L) {
+        	if (!idNodeQIDMap.containsKey(qVO.getIdNode())) {
+                String qidStrCount = "QID" + qidCount.incrementAndGet();
+                idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
+            }
             String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
             SimpleQuestionPayload payload = null;
             if (logic == null) {
@@ -148,13 +158,12 @@ public class StudyAgentUtil {
                     if(childQuestionVO.getDeleted() != 0) {
                         continue;
                     }
-                    if (!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())) {
-                        if (childQuestionVO.getLink() == 0L) {
-                            String qidStrCount = "QID" + qidCount.incrementAndGet();
-                            idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);
-                        }
-                    }
+                    
                     if (childQuestionVO.getLink() == 0L) {
+                    	if (!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())) {                          
+                    		String qidStrCount = "QID" + qidCount.incrementAndGet();
+                    		idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);                          
+                        }
                         String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
                         createManualQuestionIntro(node, childQuestionVO,
@@ -229,8 +238,12 @@ public class StudyAgentUtil {
         for (QuestionVO qVO : moduleVO.getChildNodes()) {
             createManualQuestion(moduleVO, qVO, null, questionPayloads,qidCount);
         }
+        int i=0;
+        int size = questionPayloads.size();
         for (SimpleQuestionPayload payload : questionPayloads) {
             iqsfClient.createQuestion(surveyId, payload, null);
+            System.out.println(i+" of "+size);
+            i++;
         }
         return surveyId;
     }
@@ -295,7 +308,7 @@ public class StudyAgentUtil {
 
         SurveyElement surveyOptions = new SurveyElement(surveyId, QSFElementTypes.OPTIONS.getAbbr(),
                 QSFElementTypes.OPTIONS.getDesc(), null, null,
-                buildPayload(new SurveyOptionPayload("false", "true", "PublicSurvey", "false", "Yes", "true", "None",
+                buildPayload(new SurveyOptionPayload("true", "true", "PublicSurvey", "false", "Yes", "true", "None",
                         "DefaultMessage", "", "", "None", "+1 week", "", "\u2190", "\u2192", "curtin", "MQ", "curtin1",
                         1)));
 
@@ -423,11 +436,11 @@ public class StudyAgentUtil {
             (NodeVO node, QuestionVO qVO, DisplayLogic logic,
              List<SimpleQuestionPayload> questionPayloads,AtomicInteger qidCount) {
 
-        if (!idNodeQIDMap.containsKey(qVO.getIdNode())) {
-            String qidStrCount = "QID" + qidCount.incrementAndGet();
-            idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
-        }
         if (qVO.getLink() == 0L) {
+        	if (!idNodeQIDMap.containsKey(qVO.getIdNode())) {
+                String qidStrCount = "QID" + qidCount.incrementAndGet();
+                idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
+            }
             String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
             SimpleQuestionPayload payload = null;
             if (logic == null) {
@@ -440,16 +453,27 @@ public class StudyAgentUtil {
                         buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
             }
             questionPayloads.add(payload);
+        } else if (qVO.getLink() != 0L) {
+            NodeVO linkModule = nodeService.getNode(qVO.getLink());
+            if ("F".equals(linkModule.getNodeclass())) {
+                for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
+                	System.out.println(linkQuestion.getName());
+                	createManualQuestion(linkModule, linkQuestion, null, questionPayloads,qidCount);
+                }
+            } else{
+            	System.out.println("Something not right here!!");
+            }
+
         }
         int ansCount = 1;
         for (PossibleAnswerVO answer : qVO.getChildNodes()) {
             if (!answer.getChildNodes().isEmpty()) {
                 for (QuestionVO childQuestionVO : answer.getChildNodes()) {
-                    if (!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())) {
-                        String qidStrCount = "QID" + qidCount.incrementAndGet();
-                        idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);
-                    }
                     if (childQuestionVO.getLink() == 0L) {
+                    	if (!idNodeQIDMap.containsKey(childQuestionVO.getIdNode())) {
+                            String qidStrCount = "QID" + qidCount.incrementAndGet();
+                            idNodeQIDMap.put(childQuestionVO.getIdNode(), qidStrCount);
+                        }
                         String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
                         createManualQuestion(node, childQuestionVO,
@@ -463,7 +487,7 @@ public class StudyAgentUtil {
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
                         if ("F".equals(linkModule.getNodeclass())) {
                             for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
-                                createManualQuestion(node, linkQuestion,
+                                createManualQuestion(linkModule, linkQuestion,
                                         new DisplayLogic("BooleanExpression", false,
                                                 new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
                                                         "Selected", childQidCount, choiceLocator, "Expression",
