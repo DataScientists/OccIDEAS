@@ -1,8 +1,10 @@
 package org.occideas.qsf.payload;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.occideas.qsf.BaseQSF;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SurveyOptionPayload extends BaseQSF implements Payload{
 
     @JsonProperty(value = "BackButton")
@@ -21,6 +23,8 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     private String surveyExpiration;
     @JsonProperty(value = "SurveyTermination")
     private String surveyTermination;
+    @JsonProperty(value = "SurveyTitle")
+    private String surveyTitle;
     @JsonProperty(value = "Header")
     private String header;
     @JsonProperty(value = "Footer")
@@ -219,5 +223,13 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
 
     public void setNewScoring(int newScoring) {
         this.newScoring = newScoring;
+    }
+
+    public String getSurveyTitle() {
+        return surveyTitle;
+    }
+
+    public void setSurveyTitle(String surveyTitle) {
+        this.surveyTitle = surveyTitle;
     }
 }

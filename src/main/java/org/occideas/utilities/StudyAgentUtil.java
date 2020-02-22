@@ -82,6 +82,11 @@ public class StudyAgentUtil {
             createPageBreaks(getBlockElementResult);
 //            getBlockElementResult.setBlockElement(buildBlockElements(questionPayloads.size(),moduleVO.getName()));
             iqsfClient.updateBlock(surveyId,blockId,getBlockElementResult);
+            final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
+            SurveyOptionResponse options = (SurveyOptionResponse)surveyOptions.getEntity();
+            options.getResult().setBackButton("true");
+            iqsfClient.updateSurveyOptions(surveyId,options.getResult());
+
             return surveyId;
         } else {
             return manualBuildQSF(moduleVO, null);
@@ -112,6 +117,11 @@ public class StudyAgentUtil {
         createPageBreaks(getBlockElementResult);
 //        getBlockElementResult.setBlockElement(buildBlockElements(questionPayloads.size(),moduleVO.getName()));
         iqsfClient.updateBlock(surveyId,blockId,getBlockElementResult);
+        final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
+        SurveyOptionResponse options = (SurveyOptionResponse)surveyOptions.getEntity();
+        options.getResult().setBackButton("true");
+        iqsfClient.updateSurveyOptions(surveyId,options.getResult());
+
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);
         return surveyId;
@@ -245,6 +255,11 @@ public class StudyAgentUtil {
             System.out.println(i+" of "+size);
             i++;
         }
+
+        final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
+        SurveyOptionResponse options = (SurveyOptionResponse)surveyOptions.getEntity();
+        options.getResult().setBackButton("true");
+        iqsfClient.updateSurveyOptions(surveyId,options.getResult());
         return surveyId;
     }
 

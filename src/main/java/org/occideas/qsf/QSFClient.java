@@ -16,6 +16,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.occideas.qsf.payload.Default;
 import org.occideas.qsf.payload.Flow;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
+import org.occideas.qsf.payload.SurveyOptionPayload;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.request.SurveyPublishRequest;
 import org.occideas.qsf.request.SurveyUpdateRequest;
@@ -128,6 +129,58 @@ public class QSFClient implements IQSFClient {
                     .readEntity(SurveyCreateResponse.class);
 
             return handleResponse(response, questionPayload.toString(), "createQuestion");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response getSurveyOptions(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            SurveyOptionResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/survey-definitions")
+                    .path(surveyId)
+                    .path("options")
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .get()
+                    .readEntity(SurveyOptionResponse.class);
+
+            return handleResponse(response, surveyId, "getOptions");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response updateSurveyOptions(String surveyId, SurveyOptionPayload optionPayload) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            SurveyOptionResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/survey-definitions")
+                    .path(surveyId)
+                    .path("options")
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .put(Entity.entity(optionPayload.toString(), MediaType.APPLICATION_JSON))
+                    .readEntity(SurveyOptionResponse.class);
+
+            return handleResponse(response, optionPayload.toString(), "updateOptions");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -369,7 +422,7 @@ public class QSFClient implements IQSFClient {
     }
 
 
-    private Response handleResponse(BaseResponse response, String requestBody, String function) {
+    private  Response handleResponse(BaseResponse response, String requestBody, String function) {
         if ("200 - OK".equals(response.getMeta().getHttpStatus())) {
             log.info(response);
             return Response.ok(response).build();
