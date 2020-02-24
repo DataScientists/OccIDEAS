@@ -5,6 +5,7 @@ import org.occideas.qsf.payload.Flow;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.payload.SurveyOptionPayload;
 import org.occideas.qsf.request.SurveyCreateRequest;
+import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.response.GetBlockElementResult;
 
 import javax.ws.rs.core.Response;
@@ -40,5 +41,11 @@ public interface IQSFClient {
 
     Response updateFlow(String surveyId, Flow flow);
 
+    Response createExportResponse(String surveyId, SurveyExportRequest request);
+
     String buildRedirectUrl(String surveyId);
+
+    Response getExportResponseProgress(String surveyId, String progressId);
+
+    File getExportResponseFile(String surveyId, String fileId);
 }

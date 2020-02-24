@@ -13,6 +13,7 @@ import org.occideas.qsf.dao.INodeQSFDao;
 import org.occideas.qsf.payload.Properties;
 import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
+import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.response.*;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
@@ -52,6 +53,41 @@ public class StudyAgentUtil {
         File file = getJsonFile(idNode);
         ModuleVO modVO = mapper.readValue(file, ModuleVO.class);
         return modVO;
+    }
+
+    public void exportQSFResponses(long idNode) throws InterruptedException {
+        String surveyId = nodeQSFDao.getByIdNode(idNode);
+        SurveyExportRequest surveyExportRequest = new SurveyExportRequest();
+        surveyExportRequest.setFormat("json");
+        Response response = iqsfClient.createExportResponse(surveyId,surveyExportRequest);
+        if(response != null){
+            SurveyExportResponse exportResponse = (SurveyExportResponse)response.getEntity();
+            int tries = 0;
+            String fileId = null;
+            while(true){
+                log.info("Export Progress:"+(exportResponse.getResult().getPercentComplete()*100)+"%");
+                Response exportProgress = iqsfClient.getExportResponseProgress(surveyId,exportResponse.getResult().getProgressId());
+                if(exportProgress != null){
+                    exportResponse = (SurveyExportResponse)exportProgress.getEntity();
+                }
+                if(exportResponse.getResult().getFileId() != null){
+                    fileId = exportResponse.getResult().getFileId();
+                    break;
+                }
+                if(tries == 20){
+                    log.error("Stop check export qualtrics, seems its down or failed... tried "+tries+" times.");
+                    break;
+                }
+                tries++;
+                Thread.currentThread().sleep(5000);
+            }
+            log.info("export in qualtrics has been completed , tried to check "+tries+" times.");
+            File file = iqsfClient.getExportResponseFile(surveyId,fileId);
+            log.info("File is successfully exported here "+file.getAbsolutePath());
+
+//            nodeQSF.saveResponses(surveyId,file);
+//            nodeQSF.convertResponsesToInterviews(file);
+        }
     }
 
     public String buildQSF(ModuleVO moduleVO) {

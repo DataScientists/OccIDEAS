@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientConfig;
@@ -18,6 +19,7 @@ import org.occideas.qsf.payload.Flow;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.payload.SurveyOptionPayload;
 import org.occideas.qsf.request.SurveyCreateRequest;
+import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.request.SurveyPublishRequest;
 import org.occideas.qsf.request.SurveyUpdateRequest;
 import org.occideas.qsf.response.*;
@@ -30,6 +32,8 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 @Component
 public class QSFClient implements IQSFClient {
@@ -324,6 +328,95 @@ public class QSFClient implements IQSFClient {
     }
 
     @Override
+    public Response createExportResponse(String surveyId, SurveyExportRequest surveyExportRequest) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            String request = JSON_MAPPER.writeValueAsString(surveyExportRequest);
+            SurveyExportResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/surveys")
+                    .path(surveyId)
+                    .path("export-responses")
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .post(Entity.entity(request, MediaType.APPLICATION_JSON))
+                    .readEntity(SurveyExportResponse.class);
+
+            return handleResponse(response, "surveyId:"+surveyId+" request:"+request, "createExportResponse");
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response getExportResponseProgress(String surveyId, String progressId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            SurveyExportResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/surveys")
+                    .path(surveyId)
+                    .path("export-responses")
+                    .path(progressId)
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .get()
+                    .readEntity(SurveyExportResponse.class);
+
+            return handleResponse(response, "surveyId:"+surveyId+"-progressId:"+progressId, "getExportResponseProgress");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public File getExportResponseFile(String surveyId, String fileId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            InputStream inputStream = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/surveys")
+                    .path(surveyId)
+                    .path("export-responses")
+                    .path(fileId)
+                    .path("file")
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .get()
+                    .readEntity(InputStream.class);
+            File downloadfile = new File("/tmp/"+surveyId+".json");
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+            FileOutputStream fos = new FileOutputStream(downloadfile);
+            fos.write(byteArray);
+            fos.flush();
+            fos.close();
+            IOUtils.closeQuietly(inputStream);
+            log.info("surveyId:"+surveyId+"-fileId:"+fileId);
+            return downloadfile;
+        } catch (Exception e) {
+            log.error("getExportResponseFile:"+e.getMessage(), e);
+            return null;
+        }
+    }
+
+    @Override
     public Response activateSurvey(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
         headers.add("X-API-TOKEN", API_TOKEN);
@@ -415,6 +508,7 @@ public class QSFClient implements IQSFClient {
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
     }
+
 
     @Override
     public String buildRedirectUrl(String surveyId) {

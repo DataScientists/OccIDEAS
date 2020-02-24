@@ -112,6 +112,20 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 		}
 	}
 
+	@GET
+	@Path(value = "/exportQSFResponse")
+	@Consumes(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
+	@Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
+	public Response exportQSFResponse(@QueryParam("id") Long id) throws IOException, InterruptedException {
+			try {
+				service.exportResponseQSF(id);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				return null;
+			}
+			return Response.ok().build();
+	}
+
 	private String extractUserFromToken() {
 		TokenManager tokenManager = new TokenManager();
 		String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();

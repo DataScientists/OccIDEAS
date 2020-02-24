@@ -18,6 +18,15 @@
         });
         return request.then(handleSuccess, handleError);
       }
+
+    function exportQSFResponse(idNode) {
+      var restSaveUrl = 'web/rest/module/exportQSFResponse?id=' + idNode;
+      var request = $http({
+        method: 'GET',
+        url: restSaveUrl
+      });
+      return request.then(handleSuccess, handleError);
+    }
     
     function getModuleById(idNode) {
       var restUrl = 'web/rest/module/getModuleById?id=' + idNode;
@@ -312,7 +321,8 @@
       getModulesWithTranslationCount: getModulesWithTranslationCount,
       getModuleById: getModuleById,
       getNodeById: getNodeById,
-      convertModuleToApplicationQSF:convertModuleToApplicationQSF
+      convertModuleToApplicationQSF:convertModuleToApplicationQSF,
+      exportQSFResponse:exportQSFResponse
     };
   }
 

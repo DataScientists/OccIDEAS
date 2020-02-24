@@ -55,6 +55,9 @@ public interface ModuleService {
     @Async
     void manualBuildQSF(Long id, String user);
 
+    @Async("threadPoolTaskExecutor")
+    void exportResponseQSF(Long id) throws InterruptedException;
+
     Integer getModuleTranslationTotalCount(String idNode);
 
 	Integer getModuleTranslationCurrentCount(String idNode, Long languageId);

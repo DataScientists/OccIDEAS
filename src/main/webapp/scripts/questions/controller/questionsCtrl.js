@@ -1939,6 +1939,27 @@
         ]);
       }
 
+    if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+      $scope.moduleMenuOptions.unshift(['Export QSF Responses', function () {
+          ModulesService.exportQSFResponse(self.data[0].idNode)
+              .then(function (response) {
+                if (response.status == 200) {
+                  ngToast.create({
+                    className: 'success',
+                    content: "Qualtrics Response Downloaded."
+                  });
+                } else {
+                  ngToast.create({
+                    className: 'danger',
+                    content: "response was " + response.status + " - Unable to export to Qualtrics"
+                  });
+
+                }
+              });
+      }
+      ]);
+    }
+
 
 
     $scope.questionMenuOptions =
