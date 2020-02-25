@@ -401,7 +401,7 @@ public class QSFClient implements IQSFClient {
                     .headers(headers)
                     .get()
                     .readEntity(InputStream.class);
-            File downloadfile = new File("/tmp/"+surveyId+".json");
+            File downloadfile = new File("/tmp/"+surveyId+".zip");
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             FileOutputStream fos = new FileOutputStream(downloadfile);
             fos.write(byteArray);

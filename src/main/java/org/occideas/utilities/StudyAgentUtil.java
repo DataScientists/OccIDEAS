@@ -9,12 +9,12 @@ import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
 import org.occideas.qsf.*;
-import org.occideas.qsf.dao.INodeQSFDao;
 import org.occideas.qsf.payload.Properties;
 import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.response.*;
+import org.occideas.qsf.service.IQSFService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class StudyAgentUtil {
     @Autowired
     private INodeService nodeService;
     @Autowired
-    private INodeQSFDao nodeQSFDao;
+    private IQSFService iqsfService;
     @Autowired
     private IQSFClient iqsfClient;
     private Map<Long, String> idNodeQIDMap;
@@ -56,7 +56,7 @@ public class StudyAgentUtil {
     }
 
     public void exportQSFResponses(long idNode) throws InterruptedException {
-        String surveyId = nodeQSFDao.getByIdNode(idNode);
+        String surveyId = iqsfService.getByIdNode(idNode);
         SurveyExportRequest surveyExportRequest = new SurveyExportRequest();
         surveyExportRequest.setFormat("json");
         Response response = iqsfClient.createExportResponse(surveyId,surveyExportRequest);
@@ -84,8 +84,7 @@ public class StudyAgentUtil {
             log.info("export in qualtrics has been completed , tried to check "+tries+" times.");
             File file = iqsfClient.getExportResponseFile(surveyId,fileId);
             log.info("File is successfully exported here "+file.getAbsolutePath());
-
-//            nodeQSF.saveResponses(surveyId,file);
+            iqsfService.save(surveyId,idNode,file.getAbsolutePath());
 //            nodeQSF.convertResponsesToInterviews(file);
         }
     }
@@ -308,7 +307,7 @@ public class StudyAgentUtil {
         Object entity = response.getEntity();
         if (entity instanceof SurveyCreateResponse) {
             SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) entity;
-            nodeQSFDao.save(surveyCreateResponse.getResult().getSurveyId(), moduleVO.getIdNode());
+            iqsfService.save(surveyCreateResponse.getResult().getSurveyId(), moduleVO.getIdNode(),null);
             return surveyCreateResponse.getResult();
         }
         return null;

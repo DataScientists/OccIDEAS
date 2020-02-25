@@ -4,7 +4,10 @@ DROP TABLE IF EXISTS `node_qsf`;
 CREATE TABLE `node_qsf` (
   `surveyId` varchar (255) NOT NULL,
   `idNode` bigint(20) NOT NULL,
+  `results` varchar (255) NULL,
+  `lastUpdated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`surveyId`),
   KEY `FK_2jovkmckdt8xpts3eh0sjfuma` (`idNode`),
   CONSTRAINT `FK_NODE` FOREIGN KEY (`idNode`) REFERENCES `Node` (`idNode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+

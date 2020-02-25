@@ -18,8 +18,8 @@ public class NodeQSFDao implements INodeQSFDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public String save(String surveyId, long idNode) {
-        sessionFactory.getCurrentSession().save(new NodeQSF(surveyId,idNode));
+    public String save(String surveyId, long idNode, String results) {
+        sessionFactory.getCurrentSession().saveOrUpdate(new NodeQSF(surveyId,idNode,results));
         return surveyId;
     }
 
