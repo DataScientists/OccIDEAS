@@ -29,7 +29,7 @@ public class NodeQSFDao implements INodeQSFDao {
         CriteriaQuery<NodeQSF> criteria = builder.createQuery(NodeQSF.class);
         Root<NodeQSF> root = criteria.from(NodeQSF.class);
         criteria.select(root).where(builder.equal(root.get("idNode"),idNode));
-
+        criteria.orderBy(builder.desc(root.get("lastUpdated")));
         Query<NodeQSF> query = sessionFactory.getCurrentSession().createQuery(criteria);
         List<NodeQSF> results = query.getResultList();
         if(results.isEmpty()){

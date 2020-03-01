@@ -14,6 +14,7 @@ import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.response.*;
+import org.occideas.qsf.results.SurveyResponses;
 import org.occideas.qsf.service.IQSFService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
@@ -61,6 +62,11 @@ public class StudyAgentUtil {
         surveyExportRequest.setFormat("json");
         Response response = iqsfClient.createExportResponse(surveyId,surveyExportRequest);
         if(response != null){
+            if(!(response.getEntity() instanceof SurveyExportResponse)){
+                log.error(response.getEntity());
+                return;
+            }
+
             SurveyExportResponse exportResponse = (SurveyExportResponse)response.getEntity();
             int tries = 0;
             String fileId = null;
@@ -85,6 +91,33 @@ public class StudyAgentUtil {
             File file = iqsfClient.getExportResponseFile(surveyId,fileId);
             log.info("File is successfully exported here "+file.getAbsolutePath());
             iqsfService.save(surveyId,idNode,file.getAbsolutePath());
+            File responseDir = null;
+            try {
+                File newDirectory = new File(file.getParent(), FilenameUtils.removeExtension(file.getName()));
+                if(!newDirectory.exists()){
+                    newDirectory.mkdir();
+                }
+                ZipUtil.unzip(file,newDirectory.getAbsolutePath());
+                responseDir = newDirectory;
+            } catch (IOException e) {
+                log.error(e.getMessage(),e);
+            }
+            File[] files = responseDir.listFiles();
+            File surveyJsonFile = null;
+            for(File survey: files){
+                if("json".equals(FilenameUtils.getExtension(survey.getName()))){
+                    surveyJsonFile = survey;
+                    break;
+                }
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                SurveyResponses surveyResponses = objectMapper.readValue(surveyJsonFile, SurveyResponses.class);
+                log.info(surveyResponses.toString());
+                iqsfService.consumeQSFResponse(surveyResponses);
+            } catch (IOException e) {
+                log.error(e.getMessage(),e);
+            }
 //            nodeQSF.convertResponsesToInterviews(file);
         }
     }
