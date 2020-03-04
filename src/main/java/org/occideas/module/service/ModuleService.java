@@ -53,7 +53,7 @@ public interface ModuleService {
 	ModuleVO getStudyAgentJSON(Long id);
 
     @Async
-    void manualBuildQSF(Long id, String user);
+    void manualBuildQSF(Long id, boolean filter);
 
     @Async("threadPoolTaskExecutor")
     void exportResponseQSF(Long id) throws InterruptedException;
@@ -86,6 +86,4 @@ public interface ModuleService {
 
 	File convertToApplicationQSF(Long id, String user);
 
-	@Async
-	void manualBuildQSFFilter(NodeVO nodeVO, String extractUserFromToken);
 }
