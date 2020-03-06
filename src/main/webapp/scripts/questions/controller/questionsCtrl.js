@@ -1883,7 +1883,7 @@
           }
         }]
       ];
-    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
+    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_STUDYMANAGER', 'ROLE_CONTDEV'])) {
       $scope.moduleMenuOptions.unshift(['View Study Specific', function($itemScope) {
         previewStudySpecific();
       }

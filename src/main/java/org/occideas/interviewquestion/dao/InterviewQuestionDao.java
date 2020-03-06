@@ -170,7 +170,9 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
         log.error("no intro module set");
       } else {
         Node node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
+        System.out.println("generateCSVForChildAJSMandModule Started");
         generateCSVForChildAJSMandModule(node);
+        System.out.println("generateCSVForChildAJSMandModule Ended");
       }
     }
     return filterStudyAgentFlag;
@@ -184,8 +186,12 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   private void generateCSVForChildAJSMandModule(Node node) {
     generateLinks(node);
 
-    for (Long link : links) {
-      generateCSVFile(link);
+    int i = 0;
+    int iSize = links.size();
+    for (Long link : links) {   	
+    	System.out.println(i + " of "+ iSize);
+        generateCSVFile(link);
+        i++;
     }
 
     links = new ArrayList<>();
