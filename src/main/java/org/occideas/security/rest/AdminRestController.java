@@ -53,7 +53,10 @@ public class AdminRestController {
             Response response = iqsfClient.listSurvey();
             if (response.getEntity() != null) {
                 SurveyListResponse surveyListResponse = (SurveyListResponse) response.getEntity();
+                int i = 0;
+                int iSize = surveyListResponse.getResult().getElements().size();
                 for (Element element : surveyListResponse.getResult().getElements()) {
+                	System.out.println(i+ " of " + iSize);
                     iqsfClient.deleteSurvey(element.getId());
                 }
             }
