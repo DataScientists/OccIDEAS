@@ -16,5 +16,6 @@ public interface InterviewAnswerService extends BaseService<InterviewAnswerVO> {
 
   List<InterviewQuestionVO> saveIntervewAnswersAndGetChildQuestion(List<InterviewAnswerVO> o);
 
+  InterviewAnswerVO saveOrUpdate(InterviewAnswerVO answerVO);
 
 }

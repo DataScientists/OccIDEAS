@@ -4,10 +4,11 @@ import org.occideas.entity.PossibleAnswer;
 
 public interface IPossibleAnswerDao {
 
-  PossibleAnswer get(long id);
+    PossibleAnswer get(long id);
 
-  void saveOrUpdate(PossibleAnswer answer);
+    void saveOrUpdate(PossibleAnswer answer);
 
-  void saveOrUpdateIgnoreFK(PossibleAnswer answer);
+    void saveOrUpdateIgnoreFK(PossibleAnswer answer);
 
+    PossibleAnswer findByTopNodeIdAndNumber(long moduleId, String answerNumber);
 }

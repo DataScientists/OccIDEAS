@@ -86,4 +86,6 @@ public interface ModuleService {
 
 	File convertToApplicationQSF(Long id, String user);
 
+	ModuleVO getModuleByNameLength(String name, int length);
+
 }

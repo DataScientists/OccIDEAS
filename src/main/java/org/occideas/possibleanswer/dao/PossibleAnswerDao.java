@@ -1,12 +1,17 @@
 package org.occideas.possibleanswer.dao;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.PossibleAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Repository
 public class PossibleAnswerDao implements IPossibleAnswerDao {
@@ -34,6 +39,21 @@ public class PossibleAnswerDao implements IPossibleAnswerDao {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();
     sessionFactory.getCurrentSession().saveOrUpdate(answer);
+  }
+
+  @Override
+  public PossibleAnswer findByTopNodeIdAndNumber(long moduleId, String answerNumber) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(PossibleAnswer.class)
+            .add(Restrictions.eq("topNodeId", moduleId))
+            .add(Restrictions.eq("number",answerNumber))
+            .add(Restrictions.eq("deleted", 0));
+    final List<PossibleAnswer> list = crit.list();
+    if(list.isEmpty()){
+      return null;
+    }else {
+      return list.get(0);
+    }
   }
 
 

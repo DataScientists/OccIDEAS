@@ -71,6 +71,12 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
     return list;
   }
 
+  @Override
+  public InterviewAnswer saveOrUpdate(InterviewAnswer answer) {
+    sessionFactory.getCurrentSession().saveOrUpdate(answer);
+    return answer;
+  }
+
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override

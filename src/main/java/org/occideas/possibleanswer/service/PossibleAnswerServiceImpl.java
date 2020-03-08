@@ -76,4 +76,11 @@ public class PossibleAnswerServiceImpl implements PossibleAnswerService {
     return mapper.convertToPossibleAnswerWithModuleRuleVO(answer);
   }
 
+  @Override
+  public PossibleAnswerVO findByTopNodeIdAndNumber(long moduleId, String answerNumber) {
+    PossibleAnswer answer = possibleAnswerDao.findByTopNodeIdAndNumber(moduleId,answerNumber);
+    PossibleAnswerVO paVO = mapper.convertToPossibleAnswerVO(answer, false);
+    return paVO;
+  }
+
 }

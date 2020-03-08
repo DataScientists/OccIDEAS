@@ -51,4 +51,6 @@ public interface IModuleDao {
   List<? extends Node> getNodeByType(String type);
 
   void saveOrUpdateIgnoreFK(Module module);
+
+  List<Module> findByNameLength(String name);
 }

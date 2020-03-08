@@ -89,6 +89,15 @@ public class ModuleDao implements IModuleDao {
     sessionFactory.getCurrentSession().saveOrUpdate(module);
   }
 
+  @Override
+  public List<Module> findByNameLength(String name) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Module.class)
+            .add(Restrictions.like("name", name, MatchMode.START))
+            .add(Restrictions.eq("deleted", 0));
+    return crit.list();
+  }
+
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public long create(Module module) {
     sessionFactory.getCurrentSession().save(module);

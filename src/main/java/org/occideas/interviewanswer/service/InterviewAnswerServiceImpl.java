@@ -1,5 +1,6 @@
 package org.occideas.interviewanswer.service;
 
+import org.hibernate.SessionFactory;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.mapper.InterviewAnswerMapper;
@@ -8,6 +9,7 @@ import org.occideas.vo.InterviewAnswerVO;
 import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService {
   private InterviewQuestionMapper qmapper;
   @Autowired
   private IInterviewAnswerDao dao;
+  @Autowired
+  private SessionFactory sessionFactory;
 
   @Override
   public List<InterviewAnswerVO> listAll() {
@@ -67,6 +71,12 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService {
   @Override
   public List<InterviewQuestionVO> saveIntervewAnswersAndGetChildQuestion(List<InterviewAnswerVO> o) {
     return qmapper.convertToInterviewQuestionVOList(dao.saveIntervewAnswersAndGetChildQuestion(mapper.convertToInterviewAnswerList(o)));
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Override
+  public InterviewAnswerVO saveOrUpdate(InterviewAnswerVO answerVO) {
+    return mapper.convertToInterviewAnswerVO(dao.saveOrUpdate(mapper.convertToInterviewAnswer(answerVO)));
   }
 
   @Override
