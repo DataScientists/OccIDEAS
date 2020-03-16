@@ -43,4 +43,6 @@ public interface FragmentService extends BaseService<FragmentVO> {
   Integer getFragmentWithTranslationCount(long languageId);
 
   Integer getTotalTranslatedNodeByLanguage(long languageId);
+
+  FragmentVO getModuleByNameLength(String moduleKey, int i);
 }

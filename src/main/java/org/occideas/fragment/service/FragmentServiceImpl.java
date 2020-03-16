@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Fragment;
+import org.occideas.entity.Module;
 import org.occideas.entity.Node;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -297,4 +299,23 @@ public class FragmentServiceImpl implements FragmentService {
     vo.setTotal(totalCount);
     return vo;
   }
+
+  @Override
+	public FragmentVO getModuleByNameLength(String name, int length) {
+		Optional<String> moduleName = Optional.ofNullable(name);
+		if(moduleName.isPresent()){
+			String truncatedName = moduleName.get().substring(0,length);
+			List<Fragment> modules = dao.findByNameLength(name);
+			if(!modules.isEmpty() && modules.size() == 1){
+				return mapper.convertToFragmentVO(modules.get(0),false);
+			}
+			else if(!modules.isEmpty() && modules.size() > 1){
+				log.error("Cleanup database their are 2 modules with same {} length for {}", length, truncatedName);
+			}
+			else{
+				log.error("Cannot find module with char length {} and {}", length, truncatedName);
+			}
+		}
+		return null;
+	}
 }

@@ -36,6 +36,8 @@ public interface IQSFClient {
     Response activateSurvey(String surveyId);
 
     Response deleteSurvey(String surveyId);
+    
+    Response copySurvey(String surveyId);
 
     Response listSurvey();
 

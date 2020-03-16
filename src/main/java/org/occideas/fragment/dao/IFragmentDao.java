@@ -37,4 +37,6 @@ public interface IFragmentDao {
 
   void saveOrUpdateIgnoreFK(Fragment fragment);
 
+  List<Fragment> findByNameLength(String name);
+
 }

@@ -461,6 +461,26 @@ public class QSFClient implements IQSFClient {
         log.info("deleting survey "+surveyId);
         return handleResponse(response, surveyId + "/delete", "deleteSurvey");
     }
+    
+    @Override
+    public Response copySurvey(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+
+        BaseResponse response = ClientBuilder.newBuilder()
+                .withConfig(clientConfig)
+                .build()
+                .target(QSF_PATH)
+                .path("API/v3/surveys")
+                .path(surveyId)
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .delete()
+                .readEntity(BaseResponse.class);
+        log.info("copying survey "+surveyId);
+        return handleResponse(response, surveyId + "/delete", "deleteSurvey");
+    }
 
     @Override
     public Response listSurvey() {

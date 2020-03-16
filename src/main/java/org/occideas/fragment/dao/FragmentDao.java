@@ -4,11 +4,13 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.Fragment;
+import org.occideas.entity.Module;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -178,5 +180,14 @@ public class FragmentDao implements IFragmentDao {
     }
 
     return fragments;
+  }
+
+  @Override
+  public List<Fragment> findByNameLength(String name) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Fragment.class)
+            .add(Restrictions.like("name", name, MatchMode.START))
+            .add(Restrictions.eq("deleted", 0));
+    return crit.list();
   }
 }

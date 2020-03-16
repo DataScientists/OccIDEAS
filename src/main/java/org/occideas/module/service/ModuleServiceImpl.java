@@ -540,7 +540,8 @@ public class ModuleServiceImpl implements ModuleService {
 	@Async("threadPoolTaskExecutor")
 	public void exportResponseQSF(Long id) throws InterruptedException {
 		List<ModuleVO> modules = this.findById(id);
-		if (!modules.isEmpty()) { studyAgentUtil.exportQSFResponses(modules.get(0).getIdNode());
+		if (!modules.isEmpty()) { 
+			studyAgentUtil.exportQSFResponses(modules.get(0).getIdNode());
 		}
 	}
 
