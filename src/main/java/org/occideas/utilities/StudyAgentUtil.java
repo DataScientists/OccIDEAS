@@ -652,19 +652,25 @@ public class StudyAgentUtil {
                                                 childQidCount, choiceLocator, "Expression", childQuestionVO.getName()),
                                         "If")), questionPayloads, qidCount, filter);
                     } else if (childQuestionVO.getLink() != 0L) {
+                    	System.out.println(childQuestionVO.getName());
                         NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
                         String childQidCount = idNodeQIDMap.get(Long.valueOf(answer.getParentId()));
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
+                        List<String> filterIdNodes = null;
+                        if(filter != null){
+                            filterIdNodes = moduleService.getFilterStudyAgent(childQuestionVO.getLink());
+                        }
                         if ("F".equals(linkModule.getNodeclass())) {
                             for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
                                 //if (filter != null && !filter.contains(linkQuestion.getIdNode())) {
                                //     continue;
                                 //}
+                            	
                                 createManualQuestion(linkModule, linkQuestion,
                                         new DisplayLogic("BooleanExpression", false,
                                                 new Condition(new Logic("Question", childQidCount, "no", choiceLocator,
                                                         "Selected", childQidCount, choiceLocator, "Expression",
-                                                        childQuestionVO.getName()), "If")), questionPayloads, qidCount, filter);
+                                                        childQuestionVO.getName()), "If")), questionPayloads, qidCount, filterIdNodes);
                             }
                         } else {
                             for (QuestionVO linkQuestion : ((ModuleVO) linkModule).getChildNodes()) {
