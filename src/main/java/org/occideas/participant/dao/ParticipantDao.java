@@ -8,6 +8,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
@@ -194,5 +195,12 @@ public class ParticipantDao implements IParticipantDao {
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Participant").executeUpdate();
+  }
+
+  @Override
+  public void softDeleteAll() {
+    final Session session = sessionFactory.getCurrentSession();
+    Query<Participant> query =session.createQuery("update Participant p set p.deleted=1");
+    query.executeUpdate();
   }
 }

@@ -9,4 +9,6 @@ public interface IQSFService {
     String getByIdNode(long idNode);
 
     void consumeQSFResponse(SurveyResponses surveyResponses);
+
+    void importQSFResponses();
 }

@@ -30,4 +30,6 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
   ParticipantVO getByReferenceNumber(String referenceNumber);
 
   Boolean checkIfStudyAgentPreLoaded();
+
+  void softDeleteAll();
 }

@@ -43,4 +43,5 @@ public interface IParticipantDao {
 
   void deleteAll();
 
+  void softDeleteAll();
 }

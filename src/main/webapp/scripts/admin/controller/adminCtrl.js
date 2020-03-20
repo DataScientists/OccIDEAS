@@ -93,6 +93,26 @@
       });
     };
 
+    self.importQSFResponses = function(){
+      AdminService.importQSFResponses().then(function(response){
+        if (response.status == '200') {
+          $ngToast.create({
+            className: 'success',
+            content: 'Import QSF Response Successful , check result in a few minutes.',
+            animation: 'slide'
+          });
+        } else {
+          $ngToast.create({
+            className: 'danger',
+            content: 'Import QSF Responses failed, check the logs.',
+            dismissButton: true,
+            dismissOnClick: false,
+            animation: 'slide'
+          });
+        }
+      });
+    };
+
     self.purgeParticipants = function() {
       AdminService.purgeParticipants().then(function(response) {
         if(response.status == '200') {

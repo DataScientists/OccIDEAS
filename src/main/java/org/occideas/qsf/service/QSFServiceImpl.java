@@ -1,9 +1,12 @@
 package org.occideas.qsf.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Node;
+import org.occideas.entity.NodeQSF;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interview.service.InterviewService;
@@ -13,19 +16,27 @@ import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
+import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.dao.INodeQSFDao;
+import org.occideas.qsf.request.SurveyExportRequest;
+import org.occideas.qsf.response.SurveyExportResponse;
 import org.occideas.qsf.results.Response;
 import org.occideas.qsf.results.SurveyResponses;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.ZipUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Transactional
 @Service
@@ -58,7 +69,10 @@ public class QSFServiceImpl implements IQSFService{
     private SystemPropertyService systemPropertyService;
     @Autowired
     private IModuleDao moduleDao;
-    
+    @Autowired
+    private INodeQSFDao nodeQSFDao;
+    @Autowired
+    private IQSFClient iqsfClient;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -237,4 +251,82 @@ public class QSFServiceImpl implements IQSFService{
         }
     }
 
+    @Override
+    @Async("threadPoolTaskExecutor")
+    public void importQSFResponses() {
+        List<NodeQSF> list = nodeQSFDao.list();
+        AtomicInteger count = new AtomicInteger(1);
+        list.stream().forEach(nodeQSF -> {
+            try {
+                log.info("{} of {} - survey Id {}",count.getAndIncrement(),list.size(),nodeQSF.getSurveyId());
+                processResponseForSurvey(nodeQSF);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage(),e);
+            }
+        });
+    }
+
+    private void processResponseForSurvey(NodeQSF nodeQSF) throws InterruptedException {
+        SurveyExportRequest surveyExportRequest = new SurveyExportRequest();
+        surveyExportRequest.setFormat("json");
+        javax.ws.rs.core.Response response = iqsfClient.createExportResponse(nodeQSF.getSurveyId(), surveyExportRequest);
+        if (response != null) {
+            if (!(response.getEntity() instanceof SurveyExportResponse)) {
+                log.error(response.getEntity());
+                return;
+            }
+
+            SurveyExportResponse exportResponse = (SurveyExportResponse) response.getEntity();
+            int tries = 0;
+            String fileId = null;
+            while (true) {
+                log.info("Export Progress:" + (exportResponse.getResult().getPercentComplete() * 100) + "%");
+                javax.ws.rs.core.Response exportProgress = iqsfClient.getExportResponseProgress(nodeQSF.getSurveyId(), exportResponse.getResult().getProgressId());
+                if (exportProgress != null) {
+                    exportResponse = (SurveyExportResponse) exportProgress.getEntity();
+                }
+                if (exportResponse.getResult().getFileId() != null) {
+                    fileId = exportResponse.getResult().getFileId();
+                    break;
+                }
+                if (tries == 20) {
+                    log.error("Stop check export qualtrics, seems its down or failed... tried " + tries + " times.");
+                    break;
+                }
+                tries++;
+                Thread.currentThread().sleep(5000);
+            }
+            log.info("export in qualtrics has been completed , tried to check " + tries + " times.");
+            File file = iqsfClient.getExportResponseFile(nodeQSF.getSurveyId(), fileId);
+            log.info("File is successfully exported here " + file.getAbsolutePath());
+            this.save(nodeQSF.getSurveyId(), nodeQSF.getIdNode(), file.getAbsolutePath());
+            File responseDir = null;
+            try {
+                File newDirectory = new File(file.getParent(), FilenameUtils.removeExtension(file.getName()));
+                if (!newDirectory.exists()) {
+                    newDirectory.mkdir();
+                }
+                ZipUtil.unzip(file, newDirectory.getAbsolutePath());
+                responseDir = newDirectory;
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+            File[] files = responseDir.listFiles();
+            File surveyJsonFile = null;
+            for (File survey : files) {
+                if ("json".equals(FilenameUtils.getExtension(survey.getName()))) {
+                    surveyJsonFile = survey;
+                    break;
+                }
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                SurveyResponses surveyResponses = objectMapper.readValue(surveyJsonFile, SurveyResponses.class);
+                log.info(surveyResponses.toString());
+                this.consumeQSFResponse(surveyResponses);
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+    }
 }

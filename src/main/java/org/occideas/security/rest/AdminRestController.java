@@ -3,10 +3,12 @@ package org.occideas.security.rest;
 import org.occideas.admin.service.IAdminService;
 import org.occideas.admin.service.IDbConnectService;
 import org.occideas.entity.NodePlain;
+import org.occideas.participant.service.ParticipantService;
 import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.QSFClient;
 import org.occideas.qsf.response.Element;
 import org.occideas.qsf.response.SurveyListResponse;
+import org.occideas.qsf.service.IQSFService;
 import org.occideas.security.service.UserService;
 import org.occideas.vo.DBConnectVO;
 import org.occideas.vo.UserProfileVO;
@@ -32,6 +34,12 @@ public class AdminRestController {
 
     @Autowired
     private IDbConnectService iDbConnectService;
+
+    @Autowired
+    private IQSFService iqsfService;
+
+    @Autowired
+    private ParticipantService participantService;
 
     @GET
     @Path(value = "/purgeParticipants")
@@ -60,6 +68,19 @@ public class AdminRestController {
                     iqsfClient.deleteSurvey(element.getId());
                 }
             }
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path(value = "/importQSFResponses")
+    public Response importQSFResponses() {
+        try {
+            participantService.softDeleteAll();
+            iqsfService.importQSFResponses();
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

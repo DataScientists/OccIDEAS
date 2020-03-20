@@ -128,6 +128,14 @@
       });
     }
 
+    var importQSFResponses = function(){
+      return $http.get(adminEndpoint + '/importQSFResponses', {
+        cache: false
+      }).then(function(response) {
+        return response;
+      });
+    }
+
     function handleError(response) {
       if(!angular.isObject(response.data) || !response.data.message) {
         return ($q.reject("An unknown error occurred."));
@@ -152,7 +160,8 @@
       purgeParticipants: purgeParticipants,
       purgeModule: purgeModule,
       importLibrary: importLibrary,
-      deleteQSFSurveys: deleteQSFSurveys
+      deleteQSFSurveys: deleteQSFSurveys,
+      importQSFResponses: importQSFResponses
     };
   }
 

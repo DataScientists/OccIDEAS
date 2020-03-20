@@ -143,4 +143,9 @@ public class ParticipantServiceImpl implements ParticipantService {
   public Boolean checkIfStudyAgentPreLoaded() {
     return interviewQuestionDao.checkIfStudyAgentPreLoaded();
   }
+
+  @Override
+  public void softDeleteAll() {
+     participantDao.softDeleteAll();
+  }
 }
