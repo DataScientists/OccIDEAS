@@ -66,6 +66,7 @@ public class AdminRestController {
                 for (Element element : surveyListResponse.getResult().getElements()) {
                 	System.out.println(i+ " of " + iSize);
                     iqsfClient.deleteSurvey(element.getId());
+                    i++;
                 }
             }
         } catch (Throwable e) {
