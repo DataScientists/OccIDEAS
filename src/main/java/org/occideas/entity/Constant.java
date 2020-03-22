@@ -37,4 +37,5 @@ public class Constant {
   public static final String NOT_ASSESSED = "Not Assessed";
   public static final String AUTO_ASSESSED = "Auto Assessed";
     public static final String Q_LINKEDMODULE = "Q_linkedmodule";
+    public static final String Q_LINKEDAJSM="Q_linkedajsm";
 }

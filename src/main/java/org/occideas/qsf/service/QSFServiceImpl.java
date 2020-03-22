@@ -259,7 +259,7 @@ public class QSFServiceImpl implements IQSFService {
     }
 
     private void consumeQSFModuleResponse(SurveyResponses surveyResponses,
-                                          ModuleVO moduleVO,
+                                          NodeVO nodeVO,
                                           InterviewVO newInterview) {
         if (isEmptyResponse(surveyResponses)) {
             return;
@@ -271,41 +271,32 @@ public class QSFServiceImpl implements IQSFService {
         AtomicInteger questionCounter = new AtomicInteger();
         response.getLabels().forEach((key, value) -> {
             if (key.contains(QID)) {
+                if (value instanceof List) {
+                    value = ((List) value).get(0).toString();
+                }
                 String values[] = value.toString().split(" ");
                 String splitAnswer[] = values[0].split("_");
                 final String moduleKey = splitAnswer[0];
                 final String answerNumber = splitAnswer[1];
-                PossibleAnswerVO possibleAnswerVO = possibleAnswerService
-                        .findByTopNodeIdAndNumber(moduleVO.getIdNode(), answerNumber);
 
-                final Set<Long> linkAJSM = possibleAnswerVO.getChildNodes().stream().filter(questions -> {
-                    return questions.getLink() > 0L;
-                }).map(QuestionVO::getLink).collect(Collectors.toSet());
+                NodeVO newNodeVO = nodeVO;
+                if (!moduleKey.equals(newNodeVO.getName().substring(0, 4))) {
+                    newNodeVO = fragmentService.getModuleByNameLength(moduleKey, 4);
+                    storage.put(String.valueOf(newNodeVO.getIdNode()), Optional.ofNullable(newNodeVO));
+                    PossibleAnswerVO fragmentAnswerVO = possibleAnswerService
+                            .findByTopNodeIdAndNumber(newNodeVO.getIdNode(), answerNumber);
 
-                if (!linkAJSM.isEmpty()) {
-                    linkAJSM.forEach(idNode -> {
-                        final List<FragmentVO> fragments = fragmentService.findByIdForInterview(idNode);
-                        if (!fragments.isEmpty()) {
-                            FragmentVO linkedAJSM = fragments.get(0);
-                            storage.put(String.valueOf(idNode), Optional.ofNullable(linkedAJSM));
-                            interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO,
-                                    linkedAJSM,
-                                    newInterview.getInterviewId(),
-                                    questionCounter.incrementAndGet()));
-                            try {
-                                final SurveyResponses moduleSurveyResponses =
-                                        this.exportQSFResponses(linkedAJSM.getIdNode());
-                                consumeQSFModuleResponse(moduleSurveyResponses,
-                                        moduleVO,
-                                        newInterview);
-                            } catch (InterruptedException e) {
-                                log.error(e.getMessage(), e);
-                            }
-                        } else {
-                            log.error("Cant find linked module {}", idNode);
-                        }
-                    });
+                    List<QuestionVO> questions = questionService.getQuestionsWithSingleChildLevel(Long.valueOf(fragmentAnswerVO.getParentId()));
+                    if (!questions.isEmpty()) {
+                        QuestionVO questionVO = questions.get(0);
+                        interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(questionVO,
+                                nodeVO,newNodeVO,
+                                newInterview.getInterviewId(),
+                                questionCounter.incrementAndGet()));
+                    }
                 }
+                PossibleAnswerVO possibleAnswerVO = possibleAnswerService
+                        .findByTopNodeIdAndNumber(newNodeVO.getIdNode(), answerNumber);
 
                 List<QuestionVO> questions = questionService.getQuestionsWithSingleChildLevel(Long.valueOf(possibleAnswerVO.getParentId()));
                 if (!questions.isEmpty()) {
@@ -431,6 +422,27 @@ public class QSFServiceImpl implements IQSFService {
         interviewQuestionVO.setProcessed(true);
         interviewQuestionVO.setTopNodeId(linkedModule.getIdNode());
         interviewQuestionVO.setType(Constant.Q_LINKEDMODULE);
+        return interviewQuestionVO;
+    }
+
+    private InterviewQuestionVO createInterviewAJSMQuestion(NodeVO question, NodeVO module,
+                                                            NodeVO linkedAJSM, long interviewId, int sequence) {
+        InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
+        interviewQuestionVO.setDeleted(0);
+        interviewQuestionVO.setDescription(linkedAJSM.getDescription());
+        interviewQuestionVO.setIdInterview(interviewId);
+        interviewQuestionVO.setIntQuestionSequence(sequence);
+        interviewQuestionVO.setLink(linkedAJSM.getIdNode());
+        interviewQuestionVO.setName(linkedAJSM.getName());
+        interviewQuestionVO.setNodeClass(null);
+        interviewQuestionVO.setNumber("1");
+        interviewQuestionVO.setQuestionId(0);
+        interviewQuestionVO.setModCount(1);
+        interviewQuestionVO.setParentModuleId(module.getIdNode());
+        interviewQuestionVO.setParentAnswerId(0L);
+        interviewQuestionVO.setProcessed(true);
+        interviewQuestionVO.setTopNodeId(linkedAJSM.getIdNode());
+        interviewQuestionVO.setType(Constant.Q_LINKEDAJSM);
         return interviewQuestionVO;
     }
 
