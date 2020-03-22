@@ -5,7 +5,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
-import org.occideas.entity.Node;
 import org.occideas.entity.NodeQSF;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.dao.IInterviewDao;
@@ -34,14 +33,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
-public class QSFServiceImpl implements IQSFService{
+public class QSFServiceImpl implements IQSFService {
 
+    public static final String QID = "QID";
     private Logger log = LogManager.getLogger(this.getClass());
 
 
@@ -77,7 +77,7 @@ public class QSFServiceImpl implements IQSFService{
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String save(String surveyId, long idNode, String path) {
-        return dao.save(surveyId,idNode,path);
+        return dao.save(surveyId, idNode, path);
     }
 
     @Override
@@ -87,8 +87,8 @@ public class QSFServiceImpl implements IQSFService{
 
     @Override
     public void consumeQSFResponse(SurveyResponses surveyResponses) {
-        if(surveyResponses.getResponses().isEmpty()){
-            log.error("Response is empty for json object",surveyResponses);
+        if (surveyResponses.getResponses().isEmpty()) {
+            log.error("Response is empty for json object", surveyResponses);
             return;
         }
 
@@ -98,157 +98,74 @@ public class QSFServiceImpl implements IQSFService{
         partVO.setReference(referenceNumber);
         partVO.setStatus(2);
         ParticipantVO participantVO = participantService.create(partVO);
-        
-        long interviewId = 0;
+
+
         InterviewVO interviewVO = new InterviewVO();
         interviewVO.setParticipant(participantVO);
-        SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
-        ModuleVO introModuleVO = new ModuleVO();
-        if (introModule == null) {
-          log.error("no intro module set");
-          return;
-        } else {
-          Node node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
-          
-          introModuleVO.setIdNode(node.getIdNode());
-          introModuleVO.setName(node.getName());
-          introModuleVO.setDescription(node.getDescription());
-          
-          interviewVO.setModule(introModuleVO);
-          
-        }
-        
         interviewVO.setReferenceNumber(referenceNumber);
         InterviewVO newInterview = interviewService.create(interviewVO);
-        interviewId = newInterview.getInterviewId();
 
-        InterviewQuestionVO introInterviewQuestionVO = new InterviewQuestionVO();
-        introInterviewQuestionVO.setDeleted(0);
-        introInterviewQuestionVO.setDescription(introModuleVO.getDescription());
-        introInterviewQuestionVO.setIdInterview(interviewId);
-        introInterviewQuestionVO.setIntQuestionSequence(1);
-        introInterviewQuestionVO.setLink(introModuleVO.getIdNode());
-        introInterviewQuestionVO.setName(introModuleVO.getName());
-        introInterviewQuestionVO.setNodeClass("M");
-        introInterviewQuestionVO.setNumber("1");
-        introInterviewQuestionVO.setParentModuleId(0);
-        introInterviewQuestionVO.setProcessed(true);
-        introInterviewQuestionVO.setTopNodeId(introModuleVO.getIdNode());
-        introInterviewQuestionVO.setType("M_IntroModule");
-		// interviewQuestionVO.setParentAnswerId(Optional.ofNullable(Long.valueOf(questionVO.getParentId())).orElse(0L));
-		// interviewQuestionVO.setQuestionId(questionVO.getIdNode());
-		interviewQuestionService.updateIntQ(introInterviewQuestionVO);
+        Map<String, Optional<NodeVO>> storage = new HashMap<String, Optional<NodeVO>>();
+        AtomicInteger questionCounter = new AtomicInteger();
+        response.getLabels().forEach((key, value) -> {
+            if (key.contains(QID)) {
+                String values[] = value.toString().split(" ");
+                String splitAnswer[] = values[0].split("_");
+                final String moduleKey = splitAnswer[0];
+                final String answerNumber = splitAnswer[1];
+                Optional<NodeVO> module = Optional.ofNullable(storage.get(moduleKey))
+                        .orElse(Optional.ofNullable(moduleService.getModuleByNameLength(moduleKey, 4)));
+                if (module.isPresent()) {
+                    NodeVO moduleVO = module.get();
+                    if (!storage.containsKey(moduleKey)) {
+                        storage.put(moduleKey, Optional.of(module.get()));
+                        interviewQuestionService.updateIntQ(createInterviewIntroModuleQuestion(moduleVO,
+                                newInterview.getInterviewId(),questionCounter.incrementAndGet()));
+                    }
 
-        String prefix = "QID";
-        int count = 1;
-        long oldModuleId = 0;
-        while(response.getLabels().containsKey(prefix+(count))){
-            String value = response.getLabels().get(prefix+(count)).toString();
-            String values[] = value.split(" ");
-            String chosenAnswer = values[0];
-            String splitAnswer[] = chosenAnswer.split("_");
-            String moduleKey = splitAnswer[0].replace("[", "");
-            String answerNumber = splitAnswer[1];
+                    PossibleAnswerVO possibleAnswerVO = possibleAnswerService
+                            .findByTopNodeIdAndNumber(moduleVO.getIdNode(), answerNumber);
 
-            // get module
-            long moduleId = 0;
-            ModuleVO moduleVO = moduleService.getModuleByNameLength(moduleKey,4);
-            
-            if(moduleVO == null){
-            	FragmentVO fragmentVO = fragmentService.getModuleByNameLength(moduleKey,4);
-                long fragementId = fragmentVO.getIdNode();
-                moduleId = fragementId;
-				if (oldModuleId != moduleId) {
-					oldModuleId = moduleId;
-					InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
-					interviewQuestionVO.setDeleted(0);
-					interviewQuestionVO.setDescription(fragmentVO.getDescription());
-					interviewQuestionVO.setIdInterview(interviewId);
-					interviewQuestionVO.setIntQuestionSequence(count);
-					interviewQuestionVO.setLink(fragmentVO.getIdNode());
-					interviewQuestionVO.setName(fragmentVO.getName());
-					interviewQuestionVO.setNodeClass(fragmentVO.getNodeclass());
-					interviewQuestionVO.setNumber(fragmentVO.getNumber());
-					interviewQuestionVO.setParentModuleId(fragmentVO.getIdNode());
-					interviewQuestionVO.setProcessed(true);
-					interviewQuestionVO.setTopNodeId(fragmentVO.getIdNode());
-					interviewQuestionVO.setType("Q_linkedajsm");
-					// interviewQuestionVO.setParentAnswerId(Optional.ofNullable(Long.valueOf(questionVO.getParentId())).orElse(0L));
-					// interviewQuestionVO.setQuestionId(questionVO.getIdNode());
-					interviewQuestionService.updateIntQ(interviewQuestionVO);
-				}
-            }else{
-            	moduleId = moduleVO.getIdNode();
-				if (oldModuleId != moduleId) {
-					oldModuleId = moduleId;
-					InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
-					interviewQuestionVO.setDeleted(0);
-					interviewQuestionVO.setDescription(moduleVO.getDescription());
-					interviewQuestionVO.setIdInterview(interviewId);
-					interviewQuestionVO.setIntQuestionSequence(count);
-					interviewQuestionVO.setLink(moduleVO.getIdNode());
-					interviewQuestionVO.setName(moduleVO.getName());
-					interviewQuestionVO.setNodeClass(moduleVO.getNodeclass());
-					interviewQuestionVO.setNumber(moduleVO.getNumber());
-					interviewQuestionVO.setParentModuleId(moduleVO.getIdNode());
-					interviewQuestionVO.setProcessed(true);
-					interviewQuestionVO.setTopNodeId(moduleVO.getIdNode());
-					interviewQuestionVO.setType("Q_linkedmodule");
-					// interviewQuestionVO.setParentAnswerId(Optional.ofNullable(Long.valueOf(questionVO.getParentId())).orElse(0L));
-					// interviewQuestionVO.setQuestionId(questionVO.getIdNode());
-					interviewQuestionService.updateIntQ(interviewQuestionVO);
-				}
+                    final Set<Long> linkModules = possibleAnswerVO.getChildNodes().stream().filter(questions -> {
+                        return questions.getLink() > 0L;
+                    }).map(QuestionVO::getLink).collect(Collectors.toSet());
+
+                    if (!linkModules.isEmpty()) {
+                        linkModules.forEach(idNode -> {
+                            final List<ModuleVO> modules = moduleService.findByIdForInterview(idNode);
+                            if (!modules.isEmpty()) {
+                                ModuleVO linkedModule = modules.get(0);
+                                storage.put(String.valueOf(idNode), Optional.ofNullable(linkedModule));
+                                interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO,
+                                        linkedModule,
+                                        newInterview.getInterviewId(),
+                                        questionCounter.incrementAndGet()));
+                            } else {
+                                log.error("Cant find linked module {}", idNode);
+                            }
+                        });
+                    }
+
+                    List<QuestionVO> questions = questionService.getQuestionsWithSingleChildLevel(Long.valueOf(possibleAnswerVO.getParentId()));
+                    if (!questions.isEmpty()) {
+                        QuestionVO questionVO = questions.get(0);
+                        InterviewQuestionVO interviewQuestion =
+                                interviewQuestionService.updateIntQ(createInterviewQuestion(questionVO,
+                                        newInterview.getInterviewId(),
+                                        questionCounter.incrementAndGet()));
+                        interviewAnswerService.saveOrUpdate(createInterviewAnswer(
+                                newInterview.getInterviewId(),
+                                possibleAnswerVO,
+                                interviewQuestion.getId()));
+                    } else {
+                        log.error("Unable to find question in survey {} with answer number {} and parent id node {}", answerNumber, referenceNumber, possibleAnswerVO.getParentId());
+                    }
+                } else {
+                    FragmentVO fragmentVO = fragmentService.getModuleByNameLength(moduleKey, 4);
+                }
+
             }
-            
-            // get answer with module id and answer number
-            PossibleAnswerVO possibleAnswerVO = possibleAnswerService.findByTopNodeIdAndNumber(moduleId,answerNumber);
-            // get question from module based on answer parent_idNode
-            List<QuestionVO> questionList = questionService.findById(Long.valueOf(possibleAnswerVO.getParentId()));
-            QuestionVO questionVO =  null;
-            if(questionList.isEmpty()){
-                log.error("Question {} does not exist",possibleAnswerVO.getParentId());
-                continue;
-            }else{
-                questionVO = questionList.get(0);
-            }
-            if(count == 1) {
-            }
-            InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
-            interviewQuestionVO.setDeleted(0);
-            interviewQuestionVO.setDescription(questionVO.getDescription());
-            interviewQuestionVO.setIdInterview(interviewId);
-            interviewQuestionVO.setIntQuestionSequence(count);
-            interviewQuestionVO.setLink(questionVO.getLink());
-            interviewQuestionVO.setName(questionVO.getName());
-            interviewQuestionVO.setNodeClass(questionVO.getNodeclass());
-            interviewQuestionVO.setNumber(questionVO.getNumber());
-            interviewQuestionVO.setParentModuleId(questionVO.getTopNodeId());
-            interviewQuestionVO.setProcessed(true);
-            interviewQuestionVO.setTopNodeId(questionVO.getTopNodeId());
-            interviewQuestionVO.setType(questionVO.getType());
-            interviewQuestionVO.setParentAnswerId(Optional.ofNullable(Long.valueOf(questionVO.getParentId())).orElse(0L));
-            interviewQuestionVO.setQuestionId(questionVO.getIdNode());
-            interviewQuestionService.updateIntQ(interviewQuestionVO);
-
-            InterviewAnswerVO interviewAnswerVO = new InterviewAnswerVO();
-            interviewAnswerVO.setName(possibleAnswerVO.getName());
-            interviewAnswerVO.setIsProcessed(true);
-            interviewAnswerVO.setAnswerFreetext(possibleAnswerVO.getName());
-            interviewAnswerVO.setAnswerId(possibleAnswerVO.getIdNode());
-            interviewAnswerVO.setDeleted(0);
-            interviewAnswerVO.setIdInterview(interviewId);
-            interviewAnswerVO.setInterviewQuestionId(questionVO.getIdNode());
-            interviewAnswerVO.setNodeClass(possibleAnswerVO.getNodeclass());
-            interviewAnswerVO.setNumber(possibleAnswerVO.getNumber());
-            interviewAnswerVO.setParentQuestionId(Optional.ofNullable(Long.valueOf(possibleAnswerVO.getParentId())).orElse(0L));
-            interviewAnswerVO.setTopNodeId(possibleAnswerVO.getTopNodeId());
-            interviewAnswerVO.setType(possibleAnswerVO.getType());
-            interviewAnswerVO.setDescription(possibleAnswerVO.getDescription());
-            interviewAnswerVO.setAnswerId(possibleAnswerVO.getIdNode());
-            interviewAnswerService.saveOrUpdate(interviewAnswerVO);
-
-            count++;
-        }
+        });
     }
 
     @Override
@@ -258,75 +175,174 @@ public class QSFServiceImpl implements IQSFService{
         AtomicInteger count = new AtomicInteger(1);
         list.stream().forEach(nodeQSF -> {
             try {
-                log.info("{} of {} - survey Id {}",count.getAndIncrement(),list.size(),nodeQSF.getSurveyId());
+                log.info("{} of {} - survey Id {}", count.getAndIncrement(), list.size(), nodeQSF.getSurveyId());
                 processResponseForSurvey(nodeQSF);
             } catch (InterruptedException e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         });
     }
+
+    private InterviewAnswerVO createInterviewAnswer(long interviewId, PossibleAnswerVO possibleAnswerVO, long interviewQID) {
+        InterviewAnswerVO interviewAnswerVO = new InterviewAnswerVO();
+        interviewAnswerVO.setName(possibleAnswerVO.getName());
+        interviewAnswerVO.setIsProcessed(true);
+        interviewAnswerVO.setAnswerFreetext(possibleAnswerVO.getName());
+        interviewAnswerVO.setAnswerId(possibleAnswerVO.getIdNode());
+        interviewAnswerVO.setDeleted(0);
+        interviewAnswerVO.setModCount(1);
+        interviewAnswerVO.setIdInterview(interviewId);
+        interviewAnswerVO.setInterviewQuestionId(interviewQID);
+        interviewAnswerVO.setNodeClass(possibleAnswerVO.getNodeclass());
+        interviewAnswerVO.setNumber(possibleAnswerVO.getNumber());
+        interviewAnswerVO.setParentQuestionId(Optional.ofNullable(Long.valueOf(possibleAnswerVO.getParentId())).orElse(0L));
+        interviewAnswerVO.setTopNodeId(possibleAnswerVO.getTopNodeId());
+        interviewAnswerVO.setType(possibleAnswerVO.getType());
+        interviewAnswerVO.setDescription(possibleAnswerVO.getDescription());
+        interviewAnswerVO.setAnswerId(possibleAnswerVO.getIdNode());
+        return interviewAnswerVO;
+    }
+
+    private InterviewQuestionVO createInterviewQuestion(NodeVO node, long interviewId, int sequence) {
+        InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
+        interviewQuestionVO.setDeleted(0);
+        interviewQuestionVO.setDescription(node.getDescription());
+        interviewQuestionVO.setIdInterview(interviewId);
+        interviewQuestionVO.setIntQuestionSequence(sequence);
+        interviewQuestionVO.setLink(node.getLink());
+        interviewQuestionVO.setName(node.getName());
+        interviewQuestionVO.setNodeClass(node.getNodeclass());
+        interviewQuestionVO.setNumber(node.getNumber());
+        interviewQuestionVO.setQuestionId(node.getIdNode());
+        interviewQuestionVO.setModCount(1);
+        interviewQuestionVO.setType(node.getType());
+        interviewQuestionVO.setParentModuleId(node.getTopNodeId());
+        if (node.getTopNodeId() != Long.valueOf(node.getParentId())) {
+            interviewQuestionVO.setParentAnswerId(Long.valueOf(Optional.ofNullable(node.getParentId()).orElse("0")));
+        }
+        interviewQuestionVO.setProcessed(true);
+        interviewQuestionVO.setTopNodeId(node.getTopNodeId());
+        return interviewQuestionVO;
+    }
+
+    private InterviewQuestionVO createInterviewIntroModuleQuestion(NodeVO nodeVO, long interviewId,int sequence) {
+        InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
+        interviewQuestionVO.setDeleted(0);
+        interviewQuestionVO.setDescription(nodeVO.getDescription());
+        interviewQuestionVO.setIdInterview(interviewId);
+        interviewQuestionVO.setIntQuestionSequence(sequence);
+        interviewQuestionVO.setLink(nodeVO.getIdNode());
+        interviewQuestionVO.setName(nodeVO.getName());
+        interviewQuestionVO.setNodeClass("M");
+        interviewQuestionVO.setNumber("0");
+        interviewQuestionVO.setQuestionId(0);
+        interviewQuestionVO.setModCount(0);
+        interviewQuestionVO.setType(nodeVO.getType());
+        interviewQuestionVO.setParentModuleId(nodeVO.getIdNode());
+        interviewQuestionVO.setParentAnswerId(0L);
+        interviewQuestionVO.setProcessed(true);
+        interviewQuestionVO.setTopNodeId(nodeVO.getIdNode());
+        interviewQuestionVO.setType(nodeVO.getType());
+        return interviewQuestionVO;
+    }
+
+    private InterviewQuestionVO createInterviewModuleQuestion(NodeVO node, ModuleVO linkedModule, long interviewId, int sequence) {
+        InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
+        interviewQuestionVO.setDeleted(0);
+        interviewQuestionVO.setDescription(linkedModule.getDescription());
+        interviewQuestionVO.setIdInterview(interviewId);
+        interviewQuestionVO.setIntQuestionSequence(sequence);
+        interviewQuestionVO.setLink(linkedModule.getIdNode());
+        interviewQuestionVO.setName(linkedModule.getName());
+        interviewQuestionVO.setNodeClass(null);
+        interviewQuestionVO.setNumber(node.getNumber());
+        interviewQuestionVO.setQuestionId(0);
+        interviewQuestionVO.setModCount(1);
+        interviewQuestionVO.setType(node.getType());
+        interviewQuestionVO.setParentModuleId(0L);
+        if (node.getTopNodeId() != Long.valueOf(node.getParentId())) {
+            interviewQuestionVO.setParentAnswerId(Optional.ofNullable(node.getIdNode()).orElse(0L));
+        }
+        interviewQuestionVO.setProcessed(true);
+        interviewQuestionVO.setTopNodeId(linkedModule.getIdNode());
+        interviewQuestionVO.setType(Constant.Q_LINKEDMODULE);
+        return interviewQuestionVO;
+    }
+
 
     private void processResponseForSurvey(NodeQSF nodeQSF) throws InterruptedException {
         SurveyExportRequest surveyExportRequest = new SurveyExportRequest();
         surveyExportRequest.setFormat("json");
         javax.ws.rs.core.Response response = iqsfClient.createExportResponse(nodeQSF.getSurveyId(), surveyExportRequest);
-        if (response != null) {
-            if (!(response.getEntity() instanceof SurveyExportResponse)) {
-                log.error(response.getEntity());
-                return;
-            }
+        if (!(response.getEntity() instanceof SurveyExportResponse)) {
+            log.error(response.getEntity());
+            return;
+        }
 
-            SurveyExportResponse exportResponse = (SurveyExportResponse) response.getEntity();
-            int tries = 0;
-            String fileId = null;
-            while (true) {
-                log.info("Export Progress:" + (exportResponse.getResult().getPercentComplete() * 100) + "%");
-                javax.ws.rs.core.Response exportProgress = iqsfClient.getExportResponseProgress(nodeQSF.getSurveyId(), exportResponse.getResult().getProgressId());
-                if (exportProgress != null) {
-                    exportResponse = (SurveyExportResponse) exportProgress.getEntity();
-                }
-                if (exportResponse.getResult().getFileId() != null) {
-                    fileId = exportResponse.getResult().getFileId();
-                    break;
-                }
-                if (tries == 20) {
-                    log.error("Stop check export qualtrics, seems its down or failed... tried " + tries + " times.");
-                    break;
-                }
-                tries++;
-                Thread.currentThread().sleep(5000);
+        String fileId = monitorExportProgress(nodeQSF, response);
+        File surveyJsonFile = processDownloadedFile(nodeQSF, fileId);
+        consumeJSONfile(surveyJsonFile);
+    }
+
+    private void consumeJSONfile(File surveyJsonFile) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            SurveyResponses surveyResponses = objectMapper.readValue(surveyJsonFile, SurveyResponses.class);
+            log.info(surveyResponses.toString());
+            this.consumeQSFResponse(surveyResponses);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    private File processDownloadedFile(NodeQSF nodeQSF, String fileId) {
+        File file = iqsfClient.getExportResponseFile(nodeQSF.getSurveyId(), fileId);
+        log.info("File is successfully exported here " + file.getAbsolutePath());
+        this.save(nodeQSF.getSurveyId(), nodeQSF.getIdNode(), file.getAbsolutePath());
+        File responseDir = null;
+        try {
+            File newDirectory = new File(file.getParent(), FilenameUtils.removeExtension(file.getName()));
+            if (!newDirectory.exists()) {
+                newDirectory.mkdir();
             }
-            log.info("export in qualtrics has been completed , tried to check " + tries + " times.");
-            File file = iqsfClient.getExportResponseFile(nodeQSF.getSurveyId(), fileId);
-            log.info("File is successfully exported here " + file.getAbsolutePath());
-            this.save(nodeQSF.getSurveyId(), nodeQSF.getIdNode(), file.getAbsolutePath());
-            File responseDir = null;
-            try {
-                File newDirectory = new File(file.getParent(), FilenameUtils.removeExtension(file.getName()));
-                if (!newDirectory.exists()) {
-                    newDirectory.mkdir();
-                }
-                ZipUtil.unzip(file, newDirectory.getAbsolutePath());
-                responseDir = newDirectory;
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-            File[] files = responseDir.listFiles();
-            File surveyJsonFile = null;
-            for (File survey : files) {
-                if ("json".equals(FilenameUtils.getExtension(survey.getName()))) {
-                    surveyJsonFile = survey;
-                    break;
-                }
-            }
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                SurveyResponses surveyResponses = objectMapper.readValue(surveyJsonFile, SurveyResponses.class);
-                log.info(surveyResponses.toString());
-                this.consumeQSFResponse(surveyResponses);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
+            ZipUtil.unzip(file, newDirectory.getAbsolutePath());
+            responseDir = newDirectory;
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        File[] files = responseDir.listFiles();
+        File surveyJsonFile = null;
+        for (File survey : files) {
+            if ("json".equals(FilenameUtils.getExtension(survey.getName()))) {
+                surveyJsonFile = survey;
+                break;
             }
         }
+        return surveyJsonFile;
+    }
+
+    private String monitorExportProgress(NodeQSF nodeQSF, javax.ws.rs.core.Response response) throws InterruptedException {
+        SurveyExportResponse exportResponse = (SurveyExportResponse) response.getEntity();
+        int tries = 0;
+        String fileId = null;
+        while (true) {
+            log.info("Export Progress:" + (exportResponse.getResult().getPercentComplete() * 100) + "%");
+            javax.ws.rs.core.Response exportProgress = iqsfClient.getExportResponseProgress(nodeQSF.getSurveyId(), exportResponse.getResult().getProgressId());
+            if (exportProgress != null) {
+                exportResponse = (SurveyExportResponse) exportProgress.getEntity();
+            }
+            if (exportResponse.getResult().getFileId() != null) {
+                fileId = exportResponse.getResult().getFileId();
+                break;
+            }
+            if (tries == 20) {
+                log.error("Stop check export qualtrics, seems its down or failed... tried " + tries + " times.");
+                break;
+            }
+            tries++;
+            Thread.currentThread().sleep(5000);
+        }
+        log.info("export in qualtrics has been completed , tried to check " + tries + " times.");
+        return fileId;
     }
 }
