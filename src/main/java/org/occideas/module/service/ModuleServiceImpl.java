@@ -536,15 +536,6 @@ public class ModuleServiceImpl implements ModuleService {
 		}
 	}
 
-	@Override
-	@Async("threadPoolTaskExecutor")
-	public void exportResponseQSF(Long id) throws InterruptedException {
-		List<ModuleVO> modules = this.findById(id);
-		if (!modules.isEmpty()) { 
-			studyAgentUtil.exportQSFResponses(modules.get(0).getIdNode());
-		}
-	}
-
 	private ReportHistoryVO insertToReportHistorySuccess(String name, String fullPath,
 														  String type, String user) {
 

@@ -29,12 +29,21 @@ public class NodeQSFDao implements INodeQSFDao {
     }
 
     @Override
-    public String getByIdNode(long idNode) {
+    public String getSurveyIdByIdNode(long idNode) {
         List<NodeQSF> results = list(new NodeQSFFilter<Long>("idNode", idNode));
         if (results.isEmpty()) {
             return null;
         }
         return results.get(0).getSurveyId();
+    }
+
+    @Override
+    public NodeQSF getByIdNode(long idNode) {
+        List<NodeQSF> results = list(new NodeQSFFilter<Long>("idNode", idNode));
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
     }
 
     @Override

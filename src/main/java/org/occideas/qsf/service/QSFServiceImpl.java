@@ -2,10 +2,12 @@ package org.occideas.qsf.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
 import org.occideas.entity.NodeQSF;
+import org.occideas.entity.SystemProperty;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interview.service.InterviewService;
@@ -22,6 +24,7 @@ import org.occideas.qsf.response.SurveyExportResponse;
 import org.occideas.qsf.results.Response;
 import org.occideas.qsf.results.SurveyResponses;
 import org.occideas.question.service.QuestionService;
+import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.ZipUtil;
 import org.occideas.vo.*;
@@ -73,6 +76,8 @@ public class QSFServiceImpl implements IQSFService {
     private INodeQSFDao nodeQSFDao;
     @Autowired
     private IQSFClient iqsfClient;
+    @Autowired
+    private SystemPropertyDao systemPropertyDao;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -81,14 +86,94 @@ public class QSFServiceImpl implements IQSFService {
     }
 
     @Override
-    public String getByIdNode(long idNode) {
+    public String getSurveyIdByIdNode(long idNode) {
+        return dao.getSurveyIdByIdNode(idNode);
+    }
+
+    @Override
+    public NodeQSF getByIdNode(long idNode) {
         return dao.getByIdNode(idNode);
     }
 
     @Override
+    @Async("threadPoolTaskExecutor")
+    public void exportResponseQSF(Long id) throws InterruptedException {
+        List<ModuleVO> modules = moduleService.findById(id);
+        if (!modules.isEmpty()) {
+            this.consumeQSFResponse(this.exportQSFResponses(modules.get(0).getIdNode()));
+        }
+    }
+
+    @Override
+    public SurveyResponses exportQSFResponses(long idNode) throws InterruptedException {
+        String surveyId = this.getSurveyIdByIdNode(idNode);
+        SurveyExportRequest surveyExportRequest = new SurveyExportRequest();
+        surveyExportRequest.setFormat("json");
+        javax.ws.rs.core.Response response = iqsfClient.createExportResponse(surveyId, surveyExportRequest);
+        if (response != null) {
+            if (!(response.getEntity() instanceof SurveyExportResponse)) {
+                log.error(response.getEntity());
+                return null;
+            }
+
+            SurveyExportResponse exportResponse = (SurveyExportResponse) response.getEntity();
+            int tries = 0;
+            String fileId = null;
+            while (true) {
+                log.info("Export Progress:" + (exportResponse.getResult().getPercentComplete() * 100) + "%");
+                javax.ws.rs.core.Response exportProgress = iqsfClient.getExportResponseProgress(surveyId, exportResponse.getResult().getProgressId());
+                if (exportProgress != null) {
+                    exportResponse = (SurveyExportResponse) exportProgress.getEntity();
+                }
+                if (exportResponse.getResult().getFileId() != null) {
+                    fileId = exportResponse.getResult().getFileId();
+                    break;
+                }
+                if (tries == 20) {
+                    log.error("Stop check export qualtrics, seems its down or failed... tried " + tries + " times.");
+                    break;
+                }
+                tries++;
+                Thread.currentThread().sleep(5000);
+            }
+            log.info("export in qualtrics has been completed , tried to check " + tries + " times.");
+            File file = iqsfClient.getExportResponseFile(surveyId, fileId);
+            log.info("File is successfully exported here " + file.getAbsolutePath());
+            this.save(surveyId, idNode, file.getAbsolutePath());
+            File responseDir = null;
+            try {
+                File newDirectory = new File(file.getParent(), FilenameUtils.removeExtension(file.getName()));
+                if (!newDirectory.exists()) {
+                    newDirectory.mkdir();
+                }
+                ZipUtil.unzip(file, newDirectory.getAbsolutePath());
+                responseDir = newDirectory;
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+            File[] files = responseDir.listFiles();
+            File surveyJsonFile = null;
+            for (File survey : files) {
+                if ("json".equals(FilenameUtils.getExtension(survey.getName()))) {
+                    surveyJsonFile = survey;
+                    break;
+                }
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                SurveyResponses surveyResponses = objectMapper.readValue(surveyJsonFile, SurveyResponses.class);
+                log.info(surveyResponses.toString());
+                return surveyResponses;
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void consumeQSFResponse(SurveyResponses surveyResponses) {
-        if (surveyResponses.getResponses().isEmpty()) {
-            log.error("Response is empty for json object", surveyResponses);
+        if (isEmptyResponse(surveyResponses)) {
             return;
         }
 
@@ -120,7 +205,7 @@ public class QSFServiceImpl implements IQSFService {
                     if (!storage.containsKey(moduleKey)) {
                         storage.put(moduleKey, Optional.of(module.get()));
                         interviewQuestionService.updateIntQ(createInterviewIntroModuleQuestion(moduleVO,
-                                newInterview.getInterviewId(),questionCounter.incrementAndGet()));
+                                newInterview.getInterviewId(), questionCounter.incrementAndGet()));
                     }
 
                     PossibleAnswerVO possibleAnswerVO = possibleAnswerService
@@ -140,6 +225,13 @@ public class QSFServiceImpl implements IQSFService {
                                         linkedModule,
                                         newInterview.getInterviewId(),
                                         questionCounter.incrementAndGet()));
+                                try {
+                                    final SurveyResponses moduleSurveyResponses =
+                                            this.exportQSFResponses(linkedModule.getIdNode());
+                                    consumeQSFModuleResponse(moduleSurveyResponses, linkedModule, newInterview);
+                                } catch (InterruptedException e) {
+                                    log.error(e.getMessage(), e);
+                                }
                             } else {
                                 log.error("Cant find linked module {}", idNode);
                             }
@@ -160,27 +252,100 @@ public class QSFServiceImpl implements IQSFService {
                     } else {
                         log.error("Unable to find question in survey {} with answer number {} and parent id node {}", answerNumber, referenceNumber, possibleAnswerVO.getParentId());
                     }
-                } else {
-                    FragmentVO fragmentVO = fragmentService.getModuleByNameLength(moduleKey, 4);
                 }
 
             }
         });
     }
 
+    private void consumeQSFModuleResponse(SurveyResponses surveyResponses,
+                                          ModuleVO moduleVO,
+                                          InterviewVO newInterview) {
+        if (isEmptyResponse(surveyResponses)) {
+            return;
+        }
+
+        final Response response = surveyResponses.getResponses().get(0);
+
+        Map<String, Optional<NodeVO>> storage = new HashMap<String, Optional<NodeVO>>();
+        AtomicInteger questionCounter = new AtomicInteger();
+        response.getLabels().forEach((key, value) -> {
+            if (key.contains(QID)) {
+                String values[] = value.toString().split(" ");
+                String splitAnswer[] = values[0].split("_");
+                final String moduleKey = splitAnswer[0];
+                final String answerNumber = splitAnswer[1];
+                PossibleAnswerVO possibleAnswerVO = possibleAnswerService
+                        .findByTopNodeIdAndNumber(moduleVO.getIdNode(), answerNumber);
+
+                final Set<Long> linkAJSM = possibleAnswerVO.getChildNodes().stream().filter(questions -> {
+                    return questions.getLink() > 0L;
+                }).map(QuestionVO::getLink).collect(Collectors.toSet());
+
+                if (!linkAJSM.isEmpty()) {
+                    linkAJSM.forEach(idNode -> {
+                        final List<FragmentVO> fragments = fragmentService.findByIdForInterview(idNode);
+                        if (!fragments.isEmpty()) {
+                            FragmentVO linkedAJSM = fragments.get(0);
+                            storage.put(String.valueOf(idNode), Optional.ofNullable(linkedAJSM));
+                            interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO,
+                                    linkedAJSM,
+                                    newInterview.getInterviewId(),
+                                    questionCounter.incrementAndGet()));
+                            try {
+                                final SurveyResponses moduleSurveyResponses =
+                                        this.exportQSFResponses(linkedAJSM.getIdNode());
+                                consumeQSFModuleResponse(moduleSurveyResponses,
+                                        moduleVO,
+                                        newInterview);
+                            } catch (InterruptedException e) {
+                                log.error(e.getMessage(), e);
+                            }
+                        } else {
+                            log.error("Cant find linked module {}", idNode);
+                        }
+                    });
+                }
+
+                List<QuestionVO> questions = questionService.getQuestionsWithSingleChildLevel(Long.valueOf(possibleAnswerVO.getParentId()));
+                if (!questions.isEmpty()) {
+                    QuestionVO questionVO = questions.get(0);
+                    InterviewQuestionVO interviewQuestion =
+                            interviewQuestionService.updateIntQ(createInterviewQuestion(questionVO,
+                                    newInterview.getInterviewId(),
+                                    questionCounter.incrementAndGet()));
+                    interviewAnswerService.saveOrUpdate(createInterviewAnswer(
+                            newInterview.getInterviewId(),
+                            possibleAnswerVO,
+                            interviewQuestion.getId()));
+                } else {
+                    log.error("Unable to find question in survey {} with answer number {} and parent id node {}", response.getResponseId(), answerNumber, possibleAnswerVO.getParentId());
+                }
+            }
+        });
+    }
+
+    private boolean isEmptyResponse(SurveyResponses surveyResponses) {
+        if (surveyResponses.getResponses().isEmpty()) {
+            log.error("Response is empty for json object", surveyResponses);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     @Async("threadPoolTaskExecutor")
     public void importQSFResponses() {
-        List<NodeQSF> list = nodeQSFDao.list();
-        AtomicInteger count = new AtomicInteger(1);
-        list.stream().forEach(nodeQSF -> {
-            try {
-                log.info("{} of {} - survey Id {}", count.getAndIncrement(), list.size(), nodeQSF.getSurveyId());
-                processResponseForSurvey(nodeQSF);
-            } catch (InterruptedException e) {
-                log.error(e.getMessage(), e);
-            }
-        });
+        SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
+        if (activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())) {
+            log.error("Active intro is either null or is not numeric");
+            return;
+        }
+        try {
+            processResponseForSurvey(this.getByIdNode(Long.valueOf(activeIntro.getValue())));
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private InterviewAnswerVO createInterviewAnswer(long interviewId, PossibleAnswerVO possibleAnswerVO, long interviewQID) {
@@ -225,7 +390,7 @@ public class QSFServiceImpl implements IQSFService {
         return interviewQuestionVO;
     }
 
-    private InterviewQuestionVO createInterviewIntroModuleQuestion(NodeVO nodeVO, long interviewId,int sequence) {
+    private InterviewQuestionVO createInterviewIntroModuleQuestion(NodeVO nodeVO, long interviewId, int sequence) {
         InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
         interviewQuestionVO.setDeleted(0);
         interviewQuestionVO.setDescription(nodeVO.getDescription());
@@ -246,7 +411,7 @@ public class QSFServiceImpl implements IQSFService {
         return interviewQuestionVO;
     }
 
-    private InterviewQuestionVO createInterviewModuleQuestion(NodeVO node, ModuleVO linkedModule, long interviewId, int sequence) {
+    private InterviewQuestionVO createInterviewModuleQuestion(NodeVO node, NodeVO linkedModule, long interviewId, int sequence) {
         InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
         interviewQuestionVO.setDeleted(0);
         interviewQuestionVO.setDescription(linkedModule.getDescription());

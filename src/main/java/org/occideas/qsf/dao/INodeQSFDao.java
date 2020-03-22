@@ -8,7 +8,9 @@ public interface INodeQSFDao {
 
     String save(String surveyId, long idNode, String results);
 
-    String getByIdNode(long idNode);
+    String getSurveyIdByIdNode(long idNode);
+
+    NodeQSF getByIdNode(long idNode);
 
     List<NodeQSF> list();
 }

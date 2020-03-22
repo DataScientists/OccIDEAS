@@ -9,6 +9,7 @@ import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.*;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
+import org.occideas.qsf.service.IQSFService;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
 import org.occideas.systemproperty.service.SystemPropertyService;
@@ -38,6 +39,8 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     private MSWordGenerator msWordGenerator;
     @Autowired
     private INodeService nodeService;
+    @Autowired
+    private IQSFService iqsfService;
 
     private String FREE_TEXT_REGEX = "\\[free\\s?text\\]";
 
@@ -109,7 +112,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     @Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
     public Response exportQSFResponse(@QueryParam("id") Long id) throws IOException, InterruptedException {
         try {
-            service.exportResponseQSF(id);
+            iqsfService.exportResponseQSF(id);
         } catch (Throwable e) {
             e.printStackTrace();
             return null;
