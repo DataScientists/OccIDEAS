@@ -1,11 +1,21 @@
 package org.occideas.qsf.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
+import org.occideas.entity.Node;
 import org.occideas.entity.NodeQSF;
 import org.occideas.entity.SystemProperty;
 import org.occideas.fragment.service.FragmentService;
@@ -27,18 +37,24 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.ZipUtil;
-import org.occideas.vo.*;
+import org.occideas.vo.FragmentVO;
+import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewQuestionVO;
+import org.occideas.vo.InterviewVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.ParticipantVO;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.QuestionVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Transactional
 @Service
@@ -183,23 +199,66 @@ public class QSFServiceImpl implements IQSFService {
         partVO.setReference(referenceNumber);
         partVO.setStatus(2);
         ParticipantVO participantVO = participantService.create(partVO);
-
+        long interviewId = 0;
 
         InterviewVO interviewVO = new InterviewVO();
         interviewVO.setParticipant(participantVO);
         interviewVO.setReferenceNumber(referenceNumber);
         InterviewVO newInterview = interviewService.create(interviewVO);
-
+        interviewId = newInterview.getInterviewId();
+        SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
+        ModuleVO introModuleVO = new ModuleVO();
+        if (introModule == null) {
+          log.error("no intro module set");
+          return;
+        } else {
+          Node<?> node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
+          
+          introModuleVO.setIdNode(node.getIdNode());
+          introModuleVO.setName(node.getName());
+          introModuleVO.setDescription(node.getDescription());
+          
+          interviewVO.setModule(introModuleVO);
+          
+        }
+        InterviewQuestionVO introInterviewQuestionVO = new InterviewQuestionVO();
+        introInterviewQuestionVO.setDeleted(0);
+        introInterviewQuestionVO.setDescription(introModuleVO.getDescription());
+        introInterviewQuestionVO.setIdInterview(interviewId);
+        introInterviewQuestionVO.setIntQuestionSequence(1);
+        introInterviewQuestionVO.setLink(introModuleVO.getIdNode());
+        introInterviewQuestionVO.setName(introModuleVO.getName());
+        introInterviewQuestionVO.setNodeClass("M");
+        introInterviewQuestionVO.setNumber("1");
+        introInterviewQuestionVO.setParentModuleId(0);
+        introInterviewQuestionVO.setProcessed(true);
+        introInterviewQuestionVO.setTopNodeId(introModuleVO.getIdNode());
+        introInterviewQuestionVO.setType("M_IntroModule");
+		
+		interviewQuestionService.updateIntQ(introInterviewQuestionVO);
         Map<String, Optional<NodeVO>> storage = new HashMap<String, Optional<NodeVO>>();
         AtomicInteger questionCounter = new AtomicInteger();
         response.getLabels().forEach((key, value) -> {
+        	System.out.println(key.toString());
+        	System.out.println(value.toString());
             if (key.contains(QID)) {
+            	if(value.toString().contains("[")){
+            		System.err.println("Not handling multiple choice yet");
+            		//for now remove the [ and take the first answer see splitAnswer[0].replace("[", "");
+            	}
+            	if(value.toString()=="[]"){
+            		return;
+            	}
                 String values[] = value.toString().split(" ");
                 String splitAnswer[] = values[0].split("_");
-                final String moduleKey = splitAnswer[0];
+                final String moduleKey = splitAnswer[0].replace("[", "");
                 final String answerNumber = splitAnswer[1];
                 Optional<NodeVO> module = Optional.ofNullable(storage.get(moduleKey))
                         .orElse(Optional.ofNullable(moduleService.getModuleByNameLength(moduleKey, 4)));
+                if (!module.isPresent()) {
+                	module = Optional.ofNullable(storage.get(moduleKey))
+                            .orElse(Optional.ofNullable(fragmentService.getModuleByNameLength(moduleKey, 4)));
+                }
                 if (module.isPresent()) {
                     NodeVO moduleVO = module.get();
                     if (!storage.containsKey(moduleKey)) {
@@ -217,21 +276,25 @@ public class QSFServiceImpl implements IQSFService {
 
                     if (!linkModules.isEmpty()) {
                         linkModules.forEach(idNode -> {
-                            final List<ModuleVO> modules = moduleService.findByIdForInterview(idNode);
+                            final List<FragmentVO> modules = fragmentService.findByIdForInterview(idNode);
                             if (!modules.isEmpty()) {
-                                ModuleVO linkedModule = modules.get(0);
-                                storage.put(String.valueOf(idNode), Optional.ofNullable(linkedModule));
-                                interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO,
-                                        linkedModule,
-                                        newInterview.getInterviewId(),
-                                        questionCounter.incrementAndGet()));
-                                try {
-                                    final SurveyResponses moduleSurveyResponses =
-                                            this.exportQSFResponses(linkedModule.getIdNode());
-                                    consumeQSFModuleResponse(moduleSurveyResponses, linkedModule, newInterview);
-                                } catch (InterruptedException e) {
-                                    log.error(e.getMessage(), e);
+                            	FragmentVO linkedModule = modules.get(0);
+                                if (linkedModule != null) {
+                                	storage.put(String.valueOf(idNode), Optional.ofNullable(linkedModule));
+                                    interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
+                                    		moduleVO,
+                                    		linkedModule,
+                                            newInterview.getInterviewId(),
+                                            questionCounter.incrementAndGet()));
+                                   // try {
+                                        //final SurveyResponses moduleSurveyResponses =
+                                        //        this.exportQSFResponses(linkedModule.getIdNode());
+                                        //consumeQSFModuleResponse(moduleSurveyResponses, linkedModule, newInterview);
+                                   // } catch (InterruptedException e) {
+                                  //      log.error(e.getMessage(), e);
+                                   // }
                                 }
+                                
                             } else {
                                 log.error("Cant find linked module {}", idNode);
                             }
