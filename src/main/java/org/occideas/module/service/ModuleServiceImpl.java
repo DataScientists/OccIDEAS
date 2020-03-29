@@ -460,7 +460,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public NodeVO getNodeNameById(Long idNode) {
+	public NodeVO getNodeById(Long idNode) {
 		Node node = dao.getNodeById(idNode);
 		if ("M".equals(node.getNodeclass())) {
 			ModuleVO moduleVO = mapper.convertToModuleVO((Module) node, false);

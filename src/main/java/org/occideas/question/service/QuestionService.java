@@ -28,4 +28,8 @@ public interface QuestionService extends BaseService<QuestionVO> {
   NodeVO getTopModuleByTopNodeId(long topNodeId);
 
   List<NodesAgent> getNodesWithAgent(long agentId);
+
+  QuestionVO findByIdExcludeChildren(long idNode);
+
+  QuestionVO getQuestionByLinkIdAndTopId(long idNode, long idNode1);
 }

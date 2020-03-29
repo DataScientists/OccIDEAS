@@ -12,4 +12,6 @@ public interface PossibleAnswerService extends BaseService<PossibleAnswerVO> {
     PossibleAnswerVO findAnswerWithRulesById(long id);
 
     PossibleAnswerVO findByTopNodeIdAndNumber(long moduleId, String answerNumber);
+
+    PossibleAnswerVO findByIdExcludeChildren(Long id);
 }

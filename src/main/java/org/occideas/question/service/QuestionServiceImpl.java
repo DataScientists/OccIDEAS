@@ -156,4 +156,14 @@ public class QuestionServiceImpl implements QuestionService {
     return qdao.getNodesWithAgent(agentId);
   }
 
+  @Override
+  public QuestionVO findByIdExcludeChildren(long idNode) {
+    return mapper.convertToQuestionWithFlagsVO(qdao.get(idNode), false,false);
+  }
+
+  @Override
+  public QuestionVO getQuestionByLinkIdAndTopId(long linkId, long topId) {
+     return mapper.convertToQuestionWithFlagsVO(qdao.getQuestionByLinkIdAndTopId(linkId, topId), true,false);
+  }
+
 }

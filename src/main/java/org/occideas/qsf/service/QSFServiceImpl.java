@@ -1,29 +1,19 @@
 package org.occideas.qsf.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
-import org.occideas.entity.Node;
 import org.occideas.entity.NodeQSF;
 import org.occideas.entity.SystemProperty;
+import org.occideas.exceptions.NodeNotFoundException;
+import org.occideas.exceptions.StudyIntroModuleNotFoundException;
 import org.occideas.fragment.service.FragmentService;
-import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
-import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
@@ -37,23 +27,18 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.ZipUtil;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.InterviewAnswerVO;
-import org.occideas.vo.InterviewQuestionVO;
-import org.occideas.vo.InterviewVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
-import org.occideas.vo.ParticipantVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.SystemPropertyVO;
+import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 
 @Transactional
@@ -68,8 +53,6 @@ public class QSFServiceImpl implements IQSFService {
     private INodeQSFDao dao;
     @Autowired
     private ParticipantService participantService;
-    @Autowired
-    private IInterviewDao interviewDao;
     @Autowired
     private ModuleService moduleService;
     @Autowired
@@ -86,10 +69,6 @@ public class QSFServiceImpl implements IQSFService {
     private InterviewAnswerService interviewAnswerService;
     @Autowired
     private SystemPropertyService systemPropertyService;
-    @Autowired
-    private IModuleDao moduleDao;
-    @Autowired
-    private INodeQSFDao nodeQSFDao;
     @Autowired
     private IQSFClient iqsfClient;
     @Autowired
@@ -195,130 +174,208 @@ public class QSFServiceImpl implements IQSFService {
 
         final Response response = surveyResponses.getResponses().get(0);
         String referenceNumber = String.valueOf(response.getResponseId());
-        ParticipantVO partVO = new ParticipantVO();
-        partVO.setReference(referenceNumber);
-        partVO.setStatus(2);
-        ParticipantVO participantVO = participantService.create(partVO);
-        long interviewId = 0;
+        ParticipantVO participantVO = createParticipant(referenceNumber);
 
-        InterviewVO interviewVO = new InterviewVO();
-        interviewVO.setParticipant(participantVO);
-        interviewVO.setReferenceNumber(referenceNumber);
-        InterviewVO newInterview = interviewService.create(interviewVO);
-        interviewId = newInterview.getInterviewId();
-        SystemPropertyVO introModule = systemPropertyService.getByName(Constant.STUDY_INTRO);
-        ModuleVO introModuleVO = new ModuleVO();
-        if (introModule == null) {
-          log.error("no intro module set");
-          return;
-        } else {
-          Node<?> node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
-          
-          introModuleVO.setIdNode(node.getIdNode());
-          introModuleVO.setName(node.getName());
-          introModuleVO.setDescription(node.getDescription());
-          
-          interviewVO.setModule(introModuleVO);
-          
+        InterviewVO newInterview = createNewInterview(referenceNumber, participantVO);
+
+        SystemPropertyVO introModule = Optional.ofNullable(systemPropertyService.getByName(Constant.STUDY_INTRO))
+                .orElseThrow(StudyIntroModuleNotFoundException::new);
+        NodeVO nodeVO = moduleService.getNodeById(Long.valueOf(introModule.getValue()));
+
+        createIntroQuestion(newInterview, nodeVO);
+
+        processResponseAnswers(response, referenceNumber, newInterview, nodeVO);
+    }
+
+    private void processResponseAnswers(Response response, String referenceNumber, InterviewVO newInterview, NodeVO nodeVO) {
+
+        PriorityQueue<String> answersQueue = new PriorityQueue<>();
+        response.getLabels().entrySet().stream()
+                .filter(item -> item.getKey().contains(QID))
+                .map(item -> item.getValue().toString())
+                .forEach(answer -> answersQueue.add(answer));
+
+        createInterviewQuestionsAnswers(answersQueue, nodeVO, newInterview);
+    }
+
+    private void createInterviewQuestionsAnswers(PriorityQueue<String> answersQueue, NodeVO nodeVO, InterviewVO newInterview) {
+        AtomicInteger questionCounter = new AtomicInteger(1);
+
+        QuestionVO topQuestion = getParentQuestionsFromFirstAnswer(answersQueue.poll(), nodeVO, newInterview);
+        createInterviewQuestionFromQuestion(topQuestion, newInterview.getInterviewId(), questionCounter);
+
+        while (answersQueue.peek() != null) {
+            String answer = answersQueue.poll();
+            if (answer.contains("[")) {
+                handleMultipleAnswer(newInterview, questionCounter, answer);
+                continue;
+            } else {
+                handleSimpleAnswer(newInterview, questionCounter, answer);
+            }
         }
+    }
+
+    private void handleMultipleAnswer(InterviewVO newInterview, AtomicInteger questionCounter, String answer) {
+        answer = answer.replace("[", "").replace("]", "");
+        if (!StringUtils.isEmpty(answer)) {
+            if (answer.contains(",")) {
+                String[] answers = answer.split(",");
+                Arrays.stream(answers)
+                        .filter(ans -> ans.contains("_"))
+                        .forEach(ans -> handleSimpleAnswer(newInterview, questionCounter, ans.trim()));
+            } else {
+                handleSimpleAnswer(newInterview, questionCounter, answer);
+            }
+        }
+    }
+
+    private void handleSimpleAnswer(InterviewVO newInterview, AtomicInteger questionCounter, String answer) {
+        String values[] = answer.toString().split(" ");
+        String splitAnswer[] = values[0].split("_");
+        final String moduleKey = splitAnswer[0];
+        final String answerNumber = splitAnswer[1];
+
+        Optional<NodeVO> node = getNodeByModuleKey(moduleKey);
+        if (node.isPresent()) {
+            NodeVO moduleVO = node.get();
+
+            interviewQuestionService.updateIntQ(createInterviewIntroModuleQuestion(moduleVO,
+                    newInterview.getInterviewId(), questionCounter.incrementAndGet()));
+            PossibleAnswerVO possibleAnswerVO = possibleAnswerService
+                    .findByTopNodeIdAndNumber(moduleVO.getIdNode(), answerNumber);
+
+            final Set<Long> linkModules = possibleAnswerVO.getChildNodes().stream().filter(questions -> {
+                return questions.getLink() > 0L;
+            }).map(QuestionVO::getLink).collect(Collectors.toSet());
+
+            if (!linkModules.isEmpty()) {
+                linkModules.forEach(idNode -> {
+                    final List<FragmentVO> modules = fragmentService.findByIdForInterview(idNode);
+                    if (!modules.isEmpty()) {
+                        FragmentVO linkedModule = modules.get(0);
+                        if (linkedModule != null) {
+                            interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
+                                    moduleVO,
+                                    linkedModule,
+                                    newInterview.getInterviewId(),
+                                    questionCounter.incrementAndGet()));
+                        }
+
+                    } else {
+                        log.error("Cant find linked module {}", idNode);
+                    }
+                });
+            }
+
+            List<QuestionVO> questions = questionService.getQuestionsWithSingleChildLevel(Long.valueOf(possibleAnswerVO.getParentId()));
+            if (!questions.isEmpty()) {
+                QuestionVO questionVO = questions.get(0);
+                InterviewQuestionVO interviewQuestion =
+                        interviewQuestionService.updateIntQ(createInterviewQuestion(questionVO,
+                                newInterview.getInterviewId(),
+                                questionCounter.incrementAndGet()));
+                interviewAnswerService.saveOrUpdate(createInterviewAnswer(
+                        newInterview.getInterviewId(),
+                        possibleAnswerVO,
+                        interviewQuestion.getId()));
+            } else {
+                log.error("Unable to find question in survey {} with answer number {} and parent id node {}",
+                        answerNumber, newInterview.getReferenceNumber(), possibleAnswerVO.getParentId());
+            }
+        }
+    }
+
+    private void createInterviewQuestionFromQuestion(QuestionVO questionVO, long interviewId, AtomicInteger questionCounter) {
+        InterviewQuestionVO interviewQuestion =
+                interviewQuestionService.updateIntQ(createInterviewQuestion(questionVO,
+                        interviewId,
+                        questionCounter.incrementAndGet()));
+        final PossibleAnswerVO possibleAnswerVO = questionVO.getChildNodes().get(0);
+        interviewAnswerService.saveOrUpdate(createInterviewAnswer(
+                interviewId,
+                possibleAnswerVO,
+                interviewQuestion.getId()));
+        if (!possibleAnswerVO.getChildNodes().isEmpty()) {
+            createInterviewQuestionFromQuestion(possibleAnswerVO.getChildNodes().get(0), interviewId, questionCounter);
+        }
+
+    }
+
+    private QuestionVO getParentQuestionsFromFirstAnswer(String answer, NodeVO topNode, InterviewVO newInterview) {
+        String values[] = answer.toString().split(" ");
+        String splitAnswer[] = values[0].split("_");
+        final String moduleKey = splitAnswer[0].replace("[", "");
+        final String answerNumber = splitAnswer[1];
+
+        Optional<NodeVO> node = getNodeByModuleKey(moduleKey);
+        if (node.isPresent()) {
+            QuestionVO linkQuestion = questionService
+                    .getQuestionByLinkIdAndTopId(node.get().getIdNode(), topNode.getIdNode());
+            PossibleAnswerVO parentAnswer = possibleAnswerService.findByIdExcludeChildren(Long.valueOf(linkQuestion.getParentId()));
+            QuestionVO parentQuestion = questionService.findByIdExcludeChildren(Long.valueOf(parentAnswer.getParentId()));
+            parentQuestion.setChildNodes(Arrays.asList(parentAnswer));
+            if (Long.valueOf(parentQuestion.getParentId()) != topNode.getIdNode()) {
+                return queueUntilTopQuestion(topNode.getIdNode(), parentQuestion);
+            } else {
+                return parentQuestion;
+            }
+        } else {
+            throw new NodeNotFoundException(topNode.getIdNode());
+        }
+    }
+
+    private QuestionVO queueUntilTopQuestion(long topNodeId, QuestionVO questionVO) {
+        final Long parentId = Long.valueOf(questionVO.getParentId());
+        if (topNodeId == parentId) {
+            return questionVO;
+        }
+        PossibleAnswerVO possibleAnswerVO = possibleAnswerService.findByIdExcludeChildren(parentId);
+        possibleAnswerVO.setChildNodes(Arrays.asList(questionVO));
+        final long answerParentId = Long.valueOf(possibleAnswerVO.getParentId());
+        QuestionVO parentQuestion = questionService.findByIdExcludeChildren(answerParentId);
+        parentQuestion.setChildNodes(Arrays.asList(possibleAnswerVO));
+        return queueUntilTopQuestion(topNodeId, parentQuestion);
+    }
+
+    private Optional<NodeVO> getNodeByModuleKey(String moduleKey) {
+        Optional<NodeVO> node =
+                Optional.ofNullable(moduleService.getModuleByNameLength(moduleKey, 4));
+        if (!node.isPresent()) {
+            node = Optional.ofNullable(fragmentService.getModuleByNameLength(moduleKey, 4));
+        }
+        return node;
+    }
+
+    private void createIntroQuestion(InterviewVO newInterview, NodeVO node) {
         InterviewQuestionVO introInterviewQuestionVO = new InterviewQuestionVO();
         introInterviewQuestionVO.setDeleted(0);
-        introInterviewQuestionVO.setDescription(introModuleVO.getDescription());
-        introInterviewQuestionVO.setIdInterview(interviewId);
+        introInterviewQuestionVO.setDescription(node.getDescription());
+        introInterviewQuestionVO.setIdInterview(newInterview.getInterviewId());
         introInterviewQuestionVO.setIntQuestionSequence(1);
-        introInterviewQuestionVO.setLink(introModuleVO.getIdNode());
-        introInterviewQuestionVO.setName(introModuleVO.getName());
+        introInterviewQuestionVO.setLink(node.getIdNode());
+        introInterviewQuestionVO.setName(node.getName());
         introInterviewQuestionVO.setNodeClass("M");
         introInterviewQuestionVO.setNumber("1");
         introInterviewQuestionVO.setParentModuleId(0);
         introInterviewQuestionVO.setProcessed(true);
-        introInterviewQuestionVO.setTopNodeId(introModuleVO.getIdNode());
+        introInterviewQuestionVO.setTopNodeId(node.getIdNode());
         introInterviewQuestionVO.setType("M_IntroModule");
-		
-		interviewQuestionService.updateIntQ(introInterviewQuestionVO);
-        Map<String, Optional<NodeVO>> storage = new HashMap<String, Optional<NodeVO>>();
-        AtomicInteger questionCounter = new AtomicInteger();
-        response.getLabels().forEach((key, value) -> {
-        	System.out.println(key.toString());
-        	System.out.println(value.toString());
-            if (key.contains(QID)) {
-            	if(value.toString().contains("[")){
-            		System.err.println("Not handling multiple choice yet");
-            		//for now remove the [ and take the first answer see splitAnswer[0].replace("[", "");
-            	}
-            	if(value.toString()=="[]"){
-            		return;
-            	}
-                String values[] = value.toString().split(" ");
-                String splitAnswer[] = values[0].split("_");
-                final String moduleKey = splitAnswer[0].replace("[", "");
-                final String answerNumber = splitAnswer[1];
-                Optional<NodeVO> module = Optional.ofNullable(storage.get(moduleKey))
-                        .orElse(Optional.ofNullable(moduleService.getModuleByNameLength(moduleKey, 4)));
-                if (!module.isPresent()) {
-                	module = Optional.ofNullable(storage.get(moduleKey))
-                            .orElse(Optional.ofNullable(fragmentService.getModuleByNameLength(moduleKey, 4)));
-                }
-                if (module.isPresent()) {
-                    NodeVO moduleVO = module.get();
-                    if (!storage.containsKey(moduleKey)) {
-                        storage.put(moduleKey, Optional.of(module.get()));
-                        interviewQuestionService.updateIntQ(createInterviewIntroModuleQuestion(moduleVO,
-                                newInterview.getInterviewId(), questionCounter.incrementAndGet()));
-                    }
 
-                    PossibleAnswerVO possibleAnswerVO = possibleAnswerService
-                            .findByTopNodeIdAndNumber(moduleVO.getIdNode(), answerNumber);
+        interviewQuestionService.updateIntQ(introInterviewQuestionVO);
+    }
 
-                    final Set<Long> linkModules = possibleAnswerVO.getChildNodes().stream().filter(questions -> {
-                        return questions.getLink() > 0L;
-                    }).map(QuestionVO::getLink).collect(Collectors.toSet());
+    public InterviewVO createNewInterview(String referenceNumber, ParticipantVO participantVO) {
+        InterviewVO interviewVO = new InterviewVO();
+        interviewVO.setParticipant(participantVO);
+        interviewVO.setReferenceNumber(referenceNumber);
+        return interviewService.create(interviewVO);
+    }
 
-                    if (!linkModules.isEmpty()) {
-                        linkModules.forEach(idNode -> {
-                            final List<FragmentVO> modules = fragmentService.findByIdForInterview(idNode);
-                            if (!modules.isEmpty()) {
-                            	FragmentVO linkedModule = modules.get(0);
-                                if (linkedModule != null) {
-                                	storage.put(String.valueOf(idNode), Optional.ofNullable(linkedModule));
-                                    interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
-                                    		moduleVO,
-                                    		linkedModule,
-                                            newInterview.getInterviewId(),
-                                            questionCounter.incrementAndGet()));
-                                   // try {
-                                        //final SurveyResponses moduleSurveyResponses =
-                                        //        this.exportQSFResponses(linkedModule.getIdNode());
-                                        //consumeQSFModuleResponse(moduleSurveyResponses, linkedModule, newInterview);
-                                   // } catch (InterruptedException e) {
-                                  //      log.error(e.getMessage(), e);
-                                   // }
-                                }
-                                
-                            } else {
-                                log.error("Cant find linked module {}", idNode);
-                            }
-                        });
-                    }
-
-                    List<QuestionVO> questions = questionService.getQuestionsWithSingleChildLevel(Long.valueOf(possibleAnswerVO.getParentId()));
-                    if (!questions.isEmpty()) {
-                        QuestionVO questionVO = questions.get(0);
-                        InterviewQuestionVO interviewQuestion =
-                                interviewQuestionService.updateIntQ(createInterviewQuestion(questionVO,
-                                        newInterview.getInterviewId(),
-                                        questionCounter.incrementAndGet()));
-                        interviewAnswerService.saveOrUpdate(createInterviewAnswer(
-                                newInterview.getInterviewId(),
-                                possibleAnswerVO,
-                                interviewQuestion.getId()));
-                    } else {
-                        log.error("Unable to find question in survey {} with answer number {} and parent id node {}", answerNumber, referenceNumber, possibleAnswerVO.getParentId());
-                    }
-                }
-
-            }
-        });
+    public ParticipantVO createParticipant(String referenceNumber) {
+        ParticipantVO partVO = new ParticipantVO();
+        partVO.setReference(referenceNumber);
+        partVO.setStatus(2);
+        return participantService.create(partVO);
     }
 
     private void consumeQSFModuleResponse(SurveyResponses surveyResponses,
@@ -353,7 +410,7 @@ public class QSFServiceImpl implements IQSFService {
                     if (!questions.isEmpty()) {
                         QuestionVO questionVO = questions.get(0);
                         interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(questionVO,
-                                nodeVO,newNodeVO,
+                                nodeVO, newNodeVO,
                                 newInterview.getInterviewId(),
                                 questionCounter.incrementAndGet()));
                     }
@@ -390,6 +447,19 @@ public class QSFServiceImpl implements IQSFService {
     @Override
     @Async("threadPoolTaskExecutor")
     public void importQSFResponses() {
+        List<NodeQSF> nodeQSF = dao.list();
+        nodeQSF.stream().forEach(qsf -> {
+            try {
+                processResponseForSurvey(qsf);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage(), e);
+            }
+        });
+    }
+
+    @Override
+    @Async("threadPoolTaskExecutor")
+    public void importQSFResponsesForIntro() {
         SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
         if (activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())) {
             log.error("Active intro is either null or is not numeric");

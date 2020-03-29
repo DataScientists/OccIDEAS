@@ -83,4 +83,10 @@ public class PossibleAnswerServiceImpl implements PossibleAnswerService {
     return paVO;
   }
 
+  @Override
+  public PossibleAnswerVO findByIdExcludeChildren(Long id) {
+    PossibleAnswer answer = possibleAnswerDao.get(id);
+    return mapper.convertToPossibleAnswerVO(answer,false);
+  }
+
 }

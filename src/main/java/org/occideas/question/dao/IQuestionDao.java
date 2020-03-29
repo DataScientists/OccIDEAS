@@ -27,6 +27,9 @@ public interface IQuestionDao {
 
   void saveOrUpdate(Question question);
 
+  Question get(long id);
+
   void saveOrUpdateIgnoreFK(Question question);
 
+  Question getQuestionByLinkIdAndTopId(long linkId, long topId);
 }

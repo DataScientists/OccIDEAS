@@ -46,7 +46,7 @@ public interface ModuleService {
 
 	List<Module> getAllModules();
 
-	NodeVO getNodeNameById(Long idNode);
+	NodeVO getNodeById(Long idNode);
 
 	List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(Long theId);
 

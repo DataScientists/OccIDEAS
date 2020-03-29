@@ -5,6 +5,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.Module;
 import org.occideas.entity.Node;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
@@ -37,11 +41,29 @@ public class QuestionDao implements IQuestionDao {
   }
 
   @Override
+  public Question get(long id) {
+    return baseDao.get(Question.class, id);
+  }
+
+  @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveOrUpdateIgnoreFK(Question question) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();
     sessionFactory.getCurrentSession().saveOrUpdate(question);
+  }
+
+  @Override
+  public Question getQuestionByLinkIdAndTopId(long linkId, long topId) {
+    CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+    CriteriaQuery<Question> criteria = builder.createQuery(Question.class);
+    Root<Question> root = criteria.from(Question.class);
+    final CriteriaQuery<Question> select = criteria.select(root);
+    select.where(builder.equal(root.get("link"), linkId),
+            builder.equal(root.get("topNodeId"), topId),
+            builder.equal(root.get("deleted"), 0));
+    Query<Question> query = sessionFactory.getCurrentSession().createQuery(criteria);
+    return query.getSingleResult();
   }
 
   public Question getQuestionByModuleIdAndNumber(String parentId, String number) {

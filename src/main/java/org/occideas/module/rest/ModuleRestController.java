@@ -466,7 +466,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     public Response getNodeNameById(@QueryParam("id") Long idNode) {
         NodeVO nodeVO = null;
         try {
-            nodeVO = service.getNodeNameById(idNode);
+            nodeVO = service.getNodeById(idNode);
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
