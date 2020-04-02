@@ -165,12 +165,13 @@ public class QSFServiceImpl implements IQSFService {
         }
         return null;
     }
-
+    Set<Long> uniqueModules = null;
     @Override
     public void consumeQSFResponse(SurveyResponses surveyResponses) {
         if (isEmptyResponse(surveyResponses)) {
             return;
         }
+        uniqueModules = new HashSet<>();
 
         final Response response = surveyResponses.getResponses().get(0);
         String referenceNumber = String.valueOf(response.getResponseId());
@@ -201,16 +202,19 @@ public class QSFServiceImpl implements IQSFService {
     private void createInterviewQuestionsAnswers(PriorityQueue<String> answersQueue, NodeVO nodeVO, InterviewVO newInterview) {
         AtomicInteger questionCounter = new AtomicInteger(1);
 
-        QuestionVO topQuestion = getParentQuestionsFromFirstAnswer(answersQueue.poll(), nodeVO, newInterview);
+        QuestionVO topQuestion = getParentQuestionsFromFirstAnswer(answersQueue.peek(), nodeVO, newInterview);
         createInterviewQuestionFromQuestion(topQuestion, newInterview.getInterviewId(), questionCounter);
 
+        AtomicInteger newQuestionCounter = new AtomicInteger();
+        
         while (answersQueue.peek() != null) {
             String answer = answersQueue.poll();
+            System.out.println(answer);
             if (answer.contains("[")) {
-                handleMultipleAnswer(newInterview, questionCounter, answer);
+                handleMultipleAnswer(newInterview, newQuestionCounter, answer);
                 continue;
             } else {
-                handleSimpleAnswer(newInterview, questionCounter, answer);
+                handleSimpleAnswer(newInterview, newQuestionCounter, answer);
             }
         }
     }
@@ -238,11 +242,15 @@ public class QSFServiceImpl implements IQSFService {
         Optional<NodeVO> node = getNodeByModuleKey(moduleKey);
         if (node.isPresent()) {
             NodeVO moduleVO = node.get();
-
-            interviewQuestionService.updateIntQ(createInterviewIntroModuleQuestion(moduleVO,
-                    newInterview.getInterviewId(), questionCounter.incrementAndGet()));
             PossibleAnswerVO possibleAnswerVO = possibleAnswerService
                     .findByTopNodeIdAndNumber(moduleVO.getIdNode(), answerNumber);
+            
+             if(!uniqueModules.contains(node.get().getIdNode()) && node.get().getNodeclass().equals("M")){
+            	 interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO, moduleVO, newInterview.getInterviewId(), questionCounter.incrementAndGet()));
+            	 uniqueModules.add(node.get().getIdNode());
+             } 
+           
+            
 
             final Set<Long> linkModules = possibleAnswerVO.getChildNodes().stream().filter(questions -> {
                 return questions.getLink() > 0L;
@@ -253,12 +261,17 @@ public class QSFServiceImpl implements IQSFService {
                     final List<FragmentVO> modules = fragmentService.findByIdForInterview(idNode);
                     if (!modules.isEmpty()) {
                         FragmentVO linkedModule = modules.get(0);
+                        
                         if (linkedModule != null) {
-                            interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
-                                    moduleVO,
-                                    linkedModule,
-                                    newInterview.getInterviewId(),
-                                    questionCounter.incrementAndGet()));
+                        	 if(!uniqueModules.contains(linkedModule.getIdNode())){
+                        		 interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
+                                         moduleVO,
+                                         linkedModule,
+                                         newInterview.getInterviewId(),
+                                         questionCounter.incrementAndGet()));
+                        		 uniqueModules.add(linkedModule.getIdNode());
+                             }
+                           
                         }
 
                     } else {
@@ -307,6 +320,7 @@ public class QSFServiceImpl implements IQSFService {
         final String moduleKey = splitAnswer[0].replace("[", "");
         final String answerNumber = splitAnswer[1];
 
+        System.out.println(answer);
         Optional<NodeVO> node = getNodeByModuleKey(moduleKey);
         if (node.isPresent()) {
             QuestionVO linkQuestion = questionService
@@ -547,7 +561,7 @@ public class QSFServiceImpl implements IQSFService {
         interviewQuestionVO.setNumber(node.getNumber());
         interviewQuestionVO.setQuestionId(0);
         interviewQuestionVO.setModCount(1);
-        interviewQuestionVO.setType(node.getType());
+       // interviewQuestionVO.setType(node.getType());
         interviewQuestionVO.setParentModuleId(0L);
         if (node.getTopNodeId() != Long.valueOf(node.getParentId())) {
             interviewQuestionVO.setParentAnswerId(Optional.ofNullable(node.getIdNode()).orElse(0L));
