@@ -248,7 +248,27 @@ public class QSFServiceImpl implements IQSFService {
              if(!uniqueModules.contains(node.get().getIdNode()) && node.get().getNodeclass().equals("M")){
             	 interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO, moduleVO, newInterview.getInterviewId(), questionCounter.incrementAndGet()));
             	 uniqueModules.add(node.get().getIdNode());
-             } 
+             } else if(!uniqueModules.contains(node.get().getIdNode()) && node.get().getNodeclass().equals("F")){
+            	 final List<FragmentVO> modules = fragmentService.findByIdForInterview(node.get().getIdNode());
+                 if (!modules.isEmpty()) {
+                     FragmentVO linkedModule = modules.get(0);
+                     
+                     if (linkedModule != null) {
+                     	 if(!uniqueModules.contains(linkedModule.getIdNode())){
+                     		 interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
+                                      moduleVO,
+                                      linkedModule,
+                                      newInterview.getInterviewId(),
+                                      questionCounter.incrementAndGet()));
+                     		 uniqueModules.add(linkedModule.getIdNode());
+                          }
+                        
+                     }
+
+                 } else {
+                     log.error("Cant find linked module {}", node.get().getIdNode());
+                 }
+             }
            
             
 
