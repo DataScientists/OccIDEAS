@@ -84,8 +84,8 @@
     </div>
     <div class="noiseAssessmentWrapper" ng-if="noiseRows.length>0">
       <div>Shift Hours: {{shiftHours}}</div>
-      <div>If there is an asterisk(*) before and after the noise values this means that the value has been adjusted for
-        a shift length longer than {{shiftHours}} hours
+      <div>If there is an asterisk (*) next to the noise value this means that the tool times have been adjusted to 
+      allow for the total tool time to be no greater than the shift time.
       </div>
       <table class="table table-bordered ">
         <thead>
