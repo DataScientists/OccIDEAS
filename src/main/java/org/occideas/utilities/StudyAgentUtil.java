@@ -173,11 +173,11 @@ public class StudyAgentUtil {
                 if (logic == null) {
                     payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                             new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                            buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
+                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
                 } else {
                     payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                             new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                            buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
+                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
                 }
                 questionPayloads.add(payload);
             }
@@ -450,12 +450,12 @@ public class StudyAgentUtil {
             if (logic == null) {
                 payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                        buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), -999999,
+                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), -999999,
                         1, qidStrCount, logic));
             } else {
                 payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                        buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), -999999,
+                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), -999999,
                         1, qidStrCount, logic));
             }
             SurveyElement question = new SurveyElement(surveyId, QSFElementTypes.QUESTION.getAbbr(), qidStrCount,
@@ -523,11 +523,11 @@ public class StudyAgentUtil {
             if (logic == null) {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                        buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
+                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
             } else {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
                         new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                        buildChoiceOrder(qVO), new Validation(new Setting("OFF", "ON", "None")), new ArrayList<>(), logic);
+                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
             }
             questionPayloads.add(payload);
         } else if (qVO.getLink() != 0L) {

@@ -119,7 +119,6 @@ public class QSFClient implements IQSFClient {
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
-//            String request = JSON_MAPPER.writeValueAsString(questionPayload);
             SurveyCreateResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
