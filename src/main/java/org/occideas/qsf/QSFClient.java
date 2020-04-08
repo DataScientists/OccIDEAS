@@ -14,10 +14,7 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
-import org.occideas.qsf.payload.Default;
-import org.occideas.qsf.payload.Flow;
-import org.occideas.qsf.payload.SimpleQuestionPayload;
-import org.occideas.qsf.payload.SurveyOptionPayload;
+import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.request.SurveyPublishRequest;
@@ -132,6 +129,32 @@ public class QSFClient implements IQSFClient {
                     .readEntity(SurveyCreateResponse.class);
 
             return handleResponse(response, questionPayload.toString(), "createQuestion");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+    }
+
+    @Override
+    public Response copySurvey(CopySurveyPayload payload, String surveyId, String userId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("Content-type", APPLICATION_JSON);
+        headers.add("X-COPY-SOURCE",surveyId);
+        headers.add("X-COPY-DESTINATION-OWNER",userId);
+
+        try {
+            CopySurveyResponse response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(QSF_PATH)
+                    .path("API/v3/surveys")
+                    .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .post(Entity.entity(payload.toString(), MediaType.APPLICATION_JSON))
+                    .readEntity(CopySurveyResponse.class);
+
+            return handleResponse(response, payload.toString(), "copySurvey");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

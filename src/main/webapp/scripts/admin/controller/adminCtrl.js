@@ -78,7 +78,7 @@
         if (response.status == '200') {
           $ngToast.create({
             className: 'success',
-            content: 'Delete QSF Surveys successfull.',
+            content: 'Delete QSF Surveys successful.',
             animation: 'slide'
           });
         } else {
@@ -89,6 +89,48 @@
             dismissOnClick: false,
             animation: 'slide'
           });
+        }
+      });
+    };
+
+    self.openCopySurveys = function(){
+      self.copySurveyReq = {userId:'',prefix:''};
+      $mdDialog.show({
+        scope: $scope,
+        preserveScope: true,
+        templateUrl: 'scripts/admin/partials/copySurveys.html',
+        clickOutsideToClose: false
+      });
+    }
+
+    $scope.copySurveys = function(copySurveyReq){
+      if(copySurveyReq.userId == '' || copySurveyReq.prefix ==''){
+        $ngToast.create({
+          className: 'danger',
+          content: 'All fields are required.',
+          dismissButton: true,
+          dismissOnClick: false,
+          animation: 'slide'
+        });
+        return;
+      }
+      AdminService.copySurveys(copySurveyReq.userId, copySurveyReq.prefix).then(function(response) {
+        if (response.status == '200') {
+          $ngToast.create({
+            className: 'success',
+            content: 'Copy surveys was successful, duration is based on number of surveys to copy.',
+            animation: 'slide'
+          });
+          $mdDialog.cancel();
+        } else {
+          $ngToast.create({
+            className: 'danger',
+            content: 'Copy surveys failed, check the logs.',
+            dismissButton: true,
+            dismissOnClick: false,
+            animation: 'slide'
+          });
+          $mdDialog.cancel();
         }
       });
     };

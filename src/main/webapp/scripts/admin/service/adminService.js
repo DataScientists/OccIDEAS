@@ -87,6 +87,19 @@
       return request.then(handleSuccess, handleError);
     };
 
+    var copySurveys = function(userId,prefix){
+      var restSaveUrl = adminEndpoint + '/copySurveys';
+      var request = $http({
+        method: 'POST',
+        url: restSaveUrl,
+        data: {
+          userId:userId,
+          prefix:prefix
+        }
+      });
+      return request.then(handleSuccess, handleError);
+    }
+
     var getRoles = function() {
       return $http.get(adminEndpoint + '/getRoles', {
         cache: true
@@ -161,7 +174,8 @@
       purgeModule: purgeModule,
       importLibrary: importLibrary,
       deleteQSFSurveys: deleteQSFSurveys,
-      importQSFResponses: importQSFResponses
+      importQSFResponses: importQSFResponses,
+      copySurveys: copySurveys
     };
   }
 

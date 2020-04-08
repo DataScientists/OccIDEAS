@@ -19,8 +19,10 @@ import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.dao.INodeQSFDao;
+import org.occideas.qsf.payload.CopySurveyPayload;
 import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.response.SurveyExportResponse;
+import org.occideas.qsf.response.SurveyListResponse;
 import org.occideas.qsf.results.Response;
 import org.occideas.qsf.results.SurveyResponses;
 import org.occideas.question.service.QuestionService;
@@ -88,6 +90,14 @@ public class QSFServiceImpl implements IQSFService {
     @Override
     public NodeQSF getByIdNode(long idNode) {
         return dao.getByIdNode(idNode);
+    }
+
+    @Override
+    @Async("threadPoolTaskExecutor")
+    public void copySurveys(String userId, String prefix) throws InterruptedException {
+        SurveyListResponse response = (SurveyListResponse) iqsfClient.listSurvey().getEntity();
+        response.getResult().getElements()
+                .stream().forEach(survey -> iqsfClient.copySurvey(new CopySurveyPayload(survey.getName()+prefix),survey.getId(),userId));
     }
 
     @Override
@@ -165,7 +175,9 @@ public class QSFServiceImpl implements IQSFService {
         }
         return null;
     }
+
     Set<Long> uniqueModules = null;
+
     @Override
     public void consumeQSFResponse(SurveyResponses surveyResponses) {
         if (isEmptyResponse(surveyResponses)) {
@@ -206,7 +218,7 @@ public class QSFServiceImpl implements IQSFService {
         createInterviewQuestionFromQuestion(topQuestion, newInterview.getInterviewId(), questionCounter);
 
         AtomicInteger newQuestionCounter = new AtomicInteger();
-        
+
         while (answersQueue.peek() != null) {
             String answer = answersQueue.poll();
             System.out.println(answer);
@@ -244,33 +256,32 @@ public class QSFServiceImpl implements IQSFService {
             NodeVO moduleVO = node.get();
             PossibleAnswerVO possibleAnswerVO = possibleAnswerService
                     .findByTopNodeIdAndNumber(moduleVO.getIdNode(), answerNumber);
-            
-             if(!uniqueModules.contains(node.get().getIdNode()) && node.get().getNodeclass().equals("M")){
-            	 interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO, moduleVO, newInterview.getInterviewId(), questionCounter.incrementAndGet()));
-            	 uniqueModules.add(node.get().getIdNode());
-             } else if(!uniqueModules.contains(node.get().getIdNode()) && node.get().getNodeclass().equals("F")){
-            	 final List<FragmentVO> modules = fragmentService.findByIdForInterview(node.get().getIdNode());
-                 if (!modules.isEmpty()) {
-                     FragmentVO linkedModule = modules.get(0);
-                     
-                     if (linkedModule != null) {
-                     	 if(!uniqueModules.contains(linkedModule.getIdNode())){
-                     		 interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
-                                      moduleVO,
-                                      linkedModule,
-                                      newInterview.getInterviewId(),
-                                      questionCounter.incrementAndGet()));
-                     		 uniqueModules.add(linkedModule.getIdNode());
-                          }
-                        
-                     }
 
-                 } else {
-                     log.error("Cant find linked module {}", node.get().getIdNode());
-                 }
-             }
-           
-            
+            if (!uniqueModules.contains(node.get().getIdNode()) && node.get().getNodeclass().equals("M")) {
+                interviewQuestionService.updateIntQ(createInterviewModuleQuestion(possibleAnswerVO, moduleVO, newInterview.getInterviewId(), questionCounter.incrementAndGet()));
+                uniqueModules.add(node.get().getIdNode());
+            } else if (!uniqueModules.contains(node.get().getIdNode()) && node.get().getNodeclass().equals("F")) {
+                final List<FragmentVO> modules = fragmentService.findByIdForInterview(node.get().getIdNode());
+                if (!modules.isEmpty()) {
+                    FragmentVO linkedModule = modules.get(0);
+
+                    if (linkedModule != null) {
+                        if (!uniqueModules.contains(linkedModule.getIdNode())) {
+                            interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
+                                    moduleVO,
+                                    linkedModule,
+                                    newInterview.getInterviewId(),
+                                    questionCounter.incrementAndGet()));
+                            uniqueModules.add(linkedModule.getIdNode());
+                        }
+
+                    }
+
+                } else {
+                    log.error("Cant find linked module {}", node.get().getIdNode());
+                }
+            }
+
 
             final Set<Long> linkModules = possibleAnswerVO.getChildNodes().stream().filter(questions -> {
                 return questions.getLink() > 0L;
@@ -281,17 +292,17 @@ public class QSFServiceImpl implements IQSFService {
                     final List<FragmentVO> modules = fragmentService.findByIdForInterview(idNode);
                     if (!modules.isEmpty()) {
                         FragmentVO linkedModule = modules.get(0);
-                        
+
                         if (linkedModule != null) {
-                        	 if(!uniqueModules.contains(linkedModule.getIdNode())){
-                        		 interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
-                                         moduleVO,
-                                         linkedModule,
-                                         newInterview.getInterviewId(),
-                                         questionCounter.incrementAndGet()));
-                        		 uniqueModules.add(linkedModule.getIdNode());
-                             }
-                           
+                            if (!uniqueModules.contains(linkedModule.getIdNode())) {
+                                interviewQuestionService.updateIntQ(createInterviewAJSMQuestion(possibleAnswerVO,
+                                        moduleVO,
+                                        linkedModule,
+                                        newInterview.getInterviewId(),
+                                        questionCounter.incrementAndGet()));
+                                uniqueModules.add(linkedModule.getIdNode());
+                            }
+
                         }
 
                     } else {
@@ -581,7 +592,7 @@ public class QSFServiceImpl implements IQSFService {
         interviewQuestionVO.setNumber(node.getNumber());
         interviewQuestionVO.setQuestionId(0);
         interviewQuestionVO.setModCount(1);
-       // interviewQuestionVO.setType(node.getType());
+        // interviewQuestionVO.setType(node.getType());
         interviewQuestionVO.setParentModuleId(0L);
         if (node.getTopNodeId() != Long.valueOf(node.getParentId())) {
             interviewQuestionVO.setParentAnswerId(Optional.ofNullable(node.getIdNode()).orElse(0L));

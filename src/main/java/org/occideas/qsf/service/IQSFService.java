@@ -13,6 +13,9 @@ public interface IQSFService {
     NodeQSF getByIdNode(long idNode);
 
     @Async("threadPoolTaskExecutor")
+    void copySurveys(String userId, String prefix) throws InterruptedException;
+
+    @Async("threadPoolTaskExecutor")
     void exportResponseQSF(Long id) throws InterruptedException;
 
     SurveyResponses exportQSFResponses(long idNode) throws InterruptedException;

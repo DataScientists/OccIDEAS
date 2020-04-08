@@ -1,0 +1,43 @@
+<md-dialog aria-label="Edit User" ng-cloak
+           style="margin:0 0 0 0;padding:0 0 0 0;"> <!-- <pre>{{data | json}}</pre> -->
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Copy All Surveys In QSF</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()"><span
+                        aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="width:510px;">
+            <div class="md-dialog-content">
+                <div class="md-inline-form" layout="column" ng-cloak>
+                    <md-content>
+                        <form class="navbar-form navbar-left" id="existingUserForm"
+                              name="existingUserForm">
+                            <div layout-gt-sm="row">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label for="userId">User Id</label>
+                                    <input maxlength="100" name="userId" id="userId" ng-model="vm.copySurveyReq.userId">
+                                </md-input-container>
+                                <div flex="5" hide-sm hide-xs>
+                                    <!-- Spacer //-->
+                                </div>
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label for="prefix">Prefix</label>
+                                    <input maxlength="100" name="prefix" id="prefix" ng-model="vm.copySurveyReq.prefix">
+                                </md-input-container>
+                            </div>
+                            <div layout-gt-sm="row">
+                                <md-dialog-actions layout="row">
+                                    <md-button class="md-raised" ng-click="cancel()">Cancel</md-button>
+                                    <md-button class="md-raised" ng-click="copySurveys(vm.copySurveyReq)" type="submit">Submit</md-button>
+                                </md-dialog-actions>
+                            </div>
+                        </form>
+                    </md-content>
+                </div>
+            </div>
+        </md-dialog-content>
+    </form>
+</md-dialog>

@@ -10,10 +10,7 @@ import org.occideas.qsf.response.Element;
 import org.occideas.qsf.response.SurveyListResponse;
 import org.occideas.qsf.service.IQSFService;
 import org.occideas.security.service.UserService;
-import org.occideas.vo.DBConnectVO;
-import org.occideas.vo.UserProfileVO;
-import org.occideas.vo.UserUserProfileVO;
-import org.occideas.vo.UserVO;
+import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -82,6 +79,20 @@ public class AdminRestController {
         try {
             participantService.softDeleteAll();
             iqsfService.importQSFResponses();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @POST
+    @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    @Path(value = "/copySurveys")
+    public Response copySurveys(CopySurveyRequestVO request) {
+        try {
+            iqsfService.copySurveys(request.getUserId(),request.getPrefix());
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
