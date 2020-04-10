@@ -33,6 +33,7 @@
           <input type="text"
                  ng-model="additionalFields.value"
                  ng-focus="focus=true;blur=false;"
+                 ng-blur="autoUpdateRule(rule,model)"
                  class="form-control"
                  ng-keypress="(($event.which === 13))?updateRule(rule,model):0">
           <div>

@@ -3011,7 +3011,11 @@
     $scope.updateRule = function(rule, model) {
       RulesService.update(rule).then(function(response) {
         if(response.status === 200) {
-          $log.info('Rule Save was Successful!' + rule);
+          ngToast.create({
+            className: 'success',
+            content: 'Rules was saved successfully.',
+            animation: 'slide'
+          });
           ModuleRuleService.getModuleRule(model.idNode).then(function(response) {
             if(response.status === 200) {
               var result = response.data[response.data.length - 1];
@@ -3027,10 +3031,27 @@
               }
             }
           });
+        }else{
+          ngToast.create({
+            className: 'danger',
+            content: 'Error on saving rule , try again later or report to IT support.',
+            animation: 'slide'
+          });
         }
       });
-
     };
+
+    $scope.autoUpdateRule = function(rule, model) {
+      let originalRules = _.find(model.moduleRule,(moduleRule)=>{
+          return moduleRule.rule.idRule == rule.idRule;
+      });
+      let noChanges = _.isEqualWith(originalRules.rule.ruleAdditionalfields,rule.ruleAdditionalfields,
+          _.after(2, (original, newRule) => original.value == newRule.value));
+      if(!noChanges){
+        $scope.updateRule(rule, model);
+      }
+    };
+
     $scope.removeNodeFromRule = function(node) {
       var rule = $scope.activeRule;
 
