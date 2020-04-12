@@ -78,6 +78,7 @@ public class AdminRestController {
     public Response importQSFResponses() {
         try {
             participantService.softDeleteAll();
+            iqsfService.cleanSurveyResponses();
             iqsfService.importQSFResponses();
         } catch (Throwable e) {
             e.printStackTrace();

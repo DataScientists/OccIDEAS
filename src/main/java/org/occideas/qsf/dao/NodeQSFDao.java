@@ -1,5 +1,6 @@
 package org.occideas.qsf.dao;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.occideas.entity.NodeQSF;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.stream.Stream;
@@ -49,6 +51,15 @@ public class NodeQSFDao implements INodeQSFDao {
     @Override
     public List<NodeQSF> list() {
         return list(null);
+    }
+
+    @Override
+    public void cleanSurveyResponses() {
+        CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+        CriteriaUpdate<NodeQSF> criteriaUpdate = builder.createCriteriaUpdate(NodeQSF.class);
+        Root<NodeQSF> root = criteriaUpdate.from(NodeQSF.class);
+        criteriaUpdate.set(root.get("results"), StringUtils.EMPTY);
+        sessionFactory.getCurrentSession().createQuery(criteriaUpdate).executeUpdate();
     }
 
     private List<NodeQSF> list(NodeQSFFilter... filters) {

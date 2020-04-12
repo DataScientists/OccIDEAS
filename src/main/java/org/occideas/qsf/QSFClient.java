@@ -114,7 +114,6 @@ public class QSFClient implements IQSFClient {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
         headers.add("X-API-TOKEN", API_TOKEN);
         headers.add("Content-type", APPLICATION_JSON);
-
         try {
             SurveyCreateResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)

@@ -1,5 +1,6 @@
 package org.occideas.qsf.payload;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Logic {
@@ -22,6 +23,9 @@ public class Logic {
     private String type;
     @JsonProperty(value = "Description")
     private String description;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty(value = "Conjuction")
+    private String conjunction;
 
     public Logic() {
     }
@@ -36,6 +40,19 @@ public class Logic {
         this.leftOperand = leftOperand;
         this.type = type;
         this.description = description;
+    }
+
+    public Logic(String logicType, String questionId, String questionIsInLoop, String choiceLocator, String operator, String questionIdFromLocator, String leftOperand, String type, String description, String conjunction) {
+        this.logicType = logicType;
+        this.questionId = questionId;
+        this.questionIsInLoop = questionIsInLoop;
+        this.choiceLocator = choiceLocator;
+        this.operator = operator;
+        this.questionIdFromLocator = questionIdFromLocator;
+        this.leftOperand = leftOperand;
+        this.type = type;
+        this.description = description;
+        this.conjunction = conjunction;
     }
 
     public String getLogicType() {
@@ -108,5 +125,13 @@ public class Logic {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getConjunction() {
+        return conjunction;
+    }
+
+    public void setConjunction(String conjunction) {
+        this.conjunction = conjunction;
     }
 }

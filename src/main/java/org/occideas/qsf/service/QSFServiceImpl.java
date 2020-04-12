@@ -105,16 +105,27 @@ public class QSFServiceImpl implements IQSFService {
     public void exportResponseQSF(Long id) throws InterruptedException {
         List<ModuleVO> modules = moduleService.findById(id);
         if (!modules.isEmpty()) {
-            this.consumeQSFResponse(this.exportQSFResponses(modules.get(0).getIdNode()));
+            final SurveyResponses surveyResponses = this.exportQSFResponses(modules.get(0).getIdNode());
+            if(surveyResponses !=null) {
+                this.consumeQSFResponse(surveyResponses);
+            }else{
+                log.error("No survey id found for module id {}",modules.get(0).getIdNode());
+            }
         }
     }
 
     @Override
     public SurveyResponses exportQSFResponses(long idNode) throws InterruptedException {
         String surveyId = this.getSurveyIdByIdNode(idNode);
+
+        if(surveyId == null){
+            return null;
+        }
+
         SurveyExportRequest surveyExportRequest = new SurveyExportRequest();
         surveyExportRequest.setFormat("json");
         javax.ws.rs.core.Response response = iqsfClient.createExportResponse(surveyId, surveyExportRequest);
+        Thread.currentThread().sleep(2000);
         if (response != null) {
             if (!(response.getEntity() instanceof SurveyExportResponse)) {
                 log.error(response.getEntity());
@@ -185,19 +196,18 @@ public class QSFServiceImpl implements IQSFService {
         }
         uniqueModules = new HashSet<>();
 
-        final Response response = surveyResponses.getResponses().get(0);
-        String referenceNumber = String.valueOf(response.getResponseId());
-        ParticipantVO participantVO = createParticipant(referenceNumber);
-
-        InterviewVO newInterview = createNewInterview(referenceNumber, participantVO);
-
         SystemPropertyVO introModule = Optional.ofNullable(systemPropertyService.getByName(Constant.STUDY_INTRO))
                 .orElseThrow(StudyIntroModuleNotFoundException::new);
         NodeVO nodeVO = moduleService.getNodeById(Long.valueOf(introModule.getValue()));
 
-        createIntroQuestion(newInterview, nodeVO);
+        surveyResponses.getResponses().stream().forEach(response ->{
+            String referenceNumber = String.valueOf(response.getResponseId());
+            ParticipantVO participantVO = createParticipant(referenceNumber);
+            InterviewVO newInterview = createNewInterview(referenceNumber, participantVO);
+            createIntroQuestion(newInterview, nodeVO);
+            processResponseAnswers(response, referenceNumber, newInterview, nodeVO);
+        });
 
-        processResponseAnswers(response, referenceNumber, newInterview, nodeVO);
     }
 
     private void processResponseAnswers(Response response, String referenceNumber, InterviewVO newInterview, NodeVO nodeVO) {
@@ -517,6 +527,11 @@ public class QSFServiceImpl implements IQSFService {
         }
     }
 
+    @Override
+    public void cleanSurveyResponses() {
+        dao.cleanSurveyResponses();
+    }
+
     private InterviewAnswerVO createInterviewAnswer(long interviewId, PossibleAnswerVO possibleAnswerVO, long interviewQID) {
         InterviewAnswerVO interviewAnswerVO = new InterviewAnswerVO();
         interviewAnswerVO.setName(possibleAnswerVO.getName());
@@ -633,10 +648,11 @@ public class QSFServiceImpl implements IQSFService {
             log.error(response.getEntity());
             return;
         }
-
         String fileId = monitorExportProgress(nodeQSF, response);
-        File surveyJsonFile = processDownloadedFile(nodeQSF, fileId);
-        consumeJSONfile(surveyJsonFile);
+        if(!StringUtils.isEmpty(fileId)) {
+            File surveyJsonFile = processDownloadedFile(nodeQSF, fileId);
+            consumeJSONfile(surveyJsonFile);
+        }
     }
 
     private void consumeJSONfile(File surveyJsonFile) {
@@ -682,11 +698,15 @@ public class QSFServiceImpl implements IQSFService {
         String fileId = null;
         while (true) {
             log.info("Export Progress:" + (exportResponse.getResult().getPercentComplete() * 100) + "%");
+            if(!isResponseProgressValid(response)) {
+                response = iqsfClient.getExportResponseProgress(nodeQSF.getSurveyId(), exportResponse.getResult().getProgressId());
+                continue;
+            }
             javax.ws.rs.core.Response exportProgress = iqsfClient.getExportResponseProgress(nodeQSF.getSurveyId(), exportResponse.getResult().getProgressId());
-            if (exportProgress != null) {
+            if (Objects.nonNull(exportProgress)) {
                 exportResponse = (SurveyExportResponse) exportProgress.getEntity();
             }
-            if (exportResponse.getResult().getFileId() != null) {
+            if (!StringUtils.isEmpty(exportResponse.getResult().getFileId())) {
                 fileId = exportResponse.getResult().getFileId();
                 break;
             }
@@ -699,5 +719,12 @@ public class QSFServiceImpl implements IQSFService {
         }
         log.info("export in qualtrics has been completed , tried to check " + tries + " times.");
         return fileId;
+    }
+
+    private boolean isResponseProgressValid(javax.ws.rs.core.Response  response) {
+        SurveyExportResponse exportResponse = (SurveyExportResponse) response.getEntity();
+        return Objects.nonNull(exportResponse) &&
+                Objects.nonNull(exportResponse.getResult()) &&
+                Objects.nonNull(exportResponse.getResult().getProgressId());
     }
 }

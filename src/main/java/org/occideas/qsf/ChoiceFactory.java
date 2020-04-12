@@ -39,6 +39,13 @@ public enum ChoiceFactory {
             choice.setTextEntry("true");
             return choice;
         }
+    }),FREQWEEKS("P_frequencyweeks", new Function<ChoiceFactory.AnswerDecorator,Choice>() {
+        @Override
+        public Choice apply(AnswerDecorator answerDecorator) {
+            Choice choice = new Choice(answerDecorator.getName().substring(0, 4) + "_" +
+                    answerDecorator.answerVO.getNumber() + " " + answerDecorator.answerVO.getName());
+            return choice;
+        }
     });
 
     private static class AnswerDecorator{

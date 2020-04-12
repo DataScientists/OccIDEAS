@@ -27,4 +27,6 @@ public interface IQSFService {
 
     @Async("threadPoolTaskExecutor")
     void importQSFResponsesForIntro();
+
+    void cleanSurveyResponses();
 }

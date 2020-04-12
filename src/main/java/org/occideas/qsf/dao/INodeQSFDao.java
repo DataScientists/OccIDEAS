@@ -13,4 +13,6 @@ public interface INodeQSFDao {
     NodeQSF getByIdNode(long idNode);
 
     List<NodeQSF> list();
+
+    void cleanSurveyResponses();
 }

@@ -1,17 +1,19 @@
 package org.occideas.qsf.payload;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.occideas.qsf.BaseQSF;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class DisplayLogic extends BaseQSF implements Payload {
 
-public class DisplayLogic extends BaseQSF implements Payload{
-	
-	@JsonProperty(value = "0")
-	private Condition condition;
-	@JsonProperty(value = "Type")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("0")
+    private Condition condition;
+    @JsonProperty(value = "Type")
     private String type;
-	@JsonProperty(value = "inPage")
+    @JsonProperty(value = "inPage")
     private boolean inPage;
+
 
     public DisplayLogic() {
     }

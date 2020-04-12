@@ -521,9 +521,6 @@ public class ModuleServiceImpl implements ModuleService {
 			else if(!modules.isEmpty() && modules.size() > 1){
 				log.error("Cleanup database their are 2 modules with same {} length for {}", length, truncatedName);
 			}
-			else{
-				log.error("Cannot find module with char length {} and {}", length, truncatedName);
-			}
 		}
 		return null;
 	}

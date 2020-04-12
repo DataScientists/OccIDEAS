@@ -1,8 +1,11 @@
 package org.occideas.qsf;
 
+import org.occideas.entity.Constant;
+
 public enum QuestionSelector {
 
-    MULTIPLE("Q_multiple","MAVR");
+    MULTIPLE("Q_multiple","MAVR"),
+    FREQUENCY(Constant.Q_FREQUENCY,"DL");
 
     QuestionSelector(String type, String selector) {
         this.type = type;
