@@ -1869,11 +1869,12 @@
         ]
       ];
     if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])) {
-      $scope.moduleMenuOptions.unshift(['Set Active Intro Module', function($itemScope) {
-        if(confirm('Are you sure you want to set  ' + $itemScope.$modelValue.name
+      if ($scope.data[0].type == 'M_IntroModule') {
+        $scope.moduleMenuOptions.unshift(['Set Active Intro Module', function ($itemScope) {
+          if (confirm('Are you sure you want to set  ' + $itemScope.$modelValue.name
             + ' as active intro module?')) {
-          ModulesService.setActiveIntroModule($itemScope.$modelValue)
-              .then(function(response) {
+            ModulesService.setActiveIntroModule($itemScope.$modelValue)
+              .then(function (response) {
 //            	$scope.data[0].type = 'M_IntroModule';
                 ngToast.create({
                   className: 'success',
@@ -1881,8 +1882,9 @@
                   animation: 'slide'
                 });
               });
-        }
-      }]);
+          }
+        }]);
+      }
     }
     if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_STUDYMANAGER', 'ROLE_CONTDEV'])) {
       $scope.moduleMenuOptions.unshift(['View Study Specific', function($itemScope) {

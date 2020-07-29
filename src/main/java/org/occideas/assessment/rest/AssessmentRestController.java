@@ -86,13 +86,6 @@ public class AssessmentRestController {
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity("Filename cannot be empty.").build();
     }
 
-    SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-
-    // check if we have the directory TreeSet ins sys prop
-    if (csvDir == null) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
-    }
     String exportFileCSV = createFileName(filterModuleVO.getFileName());
 
     ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
@@ -100,7 +93,7 @@ public class AssessmentRestController {
     // filename saved on the report would be different from the one saved in
     // dir
     // this is to avoid overwritten reports
-    String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
     reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
       ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue());
 
@@ -134,7 +127,7 @@ public class AssessmentRestController {
       int currentCount = 0;
 
       System.out.println("About to  create folder");
-      String tempFolder = csvDir.getValue() + reportHistoryVO.getId() + "/";
+        String tempFolder = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "/";
       File temp = new File(tempFolder);
       // FileUtils.deleteDirectory(temp);
       temp.mkdir();
@@ -326,8 +319,7 @@ public class AssessmentRestController {
   private void writeReport(String fullPath, ReportHistoryVO reportHistoryVO, ExportCSVVO csvVO) {
     CSVWriter writer;
     try {
-      SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-      File csvDirFile = new File(csvDir.getValue());
+        File csvDirFile = new File(Constant.REPORT_EXPORT_CSV_DIR);
 
       if (!csvDirFile.exists()) {
         csvDirFile.mkdir();
@@ -466,16 +458,12 @@ public class AssessmentRestController {
   public Response exportAssessmentsCSV(FilterModuleVO filterModuleVO) {
 
     // check if we have the directory TreeSet ins sys prop
-    SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-    if (csvDir == null) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
-    }
+
     String exportFileCSV = createFileName(filterModuleVO.getFileName());
 
     ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
       ReportsEnum.REPORT_ASSESSMENT_EXPORT.getValue());
-    String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
     reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
       ReportsEnum.REPORT_ASSESSMENT_EXPORT.getValue());
 
@@ -525,16 +513,12 @@ public class AssessmentRestController {
   public Response exportAssessmentsNoiseCSV(FilterModuleVO filterModuleVO) {
 
     // check if we have the directory TreeSet ins sys prop
-    SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-    if (csvDir == null) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
-    }
+
     String exportFileCSV = createFileName(filterModuleVO.getFileName());
 
     ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
       ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
-    String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
     reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
       ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
 
@@ -824,16 +808,11 @@ public class AssessmentRestController {
   public Response exportAssessmentsVibrationFullCSV(FilterModuleVO filterModuleVO) {
 
     // check if we have the directory TreeSet ins sys prop
-    SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-    if (csvDir == null) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
-    }
     String exportFileCSV = createFileName(filterModuleVO.getFileName());
 
     ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
       ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
-    String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
     reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
       ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
 
@@ -1086,16 +1065,11 @@ public class AssessmentRestController {
   public Response exportAssessmentsVibrationCSV(FilterModuleVO filterModuleVO) {
 
     // check if we have the directory TreeSet ins sys prop
-    SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-    if (csvDir == null) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
-    }
     String exportFileCSV = createFileName(filterModuleVO.getFileName());
 
     ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
       ReportsEnum.REPORT_VIBRATION_ASSESSMENT_EXPORT.getValue());
-    String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
     reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
       ReportsEnum.REPORT_VIBRATION_ASSESSMENT_EXPORT.getValue());
 
@@ -2288,20 +2262,12 @@ public class AssessmentRestController {
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response exportNotes(FilterModuleVO filterModuleVO) {
 
-    SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-
-    // check if we have the directory TreeSet ins sys prop
-    if (csvDir == null) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
-    }
-
     String exportFileCSV = createFileName(filterModuleVO.getFileName() + "-Notes");
 
     ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
       ReportsEnum.NOTES_EXPORT.getValue());
 
-    String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
 
     reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
       ReportsEnum.NOTES_EXPORT.getValue());
@@ -2388,18 +2354,12 @@ public class AssessmentRestController {
   public Response exportInterviewRulesCSV(FilterAgentVO filterAgentVO) {
 
     // check if we have the directory TreeSet ins sys prop
-    SystemPropertyVO csvDir = systemPropertyService.getByName(Constant.REPORT_EXPORT_CSV_DIR);
-    if (csvDir == null) {
-      log.error("ERROR", "REPORT_EXPORT_CSV_DIR does not exist in System Property.");
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("REPORT_EXPORT_CSV_DIR does not exist in System Property.").build();
-    }
     String exportFileCSV = createFileName(filterAgentVO.getFileName());
 
     ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
       ReportsEnum.INTERVIEW_FIREDRULES.getValue());
 
-    String fullPath = csvDir.getValue() + reportHistoryVO.getId() + "_" + exportFileCSV;
+      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
 
     reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
       ReportsEnum.INTERVIEW_FIREDRULES.getValue());
