@@ -216,19 +216,32 @@
     };
 
     self.preloadActiveIntro = function() {
-      InterviewsService.preloadActiveIntro().then(function(response) {
-        if(response.status === 200) {
-          $ngToast.create({
-            className: 'success',
-            content: 'Preload study agents successful',
-            animation: 'slide',
-            dismissOnTimeout: false,
-            dismissButton: true
+      AdminService.purgeModule().then(function (response) {
+        if (response.status == '200') {
+          console.info("purge successful");
+          InterviewsService.preloadActiveIntro().then(function (response) {
+            if (response.status === 200) {
+              $ngToast.create({
+                className: 'success',
+                content: 'Preload study agents successful',
+                animation: 'slide',
+                dismissOnTimeout: false,
+                dismissButton: true
+              });
+            } else if (response.status !== 417) {
+              $ngToast.create({
+                className: 'danger',
+                content: 'Preload study agents failed, check the logs.',
+                dismissButton: true,
+                dismissOnClick: false,
+                animation: 'slide'
+              });
+            }
           });
-        } else if(response.status !== 417) {
+        } else {
           $ngToast.create({
             className: 'danger',
-            content: 'Preload study agents failed, check the logs.',
+            content: 'Purge module failed, check the logs.',
             dismissButton: true,
             dismissOnClick: false,
             animation: 'slide'
