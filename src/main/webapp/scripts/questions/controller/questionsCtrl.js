@@ -2236,7 +2236,7 @@
                   var x = scope.rule.conditions;
                   x.idRule = scope.rule.idRule;
                   addPopoverInfo(x, scope.rule.idRule);
-                  var targetDiv = angular.element("#allModuleRulesOfAgent");
+                  var targetDiv = angular.element("#allModuleRulesOfAgent" + mRules[i].idModule);
                   newNote(targetDiv, scope, $compile);
                   $scope.activeRule = scope.rule;
                 }
