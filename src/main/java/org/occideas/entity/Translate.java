@@ -1,9 +1,9 @@
 package org.occideas.entity;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.sql.Date;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import java.util.Date;
 
 //@Entity
 //@Table(name = "Translate")
@@ -22,6 +22,8 @@ public class Translate {
   private long id;
   private String language;
   private String description;
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
   private Date lastUpdated;
   private String flag;
   private String jdoc;

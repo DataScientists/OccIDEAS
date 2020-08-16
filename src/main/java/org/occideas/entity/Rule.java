@@ -7,8 +7,8 @@ import org.hibernate.annotations.*;
 import javax.persistence.Entity;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -32,6 +32,8 @@ public class Rule implements Serializable {
   private Agent agent;
   private String type;
   private int level;
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
   private Date lastUpdated;
   private int deleted;
 

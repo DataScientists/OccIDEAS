@@ -256,7 +256,6 @@
         'questions@tabs': {
           template: '<div scope-question></div>',
           controller: 'QuestionsCtrl as vm',
-          params: {row: null},
           resolve: {
             data: function($stateParams, QuestionsService) {
               $log.info("inside questions@tabs resolve");

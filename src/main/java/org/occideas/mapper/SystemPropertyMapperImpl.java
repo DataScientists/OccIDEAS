@@ -20,7 +20,6 @@ public class SystemPropertyMapperImpl implements SystemPropertyMapper {
     entity.setName(vo.getName());
     entity.setType(vo.getType());
     entity.setUpdatedBy(vo.getUpdatedBy());
-    entity.setUpdatedDt(vo.getUpdatedDt());
     entity.setValue(vo.getValue());
     return entity;
   }
@@ -35,7 +34,6 @@ public class SystemPropertyMapperImpl implements SystemPropertyMapper {
     vo.setName(entity.getName());
     vo.setType(entity.getType());
     vo.setUpdatedBy(entity.getUpdatedBy());
-    vo.setUpdatedDt(entity.getUpdatedDt());
     vo.setValue(entity.getValue());
     return vo;
   }

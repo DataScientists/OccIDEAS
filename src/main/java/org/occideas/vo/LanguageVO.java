@@ -2,7 +2,7 @@ package org.occideas.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.sql.Date;
+import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LanguageVO {

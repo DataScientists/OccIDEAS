@@ -1,5 +1,7 @@
 package org.occideas.entity;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +67,8 @@ public class InterviewDisplay implements java.io.Serializable {
   private List<InterviewDisplayAnswer> answers;
 
   @Column(name = "lastUpdated")
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
   private Date lastUpdated;
 
   public long getId() {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -35,7 +36,9 @@ public class GenericNode implements Serializable {
   protected String parentId;
   protected long link;
   protected long topNodeId;
-  protected Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    protected Date lastUpdated;
   @OneToMany(mappedBy = "node", fetch = FetchType.LAZY)
   @JsonInclude(Include.NON_EMPTY)
   protected List<Note> notes;

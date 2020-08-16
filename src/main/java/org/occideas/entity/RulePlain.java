@@ -1,10 +1,10 @@
 package org.occideas.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Table(name = "Rule")
@@ -17,6 +17,8 @@ public class RulePlain implements Serializable {
   private long agentId;
   private String type;
   private int level;
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
   private Date lastUpdated;
   private int deleted;
   private Long legacyRuleId;

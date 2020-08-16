@@ -28,7 +28,9 @@ public class Participant implements Serializable {
   private List<Interview> interviews;
   private int status;
   private String reference;
-  private Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date lastUpdated;
   private Integer deleted;
 
   public Participant() {

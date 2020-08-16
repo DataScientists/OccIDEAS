@@ -32,7 +32,9 @@ public class Node<T extends Node> implements Cloneable {
   protected String parentId;
   protected long link;
   protected long topNodeId;
-  protected Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    protected Date lastUpdated;
   @Column(name = "node_discriminator", insertable = false, updatable = false)
   protected String nodeDiscriminator;
   @OneToMany(mappedBy = "node", fetch = FetchType.LAZY)

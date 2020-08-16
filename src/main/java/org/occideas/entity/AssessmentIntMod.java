@@ -1,9 +1,13 @@
 package org.occideas.entity;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 public class AssessmentIntMod implements Serializable {
@@ -18,6 +22,8 @@ public class AssessmentIntMod implements Serializable {
   private String reference;
   private String assessedStatus;
   private Integer status;
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
   private Date lastUpdated;
   private int deleted;
   private Long idinterview;
