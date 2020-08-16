@@ -1,5 +1,7 @@
 package org.occideas.entity;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
@@ -17,7 +19,9 @@ public class AgentInfo implements Serializable {
   private long idAgent;
   private String name;
   private String description;
-  private Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date lastUpdated;
   private int deleted;
 
   public AgentInfo() {

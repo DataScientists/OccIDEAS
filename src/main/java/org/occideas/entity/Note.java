@@ -1,5 +1,7 @@
 package org.occideas.entity;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -22,7 +24,9 @@ public class Note implements Serializable {
 
   @Column(length = 2048)
   private String text;
-  private Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date lastUpdated;
   private Integer deleted;
 
   public Note() {

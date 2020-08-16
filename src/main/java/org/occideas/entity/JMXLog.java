@@ -1,9 +1,8 @@
 package org.occideas.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import org.hibernate.annotations.CreationTimestamp;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -19,7 +18,9 @@ public class JMXLog {
   private String getParameters;
   private String postParameters;
   private Integer deleted;
-  private Date createdDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Date createdDate;
 
   public long getId() {
     return id;

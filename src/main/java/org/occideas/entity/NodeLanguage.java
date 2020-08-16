@@ -3,10 +3,11 @@ package org.occideas.entity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Table(name = "Node_Language")
@@ -30,7 +31,9 @@ public class NodeLanguage implements Serializable {
   private Language language;
   private String word;
   private String translation;
-  private Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date lastUpdated;
 
   public long getId() {
     return id;

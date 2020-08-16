@@ -1,10 +1,8 @@
 package org.occideas.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,10 +24,14 @@ public class ReportHistory implements Serializable {
   private String status;
   private String requestor;
   private String progress;
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
   private Date updatedDt;
   private String updatedBy;
   private String jsonData;
+  @Temporal(TemporalType.TIMESTAMP)
   private Date startDt;
+  @Temporal(TemporalType.TIMESTAMP)
   private Date endDt;
   private float duration;
   private long recordCount;

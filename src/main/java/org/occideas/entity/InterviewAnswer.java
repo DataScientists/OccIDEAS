@@ -3,6 +3,7 @@ package org.occideas.entity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -53,6 +54,8 @@ public class InterviewAnswer implements java.io.Serializable {
   @Column(name = "deleted")
   private Integer deleted;
   @Column(name = "lastUpdated")
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
   private Date lastUpdated;
 
   @OneToMany(fetch = FetchType.LAZY)

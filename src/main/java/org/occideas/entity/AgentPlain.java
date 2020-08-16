@@ -1,9 +1,8 @@
 package org.occideas.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,7 +17,9 @@ public class AgentPlain implements Serializable {
   private String discriminator;
   private String name;
   private String description;
-  private Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date lastUpdated;
   private int deleted;
   @Column(name = "agentGroup_idAgent")
   private long agentGroupId;

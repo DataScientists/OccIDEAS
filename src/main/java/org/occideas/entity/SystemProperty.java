@@ -1,7 +1,10 @@
 package org.occideas.entity;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "SYS_CONFIG")
@@ -22,7 +25,9 @@ public class SystemProperty implements Serializable {
   @Column(name = "value")
   private String value;
   @Column(name = "updatedDt")
-  private String updatedDt;
+  @Temporal(TemporalType.TIMESTAMP)
+  @UpdateTimestamp
+  private Date updatedDt;
   @Column(name = "updatedBy")
   private String updatedBy;
 
@@ -58,11 +63,11 @@ public class SystemProperty implements Serializable {
     this.value = value;
   }
 
-  public String getUpdatedDt() {
+  public Date getUpdatedDt() {
     return updatedDt;
   }
 
-  public void setUpdatedDt(String updatedDt) {
+  public void setUpdatedDt(Date updatedDt) {
     this.updatedDt = updatedDt;
   }
 

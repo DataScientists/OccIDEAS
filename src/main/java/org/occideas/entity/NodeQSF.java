@@ -2,9 +2,7 @@ package org.occideas.entity;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,6 +14,7 @@ public class NodeQSF implements Serializable {
     private String surveyId;
     private long idNode;
     private String results;
+    @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date lastUpdated;
 

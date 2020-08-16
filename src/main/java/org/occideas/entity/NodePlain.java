@@ -1,9 +1,8 @@
 package org.occideas.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,7 +23,9 @@ public class NodePlain implements Serializable {
   private String parentId;
   private long link;
   private long topNodeId;
-  private Date lastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    private Date lastUpdated;
   @Column(name = "node_discriminator")
   private String nodeDiscriminator;
   private long originalId;
