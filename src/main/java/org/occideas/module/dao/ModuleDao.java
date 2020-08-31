@@ -7,7 +7,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,66 +48,66 @@ public class ModuleDao implements IModuleDao {
   @Autowired
   private SessionFactory sessionFactory;
 
-  public Module save(Module module) {
-    return (Module) sessionFactory.getCurrentSession().save(module);
+  public JobModule save(JobModule module) {
+    return (JobModule) sessionFactory.getCurrentSession().save(module);
   }
 
   //    @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void saveCopy(Module module) {
+  public void saveCopy(JobModule module) {
     sessionFactory.getCurrentSession().save(module);
   }
 
-  public void delete(Module module) {
+  public void delete(JobModule module) {
     sessionFactory.getCurrentSession().delete(module);
   }
 
-  public List<Module> findByName(String name) {
+  public List<JobModule> findByName(String name) {
     final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(Module.class)
+    final Criteria crit = session.createCriteria(JobModule.class)
       .add(Restrictions.eq("name", name));
     return crit.list();
   }
 
-  public Module get(Long id) {
-    return (Module) sessionFactory.getCurrentSession().get(Module.class, id);
+  public JobModule get(Long id) {
+    return (JobModule) sessionFactory.getCurrentSession().get(JobModule.class, id);
   }
 
-  public Module merge(Module module) {
-    return (Module) sessionFactory.getCurrentSession().merge(module);
+  public JobModule merge(JobModule module) {
+    return (JobModule) sessionFactory.getCurrentSession().merge(module);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void saveOrUpdate(Module module) {
+  public void saveOrUpdate(JobModule module) {
     sessionFactory.getCurrentSession().saveOrUpdate(module);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
-  public void saveOrUpdateIgnoreFK(Module module) {
+  public void saveOrUpdateIgnoreFK(JobModule module) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();
     sessionFactory.getCurrentSession().saveOrUpdate(module);
   }
 
   @Override
-  public List<Module> findByNameLength(String name) {
+  public List<JobModule> findByNameLength(String name) {
     final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(Module.class)
+    final Criteria crit = session.createCriteria(JobModule.class)
             .add(Restrictions.like("name", name, MatchMode.START))
             .add(Restrictions.eq("deleted", 0));
     return crit.list();
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public long create(Module module) {
+  public long create(JobModule module) {
     sessionFactory.getCurrentSession().save(module);
     return module.getIdNode();
   }
 
   @SuppressWarnings("unchecked")
-  public List<Module> getAll(boolean isIncludeChild) {
+  public List<JobModule> getAll(boolean isIncludeChild) {
     final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(Module.class);
+    final Criteria crit = session.createCriteria(JobModule.class);
 
     //      if(!isIncludeChild){
     //    	  crit.setProjection(Projections.projectionList()
@@ -123,9 +123,9 @@ public class ModuleDao implements IModuleDao {
   }
 
   @SuppressWarnings("unchecked")
-  public List<Module> getAllActive() {
+  public List<JobModule> getAllActive() {
     final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(Module.class)
+    final Criteria crit = session.createCriteria(JobModule.class)
       .addOrder(Order.asc("name"))
       .add(Restrictions.eq("deleted", 0))
       .setProjection(Projections.projectionList()
@@ -133,7 +133,7 @@ public class ModuleDao implements IModuleDao {
         .add(Projections.property("type"), "type")
         .add(Projections.property("name"), "name")
         .add(Projections.property("description"), "description"))
-      .setResultTransformer(Transformers.aliasToBean(Module.class));
+      .setResultTransformer(Transformers.aliasToBean(JobModule.class));
     return crit.list();
   }
 

@@ -1,7 +1,7 @@
 package org.occideas.mapper;
 
 import org.occideas.entity.InterviewIntroModuleModule;
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.ModuleRule;
 import org.occideas.entity.Question;
 import org.occideas.utilities.CommonUtil;
@@ -25,7 +25,7 @@ public class ModuleMapperImpl implements ModuleMapper {
   private ModuleRuleMapper ruleMapper;
 
   @Override
-  public ModuleVO convertToModuleVOOnly(Module moduleEntity) {
+  public ModuleVO convertToModuleVOOnly(JobModule moduleEntity) {
     if (moduleEntity == null) {
       return null;
     }
@@ -54,7 +54,7 @@ public class ModuleMapperImpl implements ModuleMapper {
   }
 
   @Override
-  public ModuleVO convertToModuleVO(Module moduleEntity, boolean includeChild) {
+  public ModuleVO convertToModuleVO(JobModule moduleEntity, boolean includeChild) {
     if (moduleEntity == null) {
       return null;
     }
@@ -86,7 +86,7 @@ public class ModuleMapperImpl implements ModuleMapper {
   }
 
   @Override
-  public ModuleVO convertToModuleWithFlagsVO(Module moduleEntity, boolean includeChildNodes, boolean includeRules) {
+  public ModuleVO convertToModuleWithFlagsVO(JobModule moduleEntity, boolean includeChildNodes, boolean includeRules) {
     if (moduleEntity == null) {
       return null;
     }
@@ -118,7 +118,7 @@ public class ModuleMapperImpl implements ModuleMapper {
   }
 
   @Override
-  public ModuleVO convertToInterviewModuleVO(Module moduleEntity) {
+  public ModuleVO convertToInterviewModuleVO(JobModule moduleEntity) {
     if (moduleEntity == null) {
       return null;
     }
@@ -144,13 +144,13 @@ public class ModuleMapperImpl implements ModuleMapper {
   }
 
   @Override
-  public List<ModuleVO> convertToModuleVOList(List<Module> moduleEntity, boolean includeChild) {
+  public List<ModuleVO> convertToModuleVOList(List<JobModule> moduleEntity, boolean includeChild) {
     if (moduleEntity == null) {
       return null;
     }
 
     List<ModuleVO> list = new ArrayList<ModuleVO>();
-    for (Module module : moduleEntity) {
+    for (JobModule module : moduleEntity) {
       list.add(convertToModuleVO(module, includeChild));
     }
 
@@ -158,12 +158,12 @@ public class ModuleMapperImpl implements ModuleMapper {
   }
 
   @Override
-  public Module convertToModule(ModuleVO moduleVO, boolean includeChild) {
+  public JobModule convertToModule(ModuleVO moduleVO, boolean includeChild) {
     if (moduleVO == null) {
       return null;
     }
 
-    Module module = new Module();
+    JobModule module = new JobModule();
 
     module.setIdNode(moduleVO.getIdNode());
     module.setName(moduleVO.getName());
@@ -187,12 +187,12 @@ public class ModuleMapperImpl implements ModuleMapper {
   }
 
   @Override
-  public List<Module> convertToModuleList(List<ModuleVO> moduleVO, boolean includeChild) {
+  public List<JobModule> convertToModuleList(List<ModuleVO> moduleVO, boolean includeChild) {
     if (moduleVO == null) {
       return null;
     }
 
-    List<Module> list = new ArrayList<Module>();
+    List<JobModule> list = new ArrayList<JobModule>();
     for (ModuleVO moduleVO_ : moduleVO) {
       list.add(convertToModule(moduleVO_, includeChild));
     }

@@ -1,6 +1,6 @@
 package org.occideas.moduleintromodule.service;
 
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.mapper.ModuleIntroModuleMapper;
 import org.occideas.mapper.ModuleMapper;
@@ -42,7 +42,7 @@ public class ModuleIntroModuleServiceImpl implements ModuleIntroModuleService {
 
   @Override
   public List<ModuleVO> findByIdWithFragments(Long id) {
-    Module module = moduleDao.get(id);
+    JobModule module = moduleDao.get(id);
     ModuleVO moduleVO = moduleMapper.convertToModuleVO(module, true);
     List<ModuleVO> list = new ArrayList<ModuleVO>();
     List<ModuleFragmentVO> moduleFragmentList = moduleFragmentService.getModuleFragmentByModuleId(id);

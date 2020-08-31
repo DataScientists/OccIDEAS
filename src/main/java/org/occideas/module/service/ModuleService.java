@@ -1,6 +1,6 @@
 package org.occideas.module.service;
 
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.vo.*;
 import org.springframework.scheduling.annotation.Async;
@@ -44,7 +44,7 @@ public interface ModuleService {
 
 	NodeVO getModuleFilterAgent(Long id, Long idAgent);
 
-	List<Module> getAllModules();
+	List<JobModule> getAllModules();
 
 	NodeVO getNodeById(Long idNode);
 

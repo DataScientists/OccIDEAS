@@ -275,7 +275,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
         PossibleAnswerVO vo = posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer) n, false);
         vo.getChildNodes().add((QuestionVO) node);
         posAnsWithStudyAgentsList.add(vo);
-      } else if (n instanceof Module) {
+      } else if (n instanceof JobModule) {
         QuestionVO qVo = (QuestionVO) node;
         if (nodeVo instanceof ModuleVO) {
           ModuleVO modVo = (ModuleVO) nodeVo;

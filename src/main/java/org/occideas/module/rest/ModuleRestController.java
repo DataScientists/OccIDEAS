@@ -448,7 +448,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     public Response getAllModulesReport() {
         List<ModuleReportVO> report = new ArrayList<>();
 
-        List<Module> modules;
+        List<JobModule> modules;
         try {
             modules = service.getAllModules();
             report = generateReport(modules);
@@ -553,10 +553,10 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
         }
     }
 
-    private List<ModuleReportVO> generateReport(List<Module> modules) {
+    private List<ModuleReportVO> generateReport(List<JobModule> modules) {
         List<ModuleReportVO> reports = new ArrayList();
 
-        for (Module module : modules) {
+        for (JobModule module : modules) {
 
             ModuleReportVO report = new ModuleReportVO();
             ModuleVO vo = new ModuleVO();

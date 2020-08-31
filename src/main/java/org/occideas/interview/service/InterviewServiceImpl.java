@@ -342,7 +342,7 @@ public class InterviewServiceImpl implements InterviewService {
       return null;
     }
     // get the module
-    Module mod = moduleDao.get(Long.valueOf(activeIntro.getValue()));
+    JobModule mod = moduleDao.get(Long.valueOf(activeIntro.getValue()));
     ModuleVO modVO = moduleMapper.convertToModuleVO(mod, false);
     // get latest participant count
     String maxReferenceNumber = participantService.getMaxReferenceNumber();

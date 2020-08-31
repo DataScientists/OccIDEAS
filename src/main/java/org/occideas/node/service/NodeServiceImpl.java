@@ -1,7 +1,7 @@
 package org.occideas.node.service;
 
 import org.occideas.entity.Fragment;
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
@@ -32,7 +32,7 @@ public class NodeServiceImpl implements INodeService {
 	
 	@Override
 	public ModuleVO getModule(Long idNode) {
-		Module module = (Module) dao.getNode(idNode);
+		JobModule module = (JobModule) dao.getNode(idNode);
 		return moduleMapper.convertToModuleVOOnly(module);
 	}
 
@@ -46,7 +46,7 @@ public class NodeServiceImpl implements INodeService {
 	public NodeVO getNode(Long idNode) {
 		Node node = dao.getNode(idNode);
 		if ("M".equals(node.getNodeclass())) {
-			Module module = (Module) node;
+			JobModule module = (JobModule) node;
 			return moduleMapper.convertToModuleVO(module,true);
 		}
 		if ("Q".equals(node.getNodeclass())) {

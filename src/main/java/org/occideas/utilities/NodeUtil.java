@@ -38,7 +38,7 @@ public class NodeUtil {
 
   public NodeVO convertToNodeVO(Node node) {
     if (NodeDiscriminatorEnum.M.name().equals(node.getNodeDiscriminator())) {
-      Module module = new Module(node);
+      JobModule module = new JobModule(node);
       return moduleMapper.convertToModuleVOOnly(module);
     }
     if (NodeDiscriminatorEnum.F.name().equals(node.getNodeDiscriminator())) {

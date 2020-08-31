@@ -7,7 +7,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.occideas.base.dao.BaseDao;
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.entity.NodesAgent;
 import org.occideas.entity.Question;
@@ -97,12 +97,12 @@ public class QuestionDao implements IQuestionDao {
     return null;
   }
 
-  public Module getModuleByParentId(Long idNode) {
+  public JobModule getModuleByParentId(Long idNode) {
     final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(Module.class).add(Restrictions.eq("idNode", idNode))
+    final Criteria crit = session.createCriteria(JobModule.class).add(Restrictions.eq("idNode", idNode))
       .add(Restrictions.eq("deleted", 0));
     if (!crit.list().isEmpty()) {
-      return (Module) crit.list().get(0);
+      return (JobModule) crit.list().get(0);
     }
     return null;
   }

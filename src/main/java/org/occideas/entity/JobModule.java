@@ -14,7 +14,7 @@ import java.util.List;
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
-public class Module extends Node<Question> implements Serializable {
+public class JobModule extends Node<Question> implements Serializable {
 
   /**
    *
@@ -26,22 +26,22 @@ public class Module extends Node<Question> implements Serializable {
   protected List<ModuleRule> moduleRule;
 
 
-  public Module() {
+  public JobModule() {
     super();
   }
 
-  public Module(Node node) {
+  public JobModule(Node node) {
     super(node);
   }
 
 
-  public Module(long idNode) {
+  public JobModule(long idNode) {
     super();
     this.setIdNode(idNode);
   }
 
 
-  public Module(String idNode) {
+  public JobModule(String idNode) {
     super();
     this.setIdNode(Long.parseLong(idNode));
   }

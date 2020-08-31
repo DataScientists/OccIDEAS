@@ -87,7 +87,7 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public List<ModuleVO> findById(Long id) {
-		Module module = dao.get(id);
+		JobModule module = dao.get(id);
 		ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
 		list.add(moduleVO);
@@ -96,7 +96,7 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public List<ModuleVO> findByIdForInterview(Long id) {
-		Module module = dao.get(id);
+		JobModule module = dao.get(id);
 		ModuleVO moduleVO = mapper.convertToModuleVO(module, false);
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
 		list.add(moduleVO);
@@ -105,7 +105,7 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public List<ModuleVO> findByIdNoRules(Long id) {
-		Module module = dao.get(id);
+		JobModule module = dao.get(id);
 		boolean includeChildNodes = true;
 		boolean includeRules = false;
 		ModuleVO moduleVO = mapper.convertToModuleWithFlagsVO(module, includeChildNodes, includeRules);
@@ -116,7 +116,7 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public ModuleVO create(ModuleVO module) {
-		Module moduleEntity = dao.save(mapper.convertToModule(module, false));
+		JobModule moduleEntity = dao.save(mapper.convertToModule(module, false));
 		studyAgentUtil.createStudyAgentForUpdatedNode(moduleEntity.getIdNode(), moduleEntity.getName());
 		return mapper.convertToModuleVO(moduleEntity, false);
 	}
@@ -301,7 +301,7 @@ public class ModuleServiceImpl implements ModuleService {
 		List<ModuleVO> modules = moduleVO.getModules();
 		for (ModuleVO vo : modules) {
 			// check if module exist
-			List<Module> list = dao.findByName(vo.getName());
+			List<JobModule> list = dao.findByName(vo.getName());
 			if (list.isEmpty()) {
 				ModuleVO newModuleVO = vo;
 				Long idNode = idNodeRuleHolder.getLastIdNode() + 1;
@@ -408,7 +408,7 @@ public class ModuleServiceImpl implements ModuleService {
 	public NodeVO getModuleFilterStudyAgent(Long id) {
 		Node node = dao.getNodeById(id);
 		if ("M".equals(node.getNodeclass())) {
-			ModuleVO moduleVO = mapper.convertToModuleVO((Module) node, true);
+			ModuleVO moduleVO = mapper.convertToModuleVO((JobModule) node, true);
 			ModuleVO newModuleVO = sysPropService.filterModulesNodesWithStudyAgents(moduleVO);
 			return newModuleVO;
 		} else if ("F".equals(node.getNodeclass())) {
@@ -432,7 +432,7 @@ public class ModuleServiceImpl implements ModuleService {
 	private NodeVO convertToModuleOrFragment(Node node) {
 		NodeVO vo = null;
 		if ("M".equals(node.getNodeclass())) {
-			vo = mapper.convertToModuleVO((Module) node, true);
+			vo = mapper.convertToModuleVO((JobModule) node, true);
 		} else if ("F".equals(node.getNodeclass())) {
 			vo = fragmentMapper.convertToFragmentVO((Fragment) node, true);
 		}
@@ -443,7 +443,7 @@ public class ModuleServiceImpl implements ModuleService {
 	public NodeVO getModuleFilterAgent(Long id, Long idAgent) {
 		Node node = dao.getNodeById(id);
 		if ("M".equals(node.getNodeclass())) {
-			ModuleVO moduleVO = mapper.convertToModuleVO((Module) node, true);
+			ModuleVO moduleVO = mapper.convertToModuleVO((JobModule) node, true);
 			ModuleVO newModuleVO = sysPropService.filterModulesNodesWithAgents(moduleVO, idAgent);
 			return newModuleVO;
 		} else if ("F".equals(node.getNodeclass())) {
@@ -455,7 +455,7 @@ public class ModuleServiceImpl implements ModuleService {
 	}
 
 	@Override
-	public List<Module> getAllModules() {
+	public List<JobModule> getAllModules() {
 		return dao.getAll(true);
 	}
 
@@ -463,7 +463,7 @@ public class ModuleServiceImpl implements ModuleService {
 	public NodeVO getNodeById(Long idNode) {
 		Node node = dao.getNodeById(idNode);
 		if ("M".equals(node.getNodeclass())) {
-			ModuleVO moduleVO = mapper.convertToModuleVO((Module) node, false);
+			ModuleVO moduleVO = mapper.convertToModuleVO((JobModule) node, false);
 			return moduleVO;
 		} else if ("F".equals(node.getNodeclass())) {
 			FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO((Fragment) node, false);
@@ -514,7 +514,7 @@ public class ModuleServiceImpl implements ModuleService {
 		Optional<String> moduleName = Optional.ofNullable(name);
 		if(moduleName.isPresent()){
 			String truncatedName = moduleName.get().substring(0,length);
-			List<Module> modules = dao.findByNameLength(name);
+			List<JobModule> modules = dao.findByNameLength(name);
 			if(!modules.isEmpty() && modules.size() == 1){
 				return mapper.convertToModuleVO(modules.get(0),false);
 			}
@@ -626,8 +626,8 @@ public class ModuleServiceImpl implements ModuleService {
 	public List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId) {
 		List<LanguageModBreakdownVO> results = new ArrayList<>();
 
-		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
-		for (Module module : listOfModuleIdNodes) {
+		List<JobModule> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		for (JobModule module : listOfModuleIdNodes) {
 			long idNode = module.getIdNode();
 			Integer currentCount = getModuleTranslationCurrentCount(String.valueOf(idNode), languageId);
 			Integer totalCount = getModuleTranslationTotalCount(String.valueOf(idNode));
@@ -642,9 +642,9 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public Integer getTotalUntranslatedModule(Long languageId) {
-		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		List<JobModule> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
 		int count = 0;
-		for (Module module : listOfModuleIdNodes) {
+		for (JobModule module : listOfModuleIdNodes) {
 			count = count + countUniqueNodeNamesInModule(String.valueOf(module.getIdNode()));
 		}
 		return count;
@@ -652,11 +652,11 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public Integer getModulesWithTranslationCount(long languageId) {
-		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		List<JobModule> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
 		int count = 0;
 		List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
 		CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
-		for (Module module : listOfModuleIdNodes) {
+		for (JobModule module : listOfModuleIdNodes) {
 			if (hasAnyNodeTranslated(String.valueOf(module.getIdNode()), languageId, nodeLanguageList)) {
 				count++;
 			}
@@ -666,11 +666,11 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public Integer getTotalTranslatedNodeByLanguage(long languageId) {
-		List<Module> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
+		List<JobModule> listOfModuleIdNodes = nodeLanguageDao.getModulesIdNodeSQL();
 		int count = 0;
 		List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
 		CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
-		for (Module module : listOfModuleIdNodes) {
+		for (JobModule module : listOfModuleIdNodes) {
 			List<String> nodeList = dao.getNodeNameByIdNode(String.valueOf(module.getIdNode()));
 			CommonUtil.removeNonUniqueString(nodeList);
 			CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
@@ -683,7 +683,7 @@ public class ModuleServiceImpl implements ModuleService {
 		return count;
 	}
 
-	private LanguageModBreakdownVO buildBreakdownStatsForModule(Module module, long idNode, Integer currentCount,
+	private LanguageModBreakdownVO buildBreakdownStatsForModule(JobModule module, long idNode, Integer currentCount,
 			Integer totalCount) {
 		LanguageModBreakdownVO vo = new LanguageModBreakdownVO();
 		vo.setIdNode(idNode);

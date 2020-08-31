@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Fragment;
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;

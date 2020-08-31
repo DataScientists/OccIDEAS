@@ -27,6 +27,8 @@
     <property name="username" value="root"/>
     <property name="password" value="P@ssw0rd"/>
     <property name="validationQuery" value="SELECT 1"/>
+    <property name="serverTimezone" value="UTC"/>    
+    <property name="useTimezone" value="true"/>
   </bean>
 
   <bean id="sessionFactory"

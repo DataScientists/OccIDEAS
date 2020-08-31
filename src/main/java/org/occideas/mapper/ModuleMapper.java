@@ -1,7 +1,7 @@
 package org.occideas.mapper;
 
 import org.occideas.entity.InterviewIntroModuleModule;
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.vo.InterviewIntroModuleModuleVO;
 import org.occideas.vo.ModuleVO;
 
@@ -11,22 +11,22 @@ import java.util.List;
 public interface ModuleMapper {
 
   //	@Mapping(target = "notes", ignore=true)
-  ModuleVO convertToModuleVO(Module moduleEntity, boolean includeChild);
+  ModuleVO convertToModuleVO(JobModule moduleEntity, boolean includeChild);
 
-  ModuleVO convertToInterviewModuleVO(Module moduleEntity);
+  ModuleVO convertToInterviewModuleVO(JobModule moduleEntity);
 
   List<InterviewIntroModuleModuleVO> convertToInterviewModuleListVO(List<InterviewIntroModuleModule> moduleList);
 
   //	@Mapping(target = "notes", ignore=true)
-  List<ModuleVO> convertToModuleVOList(List<Module> moduleEntity, boolean includeChild);
+  List<ModuleVO> convertToModuleVOList(List<JobModule> moduleEntity, boolean includeChild);
 
   //	@Mapping(target = "notes", ignore=true)
-  Module convertToModule(ModuleVO moduleVO, boolean includeChild);
+  JobModule convertToModule(ModuleVO moduleVO, boolean includeChild);
 
   //	@Mapping(target = "notes", ignore=true)
-  List<Module> convertToModuleList(List<ModuleVO> moduleVO, boolean includeChild);
+  List<JobModule> convertToModuleList(List<ModuleVO> moduleVO, boolean includeChild);
 
-  ModuleVO convertToModuleWithFlagsVO(Module moduleEntity, boolean includeChildNodes, boolean includeRules);
+  ModuleVO convertToModuleWithFlagsVO(JobModule moduleEntity, boolean includeChildNodes, boolean includeRules);
 
-  ModuleVO convertToModuleVOOnly(Module moduleEntity);
+  ModuleVO convertToModuleVOOnly(JobModule moduleEntity);
 }

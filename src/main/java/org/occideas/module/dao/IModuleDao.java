@@ -1,6 +1,6 @@
 package org.occideas.module.dao;
 
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 
@@ -8,25 +8,25 @@ import java.util.List;
 
 public interface IModuleDao {
 
-  Module save(Module module);
+  JobModule save(JobModule module);
 
-  void saveCopy(Module module);
+  void saveCopy(JobModule module);
 
-  void delete(Module module);
+  void delete(JobModule module);
 
-  List<Module> findByName(String name);
+  List<JobModule> findByName(String name);
 
-  Module get(Long id);
+  JobModule get(Long id);
 
-  Module merge(Module module);
+  JobModule merge(JobModule module);
 
-  void saveOrUpdate(Module module);
+  void saveOrUpdate(JobModule module);
 
-  long create(Module module);
+  long create(JobModule module);
 
-  List<Module> getAll(boolean b);
+  List<JobModule> getAll(boolean b);
 
-  List<Module> getAllActive();
+  List<JobModule> getAllActive();
 
   Long generateIdNode();
 
@@ -50,7 +50,7 @@ public interface IModuleDao {
 
   List<? extends Node> getNodeByType(String type);
 
-  void saveOrUpdateIgnoreFK(Module module);
+  void saveOrUpdateIgnoreFK(JobModule module);
 
-  List<Module> findByNameLength(String name);
+  List<JobModule> findByNameLength(String name);
 }

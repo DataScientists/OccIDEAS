@@ -137,7 +137,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void preloadAllModules() {
-    List<Module> modules = moduleDao.getAll(false);
+    List<JobModule> modules = moduleDao.getAll(false);
     List<ModuleVO> voList = moduleMapper.convertToModuleVOList(modules, false);
     for (ModuleVO moduleVO : voList) {
       try {

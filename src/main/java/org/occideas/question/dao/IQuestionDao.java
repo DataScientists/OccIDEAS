@@ -1,6 +1,6 @@
 package org.occideas.question.dao;
 
-import org.occideas.entity.Module;
+import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.entity.NodesAgent;
 import org.occideas.entity.Question;
@@ -15,7 +15,7 @@ public interface IQuestionDao {
 
   List<Question> getAllMultipleQuestions();
 
-  Module getModuleByParentId(Long idNode);
+  JobModule getModuleByParentId(Long idNode);
 
   Question findMultipleQuestion(long questionId);
 

@@ -34,7 +34,7 @@ public interface INodeLanguageDao {
 
   void addLanguage(Language entity);
 
-  List<Module> getUntranslatedModules(String flag);
+  List<JobModule> getUntranslatedModules(String flag);
 
   Integer getTotalUntranslatedModule();
 
@@ -60,7 +60,7 @@ public interface INodeLanguageDao {
 
   List<String> getNodeLanguageWordsByIdOrderByWord(Long id);
 
-  List<Module> getModulesIdNodeSQL();
+  List<JobModule> getModulesIdNodeSQL();
 
   List<Fragment> getFragmentIdNodeSQL();
 

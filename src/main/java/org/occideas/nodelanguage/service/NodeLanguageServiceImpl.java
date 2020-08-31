@@ -157,7 +157,7 @@ public class NodeLanguageServiceImpl implements NodeLanguageService {
 
   @Override
   public Integer getUntranslatedModules(String flag) {
-    List<Module> untranslatedModules = dao.getUntranslatedModules(flag);
+    List<JobModule> untranslatedModules = dao.getUntranslatedModules(flag);
     if (untranslatedModules == null) {
       return 0;
     }

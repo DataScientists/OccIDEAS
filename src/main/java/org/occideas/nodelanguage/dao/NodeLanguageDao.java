@@ -235,11 +235,11 @@ public class NodeLanguageDao implements INodeLanguageDao {
   }
 
   @Override
-  public List<Module> getUntranslatedModules(String flag) {
+  public List<JobModule> getUntranslatedModules(String flag) {
     final Session session = sessionFactory.getCurrentSession();
-    SQLQuery sqlQuery = session.createSQLQuery(getUntranslatedModulesSQL).addEntity(Module.class);
+    SQLQuery sqlQuery = session.createSQLQuery(getUntranslatedModulesSQL).addEntity(JobModule.class);
     sqlQuery.setParameter("param", flag);
-    List<Module> list = sqlQuery.list();
+    List<JobModule> list = sqlQuery.list();
     return list;
   }
 
@@ -290,11 +290,11 @@ public class NodeLanguageDao implements INodeLanguageDao {
   }
 
   @Override
-  public List<Module> getModulesIdNodeSQL() {
+  public List<JobModule> getModulesIdNodeSQL() {
     final Session session = sessionFactory.getCurrentSession();
     SQLQuery sqlQuery = session.createSQLQuery(getModulesIdNodeSQL)
-      .addEntity(Module.class);
-    List<Module> list = sqlQuery.list();
+      .addEntity(JobModule.class);
+    List<JobModule> list = sqlQuery.list();
     return list;
   }
 

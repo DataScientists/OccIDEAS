@@ -28,7 +28,7 @@ public class Interview implements java.io.Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "module_idNode", referencedColumnName = "idNode")
-  private Module module;
+  private JobModule module;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "fragment_idNode", referencedColumnName = "idNode")
@@ -113,11 +113,11 @@ public class Interview implements java.io.Serializable {
     this.idinterview = idinterview;
   }
 
-  public Module getModule() {
+  public JobModule getModule() {
     return module;
   }
 
-  public void setModule(Module module) {
+  public void setModule(JobModule module) {
     this.module = module;
   }
 
