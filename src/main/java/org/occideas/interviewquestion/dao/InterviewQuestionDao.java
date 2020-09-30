@@ -198,7 +198,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
   private void generateLinks(Node node) {
-    for (Object obj : node.getChildNodes()) {
+	List<Question> qList = moduleDao.getAllLinkingQuestionByModId(node.getIdNode());
+    for (Object obj : qList) {
       if (obj instanceof Question) {
         Long link = ((Node) obj).getLink();
         if (link > 0) {
@@ -211,15 +212,16 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
   private void processFragmentQuestion(Long link) {
-    Node node = moduleDao.getNodeById(link);
-    if (node != null) {
-      for (Object object : node.getChildNodes()) {
+    //Node node = moduleDao.getNodeById(link);
+    //if (node != null) {
+      List<Question> qList = moduleDao.getAllLinkingQuestionByModId(link);
+      for (Object object : qList) {
         if (object instanceof Question && ((Question) object).getLink() > 0) {
           addToLinkList(((Question) object).getLink());
         }
 //        generateLinks((Node) object);
       }
-    }
+    //}
   }
 
   private void addToLinkList(Long val) {

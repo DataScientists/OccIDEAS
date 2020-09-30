@@ -184,6 +184,7 @@
         if(participant.status == 2) {//completed interview
           endInterview();
         } else {
+
           var msg = "Could not queue next question, please check study agent configuration settings.";
           console.error(msg);
           ngToast.create({
@@ -1248,13 +1249,14 @@
                           }
                         });
                       } else {
-                        var msg = "Could not queue next question, please check study agent configuration settings.";
+                        var msg = "Ending interview";
                         ngToast.create({
                           className: 'danger',
                           content: msg,
                           animation: 'slide'
                         });
                         console.log(msg);
+                        endInterview();
                       }
                     }
                   });
@@ -1870,13 +1872,14 @@
                   processLinkingQuestionNew(question);
                 }
               } else {
-                var msg = "Could not queue next question, please check study agent configuration settings.";
-                ngToast.create({
-                  className: 'danger',
-                  content: msg,
-                  animation: 'slide'
-                });
-                console.log(msg);
+            	  endInterview();
+                //var msg = "Could not queue next question, please check study agent configuration settings.";
+               // ngToast.create({
+                //  className: 'danger',
+                //  content: msg,
+                //  animation: 'slide'
+               // });
+               // console.log(msg);
               }
             }
           });

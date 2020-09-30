@@ -13,36 +13,38 @@
             data-toggle="tooltip"
             confirm="Are you sure to preload study agents? this will also purge the existing modules"
             title="Filter modules by agents to create study specific modules"
-            type="button">Preload Study Agents
+            type="button">Create Study Specific Modules
+    </button>
+    <button class="btn btn-default" ng-click="vm.purgeModule()" data-toggle="tooltip"
+            style="margin-left:3px;" title="Removes study specific modules."
+            type="button">Clean up Study Specific Modules
     </button>
     <button class="btn btn-default" ng-click="vm.purgeParticipants()"
             style="margin-left:3px;" data-toggle="tooltip"
             title="This will permanently delete all participants and assessments"
             type="button">Purge Participants
     </button>
-    <button class="btn btn-default" ng-click="vm.purgeModule()" data-toggle="tooltip"
-            style="margin-left:3px;" title="Removes study specific modules."
-            type="button">Purge Modules
-    </button>
+    
     <button class="btn btn-default" ng-click="vm.importLibraryDialog()"
             style="margin-left:3px;" data-toggle="tooltip" title="Import library from another database."
-            type="button">Import Library
+            type="button">Import Library Modules
     </button>
     <button class="btn btn-default" ng-click="vm.cleanOrphans()"
             style="margin-left:3px;"
-            type="button" data-toggle="tooltip" title="Used to delete questions/answers without parent module/question.">Clean Orphans Nodes
+            type="button" data-toggle="tooltip" title="Used to delete questions/answers without parent module/question.">
+            Clean Orphans Nodes
     </button>
    <!--   <button class="btn btn-default" ng-click="vm.deleteQSFSurveys()" data-toggle="tooltip"
             style="margin-left:3px;" title="Warning! Deletes All QSF Surveys"
             type="button">Delete All QSF Surveys
     </button> -->
     <button class="btn btn-default" ng-click="vm.importQSFResponses()" data-toggle="tooltip"
-            style="margin-left:3px;" title="Warning! Deletes All QSF Surveys"
-            type="button">Import QSF Responses
+            style="margin-left:3px;" title="Downloads and imports qualtrics survey responses from previously imported surveys"
+            type="button">Import Qualtrics Responses
     </button>
     <button class="btn btn-default" ng-click="vm.openCopySurveys()" data-toggle="tooltip"
-            style="margin-left:3px;" title="Copy Surveys"
-            type="button">Copy Surveys
+            style="margin-left:3px;" title="Copy Qualtrics Surveys"
+            type="button">Copy Qualtrics Surveys
     </button>
 
   </div>

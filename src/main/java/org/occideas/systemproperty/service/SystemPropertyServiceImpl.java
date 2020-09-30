@@ -179,7 +179,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
     getStudyAgentsForLinks(nodeWithStudyAgentsList, posAnsWithStudyAgentsList, vo);
     addAnsDependencyFromModuleFragment(vo, posAnsWithStudyAgentsList);
     if (posAnsWithStudyAgentsList.isEmpty() && nodeWithStudyAgentsList.isEmpty()) {
-      return null;
+      return list;
     } else {
       if (vo instanceof ModuleVO) {
         ((ModuleVO) vo).getChildNodes().addAll(buildChildNodesWithStudyAgents(posAnsWithStudyAgentsList));
