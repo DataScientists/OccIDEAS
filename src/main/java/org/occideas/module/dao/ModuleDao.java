@@ -31,8 +31,8 @@ public class ModuleDao implements IModuleDao {
     + "= :link and topNodeId = :modId and deleted = 0";
   private final String GET_ALL_LINKING_QUESTION_BY_MOD_ID = "SELECT distinct n.* "
     + "FROM Node n, ModuleRule mr "
-    + "WHERE n.topNodeId=:modId and n.link>0 and n.deleted=0 "
-    + "";
+    + "WHERE n.topNodeId=:modId and n.link>0 and n.deleted=0 and n.link=mr.idModule "
+    + "AND mr.idAgent in (select value from SYS_CONFIG where type='studyagent')";
   private final String DISTINCT_NODE_NAME_BY_IDNODE = "select * from Node where " +
     "topNodeId = :idNode and type != 'P_freetext' " +
     "and type not like '%frequency%' " +

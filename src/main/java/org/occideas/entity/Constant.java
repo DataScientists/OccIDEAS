@@ -30,7 +30,7 @@ public class Constant {
     public static final String REPORT_EXPORT_CSV_DIR = "/opt/data/reports/";
     public static final String FILTER_STUDY_AGENTS = "filterStudyAgent";
     public static final String AUTO_CREATE_STUDY_AGENT_JSON = "autoCreateJson";
-    public static final String REPORT_DOC_DIR = "reportDocDir";
+    //public static final String REPORT_DOC_DIR = "reportDocDir";
 
     public static final String STUDY_AGENT_SYS_PROP = "studyagent";
 

@@ -59,13 +59,8 @@ public class MSWordGenerator {
     // Blank Document
     map = new HashMap<>();
     XWPFDocument document = new XWPFDocument();
-    String path = System.getProperty("user.home");
-    SystemPropertyVO reportDir = systemPropertyService.getByName(Constant.REPORT_DOC_DIR);
-    if (reportDir == null) {
-      log.info("Admin config " + Constant.REPORT_DOC_DIR + " does not exist going for default path user home.");
-    } else {
-      path = reportDir.getValue();
-    }
+    String path = Constant.REPORT_EXPORT_CSV_DIR;
+    
     LocalDateTime localDateTime = LocalDateTime.now();
     String formatDate = DateTimeFormatter.ofPattern("yyy_MM_dd_HH_mm_ss").format(localDateTime);
     File file = new File(path + "/" + idNode + "_" + formatDate + ".docx");

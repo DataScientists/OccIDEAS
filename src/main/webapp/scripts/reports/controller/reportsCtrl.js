@@ -293,9 +293,9 @@
           dismissButton: true
         });
       } else {
-        SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response) {
-          if(response.status == '200') {
-            if(response.data) {
+       // SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response) {
+       //   if(response.status == '200') {
+       //     if(response.data) {
               $scope.cancel();
               ngToast.create({
                 className: 'success',
@@ -352,17 +352,17 @@
                 });
               }, 1000 * 30); //Update every 30 seconds, just to know if it's completed already
 
-            } else {
-              ngToast.create({
-                className: 'danger',
-                content: 'Unable to generate report no directory path defined. SystemProperty "REPORT_EXPORT_CSV_DIR" is not defined.',
-                dismissButton: true,
-                dismissOnClick: false,
-                animation: 'slide'
-              });
-            }
-          }
-        });
+      //      } else {
+       //       ngToast.create({
+      //          className: 'danger',
+      //          content: 'Unable to generate report no directory path defined. SystemProperty "REPORT_EXPORT_CSV_DIR" is not defined.',
+      //          dismissButton: true,
+      //          dismissOnClick: false,
+      //          animation: 'slide'
+      //        });
+     //       }
+      //    }
+      //  });
       }
     };
 
