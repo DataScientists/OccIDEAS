@@ -59,7 +59,7 @@ public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
     List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
     for (UserProfile userProfile : user.getUserProfiles()) {
-      System.out.println("UserProfile : " + userProfile);
+      //System.out.println("UserProfile : " + userProfile);
       authorities.add(new SimpleGrantedAuthority("ROLE_" + userProfile.getType()));
     }
     if (authorities.isEmpty()) {
