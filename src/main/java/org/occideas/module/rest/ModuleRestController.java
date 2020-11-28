@@ -570,15 +570,19 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
         return reports;
     }
 
-    private void populateQuestions(List<Question> childNodes, ModuleReportVO report) {
+	private void populateQuestions(List<Question> childNodes, ModuleReportVO report) {
 
-        for (Question vo : childNodes) {
-            report.setTotalQuestions(report.getTotalQuestions() + 1);
-            if (!vo.getChildNodes().isEmpty()) {
-                populateAnswers(vo.getChildNodes(), report);
-            }
-        }
-    }
+		for (Question vo : childNodes) {
+			report.setTotalQuestions(report.getTotalQuestions() + 1);
+			if (!vo.getChildNodes().isEmpty()) {
+				populateAnswers(vo.getChildNodes(), report);
+			} else {
+				if (vo.getDescription() != "display") {
+					report.addIssue(vo.getNumber() + " " + vo.getName());
+				}
+			}
+		}
+	}
 
     private void populateAnswers(List<PossibleAnswer> childNodes, ModuleReportVO report) {
 
