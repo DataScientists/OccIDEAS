@@ -213,6 +213,10 @@ public class FragmentRestController implements BaseRestController<FragmentVO> {
       report.setTotalQuestions(report.getTotalQuestions() + 1);
       if (!vo.getChildNodes().isEmpty()) {
         populateAnswers(vo.getChildNodes(), report);
+      }else{
+    	if(vo.getDescription()!="display"){
+          report.addIssue(vo.getNumber() + " " + vo.getName());
+    	} 	  
       }
     }
   }
