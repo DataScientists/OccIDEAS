@@ -15,6 +15,7 @@ import org.occideas.security.model.TokenResponse;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.MSWordGenerator;
 import org.occideas.vo.*;
+import org.occideas.voxco.service.VoxcoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -41,6 +42,8 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     private INodeService nodeService;
     @Autowired
     private IQSFService iqsfService;
+    @Autowired
+    private VoxcoService voxcoService;
 
     private String FREE_TEXT_REGEX = "\\[free\\s?text\\]";
 
@@ -113,6 +116,20 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     public Response exportQSFResponse(@QueryParam("id") Long id) throws IOException, InterruptedException {
         try {
             iqsfService.exportResponseQSF(id);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path(value = "/importToVoxco")
+    @Consumes(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
+    @Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
+    public Response importToVoxco(@QueryParam("id") Long id) {
+        try {
+            voxcoService.loadSurvey(id);
         } catch (Throwable e) {
             e.printStackTrace();
             return null;

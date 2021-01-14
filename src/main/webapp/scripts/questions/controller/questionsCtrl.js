@@ -1944,11 +1944,7 @@
         ]);
 
         $scope.moduleMenuOptions.unshift(['Import to Voxco', function($itemScope) {
-            var data = {
-                "Name": $itemScope.$modelValue.name,
-                "Description": $itemScope.$modelValue.description
-            }
-            ModulesService.importToVoxco(data)
+            ModulesService.importToVoxco($itemScope.$modelValue.idNode)
                 .then(function(response) {
                     if (response.status == 200) {
                         ngToast.create({

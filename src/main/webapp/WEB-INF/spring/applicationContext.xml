@@ -47,4 +47,9 @@
     <property name="sessionFactory" ref="sessionFactory"/>
   </bean>
 
+  <context:property-placeholder location="classpath:occideas.properties"/>
+  <bean id="restTemplate"
+        class="org.springframework.web.client.RestTemplate">
+  </bean>
+
 </beans>
