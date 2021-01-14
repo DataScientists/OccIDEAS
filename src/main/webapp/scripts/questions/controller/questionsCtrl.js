@@ -1942,6 +1942,27 @@
           });
         }
         ]);
+
+        $scope.moduleMenuOptions.unshift(['Import to Voxco', function($itemScope) {
+            var data = {
+                "Name": $itemScope.$modelValue.name,
+                "Description": $itemScope.$modelValue.description
+            }
+            ModulesService.importToVoxco(data)
+                .then(function(response) {
+                    if (response.status == 200) {
+                        ngToast.create({
+                            className: 'success',
+                            content: "Voxco survey is being generated/uploaded, kindly check Voxco in a few minutes."
+                        });
+                    } else {
+                        ngToast.create({
+                            className: 'danger',
+                            content: "response was " + response.status + " - Unable to import to Voxco"
+                        });
+                    }
+                });
+        }]);
       }
 /*
     if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
