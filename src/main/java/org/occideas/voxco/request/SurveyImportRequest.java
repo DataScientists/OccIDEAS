@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.occideas.voxco.model.Block;
 import org.occideas.voxco.model.Choice;
+import org.occideas.voxco.model.SurveySettings;
+import org.occideas.voxco.model.SurveyTranslatedTexts;
 import org.occideas.voxco.model.Theme;
-import org.occideas.voxco.model.TranslatedTexts;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,13 +19,14 @@ public class SurveyImportRequest {
 
     private Long id;
     private String name;
+    private SurveySettings settings;
     private String defaultLanguage;
     private Set<String> languages;
     private List<Block> blocks;
     private List<List<Choice>> choiceLists;
     private List<Object> shortcuts;
     private List<Object> randomizations;
-    private TranslatedTexts translatedTexts;
+    private SurveyTranslatedTexts translatedTexts;
     private Theme theme;
 
     public SurveyImportRequest() {
@@ -35,10 +37,11 @@ public class SurveyImportRequest {
         this.blocks = blocks;
         this.choiceLists = choiceLists;
 
+        this.settings = new SurveySettings();
         addDefaultLanguage();
         this.shortcuts = new ArrayList<>();
         this.randomizations = new ArrayList<>();
-        this.translatedTexts = new TranslatedTexts();
+        this.translatedTexts = new SurveyTranslatedTexts();
         this.theme = new Theme(name);
 
     }
@@ -65,6 +68,14 @@ public class SurveyImportRequest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public SurveySettings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(SurveySettings settings) {
+        this.settings = settings;
     }
 
     public String getDefaultLanguage() {
@@ -115,11 +126,11 @@ public class SurveyImportRequest {
         this.randomizations = randomizations;
     }
 
-    public TranslatedTexts getTranslatedTexts() {
+    public SurveyTranslatedTexts getTranslatedTexts() {
         return translatedTexts;
     }
 
-    public void setTranslatedTexts(TranslatedTexts translatedTexts) {
+    public void setTranslatedTexts(SurveyTranslatedTexts translatedTexts) {
         this.translatedTexts = translatedTexts;
     }
 

@@ -10,7 +10,7 @@ import java.util.List;
 public class Block {
 
     private String name;
-    private Settings settings;
+    private BlockSettings settings;
     private List<Question> questions;
 
     public Block() {
@@ -29,11 +29,11 @@ public class Block {
         this.name = name;
     }
 
-    public Settings getSettings() {
+    public BlockSettings getSettings() {
         return settings;
     }
 
-    public void setSettings(Settings settings) {
+    public void setSettings(BlockSettings settings) {
         this.settings = settings;
     }
 

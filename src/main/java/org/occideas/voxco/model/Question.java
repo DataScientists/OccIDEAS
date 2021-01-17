@@ -12,7 +12,7 @@ public class Question {
 
     private String name;
     private Type type;
-    private Settings settings;
+    private QuestionSettings settings;
     private TranslatedTexts translatedTexts;
     private List<Variable> variables;
 
@@ -24,6 +24,7 @@ public class Question {
         this.type = type;
         this.translatedTexts = translatedTexts;
         this.variables = variables;
+        this.settings = new QuestionSettings();
     }
 
     public enum Type {
@@ -70,11 +71,11 @@ public class Question {
         this.type = type;
     }
 
-    public Settings getSettings() {
+    public QuestionSettings getSettings() {
         return settings;
     }
 
-    public void setSettings(Settings settings) {
+    public void setSettings(QuestionSettings settings) {
         this.settings = settings;
     }
 
