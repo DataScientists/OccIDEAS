@@ -25,11 +25,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
 public class VoxcoService implements IVoxcoService {
     private static final Logger log = LogManager.getLogger(VoxcoService.class);
+
+    private static final String SKIP_LOGIC_PRE = "logic:basic;";
+    private static final String SKIP_LOGIC_NOT_EQUAL = " != ";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -42,9 +46,11 @@ public class VoxcoService implements IVoxcoService {
     @Autowired
     private IVoxcoClient<Survey, Long> iVoxcoClient;
 
-    private String generateName(String name, Long key) {
+    private String generateName(String name, String key) {
         return name + "_" + key;
     }
+
+    private int choiceId;
 
     @Override
     @Transactional
@@ -58,11 +64,11 @@ public class VoxcoService implements IVoxcoService {
             if (voxcoList != null && !voxcoList.isEmpty()) {
                 NodeVoxco voxco = voxcoList.get(0);
                 surveyId = voxco.getSurveyId();
-                String generatedName = generateName(module.getName(), surveyId);
-                name = generatedName.equals(voxco) ? voxco.getSurveyName() : generatedName;
+                String generatedName = generateName(module.getName(), String.valueOf(surveyId));
+                name = generatedName.equals(voxco.getSurveyName()) ? voxco.getSurveyName() : generatedName;
             } else {
                 surveyId = voxcoDao.getMaxSurveyId() + 1;
-                name = generateName(module.getName(), surveyId);
+                name = generateName(module.getName(), String.valueOf(surveyId));
             }
             Survey survey = createOrUpdateSurvey(surveyId, name, module.getDescription());
             voxcoDao.save(surveyId, module.getIdNode(), survey.getName());
@@ -82,8 +88,9 @@ public class VoxcoService implements IVoxcoService {
 
     private void buildAndImportSurvey(ModuleVO module, Survey survey) {
         List<Block> blocks = new ArrayList<>();
-        List<List<Choice>> choiceLists = new ArrayList<>();
-        buildBlocksAndChoices(module, blocks, choiceLists);
+        List<List<Choice>> choiceLists = new LinkedList<>();
+        choiceId = 0;
+        buildBlocksAndChoices(module.getChildNodes(), blocks, choiceLists, null);
         SurveyImportRequest importSurvey = new SurveyImportRequest(survey.getName(), blocks, choiceLists);
         ResponseEntity<SurveyImportResult> response = iVoxcoClient.importSurveyAsJson(importSurvey, survey.getId());
         if (HttpStatus.OK.equals(response.getStatusCode())) {
@@ -91,21 +98,19 @@ public class VoxcoService implements IVoxcoService {
         }
     }
 
-    private void buildBlocksAndChoices(ModuleVO module, List<Block> blocks, List<List<Choice>> choiceLists) {
-        int choiceId = 0;
-        for (QuestionVO question : module.getChildNodes()) {
+    private void buildBlocksAndChoices(List<QuestionVO> nodeQuestions, List<Block> blocks, List<List<Choice>> choiceLists, String skipLogic) {
+        for (QuestionVO question : nodeQuestions) {
             List<Question> questions = new ArrayList<>();
-            if (question.getDeleted() == 0) {
-                List<Choice> choices = new ArrayList<>();
-                for(PossibleAnswerVO answer : question.getChildNodes()) {
-                    choices.add(new Choice(answer.getName(),
-                            new TranslatedTexts(new TranslatedTextContent(answer.getName()))));
-                }
-                choiceLists.add(choiceId, choices);
-                String questionName = generateName(question.getNodeType(), Long.valueOf(question.getNumber()));
+            if (question.getDeleted() == 0 && "Q".equals(question.getNodeclass())) {
                 Question.Type type = Question.getType(question.getType());
+                if (type == null) continue; //process single, simple and multiple for now
+
+                List<Choice> choices = buildChoices(question);
+                if (!choices.isEmpty()) choiceLists.add(choiceId, choices);
+
+                String questionName = generateName(question.getNodeType(), question.getNumber());
                 List<Variable> variables = new ArrayList<>();
-                String variableName =  generateName(type.getVariable(), Long.valueOf(question.getNumber()));
+                String variableName =  generateName(type.getVariable(), question.getNumber());
                 Variable variable = new Variable(variableName, choiceId);
                 if (Question.Type.CheckBox.equals(type)) {
                     variable.setMaxMention(choices.size());
@@ -115,9 +120,29 @@ public class VoxcoService implements IVoxcoService {
                         new Question(questionName, type,
                                 new TranslatedTexts(new TranslatedTextContent(question.getName())),
                                 variables));
-                blocks.add(new Block(questionName, questions));
+                blocks.add(new Block(questionName, questions, skipLogic));
                 choiceId++;
+
+                //build blocks for child questions
+                for(PossibleAnswerVO answer : question.getChildNodes()) {
+                    if (answer.getDeleted() == 0 && "P".equals(answer.getNodeclass())
+                            && answer.getChildNodes() != null && !answer.getChildNodes().isEmpty()) {
+                        skipLogic = SKIP_LOGIC_PRE + variableName + SKIP_LOGIC_NOT_EQUAL + answer.getName();
+                        buildBlocksAndChoices(answer.getChildNodes(), blocks, choiceLists, skipLogic);
+                    }
+                }
             }
         }
+    }
+
+    private List<Choice> buildChoices(QuestionVO question) {
+        List<Choice> choices = new ArrayList<>();
+        for(PossibleAnswerVO answer : question.getChildNodes()) {
+            if (answer.getDeleted() == 0 && "P".equals(answer.getNodeclass())) {
+                choices.add(new Choice(answer.getName(),
+                        new TranslatedTexts(new TranslatedTextContent(answer.getName()))));
+            }
+        }
+        return choices;
     }
 }

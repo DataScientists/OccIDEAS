@@ -15,6 +15,8 @@ public class Question {
     private QuestionSettings settings;
     private TranslatedTexts translatedTexts;
     private List<Variable> variables;
+    private String skipLogic;
+
 
     public Question() {
     }
@@ -47,11 +49,10 @@ public class Question {
         switch (questionType) {
             case Constant.Q_SIMPLE:
             case Constant.Q_SINGLE:
-                return Type.RadioButton;
             case Constant.Q_MULTIPLE:
-                return Type.CheckBox;
+                return Type.RadioButton;
             default:
-                return Type.TextAnswer;
+                return null;
         }
     }
 
@@ -93,5 +94,13 @@ public class Question {
 
     public void setVariables(List<Variable> variables) {
         this.variables = variables;
+    }
+
+    public String getSkipLogic() {
+        return skipLogic;
+    }
+
+    public void setSkipLogic(String skipLogic) {
+        this.skipLogic = skipLogic;
     }
 }

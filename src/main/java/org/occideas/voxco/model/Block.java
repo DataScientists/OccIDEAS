@@ -12,6 +12,7 @@ public class Block {
     private String name;
     private BlockSettings settings;
     private List<Question> questions;
+    private String skipLogic;
 
     public Block() {
     }
@@ -19,6 +20,15 @@ public class Block {
     public Block(String name, List<Question> questions) {
         this.name = name;
         this.questions = questions;
+    }
+
+    public Block(String name, List<Question> questions, String skipLogic) {
+        this.name = name;
+        this.questions = questions;
+
+        if (skipLogic != null && !"".equals(skipLogic.trim())) {
+            //this.skipLogic = skipLogic;
+        }
     }
 
     public String getName() {
@@ -43,5 +53,13 @@ public class Block {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public String getSkipLogic() {
+        return skipLogic;
+    }
+
+    public void setSkipLogic(String skipLogic) {
+        this.skipLogic = skipLogic;
     }
 }
