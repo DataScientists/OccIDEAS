@@ -27,7 +27,7 @@ public class Block {
         this.questions = questions;
 
         if (skipLogic != null && !"".equals(skipLogic.trim())) {
-            //this.skipLogic = skipLogic;
+            this.skipLogic = skipLogic;
         }
     }
 

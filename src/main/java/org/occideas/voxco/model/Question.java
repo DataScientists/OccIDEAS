@@ -16,17 +16,22 @@ public class Question {
     private TranslatedTexts translatedTexts;
     private List<Variable> variables;
     private String skipLogic;
+    private String displayLogic;
 
 
     public Question() {
     }
 
-    public Question(String name, Type type, TranslatedTexts translatedTexts, List<Variable> variables) {
+    public Question(String name, Type type, TranslatedTexts translatedTexts, List<Variable> variables, String displayLogic) {
         this.name = name;
         this.type = type;
         this.translatedTexts = translatedTexts;
         this.variables = variables;
         this.settings = new QuestionSettings();
+
+        if (displayLogic != null && !"".equals(displayLogic.trim())) {
+            this.displayLogic = displayLogic;
+        }
     }
 
     public enum Type {
@@ -49,8 +54,9 @@ public class Question {
         switch (questionType) {
             case Constant.Q_SIMPLE:
             case Constant.Q_SINGLE:
-            case Constant.Q_MULTIPLE:
                 return Type.RadioButton;
+            case Constant.Q_MULTIPLE:
+                return Type.CheckBox;
             default:
                 return null;
         }
@@ -102,5 +108,13 @@ public class Question {
 
     public void setSkipLogic(String skipLogic) {
         this.skipLogic = skipLogic;
+    }
+
+    public String getDisplayLogic() {
+        return displayLogic;
+    }
+
+    public void setDisplayLogic(String displayLogic) {
+        this.displayLogic = displayLogic;
     }
 }

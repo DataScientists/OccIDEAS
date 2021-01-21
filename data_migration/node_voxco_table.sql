@@ -8,12 +8,3 @@ CREATE TABLE `node_voxco` (
 	PRIMARY KEY (surveyId),
 	CONSTRAINT `FK_NVXCO_NODE` FOREIGN KEY (`idNode`) REFERENCES `Node` (`idNode`)
 );
-
-/* insert max survey Id in Voxco as `surveyId` */
-INSERT INTO `occideas`.`node_voxco`
-(`surveyId`,
-`idNode`,
-`surveyName`,
-`deleted`)
-VALUES
-(35, 6486, AIRT_Air Transport Workers_35, 1);

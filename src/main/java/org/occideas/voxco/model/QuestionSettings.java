@@ -21,7 +21,7 @@ public class QuestionSettings {
     private Boolean enableMobileRendering;
 
     public QuestionSettings() {
-        this.answerRequired = "No";
+        //this.answerRequired = "No";
     }
 
     public String getCaseMode() {

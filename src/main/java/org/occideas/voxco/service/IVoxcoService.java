@@ -4,4 +4,6 @@ public interface IVoxcoService {
 
     void importSurvey(Long id);
 
+    void importSurvey(Long id, boolean filter);
+
 }

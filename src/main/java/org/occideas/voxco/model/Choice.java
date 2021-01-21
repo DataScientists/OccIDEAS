@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Choice {
 
+    private ChoiceSettings settings;
     private String value;
     private TranslatedTexts translatedTexts;
 
@@ -16,6 +17,20 @@ public class Choice {
     public Choice(String value, TranslatedTexts translatedTexts) {
         this.value = value;
         this.translatedTexts = translatedTexts;
+    }
+
+    public Choice(ChoiceSettings settings, String value, TranslatedTexts translatedTexts) {
+        this.settings = settings;
+        this.value = value;
+        this.translatedTexts = translatedTexts;
+    }
+
+    public ChoiceSettings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(ChoiceSettings settings) {
+        this.settings = settings;
     }
 
     public String getValue() {
