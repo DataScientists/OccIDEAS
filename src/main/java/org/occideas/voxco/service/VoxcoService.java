@@ -3,7 +3,6 @@ package org.occideas.voxco.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.Constant;
-import org.occideas.entity.NodeVoxco;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
 import org.occideas.vo.FragmentVO;
@@ -81,17 +80,13 @@ public class VoxcoService implements IVoxcoService {
         if (!modules.isEmpty()) {
             ModuleVO module = modules.get(0);
             List<Survey> surveys = userClient.getUserSurveys().getBody();
-            Long surveyId = getMaxSurveyId(surveys) + 1;
-            String name = generateName(module.getName(), String.valueOf(surveyId));
-
-            List<NodeVoxco> voxcoList = voxcoDao.findByIdNodeAndDeleted(module.getIdNode(), Boolean.FALSE);
-            if (voxcoList != null && !voxcoList.isEmpty()) {
-                NodeVoxco voxco = voxcoList.get(0);
-                Survey matched = getSurveyByName(surveys, voxco.getSurveyName());
-                if (matched != null && matched.getId().equals(voxco.getSurveyId())) {
-                    surveyId = matched.getId();
-                    name = matched.getName();
-                }
+            Long surveyId;
+            String name = generateName(module.getName(), String.valueOf(module.getIdNode()));
+            Survey matched = getSurveyByName(surveys, name);
+            if (matched != null) {
+                surveyId = matched.getId();
+            } else {
+                surveyId = getMaxSurveyId(surveys) + 1;
             }
 
             Survey survey = createOrUpdateSurvey(surveyId, name, module.getDescription());
@@ -139,18 +134,18 @@ public class VoxcoService implements IVoxcoService {
         }
 
         buildBlocksAndChoices(getNodeKey(module.getName()), module.getChildNodes(), blocks, choiceLists,
-                filteredIdNodes, null, null, null);
+                filteredIdNodes, null, null, null, false);
         SurveyImportRequest importSurvey = new SurveyImportRequest(survey.getName(), blocks, choiceLists);
         ResponseEntity<SurveyImportResult> response = surveyClient.importSurveyAsJson(importSurvey, survey.getId());
         if (HttpStatus.OK.equals(response.getStatusCode())) {
-            log.info("import successful for idNode={}", module.getIdNode());
+            log.info("import successful for idNode={} surveyId={}", module.getIdNode(), survey.getId());
         }
     }
 
     private void buildBlocksAndChoices(String nodeKey, List<QuestionVO> nodeQuestions, List<Block> blocks, List<List<Choice>> choiceLists,
-                                       List<String> filteredIdNodes, String parentVariableName, String parentAnswer, String parentNumber) {
+                                       List<String> filteredIdNodes, String parentVariableName, String parentAnswer, String parentNumber, boolean linked) {
         for (QuestionVO question : nodeQuestions) {
-            if (filteredIdNodes != null && !filteredIdNodes.contains(String.valueOf(question.getIdNode()))) {
+            if (!linked && filteredIdNodes != null && !filteredIdNodes.contains(String.valueOf(question.getIdNode()))) {
                 log.warn("idNode {} is excluded", question.getIdNode());
                 continue;
             }
@@ -165,7 +160,7 @@ public class VoxcoService implements IVoxcoService {
                     NodeVO linkModule = nodeService.getNode(question.getLink());
                     if ("F".equals(linkModule.getNodeclass())) {
                         buildBlocksAndChoices(getNodeKey(linkModule.getName()), ((FragmentVO) linkModule).getChildNodes(),
-                                blocks, choiceLists, filteredIdNodes, parentVariableName, parentAnswer, question.getNumber());
+                                blocks, choiceLists, filteredIdNodes, parentVariableName, parentAnswer, question.getNumber(), true);
                     }
                 } else {
                     List<Question> questions = new ArrayList<>();
@@ -173,7 +168,11 @@ public class VoxcoService implements IVoxcoService {
                     if (type == null) continue; //process single, simple and multiple for now
 
                     List<Choice> choices = buildChoices(nodeKey, question);
-                    if (!choices.isEmpty()) choiceLists.add(choiceId, choices);
+                    log.trace("idNode={}, choiceLists={}, choiceId={}, choices={}",
+                            question.getIdNode(), choiceLists.size(), choiceId, choices.size());
+
+                    if (choices.isEmpty()) continue;
+                    choiceLists.add(choiceId, choices);
 
                     String displayLogic = null;
                     if (parentVariableName != null && parentAnswer != null) {
@@ -182,28 +181,31 @@ public class VoxcoService implements IVoxcoService {
 
                     String questionName = generateName(nodeKey, question.getNumber());
                     String variableName = generateName(type.getVariable(), question.getNumber());
+                    String number = question.getNumber();
                     if (parentNumber != null) {
-                        questionName = generateName(nodeKey, generateName(parentNumber, question.getNumber()));
-                        variableName = generateName(type.getVariable(), generateName(parentNumber, question.getNumber()));
+                        number = generateName(parentNumber, question.getNumber());
+                        questionName = generateName(nodeKey, number);
+                        variableName = generateName(type.getVariable(), number);
                     }
 
                     List<Variable> variables = buildVariables(type, variableName, choices.size());
                     questions.add(
                             new Question(questionName.toUpperCase(), type,
-                                    new TranslatedTexts(new TranslatedTextContent(question.getName())),
+                                    new TranslatedTexts(new TranslatedTextContent(question.getName() + "  _" + number)),
                                     variables, displayLogic));
                     blocks.add(new Block(questionName, questions));
                     choiceId++;
 
                     //build blocks for child questions
                     buildChildBlocksAndChoices(nodeKey, blocks, choiceLists, filteredIdNodes,
-                            question.getChildNodes(), variableName, parentNumber);
+                            question.getChildNodes(), variableName, parentNumber, linked);
                 }
             }
         }
     }
 
     private List<Choice> buildChoices(String nodeKey, QuestionVO question) {
+        log.trace("building choices for question={}", question.getIdNode());
         List<Choice> choices = new ArrayList<>();
         for(PossibleAnswerVO answer : question.getChildNodes()) {
             if (answer.getDeleted() != 0) continue;
@@ -232,12 +234,12 @@ public class VoxcoService implements IVoxcoService {
     }
 
     private void buildChildBlocksAndChoices(String nodeKey, List<Block> blocks, List<List<Choice>> choiceLists, List<String> filteredIdNodes,
-                                            List<PossibleAnswerVO> answers, String variableName, String parentNumber) {
+                                            List<PossibleAnswerVO> answers, String variableName, String parentNumber, boolean linked) {
         for (PossibleAnswerVO answer : answers) {
             if (answer.getDeleted() == 0 && "P".equals(answer.getNodeclass())
                     && answer.getChildNodes() != null && !answer.getChildNodes().isEmpty()) {
                 buildBlocksAndChoices(nodeKey, answer.getChildNodes(), blocks, choiceLists, filteredIdNodes,
-                        variableName, generateName(nodeKey, answer.getNumber()), parentNumber);
+                        variableName, generateName(nodeKey, answer.getNumber()), parentNumber, linked);
 
             }
         }
