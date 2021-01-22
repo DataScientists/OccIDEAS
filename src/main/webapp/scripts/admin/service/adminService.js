@@ -149,6 +149,14 @@
       });
     }
 
+    var importAllToVoxco = function(){
+      return $http.get(adminEndpoint + '/importAllToVoxco', {
+        cache: false
+      }).then(function(response) {
+        return response;
+      });
+    }
+
     function handleError(response) {
       if(!angular.isObject(response.data) || !response.data.message) {
         return ($q.reject("An unknown error occurred."));
@@ -175,7 +183,8 @@
       importLibrary: importLibrary,
       deleteQSFSurveys: deleteQSFSurveys,
       importQSFResponses: importQSFResponses,
-      copySurveys: copySurveys
+      copySurveys: copySurveys,
+      importAllToVoxco: importAllToVoxco
     };
   }
 

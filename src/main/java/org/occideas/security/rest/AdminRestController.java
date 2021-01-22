@@ -11,6 +11,7 @@ import org.occideas.qsf.response.SurveyListResponse;
 import org.occideas.qsf.service.IQSFService;
 import org.occideas.security.service.UserService;
 import org.occideas.vo.*;
+import org.occideas.voxco.service.IVoxcoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
@@ -37,6 +38,9 @@ public class AdminRestController {
 
     @Autowired
     private ParticipantService participantService;
+
+    @Autowired
+    private IVoxcoService iVoxcoService;
 
     @GET
     @Path(value = "/purgeParticipants")
@@ -80,6 +84,18 @@ public class AdminRestController {
             participantService.softDeleteAll();
             iqsfService.cleanSurveyResponses();
             iqsfService.importQSFResponses();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path(value = "/importAllToVoxco")
+    public Response importAllToVoxco() {
+        try {
+            iVoxcoService.importAllToVoxco();
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

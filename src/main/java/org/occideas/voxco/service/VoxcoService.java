@@ -25,6 +25,7 @@ import org.occideas.voxco.response.SurveyImportResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,6 +93,16 @@ public class VoxcoService implements IVoxcoService {
             Survey survey = createOrUpdateSurvey(surveyId, name, module.getDescription());
             voxcoDao.save(surveyId, module.getIdNode(), survey.getName());
             buildAndImportSurvey(module, survey, filter);
+        }
+    }
+
+    @Override
+    @Async("threadPoolTaskExecutor")
+    public void importAllToVoxco() {
+        log.debug("importing all active job modules to voxco");
+        List<ModuleVO> modules = moduleService.listAll();
+        for (ModuleVO module : modules) {
+            importSurvey(module.getIdNode());
         }
     }
 
