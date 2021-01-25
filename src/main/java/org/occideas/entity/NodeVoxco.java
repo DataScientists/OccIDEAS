@@ -18,6 +18,14 @@ public class NodeVoxco implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date lastUpdated;
+    private Long extractionId;
+    private String extractionStatus;
+    private Long fileId;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date extractionStart;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date extractionEnd;
+    private String resultPath;
 
     public NodeVoxco() {
     }
@@ -66,5 +74,53 @@ public class NodeVoxco implements Serializable {
 
     public void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public Long getExtractionId() {
+        return extractionId;
+    }
+
+    public void setExtractionId(Long extractionId) {
+        this.extractionId = extractionId;
+    }
+
+    public String getExtractionStatus() {
+        return extractionStatus;
+    }
+
+    public void setExtractionStatus(String extractionStatus) {
+        this.extractionStatus = extractionStatus;
+    }
+
+    public Long getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(Long fileId) {
+        this.fileId = fileId;
+    }
+
+    public Date getExtractionStart() {
+        return extractionStart;
+    }
+
+    public void setExtractionStart(Date extractionStart) {
+        this.extractionStart = extractionStart;
+    }
+
+    public Date getExtractionEnd() {
+        return extractionEnd;
+    }
+
+    public void setExtractionEnd(Date extractionEnd) {
+        this.extractionEnd = extractionEnd;
+    }
+
+    public String getResultPath() {
+        return resultPath;
+    }
+
+    public void setResultPath(String resultPath) {
+        this.resultPath = resultPath;
     }
 }

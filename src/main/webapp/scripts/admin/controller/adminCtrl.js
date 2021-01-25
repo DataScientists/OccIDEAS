@@ -175,6 +175,26 @@
       });
     };
 
+    self.importVoxcoResponse = function(){
+          AdminService.importVoxcoResponse().then(function(response){
+            if (response.status == '200') {
+              $ngToast.create({
+                className: 'success',
+                content: 'Import Voxco Response Successful , check result in a few minutes.',
+                animation: 'slide'
+              });
+            } else {
+              $ngToast.create({
+                className: 'danger',
+                content: 'ImportVoxco Response failed, check the logs.',
+                dismissButton: true,
+                dismissOnClick: false,
+                animation: 'slide'
+              });
+            }
+          });
+        };
+
     self.purgeParticipants = function() {
       AdminService.purgeParticipants().then(function(response) {
         if(response.status == '200') {

@@ -8,4 +8,6 @@ public interface IVoxcoService {
 
     void importAllToVoxco();
 
+    void importVoxcoResponse(boolean recreateExtractions);
 }
+

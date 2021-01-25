@@ -92,6 +92,18 @@ public class AdminRestController {
     }
 
     @GET
+    @Path(value = "/importVoxcoResponse")
+    public Response importVoxcoResponse() {
+        try {
+            iVoxcoService.importVoxcoResponse(true);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
     @Path(value = "/importAllToVoxco")
     public Response importAllToVoxco() {
         try {

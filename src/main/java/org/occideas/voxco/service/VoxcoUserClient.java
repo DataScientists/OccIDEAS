@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.occideas.voxco.model.Survey;
 import org.occideas.voxco.model.User;
 import org.occideas.voxco.request.SurveyImportRequest;
+import org.occideas.voxco.response.ExtractionResult;
+import org.occideas.voxco.response.SurveyExtractionsResult;
 import org.occideas.voxco.response.SurveyImportResult;
 import org.occideas.voxco.response.UserSurveysResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,11 @@ public class VoxcoUserClient implements IVoxcoClient<User, Long> {
     }
 
     @Override
+    public void deleteById(Long id) {
+        log.warn("Method not supported");
+    }
+
+    @Override
     public ResponseEntity<SurveyImportResult> importSurveyAsJson(SurveyImportRequest request, Long aLong) {
         log.warn("Method not supported");
         return null;
@@ -79,5 +86,29 @@ public class VoxcoUserClient implements IVoxcoClient<User, Long> {
             log.error("Unable to get user surveys, cause=" + e.getMessage());
             throw e;
         }
+    }
+
+    @Override
+    public ResponseEntity<SurveyExtractionsResult> getSurveyExtractions(Long surveyId) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ExtractionResult> getExtractionResult(Long extractionId) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> startSurveyExtraction(Long extractionId) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> downloadSurveyExtract(Long extractionId, Long fileId) {
+        log.warn("Method not supported");
+        return null;
     }
 }

@@ -1,11 +1,12 @@
 package org.occideas.voxco.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.voxco.model.Survey;
 import org.occideas.voxco.request.SurveyImportRequest;
+import org.occideas.voxco.response.ExtractionResult;
+import org.occideas.voxco.response.SurveyExtractionsResult;
 import org.occideas.voxco.response.SurveyImportResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,14 +43,6 @@ public class VoxcoSurveyClient implements IVoxcoClient<Survey, Long> {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Client " + apiKey);
         return headers;
-    }
-
-    private void prettyPrint(Object payload) {
-        try {
-            log.debug("payload: {}", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(payload));
-        } catch (JsonProcessingException e) {
-            //ignore
-        }
     }
 
     @Override
@@ -99,11 +92,16 @@ public class VoxcoSurveyClient implements IVoxcoClient<Survey, Long> {
     }
 
     @Override
+    public void deleteById(Long id) {
+        log.warn("Method not supported");
+    }
+
+    @Override
     public ResponseEntity<SurveyImportResult> importSurveyAsJson(SurveyImportRequest request, Long surveyId) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl + BASE_ENDPOINT)
                 .path("/import/json/").path(String.valueOf(surveyId));
         try {
-            prettyPrint(request);
+            prettyPrint(objectMapper, request);
             return restTemplate.postForEntity(
                     builder.build().toUri(),
                     new HttpEntity<>(request, getHeaders()), SurveyImportResult.class);
@@ -115,6 +113,30 @@ public class VoxcoSurveyClient implements IVoxcoClient<Survey, Long> {
 
     @Override
     public ResponseEntity<List<Survey>> getUserSurveys() {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<SurveyExtractionsResult> getSurveyExtractions(Long surveyId) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ExtractionResult> getExtractionResult(Long extractionId) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Void> startSurveyExtraction(Long extractionId) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> downloadSurveyExtract(Long extractionId, Long fileId) {
         log.warn("Method not supported");
         return null;
     }
