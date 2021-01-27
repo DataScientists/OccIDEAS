@@ -32,4 +32,6 @@ public interface QuestionService extends BaseService<QuestionVO> {
   QuestionVO findByIdExcludeChildren(long idNode);
 
   QuestionVO getQuestionByLinkIdAndTopId(long idNode, long idNode1);
+
+  QuestionVO getQuestionByTopIdAndNumber(Long topNodeId, String number);
 }

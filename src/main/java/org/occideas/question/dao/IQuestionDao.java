@@ -32,4 +32,6 @@ public interface IQuestionDao {
   void saveOrUpdateIgnoreFK(Question question);
 
   Question getQuestionByLinkIdAndTopId(long linkId, long topId);
+
+  Question getQuestionByTopIdAndNumber(Long topNodeId, String number);
 }

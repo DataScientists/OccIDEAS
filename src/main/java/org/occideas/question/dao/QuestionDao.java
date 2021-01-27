@@ -77,6 +77,17 @@ public class QuestionDao implements IQuestionDao {
 
   }
 
+  public Question getQuestionByTopIdAndNumber(Long topNodeId, String number) {
+    final Session session = sessionFactory.getCurrentSession();
+    final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("topNodeId", topNodeId))
+            .add(Restrictions.eq("number", number)).add(Restrictions.eq("deleted", 0));
+    if (!crit.list().isEmpty()) {
+      return (Question) crit.list().get(0);
+    }
+    return null;
+
+  }
+
   public List<Question> getQuestionsByParentId(String parentId) {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))

@@ -166,4 +166,9 @@ public class QuestionServiceImpl implements QuestionService {
      return mapper.convertToQuestionWithFlagsVO(qdao.getQuestionByLinkIdAndTopId(linkId, topId), true,false);
   }
 
+  @Override
+  public QuestionVO getQuestionByTopIdAndNumber(Long topNodeId, String number) {
+    return mapper.convertToQuestionVO(qdao.getQuestionByTopIdAndNumber(topNodeId, number));
+  }
+
 }

@@ -148,5 +148,6 @@ public class NodeVoxcoDao implements INodeVoxcoDao {
         criteriaUpdate.set("extractionStart", null);
         criteriaUpdate.set("extractionEnd", null);
         sessionFactory.getCurrentSession().createQuery(criteriaUpdate).executeUpdate();
+        sessionFactory.getCurrentSession().flush();
     }
 }

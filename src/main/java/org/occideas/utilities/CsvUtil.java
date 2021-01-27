@@ -1,6 +1,8 @@
 package org.occideas.utilities;
 
 import com.opencsv.CSVReader;
+import org.apache.commons.lang3.StringUtils;
+import org.occideas.voxco.model.Question;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -50,6 +52,38 @@ public class CsvUtil {
                 index++;
             }
             System.out.println(formatted);
+            String moduleKey = "WELD";
+            formatted.forEach((caseId, answers) -> {
+                answers.forEach((label, answer) -> {
+                    if (answer != null && !StringUtils.EMPTY.equals(answer)) {
+                        String[] qVariable = label.split("_");
+                        String qType = qVariable[0];
+                        String nodeKey = qVariable[1];
+                        System.out.println("nodeKey=" + nodeKey);
+                        if (qVariable.length == 4 && !nodeKey.equals(moduleKey)) {
+                            System.out.println("linked");
+                        } else if (qVariable.length == 3 && nodeKey.equals(moduleKey)) {
+                            System.out.println("not linked");
+                        }
+
+                        if (Question.Type.CheckBox.getVariable().equals(qType)) {
+                            String actualVariable = label.substring(0, label.lastIndexOf("_"));
+                            System.out.println("CHECK: actualVariable=" + actualVariable);
+                            String qNumber = actualVariable.substring(actualVariable.lastIndexOf("_") + 1);
+                            System.out.println("CHECK: qNumber=" + qNumber);
+                            System.out.println("CHECK: answer=" + answer);
+                            System.out.println("CHECK: aNumber=" + answer.split("_")[1]);
+
+                        } else if (Question.Type.RadioButton.getVariable().equals(qType)) {
+                            System.out.println("RADIO: actualVariable=" + label);
+                            String qNumber = label.substring(label.lastIndexOf("_") + 1);
+                            System.out.println("RADIO: qNumber=" + qNumber);
+                            System.out.println("RADIO: answer=" + answer);
+                            System.out.println("RADIO: aNumber=" + answer.split("_")[1]);
+                        }
+                    }
+                });
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
