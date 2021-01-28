@@ -171,4 +171,9 @@ public class QuestionServiceImpl implements QuestionService {
     return mapper.convertToQuestionVO(qdao.getQuestionByTopIdAndNumber(topNodeId, number));
   }
 
+  @Override
+  public QuestionVO getNearestQuestionByLinkIdAndTopId(long linkId, long topId) {
+    return mapper.convertToQuestionWithFlagsVO(qdao.getNearestQuestionByLinkIdAndTopId(linkId, topId), true,false);
+  }
+
 }

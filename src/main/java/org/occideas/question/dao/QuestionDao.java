@@ -66,6 +66,20 @@ public class QuestionDao implements IQuestionDao {
     return query.getSingleResult();
   }
 
+  @Override
+  public Question getNearestQuestionByLinkIdAndTopId(long linkId, long topId) {
+    CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+    CriteriaQuery<Question> criteria = builder.createQuery(Question.class);
+    Root<Question> root = criteria.from(Question.class);
+    final CriteriaQuery<Question> select = criteria.select(root);
+    select.where(builder.equal(root.get("link"), linkId),
+            builder.equal(root.get("topNodeId"), topId),
+            builder.equal(root.get("deleted"), 0));
+    select.orderBy(builder.asc(root.get("number")));
+    Query<Question> query = sessionFactory.getCurrentSession().createQuery(criteria);
+    return query.getResultList().get(0);
+  }
+
   public Question getQuestionByModuleIdAndNumber(String parentId, String number) {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("parentId", parentId))

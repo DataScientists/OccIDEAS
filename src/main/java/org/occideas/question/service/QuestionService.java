@@ -34,4 +34,6 @@ public interface QuestionService extends BaseService<QuestionVO> {
   QuestionVO getQuestionByLinkIdAndTopId(long idNode, long idNode1);
 
   QuestionVO getQuestionByTopIdAndNumber(Long topNodeId, String number);
+
+  QuestionVO getNearestQuestionByLinkIdAndTopId(long linkId, long topId);
 }

@@ -34,4 +34,6 @@ public interface IQuestionDao {
   Question getQuestionByLinkIdAndTopId(long linkId, long topId);
 
   Question getQuestionByTopIdAndNumber(Long topNodeId, String number);
+
+  Question getNearestQuestionByLinkIdAndTopId(long linkId, long topId);
 }
