@@ -62,10 +62,10 @@ public class Extraction {
     private Boolean mergeOpenEnds;
 
     @JsonProperty(value = "DichotomizedMultiple")
-    private Boolean dichotomizedMultiple;
+    private boolean dichotomizedMultiple = true;
 
     @JsonProperty(value = "DichotomizedEmptyWhenNoAnswer")
-    private Boolean dichotomizedEmptyWhenNoAnswer;
+    private boolean dichotomizedEmptyWhenNoAnswer = true;
 
     @JsonProperty(value = "UseNegativeIntegersForEmptyAnswers")
     private Boolean useNegativeIntegersForEmptyAnswers;
@@ -224,19 +224,19 @@ public class Extraction {
         this.mergeOpenEnds = mergeOpenEnds;
     }
 
-    public Boolean getDichotomizedMultiple() {
+    public boolean isDichotomizedMultiple() {
         return dichotomizedMultiple;
     }
 
-    public void setDichotomizedMultiple(Boolean dichotomizedMultiple) {
+    public void setDichotomizedMultiple(boolean dichotomizedMultiple) {
         this.dichotomizedMultiple = dichotomizedMultiple;
     }
 
-    public Boolean getDichotomizedEmptyWhenNoAnswer() {
+    public boolean isDichotomizedEmptyWhenNoAnswer() {
         return dichotomizedEmptyWhenNoAnswer;
     }
 
-    public void setDichotomizedEmptyWhenNoAnswer(Boolean dichotomizedEmptyWhenNoAnswer) {
+    public void setDichotomizedEmptyWhenNoAnswer(boolean dichotomizedEmptyWhenNoAnswer) {
         this.dichotomizedEmptyWhenNoAnswer = dichotomizedEmptyWhenNoAnswer;
     }
 

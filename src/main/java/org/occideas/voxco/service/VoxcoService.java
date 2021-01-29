@@ -433,7 +433,7 @@ public class VoxcoService implements IVoxcoService {
             ResponseEntity<byte[]> response = resultClient.downloadSurveyExtract(
                     survey.getExtractionId(), survey.getFileId());
             try {
-                String path = downloadPath + "_" + survey.getSurveyName().toLowerCase();
+                String path = downloadPath + "_" + getNodeKey(survey.getSurveyName()).toLowerCase();
                 Files.deleteIfExists(Paths.get(path));
                 FileUtils.writeByteArrayToFile(new File(path), response.getBody());
                 File csvFile = extract(path);
@@ -466,7 +466,7 @@ public class VoxcoService implements IVoxcoService {
         return null;
     }
 
-    private Map<String, Map<String, String>> convertToObject(String csvPath) throws IOException {
+    private Map<String, Map<String, String>> convertToObject(String moduleKey, String csvPath) throws IOException {
         List<String[]> extract = CsvUtil.readAll(csvPath);
         Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
         String[] labels = extract.get(0);
@@ -481,7 +481,7 @@ public class VoxcoService implements IVoxcoService {
                     }
                     dataIndex++;
                 }
-                formatted.put("CASEID_" + data[0], entry);
+                formatted.put(moduleKey + "_" + data[0], entry);
             }
             index++;
         }
@@ -500,10 +500,10 @@ public class VoxcoService implements IVoxcoService {
 
         for (NodeVoxco survey : surveys) {
             ModuleVO module = (ModuleVO) moduleService.getNodeById(survey.getIdNode());
-            Map<String, Map<String, String>> responses = convertToObject(survey.getResultPath());
+            String moduleKey = getNodeKey(module.getName());
+            Map<String, Map<String, String>> responses = convertToObject(moduleKey, survey.getResultPath());
             if (CollectionUtils.isEmpty(responses)) continue;
 
-            String moduleKey = getNodeKey(module.getName());
             responses.forEach((caseId, answers) -> {
                 uniqueModules = new HashMap<>();
                 if (hasAnyAnswer(answers)) {
@@ -525,36 +525,58 @@ public class VoxcoService implements IVoxcoService {
                     }
                     AtomicInteger qCounter = new AtomicInteger(1);
                     answers.forEach((label, answer) -> {
+                        log.debug("label={}, answer={}", label, answer);
                         if (answer != null && !StringUtils.EMPTY.equals(answer)) {
                             String[] qVariable = label.split("_");
-                            String qType = qVariable[0]; //RADIO, CHECK, TEXT
-                            String responseNodeKey = qVariable[1];
-                            String[] actualVariable = null;
-                            String aNumber = answer.split("_")[1];
-                            if (Question.Type.RadioButton.getVariable().equals(qType)) {
-                                actualVariable = qVariable;
-                            } else if (Question.Type.CheckBox.getVariable().equals(qType)) {
-                                actualVariable = label.substring(0, label.lastIndexOf("_")).split("_");
+                            String qType;
+                            String responseNodeKey;
+                            boolean openEndEntry = label.startsWith("O_");
+                            if (openEndEntry) { //handle open-ends
+                                qType = qVariable[1]; //RADIO, CHECK, TEXT
+                                responseNodeKey = qVariable[2];
+                            } else {
+                                qType = qVariable[0]; //RADIO, CHECK, TEXT
+                                responseNodeKey = qVariable[1];
                             }
 
-                            if (actualVariable != null) {
+                            String[] actualVariable = null;
+                            String aNumber = null;
+                            String freetext = null;
+                            if (Question.Type.RadioButton.getVariable().equals(qType)) {
+                                actualVariable = qVariable;
+                                aNumber = answer.split("_")[1];
+                            } else if (Question.Type.CheckBox.getVariable().equals(qType)) {
+                                aNumber = label.substring((label.lastIndexOf("_") + 1)); //C1, C2, C3
+                                if (openEndEntry) {
+                                    freetext = answer; //actual text
+                                    actualVariable = label.substring(2, label.lastIndexOf("_")).split("_");
+                                } else if ("1".equals(answer)) { //answer has value of 1/0 if not open-end entry
+                                    actualVariable = label.substring(0, label.lastIndexOf("_")).split("_");
+                                }
+                            }
+
+                            if (actualVariable != null && aNumber != null) {
                                 if (actualVariable.length == 4 && !responseNodeKey.equals(moduleKey)) {
                                     String linkedNumber = actualVariable[2];
                                     String qNumber = actualVariable[3];
                                     QuestionVO linkAJSM = questionService.getQuestionByTopIdAndNumber(module.getIdNode(), linkedNumber);
-                                    List<FragmentVO> fragments = fragmentService.findByIdForInterview(linkAJSM.getLink());
-                                    if (!fragments.isEmpty()) {
-                                        FragmentVO fragment = fragments.get(0);
-                                        String fragmentIUniqueKey = getInterviewUniqueKey(fragment.getIdNode(), interview.getInterviewId());
-                                        if (!uniqueModules.containsKey(fragmentIUniqueKey)) {
-                                            createAJSMInterviewQuestion(linkAJSM, fragment, interview.getInterviewId(), qCounter.incrementAndGet());
-                                            uniqueModules.put(fragmentIUniqueKey, null);
+                                    if (linkAJSM != null) {
+                                        List<FragmentVO> fragments = fragmentService.findByIdForInterview(linkAJSM.getLink());
+                                        if (!fragments.isEmpty()) {
+                                            FragmentVO fragment = fragments.get(0);
+                                            String fragmentIUniqueKey = getInterviewUniqueKey(fragment.getIdNode(), interview.getInterviewId());
+                                            if (!uniqueModules.containsKey(fragmentIUniqueKey)) {
+                                                createAJSMInterviewQuestion(linkAJSM, fragment, interview.getInterviewId(), qCounter.incrementAndGet());
+                                                uniqueModules.put(fragmentIUniqueKey, null);
+                                            }
+                                            createInterviewQuestionsAndAnswers(fragment.getIdNode(), interview.getInterviewId(),
+                                                    qNumber, aNumber, qCounter, freetext);
                                         }
-                                        createInterviewQuestionsAndAnswers(fragment.getIdNode(), interview.getInterviewId(), qNumber, aNumber, qCounter);
                                     }
                                 } else if (actualVariable.length == 3 && responseNodeKey.equals(moduleKey)) {
                                     String qNumber = actualVariable[2];
-                                    createInterviewQuestionsAndAnswers(module.getIdNode(), interview.getInterviewId(), qNumber, aNumber, qCounter);
+                                    createInterviewQuestionsAndAnswers(module.getIdNode(), interview.getInterviewId(),
+                                            qNumber, aNumber, qCounter, freetext);
                                 }
                             }
                         }
@@ -602,10 +624,10 @@ public class VoxcoService implements IVoxcoService {
                         interviewId,
                         introQCounter.incrementAndGet()));
         final PossibleAnswerVO possibleAnswerVO = question.getChildNodes().get(0);
-        interviewAnswerService.saveOrUpdate(createInterviewAnswer(
+        interviewAnswerService.saveOrUpdate(createInterviewAnswer(null,
                 interviewId,
                 possibleAnswerVO,
-                interviewQuestion.getId()));
+                interviewQuestion.getId(), null));
         if (!possibleAnswerVO.getChildNodes().isEmpty()) {
             createInterviewQuestionFromQuestion(possibleAnswerVO.getChildNodes().get(0), interviewId, introQCounter);
         }
@@ -630,15 +652,40 @@ public class VoxcoService implements IVoxcoService {
         return interviewService.create(interview);
     }
 
-    private void createInterviewQuestionsAndAnswers(long idNode, long interviewId, String qNumber, String aNumber, AtomicInteger qCounter) {
+    private void createInterviewQuestionsAndAnswers(long idNode, long interviewId, String qNumber, String aNumber,
+                                                    AtomicInteger qCounter, String freetext) {
         QuestionVO nodeQuestion = questionService.getQuestionByTopIdAndNumber(idNode, qNumber);
-        String questionIUniqueKey = getInterviewUniqueKey(nodeQuestion.getIdNode(), interviewId);
-        if (!uniqueModules.containsKey(questionIUniqueKey)) {
-            InterviewQuestionVO iQuestion = createInterviewQuestion(nodeQuestion, interviewId, qCounter.incrementAndGet());
-            uniqueModules.put(questionIUniqueKey, iQuestion.getId());
+        if (nodeQuestion != null) {
+            String questionIUniqueKey = getInterviewUniqueKey(nodeQuestion.getIdNode(), interviewId);
+            if (!uniqueModules.containsKey(questionIUniqueKey)) {
+                InterviewQuestionVO iQuestion = createInterviewQuestion(nodeQuestion, interviewId, qCounter.incrementAndGet());
+                uniqueModules.put(questionIUniqueKey, iQuestion.getId());
+            }
+
+            PossibleAnswerVO nodeAnswer;
+            if (Constant.Q_MULTIPLE.equals(nodeQuestion.getType())) {
+                int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
+                List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
+                nodeAnswer = possibleAnswers.get(answerIndex);
+            } else {
+                nodeAnswer = possibleAnswerService.findByTopNodeIdAndNumber(idNode, aNumber);
+            }
+
+            String answerIUniqueKey = getInterviewUniqueKey(nodeAnswer.getIdNode(), interviewId);
+            Long interviewAnswerId = null;
+            if (uniqueModules.containsKey(answerIUniqueKey) && uniqueModules.get(answerIUniqueKey) != null) {
+                interviewAnswerId = (Long) uniqueModules.get(answerIUniqueKey);
+            }
+            InterviewAnswerVO interviewAnswer = createInterviewAnswer(interviewAnswerId, interviewId,
+                    nodeAnswer, (Long) uniqueModules.get(questionIUniqueKey), freetext);
+
+            if (!uniqueModules.containsKey(answerIUniqueKey)) {
+                uniqueModules.put(answerIUniqueKey, interviewAnswer.getId());
+            }
+        } else {
+            log.warn("Question not found for idNode={}, number={}", idNode, qNumber);
         }
-        PossibleAnswerVO nodeAnswer = possibleAnswerService.findByTopNodeIdAndNumber(idNode, aNumber);
-        createInterviewAnswer(interviewId, nodeAnswer, (Long) uniqueModules.get(questionIUniqueKey));
+
     }
 
     private InterviewQuestionVO createInterviewQuestion(NodeVO node, long interviewId, int sequence) {
@@ -663,11 +710,16 @@ public class VoxcoService implements IVoxcoService {
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
-    private InterviewAnswerVO createInterviewAnswer(long interviewId, PossibleAnswerVO possibleAnswerVO, long interviewQID) {
+    private InterviewAnswerVO createInterviewAnswer(Long interviewAnswerId, long interviewId, PossibleAnswerVO possibleAnswerVO,
+                                                    long interviewQID, String freetext) {
         InterviewAnswerVO interviewAnswer = new InterviewAnswerVO();
+        if (interviewAnswerId != null && interviewAnswerId != 0L) {
+            interviewAnswer.setId(interviewAnswerId);
+        }
         interviewAnswer.setName(possibleAnswerVO.getName());
         interviewAnswer.setIsProcessed(true);
-        interviewAnswer.setAnswerFreetext(possibleAnswerVO.getName());
+        interviewAnswer.setAnswerFreetext((freetext != null && !StringUtils.EMPTY.equals(freetext))
+                ? freetext : possibleAnswerVO.getName());
         interviewAnswer.setAnswerId(possibleAnswerVO.getIdNode());
         interviewAnswer.setDeleted(0);
         interviewAnswer.setModCount(1);
@@ -704,7 +756,7 @@ public class VoxcoService implements IVoxcoService {
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
-    private void createModuleInterviewQuestion(NodeVO node, NodeVO linkedModule, long interviewId, int sequence) {
+    private InterviewQuestionVO createModuleInterviewQuestion(NodeVO node, NodeVO linkedModule, long interviewId, int sequence) {
         InterviewQuestionVO interviewQuestion = new InterviewQuestionVO();
         interviewQuestion.setDeleted(0);
         interviewQuestion.setDescription(linkedModule.getDescription());
@@ -724,10 +776,10 @@ public class VoxcoService implements IVoxcoService {
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkedModule.getIdNode());
         interviewQuestion.setType(Constant.Q_LINKEDMODULE);
-        interviewQuestionService.updateIntQ(interviewQuestion);
+        return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
-    private void createIntroModuleQuestion(NodeVO node, long interviewId) {
+    private InterviewQuestionVO createIntroModuleQuestion(NodeVO node, long interviewId) {
         InterviewQuestionVO interviewQuestion = new InterviewQuestionVO();
         interviewQuestion.setDeleted(0);
         interviewQuestion.setDescription(node.getDescription());
@@ -741,7 +793,7 @@ public class VoxcoService implements IVoxcoService {
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(node.getIdNode());
         interviewQuestion.setType("M_IntroModule");
-        interviewQuestionService.updateIntQ(interviewQuestion);
+        return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
 }
