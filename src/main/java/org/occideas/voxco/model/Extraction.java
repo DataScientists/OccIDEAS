@@ -85,7 +85,7 @@ public class Extraction {
     public Extraction(String name, Long surveyId) {
         this.name = name;
         this.surveyId = surveyId;
-        this.destinationFileName = name.replaceAll(" ", "_").toLowerCase();
+        this.destinationFileName = name.substring(0, 4).toLowerCase();
     }
 
     public String getName() {

@@ -154,7 +154,7 @@ public class VoxcoService implements IVoxcoService {
     @Override
     @Transactional
     public void importSurvey(Long id) {
-        importSurvey(id, false);
+        importSurvey(id, true);
     }
 
     @Override
@@ -174,7 +174,7 @@ public class VoxcoService implements IVoxcoService {
             }
 
             Survey survey = createOrUpdateSurvey(surveyId, name, module.getDescription());
-            voxcoDao.save(surveyId, module.getIdNode(), survey.getName());
+            voxcoDao.save(survey.getId(), module.getIdNode(), survey.getName());
             buildAndImportSurvey(module, survey, filter);
         }
     }
@@ -185,7 +185,11 @@ public class VoxcoService implements IVoxcoService {
         log.debug("importing all active job modules to voxco");
         List<ModuleVO> modules = moduleService.listAll();
         for (ModuleVO module : modules) {
-            importSurvey(module.getIdNode());
+            if ("M_Module".equals(module.getType())) {
+                importSurvey(module.getIdNode());
+            } else {
+                log.warn("Not a job module will ignore. Type=", module.getType());
+            }
         }
     }
 
@@ -232,7 +236,9 @@ public class VoxcoService implements IVoxcoService {
             return surveyClient.update(new Survey(id, name, description)).getBody();
         } else {
             surveyClient.create(new Survey(name, description));
-            return surveyClient.getById(id).getBody();
+            List<Survey> surveys = userClient.getUserSurveys().getBody();
+            Survey survey = getSurveyByName(surveys, name);
+            return surveyClient.getById(survey.getId()).getBody();
         }
     }
 
