@@ -153,13 +153,13 @@ public class VoxcoService implements IVoxcoService {
 
     @Override
     @Transactional
-    public void importSurvey(Long id) {
-        importSurvey(id, true);
+    public void exportSurvey(Long id) {
+        exportSurvey(id, true);
     }
 
     @Override
     @Transactional
-    public void importSurvey(Long id, boolean filter) {
+    public void exportSurvey(Long id, boolean filter) {
         List<ModuleVO> modules = moduleService.findById(id);
         if (!modules.isEmpty()) {
             ModuleVO module = modules.get(0);
@@ -175,18 +175,18 @@ public class VoxcoService implements IVoxcoService {
 
             Survey survey = createOrUpdateSurvey(surveyId, name, module.getDescription());
             voxcoDao.save(survey.getId(), module.getIdNode(), survey.getName());
-            buildAndImportSurvey(module, survey, filter);
+            buildAndExportSurvey(module, survey, filter);
         }
     }
 
     @Override
     @Async("threadPoolTaskExecutor")
-    public void importAllToVoxco() {
+    public void exportAllToVoxco() {
         log.debug("importing all active job modules to voxco");
         List<ModuleVO> modules = moduleService.listAll();
         for (ModuleVO module : modules) {
             if ("M_Module".equals(module.getType())) {
-                importSurvey(module.getIdNode());
+                exportSurvey(module.getIdNode());
             } else {
                 log.warn("Not a job module will ignore. Type=", module.getType());
             }
@@ -242,7 +242,7 @@ public class VoxcoService implements IVoxcoService {
         }
     }
 
-    private void buildAndImportSurvey(ModuleVO module, Survey survey, boolean filter) {
+    private void buildAndExportSurvey(ModuleVO module, Survey survey, boolean filter) {
         List<Block> blocks = new ArrayList<>();
         List<List<Choice>> choiceLists = new LinkedList<>();
         choiceId = 0;

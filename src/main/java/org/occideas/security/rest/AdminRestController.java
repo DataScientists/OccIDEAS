@@ -104,10 +104,10 @@ public class AdminRestController {
     }
 
     @GET
-    @Path(value = "/importAllToVoxco")
-    public Response importAllToVoxco() {
+    @Path(value = "/exportAllToVoxco")
+    public Response exportAllToVoxco() {
         try {
-            iVoxcoService.importAllToVoxco();
+            iVoxcoService.exportAllToVoxco();
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

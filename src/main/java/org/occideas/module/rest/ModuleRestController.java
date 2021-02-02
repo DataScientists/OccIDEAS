@@ -124,12 +124,12 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     }
 
     @GET
-    @Path(value = "/importToVoxco")
+    @Path(value = "/exportToVoxco")
     @Consumes(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
     @Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
-    public Response importToVoxco(@QueryParam("id") Long id) {
+    public Response exportToVoxco(@QueryParam("id") Long id) {
         try {
-            voxcoService.importSurvey(id);
+            voxcoService.exportSurvey(id);
         } catch (Throwable e) {
             e.printStackTrace();
             return null;

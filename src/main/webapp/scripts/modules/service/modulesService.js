@@ -9,19 +9,8 @@
     var modulesUrl = apiUrl + 'module';
     var apiKey = '';
 
-    function postToVoxco(data) {
-      var voxcoCreateUrl = 'https://ap1mgmt.voxco.com/api/survey/create';
-      var request = $http({
-        headers: { 'Authorization': 'Client rsnZMLSpaU6ave4oocOa4jh+htO/feSxB8wBDSgUgPwb9BIrkmqq3MdsTJclY/CE0ZtBMMTvcLE3z8hIKcVUfCtuKVAL4IsnwCD+zcAIJQvXNNjSKT1JTw==' },
-        method: 'POST',
-        url: voxcoCreateUrl,
-        data: data
-      });
-      return request.then(handleSuccess, handleError);
-    }
-
-    function importToVoxco(idNode) {
-      var restUrl = 'web/rest/module/importToVoxco?id=' + idNode
+    function exportToVoxco(idNode) {
+      var restUrl = 'web/rest/module/exportToVoxco?id=' + idNode
       var request = $http({
         method: 'GET',
         url: restUrl
@@ -343,8 +332,7 @@
       getNodeById: getNodeById,
       convertModuleToApplicationQSF:convertModuleToApplicationQSF,
       exportQSFResponse:exportQSFResponse,
-      postToVoxco: postToVoxco,
-      importToVoxco: importToVoxco
+      exportToVoxco: exportToVoxco
     };
   }
 

@@ -155,18 +155,18 @@
       });
     };
 
-    self.importAllToVoxco = function(){
-      AdminService.importAllToVoxco().then(function(response){
+    self.exportAllToVoxco = function(){
+      AdminService.exportAllToVoxco().then(function(response){
         if (response.status == '200') {
           $ngToast.create({
             className: 'success',
-            content: 'Import All Surveys to Voxco Successful , check result in a few minutes.',
+            content: 'Export All Surveys to Voxco Successful , check result in a few minutes.',
             animation: 'slide'
           });
         } else {
           $ngToast.create({
             className: 'danger',
-            content: 'Import All Surveys to Voxco failed, check the logs.',
+            content: 'Export All Surveys to Voxco failed, check the logs.',
             dismissButton: true,
             dismissOnClick: false,
             animation: 'slide'

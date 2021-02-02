@@ -1943,8 +1943,8 @@
         }
         ]);
 
-        $scope.moduleMenuOptions.unshift(['Import to Voxco', function($itemScope) {
-            ModulesService.importToVoxco($itemScope.$modelValue.idNode)
+        $scope.moduleMenuOptions.unshift(['Export to Voxco', function($itemScope) {
+            ModulesService.exportToVoxco($itemScope.$modelValue.idNode)
                 .then(function(response) {
                     if (response.status == 200) {
                         ngToast.create({
@@ -1954,7 +1954,7 @@
                     } else {
                         ngToast.create({
                             className: 'danger',
-                            content: "response was " + response.status + " - Unable to import to Voxco"
+                            content: "response was " + response.status + " - Unable to export to Voxco"
                         });
                     }
                 });

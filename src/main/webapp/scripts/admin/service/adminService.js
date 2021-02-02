@@ -149,8 +149,8 @@
       });
     }
 
-    var importAllToVoxco = function(){
-      return $http.get(adminEndpoint + '/importAllToVoxco', {
+    var exportAllToVoxco = function(){
+      return $http.get(adminEndpoint + '/exportAllToVoxco', {
         cache: false
       }).then(function(response) {
         return response;
@@ -192,7 +192,7 @@
       deleteQSFSurveys: deleteQSFSurveys,
       importQSFResponses: importQSFResponses,
       copySurveys: copySurveys,
-      importAllToVoxco: importAllToVoxco,
+      exportAllToVoxco: exportAllToVoxco,
       importVoxcoResponse: importVoxcoResponse
     };
   }
