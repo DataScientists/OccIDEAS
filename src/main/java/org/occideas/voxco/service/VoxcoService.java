@@ -191,6 +191,7 @@ public class VoxcoService implements IVoxcoService {
                 log.warn("Not a job module will ignore. Type=", module.getType());
             }
         }
+        log.debug("exporting complete");
     }
 
     @Override
