@@ -221,7 +221,7 @@
         } else if(response.status == 403) {
           var state = $injector.get('$state');
           var msg = "Occideas is in READ-ONLY mode, update/delete action is not premitted.";
-          ngToast.create({
+          $ngToast.create({
             className: 'danger',
             content: msg,
             animation: 'slide'
