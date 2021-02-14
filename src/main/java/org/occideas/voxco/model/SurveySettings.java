@@ -68,6 +68,9 @@ public class SurveySettings {
     @JsonProperty(value = "COMPLETED_ACTION")
     private String completedAction = "None";
 
+    @JsonProperty(value = "COMPLETED_ACTION_REDIRECT_URL")
+    private String completedActionRedirectUrl;
+
     @JsonProperty(value = "INTERRUPTED_ACTION")
     private String interruptedAction = "None";
 
@@ -103,6 +106,15 @@ public class SurveySettings {
 
     @JsonProperty(value = "ENABLE_LEGACY_BROWSER_WARNING")
     private boolean enableLegacyBrowserWarning;
+
+    public SurveySettings() {
+
+    }
+
+    public SurveySettings(String completedActionRedirectUrl) {
+        this.completedAction = "RedirectToUrl";
+        this.completedActionRedirectUrl = completedActionRedirectUrl;
+    }
 
     public boolean isDisableSmartPhoneMobileSupport() {
         return disableSmartPhoneMobileSupport;
@@ -262,6 +274,14 @@ public class SurveySettings {
 
     public void setCompletedAction(String completedAction) {
         this.completedAction = completedAction;
+    }
+
+    public String getCompletedActionRedirectUrl() {
+        return completedActionRedirectUrl;
+    }
+
+    public void setCompletedActionRedirectUrl(String completedActionRedirectUrl) {
+        this.completedActionRedirectUrl = completedActionRedirectUrl;
     }
 
     public String getInterruptedAction() {

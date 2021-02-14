@@ -87,6 +87,9 @@ public class VoxcoService implements IVoxcoService {
     @Value("${voxco.extracton.result.fetch.retry:20}")
     private int resultRetryThreshold;
 
+    @Value("${voxco.completed.redirect.url}")
+    private String completedActionRedirectUrl;
+
     @Autowired
     private INodeVoxcoDao voxcoDao;
 
@@ -256,7 +259,7 @@ public class VoxcoService implements IVoxcoService {
 
         buildBlocksAndChoices(getNodeKey(module.getName()), module.getChildNodes(), blocks, choiceLists,
                 filteredIdNodes, null, null, null, false);
-        SurveyImportRequest importSurvey = new SurveyImportRequest(survey.getName(), blocks, choiceLists);
+        SurveyImportRequest importSurvey = new SurveyImportRequest(survey.getName(), completedActionRedirectUrl, blocks, choiceLists);
         ResponseEntity<SurveyImportResult> response = surveyClient.importSurveyAsJson(importSurvey, survey.getId());
         if (HttpStatus.OK.equals(response.getStatusCode())) {
             log.info("import successful for idNode={} surveyId={}", module.getIdNode(), survey.getId());

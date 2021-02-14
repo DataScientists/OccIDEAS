@@ -32,12 +32,12 @@ public class SurveyImportRequest {
     public SurveyImportRequest() {
     }
 
-    public SurveyImportRequest(String name, List<Block> blocks, List<List<Choice>> choiceLists) {
+    public SurveyImportRequest(String name, String completedActionRedirectUrl, List<Block> blocks, List<List<Choice>> choiceLists) {
         this.name = name;
         this.blocks = blocks;
         this.choiceLists = choiceLists;
 
-        this.settings = new SurveySettings();
+        this.settings = new SurveySettings(completedActionRedirectUrl);
         addDefaultLanguage();
         this.shortcuts = new ArrayList<>();
         this.randomizations = new ArrayList<>();
