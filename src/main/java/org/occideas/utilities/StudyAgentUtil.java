@@ -17,6 +17,7 @@ import org.occideas.qsf.service.IQSFService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
@@ -32,6 +33,10 @@ import java.util.stream.Collectors;
 public class StudyAgentUtil {
 
     public static final String COMMA = ",";
+
+    @Value("${qualtrics.hide.nodekeys}")
+    private boolean hideNodeKeys;
+
     @Autowired
     ServletContext context;
     private Logger log = LogManager.getLogger(this.getClass());
@@ -168,7 +173,9 @@ public class StudyAgentUtil {
                     String qidStrCount = "QID" + qidCount.incrementAndGet();
                     idNodeQIDMapIntro.put(qVO.getIdNode(), qidStrCount);
                 }
-                String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
+                String questionTextKey = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - ";
+                String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
+                String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
                 SimpleQuestionPayload payload = null;
                 if (logic == null) {
                     payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
@@ -544,7 +551,9 @@ public class StudyAgentUtil {
                 String qidStrCount = "QID" + qidCount.incrementAndGet();
                 idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
             }
-            String questionTxt = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - " + qVO.getName();
+            String questionTextKey = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - ";
+            String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
+            String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
             SimpleQuestionPayload payload = null;
             if (logic == null) {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
@@ -759,7 +768,7 @@ public class StudyAgentUtil {
                         PossibleAnswerVO answer = new PossibleAnswerVO();
                         answer.setNumber(answerVO.getNumber());
                         answer.setName(String.valueOf(i));
-                        choiceList.add(ChoiceFactory.create(answer, name));
+                        choiceList.add(ChoiceFactory.create(answer, name, hideNodeKeys));
                     }
                 }
             }
@@ -771,7 +780,7 @@ public class StudyAgentUtil {
     private List<Choice> handlePossibleAnswers(QuestionVO qVO, String name) {
         List<Choice> choiceList = new ArrayList<>();
         for (PossibleAnswerVO answerVO : qVO.getChildNodes()) {
-            choiceList.add(ChoiceFactory.create(answerVO, name));
+            choiceList.add(ChoiceFactory.create(answerVO, name, hideNodeKeys));
         }
         return choiceList;
     }

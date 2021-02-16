@@ -42,4 +42,7 @@ public class Constant {
     public static final String Q_SIMPLE = "Q_simple";
     public static final String Q_MULTIPLE = "Q_multiple";
     public static final String Q_SINGLE = "Q_single";
+
+    public static final String SPAN_START_DISPLAY_NONE = "<span style=\"display:none;\">";
+    public static final String SPAN_END = "</span>";
 }

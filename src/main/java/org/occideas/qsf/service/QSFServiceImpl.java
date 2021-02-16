@@ -365,7 +365,7 @@ public class QSFServiceImpl implements IQSFService {
         Optional<NodeVO> node = getNodeByModuleKey(moduleKey);
         if (node.isPresent()) {
             QuestionVO linkQuestion = questionService
-                    .getQuestionByLinkIdAndTopId(node.get().getIdNode(), topNode.getIdNode());
+                    .getNearestQuestionByLinkIdAndTopId(node.get().getIdNode(), topNode.getIdNode());
             PossibleAnswerVO parentAnswer = possibleAnswerService.findByIdExcludeChildren(Long.valueOf(linkQuestion.getParentId()));
             QuestionVO parentQuestion = questionService.findByIdExcludeChildren(Long.valueOf(parentAnswer.getParentId()));
             parentQuestion.setChildNodes(Arrays.asList(parentAnswer));
