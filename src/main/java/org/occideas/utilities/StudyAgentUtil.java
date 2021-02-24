@@ -144,6 +144,20 @@ public class StudyAgentUtil {
         createPageBreaks(getBlockElementResult);
 //        getBlockElementResult.setBlockElement(buildBlockElements(questionPayloads.size(),moduleVO.getName()));
         iqsfClient.updateBlock(surveyId, blockId, getBlockElementResult);
+
+        //adding embedded data flow
+        Response getFlowResponse = iqsfClient.getFlow(surveyId);
+        FlowResult flowResult = ((GetFlowResponse) getFlowResponse.getEntity()).getResult();
+        List<EmbeddedData> embeddedDataList = new ArrayList<>();
+        EmbeddedData embeddedData = new EmbeddedData("Recipient", "IDAnswer", "String");
+        embeddedDataList.add(embeddedData);
+        List<Flow> flows = new ArrayList<>();
+        flows.add(new Flow(null, "EmbeddedData", "FL_3", embeddedDataList));
+        flows.addAll(flowResult.getFlows());
+        Flow mainFlow = new Flow(null, "Root", flowResult.getFlowId(), null,
+                flows, null, null, null);
+        iqsfClient.updateFlow(surveyId, mainFlow);
+
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton("true");
@@ -259,7 +273,7 @@ public class StudyAgentUtil {
                                 }
                                 if (!flowResult.getFlows().contains(new Flow(String.valueOf(linkModule.getIdNode())))) {
                                     String linkModSurveyId = publishJobModules((ModuleVO) linkModule, listOfIdNodes);
-                                    String url = iqsfClient.buildRedirectUrl(linkModSurveyId);
+                                    String url = iqsfClient.buildRedirectUrl(linkModSurveyId) + "?IDAnswer=${q://QID1/ChoiceTextEntryValue/1}";
                                     List<Logic> introLogics = new ArrayList<>();
                                     Logic introLogic = new Logic("Question",
                                             childQidCount, "no",

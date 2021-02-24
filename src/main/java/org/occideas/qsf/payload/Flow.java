@@ -36,6 +36,9 @@ public class Flow extends BaseQSF {
     @JsonProperty(value = "Description")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
+    @JsonProperty(value = "EmbeddedData")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<EmbeddedData> embeddedData;
 
     public Flow() {
     }
@@ -60,6 +63,13 @@ public class Flow extends BaseQSF {
 
     public Flow(String description) {
         this.description = description;
+    }
+
+    public Flow(String id, String type, String flowId, List<EmbeddedData> embeddedData) {
+        this.id = id;
+        this.type = type;
+        this.flowId = flowId;
+        this.embeddedData = embeddedData;
     }
 
     public BranchLogic getBranchLogic() {
@@ -124,6 +134,14 @@ public class Flow extends BaseQSF {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<EmbeddedData> getEmbeddedData() {
+        return embeddedData;
+    }
+
+    public void setEmbeddedData(List<EmbeddedData> embeddedData) {
+        this.embeddedData = embeddedData;
     }
 
     @Override

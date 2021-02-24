@@ -200,14 +200,19 @@ public class QSFServiceImpl implements IQSFService {
                 .orElseThrow(StudyIntroModuleNotFoundException::new);
         NodeVO nodeVO = moduleService.getNodeById(Long.valueOf(introModule.getValue()));
 
-        surveyResponses.getResponses().stream().forEach(response ->{
-            String referenceNumber = String.valueOf(response.getResponseId());
+        surveyResponses.getResponses().stream().forEach(response -> {
+            String referenceNumber = getIDAnswer(response);
             ParticipantVO participantVO = createParticipant(referenceNumber);
             InterviewVO newInterview = createNewInterview(referenceNumber, participantVO);
             createIntroQuestion(newInterview, nodeVO);
             processResponseAnswers(response, referenceNumber, newInterview, nodeVO);
         });
 
+    }
+
+    private String getIDAnswer(Response response) {
+        Object value = response.getValues().get("IDAnswer");
+        return value == null ? null : (String) value;
     }
 
     private void processResponseAnswers(Response response, String referenceNumber, InterviewVO newInterview, NodeVO nodeVO) {
@@ -503,9 +508,12 @@ public class QSFServiceImpl implements IQSFService {
     @Async("threadPoolTaskExecutor")
     public void importQSFResponses() {
         List<NodeQSF> nodeQSF = dao.list();
+        SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
         nodeQSF.stream().forEach(qsf -> {
             try {
-                processResponseForSurvey(qsf);
+                if (activeIntro == null || !Long.valueOf(activeIntro.getValue()).equals(qsf.getIdNode())) {
+                    processResponseForSurvey(qsf);
+                }
             } catch (InterruptedException e) {
                 log.error(e.getMessage(), e);
             }
