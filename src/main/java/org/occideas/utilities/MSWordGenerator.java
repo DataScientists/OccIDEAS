@@ -135,7 +135,7 @@ public class MSWordGenerator {
         tablerow.getCell(0).setText(vo.getNumber());
         tablerow.getCell(1).setText(vo.getNodeType());
         tablerow.getCell(2).setText(vo.getName());
-        tablerow.getCell(3).setText(vo.getDescription());
+        //tablerow.getCell(3).setText(vo.getDescription());
         row++;
         if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
           for (NodeVO nodes : vo.getChildNodes()) {
@@ -189,8 +189,8 @@ public class MSWordGenerator {
   private void createheader(XWPFTableRow tableRowOne) {
     tableRowOne.getCell(0).setText("Node Number");
     tableRowOne.addNewTableCell().setText("Type");
-    tableRowOne.addNewTableCell().setText("Name");
-    tableRowOne.addNewTableCell().setText("Description");
+    tableRowOne.addNewTableCell().setText("Text");
+    //tableRowOne.addNewTableCell().setText("Description");
     // tableRowOne.addNewTableCell().setText("Translation");
   }
 
