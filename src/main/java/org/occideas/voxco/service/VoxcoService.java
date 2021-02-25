@@ -78,6 +78,7 @@ public class VoxcoService implements IVoxcoService {
     private static final String LOGIC_BASIC = "logic:basic;";
     private static final String LOGIC_NOT_EQUAL = " != ";
     private static final String LOGIC_EQUAL = " = ";
+    private static final String RESPONSE_KEY_SEPARATOR = "__";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -485,7 +486,7 @@ public class VoxcoService implements IVoxcoService {
                     }
                     dataIndex++;
                 }
-                formatted.put(moduleKey + "_" + data[0], entry);
+                formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + data[4], entry);
             }
             index++;
         }
@@ -508,9 +509,14 @@ public class VoxcoService implements IVoxcoService {
             Map<String, Map<String, String>> responses = convertToObject(moduleKey, survey.getResultPath());
             if (CollectionUtils.isEmpty(responses)) continue;
 
-            responses.forEach((caseId, answers) -> {
+            responses.forEach((responseKey, answers) -> {
                 uniqueModules = new HashMap<>();
                 if (hasAnyAnswer(answers)) {
+                    String[] keys = responseKey.split(RESPONSE_KEY_SEPARATOR);
+                    String caseId = keys[0];
+                    if (keys != null && keys.length == 2) {
+                        caseId = keys[1];
+                    }
                     ParticipantVO participant = createParticipant(caseId);
                     InterviewVO interview = createInterview(participant);
 

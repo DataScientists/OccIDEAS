@@ -29,10 +29,9 @@ public class CsvUtil {
     public static void main(String[] args) {
         try {
             System.out.println(new Date(0));
-            String csvPath = "/tmp/voxco_result_weld_welder_5815_extract/weld_welder_5815.csv";
+            String csvPath = "/tmp/test-3.csv";
             List<String[]> extract = readAll(csvPath);
             Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
-
             String[] labels = extract.get(0);
             int index = 0;
             for (String[] data : extract) {
@@ -41,18 +40,23 @@ public class CsvUtil {
                     int dataIndex = 0;
                     for (String value : data) {
                         if (dataIndex > 26) {
-                            String label = labels[dataIndex].replaceAll("\\{", "")
-                                    .replaceAll("\\}", "");
-                            entry.put(label, value);
+                            entry.put(labels[dataIndex], value);
                         }
                         dataIndex++;
                     }
-                    formatted.put("CASEID_" + data[0], entry);
+                    formatted.put("MKEY_" + data[0] + "__" + data[4], entry);
                 }
                 index++;
             }
             System.out.println(formatted);
-            String moduleKey = "WELD";
+            formatted.forEach((key, answers) -> {
+                String[] keys = key.split("__");
+                System.out.println("size: " + keys.length);
+                if (keys != null && keys.length == 2) {
+                    System.out.println("keys[1]: " + keys[1]);
+                }
+            });
+            /*String moduleKey = "WELD";
             formatted.forEach((caseId, answers) -> {
                 answers.forEach((label, answer) -> {
                     if (answer != null && !StringUtils.EMPTY.equals(answer)) {
@@ -83,7 +87,7 @@ public class CsvUtil {
                         }
                     }
                 });
-            });
+            });*/
         } catch (Exception e) {
             e.printStackTrace();
         }
