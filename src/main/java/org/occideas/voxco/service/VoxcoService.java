@@ -91,6 +91,9 @@ public class VoxcoService implements IVoxcoService {
     @Value("${voxco.completed.redirect.url}")
     private String completedActionRedirectUrl;
 
+    @Value("${voxco.hide.nodekeys}")
+    private boolean hideNodeKeys;
+
     @Autowired
     private INodeVoxcoDao voxcoDao;
 
@@ -316,7 +319,8 @@ public class VoxcoService implements IVoxcoService {
                     List<Variable> variables = buildVariables(type, variableName, choices.size());
                     questions.add(
                             new Question(questionName.toUpperCase(), type,
-                                    new TranslatedTexts(new TranslatedTextContent(question.getName() + "  " + questionName)),
+                                    new TranslatedTexts(new TranslatedTextContent(
+                                            hideNodeKeys ? question.getName() : (question.getName() + "  " + questionName))),
                                     variables, displayLogic));
                     blocks.add(new Block(questionName, questions));
                     choiceId++;
