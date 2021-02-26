@@ -264,7 +264,7 @@
               + response.status + " "
               + response.statusText + " "
               + response.data;
-            ngToast.create({
+            $ngToast.create({
               className: 'danger',
               content: msg,
               animation: 'slide'
