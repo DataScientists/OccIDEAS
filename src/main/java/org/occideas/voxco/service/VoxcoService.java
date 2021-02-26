@@ -79,6 +79,8 @@ public class VoxcoService implements IVoxcoService {
     private static final String LOGIC_NOT_EQUAL = " != ";
     private static final String LOGIC_EQUAL = " = ";
     private static final String RESPONSE_KEY_SEPARATOR = "__";
+    private static final String FREETEXT_LOWERCASE = "[freetext]";
+    private static final String FREETEXT = "[Freetext]";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -341,15 +343,29 @@ public class VoxcoService implements IVoxcoService {
 
             if ("P".equals(answer.getNodeclass())) {
                 String value = generateName(nodeKey, answer.getNumber());
-                TranslatedTexts translatedTexts = new TranslatedTexts(new TranslatedTextContent(answer.getName()));
                 if ("P_freetext".equals(answer.getType())) {
+                    String freetextName = cleanFreeText(answer.getName());
+                    TranslatedTexts translatedTexts = new TranslatedTexts(new TranslatedTextContent(freetextName));
                     choices.add(new Choice(new ChoiceSettings(), value, translatedTexts));
                 } else {
+                    TranslatedTexts translatedTexts = new TranslatedTexts(new TranslatedTextContent(answer.getName()));
                     choices.add(new Choice(value, translatedTexts));
                 }
             }
         }
         return choices;
+    }
+
+    private String cleanFreeText(String name) {
+        if (FREETEXT.equals(name.trim()) || FREETEXT_LOWERCASE.equals(name.trim())) {
+            return " ";
+        } else if (name.contains(FREETEXT)) {
+            return name.replace(FREETEXT, "").trim();
+        } else if (name.contains(FREETEXT_LOWERCASE)) {
+            return name.replace(FREETEXT_LOWERCASE, "").trim();
+        } else {
+            return name;
+        }
     }
 
     private List<Variable> buildVariables(Question.Type type, String variableName, int maxMention) {
