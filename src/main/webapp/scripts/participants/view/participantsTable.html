@@ -79,7 +79,7 @@
     
   </div>
   <script  id="templatePagination.html" type="text/ng-template">    
-<div ng-if="vm.isSelfInterviewer === 'false'">
+<div ng-if="!vm.isSelfInterviewer">
       <ul class="pagination ng-table-pagination pull-right">
         <li><span style="height: 33px;">&nbsp; Go To Page: <input type="text"
                                                                   ng-keyup="params.goTo($event); $event.stopPropagation();"
