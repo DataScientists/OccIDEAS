@@ -1,6 +1,7 @@
 package org.occideas.qsf.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ import org.occideas.qsf.results.SurveyResponses;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.utilities.ZipUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +77,8 @@ public class QSFServiceImpl implements IQSFService {
     private IQSFClient iqsfClient;
     @Autowired
     private SystemPropertyDao systemPropertyDao;
+    @Autowired
+    private StudyAgentUtil studyAgentUtil;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -208,6 +212,16 @@ public class QSFServiceImpl implements IQSFService {
             processResponseAnswers(response, referenceNumber, newInterview, nodeVO);
         });
 
+    }
+
+    @Override
+    public void createQSFTranslationModule() {
+        SystemPropertyVO introModule = Optional.ofNullable(systemPropertyService.getByName(Constant.STUDY_INTRO))
+                .orElseThrow(StudyIntroModuleNotFoundException::new);
+        List<ModuleVO> modules = moduleService.findById(Long.valueOf(introModule.getValue()));
+        if (!CollectionUtils.isEmpty(modules)) {
+            studyAgentUtil.buildQSF(modules.get(0), true, true);
+        }
     }
 
     private String getIDAnswer(Response response) {

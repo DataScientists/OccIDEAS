@@ -165,6 +165,14 @@
       });
     }
 
+    var createQSFTranslationModule = function() {
+        return $http.get(adminEndpoint + '/createQSFTranslationModule', {
+            cache: false
+        }).then(function(response) {
+            return response;
+        })
+    }
+
     function handleError(response) {
       if(!angular.isObject(response.data) || !response.data.message) {
         return ($q.reject("An unknown error occurred."));
@@ -193,7 +201,8 @@
       importQSFResponses: importQSFResponses,
       copySurveys: copySurveys,
       exportAllToVoxco: exportAllToVoxco,
-      importVoxcoResponse: importVoxcoResponse
+      importVoxcoResponse: importVoxcoResponse,
+      createQSFTranslationModule: createQSFTranslationModule
     };
   }
 

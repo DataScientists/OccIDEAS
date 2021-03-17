@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +90,19 @@ public class AdminRestController {
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
         return Response.ok().build();
+    }
+
+    @GET
+    @Path(value = "/createQSFTranslationModule")
+    @Produces(value = javax.ws.rs.core.MediaType.APPLICATION_JSON)
+    public Response createQSFTranslationModule() throws IOException {
+        try {
+            iqsfService.createQSFTranslationModule();
+            return Response.ok().build();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @GET

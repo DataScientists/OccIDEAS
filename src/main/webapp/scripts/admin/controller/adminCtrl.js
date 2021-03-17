@@ -155,6 +155,26 @@
       });
     };
 
+    self.createQSFTranslationModule = function(){
+      AdminService.createQSFTranslationModule().then(function(response){
+        if (response.status == '200') {
+          $ngToast.create({
+            className: 'success',
+            content: 'Create Qualtrics Translation Module Successful , check result in a few minutes.',
+            animation: 'slide'
+          });
+        } else {
+          $ngToast.create({
+            className: 'danger',
+            content: 'Create Qualtrics Translation Module failed, check the logs.',
+            dismissButton: true,
+            dismissOnClick: false,
+            animation: 'slide'
+          });
+        }
+      });
+    };
+
     self.exportAllToVoxco = function(){
       AdminService.exportAllToVoxco().then(function(response){
         if (response.status == '200') {

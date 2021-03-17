@@ -529,7 +529,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Async("threadPoolTaskExecutor")
 	public void manualBuildQSF(Long id, boolean filter) {
 		List<ModuleVO> modules = this.findById(id);
-		if (!modules.isEmpty()) { studyAgentUtil.buildQSF(modules.get(0),filter);
+		if (!modules.isEmpty()) { studyAgentUtil.buildQSF(modules.get(0),filter, false);
 		}
 	}
 
