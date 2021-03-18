@@ -354,10 +354,10 @@ public class StudyAgentUtil {
                 if (!uniqueTranslationModules.containsKey(qVO.getLink())) {
                     log.debug("linkedModule fragment name={}, idNode={}, hasChildNode=",
                             linkModule.getName(), linkModule.getIdNode(), !CollectionUtils.isEmpty(((FragmentVO) linkModule).getChildNodes()));
-                    filteredIdNodes = moduleService.getFilterStudyAgent(linkModule.getIdNode());
+                    List<String> newFilteredIdNodes = moduleService.getFilterStudyAgent(linkModule.getIdNode());
                     uniqueTranslationModules.put(qVO.getLink(), linkModule.getName().substring(0, 4));
                     for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
-                        createQSFTranslationModule(linkModule, linkQuestion, null, questionPayloads, qidCount, filteredIdNodes);
+                        createQSFTranslationModule(linkModule, linkQuestion, null, questionPayloads, qidCount, newFilteredIdNodes);
                     }
                 }
             } else {
@@ -396,7 +396,7 @@ public class StudyAgentUtil {
                     } else if (childQuestionVO.getLink() != 0L) {
                         NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
                         if (!uniqueTranslationModules.containsKey(childQuestionVO.getLink())) {
-                            filteredIdNodes = moduleService.getFilterStudyAgent(linkModule.getIdNode());
+                            List<String> newFilteredIdNodes = moduleService.getFilterStudyAgent(linkModule.getIdNode());
                             uniqueTranslationModules.put(childQuestionVO.getLink(), linkModule.getName().substring(0, 4));
                             String childQidCount = idNodeQIDMapIntro.get(Long.valueOf(answer.getParentId()));
                             String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
@@ -416,16 +416,15 @@ public class StudyAgentUtil {
                                 for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
                                     createQSFTranslationModule(linkModule, linkQuestion,
                                             new DisplayLogic("BooleanExpression", false,
-                                                    new Condition(buildLogicMap(logics), "If")), questionPayloads, qidCount, filteredIdNodes);
+                                                    new Condition(buildLogicMap(logics), "If")), questionPayloads, qidCount, newFilteredIdNodes);
                                 }
                             } else if ("M_Module".equals(linkModule.getType())) {
                                 log.debug("linkedModule non-fragment name={}, idNode={}, hasChildNodes={}",
                                         linkModule.getName(), linkModule.getIdNode(), !CollectionUtils.isEmpty(((ModuleVO) linkModule).getChildNodes()));
-                                idNodeQIDMap = new HashMap<>();
                                 for (QuestionVO linkQuestion : ((ModuleVO) linkModule).getChildNodes()) {
                                     createQSFTranslationModule(linkModule, linkQuestion,
                                             new DisplayLogic("BooleanExpression", false, new Condition(buildLogicMap(logics), "If")),
-                                            questionPayloads, qidCount, filteredIdNodes);
+                                            questionPayloads, qidCount, newFilteredIdNodes);
                                 }
                             }
                         }
