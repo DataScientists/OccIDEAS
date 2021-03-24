@@ -244,7 +244,9 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
       crit.add(Restrictions.eq("deleted", 0));
       crit.addOrder(Order.desc("id"));
     }
-    return crit.list();
+    List<InterviewAnswer> retValue = crit.list();
+    session.clear();
+    return retValue;
   }
 
 

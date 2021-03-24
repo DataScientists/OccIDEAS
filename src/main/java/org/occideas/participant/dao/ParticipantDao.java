@@ -74,7 +74,10 @@ public class ParticipantDao implements IParticipantDao {
 
   @Override
   public Participant get(Long id) {
-    return (Participant) sessionFactory.getCurrentSession().get(Participant.class, id);
+	  final Session session = sessionFactory.getCurrentSession();
+	  Participant retValue = (Participant) session.get(Participant.class, id);
+	  session.clear();
+    return retValue;
   }
 
   @Override
