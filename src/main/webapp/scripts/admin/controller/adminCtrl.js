@@ -215,7 +215,16 @@
           });
         };
 
-    self.purgeParticipants = function() {
+    self.purgeParticipantsBtn = function() {
+        $mdDialog.show({
+            scope: $scope,
+            preserveScope: true,
+            templateUrl: 'scripts/admin/partials/confirmDeleteParticipants.html',
+            clickOutsideToClose: false
+        });
+    }
+
+    $scope.purgeParticipants = function() {
       AdminService.purgeParticipants().then(function(response) {
         if(response.status == '200') {
           $ngToast.create({
@@ -233,6 +242,7 @@
           });
         }
       });
+      $mdDialog.cancel();
     };
 
     self.purgeModule = function() {
