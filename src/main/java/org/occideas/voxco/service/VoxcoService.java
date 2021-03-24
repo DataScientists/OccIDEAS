@@ -697,25 +697,33 @@ public class VoxcoService implements IVoxcoService {
                 uniqueModules.put(questionIUniqueKey, iQuestion.getId());
             }
 
-            PossibleAnswerVO nodeAnswer;
-            if (Constant.Q_MULTIPLE.equals(nodeQuestion.getType())) {
-                int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
-                List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
-                nodeAnswer = possibleAnswers.get(answerIndex);
+            PossibleAnswerVO nodeAnswer = null;
+            try {
+                if (Constant.Q_MULTIPLE.equals(nodeQuestion.getType())) {
+                    int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
+                    List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
+                    nodeAnswer = possibleAnswers.get(answerIndex);
+                } else {
+                    nodeAnswer = possibleAnswerService.findByTopNodeIdAndNumber(idNode, aNumber);
+                }
+            } catch (Exception e) {
+                log.warn("Something change in OccIDEAS. qNumber={} is not the same anymore.", qNumber);
+            }
+
+            if (nodeAnswer != null) {
+                String answerIUniqueKey = getInterviewUniqueKey(nodeAnswer.getIdNode(), interviewId);
+                Long interviewAnswerId = null;
+                if (uniqueModules.containsKey(answerIUniqueKey) && uniqueModules.get(answerIUniqueKey) != null) {
+                    interviewAnswerId = (Long) uniqueModules.get(answerIUniqueKey);
+                }
+                InterviewAnswerVO interviewAnswer = createInterviewAnswer(interviewAnswerId, interviewId,
+                        nodeAnswer, (Long) uniqueModules.get(questionIUniqueKey), freetext);
+
+                if (!uniqueModules.containsKey(answerIUniqueKey)) {
+                    uniqueModules.put(answerIUniqueKey, interviewAnswer.getId());
+                }
             } else {
-                nodeAnswer = possibleAnswerService.findByTopNodeIdAndNumber(idNode, aNumber);
-            }
-
-            String answerIUniqueKey = getInterviewUniqueKey(nodeAnswer.getIdNode(), interviewId);
-            Long interviewAnswerId = null;
-            if (uniqueModules.containsKey(answerIUniqueKey) && uniqueModules.get(answerIUniqueKey) != null) {
-                interviewAnswerId = (Long) uniqueModules.get(answerIUniqueKey);
-            }
-            InterviewAnswerVO interviewAnswer = createInterviewAnswer(interviewAnswerId, interviewId,
-                    nodeAnswer, (Long) uniqueModules.get(questionIUniqueKey), freetext);
-
-            if (!uniqueModules.containsKey(answerIUniqueKey)) {
-                uniqueModules.put(answerIUniqueKey, interviewAnswer.getId());
+                log.warn("Not able to get answer. qNumber={} is not the same anymore.", qNumber);
             }
         } else {
             log.warn("Question not found for idNode={}, number={}", idNode, qNumber);
