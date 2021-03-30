@@ -82,6 +82,12 @@ public class VoxcoService implements IVoxcoService {
     private static final String FREETEXT_LOWERCASE = "[freetext]";
     private static final String FREETEXT = "[Freetext]";
 
+    // temporary definition
+    private static final String USUALLY_TEXT = "Usually";
+    private static final String USUALLY_TEXT_LOWERCASE = " usually";
+    private static final String TEMP_TOOLTIP_USUALLY = "<span title=\"Meaning you do something at least once in a typical working week\"><b>";
+    private static final String TOOLTIP_END = "</b></span>";
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${voxco.download.filepath.pre}")
@@ -95,6 +101,9 @@ public class VoxcoService implements IVoxcoService {
 
     @Value("${voxco.hide.nodekeys}")
     private boolean hideNodeKeys;
+
+    @Value("${voxco.apply.question.tooltips}")
+    private boolean applyQuestionTooltips;
 
     @Autowired
     private INodeVoxcoDao voxcoDao;
@@ -319,10 +328,10 @@ public class VoxcoService implements IVoxcoService {
                     }
 
                     List<Variable> variables = buildVariables(type, variableName, choices.size());
+                    String questionText = applyQuestionTextTooltip(hideNodeKeys ? question.getName() : (question.getName() + "  " + questionName));
                     questions.add(
                             new Question(questionName.toUpperCase(), type,
-                                    new TranslatedTexts(new TranslatedTextContent(
-                                            hideNodeKeys ? question.getName() : (question.getName() + "  " + questionName))),
+                                    new TranslatedTexts(new TranslatedTextContent(questionText)),
                                     variables, displayLogic));
                     blocks.add(new Block(questionName, questions));
                     choiceId++;
@@ -365,6 +374,20 @@ public class VoxcoService implements IVoxcoService {
             return name.replace(FREETEXT_LOWERCASE, "").trim();
         } else {
             return name;
+        }
+    }
+
+    private String applyQuestionTextTooltip(String questionText) {
+        if (!applyQuestionTooltips) {
+            return questionText;
+        }
+
+        if (questionText.contains(USUALLY_TEXT)) {
+            return questionText.replace(USUALLY_TEXT, TEMP_TOOLTIP_USUALLY + USUALLY_TEXT + TOOLTIP_END);
+        } else if (questionText.contains(USUALLY_TEXT_LOWERCASE)) {
+            return questionText.replace(USUALLY_TEXT_LOWERCASE, TEMP_TOOLTIP_USUALLY + USUALLY_TEXT_LOWERCASE + TOOLTIP_END);
+        } else {
+            return questionText;
         }
     }
 
