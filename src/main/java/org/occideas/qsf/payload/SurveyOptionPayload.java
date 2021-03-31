@@ -1,8 +1,13 @@
 package org.occideas.qsf.payload;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.BaseQSF;
+import org.occideas.qsf.serializer.AvailableLanguageSerializer;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SurveyOptionPayload extends BaseQSF implements Payload{
@@ -47,6 +52,10 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     private String skin;
     @JsonProperty(value = "NewScoring")
     private int newScoring;
+    @JsonProperty(value = "AvailableLanguages")
+    @JsonSerialize(using = AvailableLanguageSerializer.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private AvailableLanguage availableLanguages;
 
     public SurveyOptionPayload() {
     }
@@ -231,5 +240,13 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
 
     public void setSurveyTitle(String surveyTitle) {
         this.surveyTitle = surveyTitle;
+    }
+
+    public AvailableLanguage getAvailableLanguages() {
+        return availableLanguages;
+    }
+
+    public void setAvailableLanguages(AvailableLanguage availableLanguages) {
+        this.availableLanguages = availableLanguages;
     }
 }

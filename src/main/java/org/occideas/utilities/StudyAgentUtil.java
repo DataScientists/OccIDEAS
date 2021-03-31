@@ -39,6 +39,12 @@ public class StudyAgentUtil {
     @Value("${qualtrics.hide.nodekeys}")
     private boolean hideNodeKeys;
 
+    @Value("${qualtrics.include.translations}")
+    private boolean includeTranslations;
+
+    @Value("${translations.path}")
+    private String translationsPath;
+
     @Autowired
     ServletContext context;
     private Logger log = LogManager.getLogger(this.getClass());
@@ -57,6 +63,7 @@ public class StudyAgentUtil {
     private FlowResult flowResult;
 
     private Map<Long, String> uniqueTranslationModules;
+    private Map<String, Map<String, String>> numberTranslationsMap;
 
     public ModuleVO getStudyAgentJson(String idNode) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -69,9 +76,52 @@ public class StudyAgentUtil {
         return idNodesAllowed != null && !idNodesAllowed.contains(String.valueOf(idNode));
     }
 
+    private boolean hasTranslations(String key) {
+        return numberTranslationsMap != null && numberTranslationsMap.containsKey(key);
+    }
+
+    private List<String> getAvailableLanguages() {
+        if (includeTranslations && numberTranslationsMap != null && !numberTranslationsMap.isEmpty()) {
+            for (Map.Entry<String, Map<String, String>> entry : numberTranslationsMap.entrySet()) {
+                return new ArrayList<>(entry.getValue().keySet());
+            }
+        }
+        return null;
+    }
+
+    private void loadTranslations() {
+        try {
+            List<String[]> extract = CsvUtil.readAll(translationsPath);
+            numberTranslationsMap = new LinkedHashMap<>();
+            String[] labels = extract.get(0);
+            int index = 0;
+            for (String[] data : extract) {
+                if (index > 0) {
+                    Map<String, String> entry = new LinkedHashMap<>();
+                    int dataIndex = 0;
+                    for (String value : data) {
+                        if (dataIndex > 1) { //to exclude EN
+                            entry.put(labels[dataIndex], value);
+                        }
+                        dataIndex++;
+                    }
+                    numberTranslationsMap.put(data[0], entry);
+                }
+                index++;
+            }
+            log.debug("translations: {}", numberTranslationsMap);
+        } catch (Exception e) {
+            log.error("Error encountered while loading questions and answers translations", e);
+        }
+    }
+
     public String buildQSF(ModuleVO moduleVO, boolean filter, boolean translation) {
 
         if ("M_IntroModule".equals(moduleVO.getType())) {
+            if (includeTranslations && !StringUtils.isBlank(translationsPath)) {
+                loadTranslations();
+            }
+
             QSFClient qsfClient = new QSFClient();
             SurveyCreateResult surveyCreateResult = createSurvey(moduleVO, null,
                     translation ? moduleVO.getName() + "_Translation" : null);
@@ -112,6 +162,12 @@ public class StudyAgentUtil {
             final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
             SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
             options.getResult().setBackButton("true");
+
+            List<String> availableLanguages = getAvailableLanguages();
+            if (availableLanguages != null) {
+                options.getResult().setAvailableLanguages(new AvailableLanguage(availableLanguages));
+            }
+
             iqsfClient.updateSurveyOptions(surveyId, options.getResult());
 
             return surveyId;
@@ -198,18 +254,20 @@ public class StudyAgentUtil {
                     String qidStrCount = "QID" + qidCount.incrementAndGet();
                     idNodeQIDMapIntro.put(qVO.getIdNode(), qidStrCount);
                 }
-                String questionTextKey = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - ";
+                String numberKey = node.getName().substring(0, 4) + "_" + qVO.getNumber();
+                String questionTextKey = numberKey + " - ";
                 String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
                 String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
+                List<Language> languages = hasTranslations(numberKey) ? buildLanguages(node.getName(), qVO) : new ArrayList<>();
                 SimpleQuestionPayload payload = null;
                 if (logic == null) {
                     payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                            new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
+                            new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
+                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
                 } else {
                     payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                            new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
+                            new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
+                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
                 }
                 questionPayloads.add(payload);
             }
@@ -339,11 +397,11 @@ public class StudyAgentUtil {
             SimpleQuestionPayload payload = null;
             if (logic == null) {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
                         buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
             } else {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
                         buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
             }
             questionPayloads.add(payload);
@@ -446,6 +504,10 @@ public class StudyAgentUtil {
     }
 
     public String manualBuildQSF(ModuleVO moduleVO, String surveyId,List<String> filter) {
+        if (includeTranslations && !StringUtils.isBlank(translationsPath)) {
+            loadTranslations();
+        }
+
         AtomicInteger qidCount = new AtomicInteger(0);
         idNodeQIDMap = new HashMap<>();
         String blockId = "";
@@ -473,8 +535,13 @@ public class StudyAgentUtil {
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton("true");
-        iqsfClient.updateSurveyOptions(surveyId, options.getResult());
 
+        List<String> availableLanguages = getAvailableLanguages();
+        if (availableLanguages != null) {
+            options.getResult().setAvailableLanguages(new AvailableLanguage(availableLanguages));
+        }
+
+        iqsfClient.updateSurveyOptions(surveyId, options.getResult());
 
         GetBlockElementResult getBlockElementResult = getBlock(surveyId, blockId);
         createPageBreaks(getBlockElementResult);
@@ -611,12 +678,12 @@ public class StudyAgentUtil {
             Object payload = null;
             if (logic == null) {
                 payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
                         buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), -999999,
                         1, qidStrCount, logic));
             } else {
                 payload = buildPayload(new QuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
                         buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), -999999,
                         1, qidStrCount, logic));
             }
@@ -690,18 +757,21 @@ public class StudyAgentUtil {
                 String qidStrCount = "QID" + qidCount.incrementAndGet();
                 idNodeQIDMap.put(qVO.getIdNode(), qidStrCount);
             }
-            String questionTextKey = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - ";
+            String numberKey = node.getName().substring(0, 4) + "_" + qVO.getNumber();
+            String questionTextKey = numberKey + " - ";
             String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
             String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
+
+            List<Language> languages = hasTranslations(numberKey) ? buildLanguages(node.getName(), qVO) : new ArrayList<>();
             SimpleQuestionPayload payload = null;
             if (logic == null) {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
+                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
             } else {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName()),
-                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), new ArrayList<>(), logic);
+                        new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
+                        buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
             }
             questionPayloads.add(payload);
         } else if (qVO.getLink() != 0L) {
@@ -881,17 +951,17 @@ public class StudyAgentUtil {
     }
 
     // choices should be object s of object and not array
-    private List<Choice> buildChoices(QuestionVO qVO, String name) {
+    private List<Choice> buildChoices(QuestionVO qVO, String name, String lang) {
         if (Constant.Q_FREQUENCY.equals(qVO.getType())){
-            return handleFrequency(qVO, name);
+            return handleFrequency(qVO, name, lang);
         }
         if (Constant.Q_SIMPLE.equals(qVO.getType()) || Constant.Q_MULTIPLE.equals(qVO.getType()) || Constant.Q_SINGLE.equals(qVO.getType())){
-            return handlePossibleAnswers(qVO, name);
+            return handlePossibleAnswers(qVO, name, lang);
         }
         return new ArrayList<>();
     }
 
-    private List<Choice> handleFrequency(QuestionVO qVO, String name) {
+    private List<Choice> handleFrequency(QuestionVO qVO, String name, String lang) {
         List<Choice> choiceList = new ArrayList<>();
         if(!qVO.getChildNodes().isEmpty()){
             PossibleAnswerVO answerVO = qVO.getChildNodes().get(0);
@@ -907,7 +977,9 @@ public class StudyAgentUtil {
                         PossibleAnswerVO answer = new PossibleAnswerVO();
                         answer.setNumber(answerVO.getNumber());
                         answer.setName(String.valueOf(i));
-                        choiceList.add(ChoiceFactory.create(answer, name, hideNodeKeys));
+                        String choiceKey = name.substring(0, 4) + "_" + answerVO.getNumber();
+                        String translation = StringUtils.isBlank(lang) ? null : numberTranslationsMap.get(choiceKey).get(lang);
+                        choiceList.add(ChoiceFactory.create(answer, name, hideNodeKeys, translation));
                     }
                 }
             }
@@ -916,10 +988,12 @@ public class StudyAgentUtil {
     }
 
 
-    private List<Choice> handlePossibleAnswers(QuestionVO qVO, String name) {
+    private List<Choice> handlePossibleAnswers(QuestionVO qVO, String name, String lang) {
         List<Choice> choiceList = new ArrayList<>();
         for (PossibleAnswerVO answerVO : qVO.getChildNodes()) {
-            choiceList.add(ChoiceFactory.create(answerVO, name, hideNodeKeys));
+            String choiceKey = name.substring(0, 4) + "_" + answerVO.getNumber();
+            String translation = StringUtils.isBlank(lang) ? null : numberTranslationsMap.get(choiceKey).get(lang);
+            choiceList.add(ChoiceFactory.create(answerVO, name, hideNodeKeys, translation));
         }
         return choiceList;
     }
@@ -943,6 +1017,22 @@ public class StudyAgentUtil {
             payloadList.add(payload);
         }
         return payloadList;
+    }
+
+    private List<Language> buildLanguages(String nodeName, QuestionVO qVO) {
+        //each number will be checked against the translation map to get the translations
+        String numberKey = nodeName.substring(0, 4) + "_" + qVO.getNumber();
+        String questionTextKey = numberKey + " - ";
+        Map<String, String> translations = numberTranslationsMap.get(numberKey);
+        List<Language> languages = new ArrayList<>();
+        translations.forEach((lang, value) -> {
+            String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
+            String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + value;
+            Language language = new Language(lang, questionTxt, buildChoices(qVO, nodeName, lang));
+            languages.add(language);
+        });
+        log.debug("languages={}", languages);
+        return languages;
     }
 
     public boolean isStudyAgentJsonExist(Long idNode) throws IOException {

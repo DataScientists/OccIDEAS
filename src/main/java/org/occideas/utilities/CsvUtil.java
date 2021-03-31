@@ -27,6 +27,11 @@ public class CsvUtil {
     }
 
     public static void main(String[] args) {
+        //readVoxcoResponse();
+        readTranslations();
+    }
+
+    private static void readVoxcoResponse() {
         try {
             System.out.println(new Date(0));
             String csvPath = "/tmp/test-3.csv";
@@ -93,4 +98,31 @@ public class CsvUtil {
         }
     }
 
+    private static void readTranslations() {
+        try {
+            System.out.println(new Date(0));
+            String csvPath = "/tmp/module_translations.csv";
+            List<String[]> extract = readAll(csvPath);
+            Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
+            String[] labels = extract.get(0);
+            int index = 0;
+            for (String[] data : extract) {
+                if (index > 0) {
+                    Map<String, String> entry = new LinkedHashMap<>();
+                    int dataIndex = 0;
+                    for (String value : data) {
+                        if (dataIndex > 0) {
+                            entry.put(labels[dataIndex], value);
+                        }
+                        dataIndex++;
+                    }
+                    formatted.put(data[0], entry);
+                }
+                index++;
+            }
+            System.out.println(formatted);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package org.occideas.qsf;
 
+import org.apache.commons.lang3.StringUtils;
 import org.occideas.entity.Constant;
 import org.occideas.qsf.payload.Choice;
 import org.occideas.vo.PossibleAnswerVO;
@@ -13,8 +14,9 @@ public enum ChoiceFactory {
         public Choice apply(AnswerDecorator answerDecorator) {
             String choiceKey = answerDecorator.getName().substring(0, 4) + "_" + answerDecorator.answerVO.getNumber() + " ";
             String hiddenChoiceKey = Constant.SPAN_START_DISPLAY_NONE + choiceKey + Constant.SPAN_END;
+            String answerText = StringUtils.isBlank(answerDecorator.translation) ? answerDecorator.answerVO.getName() : answerDecorator.translation;
             Choice choice = new Choice((answerDecorator.isHideNodeKeys() ? hiddenChoiceKey : choiceKey) +
-                    answerDecorator.answerVO.getName());
+                    answerText);
             choice.setTextEntry("true");
             return choice;
         }
@@ -23,8 +25,9 @@ public enum ChoiceFactory {
         public Choice apply(AnswerDecorator answerDecorator) {
             String choiceKey = answerDecorator.getName().substring(0, 4) + "_" + answerDecorator.answerVO.getNumber() + " ";
             String hiddenChoiceKey = Constant.SPAN_START_DISPLAY_NONE + choiceKey + Constant.SPAN_END;
+            String answerText = StringUtils.isBlank(answerDecorator.translation) ? answerDecorator.answerVO.getName() : answerDecorator.translation;
             Choice choice = new Choice((answerDecorator.isHideNodeKeys() ? hiddenChoiceKey : choiceKey) +
-                    answerDecorator.answerVO.getName());
+                    answerText);
             choice.setTextEntry("true");
             return choice;
         }
@@ -33,8 +36,9 @@ public enum ChoiceFactory {
         public Choice apply(AnswerDecorator answerDecorator) {
             String choiceKey = answerDecorator.getName().substring(0, 4) + "_" + answerDecorator.answerVO.getNumber() + " ";
             String hiddenChoiceKey = Constant.SPAN_START_DISPLAY_NONE + choiceKey + Constant.SPAN_END;
+            String answerText = StringUtils.isBlank(answerDecorator.translation) ? answerDecorator.answerVO.getName() : answerDecorator.translation;
             Choice choice = new Choice((answerDecorator.isHideNodeKeys() ? hiddenChoiceKey : choiceKey) +
-                    answerDecorator.answerVO.getName());
+                    answerText);
             choice.setTextEntry("true");
             return choice;
         }
@@ -43,8 +47,9 @@ public enum ChoiceFactory {
         public Choice apply(AnswerDecorator answerDecorator) {
             String choiceKey = answerDecorator.getName().substring(0, 4) + "_" + answerDecorator.answerVO.getNumber() + " ";
             String hiddenChoiceKey = Constant.SPAN_START_DISPLAY_NONE + choiceKey + Constant.SPAN_END;
+            String answerText = StringUtils.isBlank(answerDecorator.translation) ? answerDecorator.answerVO.getName() : answerDecorator.translation;
             Choice choice = new Choice((answerDecorator.isHideNodeKeys() ? hiddenChoiceKey : choiceKey) +
-                    answerDecorator.answerVO.getName());
+                    answerText);
             choice.setTextEntry("true");
             return choice;
         }
@@ -53,8 +58,9 @@ public enum ChoiceFactory {
         public Choice apply(AnswerDecorator answerDecorator) {
             String choiceKey = answerDecorator.getName().substring(0, 4) + "_" + answerDecorator.answerVO.getNumber() + " ";
             String hiddenChoiceKey = Constant.SPAN_START_DISPLAY_NONE + choiceKey + Constant.SPAN_END;
+            String answerText = StringUtils.isBlank(answerDecorator.translation) ? answerDecorator.answerVO.getName() : answerDecorator.translation;
             Choice choice = new Choice((answerDecorator.isHideNodeKeys() ? hiddenChoiceKey : choiceKey) +
-                    answerDecorator.answerVO.getName());
+                    answerText);
             return choice;
         }
     });
@@ -63,11 +69,13 @@ public enum ChoiceFactory {
         private PossibleAnswerVO answerVO;
         private String name;
         private boolean hideNodeKeys;
+        private String translation;
 
-        public AnswerDecorator(PossibleAnswerVO answerVO, String name, boolean hideNodeKeys) {
+        public AnswerDecorator(PossibleAnswerVO answerVO, String name, boolean hideNodeKeys, String translation) {
             this.answerVO = answerVO;
             this.name = name;
             this.hideNodeKeys = hideNodeKeys;
+            this.translation = translation;
         }
 
         public PossibleAnswerVO getAnswerVO() {
@@ -103,15 +111,16 @@ public enum ChoiceFactory {
     private String type;
     private Function<AnswerDecorator, Choice> converter;
 
-    public static Choice create(PossibleAnswerVO answerVO,String name, boolean hideNodeKeys){
+    public static Choice create(PossibleAnswerVO answerVO,String name, boolean hideNodeKeys, String translation){
         for(ChoiceFactory choiceFactory:ChoiceFactory.values()){
             if(choiceFactory.type.equals(answerVO.getType())){
-                return choiceFactory.converter.apply(new AnswerDecorator(answerVO,name,hideNodeKeys));
+                return choiceFactory.converter.apply(new AnswerDecorator(answerVO, name, hideNodeKeys, translation));
             }
         }
         String choiceKey = name.substring(0, 4) + "_" + answerVO.getNumber() + " ";
         String hiddenChoiceKey = Constant.SPAN_START_DISPLAY_NONE + choiceKey + Constant.SPAN_END;
-        return new Choice((hideNodeKeys ? hiddenChoiceKey : choiceKey) + answerVO.getName());
+        String answerText = StringUtils.isBlank(translation) ? answerVO.getName() : translation;
+        return new Choice((hideNodeKeys ? hiddenChoiceKey : choiceKey) + answerText);
     }
 
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.BaseQSF;
 import org.occideas.qsf.serializer.ChoicesSerializer;
+import org.occideas.qsf.serializer.LanguageSerializer;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class SimpleQuestionPayload extends BaseQSF implements Payload {
     @JsonProperty(value = "Validation")
     private Validation validation;
     @JsonProperty(value = "Language")
+    @JsonSerialize(using = LanguageSerializer.class)
     private List<Language> languageList;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty(value = "DisplayLogic")
