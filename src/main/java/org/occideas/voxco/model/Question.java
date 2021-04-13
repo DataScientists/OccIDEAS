@@ -14,6 +14,7 @@ public class Question {
     private Type type;
     private QuestionSettings settings;
     private TranslatedTexts translatedTexts;
+    private List<PostAnswerAction> postAnswerActions;
     private List<Variable> variables;
     private String skipLogic;
     private String displayLogic;
@@ -22,7 +23,7 @@ public class Question {
     public Question() {
     }
 
-    public Question(String name, Type type, TranslatedTexts translatedTexts, List<Variable> variables, String displayLogic) {
+    public Question(String name, Type type, TranslatedTexts translatedTexts, List<PostAnswerAction> postAnswerActions, List<Variable> variables, String displayLogic) {
         this.name = name;
         this.type = type;
         this.translatedTexts = translatedTexts;
@@ -31,6 +32,10 @@ public class Question {
 
         if (displayLogic != null && !"".equals(displayLogic.trim())) {
             this.displayLogic = displayLogic;
+        }
+
+        if (postAnswerActions != null && !postAnswerActions.isEmpty()) {
+            this.postAnswerActions = postAnswerActions;
         }
     }
 
@@ -92,6 +97,14 @@ public class Question {
 
     public void setTranslatedTexts(TranslatedTexts translatedTexts) {
         this.translatedTexts = translatedTexts;
+    }
+
+    public List<PostAnswerAction> getPostAnswerActions() {
+        return postAnswerActions;
+    }
+
+    public void setPostAnswerActions(List<PostAnswerAction> postAnswerActions) {
+        this.postAnswerActions = postAnswerActions;
     }
 
     public List<Variable> getVariables() {

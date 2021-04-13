@@ -45,4 +45,7 @@ public class Constant {
 
     public static final String SPAN_START_DISPLAY_NONE = "<span style=\"display:none;\">";
     public static final String SPAN_END = "</span>";
+
+    public static final String DONT_KNOW = "Don't know";
+    public static final String NONE_OF_THE_ABOVE = "None of the above";
 }

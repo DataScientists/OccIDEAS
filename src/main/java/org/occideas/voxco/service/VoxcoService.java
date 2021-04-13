@@ -32,16 +32,7 @@ import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.occideas.voxco.dao.INodeVoxcoDao;
-import org.occideas.voxco.model.Block;
-import org.occideas.voxco.model.Choice;
-import org.occideas.voxco.model.ChoiceSettings;
-import org.occideas.voxco.model.Extraction;
-import org.occideas.voxco.model.Question;
-import org.occideas.voxco.model.Survey;
-import org.occideas.voxco.model.TranslatedTextContent;
-import org.occideas.voxco.model.TranslatedTexts;
-import org.occideas.voxco.model.User;
-import org.occideas.voxco.model.Variable;
+import org.occideas.voxco.model.*;
 import org.occideas.voxco.request.SurveyImportRequest;
 import org.occideas.voxco.response.ExtractionResult;
 import org.occideas.voxco.response.SurveyExtractionsResult;
@@ -104,6 +95,9 @@ public class VoxcoService implements IVoxcoService {
 
     @Value("${voxco.apply.question.tooltips}")
     private boolean applyQuestionTooltips;
+
+    @Value("${voxco.apply.post.answer.action}")
+    private boolean applyPostAnswerAction;
 
     @Autowired
     private INodeVoxcoDao voxcoDao;
@@ -327,12 +321,13 @@ public class VoxcoService implements IVoxcoService {
                         variableName = generateName(type.getVariable(), questionName).toUpperCase();
                     }
 
+                    List<PostAnswerAction> postAnswerActions = buildPostAnswerActions(choices, type, variableName);
                     List<Variable> variables = buildVariables(type, variableName, choices.size());
                     String questionText = applyQuestionTextTooltip(hideNodeKeys ? question.getName() : (question.getName() + "  " + questionName));
                     questions.add(
                             new Question(questionName.toUpperCase(), type,
                                     new TranslatedTexts(new TranslatedTextContent(questionText)),
-                                    variables, displayLogic));
+                                    postAnswerActions, variables, displayLogic));
                     blocks.add(new Block(questionName, questions));
                     choiceId++;
 
@@ -389,6 +384,22 @@ public class VoxcoService implements IVoxcoService {
         } else {
             return questionText;
         }
+    }
+
+    private List<PostAnswerAction> buildPostAnswerActions(List<Choice> choices, Question.Type type, String variableName) {
+        if (!applyPostAnswerAction || !Question.Type.CheckBox.equals(type)) return null;
+
+        List<PostAnswerAction> postAnswerActions = new ArrayList<>();
+        for (Choice choice : choices) {
+            if (choice.getTranslatedTexts() != null && choice.getTranslatedTexts().getText() != null
+                    && (Constant.DONT_KNOW.equalsIgnoreCase(choice.getTranslatedTexts().getText().getEn())
+                        || Constant.NONE_OF_THE_ABOVE.equalsIgnoreCase(choice.getTranslatedTexts().getText().getEn()))) {
+                String condition = LOGIC_BASIC + variableName + LOGIC_EQUAL + choice.getValue();
+                postAnswerActions.add(new PostAnswerAction(
+                        new PostAnswerActionProperty(variableName, choice.getValue()), condition));
+            }
+        }
+        return postAnswerActions;
     }
 
     private List<Variable> buildVariables(Question.Type type, String variableName, int maxMention) {
