@@ -9,24 +9,42 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ChoiceSettings {
 
     @JsonProperty(value = "OpenEndType")
-    private String openEndType = "Right";
+    private String openEndType;
 
     @JsonProperty(value = "OpenEndHeight")
-    private String openEndHeight = "50px";
+    private String openEndHeight;
 
     @JsonProperty(value = "OpenEndWidth")
-    private String openEndWidth = "250px";
+    private String openEndWidth;
 
     @JsonProperty(value = "DisplayOpenEndOnlyWhenSelected")
-    private boolean displayOpenEndOnlyWhenSelected = true;
+    private Boolean displayOpenEndOnlyWhenSelected;
 
     @JsonProperty(value = "EnforceOpenEnd")
-    private boolean enforceOpenEnd = true;
+    private Boolean enforceOpenEnd;
+
     @JsonProperty(value = "OpenEndSize")
-    private String openEndSize = "";
+    private String openEndSize;
 
     @JsonProperty(value = "OpenEndLines")
-    private int openEndLines = 2;
+    private Integer openEndLines;
+
+    @JsonProperty(value = "Exclusive")
+    private Boolean exclusive;
+
+    public ChoiceSettings() {
+        this.openEndType = "Right";
+        this.openEndHeight = "50px";
+        this.openEndWidth = "250px";
+        this.displayOpenEndOnlyWhenSelected = true;
+        this.enforceOpenEnd = true;
+        this.openEndSize = "";
+        this.openEndLines = 2;
+    }
+
+    public ChoiceSettings(Boolean exclusive) {
+        this.exclusive = exclusive;
+    }
 
     public String getOpenEndType() {
         return openEndType;
@@ -52,19 +70,19 @@ public class ChoiceSettings {
         this.openEndWidth = openEndWidth;
     }
 
-    public boolean isDisplayOpenEndOnlyWhenSelected() {
+    public Boolean getDisplayOpenEndOnlyWhenSelected() {
         return displayOpenEndOnlyWhenSelected;
     }
 
-    public void setDisplayOpenEndOnlyWhenSelected(boolean displayOpenEndOnlyWhenSelected) {
+    public void setDisplayOpenEndOnlyWhenSelected(Boolean displayOpenEndOnlyWhenSelected) {
         this.displayOpenEndOnlyWhenSelected = displayOpenEndOnlyWhenSelected;
     }
 
-    public boolean isEnforceOpenEnd() {
+    public Boolean getEnforceOpenEnd() {
         return enforceOpenEnd;
     }
 
-    public void setEnforceOpenEnd(boolean enforceOpenEnd) {
+    public void setEnforceOpenEnd(Boolean enforceOpenEnd) {
         this.enforceOpenEnd = enforceOpenEnd;
     }
 
@@ -76,11 +94,19 @@ public class ChoiceSettings {
         this.openEndSize = openEndSize;
     }
 
-    public int getOpenEndLines() {
+    public Integer getOpenEndLines() {
         return openEndLines;
     }
 
-    public void setOpenEndLines(int openEndLines) {
+    public void setOpenEndLines(Integer openEndLines) {
         this.openEndLines = openEndLines;
+    }
+
+    public Boolean getExclusive() {
+        return exclusive;
+    }
+
+    public void setExclusive(Boolean exclusive) {
+        this.exclusive = exclusive;
     }
 }

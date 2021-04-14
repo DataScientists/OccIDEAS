@@ -99,6 +99,9 @@ public class VoxcoService implements IVoxcoService {
     @Value("${voxco.apply.post.answer.action}")
     private boolean applyPostAnswerAction;
 
+    @Value("${voxco.checkbox.choice.exclusive}")
+    private boolean checkboxChoiceExclusive;
+
     @Autowired
     private INodeVoxcoDao voxcoDao;
 
@@ -300,7 +303,7 @@ public class VoxcoService implements IVoxcoService {
                     Question.Type type = Question.getType(question.getType());
                     if (type == null) continue; //process single, simple and multiple for now
 
-                    List<Choice> choices = buildChoices(nodeKey, question);
+                    List<Choice> choices = buildChoices(nodeKey, question, type);
                     log.trace("idNode={}, choiceLists={}, choiceId={}, choices={}",
                             question.getIdNode(), choiceLists.size(), choiceId, choices.size());
 
@@ -339,7 +342,7 @@ public class VoxcoService implements IVoxcoService {
         }
     }
 
-    private List<Choice> buildChoices(String nodeKey, QuestionVO question) {
+    private List<Choice> buildChoices(String nodeKey, QuestionVO question, Question.Type type) {
         log.trace("building choices for question={}", question.getIdNode());
         List<Choice> choices = new ArrayList<>();
         for(PossibleAnswerVO answer : question.getChildNodes()) {
@@ -353,7 +356,13 @@ public class VoxcoService implements IVoxcoService {
                     choices.add(new Choice(new ChoiceSettings(), value, translatedTexts));
                 } else {
                     TranslatedTexts translatedTexts = new TranslatedTexts(new TranslatedTextContent(answer.getName()));
-                    choices.add(new Choice(value, translatedTexts));
+                    ChoiceSettings choiceSettings = null;
+                    if (checkboxChoiceExclusive && Question.Type.CheckBox.equals(type)
+                            && (Constant.DONT_KNOW.equalsIgnoreCase(translatedTexts.getText().getEn())
+                                || Constant.NONE_OF_THE_ABOVE.equalsIgnoreCase(translatedTexts.getText().getEn()))) {
+                        choiceSettings = new ChoiceSettings(checkboxChoiceExclusive);
+                    }
+                    choices.add(new Choice(choiceSettings, value, translatedTexts));
                 }
             }
         }
