@@ -33,6 +33,7 @@ public class Constant {
     //public static final String REPORT_DOC_DIR = "reportDocDir";
 
     public static final String STUDY_AGENT_SYS_PROP = "studyagent";
+    public static final String VOXCO_TOOLTIPS = "voxco_tooltips";
 
     public static final String NOT_ASSESSED = "Not Assessed";
     public static final String AUTO_ASSESSED = "Auto Assessed";

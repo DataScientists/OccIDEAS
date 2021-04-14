@@ -73,10 +73,8 @@ public class VoxcoService implements IVoxcoService {
     private static final String FREETEXT_LOWERCASE = "[freetext]";
     private static final String FREETEXT = "[Freetext]";
 
-    // temporary definition
-    private static final String USUALLY_TEXT = "Usually";
-    private static final String USUALLY_TEXT_LOWERCASE = " usually";
-    private static final String TEMP_TOOLTIP_USUALLY = "<span title=\"Meaning you do something at least once in a typical working week\"><b>";
+    private static final String TOOLTIP_START = "<span title=\"";
+    private static final String TOOLTIP_MIDDLE = "\"><b>";
     private static final String TOOLTIP_END = "</b></span>";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -148,6 +146,12 @@ public class VoxcoService implements IVoxcoService {
 
     private int resultFetchCounter;
 
+    private Map<String, String> tooltips;
+
+    private String capitalize(String text) {
+        return (text == null || text.isEmpty()) ? text : (text.substring(0, 1).toUpperCase() + text.substring(1));
+    }
+
     private String generateName(String name, String key) {
         return name + "_" + key;
     }
@@ -177,6 +181,8 @@ public class VoxcoService implements IVoxcoService {
     public void exportSurvey(Long id, boolean filter) {
         List<ModuleVO> modules = moduleService.findById(id);
         if (!modules.isEmpty()) {
+            if (applyQuestionTooltips) loadTooltips();
+
             ModuleVO module = modules.get(0);
             List<Survey> surveys = userClient.getUserSurveys().getBody();
             Long surveyId;
@@ -227,6 +233,15 @@ public class VoxcoService implements IVoxcoService {
             log.error("Import response encountered error. ", e);
         }
         log.debug("done importing voxco responses");
+    }
+
+    private void loadTooltips() {
+        tooltips = new HashMap<>();
+        List<SystemPropertyVO> systemConfigTooltips = systemPropertyService.getByType(Constant.VOXCO_TOOLTIPS);
+        if (systemConfigTooltips != null && !systemConfigTooltips.isEmpty()) {
+            systemConfigTooltips.forEach(config -> tooltips.put(config.getName(), config.getValue()));
+        }
+        log.debug("tooltips={}", tooltips);
     }
 
     private Survey getSurveyByName(List<Survey> surveys, String name) {
@@ -382,17 +397,17 @@ public class VoxcoService implements IVoxcoService {
     }
 
     private String applyQuestionTextTooltip(String questionText) {
-        if (!applyQuestionTooltips) {
+        if (!applyQuestionTooltips || tooltips == null || tooltips.isEmpty()) {
             return questionText;
         }
 
-        if (questionText.contains(USUALLY_TEXT)) {
-            return questionText.replace(USUALLY_TEXT, TEMP_TOOLTIP_USUALLY + USUALLY_TEXT + TOOLTIP_END);
-        } else if (questionText.contains(USUALLY_TEXT_LOWERCASE)) {
-            return questionText.replace(USUALLY_TEXT_LOWERCASE, TEMP_TOOLTIP_USUALLY + USUALLY_TEXT_LOWERCASE + TOOLTIP_END);
-        } else {
-            return questionText;
+        for (Map.Entry<String, String> entry : tooltips.entrySet()) {
+            if (questionText.contains(entry.getKey())) {
+                questionText = questionText.replace(entry.getKey(),
+                        TOOLTIP_START + entry.getValue() + TOOLTIP_MIDDLE + entry.getKey() + TOOLTIP_END);
+            }
         }
+        return questionText;
     }
 
     private List<PostAnswerAction> buildPostAnswerActions(List<Choice> choices, Question.Type type, String variableName) {
