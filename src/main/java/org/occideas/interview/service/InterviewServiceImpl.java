@@ -623,4 +623,8 @@ public class InterviewServiceImpl implements InterviewService {
     interviewQuestionDao.preloadAllModules();
   }
 
+  @Override
+  public SystemPropertyVO preloadFilterStudyAgent(Long idNode) {
+    return interviewQuestionDao.preloadFilterStudyAgent(idNode);
+  }
 }

@@ -75,4 +75,6 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   void cleanDeletedAnswers(Long id);
 
+  SystemPropertyVO preloadFilterStudyAgent(Long idNode);
+
 }

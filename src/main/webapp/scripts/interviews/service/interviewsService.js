@@ -27,6 +27,16 @@
       return request.then(handleSuccess, handleError);
     }
 
+    function preloadFilterStudyAgent(idNode) {
+      var restUrl = 'web/rest/interview/preloadFilterStudyAgent?idNode=' + idNode;
+
+      var request = $http({
+        method: 'GET',
+        url: restUrl
+      });
+      return request.then(handleSuccess, handleError);
+    }
+
     function preloadAllModules(data) {
       var restUrl = 'web/rest/interview/preloadAllModules';
 
@@ -693,7 +703,8 @@
       preloadActiveIntro: preloadActiveIntro,
       preloadAllModules: preloadAllModules,
       getInterviewQuestionsByNodeIdAndIntId: getInterviewQuestionsByNodeIdAndIntId,
-      exportInterviewRules: exportInterviewRules
+      exportInterviewRules: exportInterviewRules,
+      preloadFilterStudyAgent: preloadFilterStudyAgent
     };
   }
 })();

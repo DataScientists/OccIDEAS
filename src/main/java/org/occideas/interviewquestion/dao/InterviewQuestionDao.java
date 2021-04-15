@@ -178,6 +178,20 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     return filterStudyAgentFlag;
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Override
+  public SystemPropertyVO preloadFilterStudyAgent(Long idNode) {
+    SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
+    if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
+        Node node = moduleDao.getNodeById(idNode);
+        System.out.println("generateCSVForChildAJSMandModule Started idNode=" + idNode);
+        links.add(idNode);
+        generateCSVForChildAJSMandModule(node);
+        System.out.println("generateCSVForChildAJSMandModule Ended idNode=" + idNode);
+    }
+    return filterStudyAgentFlag;
+  }
+
   /*==============================================================================================*/
   /* @author: TD */
   /*==============================================================================================*/

@@ -220,6 +220,23 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   }
 
   @GET
+  @Path(value = "/preloadFilterStudyAgent")
+  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+  public Response preloadFilterStudyAgent(@QueryParam("idNode") Long idNode) {
+    try {
+      SystemPropertyVO systemPropertyVO = service.preloadFilterStudyAgent(idNode);
+      if (systemPropertyVO == null || systemPropertyVO.getValue().toLowerCase().trim().equals("false")) {
+        log.error("You should set filterStudyAgent as true");
+        return Response.status(Status.BAD_REQUEST).type("text/plain").entity("You should set filterStudyAgent as true in admin config").build();
+      }
+    } catch (Throwable e) {
+      e.printStackTrace();
+      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+    }
+    return Response.ok().build();
+  }
+
+  @GET
   @Path(value = "/preloadAllModules")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response preloadAllModules() {

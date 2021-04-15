@@ -1771,34 +1771,51 @@
         }
         ], null, // Divider
         ['Export to Word', function($itemScope) {
-          var newUrl = '';
-          if(confirm('Should we filter it by study agent?Ok for Yes and Cancel to run without filter.')) {
-            newUrl = 'web/rest/module/exportToWord?idNode=' + data[0].idNode + '&filterStudyAgent=true';
-          } else {
-            newUrl = 'web/rest/module/exportToWord?idNode=' + data[0].idNode + '&filterStudyAgent=false';
-          }
-          $http({
-            method: 'GET',
-            cache: false,
-            url: newUrl,
-            data: data[0].idNode,
-            responseType: 'arraybuffer',
-            headers: {
-//					    'Authorization': "Bearer " + $rootScope.userInfo.access_token,
-              'Access-Control-Allow-Origin': '*'
-            }
-          }).then(function(data) {
-            var octetStreamMime = 'application/octet-stream';
-            var success = false;
-
-            // Get the headers
-            var headers = data.headers();
-            var blob = new Blob([data.data], {type: 'application/octet-stream'});
-            var link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = data.config.data + ".docx";
-            link.click();
+          $mdDialog.show({
+            scope: $itemScope,
+            preserveScope: true,
+            templateUrl: 'scripts/questions/partials/exportWordDialog.html',
+            clickOutsideToClose: false
           });
+
+          $itemScope.triggerExport = ($modelValue) => {
+            $mdDialog.cancel();
+            $itemScope.download($modelValue.idNode, false);
+          };
+
+          $itemScope.triggerExportStudyAgent = ($modelValue) => {
+            $mdDialog.cancel();
+            InterviewsService.preloadFilterStudyAgent($modelValue.idNode).then(function(response){
+                if (response.status === 200) {
+                    $itemScope.download($modelValue.idNode, true);
+                }
+            });
+          };
+
+          $itemScope.download = (idNode, filter) => {
+              $http({
+                method: 'GET',
+                cache: false,
+                url: 'web/rest/module/exportToWord?idNode=' + idNode + '&filterStudyAgent=' + filter,
+                data: idNode,
+                responseType: 'arraybuffer',
+                headers: {
+                  //'Authorization': "Bearer " + $rootScope.userInfo.access_token,
+                  'Access-Control-Allow-Origin': '*'
+                }
+              }).then(function(data) {
+                var octetStreamMime = 'application/octet-stream';
+                var success = false;
+
+                // Get the headers
+                var headers = data.headers();
+                var blob = new Blob([data.data], {type: 'application/octet-stream'});
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = data.config.data + ".docx";
+                link.click();
+              });
+          };
 
 //				  QuestionsService.exportToWord(data[0]).then(function(response){
 //						if(response.status === 200){

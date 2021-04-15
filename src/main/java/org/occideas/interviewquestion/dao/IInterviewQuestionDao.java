@@ -65,4 +65,6 @@ public interface IInterviewQuestionDao {
   void deleteAll();
 
   Boolean checkIfStudyAgentPreLoaded();
+
+  SystemPropertyVO preloadFilterStudyAgent(Long idNode);
 }
