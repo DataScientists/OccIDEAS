@@ -285,7 +285,7 @@ public class VoxcoService implements IVoxcoService {
         }
 
         buildBlocksAndChoices(getNodeKey(module.getName()), module.getChildNodes(), blocks, choiceLists,
-                filteredIdNodes, null, null, null, false);
+                filteredIdNodes, null, null, null);
         SurveyImportRequest importSurvey = new SurveyImportRequest(survey.getName(), completedActionRedirectUrl, blocks, choiceLists);
         ResponseEntity<SurveyImportResult> response = surveyClient.importSurveyAsJson(importSurvey, survey.getId());
         if (HttpStatus.OK.equals(response.getStatusCode())) {
@@ -294,9 +294,9 @@ public class VoxcoService implements IVoxcoService {
     }
 
     private void buildBlocksAndChoices(String nodeKey, List<QuestionVO> nodeQuestions, List<Block> blocks, List<List<Choice>> choiceLists,
-                                       List<String> filteredIdNodes, String parentVariableName, String parentAnswer, String parentNumber, boolean linked) {
+                                       List<String> filteredIdNodes, String parentVariableName, String parentAnswer, String parentNumber) {
         for (QuestionVO question : nodeQuestions) {
-            if (!linked && filteredIdNodes != null && !filteredIdNodes.contains(String.valueOf(question.getIdNode()))) {
+            if (filteredIdNodes != null && !filteredIdNodes.contains(String.valueOf(question.getIdNode()))) {
                 log.warn("idNode {} is excluded", question.getIdNode());
                 continue;
             }
@@ -310,8 +310,9 @@ public class VoxcoService implements IVoxcoService {
                 if (Constant.Q_LINKEDAJSM.equals(question.getType()) && question.getLink() != 0L) {
                     NodeVO linkModule = nodeService.getNode(question.getLink());
                     if ("F".equals(linkModule.getNodeclass())) {
+                        List<String> linkedFilteredIdNodes = moduleService.getFilterStudyAgent(question.getLink());
                         buildBlocksAndChoices(getNodeKey(linkModule.getName()), ((FragmentVO) linkModule).getChildNodes(),
-                                blocks, choiceLists, filteredIdNodes, parentVariableName, parentAnswer, question.getNumber(), true);
+                                blocks, choiceLists, linkedFilteredIdNodes, parentVariableName, parentAnswer, question.getNumber());
                     }
                 } else {
                     List<Question> questions = new ArrayList<>();
@@ -351,7 +352,7 @@ public class VoxcoService implements IVoxcoService {
 
                     //build blocks for child questions
                     buildChildBlocksAndChoices(nodeKey, blocks, choiceLists, filteredIdNodes,
-                            question.getChildNodes(), variableName, parentNumber, linked);
+                            question.getChildNodes(), variableName, parentNumber);
                 }
             }
         }
@@ -437,12 +438,12 @@ public class VoxcoService implements IVoxcoService {
     }
 
     private void buildChildBlocksAndChoices(String nodeKey, List<Block> blocks, List<List<Choice>> choiceLists, List<String> filteredIdNodes,
-                                            List<PossibleAnswerVO> answers, String variableName, String parentNumber, boolean linked) {
+                                            List<PossibleAnswerVO> answers, String variableName, String parentNumber) {
         for (PossibleAnswerVO answer : answers) {
             if (answer.getDeleted() == 0 && "P".equals(answer.getNodeclass())
                     && answer.getChildNodes() != null && !answer.getChildNodes().isEmpty()) {
                 buildBlocksAndChoices(nodeKey, answer.getChildNodes(), blocks, choiceLists, filteredIdNodes,
-                        variableName, generateName(nodeKey, answer.getNumber()), parentNumber, linked);
+                        variableName, generateName(nodeKey, answer.getNumber()), parentNumber);
 
             }
         }
