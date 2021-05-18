@@ -75,6 +75,12 @@ public class VoxcoUserClient implements IVoxcoClient<User, Long> {
     }
 
     @Override
+    public ResponseEntity<byte[]> downloadSurveyById(Long aLong) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
     public ResponseEntity<List<Survey>> getUserSurveys() {
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl + BASE_ENDPOINT)
                 .path("/user/surveys");

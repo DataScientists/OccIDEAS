@@ -102,6 +102,12 @@ public class VoxcoResultClient implements IVoxcoClient<Extraction, Long> {
     }
 
     @Override
+    public ResponseEntity<byte[]> downloadSurveyById(Long aLong) {
+        log.warn("Method not supported");
+        return null;
+    }
+
+    @Override
     public ResponseEntity<List<Survey>> getUserSurveys() {
         log.warn("Method not supported");
         return null;

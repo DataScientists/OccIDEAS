@@ -112,6 +112,22 @@ public class VoxcoSurveyClient implements IVoxcoClient<Survey, Long> {
     }
 
     @Override
+    public ResponseEntity<byte[]> downloadSurveyById(Long surveyId) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(baseUrl + BASE_ENDPOINT)
+                .path("/export/json/")
+                .path(String.valueOf(surveyId))
+                .queryParam("deployed", true);
+        try {
+            return restTemplate.exchange(builder.build().toUri(), HttpMethod.GET,
+                    new HttpEntity<>(getHeaders()), byte[].class);
+        } catch (final HttpClientErrorException e) {
+            log.error("Unable to download survey. surveyId={}. cause=",
+                    surveyId, e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
     public ResponseEntity<List<Survey>> getUserSurveys() {
         log.warn("Method not supported");
         return null;

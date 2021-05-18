@@ -129,6 +129,19 @@ public class AdminRestController {
         return Response.ok().build();
     }
 
+    @GET
+    @Path(value = "/validateVoxcoQuestions")
+    public Response validateVoxcoQuestions() {
+        List<NodeVoxcoVO> active = new ArrayList<>();
+        try {
+            active = iVoxcoService.validateVoxcoQuestions();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok(active).build();
+    }
+
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)

@@ -27,6 +27,8 @@ public interface IVoxcoClient<T, ID> {
 
     ResponseEntity<SurveyImportResult> importSurveyAsJson(SurveyImportRequest request, ID id);
 
+    ResponseEntity<byte[]> downloadSurveyById(ID id);
+
     ResponseEntity<List<Survey>> getUserSurveys();
 
     ResponseEntity<SurveyExtractionsResult> getSurveyExtractions(Long surveyId);

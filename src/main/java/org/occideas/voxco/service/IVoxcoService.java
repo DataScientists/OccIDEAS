@@ -1,5 +1,9 @@
 package org.occideas.voxco.service;
 
+import org.occideas.vo.NodeVoxcoVO;
+
+import java.util.List;
+
 public interface IVoxcoService {
 
     void exportSurvey(Long id);
@@ -9,5 +13,7 @@ public interface IVoxcoService {
     void exportAllToVoxco();
 
     void importVoxcoResponse(boolean recreateExtractions);
+
+    List<NodeVoxcoVO> validateVoxcoQuestions();
 }
 

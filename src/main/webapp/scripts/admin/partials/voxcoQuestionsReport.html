@@ -1,0 +1,37 @@
+<md-dialog aria-label="Voxco Questions Report">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Voxco Questions Report</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancel()"><span
+                    aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-dialog-content">
+            <div>
+                <table ng-cloak class="table table-bordered table-hover table-condensed editable-table">
+                    <thead>
+                        <th>Voxco Survey Id</th>
+                        <th>Survey Name</th>
+                        <th>Study Agent Count</th>
+                        <th>Imported Questions Count</th>
+                        <th>Voxco Questions Count</th>
+                    </thead>
+                    <tr ng-repeat="survey in vm.voxcoSurveys">
+                        <td title="'Survey Id'">
+                            {{survey.surveyId}}</td>
+                        <td title="'Survey Name'">
+                            {{survey.surveyName}}</td>
+                        <td title="'Study Agent Count'">
+                            {{survey.importFilterCount}}</td>
+                        <td title="'Imported Questions Count'">
+                            {{survey.importQuestionCount}}</td>
+                        <td title="'Voxco Questions Count'">
+                            {{survey.voxcoQuestionCount}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </md-dialog-content>
+</md-dialog>

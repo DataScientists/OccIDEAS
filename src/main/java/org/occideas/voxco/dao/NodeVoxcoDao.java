@@ -39,14 +39,18 @@ public class NodeVoxcoDao implements INodeVoxcoDao {
 
         surveys.forEach(survey -> {
             update(survey.getSurveyId(), survey.getIdNode(), survey.getExtractionId(), survey.getExtractionStatus(),
-                    survey.getFileId(), survey.getExtractionStart(), survey.getExtractionEnd(), survey.getResultPath());
+                    survey.getFileId(), survey.getExtractionStart(), survey.getExtractionEnd(), survey.getResultPath(),
+                    survey.getImportFilterCount(), survey.getImportQuestionCount(), survey.getVoxcoQuestionCount(),
+                    survey.getLastValidated());
         });
         sessionFactory.getCurrentSession().flush();
     }
 
     @Override
     public void update(long surveyId, long idNode, Long extractionId, String extractionStatus,
-                       Long fileId, Date extractionStart, Date extractionEnd, String resultPath) {
+                       Long fileId, Date extractionStart, Date extractionEnd, String resultPath,
+                       Integer importFilterCount, Integer importQuestionCount, Integer voxcoQuestionCount,
+                       Date lastValidated) {
         CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
         CriteriaUpdate<NodeVoxco> criteriaUpdate = builder.createCriteriaUpdate(NodeVoxco.class);
         Root<NodeVoxco> root = criteriaUpdate.from(NodeVoxco.class);
@@ -73,6 +77,22 @@ public class NodeVoxcoDao implements INodeVoxcoDao {
 
         if (resultPath != null && !StringUtils.EMPTY.equals(resultPath)) {
             criteriaUpdate.set(root.get("resultPath"), resultPath);
+        }
+
+        if (importFilterCount != null && importFilterCount > 0L) {
+            criteriaUpdate.set(root.get("importFilterCount"), importFilterCount);
+        }
+
+        if (importQuestionCount != null && importQuestionCount > 0L) {
+            criteriaUpdate.set(root.get("importQuestionCount"), importQuestionCount);
+        }
+
+        if (voxcoQuestionCount != null && voxcoQuestionCount > 0L) {
+            criteriaUpdate.set(root.get("voxcoQuestionCount"), voxcoQuestionCount);
+        }
+
+        if (lastValidated != null) {
+            criteriaUpdate.set(root.get("lastValidated"), lastValidated);
         }
 
         criteriaUpdate.where(builder.and(

@@ -165,6 +165,14 @@
       });
     }
 
+    var validateVoxcoQuestions = function(){
+      return $http.get(adminEndpoint + '/validateVoxcoQuestions', {
+        cache: false
+      }).then(function(response) {
+        return response;
+      });
+    }
+
     var createQSFTranslationModule = function() {
         return $http.get(adminEndpoint + '/createQSFTranslationModule', {
             cache: false
@@ -202,6 +210,7 @@
       copySurveys: copySurveys,
       exportAllToVoxco: exportAllToVoxco,
       importVoxcoResponse: importVoxcoResponse,
+      validateVoxcoQuestions: validateVoxcoQuestions,
       createQSFTranslationModule: createQSFTranslationModule
     };
   }

@@ -215,6 +215,28 @@
           });
         };
 
+    self.validateVoxcoQuestions = function() {
+        AdminService.validateVoxcoQuestions().then(function(response){
+            if (response.status == '200') {
+                self.voxcoSurveys = response.data;
+                $mdDialog.show({
+                    scope: $scope,
+                    preserveScope: true,
+                    templateUrl: 'scripts/admin/partials/voxcoQuestionsReport.html',
+                    clickOutsideToClose: false
+                });
+            } else {
+              $ngToast.create({
+                className: 'danger',
+                content: 'Voxoc Questions Validation failed, check the logs.',
+                dismissButton: true,
+                dismissOnClick: false,
+                animation: 'slide'
+              });
+            }
+        });
+    };
+
     self.purgeParticipantsBtn = function() {
         $mdDialog.show({
             scope: $scope,

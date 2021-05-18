@@ -13,6 +13,7 @@ import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
+import org.occideas.mapper.NodeVoxcoMapper;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
 import org.occideas.participant.service.ParticipantService;
@@ -27,6 +28,7 @@ import org.occideas.vo.InterviewQuestionVO;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
+import org.occideas.vo.NodeVoxcoVO;
 import org.occideas.vo.ParticipantVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
@@ -35,6 +37,7 @@ import org.occideas.voxco.dao.INodeVoxcoDao;
 import org.occideas.voxco.model.*;
 import org.occideas.voxco.request.SurveyImportRequest;
 import org.occideas.voxco.response.ExtractionResult;
+import org.occideas.voxco.response.SurveyExportResponse;
 import org.occideas.voxco.response.SurveyExtractionsResult;
 import org.occideas.voxco.response.SurveyImportResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +58,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -102,6 +107,9 @@ public class VoxcoService implements IVoxcoService {
 
     @Autowired
     private INodeVoxcoDao voxcoDao;
+
+    @Autowired
+    private NodeVoxcoMapper voxcoMapper;
 
     @Autowired
     private ModuleService moduleService;
@@ -147,6 +155,8 @@ public class VoxcoService implements IVoxcoService {
     private int resultFetchCounter;
 
     private Map<String, String> tooltips;
+
+    private Set<String> filterIds;
 
     private String capitalize(String text) {
         return (text == null || text.isEmpty()) ? text : (text.substring(0, 1).toUpperCase() + text.substring(1));
@@ -235,6 +245,13 @@ public class VoxcoService implements IVoxcoService {
         log.debug("done importing voxco responses");
     }
 
+    @Override
+    @Transactional
+    public List<NodeVoxcoVO> validateVoxcoQuestions() {
+        List<NodeVoxcoVO> surveys = voxcoMapper.convertToNodeVoxcoVOList(validateQuestions());
+        return surveys;
+    }
+
     private void loadTooltips() {
         tooltips = new HashMap<>();
         List<SystemPropertyVO> systemConfigTooltips = systemPropertyService.getByType(Constant.VOXCO_TOOLTIPS);
@@ -277,11 +294,12 @@ public class VoxcoService implements IVoxcoService {
         List<Block> blocks = new ArrayList<>();
         List<List<Choice>> choiceLists = new LinkedList<>();
         choiceId = 0;
-
+        filterIds = new HashSet<>();
         List<String> filteredIdNodes = null;
         if (filter) {
             filteredIdNodes = moduleService.getFilterStudyAgent(module.getIdNode());
             log.debug("Allowed idNodes={}", filteredIdNodes);
+            filterIds.addAll(filteredIdNodes);
         }
 
         buildBlocksAndChoices(getNodeKey(module.getName()), module.getChildNodes(), blocks, choiceLists,
@@ -290,6 +308,15 @@ public class VoxcoService implements IVoxcoService {
         ResponseEntity<SurveyImportResult> response = surveyClient.importSurveyAsJson(importSurvey, survey.getId());
         if (HttpStatus.OK.equals(response.getStatusCode())) {
             log.info("import successful for idNode={} surveyId={}", module.getIdNode(), survey.getId());
+            Set<String> filteredQuestions = new HashSet<>();
+            filterIds.stream().forEach(id -> {
+                NodeVO node = nodeService.getNode(Long.valueOf(id));
+                if (node != null && !Constant.Q_LINKEDAJSM.equals(node.getType()) && "Q".equals(node.getNodeclass())) {
+                    filteredQuestions.add(id);
+                }
+            });
+            voxcoDao.update(survey.getId(), module.getIdNode(), null, null, null, null, null, null,
+                    filteredQuestions.size(), blocks.size(), null, null);
         }
     }
 
@@ -311,6 +338,7 @@ public class VoxcoService implements IVoxcoService {
                     NodeVO linkModule = nodeService.getNode(question.getLink());
                     if ("F".equals(linkModule.getNodeclass())) {
                         List<String> linkedFilteredIdNodes = moduleService.getFilterStudyAgent(question.getLink());
+                        filterIds.addAll(linkedFilteredIdNodes);
                         buildBlocksAndChoices(getNodeKey(linkModule.getName()), ((FragmentVO) linkModule).getChildNodes(),
                                 blocks, choiceLists, linkedFilteredIdNodes, parentVariableName, parentAnswer, question.getNumber());
                     }
@@ -896,6 +924,26 @@ public class VoxcoService implements IVoxcoService {
         interviewQuestion.setTopNodeId(node.getIdNode());
         interviewQuestion.setType("M_IntroModule");
         return interviewQuestionService.updateIntQ(interviewQuestion);
+    }
+
+    private List<NodeVoxco> validateQuestions() {
+        List<NodeVoxco> surveys = voxcoDao.getAllActive();
+        if (CollectionUtils.isEmpty(surveys)) return null;
+
+        surveys.stream().forEach(survey -> {
+            ResponseEntity<byte[]> response = surveyClient.downloadSurveyById(survey.getSurveyId());
+            if (HttpStatus.OK.equals(response.getStatusCode())) {
+                try {
+                    SurveyExportResponse data = objectMapper.readValue(response.getBody(), SurveyExportResponse.class);
+                    survey.setVoxcoQuestionCount(data.getBlocks().size());
+                    survey.setLastValidated(new Date());
+                } catch (IOException io) {
+                    log.error("Unable to read response for surveyId={}, cause={}", survey.getSurveyId(), io.getMessage());
+                }
+            }
+        });
+        voxcoDao.updateAll(surveys);
+        return surveys;
     }
 
 }

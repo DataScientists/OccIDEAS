@@ -26,6 +26,11 @@ public class NodeVoxco implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date extractionEnd;
     private String resultPath;
+    private Integer importFilterCount;
+    private Integer importQuestionCount;
+    private Integer voxcoQuestionCount;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastValidated;
 
     public NodeVoxco() {
     }
@@ -122,5 +127,37 @@ public class NodeVoxco implements Serializable {
 
     public void setResultPath(String resultPath) {
         this.resultPath = resultPath;
+    }
+
+    public Integer getImportFilterCount() {
+        return importFilterCount;
+    }
+
+    public void setImportFilterCount(Integer importFilterCount) {
+        this.importFilterCount = importFilterCount;
+    }
+
+    public Integer getImportQuestionCount() {
+        return importQuestionCount;
+    }
+
+    public void setImportQuestionCount(Integer importQuestionCount) {
+        this.importQuestionCount = importQuestionCount;
+    }
+
+    public Integer getVoxcoQuestionCount() {
+        return voxcoQuestionCount;
+    }
+
+    public void setVoxcoQuestionCount(Integer voxcoQuestionCount) {
+        this.voxcoQuestionCount = voxcoQuestionCount;
+    }
+
+    public Date getLastValidated() {
+        return lastValidated;
+    }
+
+    public void setLastValidated(Date lastValidated) {
+        this.lastValidated = lastValidated;
     }
 }

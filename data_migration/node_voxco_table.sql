@@ -14,3 +14,8 @@ CREATE TABLE `node_voxco` (
 	PRIMARY KEY (surveyId),
 	CONSTRAINT `FK_NVXCO_NODE` FOREIGN KEY (`idNode`) REFERENCES `Node` (`idNode`)
 );
+
+ALTER TABLE `node_voxco` ADD `importFilterCount` bigint(10) NULL;
+ALTER TABLE `node_voxco` ADD `importQuestionCount` bigint(10) NULL;
+ALTER TABLE `node_voxco` ADD `voxcoQuestionCount` bigint(10) NULL;
+ALTER TABLE `node_voxco` ADD `lastValidated` timestamp NULL;

@@ -12,7 +12,9 @@ public interface INodeVoxcoDao {
     void updateAll(List<NodeVoxco> surveys);
 
     void update(long surveyId, long idNode, Long extractionId, String extractionStatus,
-                Long fileId, Date extractionStart, Date extractionEnd, String resultPath);
+                Long fileId, Date extractionStart, Date extractionEnd, String resultPath,
+                Integer importFilterCount, Integer importQuestionCount, Integer voxcoQuestionCount,
+                Date lastValidated);
 
     Long getMaxSurveyId();
 
