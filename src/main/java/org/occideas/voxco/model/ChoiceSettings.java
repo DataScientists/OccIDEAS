@@ -32,6 +32,9 @@ public class ChoiceSettings {
     @JsonProperty(value = "Exclusive")
     private Boolean exclusive;
 
+    @JsonProperty(value = "Visible")
+    private Boolean visible;
+
     public ChoiceSettings() {
         this.openEndType = "Right";
         this.openEndHeight = "50px";
@@ -44,6 +47,11 @@ public class ChoiceSettings {
 
     public ChoiceSettings(Boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public ChoiceSettings(Boolean exclusive, Boolean visible) {
+        this.exclusive = exclusive;
+        this.visible = visible;
     }
 
     public String getOpenEndType() {
@@ -108,5 +116,13 @@ public class ChoiceSettings {
 
     public void setExclusive(Boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public Boolean getVisible() {
+        return visible;
+    }
+
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
     }
 }

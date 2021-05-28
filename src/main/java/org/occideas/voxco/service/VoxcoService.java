@@ -359,6 +359,12 @@ public class VoxcoService implements IVoxcoService {
                         displayLogic = LOGIC_BASIC + parentVariableName + LOGIC_EQUAL + parentAnswer;
                     }
 
+                    // issue_8293 workaround
+                    if (Question.Type.RadioButton == type && question.getChildNodes().size() == 1
+                            && "P_freetext".equals(question.getChildNodes().get(0).getType())) {
+                        type = Question.Type.CheckBox;
+                    }
+
                     String questionName = generateName(nodeKey, question.getNumber());
                     String variableName = generateName(type.getVariable(), questionName).toUpperCase();
                     String number = question.getNumber();
@@ -389,6 +395,7 @@ public class VoxcoService implements IVoxcoService {
     private List<Choice> buildChoices(String nodeKey, QuestionVO question, Question.Type type) {
         log.trace("building choices for question={}", question.getIdNode());
         List<Choice> choices = new ArrayList<>();
+        int possibleAnswerCount = question.getChildNodes().size();
         for(PossibleAnswerVO answer : question.getChildNodes()) {
             if (answer.getDeleted() != 0) continue;
 
@@ -398,6 +405,11 @@ public class VoxcoService implements IVoxcoService {
                     String freetextName = cleanFreeText(answer.getName());
                     TranslatedTexts translatedTexts = new TranslatedTexts(new TranslatedTextContent(freetextName));
                     choices.add(new Choice(new ChoiceSettings(), value, translatedTexts));
+                    // issue_8293 workaround
+                    if (Question.Type.RadioButton == type && possibleAnswerCount == 1) {
+                        choices.add(new Choice(new ChoiceSettings(false, false), "ISSUE_8293",
+                                new TranslatedTexts(new TranslatedTextContent("ISSUE_8293"))));
+                    }
                 } else {
                     TranslatedTexts translatedTexts = new TranslatedTexts(new TranslatedTextContent(answer.getName()));
                     ChoiceSettings choiceSettings = null;
@@ -689,13 +701,13 @@ public class VoxcoService implements IVoxcoService {
                                                     uniqueModules.put(fragmentIUniqueKey, null);
                                                 }
                                                 createInterviewQuestionsAndAnswers(fragment.getIdNode(), interview.getInterviewId(),
-                                                        qNumber, aNumber, qCounter, freetext);
+                                                        qNumber, aNumber, qCounter, freetext, qType);
                                             }
                                         }
                                     } else if (actualVariable.length == 3 && responseNodeKey.equals(moduleKey)) {
                                         String qNumber = actualVariable[2];
                                         createInterviewQuestionsAndAnswers(module.getIdNode(), interview.getInterviewId(),
-                                                qNumber, aNumber, qCounter, freetext);
+                                                qNumber, aNumber, qCounter, freetext, qType);
                                     }
                                 }
                             }
@@ -775,7 +787,7 @@ public class VoxcoService implements IVoxcoService {
     }
 
     private void createInterviewQuestionsAndAnswers(long idNode, long interviewId, String qNumber, String aNumber,
-                                                    AtomicInteger qCounter, String freetext) {
+                                                    AtomicInteger qCounter, String freetext, String qType) {
         QuestionVO nodeQuestion = questionService.getQuestionByTopIdAndNumber(idNode, qNumber);
         if (nodeQuestion != null) {
             String questionIUniqueKey = getInterviewUniqueKey(nodeQuestion.getIdNode(), interviewId);
@@ -787,6 +799,12 @@ public class VoxcoService implements IVoxcoService {
             PossibleAnswerVO nodeAnswer = null;
             try {
                 if (Constant.Q_MULTIPLE.equals(nodeQuestion.getType())) {
+                    int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
+                    List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
+                    nodeAnswer = possibleAnswers.get(answerIndex);
+                // issue_8293 workaround
+                } else if ((Constant.Q_SINGLE.equals(nodeQuestion.getType()) || Constant.Q_SIMPLE.equals(nodeQuestion.getType()))
+                    && "CHECK".equals(qType)) {
                     int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
                     List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
                     nodeAnswer = possibleAnswers.get(answerIndex);
