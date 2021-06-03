@@ -84,7 +84,8 @@ public class ParticipantDao implements IParticipantDao {
   public Participant getByReferenceNumber(String referenceNumber) {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Participant.class)
-      .add(Restrictions.eq("reference", referenceNumber));
+      .add(Restrictions.eq("reference", referenceNumber))
+      .add(Restrictions.eq("deleted", 0));
     if (crit.list() != null && !crit.list().isEmpty()) {
       return (Participant) crit.list().get(0);
     }

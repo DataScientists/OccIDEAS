@@ -422,7 +422,10 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     final Criteria crit = session.createCriteria(InterviewQuestion.class);
     crit.add(Restrictions.eq("idInterview", idInterview));
     crit.add(Restrictions.eq("parentAnswerId", idAnswer));
-    return crit.list();
+    session.clear();
+    List<InterviewQuestion> iqs = crit.list();
+    
+    return iqs;
   }
 
   @Override
