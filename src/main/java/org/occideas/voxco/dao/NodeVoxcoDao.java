@@ -1,6 +1,8 @@
 package org.occideas.voxco.dao;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.occideas.entity.NodeVoxco;
@@ -47,11 +49,18 @@ public class NodeVoxcoDao implements INodeVoxcoDao {
     }
 
     @Override
+    @Transactional
     public void update(long surveyId, long idNode, Long extractionId, String extractionStatus,
                        Long fileId, Date extractionStart, Date extractionEnd, String resultPath,
                        Integer importFilterCount, Integer importQuestionCount, Integer voxcoQuestionCount,
                        Date lastValidated) {
-        CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+    	Session session;
+    	try {
+    	    session = sessionFactory.getCurrentSession();
+    	} catch (HibernateException e) {
+    	    session = sessionFactory.openSession();
+    	}
+        CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaUpdate<NodeVoxco> criteriaUpdate = builder.createCriteriaUpdate(NodeVoxco.class);
         Root<NodeVoxco> root = criteriaUpdate.from(NodeVoxco.class);
 
@@ -100,7 +109,7 @@ public class NodeVoxcoDao implements INodeVoxcoDao {
                 builder.equal(root.get("surveyId"), surveyId),
                 builder.equal(root.get("idNode"), idNode)
         ));
-        sessionFactory.getCurrentSession().createQuery(criteriaUpdate).executeUpdate();
+        session.createQuery(criteriaUpdate).executeUpdate();
     }
 
     @Override
