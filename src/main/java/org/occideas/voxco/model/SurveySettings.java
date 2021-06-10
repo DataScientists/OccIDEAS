@@ -48,10 +48,10 @@ public class SurveySettings {
     private boolean allowBackwardJumps = true;
 
     @JsonProperty(value = "AUTO_DATA_CLEANING")
-    private boolean autoDataCleaning;
+    private boolean autoDataCleaning = true;
 
     @JsonProperty(value = "CLEAN_QUESTION_PRELOAD")
-    private boolean cleanQuestionPreload;
+    private boolean cleanQuestionPreload = true;
 
     @JsonProperty(value = "ALLOW_OPEN_END_LOWER_CASE")
     private boolean allowOpenEndLowerCase = true;
