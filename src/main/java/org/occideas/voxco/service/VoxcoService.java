@@ -659,17 +659,21 @@ public class VoxcoService implements IVoxcoService {
                     String[] keys = responseKey.split(RESPONSE_KEY_SEPARATOR);
                     String caseId = keys[0];
                     String occupation = null;
-                    if (keys != null && keys.length == 3) {
+                    if (keys != null && keys.length > 1) {
                         if (!NO_PIN.equals(keys[1])) {
                             caseId = keys[1];
                         }
-                        occupation = keys[2];
+                        if (keys.length == 3) {
+                            occupation = keys[2];
+                        }
                     }
 
                     if (participantService.getByReferenceNumber(caseId) == null) {
                         ParticipantVO participant = createParticipant(caseId);
                         InterviewVO interview = createInterview(participant);
-                        createInterviewNote(module, interview.getInterviewId(), "Occupation", occupation);
+                        if (occupation != null && !"".equals(occupation)) {
+                            createInterviewNote(module, interview.getInterviewId(), "Occupation", occupation);
+                        }
 
                         String introModuleIUniqueKey = getInterviewUniqueKey(node.getIdNode(), interview.getInterviewId());
                         if (!uniqueModules.containsKey(introModuleIUniqueKey)) {
