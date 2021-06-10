@@ -16,6 +16,7 @@ import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.mapper.NodeVoxcoMapper;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
+import org.occideas.note.service.NoteService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.question.service.QuestionService;
@@ -29,6 +30,7 @@ import org.occideas.vo.InterviewVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.NodeVoxcoVO;
+import org.occideas.vo.NoteVO;
 import org.occideas.vo.ParticipantVO;
 import org.occideas.vo.PossibleAnswerVO;
 import org.occideas.vo.QuestionVO;
@@ -77,6 +79,8 @@ public class VoxcoService implements IVoxcoService {
     private static final String RESPONSE_KEY_SEPARATOR = "__";
     private static final String FREETEXT_LOWERCASE = "[freetext]";
     private static final String FREETEXT = "[Freetext]";
+    private static final String NODEKEY_GENE = "GENE";
+    private static final String NO_PIN = "NO-PIN";
 
     private static final String TOOLTIP_START = "<span title=\"";
     private static final String TOOLTIP_MIDDLE = "\"><b>";
@@ -104,6 +108,18 @@ public class VoxcoService implements IVoxcoService {
 
     @Value("${voxco.checkbox.choice.exclusive}")
     private boolean checkboxChoiceExclusive;
+
+    @Value("${voxco.response.start.index:32}")
+    private int dataStartIndex;
+
+    @Value("${voxco.response.occupation.index:31}")
+    private int occupationIndex;
+
+    @Value("${voxco.response.gene.start.index:30}")
+    private int dataGeneStartIndex;
+
+    @Value("${voxco.response.gene.occupation.index:30}")
+    private int occupationGeneIndex;
 
     @Autowired
     private INodeVoxcoDao voxcoDao;
@@ -149,6 +165,9 @@ public class VoxcoService implements IVoxcoService {
 
     @Autowired
     private IVoxcoClient<Extraction, Long> resultClient;
+
+    @Autowired
+    private NoteService noteService;
 
     private int choiceId;
 
@@ -591,6 +610,8 @@ public class VoxcoService implements IVoxcoService {
     }
 
     private Map<String, Map<String, String>> convertToObject(String moduleKey, String csvPath) throws IOException {
+        int startIndex = NODEKEY_GENE.equals(moduleKey) ? dataGeneStartIndex : dataStartIndex;
+        int occupation = NODEKEY_GENE.equals(moduleKey) ? occupationGeneIndex : occupationIndex;
         List<String[]> extract = CsvUtil.readAll(csvPath);
         Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
         String[] labels = extract.get(0);
@@ -600,12 +621,16 @@ public class VoxcoService implements IVoxcoService {
                 Map<String, String> entry = new LinkedHashMap<>();
                 int dataIndex = 0;
                 for (String value : data) {
-                    if (dataIndex > 26) {
+                    if (dataIndex > startIndex) {
                         entry.put(labels[dataIndex], value);
                     }
                     dataIndex++;
                 }
-                formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + data[4], entry);
+                String pin = data[4];
+                if ("".equals(pin) || pin == null) {
+                    pin = NO_PIN;
+                }
+                formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + pin + RESPONSE_KEY_SEPARATOR + data[occupation], entry);
             }
             index++;
         }
@@ -633,13 +658,18 @@ public class VoxcoService implements IVoxcoService {
                 if (hasAnyAnswer(answers)) {
                     String[] keys = responseKey.split(RESPONSE_KEY_SEPARATOR);
                     String caseId = keys[0];
-                    if (keys != null && keys.length == 2) {
-                        caseId = keys[1];
+                    String occupation = null;
+                    if (keys != null && keys.length == 3) {
+                        if (!NO_PIN.equals(keys[1])) {
+                            caseId = keys[1];
+                        }
+                        occupation = keys[2];
                     }
 
                     if (participantService.getByReferenceNumber(caseId) == null) {
                         ParticipantVO participant = createParticipant(caseId);
                         InterviewVO interview = createInterview(participant);
+                        createInterviewNote(module, interview.getInterviewId(), "Occupation", occupation);
 
                         String introModuleIUniqueKey = getInterviewUniqueKey(node.getIdNode(), interview.getInterviewId());
                         if (!uniqueModules.containsKey(introModuleIUniqueKey)) {
@@ -784,6 +814,16 @@ public class VoxcoService implements IVoxcoService {
         interview.setParticipant(participant);
         interview.setReferenceNumber(participant.getReference());
         return interviewService.create(interview);
+    }
+
+    private NoteVO createInterviewNote(NodeVO node, Long interviewId, String type, String text) {
+        NoteVO note = new NoteVO();
+        note.setNodeVO(node);
+        note.setInterviewId(interviewId);
+        note.setType(type);
+        note.setText(text);
+        noteService.update(note);
+        return note;
     }
 
     private void createInterviewQuestionsAndAnswers(long idNode, long interviewId, String qNumber, String aNumber,

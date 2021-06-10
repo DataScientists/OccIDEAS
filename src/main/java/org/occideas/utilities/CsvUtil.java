@@ -1,9 +1,11 @@
 package org.occideas.utilities;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.CSVReader;
 import org.apache.commons.lang3.StringUtils;
 import org.occideas.voxco.model.Question;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -16,6 +18,11 @@ import java.util.Map;
 
 public class CsvUtil {
 
+    private static final String RESPONSE_KEY_SEPARATOR = "__";
+    private static final String INPUT_DIRECTORY = "/temp/";
+    private static final String NODEKEY_GENE = "GENE";
+    private static final String NO_PIN = "NO-PIN";
+
     public static List<String[]> readAll(String csvPath) throws IOException {
         Reader reader = Files.newBufferedReader(Paths.get(csvPath));
         CSVReader csvReader = new CSVReader(reader);
@@ -27,14 +34,15 @@ public class CsvUtil {
     }
 
     public static void main(String[] args) {
-        //readVoxcoResponse();
-        readTranslations();
+        readVoxcoResponse("AIRT", INPUT_DIRECTORY + "airt.csv");
+        //readTranslations();
     }
 
-    private static void readVoxcoResponse() {
+    private static void readVoxcoResponse(String moduleKey, String csvPath) {
         try {
             System.out.println(new Date(0));
-            String csvPath = "/tmp/test-3.csv";
+            int dataStartIndex = NODEKEY_GENE.equals(moduleKey) ? 30 : 32;
+            int occupationIndex = NODEKEY_GENE.equals(moduleKey) ? 30 : 31;
             List<String[]> extract = readAll(csvPath);
             Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
             String[] labels = extract.get(0);
@@ -44,24 +52,29 @@ public class CsvUtil {
                     Map<String, String> entry = new LinkedHashMap<>();
                     int dataIndex = 0;
                     for (String value : data) {
-                        if (dataIndex > 26) {
+                        if (dataIndex > dataStartIndex) {
                             entry.put(labels[dataIndex], value);
                         }
                         dataIndex++;
                     }
-                    formatted.put("MKEY_" + data[0] + "__" + data[4], entry);
+                    String pin = data[4];
+                    if ("".equals(pin) || pin == null) {
+                        pin = NO_PIN;
+                    }
+                    formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + pin + RESPONSE_KEY_SEPARATOR + data[occupationIndex], entry);
                 }
                 index++;
             }
             System.out.println(formatted);
-            formatted.forEach((key, answers) -> {
+            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(new File(INPUT_DIRECTORY + moduleKey + ".json"), formatted);
+            /*formatted.forEach((key, answers) -> {
                 String[] keys = key.split("__");
                 System.out.println("size: " + keys.length);
                 if (keys != null && keys.length == 2) {
                     System.out.println("keys[1]: " + keys[1]);
                 }
             });
-            /*String moduleKey = "WELD";
+            String moduleKey = "WELD";
             formatted.forEach((caseId, answers) -> {
                 answers.forEach((label, answer) -> {
                     if (answer != null && !StringUtils.EMPTY.equals(answer)) {
