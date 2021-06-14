@@ -221,11 +221,12 @@ public class VoxcoService implements IVoxcoService {
                 surveyId = matched.getId();
             } else {
                 surveyId = getMaxSurveyId(surveys) + 1;
+                Survey survey = createOrUpdateSurvey(surveyId, name, module.getDescription());
+                voxcoDao.save(survey.getId(), module.getIdNode(), survey.getName());
+                buildAndExportSurvey(module, survey, filter);
             }
 
-            Survey survey = createOrUpdateSurvey(surveyId, name, module.getDescription());
-            voxcoDao.save(survey.getId(), module.getIdNode(), survey.getName());
-            buildAndExportSurvey(module, survey, filter);
+            
         }
     }
 
