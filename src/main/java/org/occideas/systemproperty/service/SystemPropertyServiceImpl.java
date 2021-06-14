@@ -384,9 +384,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
     int index = 0;
     for (PossibleAnswerVO ans : posAnsWithStudyAgentsList) {
       index++;
-      if (parentIdList.contains(ans.getParentId())) {
-        continue;
-      }
+//      if (parentIdList.contains(ans.getParentId())) {
+//        continue;
+ //     }
       // get parent until module is reached
       Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
       parentIdList.add(ans.getParentId());
