@@ -611,8 +611,8 @@ public class VoxcoService implements IVoxcoService {
     }
 
     private Map<String, Map<String, String>> convertToObject(String moduleKey, String csvPath) throws IOException {
-        int startIndex = NODEKEY_GENE.equals(moduleKey) ? dataGeneStartIndex : dataStartIndex;
-        int occupation = NODEKEY_GENE.equals(moduleKey) ? occupationGeneIndex : occupationIndex;
+        //int startIndex = NODEKEY_GENE.equals(moduleKey) ? dataGeneStartIndex : dataStartIndex;
+        //int occupation = NODEKEY_GENE.equals(moduleKey) ? occupationGeneIndex : occupationIndex;
         List<String[]> extract = CsvUtil.readAll(csvPath);
         Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
         String[] labels = extract.get(0);
@@ -622,16 +622,18 @@ public class VoxcoService implements IVoxcoService {
                 Map<String, String> entry = new LinkedHashMap<>();
                 int dataIndex = 0;
                 for (String value : data) {
-                    if (dataIndex > startIndex) {
+                    /*if (dataIndex > startIndex) {
                         entry.put(labels[dataIndex], value);
-                    }
+                    }*/
+                    entry.put(labels[dataIndex], value);
                     dataIndex++;
                 }
                 String pin = data[4];
                 if ("".equals(pin) || pin == null) {
                     pin = NO_PIN;
                 }
-                formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + pin + RESPONSE_KEY_SEPARATOR + data[occupation], entry);
+                //formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + pin + RESPONSE_KEY_SEPARATOR + data[occupation], entry);
+                formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + pin, entry);
             }
             index++;
         }
@@ -659,19 +661,16 @@ public class VoxcoService implements IVoxcoService {
                 if (hasAnyAnswer(answers)) {
                     String[] keys = responseKey.split(RESPONSE_KEY_SEPARATOR);
                     String caseId = keys[0];
-                    String occupation = null;
                     if (keys != null && keys.length > 1) {
                         if (!NO_PIN.equals(keys[1])) {
                             caseId = keys[1];
-                        }
-                        if (keys.length == 3) {
-                            occupation = keys[2];
                         }
                     }
 
                     if (participantService.getByReferenceNumber(caseId) == null) {
                         ParticipantVO participant = createParticipant(caseId);
                         InterviewVO interview = createInterview(participant);
+                        String occupation = answers.get("OCCUPATION");
                         if (occupation != null && !"".equals(occupation)) {
                             createInterviewNote(module, interview.getInterviewId(), "Occupation", occupation);
                         }
@@ -691,60 +690,64 @@ public class VoxcoService implements IVoxcoService {
                         }
                         AtomicInteger qCounter = new AtomicInteger(1);
                         answers.forEach((label, answer) -> {
-                            log.debug("label={}, answer={}", label, answer);
-                            if (answer != null && !StringUtils.EMPTY.equals(answer)) {
-                                String[] qVariable = label.split("_");
-                                String qType;
-                                String responseNodeKey;
-                                boolean openEndEntry = label.startsWith("O_");
-                                if (openEndEntry) { //handle open-ends
-                                    qType = qVariable[1]; //RADIO, CHECK, TEXT
-                                    responseNodeKey = qVariable[2];
-                                } else {
-                                    qType = qVariable[0]; //RADIO, CHECK, TEXT
-                                    responseNodeKey = qVariable[1];
-                                }
-
-                                String[] actualVariable = null;
-                                String aNumber = null;
-                                String freetext = null;
-                                if (Question.Type.RadioButton.getVariable().equals(qType)) {
-                                    actualVariable = qVariable;
-                                    aNumber = answer.split("_")[1];
-                                } else if (Question.Type.CheckBox.getVariable().equals(qType)) {
-                                    aNumber = label.substring((label.lastIndexOf("_") + 1)); //C1, C2, C3
-                                    if (openEndEntry) {
-                                        freetext = answer; //actual text
-                                        actualVariable = label.substring(2, label.lastIndexOf("_")).split("_");
-                                    } else if ("1".equals(answer)) { //answer has value of 1/0 if not open-end entry
-                                        actualVariable = label.substring(0, label.lastIndexOf("_")).split("_");
+                            if (isQuestionAnswer(label)) {
+                                log.debug("label={}, answer={}", label, answer);
+                                if (answer != null && !StringUtils.EMPTY.equals(answer)) {
+                                    String[] qVariable = label.split("_");
+                                    String qType;
+                                    String responseNodeKey;
+                                    boolean openEndEntry = label.startsWith("O_");
+                                    if (openEndEntry) { //handle open-ends
+                                        qType = qVariable[1]; //RADIO, CHECK, TEXT
+                                        responseNodeKey = qVariable[2];
+                                    } else {
+                                        qType = qVariable[0]; //RADIO, CHECK, TEXT
+                                        responseNodeKey = qVariable[1];
                                     }
-                                }
 
-                                if (actualVariable != null && aNumber != null) {
-                                    if (actualVariable.length == 4 && !responseNodeKey.equals(moduleKey)) {
-                                        String linkedNumber = actualVariable[2];
-                                        String qNumber = actualVariable[3];
-                                        QuestionVO linkAJSM = questionService.getQuestionByTopIdAndNumber(module.getIdNode(), linkedNumber);
-                                        if (linkAJSM != null) {
-                                            List<FragmentVO> fragments = fragmentService.findByIdForInterview(linkAJSM.getLink());
-                                            if (!fragments.isEmpty()) {
-                                                FragmentVO fragment = fragments.get(0);
-                                                String fragmentIUniqueKey = getInterviewUniqueKey(fragment.getIdNode(), interview.getInterviewId());
-                                                if (!uniqueModules.containsKey(fragmentIUniqueKey)) {
-                                                    createAJSMInterviewQuestion(linkAJSM, fragment, interview.getInterviewId(), qCounter.incrementAndGet());
-                                                    uniqueModules.put(fragmentIUniqueKey, null);
-                                                }
-                                                createInterviewQuestionsAndAnswers(fragment.getIdNode(), interview.getInterviewId(),
-                                                        qNumber, aNumber, qCounter, freetext, qType);
-                                            }
+                                    String[] actualVariable = null;
+                                    String aNumber = null;
+                                    String freetext = null;
+                                    if (Question.Type.RadioButton.getVariable().equals(qType)) {
+                                        actualVariable = qVariable;
+                                        aNumber = answer.split("_")[1];
+                                    } else if (Question.Type.CheckBox.getVariable().equals(qType)) {
+                                        aNumber = label.substring((label.lastIndexOf("_") + 1)); //C1, C2, C3
+                                        if (openEndEntry) {
+                                            freetext = answer; //actual text
+                                            actualVariable = label.substring(2, label.lastIndexOf("_")).split("_");
+                                        } else if ("1".equals(answer)) { //answer has value of 1/0 if not open-end entry
+                                            actualVariable = label.substring(0, label.lastIndexOf("_")).split("_");
                                         }
-                                    } else if (actualVariable.length == 3 && responseNodeKey.equals(moduleKey)) {
-                                        String qNumber = actualVariable[2];
-                                        createInterviewQuestionsAndAnswers(module.getIdNode(), interview.getInterviewId(),
-                                                qNumber, aNumber, qCounter, freetext, qType);
+                                    }
+
+                                    if (actualVariable != null && aNumber != null) {
+                                        if (actualVariable.length == 4 && !responseNodeKey.equals(moduleKey)) {
+                                            String linkedNumber = actualVariable[2];
+                                            String qNumber = actualVariable[3];
+                                            QuestionVO linkAJSM = questionService.getQuestionByTopIdAndNumber(module.getIdNode(), linkedNumber);
+                                            if (linkAJSM != null) {
+                                                List<FragmentVO> fragments = fragmentService.findByIdForInterview(linkAJSM.getLink());
+                                                if (!fragments.isEmpty()) {
+                                                    FragmentVO fragment = fragments.get(0);
+                                                    String fragmentIUniqueKey = getInterviewUniqueKey(fragment.getIdNode(), interview.getInterviewId());
+                                                    if (!uniqueModules.containsKey(fragmentIUniqueKey)) {
+                                                        createAJSMInterviewQuestion(linkAJSM, fragment, interview.getInterviewId(), qCounter.incrementAndGet());
+                                                        uniqueModules.put(fragmentIUniqueKey, null);
+                                                    }
+                                                    createInterviewQuestionsAndAnswers(fragment.getIdNode(), interview.getInterviewId(),
+                                                            qNumber, aNumber, qCounter, freetext, qType);
+                                                }
+                                            }
+                                        } else if (actualVariable.length == 3 && responseNodeKey.equals(moduleKey)) {
+                                            String qNumber = actualVariable[2];
+                                            createInterviewQuestionsAndAnswers(module.getIdNode(), interview.getInterviewId(),
+                                                    qNumber, aNumber, qCounter, freetext, qType);
+                                        }
                                     }
                                 }
+                            } else {
+                                log.debug("Disregard label={}", label);
                             }
                         });
                     } else {
@@ -804,7 +807,11 @@ public class VoxcoService implements IVoxcoService {
 
     private boolean hasAnyAnswer(Map<String, String> answers) {
         return answers.entrySet().stream().anyMatch(entry ->
-                entry.getValue() != null && !StringUtils.EMPTY.equals(entry.getValue()));
+                isQuestionAnswer(entry.getKey()) && entry.getValue() != null && !StringUtils.EMPTY.equals(entry.getValue()));
+    }
+
+    private boolean isQuestionAnswer(String label) {
+        return label.startsWith(Question.Type.RadioButton.getVariable()) || label.startsWith(Question.Type.CheckBox.getVariable()) || label.startsWith("O_");
     }
 
     private ParticipantVO createParticipant(String reference) {

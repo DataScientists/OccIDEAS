@@ -34,15 +34,13 @@ public class CsvUtil {
     }
 
     public static void main(String[] args) {
-        readVoxcoResponse("AIRT", INPUT_DIRECTORY + "airt.csv");
+        readVoxcoResponse("GENE", INPUT_DIRECTORY + "gene.csv");
         //readTranslations();
     }
 
     private static void readVoxcoResponse(String moduleKey, String csvPath) {
         try {
             System.out.println(new Date(0));
-            int dataStartIndex = NODEKEY_GENE.equals(moduleKey) ? 30 : 32;
-            int occupationIndex = NODEKEY_GENE.equals(moduleKey) ? 30 : 31;
             List<String[]> extract = readAll(csvPath);
             Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
             String[] labels = extract.get(0);
@@ -52,16 +50,14 @@ public class CsvUtil {
                     Map<String, String> entry = new LinkedHashMap<>();
                     int dataIndex = 0;
                     for (String value : data) {
-                        if (dataIndex > dataStartIndex) {
-                            entry.put(labels[dataIndex], value);
-                        }
+                        entry.put(labels[dataIndex], value);
                         dataIndex++;
                     }
                     String pin = data[4];
                     if ("".equals(pin) || pin == null) {
                         pin = NO_PIN;
                     }
-                    formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + pin + RESPONSE_KEY_SEPARATOR + data[occupationIndex], entry);
+                    formatted.put(moduleKey + "_" + data[0] + RESPONSE_KEY_SEPARATOR + pin, entry);
                 }
                 index++;
             }
