@@ -650,7 +650,11 @@ public class VoxcoService implements IVoxcoService {
                 .orElseThrow(StudyIntroModuleNotFoundException::new);
         NodeVO node = moduleService.getNodeById(Long.valueOf(introModule.getValue()));
 
+        int iSurveyCount = 0;
+        int iSurveySize = surveys.size();
         for (NodeVoxco survey : surveys) {
+        	System.out.println(iSurveyCount + " of "+ iSurveySize);
+        	iSurveyCount++;
             ModuleVO module = (ModuleVO) moduleService.getNodeById(survey.getIdNode());
             String moduleKey = getNodeKey(module.getName());
             Map<String, Map<String, String>> responses = convertToObject(moduleKey, survey.getResultPath());
@@ -672,7 +676,7 @@ public class VoxcoService implements IVoxcoService {
                         InterviewVO interview = createInterview(participant);
                         String occupation = answers.get("OCCUPATION");
                         if (occupation != null && !"".equals(occupation)) {
-                            createInterviewNote(module, interview.getInterviewId(), "Occupation", occupation);
+                            createInterviewNote(module, interview.getInterviewId(), "Interviewer", occupation);
                         }
 
                         String introModuleIUniqueKey = getInterviewUniqueKey(node.getIdNode(), interview.getInterviewId());
