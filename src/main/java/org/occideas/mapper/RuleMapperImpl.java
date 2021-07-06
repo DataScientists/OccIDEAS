@@ -186,9 +186,10 @@ public class RuleMapperImpl implements RuleMapper {
 
     List<RuleVO> list = new ArrayList<RuleVO>();
     for (Rule rule : ruleEntity) {
-      list.add(convertToRuleVOExcPa(rule));
+      if(rule.getLevel() != RuleLevelEnum.NoExposure.getValue()){
+        list.add(convertToRuleVOExcPa(rule));
+      }
     }
-
     return list;
   }
 
