@@ -36,7 +36,7 @@ import java.util.*;
 public class InterviewServiceImpl implements InterviewService {
 
     private final String PARTICIPANT_PREFIX = "auto";
-    private Logger log = LogManager.getLogger(this.getClass());
+    private static Logger log = LogManager.getLogger(InterviewServiceImpl.class);
     @Autowired
     private BaseDao dao;
     @Autowired
