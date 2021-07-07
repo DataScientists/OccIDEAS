@@ -18,11 +18,15 @@ import org.occideas.vo.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
 import org.apache.logging.log4j.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.occideas.utilities.AssessmentStatusEnum.NEEDSREVIEW;
 
 @ExtendWith(MockitoExtension.class)
 class InterviewServiceImplTest {
@@ -62,6 +66,22 @@ class InterviewServiceImplTest {
         List<InterviewVO> interviews = interviewService.autoAssessedRules();
 
         assertNotNull(interviews);
+        Optional<InterviewVO> needsReviewInterview = interviews.stream().filter(interviewVO -> interviewVO.getInterviewId() == 10L).findFirst();
+        assertTrue(needsReviewInterview.isPresent());
+        assertEquals(NEEDSREVIEW.getDisplay(), needsReviewInterview.get().getAssessedStatus());
+        List<RuleVO> autoAssessedRulesFromNeedsReviewInterview = needsReviewInterview.get().getAutoAssessedRules();
+        assertNotNull(autoAssessedRulesFromNeedsReviewInterview);
+        assertFalse(autoAssessedRulesFromNeedsReviewInterview.isEmpty());
+        RuleVO deletedRuleFromNeedsReviewInterview = autoAssessedRulesFromNeedsReviewInterview.get(0);
+        assertEquals(1L, deletedRuleFromNeedsReviewInterview.getIdRule());
+        assertEquals(5, deletedRuleFromNeedsReviewInterview.getLevelValue());
+        assertEquals(Integer.valueOf(1), deletedRuleFromNeedsReviewInterview.getDeleted());
+        assertNotNull(deletedRuleFromNeedsReviewInterview.getAgent());
+        RuleVO activeRuleFromNeedsReviewInterview = autoAssessedRulesFromNeedsReviewInterview.get(1);
+        assertEquals(0L, activeRuleFromNeedsReviewInterview.getIdRule());
+        assertEquals(5, activeRuleFromNeedsReviewInterview.getLevelValue());
+        assertEquals(Integer.valueOf(0),activeRuleFromNeedsReviewInterview.getDeleted());
+        assertNull(activeRuleFromNeedsReviewInterview.getAgent());
     }
 
     private List<InterviewVO> buildSampleInterviewVOs() {
