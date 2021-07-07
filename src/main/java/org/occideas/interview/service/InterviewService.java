@@ -2,10 +2,7 @@ package org.occideas.interview.service;
 
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Interview;
-import org.occideas.vo.InterviewVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.RandomInterviewReport;
-import org.occideas.vo.SystemPropertyVO;
+import org.occideas.vo.*;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -77,4 +74,7 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   SystemPropertyVO preloadFilterStudyAgent(Long idNode);
 
+  List<InterviewVO> autoAssessedRules();
+
+  InterviewVO determineFiredRules(InterviewVO interview);
 }
