@@ -698,7 +698,7 @@ public class InterviewServiceImpl implements InterviewService {
         for (InterviewAnswerVO ia : answerHistory) {
             //for(InterviewAnswerVO ia:iq.getAnswers()){
             List<ModuleRuleVO> nodeModuleRules = moduleRuleService.findByIdNode(ia.getAnswerId());
-
+            // nodeModuleRules can be empty if no rules attached to the answer
             moduleRules.addAll(nodeModuleRules);
 
             //}
