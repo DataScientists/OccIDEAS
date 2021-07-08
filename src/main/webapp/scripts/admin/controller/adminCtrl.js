@@ -237,6 +237,26 @@
         });
     };
 
+    self.importIPSOSResponse = function(){
+        AdminService.importIPSOSResponse().then(function(response){
+            if (response.status == '200') {
+              $ngToast.create({
+                className: 'success',
+                content: 'Import IPSOS Response Successful , check result in a few minutes.',
+                animation: 'slide'
+              });
+            } else {
+              $ngToast.create({
+                className: 'danger',
+                content: 'Import IPSOS Response failed, check the logs.',
+                dismissButton: true,
+                dismissOnClick: false,
+                animation: 'slide'
+              });
+            }
+        });
+    };
+
     self.purgeParticipantsBtn = function() {
         $mdDialog.show({
             scope: $scope,

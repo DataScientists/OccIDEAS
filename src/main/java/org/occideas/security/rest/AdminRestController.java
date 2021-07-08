@@ -3,6 +3,7 @@ package org.occideas.security.rest;
 import org.occideas.admin.service.IAdminService;
 import org.occideas.admin.service.IDbConnectService;
 import org.occideas.entity.NodePlain;
+import org.occideas.ipsos.service.IIPSOSService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.QSFClient;
@@ -42,6 +43,9 @@ public class AdminRestController {
 
     @Autowired
     private IVoxcoService iVoxcoService;
+
+    @Autowired
+    private IIPSOSService iIPSOSService;
 
     @GET
     @Path(value = "/purgeParticipants")
@@ -140,6 +144,18 @@ public class AdminRestController {
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
         return Response.ok(active).build();
+    }
+
+    @GET
+    @Path(value = "/importIPSOSResponse")
+    public Response importIPSOSResponse() {
+        try {
+            iIPSOSService.importResponse();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
     }
 
     @POST

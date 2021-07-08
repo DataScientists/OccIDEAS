@@ -19,7 +19,7 @@ import java.util.Map;
 public class CsvUtil {
 
     private static final String RESPONSE_KEY_SEPARATOR = "__";
-    private static final String INPUT_DIRECTORY = "/temp/";
+    private static final String INPUT_DIRECTORY = "/tmp/";
     private static final String NODEKEY_GENE = "GENE";
     private static final String NO_PIN = "NO-PIN";
 
@@ -33,9 +33,20 @@ public class CsvUtil {
         return list;
     }
 
+    public static List<String[]> readAll(String csvPath, char separator) throws IOException {
+        Reader reader = Files.newBufferedReader(Paths.get(csvPath));
+        CSVReader csvReader = new CSVReader(reader, separator);
+        List<String[]> list = new ArrayList<>();
+        list = csvReader.readAll();
+        reader.close();
+        csvReader.close();
+        return list;
+    }
+
     public static void main(String[] args) {
-        readVoxcoResponse("GENE", INPUT_DIRECTORY + "gene.csv");
+        //readVoxcoResponse("GENE", INPUT_DIRECTORY + "gene.csv");
         //readTranslations();
+        readIPSOSCSV(INPUT_DIRECTORY + "MODU.csv");
     }
 
     private static void readVoxcoResponse(String moduleKey, String csvPath) {
@@ -133,5 +144,30 @@ public class CsvUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void readIPSOSCSV(String csvPath) {
+        try {
+            List<String[]> extract = readAll(csvPath, ';');
+            Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
+            String[] labels = extract.get(0);
+            int index = 0;
+            for (String[] data : extract) {
+                if (index > 0) {
+                    Map<String, String> entry = new LinkedHashMap<>();
+                    int dataIndex = 0;
+                    for (String value : data) {
+                        entry.put(labels[dataIndex], value);
+                        dataIndex++;
+                    }
+                    formatted.put(data[0], entry);
+                }
+                index++;
+            }
+            System.out.println("formatted=" + formatted);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
