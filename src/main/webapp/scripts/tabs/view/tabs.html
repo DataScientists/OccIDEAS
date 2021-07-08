@@ -4,7 +4,7 @@
              md-selected="selectedIndex">
       <md-tab layout-fill ng-disabled="tab.disabled" ng-repeat="tab in tabs">
         <md-tab-label>
-          <span context-menu="tabMenu(tab)">{{tab.title}}</span>
+          <span context-menu="tabMenu(tab)" id="{{tab.title}}-id">{{tab.title}}</span>
 
           <span
             class="glyphicon glyphicon-warning-sign"
