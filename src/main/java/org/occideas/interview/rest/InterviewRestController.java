@@ -246,7 +246,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
       log.info("Assessment completed for interviewIds");
       return Response.ok(results).build();
     } catch (Throwable e) {
-      log.error("Error Occured on assessment", e.getMessage());
+      log.error("Error Occured on assessment", e);
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
     }
   }
@@ -440,8 +440,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   }
 
   private List<InterviewQuestionVO> sort(
-    List<InterviewQuestionVO> inputQuestionHistory,
-    Long interviewId) {
+          List<InterviewQuestionVO> inputQuestionHistory,
+          Long interviewId) {
     System.out.println("Sort start " + new Date());
     List<InterviewQuestionVO> sortedQuestionHistory = new ArrayList<InterviewQuestionVO>();
 
@@ -454,8 +454,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     List<Long> moduleList = new ArrayList<Long>();
     // Make a map of the question history, populate the module list
     Map<Long, InterviewQuestionVO> questionMap = getMap(inputQuestionHistory,
-      moduleList,
-      sortedQuestionHistory);
+            moduleList,
+            sortedQuestionHistory);
 
     //Get linked module
     for (Long id : moduleList) {
@@ -467,8 +467,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     for (NodeVO module : sortedQuestions) {
       if (module instanceof ModuleVO) {
         findQuestion(((ModuleVO) module).getChildNodes(),
-          sortedQuestionHistory,
-          questionMap);
+                sortedQuestionHistory,
+                questionMap);
       } else if (module instanceof QuestionVO) {
         findQuestion(sortedQuestionHistory, questionMap, (QuestionVO) module);
       }
@@ -508,9 +508,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   }
 
   private Map<Long, InterviewQuestionVO> getMap(
-    List<InterviewQuestionVO> questionHistory,
-    List<Long> moduleList,
-    List<InterviewQuestionVO> sortedQuestionHistory) {
+          List<InterviewQuestionVO> questionHistory,
+          List<Long> moduleList,
+          List<InterviewQuestionVO> sortedQuestionHistory) {
 
     //Map of the actual unsorted question history
     Map<Long, InterviewQuestionVO> map = new HashMap<Long, InterviewQuestionVO>();
@@ -873,8 +873,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Path(value = "/getModuleForSubModule")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response getModuleForSubModule(
-    @QueryParam("id") Long interviewId,
-    @QueryParam("linkId") Long linkId) {
+          @QueryParam("id") Long interviewId,
+          @QueryParam("linkId") Long linkId) {
 
     List<ModuleVO> list = new ArrayList<ModuleVO>();
 
@@ -906,8 +906,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Path(value = "/checkQuestionAnswered")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response checkQuestionAnswered(
-    @QueryParam("idInterview") Long interviewId,
-    @QueryParam("nodeId") Long nodeId) {
+          @QueryParam("idInterview") Long interviewId,
+          @QueryParam("nodeId") Long nodeId) {
 
     boolean result = false;
     try {
@@ -988,7 +988,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     List<RandomInterviewReport> results = null;
     try {
       results = service.createRandomInterviews(randomInterview.getCount(), randomInterview.isRandomAnswers(),
-        randomInterview.getFilterModule());
+              randomInterview.getFilterModule());
 
     } catch (Throwable e) {
 

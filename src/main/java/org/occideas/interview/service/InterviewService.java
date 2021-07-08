@@ -5,6 +5,7 @@ import org.occideas.entity.Interview;
 import org.occideas.vo.*;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface InterviewService extends BaseService<InterviewVO> {
@@ -77,4 +78,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
   List<InterviewVO> autoAssessedRules();
 
   InterviewVO determineFiredRules(InterviewVO interview);
+
+  void evaluateAssessmentStatus(InterviewVO interviewVO);
+
+  void setRuleLevelNoExposure(List<AgentVO> listAgents, ArrayList<RuleVO> autoAssessedRules, ArrayList<RuleVO> firedRules);
 }

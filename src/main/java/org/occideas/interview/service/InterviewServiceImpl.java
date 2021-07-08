@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.core.Response;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -651,7 +650,8 @@ public class InterviewServiceImpl implements InterviewService {
         List<AgentVO> listAgents = agentService.getStudyAgents();
         int iSize = list.size();
         int iCount = 0;
-        for (InterviewVO interviewVO : list) {
+//        for (InterviewVO interviewVO : list) {
+            InterviewVO interviewVO = list.get(0);
             iCount++;
             log.info("auto assessment for " + interviewVO.getInterviewId() + " triggered " + iCount + " of " + iSize);
             System.out.println("ID " + interviewVO.getInterviewId() + " triggered " + iCount + " of " + iSize);
@@ -659,13 +659,13 @@ public class InterviewServiceImpl implements InterviewService {
             // get interviewautoassessment for each interview
             // can change if we can do a batch retrieve for all interviews
             List<InterviewAutoAssessmentVO> assessments = autoAssessmentService.findByInterviewId(interviewVO.getInterviewId());
-            ArrayList<RuleVO> autoAssessedRules = new ArrayList<RuleVO>();
+            ArrayList<RuleVO> autoAssessedRules = new ArrayList<>();
             for (InterviewAutoAssessmentVO assessment : assessments) {
                 assessment.getRule().setDeleted(1);
                 autoAssessedRules.add(assessment.getRule());
             }
             List<InterviewFiredRulesVO> interviewFiredRules = firedRulesService.findByInterviewId(interviewVO.getInterviewId());
-            ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
+            ArrayList<RuleVO> firedRules = new ArrayList<>();
             for (InterviewFiredRulesVO ifiredRule : interviewFiredRules) {
                 RuleVO firedRule = ifiredRule.getRules().get(0);
                 firedRules.add(firedRule);
@@ -673,11 +673,10 @@ public class InterviewServiceImpl implements InterviewService {
 
             setRuleLevelNoExposure(listAgents, autoAssessedRules, firedRules);
             evaluateAssessmentStatus(interviewVO);
-
-            interviewVO.setAutoAssessedRules(autoAssessedRules);
+//            interviewVO.setAutoAssessedRules(autoAssessedRules);
             System.out.println("Status is" + interviewVO.getAssessedStatus());
             update(interviewVO);
-        }
+//        }
         return list;
     }
 
@@ -686,7 +685,7 @@ public class InterviewServiceImpl implements InterviewService {
         ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
         ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
         // TODO need to move this call every after interview that is finished
-        cleanDeletedAnswers(interview.getInterviewId());
+//        cleanDeletedAnswers(interview.getInterviewId());
         // get all answers by interviewId
 
         /**
@@ -749,7 +748,7 @@ public class InterviewServiceImpl implements InterviewService {
         }
         interview.setManualAssessedRules(manualAssessedRules);
         //System.out.print("Assessment status before update:"+interview.getAssessedStatus());
-        update(interview);
+//        update(interview);
         return interview;
     }
 
@@ -763,7 +762,8 @@ public class InterviewServiceImpl implements InterviewService {
         return retValue;
     }
 
-    private void evaluateAssessmentStatus(InterviewVO interviewVO) {
+    @Override
+    public void evaluateAssessmentStatus(InterviewVO interviewVO) {
         if (hasManualAssessedRules(interviewVO)) {
             interviewVO.setAssessedStatus(AssessmentStatusEnum.MANUALLYASSESSED.getDisplay());
         } else {
@@ -781,7 +781,13 @@ public class InterviewServiceImpl implements InterviewService {
                 !interviewVO.getManualAssessedRules().isEmpty();
     }
 
-    private void setRuleLevelNoExposure(List<AgentVO> listAgents, ArrayList<RuleVO> autoAssessedRules, ArrayList<RuleVO> firedRules) {
+    private boolean hasManualAssessedRules(Interview interview) {
+        return interview.getManualAssessedRules() != null &&
+                !interview.getManualAssessedRules().isEmpty();
+    }
+
+    @Override
+    public void setRuleLevelNoExposure(List<AgentVO> listAgents, ArrayList<RuleVO> autoAssessedRules, ArrayList<RuleVO> firedRules) {
         for (AgentVO agent : listAgents) {
             RuleVO rule = new RuleVO();
             rule.setLevel("noExposure");
