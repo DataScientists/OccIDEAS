@@ -7,6 +7,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Interview_FiredRules")
@@ -70,7 +71,21 @@ public class InterviewFiredRules implements Serializable {
   public void setRules(List<Rule> rules) {
     this.rules = rules;
   }
-/*
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    InterviewFiredRules that = (InterviewFiredRules) o;
+    return idinterview == that.idinterview && idRule == that.idRule;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(idinterview, idRule);
+  }
+
+  /*
   public List<Interview> getInterviews() {
     return interviews;
   }

@@ -6,7 +6,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
+import org.occideas.entity.Participant;
 import org.occideas.entity.Rule;
 import org.occideas.entity.RulePlain;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,14 @@ public class RuleDao implements IRuleDao {
   public void delete(Rule rule) {
     rule.setDeleted(1);
     sessionFactory.getCurrentSession().saveOrUpdate(rule);
+  }
+
+  @Override
+  public void deleteAll(List<Long> ruleIds){
+    final Session session = sessionFactory.getCurrentSession();
+    Query<Rule> query =session.createQuery("update Rule r set r.deleted=1 where r.idRule IN (:ruleIds)");
+    query.setParameterList("ruleIds", ruleIds);
+    query.executeUpdate();
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)

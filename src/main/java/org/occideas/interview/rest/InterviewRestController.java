@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Path("/interview")
 public class InterviewRestController implements BaseRestController<InterviewVO> {
@@ -242,9 +243,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response updateAutoAssessments() {
     try {
-      List<InterviewVO> results = service.autoAssessedRules();
-      log.info("Assessment completed for interviewIds");
-      return Response.ok(results).build();
+      service.deleteOldAutoAssessments();
+      service.autoAssessedRules();
+      return Response.ok(true).build();
     } catch (Throwable e) {
       log.error("Error Occured on assessment", e);
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -270,12 +271,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Path(value = "/updatefiredrules")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response updateFiredRules(@QueryParam("id") Long id) {
-    List<InterviewVO> list = new ArrayList<InterviewVO>();
+    List<InterviewVO> list = new ArrayList<>();
     try {
-      list = service.findByIdWithRules(id);
-      for (InterviewVO interviewVO : list) {
-        interviewVO = service.determineFiredRules(interviewVO);
-      }
+      InterviewVO interviewVO = service.updateFiredRule(id);
+      list.add(interviewVO);
     } catch (Throwable e) {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

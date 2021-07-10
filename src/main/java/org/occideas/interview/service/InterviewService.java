@@ -5,10 +5,11 @@ import org.occideas.entity.Interview;
 import org.occideas.vo.*;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 public interface InterviewService extends BaseService<InterviewVO> {
+  void update(Interview interview);
+
   void merge(InterviewVO o);
 
   List<InterviewVO> listAssessments();
@@ -75,11 +76,15 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   SystemPropertyVO preloadFilterStudyAgent(Long idNode);
 
-  List<InterviewVO> autoAssessedRules();
+  void autoAssessedRules();
 
-  InterviewVO determineFiredRules(InterviewVO interview);
+  void evaluateAssessmentStatus(Interview interview);
 
-  void evaluateAssessmentStatus(InterviewVO interviewVO);
+  void deleteOldAutoAssessments(Interview interview);
 
-  void setRuleLevelNoExposure(List<AgentVO> listAgents, ArrayList<RuleVO> autoAssessedRules, ArrayList<RuleVO> firedRules);
+  void determineFiredRules(Interview interview);
+
+  InterviewVO updateFiredRule(long interviewId);
+
+  void deleteOldAutoAssessments();
 }
