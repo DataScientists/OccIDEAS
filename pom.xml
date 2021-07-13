@@ -14,6 +14,7 @@
 		<spring.version>5.2.3.RELEASE</spring.version>
 		<org.mapstruct.version>1.0.0.CR2</org.mapstruct.version>
 		<jersey.version>2.29.1</jersey.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>
@@ -359,10 +360,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>11</source>
+					<target>11</target>
 				</configuration>
 			</plugin>
 
