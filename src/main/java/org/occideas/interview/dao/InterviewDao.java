@@ -8,8 +8,8 @@ import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -92,7 +92,7 @@ public class InterviewDao implements IInterviewDao {
     sessionFactory.getCurrentSession().delete(interview);
   }
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   @Override
   public Interview get(Long id) {
     return (Interview) sessionFactory.getCurrentSession().get(Interview.class, id);
@@ -109,7 +109,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void saveNewTransaction(Interview interview) {
     sessionFactory.getCurrentSession().saveOrUpdate(interview);
   }
@@ -231,7 +231,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   @SuppressWarnings("unchecked")
   public List<Interview> getInterview(Long interviewId) {
     final Session session = sessionFactory.getCurrentSession();
@@ -459,7 +459,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public List<Long> getLinksByAnswerId(long answerId) {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Node.class)
@@ -481,7 +481,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview").executeUpdate();
   }

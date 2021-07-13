@@ -21,7 +21,6 @@ public class AgentPlain implements Serializable {
     @UpdateTimestamp
     private Date lastUpdated;
   private int deleted;
-  @Column(name = "agentGroup_idAgent")
   private long agentGroupId;
 
   public long getIdAgent() {

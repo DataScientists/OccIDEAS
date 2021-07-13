@@ -6,8 +6,8 @@ import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.PossibleAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -31,13 +31,13 @@ public class PossibleAnswerDao implements IPossibleAnswerDao {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void saveOrUpdate(PossibleAnswer answer) {
         sessionFactory.getCurrentSession().saveOrUpdate(answer);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public void saveOrUpdateIgnoreFK(PossibleAnswer answer) {
         sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
                 .executeUpdate();

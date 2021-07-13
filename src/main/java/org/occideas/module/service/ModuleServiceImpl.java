@@ -27,9 +27,10 @@ import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.StreamingOutput;
@@ -68,6 +69,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Autowired
 	private IQuestionCopier questionCopier;
 	@Autowired
+	@Lazy
 	private QuestionService questionService;
 	@Autowired
 	private SystemPropertyService sysPropService;

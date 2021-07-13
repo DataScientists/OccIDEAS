@@ -31,7 +31,7 @@ import org.occideas.vo.HeaderVO;
 import org.occideas.vo.JMXLogVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;

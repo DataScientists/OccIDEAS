@@ -43,7 +43,7 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
     if (!token.isPresent() || token.get().isEmpty()) {
       throw new BadCredentialsException("Invalid token");
     }
-    validateToken(token.get());
+    tokenManager.validateToken(token.get());
     String user = tokenManager.parseUsernameFromToken(token.get());
     User userObj = userService.findBySso(user);
     if (userObj == null) {
@@ -59,18 +59,6 @@ public class TokenAuthenticationProvider implements AuthenticationProvider {
     authenticatedExternalWebService.setAuthenticated(true);
     SecurityContextHolder.getContext().setAuthentication(authenticatedExternalWebService);
     return authenticatedExternalWebService;
-  }
-
-  private void validateToken(String token) {
-    String parseExpiryFromToken = tokenManager.parseExpiryFromToken(token);
-    if (tokenManager.parseUsernameFromToken(token) == null ||
-      tokenManager.parseAuthFromToken(token) == null ||
-      parseExpiryFromToken == null) {
-      throw new BadCredentialsException("Invalid token");
-    }
-    if (ZonedDateTime.now(ZoneId.of("Z")).toLocalDateTime().isAfter(LocalDateTime.parse(parseExpiryFromToken))) {
-      throw new BadCredentialsException("Token expired");
-    }
   }
 
   @Override

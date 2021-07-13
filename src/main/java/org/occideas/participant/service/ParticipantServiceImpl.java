@@ -11,9 +11,10 @@ import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class ParticipantServiceImpl implements ParticipantService {
   private IParticipantDao participantDao;
 
   @Autowired
+  @Lazy
   private IInterviewQuestionDao interviewQuestionDao;
 
   @Autowired
@@ -68,7 +70,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     participantDao.saveOrUpdate(mapper.convertToParticipant(o, true));
   }
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   @Override
   public void updateNewTransaction(ParticipantVO o) {
     participantDao.saveOrUpdate(mapper.convertToParticipant(o, true));

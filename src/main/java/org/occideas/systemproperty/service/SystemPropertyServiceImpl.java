@@ -12,7 +12,7 @@ import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

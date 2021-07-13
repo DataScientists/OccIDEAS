@@ -10,9 +10,8 @@ import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
     return crit.list();
   }
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   @Override
   public void save(NodeLanguage entity) {
     sessionFactory.getCurrentSession().saveOrUpdate(entity);
@@ -318,7 +317,7 @@ public class NodeLanguageDao implements INodeLanguageDao {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Node_Language").executeUpdate();
   }

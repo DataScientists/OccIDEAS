@@ -18,9 +18,10 @@ import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -36,6 +37,7 @@ public class InterviewServiceImpl implements InterviewService {
   @Autowired
   private IInterviewDao interviewDao;
   @Autowired
+  @Lazy
   private IInterviewQuestionDao interviewQuestionDao;
   @Autowired
   private IInterviewAnswerDao interviewAnswerDao;
@@ -54,6 +56,7 @@ public class InterviewServiceImpl implements InterviewService {
   @Autowired
   private InterviewAnswerService interviewAnswerService;
   @Autowired
+  @Lazy
   private QuestionService questionService;
   @Autowired
   private QuestionMapper questionMapper;
@@ -332,7 +335,7 @@ public class InterviewServiceImpl implements InterviewService {
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers,
                                                             String[] filterModuleVO) {
     // get active intro

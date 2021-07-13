@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.security.model.TokenResponse;
 import org.occideas.utilities.PropUtil;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -42,6 +43,18 @@ public class TokenManager {
     } catch (Exception e) {
       logger.error("failed to initialize HMAC Algo" + HMAC_ALGO + ": ", e);
       throw new IllegalStateException();
+    }
+  }
+
+  public void validateToken(String token) {
+    String parseExpiryFromToken = parseExpiryFromToken(token);
+    if (parseUsernameFromToken(token) == null ||
+            parseAuthFromToken(token) == null ||
+            parseExpiryFromToken == null) {
+      throw new BadCredentialsException("Invalid token");
+    }
+    if (ZonedDateTime.now(ZoneId.of("Z")).toLocalDateTime().isAfter(LocalDateTime.parse(parseExpiryFromToken))) {
+      throw new BadCredentialsException("Token expired");
     }
   }
 

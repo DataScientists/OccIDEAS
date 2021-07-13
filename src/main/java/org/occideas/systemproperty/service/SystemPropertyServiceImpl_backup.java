@@ -1,7 +1,7 @@
 package org.occideas.systemproperty.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 @Service
 @Transactional

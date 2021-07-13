@@ -6,8 +6,9 @@ import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import java.util.List;
 public class InterviewQuestionServiceImpl implements InterviewQuestionService {
 
   @Autowired
+  @Lazy
   private IInterviewQuestionDao dao;
 
   @Autowired
