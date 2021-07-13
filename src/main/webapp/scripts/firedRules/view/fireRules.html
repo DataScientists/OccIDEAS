@@ -146,7 +146,7 @@
       &nbsp;
     </div>
     <div aria-label="buttonGrp" ng-if="!linkedModule.nodes" role="group" style="padding:2px 2px 2px 2px;">
-      <button class="btn btn-default" ng-click='expandAll()' type="button">Show Questions</button>
+      <button id="{{interviewId}}-show-questions" class="btn btn-default" ng-click='expandAll()' type="button">Show Questions</button>
     </div>
     <div id="interview-question-list">
       <ng-include src="'scripts/assessments/partials/moduleTree.html'"></ng-include>

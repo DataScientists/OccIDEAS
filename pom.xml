@@ -291,69 +291,25 @@
 			<artifactId>jaxb-runtime</artifactId>
 			<version>2.3.0-b170127.1453</version>
 		</dependency>
-		<!-- JMeter Dependencies -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.jmeter</groupId> -->
-		<!-- <artifactId>ApacheJMeter_core</artifactId> -->
-		<!-- <version>2.8</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>org.bouncycastle</groupId> -->
-		<!-- <artifactId>bcprov-jdk15</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
 
-		<!-- &lt;!&ndash; https://mvnrepository.com/artifact/org.apache.jmeter/ApacheJMeter_components 
-			&ndash;&gt; -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.jmeter</groupId> -->
-		<!-- <artifactId>ApacheJMeter_components</artifactId> -->
-		<!-- <version>4.0</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>org.ow2.asm</groupId> -->
-		<!-- <artifactId>asm</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.httpcomponents</groupId> -->
-		<!-- <artifactId>httpcore</artifactId> -->
-		<!-- <version>4.4.12</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.httpcomponents</groupId> -->
-		<!-- <artifactId>httpclient</artifactId> -->
-		<!-- <version>4.5.6</version> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.jmeter</groupId> -->
-		<!-- <artifactId>ApacheJMeter_http</artifactId> -->
-		<!-- <version>2.10</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>org.ow2.asm</groupId> -->
-		<!-- <artifactId>asm-debug-all</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>org.bouncycastle</groupId> -->
-		<!-- <artifactId>bcprov-jdk15</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.apache.jmeter</groupId> -->
-		<!-- <artifactId>jorphan</artifactId> -->
-		<!-- <version>2.9</version> -->
-		<!-- <exclusions> -->
-		<!-- <exclusion> -->
-		<!-- <groupId>org.bouncycastle</groupId> -->
-		<!-- <artifactId>bcprov-jdk15</artifactId> -->
-		<!-- </exclusion> -->
-		<!-- </exclusions> -->
-		<!-- </dependency> -->
-
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.3.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.21.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>2.23.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

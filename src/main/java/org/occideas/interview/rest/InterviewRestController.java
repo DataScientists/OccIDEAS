@@ -2,24 +2,15 @@ package org.occideas.interview.rest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.agent.service.AgentService;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
-import org.occideas.interviewanswer.service.InterviewAnswerService;
-import org.occideas.interviewautoassessment.service.InterviewAutoAssessmentService;
-import org.occideas.interviewfiredrules.service.InterviewFiredRulesService;
-import org.occideas.interviewmanualassessment.service.InterviewManualAssessmentService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.module.service.ModuleService;
-import org.occideas.modulerule.service.ModuleRuleService;
 import org.occideas.question.service.QuestionService;
-import org.occideas.systemproperty.service.SystemPropertyService;
-import org.occideas.utilities.AssessmentStatusEnum;
-import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,6 +20,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Path("/interview")
 public class InterviewRestController implements BaseRestController<InterviewVO> {
@@ -39,40 +31,16 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   private InterviewService service;
 
   @Autowired
-  private InterviewAutoAssessmentService autoAssessmentService;
-
-  @Autowired
-  private InterviewManualAssessmentService manualAssessmentService;
-
-  @Autowired
-  private InterviewFiredRulesService firedRulesService;
-
-  @Autowired
-  private InterviewAnswerService interviewAnswerService;
-
-  @Autowired
   private QuestionService questionService;
 
   @Autowired
   private InterviewModuleService modService;
 
   @Autowired
-  private AgentService agentService;
-
-  @Autowired
-  private ModuleRuleService moduleRuleService;
-
-  @Autowired
-  private SystemPropertyService sysPropService;
-
-  @Autowired
   private ModuleService moduleService;
 
   @Autowired
   private FragmentService fragmentService;
-
-  @Autowired
-  private StudyAgentUtil studyAgentUtil;
 
   @GET
   @Path(value = "/getlist")
@@ -274,83 +242,13 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Path(value = "/updateAutoAssessments")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response updateAutoAssessments() {
-    List<InterviewVO> list = service.listAllInterviewsWithoutAnswers();
     try {
-
-      List<AgentVO> listAgents = agentService.getStudyAgents();
-      int iSize = list.size();
-      int iCount = 0;
-      for (InterviewVO interviewVO : list) {
-        iCount++;
-        log.info("auto assessment for " + interviewVO.getInterviewId() + " triggered " + iCount + " of " + iSize);
-        System.out.println("ID " + interviewVO.getInterviewId() + " triggered " + iCount + " of " + iSize);
-        interviewVO = this.determineFiredRules(interviewVO);
-        // get interviewautoassessment for each interview
-        // can change if we can do a batch retrieve for all interviews
-        List<InterviewAutoAssessmentVO> assessments = autoAssessmentService.findByInterviewId(interviewVO.getInterviewId());
-        ArrayList<RuleVO> autoAssessedRules = new ArrayList<RuleVO>();
-        for (InterviewAutoAssessmentVO assessment : assessments) {
-          assessment.getRule().setDeleted(1);
-          autoAssessedRules.add(assessment.getRule());
-        }
-        List<InterviewFiredRulesVO> interviewFiredRules = firedRulesService.findByInterviewId(interviewVO.getInterviewId());
-        ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
-        for (InterviewFiredRulesVO ifiredRule : interviewFiredRules) {
-          RuleVO firedRule = ifiredRule.getRules().get(0);
-          firedRules.add(firedRule);
-        }
-
-        setRuleLevelNoExposure(listAgents, autoAssessedRules, firedRules);
-        evaluateAssessmentStatus(interviewVO);
-
-        interviewVO.setAutoAssessedRules(autoAssessedRules);
-        System.out.println("Status is" + interviewVO.getAssessedStatus());
-        service.update(interviewVO);
-
-      }
-      log.info("Assessment completed for interviewIds");
+      service.deleteOldAutoAssessments();
+      service.autoAssessedRules();
+      return Response.ok(true).build();
     } catch (Throwable e) {
-      log.error("Error Occured on assessment", e.getMessage());
+      log.error("Error Occured on assessment", e);
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-    }
-    return Response.ok(list).build();
-  }
-
-  private void evaluateAssessmentStatus(InterviewVO interviewVO) {
-    if (hasManualAssessedRules(interviewVO)) {
-      interviewVO.setAssessedStatus(AssessmentStatusEnum.MANUALLYASSESSED.getDisplay());
-    } else {
-      if (interviewVO.getAssessedStatus().equalsIgnoreCase(AssessmentStatusEnum.NOTASSESSED.getDisplay())) {
-        interviewVO.setAssessedStatus(AssessmentStatusEnum.AUTOASSESSED.getDisplay());
-      } else {
-        //leave status the same for now
-      }
-
-    }
-  }
-
-  private boolean hasManualAssessedRules(InterviewVO interviewVO) {
-    return interviewVO.getManualAssessedRules() != null &&
-      !interviewVO.getManualAssessedRules().isEmpty();
-  }
-
-  private void setRuleLevelNoExposure(List<AgentVO> listAgents, ArrayList<RuleVO> autoAssessedRules, ArrayList<RuleVO> firedRules) {
-    for (AgentVO agent : listAgents) {
-      RuleVO rule = new RuleVO();
-      rule.setLevel("noExposure");
-      rule.setLevelValue(5);
-      rule.setAgentId(agent.getIdAgent());
-      for (RuleVO ruleFired : firedRules) {
-        if (ruleFired.getAgentId() == agent.getIdAgent()) {
-          if (ruleFired.getLevelValue() <= rule.getLevelValue()) {
-            rule.setLevel(ruleFired.getLevel());
-            rule.setLevelValue(ruleFired.getLevelValue());
-            rule.setAgentId(ruleFired.getAgentId());
-            rule.setLegacyRuleId(ruleFired.getIdRule());
-          }
-        }
-      }
-      autoAssessedRules.add(rule);
     }
   }
 
@@ -373,12 +271,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Path(value = "/updatefiredrules")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response updateFiredRules(@QueryParam("id") Long id) {
-    List<InterviewVO> list = new ArrayList<InterviewVO>();
+    List<InterviewVO> list = new ArrayList<>();
     try {
-      list = service.findByIdWithRules(id);
-      for (InterviewVO interviewVO : list) {
-        interviewVO = this.determineFiredRules(interviewVO);
-      }
+      InterviewVO interviewVO = service.updateFiredRule(id);
+      list.add(interviewVO);
     } catch (Throwable e) {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -519,87 +415,6 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     return questionService.determineNextQuestionByCurrentNumber(parentId, number);
   }
 
-  private InterviewVO determineFiredRules(InterviewVO interview) {
-    ArrayList<RuleVO> firedRules = new ArrayList<RuleVO>();
-    ArrayList<RuleVO> rules = new ArrayList<RuleVO>();
-    // TODO need to move this call every after interview that is finished
-    service.cleanDeletedAnswers(interview.getInterviewId());
-    // get all answers by interviewId
-
-    /**
-     * TODO START refactor to use 1 sql query to get the answerhistory joined with modulerule table
-     */
-    List<InterviewAnswerVO> answerHistory = interviewAnswerService.findByInterviewId(interview.getInterviewId());
-    //h
-    List<ModuleRuleVO> moduleRules = new ArrayList<ModuleRuleVO>();
-    for (InterviewAnswerVO ia : answerHistory) {
-      //for(InterviewAnswerVO ia:iq.getAnswers()){
-      List<ModuleRuleVO> nodeModuleRules = moduleRuleService.findByIdNode(ia.getAnswerId());
-
-      moduleRules.addAll(nodeModuleRules);
-
-      //}
-    }
-    /**
-     * TODO END refactor to use 1 sql query to get the answerhistory joined with modulerule table
-     */
-    for (ModuleRuleVO moduleRule : moduleRules) {
-      if (!rules.contains(moduleRule.getRule())) {
-        rules.add(moduleRule.getRule());
-      }
-    }
-    //get list of answer nodes
-    List<InterviewAnswerVO> allActualAnswers = answerHistory;
-    allActualAnswers = removeDeletedAnswers(allActualAnswers);
-    for (RuleVO rule : rules) {
-      boolean bFired = false;
-      for (PossibleAnswerVO pa : rule.getConditions()) {
-        boolean bPartialFired = false;
-        for (InterviewAnswerVO ia : allActualAnswers) {
-          if (pa.getIdNode() == ia.getAnswerId()) {
-            bPartialFired = true;
-            bFired = true;
-            break;
-          }
-        }
-        if (!bPartialFired) {
-          bFired = false;
-          break;
-        }
-      }
-      if (bFired) {
-        if (!firedRules.contains(rule)) {
-          firedRules.add(rule);
-        }
-      }
-    }
-    interview.setFiredRules(firedRules);
-    NoteVO note = new NoteVO();
-    note.setInterviewId(interview.getInterviewId());
-    note.setText("Ran determineFiredRules");
-    note.setType("System");
-    interview.getNotes().add(note);
-    List<InterviewManualAssessmentVO> assessmentRules = manualAssessmentService.findByInterviewId(interview.getInterviewId());
-    ArrayList<RuleVO> manualAssessedRules = new ArrayList<RuleVO>();
-    for (InterviewManualAssessmentVO assessment : assessmentRules) {
-      manualAssessedRules.add(assessment.getRule());
-    }
-    interview.setManualAssessedRules(manualAssessedRules);
-    //System.out.print("Assessment status before update:"+interview.getAssessedStatus());
-    service.update(interview);
-    return interview;
-  }
-
-  private List<InterviewAnswerVO> removeDeletedAnswers(List<InterviewAnswerVO> allActualAnswers) {
-    ArrayList<InterviewAnswerVO> retValue = new ArrayList<InterviewAnswerVO>();
-    for (InterviewAnswerVO answer : allActualAnswers) {
-      if (answer.getDeleted() == 0) {
-        retValue.add(answer);
-      }
-    }
-    return retValue;
-  }
-
   private ArrayList<RuleVO> removeDuplicates(List<RuleVO> rules) {
     ArrayList<RuleVO> retValue = new ArrayList<RuleVO>();
     for (RuleVO rule : rules) {
@@ -624,8 +439,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   }
 
   private List<InterviewQuestionVO> sort(
-    List<InterviewQuestionVO> inputQuestionHistory,
-    Long interviewId) {
+          List<InterviewQuestionVO> inputQuestionHistory,
+          Long interviewId) {
     System.out.println("Sort start " + new Date());
     List<InterviewQuestionVO> sortedQuestionHistory = new ArrayList<InterviewQuestionVO>();
 
@@ -638,8 +453,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     List<Long> moduleList = new ArrayList<Long>();
     // Make a map of the question history, populate the module list
     Map<Long, InterviewQuestionVO> questionMap = getMap(inputQuestionHistory,
-      moduleList,
-      sortedQuestionHistory);
+            moduleList,
+            sortedQuestionHistory);
 
     //Get linked module
     for (Long id : moduleList) {
@@ -651,8 +466,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     for (NodeVO module : sortedQuestions) {
       if (module instanceof ModuleVO) {
         findQuestion(((ModuleVO) module).getChildNodes(),
-          sortedQuestionHistory,
-          questionMap);
+                sortedQuestionHistory,
+                questionMap);
       } else if (module instanceof QuestionVO) {
         findQuestion(sortedQuestionHistory, questionMap, (QuestionVO) module);
       }
@@ -692,9 +507,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   }
 
   private Map<Long, InterviewQuestionVO> getMap(
-    List<InterviewQuestionVO> questionHistory,
-    List<Long> moduleList,
-    List<InterviewQuestionVO> sortedQuestionHistory) {
+          List<InterviewQuestionVO> questionHistory,
+          List<Long> moduleList,
+          List<InterviewQuestionVO> sortedQuestionHistory) {
 
     //Map of the actual unsorted question history
     Map<Long, InterviewQuestionVO> map = new HashMap<Long, InterviewQuestionVO>();
@@ -1057,8 +872,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Path(value = "/getModuleForSubModule")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response getModuleForSubModule(
-    @QueryParam("id") Long interviewId,
-    @QueryParam("linkId") Long linkId) {
+          @QueryParam("id") Long interviewId,
+          @QueryParam("linkId") Long linkId) {
 
     List<ModuleVO> list = new ArrayList<ModuleVO>();
 
@@ -1090,8 +905,8 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Path(value = "/checkQuestionAnswered")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response checkQuestionAnswered(
-    @QueryParam("idInterview") Long interviewId,
-    @QueryParam("nodeId") Long nodeId) {
+          @QueryParam("idInterview") Long interviewId,
+          @QueryParam("nodeId") Long nodeId) {
 
     boolean result = false;
     try {
@@ -1172,7 +987,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     List<RandomInterviewReport> results = null;
     try {
       results = service.createRandomInterviews(randomInterview.getCount(), randomInterview.isRandomAnswers(),
-        randomInterview.getFilterModule());
+              randomInterview.getFilterModule());
 
     } catch (Throwable e) {
 
