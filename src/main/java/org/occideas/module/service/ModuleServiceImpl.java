@@ -72,6 +72,7 @@ public class ModuleServiceImpl implements ModuleService {
 	@Lazy
 	private QuestionService questionService;
 	@Autowired
+	@Lazy
 	private SystemPropertyService sysPropService;
 	@Autowired
 	private SystemPropertyDao sysPropDao;

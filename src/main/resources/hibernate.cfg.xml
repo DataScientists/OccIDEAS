@@ -10,8 +10,7 @@
     <!-- 		<property name="connection.autoReconnectForPools">true</property> -->
     <!-- 		<property name="connection.is-connection-validation-required">true</property> -->
     <!-- 		<property name="connection.pool_size">10</property> -->
-    <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
-    <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+    <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
     <!-- 		<property name="hibernate.connection.provider_class">com.jolbox.bonecp.provider.BoneCPConnectionProvider</property> -->
     <!-- <property name="hibernate.c3p0.min_size">5</property> -->
     <!-- <property name="hibernate.c3p0.max_size">20</property> -->

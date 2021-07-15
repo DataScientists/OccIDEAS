@@ -59,6 +59,7 @@ public class QSFServiceImpl implements IQSFService {
     @Autowired
     private ParticipantService participantService;
     @Autowired
+    @Lazy
     private ModuleService moduleService;
     @Autowired
     private FragmentService fragmentService;
@@ -74,6 +75,7 @@ public class QSFServiceImpl implements IQSFService {
     @Autowired
     private InterviewAnswerService interviewAnswerService;
     @Autowired
+    @Lazy
     private SystemPropertyService systemPropertyService;
     @Autowired
     private IQSFClient iqsfClient;

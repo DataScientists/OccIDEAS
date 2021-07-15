@@ -17,6 +17,7 @@ import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -37,6 +38,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
   private PossibleAnswerService possibleAnswerService;
 
   @Autowired
+  @Lazy
   private SystemPropertyService systemPropertyService;
 
   @Autowired
