@@ -3,17 +3,29 @@ package org.occideas.interview.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.agent.dao.IAgentDao;
+import org.occideas.agent.service.AgentService;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.*;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
+import org.occideas.interviewautoassessment.dao.InterviewAutoAssessmentDao;
+import org.occideas.interviewautoassessment.service.InterviewAutoAssessmentService;
+import org.occideas.interviewfiredrules.dao.InterviewFiredRulesDao;
+import org.occideas.interviewfiredrules.service.InterviewFiredRulesService;
+import org.occideas.interviewmanualassessment.dao.InterviewManualAssessmentDao;
+import org.occideas.interviewmanualassessment.service.InterviewManualAssessmentService;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.mapper.*;
 import org.occideas.module.dao.IModuleDao;
+import org.occideas.modulerule.dao.ModuleRuleDao;
+import org.occideas.modulerule.service.ModuleRuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.rule.constant.RuleLevelEnum;
+import org.occideas.rule.dao.IRuleDao;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.vo.*;
@@ -25,6 +37,7 @@ import javax.transaction.Transactional;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -173,10 +186,18 @@ public class InterviewServiceImpl implements InterviewService {
 
   }
 
-  @Override
-  public void merge(InterviewVO o) {
-    dao.merge(mapper.convertToInterview(o));
-  }
+    @Override
+    public void update(Interview interview) {
+        if (StringUtils.isEmpty(interview.getAssessedStatus())) {
+            interview.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
+        }
+        dao.saveOrUpdate(interview);
+    }
+
+    @Override
+    public void merge(InterviewVO o) {
+        dao.merge(mapper.convertToInterview(o));
+    }
 
   @Override
   public void delete(InterviewVO o) {
@@ -626,8 +647,228 @@ public class InterviewServiceImpl implements InterviewService {
     interviewQuestionDao.preloadAllModules();
   }
 
-  @Override
-  public SystemPropertyVO preloadFilterStudyAgent(Long idNode) {
-    return interviewQuestionDao.preloadFilterStudyAgent(idNode);
-  }
+    @Override
+    public SystemPropertyVO preloadFilterStudyAgent(Long idNode) {
+        return interviewQuestionDao.preloadFilterStudyAgent(idNode);
+    }
+
+    @Override
+    public void autoAssessedRules() {
+        log.info("Started assessing the rules.");
+        List<Interview> interviews = interviewDao.getAllInterviewsWithoutAnswers();
+        List<Agent> listAgents = agentDao.getStudyAgents();
+        for (int count = 0; count < interviews.size(); count++) {
+            Interview interview = interviews.get(count);
+            log.info("Processing interview id {} and is {} of {}",
+                    interview.getIdinterview(),
+                    count + 1,
+                    interviews.size());
+            updateNotes(interview);
+            updateManualAssessedRules(interview);
+            determineFiredRules(interview);
+            List<InterviewFiredRules> firedRules = interviewFiredRulesDao.findByInterviewId(interview.getIdinterview());
+            Set<Rule> listOfFiredRules = firedRules.stream()
+                    .map(InterviewFiredRules::getRules)
+                    .filter(Objects::nonNull)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toSet());
+            List<Rule> autoAssessedRules = new ArrayList<>();
+            autoAssessedRules.addAll(getRuleLevelNoExposure(
+                    listAgents.stream().map(Agent::getIdAgent)
+                            .distinct().collect(Collectors.toList())
+                    , listOfFiredRules));
+            evaluateAssessmentStatus(interview);
+            interview.setFiredRules(new ArrayList<>(listOfFiredRules));
+            interview.setAutoAssessedRules(autoAssessedRules);
+            update(interview);
+        }
+        log.info("Completed assessing the rules count {}.", interviews.size());
+    }
+
+    private List<Rule> getRuleLevelNoExposure(List<Long> listAgentIds, Set<Rule> listOfFiredRules) {
+        return listAgentIds.stream()
+                .map(id -> {
+                    if (Objects.nonNull(listOfFiredRules) && !listOfFiredRules.isEmpty()) {
+                        Optional<Rule> ruleOptional = listOfFiredRules.stream()
+                                .filter(Objects::nonNull)
+                                .filter(ruleFired -> ruleFired.getAgentId() == id)
+                                .filter(ruleFired -> ruleFired.getLevel() < 5)
+                                .findFirst();
+                        if (ruleOptional.isPresent()) {
+                            Rule rule = new Rule();
+                            rule.setAgentId(id);
+                            rule.setLevel(ruleOptional.get().getLevel());
+                            rule.setAgentId(ruleOptional.get().getAgentId());
+                            rule.setLegacyRuleId(ruleOptional.get().getIdRule());
+                            return rule;
+                        }
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteOldAutoAssessments() {
+        log.info("Start deleting old rules in old assessments");
+        List<Interview> interviews = interviewDao.getAllInterviewsWithoutAnswers();
+        Set<Long> rulesToDelete = new HashSet<>();
+        interviews.stream()
+                .forEach(interview -> {
+                    List<InterviewAutoAssessment> assessments = interviewAutoAssessmentDao.findByInterviewId(interview.getIdinterview());
+                    Set<Long> rules = assessments.stream()
+                            .map(InterviewAutoAssessment::getRule)
+                            .map(Rule::getIdRule)
+                            .collect(Collectors.toSet());
+                    rulesToDelete.addAll(rules);
+                });
+        ruleDao.deleteAll(new ArrayList<>(rulesToDelete));
+        log.info("Completed deleting old rules in old assessments");
+    }
+
+    @Override
+    public void deleteOldAutoAssessments(Interview interview) {
+        log.info("Start deleting old rules in old assessments for interview {}", interview.getIdinterview());
+        List<Interview> interviews = interviewDao.getAllInterviewsWithoutAnswers();
+        Set<Long> rulesToDelete = new HashSet<>();
+        List<InterviewAutoAssessment> assessments = interviewAutoAssessmentDao.findByInterviewId(interview.getIdinterview());
+        Set<Long> rules = assessments.stream()
+                .map(InterviewAutoAssessment::getRule)
+                .map(Rule::getIdRule)
+                .collect(Collectors.toSet());
+        rulesToDelete.addAll(rules);
+        ruleDao.deleteAll(new ArrayList<>(rulesToDelete));
+        log.info("Completed deleting old rules in old assessments for interview {}", interview.getIdinterview());
+    }
+
+    @Override
+    public void determineFiredRules(Interview interview) {
+        interviewFiredRulesDao.deleteAllByInterviewId(interview.getIdinterview());
+        List<InterviewAnswer> answerHistory = interviewAnswerDao.findByInterviewId(interview.getIdinterview());
+        Set<Long> allActualAnswers = answerHistory
+                .stream()
+                .filter(interviewAnswer -> interviewAnswer.getDeleted() == 0)
+                .map(InterviewAnswer::getAnswerId)
+                .collect(Collectors.toSet());
+        List<InterviewFiredRules> interviewFiredRules = deriveFiredRulesByAnswersProvided(allActualAnswers, interview.getIdinterview());
+        interviewFiredRulesDao.saveAll(interviewFiredRules);
+    }
+
+    private void updateManualAssessedRules(Interview interview) {
+        List<InterviewManualAssessment> assessmentRules = interviewManualAssessmentDao.findByInterviewId(interview.getIdinterview());
+        interview.setManualAssessedRules(assessmentRules
+                .stream()
+                .map(InterviewManualAssessment::getRule)
+                .collect(Collectors.toList()));
+    }
+
+    private void updateNotes(Interview interview) {
+        if (Objects.isNull(interview.getNotes())) {
+            interview.setNotes(new ArrayList<>());
+        }
+        interview.getNotes().add(getDefaultNote(interview.getIdinterview()));
+    }
+
+    @Override
+    public InterviewVO updateFiredRule(long interviewId) {
+        Interview interview = interviewDao.get(interviewId);
+        deleteOldAutoAssessments(interview);
+        updateNotes(interview);
+        updateManualAssessedRules(interview);
+        determineFiredRules(interview);
+        List<InterviewFiredRules> firedRules = interviewFiredRulesDao.findByInterviewId(interview.getIdinterview());
+        Set<Rule> listOfFiredRules = firedRules.stream()
+                .map(InterviewFiredRules::getRules)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+        interview.setFiredRules(new ArrayList<>(listOfFiredRules));
+        update(interview);
+        return mapper.convertToInterviewVO(interview);
+    }
+
+    private List<InterviewFiredRules> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers, long interviewId) {
+        List<Rule> derivedRulesBasedOnAnswers = allActualAnswers
+                .stream()
+                .map(ia -> moduleRuleDao.getRulesByIdNode(ia))
+                .flatMap(List::stream)
+                .collect(Collectors.toList())
+                .stream()
+                .map(ModuleRule::getRule)
+                .filter(rule -> rule.getDeleted() == 0)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+        List<InterviewFiredRules> firedRules = new ArrayList<>();
+        derivedRulesBasedOnAnswers.stream()
+                .filter(rule -> Objects.nonNull(rule.getConditions()))
+                .forEach(rule -> {
+                    for (PossibleAnswer answer : rule.getConditions()) {
+                        if (allActualAnswers.contains(answer.getIdNode())
+                                && RuleLevelEnum.NoExposure.getValue() != rule.getLevel()) {
+                            InterviewFiredRules interviewFiredRules
+                                    = new InterviewFiredRules();
+                            interviewFiredRules.setIdRule(rule.getIdRule());
+                            interviewFiredRules.setIdinterview(interviewId);
+                            if (firedRules.isEmpty()) {
+                                firedRules.add(interviewFiredRules);
+                            } else if (!firedRules.isEmpty() && firedRules.contains(interviewFiredRules)) {
+                                firedRules.add(interviewFiredRules);
+                            }
+                        }
+                    }
+                });
+        return firedRules;
+    }
+
+    private Rule createNewRule(Rule rule) {
+        Rule newRule = new Rule();
+        newRule.setDeleted(0);
+        newRule.setAgent(rule.getAgent());
+        newRule.setConditions(rule.getConditions());
+        newRule.setAgentId(rule.getAgentId());
+        newRule.setType(rule.getType());
+        newRule.setLevel(rule.getLevel());
+        newRule.setLegacyRuleId(rule.getIdRule());
+        newRule.setRuleAdditionalfields(rule.getRuleAdditionalfields());
+        return newRule;
+    }
+
+    private Note getDefaultNote(long interviewId) {
+        Note note = new Note();
+        note.setInterviewId(interviewId);
+        note.setText("Ran determineFiredRules");
+        note.setType("System");
+        return note;
+    }
+
+    private List<InterviewAnswerVO> removeDeletedAnswers(List<InterviewAnswerVO> allActualAnswers) {
+        ArrayList<InterviewAnswerVO> retValue = new ArrayList<InterviewAnswerVO>();
+        for (InterviewAnswerVO answer : allActualAnswers) {
+            if (answer.getDeleted() == 0) {
+                retValue.add(answer);
+            }
+        }
+        return retValue;
+    }
+
+    @Override
+    public void evaluateAssessmentStatus(Interview interview) {
+        if (hasManualAssessedRules(interview)) {
+            interview.setAssessedStatus(AssessmentStatusEnum.MANUALLYASSESSED.getDisplay());
+        } else {
+            if (interview.getAssessedStatus().equalsIgnoreCase(AssessmentStatusEnum.NOTASSESSED.getDisplay())) {
+                interview.setAssessedStatus(AssessmentStatusEnum.AUTOASSESSED.getDisplay());
+            } else {
+                //leave status the same for now
+            }
+
+        }
+    }
+
+    private boolean hasManualAssessedRules(Interview interview) {
+        return interview.getManualAssessedRules() != null &&
+                !interview.getManualAssessedRules().isEmpty();
+    }
 }

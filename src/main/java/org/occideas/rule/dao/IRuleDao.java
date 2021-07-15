@@ -13,6 +13,8 @@ public interface IRuleDao {
 
   void deleteAll();
 
+  void deleteAll(List<Long> ruleIds);
+
   Rule get(Long id);
 
   Rule merge(Rule rule);
