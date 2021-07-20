@@ -8,8 +8,8 @@ import org.hibernate.query.Query;
 import org.occideas.entity.NodeVoxco;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -26,7 +26,7 @@ public class NodeVoxcoDao implements INodeVoxcoDao {
     private SessionFactory sessionFactory;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Long save(Long surveyId, long idNode, String surveyName) {
         if (surveyId == null || surveyId.longValue() == 0) {
             surveyId = getMaxSurveyId() + 1;

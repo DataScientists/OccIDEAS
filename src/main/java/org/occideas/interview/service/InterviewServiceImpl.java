@@ -4,24 +4,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.IAgentDao;
-import org.occideas.agent.service.AgentService;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.*;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewautoassessment.dao.InterviewAutoAssessmentDao;
-import org.occideas.interviewautoassessment.service.InterviewAutoAssessmentService;
 import org.occideas.interviewfiredrules.dao.InterviewFiredRulesDao;
-import org.occideas.interviewfiredrules.service.InterviewFiredRulesService;
 import org.occideas.interviewmanualassessment.dao.InterviewManualAssessmentDao;
-import org.occideas.interviewmanualassessment.service.InterviewManualAssessmentService;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
-import org.occideas.mapper.*;
+import org.occideas.mapper.InterviewMapper;
+import org.occideas.mapper.InterviewQuestionMapper;
+import org.occideas.mapper.ModuleMapper;
+import org.occideas.mapper.QuestionMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.modulerule.dao.ModuleRuleDao;
-import org.occideas.modulerule.service.ModuleRuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.constant.RuleLevelEnum;
@@ -30,10 +28,10 @@ import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,13 +40,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class InterviewServiceImpl implements InterviewService {
 
-    private final String PARTICIPANT_PREFIX = "auto";
-    private static Logger log = LogManager.getLogger(InterviewServiceImpl.class);
+    private final static String PARTICIPANT_PREFIX = "auto";
+    private final Logger log = LogManager.getLogger(this.getClass());
     @Autowired
     private BaseDao dao;
     @Autowired
     private IInterviewDao interviewDao;
     @Autowired
+    @Lazy
     private IInterviewQuestionDao interviewQuestionDao;
     @Autowired
     private IInterviewAnswerDao interviewAnswerDao;
@@ -67,27 +66,14 @@ public class InterviewServiceImpl implements InterviewService {
     @Autowired
     private InterviewAnswerService interviewAnswerService;
     @Autowired
+    @Lazy
     private QuestionService questionService;
     @Autowired
     private QuestionMapper questionMapper;
     @Autowired
     private InterviewQuestionMapper intQuestionMapper;
     @Autowired
-    private InterviewAnswerMapper intAnswerMapper;
-    @Autowired
-    private AgentService agentService;
-    @Autowired
-    private ModuleRuleService moduleRuleService;
-    @Autowired
-    private InterviewAutoAssessmentService autoAssessmentService;
-    @Autowired
-    private InterviewManualAssessmentService manualAssessmentService;
-    @Autowired
-    private InterviewFiredRulesService firedRulesService;
-    @Autowired
     private IRuleDao ruleDao;
-    @Autowired
-    private RuleMapper ruleMapper;
     @Autowired
     private InterviewAutoAssessmentDao interviewAutoAssessmentDao;
     @Autowired
@@ -151,7 +137,7 @@ public class InterviewServiceImpl implements InterviewService {
     public List<InterviewVO> findById(Long id) {
         Interview interview = interviewDao.get(id);
         InterviewVO InterviewVO = mapper.convertToInterviewVO(interview);
-        List<InterviewVO> list = new ArrayList<InterviewVO>();
+        List<InterviewVO> list = new ArrayList<>();
         list.add(InterviewVO);
         return list;
     }
@@ -377,7 +363,7 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers,
                                                               String[] filterModuleVO) {
         // get active intro

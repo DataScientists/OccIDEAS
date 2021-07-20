@@ -33,10 +33,11 @@ import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.utilities.ZipUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,12 +59,14 @@ public class QSFServiceImpl implements IQSFService {
     @Autowired
     private ParticipantService participantService;
     @Autowired
+    @Lazy
     private ModuleService moduleService;
     @Autowired
     private FragmentService fragmentService;
     @Autowired
     private PossibleAnswerService possibleAnswerService;
     @Autowired
+    @Lazy
     private QuestionService questionService;
     @Autowired
     private InterviewService interviewService;
@@ -72,6 +75,7 @@ public class QSFServiceImpl implements IQSFService {
     @Autowired
     private InterviewAnswerService interviewAnswerService;
     @Autowired
+    @Lazy
     private SystemPropertyService systemPropertyService;
     @Autowired
     private IQSFClient iqsfClient;
@@ -81,7 +85,7 @@ public class QSFServiceImpl implements IQSFService {
     private StudyAgentUtil studyAgentUtil;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public String save(String surveyId, long idNode, String path) {
         return dao.save(surveyId, idNode, path);
     }

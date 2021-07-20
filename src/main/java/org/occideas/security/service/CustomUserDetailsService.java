@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
   @Autowired
   private UserService userService;
 
-  @Transactional(readOnly = true)
+  @Transactional
   public UserDetails loadUserByUsername(String ssoId)
     throws UsernameNotFoundException {
     User user = userService.findBySso(ssoId);

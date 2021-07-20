@@ -1,14 +1,13 @@
 package org.occideas.utilities;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.text.DecimalFormat;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CommonUtilTest {
 
-	
 	@Test
 	public void test(){
 		

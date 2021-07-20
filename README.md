@@ -7,3 +7,7 @@
 - set tomcat to use jdk 11
 - if you are using intellij, you need to also check the jdk here
   File->Project Structure->Modules ->> Language level to 11 
+
+## Running spring boot jar in command line
+- mvn clean install
+- java -jar target/occideas-2.0-SNAPSHOT.jar org.occideas.OccideasApplication

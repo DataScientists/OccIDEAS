@@ -16,8 +16,9 @@ import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class FragmentServiceImpl implements FragmentService {
   private QuestionMapper questionMapper;
 
   @Autowired
+  @Lazy
   private SystemPropertyService systemPropertyService;
 
   @Autowired

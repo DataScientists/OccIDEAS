@@ -20,6 +20,7 @@ import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
@@ -49,8 +50,10 @@ public class StudyAgentUtil {
     ServletContext context;
     private Logger log = LogManager.getLogger(this.getClass());
     @Autowired
+    @Lazy
     private SystemPropertyService systemPropertyService;
     @Autowired
+    @Lazy
     private ModuleService moduleService;
     @Autowired
     private INodeService nodeService;

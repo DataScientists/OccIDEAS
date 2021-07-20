@@ -1,4 +1,4 @@
-package org.occideas.security.config;
+package org.occideas.config;
 
 import org.occideas.security.filter.AuthenticationFilter;
 import org.occideas.security.filter.ReadOnlyFilter;
@@ -36,9 +36,6 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableWebSecurity
-@EnableAsync
-@Order(2)
-@ImportResource("/WEB-INF/spring/applicationContext.xml")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
@@ -48,11 +45,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-            .authorizeRequests().antMatchers(actuatorEndpoints()).hasRole(backendAdminRole).anyRequest()
-            .authenticated().and().anonymous().disable().exceptionHandling()
-            .authenticationEntryPoint(unauthorizedEntryPoint());
-
-    http.addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
+            .authorizeRequests()
+            .antMatchers("/").permitAll()
+            .antMatchers(actuatorEndpoints()).authenticated();
+    http.antMatcher("/web/**")
+            .addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
             .addFilterBefore(new ReadOnlyFilter(), BasicAuthenticationFilter.class);
   }
 

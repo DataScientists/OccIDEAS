@@ -14,8 +14,8 @@ import org.occideas.entity.JobModule;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -93,14 +93,14 @@ public class FragmentDao implements IFragmentDao {
   /* (non-Javadoc)
    * @see org.occideas.fragment.dao.IFragmentDao#saveOrUpdate(org.occideas.entity.Fragment)
    */
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   @Override
   public void saveOrUpdate(Fragment fragment) {
     sessionFactory.getCurrentSession().saveOrUpdate(fragment);
   }
 
   @Override
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void saveOrUpdateIgnoreFK(Fragment fragment) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();

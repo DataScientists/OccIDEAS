@@ -11,10 +11,14 @@ import org.occideas.security.model.TokenResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
@@ -27,12 +31,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
 
 public class AuthenticationFilter extends GenericFilterBean {
 
   public static final String TOKEN_SESSION_KEY = "token";
   public static final String USER_SESSION_KEY = "user";
   private static final Logger log = LogManager.getLogger(AuthenticationFilter.class);
+  public static final String ERROR_MSG = "ErrorMsg";
   private AuthenticationManager authenticationManager;
   private UrlPathHelper urlPathHelper = new UrlPathHelper();
 
@@ -53,7 +60,8 @@ public class AuthenticationFilter extends GenericFilterBean {
     String resourcePath = urlPathHelper.getPathWithinApplication(httpRequest);
 
     try {
-      if (postToAuthenticate(httpRequest, resourcePath)) {
+      boolean shouldAuthenticateLoginUserAndPassword = postToAuthenticate(httpRequest, resourcePath);
+      if (shouldAuthenticateLoginUserAndPassword) {
         log.debug("Trying to authenticate user {} by X-Auth-Username method -" + username);
         processUsernamePasswordAuthentication(httpResponse, username, password);
         return;
@@ -62,6 +70,13 @@ public class AuthenticationFilter extends GenericFilterBean {
       if (token.isPresent()) {
         log.debug("Trying to authenticate user by X-Auth-Token method. Token: {}-" + token);
         processTokenAuthentication(httpResponse, token);
+      }
+
+      if(!token.isPresent()){
+        String unauthorized_access = "Unauthorized Access";
+        httpResponse.addHeader(ERROR_MSG, unauthorized_access);
+        httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, unauthorized_access);
+        return;
       }
 
       log.debug("AuthenticationFilter is passing request down the filter chain");
@@ -74,11 +89,11 @@ public class AuthenticationFilter extends GenericFilterBean {
     } catch (AuthenticationException authenticationException) {
       SecurityContextHolder.clearContext();
       if (authenticationException.getMessage().contains("expired")) {
-        httpResponse.addHeader("ErrorMsg",
+        httpResponse.addHeader(ERROR_MSG,
           authenticationException.getMessage() + "- duration " + TokenManager.duration + "minutes");
         httpResponse.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT, TokenManager.duration);
       } else {
-        httpResponse.addHeader("ErrorMsg", authenticationException.getMessage());
+        httpResponse.addHeader(ERROR_MSG, authenticationException.getMessage());
         httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
       }
       log.error(String.valueOf(HttpServletResponse.SC_UNAUTHORIZED), authenticationException);
@@ -90,10 +105,11 @@ public class AuthenticationFilter extends GenericFilterBean {
   private void addSessionContextToLogging() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String tokenValue = "EMPTY";
-    if (authentication != null && !StringUtils.isEmpty(authentication.getDetails())) {
-      MessageDigestPasswordEncoder encoder = new MessageDigestPasswordEncoder("SHA-1");
+    if (authentication != null && Objects.nonNull(authentication.getDetails())) {
+      PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
       // Salt password should be stored in JNDI
-      tokenValue = encoder.encodePassword(authentication.getDetails().toString(), "secret_salt_password");
+      tokenValue = encoder.encode(authentication.getDetails().toString());
     }
     ThreadContext.put(TOKEN_SESSION_KEY, tokenValue);
 
