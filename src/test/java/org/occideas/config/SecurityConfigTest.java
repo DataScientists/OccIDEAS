@@ -1,7 +1,6 @@
 package org.occideas.config;
 
 import org.aspectj.lang.annotation.Before;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +21,7 @@ import org.springframework.http.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.net.MalformedURLException;
@@ -37,6 +37,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@TestPropertySource("/occideas.properties")
 class SecurityConfigTest {
 
     TestRestTemplate restTemplate;
@@ -133,7 +134,6 @@ class SecurityConfigTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    @NotNull
     private User createUser(String username, String password) {
         User user = new User();
         user.setSsoId(username);

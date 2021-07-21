@@ -11,9 +11,6 @@ import java.util.List;
 
 @Entity
 @DiscriminatorValue("M")
-@DynamicUpdate(value = true)
-@DynamicInsert(value = true)
-@SelectBeforeUpdate(value = true)
 public class JobModule extends Node<Question> implements Serializable {
 
   /**

@@ -9,6 +9,7 @@ import org.hibernate.annotations.*;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
 import javax.persistence.*;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
+@Table(name = "Node")
 public class Node<T extends Node> implements Cloneable {
   @Column(length = 2048)
   protected String name;
@@ -49,6 +51,7 @@ public class Node<T extends Node> implements Cloneable {
   @OrderBy("sequence ASC")
   protected List<T> childNodes;
   @Id
+  @GeneratedValue
   private long idNode;
 
   public Node() {

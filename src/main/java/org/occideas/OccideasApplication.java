@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication(scanBasePackages = "org.occideas",
         exclude = { SecurityAutoConfiguration.class })
-@ImportResource("applicationContext.xml")
 public class OccideasApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

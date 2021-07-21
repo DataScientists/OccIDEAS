@@ -129,7 +129,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
     try {
       Class.forName("com.mysql.jdbc.Driver");
       Connection con = DriverManager.getConnection(dbConnect.getHost(), dbConnect.getUsername(),
-        dbConnect.getPassword());
+              dbConnect.getPassword());
       return con;
     } catch (Exception e) {
       log.error(e.getMessage(), e);
@@ -480,14 +480,14 @@ public class DbConnectServiceImpl implements IDbConnectService {
       String fullpath = "C:\\Users\\jed\\Documents\\dumps\\" + filename;
       createFile(fullpath);
       executeCmd = "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysqldump -u " +
-        username + " -p" + password + " " + databaseName
-        + " -r " + fullpath;
+              username + " -p" + password + " " + databaseName
+              + " -r " + fullpath;
     } else {
       String fullpath = "/opt/data/" + filename;
       createFile(fullpath);
       executeCmd = "mysqldump -u " + username
-        + " -p" + password + " " + databaseName
-        + " -r " + fullpath;
+              + " -p" + password + " " + databaseName
+              + " -r " + fullpath;
     }
     return executeCmd;
   }
@@ -501,29 +501,6 @@ public class DbConnectServiceImpl implements IDbConnectService {
         log.error(e.getMessage(), e);
       }
     }
-  }
-
-  private Map<Long, Long> prepareIdsForNodes(List<NodeVO> list) {
-    Map<Long, Long> idNodeMap = new HashMap<>();
-    Long initialIdNode = moduleDao.generateIdNode();
-    for (NodeVO node : list) {
-      if (!idNodeMap.containsKey(node.getIdNode())) {
-        initialIdNode = initialIdNode + 1;
-        Long newIdNode = initialIdNode;
-        idNodeMap.put(node.getIdNode(), newIdNode);
-        node.setIdNode(newIdNode);
-      }
-    }
-    for (NodeVO node : list) {
-      if (idNodeMap.containsKey(node.getParentId())) {
-        node.setParentId(String.valueOf(idNodeMap.get(node.getParentId())));
-      }
-      if (idNodeMap.containsKey(node.getLink()) && node.getLink() > 0) {
-        node.setLink(idNodeMap.get(node.getLink()));
-      }
-    }
-
-    return idNodeMap;
   }
 
 }
