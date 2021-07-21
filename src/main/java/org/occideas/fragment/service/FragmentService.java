@@ -32,9 +32,9 @@ public interface FragmentService extends BaseService<FragmentVO> {
 
   List<FragmentVO> getFragmentParents(Long id);
 
-  Integer getFragmentTranslationTotalCount(String idNode);
+  Integer getFragmentTranslationTotalCount(Long idNode);
 
-  Integer getFragmentTranslationCurrentCount(String idNode, Long languageId);
+  Integer getFragmentTranslationCurrentCount(Long idNode, Long languageId);
 
   List<LanguageFragmentBreakdownVO> getFragmentLanguageBreakdown(Long languageId);
 

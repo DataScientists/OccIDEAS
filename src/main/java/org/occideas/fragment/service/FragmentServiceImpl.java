@@ -4,12 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.base.service.IQuestionCopier;
 import org.occideas.entity.Fragment;
-import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.QuestionMapper;
-import org.occideas.module.dao.IModuleDao;
+import org.occideas.node.dao.NodeDao;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
 import org.occideas.rule.dao.IRuleDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
@@ -31,7 +30,7 @@ public class FragmentServiceImpl implements FragmentService {
   private Logger log = LogManager.getLogger(this.getClass());
 
   @Autowired
-  private IModuleDao moduleDao;
+  private NodeDao nodeDao;
 
   @Autowired
   private IRuleDao ruleDao;
@@ -115,41 +114,45 @@ public class FragmentServiceImpl implements FragmentService {
 
   @Override
   public NodeRuleHolder copyFragment(FragmentCopyVO vo, FragmentReportVO report) {
-    FragmentVO copyVO = vo.getVo();
-    Long idNode = moduleDao.generateIdNode() + 1;
-    copyVO.setIdNode(idNode);
-    copyVO.setName(vo.getName());
-    NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
-    long maxRuleId = ruleDao.getMaxRuleId();
-    idNodeRuleHolder.setLastIdRule(maxRuleId);
-    idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
-    idNodeRuleHolder.setIdNode(idNode);
-    idNodeRuleHolder.setTopNodeId(idNode);
-    questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder, report);
-    dao.save(mapper.convertToFragment(copyVO, true));
-    return idNodeRuleHolder;
+    // todo refactor
+//    FragmentVO copyVO = vo.getVo();
+//    Long idNode = moduleDao.generateIdNode() + 1;
+//    copyVO.setIdNode(idNode);
+//    copyVO.setName(vo.getName());
+//    NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
+//    long maxRuleId = ruleDao.getMaxRuleId();
+//    idNodeRuleHolder.setLastIdRule(maxRuleId);
+//    idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
+//    idNodeRuleHolder.setIdNode(idNode);
+//    idNodeRuleHolder.setTopNodeId(idNode);
+//    questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder, report);
+//    dao.save(mapper.convertToFragment(copyVO, true));
+//    return idNodeRuleHolder;
+    return null;
   }
 
   @Override
   public NodeRuleHolder deepCopyFragment(FragmentCopyVO vo, FragmentReportVO report, Long parentIdNode,
                                          Long topNodeId) {
-    FragmentVO copyVO = vo.getVo();
-    Long idNode = moduleDao.generateIdNode() + 1;
-    copyVO.setIdNode(idNode);
-    copyVO.setName(vo.getName());
-    copyVO.setParentId(String.valueOf(parentIdNode));
-    if (topNodeId != null) {
-      copyVO.setTopNodeId(topNodeId);
-    }
-    NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
-    long maxRuleId = ruleDao.getMaxRuleId();
-    idNodeRuleHolder.setLastIdRule(maxRuleId);
-    idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
-    idNodeRuleHolder.setIdNode(idNode);
-    idNodeRuleHolder.setTopNodeId(idNode);
-    questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder, report);
-    dao.save(mapper.convertToFragment(copyVO, true));
-    return idNodeRuleHolder;
+    // todo refactor
+//    FragmentVO copyVO = vo.getVo();
+//    Long idNode = moduleDao.generateIdNode() + 1;
+//    copyVO.setIdNode(idNode);
+//    copyVO.setName(vo.getName());
+//    copyVO.setParentId(String.valueOf(parentIdNode));
+//    if (topNodeId != null) {
+//      copyVO.setTopNodeId(topNodeId);
+//    }
+//    NodeRuleHolder idNodeRuleHolder = new NodeRuleHolder();
+//    long maxRuleId = ruleDao.getMaxRuleId();
+//    idNodeRuleHolder.setLastIdRule(maxRuleId);
+//    idNodeRuleHolder.setFirstIdRuleGenerated(maxRuleId);
+//    idNodeRuleHolder.setIdNode(idNode);
+//    idNodeRuleHolder.setTopNodeId(idNode);
+//    questionCopier.populateQuestionsWithIdNode(idNode, copyVO.getChildNodes(), idNodeRuleHolder, report);
+//    dao.save(mapper.convertToFragment(copyVO, true));
+//    return idNodeRuleHolder;
+    return null;
   }
 
   @Override
@@ -188,18 +191,17 @@ public class FragmentServiceImpl implements FragmentService {
   }
 
   @Override
-  public Integer getFragmentTranslationTotalCount(String idNode) {
-    final List<? extends Node> nodeList = moduleDao.getDistinctNodeNameByIdNode(idNode);
+  public Integer getFragmentTranslationTotalCount(Long idNode) {
+    final List<String> nodeList = nodeDao.findDistinctNameByIdNode(idNode);
     if (nodeList.size() <= 1) {
       return nodeList.size();
     }
-    CommonUtil.removeNonUniqueNames(nodeList);
     return nodeList.size();
   }
 
   @Override
-  public Integer getFragmentTranslationCurrentCount(String idNode, Long languageId) {
-    List<String> nodeList = moduleDao.getNodeNameByIdNode(idNode);
+  public Integer getFragmentTranslationCurrentCount(Long idNode, Long languageId) {
+    List<String> nodeList = nodeDao.findDistinctNameByIdNode(idNode);
     CommonUtil.removeNonUniqueString(nodeList);
     CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
     List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
@@ -213,8 +215,8 @@ public class FragmentServiceImpl implements FragmentService {
     return count;
   }
 
-  private boolean hasAnyNodeTranslated(String idNode, Long languageId, List<String> nodeLanguageList) {
-    List<String> nodeList = moduleDao.getNodeNameByIdNode(idNode);
+  private boolean hasAnyNodeTranslated(Long idNode, Long languageId, List<String> nodeLanguageList) {
+    List<String> nodeList = nodeDao.findDistinctNameByIdNode(idNode);
     CommonUtil.removeNonUniqueString(nodeList);
     CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
     for (int i = 0; i < nodeList.size(); i++) {
@@ -225,8 +227,8 @@ public class FragmentServiceImpl implements FragmentService {
     return false;
   }
 
-  private Integer countUniqueNodeNamesInFragment(String idNode) {
-    List<String> nodeList = moduleDao.getNodeNameByIdNode(idNode);
+  private Integer countUniqueNodeNamesInFragment(Long idNode) {
+    List<String> nodeList = nodeDao.findDistinctNameByIdNode(idNode);
     CommonUtil.removeNonUniqueString(nodeList);
     return nodeList.size();
   }
@@ -238,8 +240,8 @@ public class FragmentServiceImpl implements FragmentService {
     List<Fragment> listOfFragmentIdNodes = nodeLanguageDao.getFragmentIdNodeSQL();
     for (Fragment fragment : listOfFragmentIdNodes) {
       long idNode = fragment.getIdNode();
-      Integer currentCount = getFragmentTranslationCurrentCount(String.valueOf(idNode), languageId);
-      Integer totalCount = getFragmentTranslationTotalCount(String.valueOf(idNode));
+      Integer currentCount = getFragmentTranslationCurrentCount(idNode, languageId);
+      Integer totalCount = getFragmentTranslationTotalCount(idNode);
 
       LanguageFragmentBreakdownVO vo = buildBreakdownStatsForFragment(fragment, idNode, currentCount, totalCount);
 
@@ -254,7 +256,7 @@ public class FragmentServiceImpl implements FragmentService {
     List<Fragment> listOfFragmentIdNodes = nodeLanguageDao.getFragmentIdNodeSQL();
     int count = 0;
     for (Fragment fragment : listOfFragmentIdNodes) {
-      count = count + countUniqueNodeNamesInFragment(String.valueOf(fragment.getIdNode()));
+      count = count + countUniqueNodeNamesInFragment(fragment.getIdNode());
     }
     return count;
   }
@@ -266,7 +268,7 @@ public class FragmentServiceImpl implements FragmentService {
     List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
     CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
     for (Fragment fragment : listOfFragmentIdNodes) {
-      if (hasAnyNodeTranslated(String.valueOf(fragment.getIdNode()), languageId, nodeLanguageList)) {
+      if (hasAnyNodeTranslated(fragment.getIdNode(), languageId, nodeLanguageList)) {
         count++;
       }
     }
@@ -280,7 +282,7 @@ public class FragmentServiceImpl implements FragmentService {
     List<String> nodeLanguageList = nodeLanguageDao.getNodeLanguageWordsByIdOrderByWord(languageId);
     CommonUtil.replaceListWithLowerCaseAndTrim(nodeLanguageList);
     for (Fragment fragment : listOfFragmentIdNodes) {
-      List<String> nodeList = moduleDao.getNodeNameByIdNode(String.valueOf(fragment.getIdNode()));
+      List<String> nodeList = nodeDao.findDistinctNameByIdNode(fragment.getIdNode());
       CommonUtil.removeNonUniqueString(nodeList);
       CommonUtil.replaceListWithLowerCaseAndTrim(nodeList);
       for (int i = 0; i < nodeList.size(); i++) {

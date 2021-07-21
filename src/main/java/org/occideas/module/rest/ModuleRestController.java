@@ -533,7 +533,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     @GET
     @Path(value = "/getModuleTranslationTotalCount")
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getModuleTranslationTotalCount(@QueryParam("id") String idNode) {
+    public Response getModuleTranslationTotalCount(@QueryParam("id") long idNode) {
         try {
             Integer total = service.getModuleTranslationTotalCount(idNode);
             return Response.ok(total).build();
@@ -546,7 +546,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
     @GET
     @Path(value = "/getModuleTranslationCurrentCount")
     @Produces(value = MediaType.APPLICATION_JSON)
-    public Response getModuleTranslationCurrentCount(@QueryParam("id") String idNode,
+    public Response getModuleTranslationCurrentCount(@QueryParam("id") long idNode,
                                                      @QueryParam("languageId") long languageId) {
         try {
             Integer total = service.getModuleTranslationCurrentCount(idNode, languageId);

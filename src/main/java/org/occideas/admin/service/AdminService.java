@@ -49,7 +49,6 @@ public class AdminService implements IAdminService {
 
   @Override
   public void purgeParticipants() {
-    // TODO Auto-generated method stub
     dao.deleteAllInterviews();
     dao.deleteAllParticipants();
   }

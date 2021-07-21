@@ -81,19 +81,20 @@ public class QuestionRestController implements BaseRestController<QuestionVO> {
     return Response.ok(list).build();
   }
 
-  @GET
-  @Path(value = "/getMaxId")
-  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-  public Response getMaxId() {
-    Long longVal = null;
-    try {
-      longVal = moduleService.getMaxId();
-    } catch (Throwable e) {
-      e.printStackTrace();
-      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-    }
-    return Response.ok(longVal).build();
-  }
+  // todo refactor
+//  @GET
+//  @Path(value = "/getMaxId")
+//  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+//  public Response getMaxId() {
+//    Long longVal = null;
+//    try {
+//      longVal = moduleService.getMaxId();
+//    } catch (Throwable e) {
+//      e.printStackTrace();
+//      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+//    }
+//    return Response.ok(longVal).build();
+//  }
 
   @Path(value = "/create")
   @POST

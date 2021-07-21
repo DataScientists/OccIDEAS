@@ -2,7 +2,10 @@ package org.occideas.interviewquestion.dao;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -11,8 +14,9 @@ import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.QuestionMapper;
-import org.occideas.module.dao.IModuleDao;
+import org.occideas.module.dao.ModuleDao;
 import org.occideas.module.service.ModuleService;
+import org.occideas.node.dao.NodeDao;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
@@ -23,11 +27,9 @@ import org.occideas.vo.ModuleVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -38,20 +40,20 @@ import java.util.List;
 @Repository
 public class InterviewQuestionDao implements IInterviewQuestionDao {
 
-  private final String UNIQUE_INT_QUESTION_SQL = "select distinct(a.question_id) as question_id,a.id,a.idinterview,"
+  private  String UNIQUE_INT_QUESTION_SQL = "select distinct(a.question_id) as question_id,a.id,a.idinterview,"
     + "a.type,a.name,a.topNodeId, a.nodeClass,a.parentModuleId,"
     + "a.modCount,a.parentAnswerId,a.link, a.deleted,a.isProcessed,"
     + "a.description,a.number,a.intQuestionSequence,a.lastUpdated "
     + "from Interview_Question a, Interview_Question b "
     + "where a.question_id>0 and a.deleted = 0 and b.deleted = 0 and a.idinterview =b.idinterview and b.topNodeId in (:param) ";
-  private final String PROCESSED_FRAGMENT = "select idNode from Node a, "
+  private  String PROCESSED_FRAGMENT = "select idNode from Node a, "
     + " (select if(parentModuleId > 0, parentModuleId, parentAnswerId) as parentModuleId"
     + " from Interview_Question where id = :id" + " and isProcessed = 1" + " ) b"
     + " where (a.topNodeId = b.parentModuleId" + " or a.parent_idNode = b.parentModuleId)"
     + " and a.link = :link";
   private Logger log = LogManager.getLogger(this.getClass());
   @Autowired
-  private SessionFactory sessionFactory;
+  private Session session;
   @Autowired
   private QuestionService questionService;
   @Autowired
@@ -63,7 +65,9 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Autowired
   private StudyAgentUtil studyAgentUtil;
   @Autowired
-  private IModuleDao moduleDao;
+  private ModuleDao moduleDao;
+  @Autowired
+  private NodeDao nodeDao;
   @Autowired
   private IFragmentDao fragmentDao;
   @Autowired
@@ -77,7 +81,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @SuppressWarnings("unchecked")
   public List<InterviewQuestion> getUniqueInterviewQuestions(String[] filterModule) {
     System.out.println("Start getUniqueInterviewQuestions:" + new Date());
-    final Session session = sessionFactory.getCurrentSession();
+    
     SQLQuery sqlQuery = session.createSQLQuery(UNIQUE_INT_QUESTION_SQL).addEntity(InterviewQuestion.class);
     sqlQuery.setParameterList("param", filterModule);
     List<InterviewQuestion> list = sqlQuery.list();
@@ -87,41 +91,41 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
   @Override
   public void updateModuleNameForInterviewId(long id, String newName) {
-    Session session = sessionFactory.getCurrentSession();
+    
     String hqlUpdate = "update InterviewQuestion iq set iq.name = :newName where iq.id = :id";
     session.createQuery(hqlUpdate).setString("newName", newName).setLong("id", id).executeUpdate();
   }
 
   @Override
   public InterviewQuestion save(InterviewQuestion iq) {
-    return (InterviewQuestion) sessionFactory.getCurrentSession().save(iq);
+    return (InterviewQuestion) session.save(iq);
   }
 
   @Override
   public void delete(InterviewQuestion iq) {
-    sessionFactory.getCurrentSession().delete(iq);
+    session.delete(iq);
   }
 
   @Override
   public InterviewQuestion get(Long id) {
-    return (InterviewQuestion) sessionFactory.getCurrentSession().get(InterviewQuestion.class, id);
+    return (InterviewQuestion) session.get(InterviewQuestion.class, id);
   }
 
   @Override
   public InterviewQuestion merge(InterviewQuestion iq) {
-    return (InterviewQuestion) sessionFactory.getCurrentSession().merge(iq);
+    return (InterviewQuestion) session.merge(iq);
   }
 
   @Transactional(Transactional.TxType.REQUIRES_NEW)
   @Override
   public InterviewQuestion saveOrUpdate(InterviewQuestion iq) {
-    sessionFactory.getCurrentSession().saveOrUpdate(iq);
+    session.saveOrUpdate(iq);
     return iq;
   }
 
   @Override
   public InterviewQuestion saveOrUpdateSingleTransaction(InterviewQuestion iq) {
-    sessionFactory.getCurrentSession().saveOrUpdate(iq);
+    session.saveOrUpdate(iq);
     return iq;
   }
 
@@ -129,7 +133,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   public List<InterviewQuestion> saveOrUpdate(List<InterviewQuestion> iqs) {
     List<InterviewQuestion> list = new ArrayList<>();
     for (InterviewQuestion iq : iqs) {
-      sessionFactory.getCurrentSession().saveOrUpdate(iq);
+      session.saveOrUpdate(iq);
       list.add(iq);
     }
     return list;
@@ -138,7 +142,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void preloadAllModules() {
-    List<JobModule> modules = moduleDao.getAll(false);
+    List<JobModule> modules = moduleDao.findByDeleted(0);
     List<ModuleVO> voList = moduleMapper.convertToModuleVOList(modules, false);
     for (ModuleVO moduleVO : voList) {
       try {
@@ -170,7 +174,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
       if (introModule == null) {
         log.error("no intro module set");
       } else {
-        Node node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
+        Node node = nodeDao.getById(Long.valueOf(introModule.getValue()));
         System.out.println("generateCSVForChildAJSMandModule Started");
         generateCSVForChildAJSMandModule(node);
         System.out.println("generateCSVForChildAJSMandModule Ended");
@@ -184,7 +188,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   public SystemPropertyVO preloadFilterStudyAgent(Long idNode) {
     SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
     if (filterStudyAgentFlag != null && "true".equals(filterStudyAgentFlag.getValue().toLowerCase().trim())) {
-        Node node = moduleDao.getNodeById(idNode);
+        Node node = nodeDao.getById(idNode);
         System.out.println("generateCSVForChildAJSMandModule Started idNode=" + idNode);
         links.add(idNode);
         generateCSVForChildAJSMandModule(node);
@@ -226,7 +230,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
   private void processFragmentQuestion(Long link) {
-    Node node = moduleDao.getNodeById(link);
+    Node node = nodeDao.getById(link);
     if (node != null) {
       for (Object object : node.getChildNodes()) {
         if (object instanceof Question && ((Question) object).getLink() > 0) {
@@ -265,7 +269,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq) {
     iq.setProcessed(true);
-    sessionFactory.getCurrentSession().saveOrUpdate(iq);
+    session.saveOrUpdate(iq);
     int intQuestionSequence = iq.getIntQuestionSequence();
     long parentModuleId = iq.getLink();
     loopChildQuestionsAndQueue(iq, intQuestionSequence, parentModuleId);
@@ -293,7 +297,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
       iqQueue.setIntQuestionSequence(++intQuestionSequence);
       iqQueue.setDeleted(0);
       if (shouldQueueQuestion(iq, filterStudyAgentFlag, iqQueue)) {
-        sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
+        session.saveOrUpdate(iqQueue);
       }
     }
   }
@@ -357,7 +361,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
   private void emptyLinkFoundDoNotQueue(InterviewQuestion iq) {
     iq.setDeleted(1);
-    sessionFactory.getCurrentSession().saveOrUpdate(iq);
+    session.saveOrUpdate(iq);
   }
 
   private void loopChildStudyAgentAndQueue(InterviewQuestion iq, int intQuestionSequence,
@@ -378,39 +382,35 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
       iqQueue.setTopNodeId(question.getTopNodeId());
       iqQueue.setIntQuestionSequence(++intQuestionSequence);
       iqQueue.setDeleted(0);
-      sessionFactory.getCurrentSession().saveOrUpdate(iqQueue);
+      session.saveOrUpdate(iqQueue);
     }
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public List<InterviewQuestion> getAll() {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class);
+     Criteria crit = session.createCriteria(InterviewQuestion.class);
     return crit.list();
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public List<InterviewQuestion> getAllActive() {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class).add(Restrictions.eq("deleted", 0));
+     Criteria crit = session.createCriteria(InterviewQuestion.class).add(Restrictions.eq("deleted", 0));
     return crit.list();
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public List<InterviewQuestion> getAllDeleted() {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class).add(Restrictions.eq("deleted", 1));
+     Criteria crit = session.createCriteria(InterviewQuestion.class).add(Restrictions.eq("deleted", 1));
     return crit.list();
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public List<InterviewQuestion> getAllDeleted(Long idInterview) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class);
+    Criteria crit = session.createCriteria(InterviewQuestion.class);
     crit.add(Restrictions.eq("deleted", 1));
     crit.add(Restrictions.eq("idInterview", idInterview));
     return crit.list();
@@ -419,8 +419,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   @SuppressWarnings("unchecked")
   public List<InterviewQuestion> getAllChildInterviewQuestions(Long idAnswer, Long idInterview) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class);
+     Criteria crit = session.createCriteria(InterviewQuestion.class);
     crit.add(Restrictions.eq("idInterview", idInterview));
     crit.add(Restrictions.eq("parentAnswerId", idAnswer));
     session.clear();
@@ -432,8 +431,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   @SuppressWarnings("unchecked")
   public List<InterviewQuestion> findByInterviewId(Long interviewId) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class);
+     Criteria crit = session.createCriteria(InterviewQuestion.class);
     if (interviewId != null) {
       crit.add(Restrictions.eq("idInterview", interviewId));
     }
@@ -443,8 +441,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   @SuppressWarnings("unchecked")
   public InterviewQuestion findIntQuestion(long idInterview, long questionId) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class);
+     Criteria crit = session.createCriteria(InterviewQuestion.class);
     crit.add(Restrictions.eq("idInterview", idInterview));
     crit.add(Restrictions.eq("questionId", questionId));
     List<InterviewQuestion> list = crit.list();
@@ -456,8 +453,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
 
   @Override
   public Long getMaxIntQuestionSequence(long idInterview) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class)
+     
+     Criteria crit = session.createCriteria(InterviewQuestion.class)
       .add(Restrictions.eq("idInterview", idInterview)).addOrder(Order.desc("intQuestionSequence"))
       .setMaxResults(1).setProjection(Projections.projectionList()
         .add(Projections.property("intQuestionSequence"), "intQuestionSequence"));
@@ -467,8 +464,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public Long getUniqueInterviewQuestionCount(String[] filterModule) {
 
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class).add(Restrictions.eq("deleted", 0))
+     
+     Criteria crit = session.createCriteria(InterviewQuestion.class).add(Restrictions.eq("deleted", 0))
       .add(Restrictions.in("topNodeId", CommonUtil.convertToLongList(filterModule)))
       .add(Restrictions.gt("questionId", 0L)).setProjection(Projections.countDistinct("idInterview"));
 
@@ -478,8 +475,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public InterviewQuestion getByQuestionId(Long questionId, Long interviewId) {
 
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class)
+     
+     Criteria crit = session.createCriteria(InterviewQuestion.class)
       .add(Restrictions.eq("questionId", questionId)).add(Restrictions.eq("idInterview", interviewId));
 
     return (InterviewQuestion) crit.uniqueResult();
@@ -488,8 +485,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public List<InterviewQuestion> getQuestionsByNodeId(Long questionId) {
 
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class);
+     
+     Criteria crit = session.createCriteria(InterviewQuestion.class);
     crit.add(Restrictions.eq("questionId", questionId));
     List<InterviewQuestion> list = crit.list();
     if (list.isEmpty()) {
@@ -501,8 +498,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public List<InterviewQuestion> getInterviewQuestionsByNodeIdAndIntId(Long questionId, Long idInterview) {
 
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class);
+     
+     Criteria crit = session.createCriteria(InterviewQuestion.class);
     crit.add(Restrictions.eq("questionId", questionId));
     crit.add(Restrictions.eq("idInterview", idInterview));
     List<InterviewQuestion> list = crit.list();
@@ -515,8 +512,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public InterviewAnswer getInterviewAnswerByAnsIdAndIntId(Long answerId, Long idInterview) {
 
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewAnswer.class);
+     
+     Criteria crit = session.createCriteria(InterviewAnswer.class);
     crit.add(Restrictions.eq("answerId", answerId));
     crit.add(Restrictions.eq("idInterview", idInterview));
     List<InterviewAnswer> list = crit.list();
@@ -529,8 +526,8 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public Long getIntroModuleId(Long interviewId) {
 
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewQuestion.class)
+     
+     Criteria crit = session.createCriteria(InterviewQuestion.class)
       .add(Restrictions.eq("idInterview", interviewId)).add(Restrictions.eq("nodeClass", "M"))
       .setMaxResults(1).setProjection(Projections.projectionList().add(Projections.property("link"), "link"));
 
@@ -540,7 +537,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   public Long checkFragmentProcessed(long link, long id) {
 
-    final Session session = sessionFactory.getCurrentSession();
+     
     Query sqlQuery = session.createSQLQuery(PROCESSED_FRAGMENT);
     sqlQuery.setParameter("id", id);
     sqlQuery.setParameter("link", link);
@@ -553,7 +550,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Override
   @Transactional(Transactional.TxType.REQUIRES_NEW)
   public void deleteAll() {
-    sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_Question").executeUpdate();
+    session.createSQLQuery("truncate table Interview_Question").executeUpdate();
   }
 
   @Override
@@ -566,7 +563,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
         log.error("no intro module set");
         return false;
       } else {
-        Node node = moduleDao.getNodeById(Long.valueOf(introModule.getValue()));
+        Node node = nodeDao.getById(Long.valueOf(introModule.getValue()));
         generateLinks(node);
 
         Boolean preLoaded = isPreLoaded(introModule);
@@ -583,7 +580,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
       for (Long link : links) {
         if (!introModule.getValue().equals(String.valueOf(link))) {
           if (!studyAgentUtil.doesStudyAgentCSVExist(String.valueOf(link))) {
-            Node node = moduleDao.getNodeById(link);
+            Node node = nodeDao.getById(link);
             List<PossibleAnswer> possibleAnswers = systemPropertyDao.getPosAnsWithStudyAgentsByIdMod(node.getIdNode());
             if (!possibleAnswers.isEmpty()) {
               return false;

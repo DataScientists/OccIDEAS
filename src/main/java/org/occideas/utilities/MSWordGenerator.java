@@ -9,13 +9,11 @@ import org.occideas.entity.Constant;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
-import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
-import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,8 +46,6 @@ public class MSWordGenerator {
   private ModuleService moduleService;
   @Autowired
   private FragmentService fragmentService;
-  @Autowired
-  private IModuleDao dao;
 
   public File writeDocument(String idNode, boolean filterStudyAgent) throws IOException {
     if (idNode == null) {

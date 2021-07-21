@@ -307,7 +307,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO> {
   @GET
   @Path(value = "/getFragmentTranslationTotalCount")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-  public Response getFragmentTranslationTotalCount(@QueryParam("id") String idNode) {
+  public Response getFragmentTranslationTotalCount(@QueryParam("id") long idNode) {
     try {
       Integer total = service.getFragmentTranslationTotalCount(idNode);
       return Response.ok(total).build();
@@ -320,7 +320,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO> {
   @GET
   @Path(value = "/getFragmentTranslationCurrentCount")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-  public Response getFragmentTranslationCurrentCount(@QueryParam("id") String idNode, @QueryParam("languageId") long languageId) {
+  public Response getFragmentTranslationCurrentCount(@QueryParam("id") long idNode, @QueryParam("languageId") long languageId) {
     try {
       Integer total = service.getFragmentTranslationCurrentCount(idNode, languageId);
       return Response.ok(total).build();

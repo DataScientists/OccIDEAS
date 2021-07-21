@@ -11,8 +11,6 @@ import java.util.List;
 public interface ModuleService {
 	void merge(ModuleVO module);
 
-	Long getMaxId();
-
 	List<ModuleVO> findByIdForInterview(Long id);
 
 	List<ModuleVO> findByIdNoRules(Long id);
@@ -55,9 +53,9 @@ public interface ModuleService {
     @Async
     void manualBuildQSF(Long id, boolean filter);
 
-    Integer getModuleTranslationTotalCount(String idNode);
+    Integer getModuleTranslationTotalCount(Long idNode);
 
-	Integer getModuleTranslationCurrentCount(String idNode, Long languageId);
+	Integer getModuleTranslationCurrentCount(Long idNode, Long languageId);
 
 	List<LanguageModBreakdownVO> getModuleLanguageBreakdown(Long languageId);
 

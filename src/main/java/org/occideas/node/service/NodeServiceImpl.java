@@ -9,7 +9,7 @@ import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
-import org.occideas.node.dao.INodeDao;
+import org.occideas.node.dao.NodeDao;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
 import org.occideas.vo.QuestionVO;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class NodeServiceImpl implements INodeService {
 
 	@Autowired
-	private INodeDao dao;
+	private NodeDao dao;
 	@Autowired
 	private ModuleMapper moduleMapper;
 	@Autowired
@@ -32,19 +32,19 @@ public class NodeServiceImpl implements INodeService {
 	
 	@Override
 	public ModuleVO getModule(Long idNode) {
-		JobModule module = (JobModule) dao.getNode(idNode);
+		JobModule module = (JobModule) dao.getById(idNode);
 		return moduleMapper.convertToModuleVOOnly(module);
 	}
 
 	@Override
 	public QuestionVO getQuestion(Long idNode) {
-		Question question = (Question) dao.getNode(idNode);
+		Question question = (Question) dao.getById(idNode);
 		return questionMapper.convertToQuestionVOOnly(question);
 	}
 
 	@Override
 	public NodeVO getNode(Long idNode) {
-		Node node = dao.getNode(idNode);
+		Node node = dao.getById(idNode);
 		if ("M".equals(node.getNodeclass())) {
 			JobModule module = (JobModule) node;
 			return moduleMapper.convertToModuleVO(module,true);

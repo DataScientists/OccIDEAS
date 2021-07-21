@@ -18,7 +18,7 @@ import org.occideas.mapper.InterviewMapper;
 import org.occideas.mapper.InterviewQuestionMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.QuestionMapper;
-import org.occideas.module.dao.IModuleDao;
+import org.occideas.module.dao.ModuleDao;
 import org.occideas.modulerule.dao.ModuleRuleDao;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.question.service.QuestionService;
@@ -58,7 +58,7 @@ public class InterviewServiceImpl implements InterviewService {
     @Autowired
     private SystemPropertyDao systemPropertyDao;
     @Autowired
-    private IModuleDao moduleDao;
+    private ModuleDao moduleDao;
     @Autowired
     private ModuleMapper moduleMapper;
     @Autowired
@@ -373,7 +373,7 @@ public class InterviewServiceImpl implements InterviewService {
             return null;
         }
         // get the module
-        JobModule mod = moduleDao.get(Long.valueOf(activeIntro.getValue()));
+        JobModule mod = moduleDao.getById(Long.valueOf(activeIntro.getValue()));
         ModuleVO modVO = moduleMapper.convertToModuleVO(mod, false);
         // get latest participant count
         String maxReferenceNumber = participantService.getMaxReferenceNumber();

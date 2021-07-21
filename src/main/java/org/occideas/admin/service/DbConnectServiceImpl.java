@@ -4,6 +4,7 @@ import com.jolbox.bonecp.BoneCPDataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.admin.dao.NodePlainDao;
 import org.occideas.agent.dao.IAgentDao;
 import org.occideas.entity.*;
 import org.occideas.fragment.dao.IFragmentDao;
@@ -12,8 +13,8 @@ import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.language.dao.ILanguageDao;
 import org.occideas.mapper.*;
-import org.occideas.module.dao.IModuleDao;
-import org.occideas.node.dao.INodeDao;
+import org.occideas.module.dao.ModuleDao;
+import org.occideas.node.dao.NodeDao;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
 import org.occideas.noderule.dao.INodeRuleDao;
 import org.occideas.participant.dao.IParticipantDao;
@@ -33,9 +34,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Transactional
 @Service
@@ -47,7 +46,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
   private NodeUtil util;
 
   @Autowired
-  private IModuleDao moduleDao;
+  private ModuleDao moduleDao;
 
   @Autowired
   private IQuestionDao questionDao;
@@ -104,7 +103,10 @@ public class DbConnectServiceImpl implements IDbConnectService {
   private IParticipantDao participantDao;
 
   @Autowired
-  private INodeDao nodeDao;
+  private NodePlainDao nodePlainDao;
+
+  @Autowired
+  private NodeDao nodeDao;
 
   @Autowired
   private INodeLanguageDao nodeLanguageDao;
@@ -189,50 +191,7 @@ public class DbConnectServiceImpl implements IDbConnectService {
   }
 
   private void saveBatchNodes(List<NodePlain> nodes) {
-    nodeDao.saveBatchNodesPlain(nodes);
-  }
-
-  private void saveNodes(List<NodeVO> nodes) {
-    for (NodeVO vo : nodes) {
-      if (vo instanceof ModuleVO) {
-        moduleDao.saveOrUpdateIgnoreFK(moduleMapper.convertToModule((ModuleVO) vo, false));
-      }
-      if (vo instanceof QuestionVO) {
-        questionDao.saveOrUpdateIgnoreFK(questionMapper.convertToQuestion((QuestionVO) vo));
-      }
-      if (vo instanceof FragmentVO) {
-        fragmentDao.saveOrUpdateIgnoreFK(fragmentMapper.convertToFragment((FragmentVO) vo, false));
-      }
-      if (vo instanceof PossibleAnswerVO) {
-        answerDao.saveOrUpdateIgnoreFK(possibleAnswerMapper.convertToPossibleAnswer((PossibleAnswerVO) vo));
-      }
-    }
-  }
-
-  private void saveBatchNodeLanguage(List<NodeLanguageVO> list) {
-    nodeLanguageDao.batchSave(nodeLanguageMapper.convertToNodeLanguageList(list));
-  }
-
-  private void saveBatchLanguage(List<LanguageVO> list) {
-    languageDao.batchSave(languageMapper.convertToLanguageList(list));
-  }
-
-  private void saveNodeRules(List<NodeRuleVO> list) {
-    for (NodeRuleVO nodeRuleVO : list) {
-      nodeRuleDao.saveOrUpdate(nodeRuleMapper.convertToNodeRule(nodeRuleVO));
-    }
-  }
-
-  private void saveRules(List<RuleVO> rules) {
-    for (RuleVO vo : rules) {
-      ruleDao.saveOrUpdate(ruleMapper.convertToRule(vo));
-    }
-  }
-
-  private void saveAgents(List<AgentVO> agentInfoList) {
-    for (AgentVO vo : agentInfoList) {
-      agentDao.saveOrUpdate(agentMapper.convertToAgent(vo, false));
-    }
+    nodePlainDao.saveAll(nodes);
   }
 
   private void deleteNodeLanguage() {
@@ -257,64 +216,6 @@ public class DbConnectServiceImpl implements IDbConnectService {
 
   private void deleteNodeRules() {
     nodeRuleDao.deleteAll();
-  }
-
-  private void prepareRules(Map<Long, Long> idNodesChecklist, List<RuleVO> ruleVOList,
-                            List<RuleAdditionalFieldVO> ruleAddFieldList, List<NodeRuleVO> nodeRuleVOList) {
-    Map<Long, Long> ruleIds = new HashMap<>();
-    Long initialRuleId = ruleDao.getMaxRuleId();
-    for (RuleVO ruleVO : ruleVOList) {
-      if (!ruleIds.containsKey(ruleVO.getIdRule())) {
-        initialRuleId = initialRuleId + 1;
-        Long newId = initialRuleId;
-        ruleIds.put(ruleVO.getIdRule(), newId);
-        ruleVO.setIdRule(newId);
-        log.info(ruleVO);
-      }
-    }
-    // @TODO mapping of rule additional field
-    for (NodeRuleVO nodeRule : nodeRuleVOList) {
-      if (ruleIds.containsKey(nodeRule.getIdRule()) && idNodesChecklist.containsKey(nodeRule.getIdNode())) {
-        nodeRule.setIdRule(ruleIds.get(nodeRule.getIdRule()));
-        nodeRule.setIdNode(idNodesChecklist.get(nodeRule.getIdNode()));
-        log.info(nodeRule);
-      }
-    }
-  }
-
-  private void mergeLibrary(List<NodeVO> nodes) {
-    for (NodeVO vo : nodes) {
-      log.info(vo);
-    }
-  }
-
-  private List<AgentVO> copyAgentInfoFromDB(Connection connect) throws SQLException {
-    Statement stmt = null;
-    String query = "select * from AgentInfo where deleted = 0";
-    try {
-      stmt = connect.createStatement();
-      ResultSet rs = stmt.executeQuery(query);
-      List<AgentVO> list = new ArrayList<>();
-      while (rs.next()) {
-        AgentVO vo = new AgentVO();
-        vo.setDiscriminator(rs.getString("agent_discriminator"));
-        vo.setIdAgent(rs.getLong("idAgent"));
-        vo.setAgentGroup(new AgentGroupVO(rs.getLong("agentGroup_idAgent")));
-        vo.setDeleted(rs.getInt("deleted"));
-        vo.setDescription(rs.getString("description"));
-        vo.setName(rs.getString("name"));
-        vo.setLastUpdated(rs.getDate("lastUpdated"));
-        list.add(vo);
-      }
-      return list;
-    } catch (SQLException e) {
-      log.error(e.getMessage(), e);
-    } finally {
-      if (stmt != null) {
-        stmt.close();
-      }
-    }
-    return null;
   }
 
   private List<AgentPlain> copyAgentInfoPlainFromDB(Connection connect) throws SQLException {

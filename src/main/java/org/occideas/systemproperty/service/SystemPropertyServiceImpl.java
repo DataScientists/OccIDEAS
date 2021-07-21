@@ -5,20 +5,23 @@ import org.occideas.mapper.ModuleMapper;
 import org.occideas.mapper.PossibleAnswerMapper;
 import org.occideas.mapper.QuestionMapper;
 import org.occideas.mapper.SystemPropertyMapper;
-import org.occideas.module.dao.IModuleDao;
+import org.occideas.module.dao.ModuleDao;
 import org.occideas.modulefragment.service.ModuleFragmentService;
+import org.occideas.node.dao.NodeDao;
+import org.occideas.question.dao.NewQuestionDao;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -32,7 +35,11 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
   @Autowired
   private PossibleAnswerMapper posAnsMapper;
   @Autowired
-  private IModuleDao moduleDao;
+  private ModuleDao moduleDao;
+  @Autowired
+  private NodeDao nodeDao;
+  @Autowired
+  private NewQuestionDao questionDao;
   @Autowired
   private QuestionMapper questionMapper;
   @Autowired
@@ -269,13 +276,16 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
       if (parentIdList.contains(node.getParentId())) {
         continue;
       }
-//			System.out.println("parent id "+node.getParentId());
-      Node n = moduleDao.getNodeById(Long.valueOf(node.getParentId()));
-      if (n instanceof PossibleAnswer) {
-        PossibleAnswerVO vo = posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer) n, false);
+      Optional<Node> foundNodeOptional = nodeDao.findById(Long.valueOf(node.getParentId()));
+      if(foundNodeOptional.isEmpty()){
+        continue;
+      }
+      Node foundNode = foundNodeOptional.get();
+      if (foundNode instanceof PossibleAnswer) {
+        PossibleAnswerVO vo = posAnsMapper.convertToPossibleAnswerVO((PossibleAnswer) foundNode, false);
         vo.getChildNodes().add((QuestionVO) node);
         posAnsWithStudyAgentsList.add(vo);
-      } else if (n instanceof JobModule) {
+      } else if (foundNode instanceof JobModule) {
         QuestionVO qVo = (QuestionVO) node;
         if (nodeVo instanceof ModuleVO) {
           ModuleVO modVo = (ModuleVO) nodeVo;
@@ -315,7 +325,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 
   private boolean addAnsDependencyFromLinkAjsmNew(NodeVO vo, List<NodeVO> nodeWithStudyAgentsList) {
     boolean shouldReturnNull = true;
-    List<Question> qList = moduleDao.getAllLinkingQuestionByModId(vo.getIdNode());
+    List<Question> qList = questionDao.getAllLinkingQuestionByModId(vo.getIdNode());
     List<QuestionVO> qListVO = questionMapper.convertToQuestionVOList(qList);
     if (qListVO == null) {
       return true;
@@ -336,7 +346,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
       if (!fragmentStudyAgentsList.isEmpty()) {
         //link ajsm has answers with study agents
         // will need to  get the parent answer for the link ajsm
-        List<? extends Node> nodeLink = moduleDao.getNodeByLinkAndModId(modFragVO.getFragmentId(), vo.getIdNode());
+        List<? extends Node> nodeLink = nodeDao.findByLinkAndIdNode(modFragVO.getFragmentId(), vo.getIdNode());
         if (!nodeLink.isEmpty() && "P".equals(nodeLink.get(0).getNodeclass())) {
           List<PossibleAnswerVO> listPosAnsFromFragment =
             posAnsMapper.convertToPossibleAnswerVOExModRuleList(
@@ -360,7 +370,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
   private void addLinkingQuestionAsChild(NodeVO vo, List<PossibleAnswerVO> posAnsWithStudyAgentsList, Long moduleId,
                                          PossibleAnswerVO ansVO) {
     QuestionVO qVO = questionMapper.convertToQuestionVO(
-      moduleDao.getLinkingQuestionByModId(moduleId,
+      questionDao.getLinkingQuestionByModId(moduleId,
         vo.getIdNode()));
     if (qVO != null) {
       posAnsWithStudyAgentsList.get(posAnsWithStudyAgentsList.indexOf(ansVO))
@@ -370,7 +380,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 
   private void addLinkingQuestionAsChildForModule(NodeVO vo, ModuleFragmentVO modFragVO) {
     QuestionVO qVO = questionMapper.convertToQuestionVO(
-      moduleDao.getLinkingQuestionByModId(modFragVO.getFragmentId(),
+            questionDao.getLinkingQuestionByModId(modFragVO.getFragmentId(),
         vo.getIdNode()));
     if (qVO != null) {
       ModuleVO modVo = (ModuleVO) vo;
@@ -388,7 +398,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 //        continue;
  //     }
       // get parent until module is reached
-      Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
+      Node node = nodeDao.getById(Long.valueOf(ans.getParentId()));
       parentIdList.add(ans.getParentId());
       if ("Q".equals(node.getNodeclass())) {
         //parent is a question
@@ -424,55 +434,6 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
       }
     }
     return nodeVOList;
-  }
-
-  private List<String> buildStringNodesWithStudyAgents(List<PossibleAnswerVO> posAnsWithStudyAgentsList) {
-    List<String> results = new ArrayList<>();
-    List<QuestionVO> nodeVOList = new ArrayList<>();
-    List<String> parentIdList = new ArrayList<>();
-    int index = 0;
-    for (PossibleAnswerVO ans : posAnsWithStudyAgentsList) {
-      index++;
-      if (parentIdList.contains(ans.getParentId())) {
-        continue;
-      }
-      // get parent until module is reached
-      Node node = moduleDao.getNodeById(Long.valueOf(ans.getParentId()));
-      parentIdList.add(ans.getParentId());
-      if ("Q".equals(node.getNodeclass())) {
-        //parent is a question
-        QuestionVO questionVO = questionMapper.convertToQuestionWithModRulesReduced((Question) node);
-
-        if (!ans.getChildNodes().isEmpty()) {
-          // got a linking question
-          try {
-            PossibleAnswerVO posAns = questionVO.getChildNodes().get(questionVO.getChildNodes().indexOf(ans));
-            if (posAns != null) {
-              posAns.getChildNodes().addAll(ans.getChildNodes());
-            }
-          } catch (Throwable ex) {
-            ex.printStackTrace();
-          }
-        }
-        QuestionVO questionUntilRootModule = getQuestionUntilRootModule(questionVO.getParentId(), questionVO);
-        if (nodeVOList.contains(questionUntilRootModule)) {
-          QuestionVO qVO = nodeVOList.get(nodeVOList.indexOf(questionUntilRootModule));
-          try {
-            mergeDifferences(questionUntilRootModule, qVO, false);
-          } catch (IllegalAccessException e) {
-            e.printStackTrace();
-          } catch (InvocationTargetException e) {
-            e.printStackTrace();
-          }
-        } else {
-          results.add(String.valueOf(questionUntilRootModule.getIdNode()));
-        }
-      } else if ("F".equals(node.getNodeclass())) {
-        //parent is a link
-        System.out.println("inside F");
-      }
-    }
-    return results;
   }
 
 
@@ -513,8 +474,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
   }
 
   public List<QuestionVO> getChildFrequencyNodes(String idNode, PossibleAnswerVO answerVO) {
-    //System.out.println(answerVO.getName());
-    List<Question> childQuestions = moduleDao.getChildFrequencyNodes(String.valueOf(answerVO.getIdNode()));
+    List<Question> childQuestions = questionDao.findByParentIdAndTypeContaining(answerVO.getIdNode(), "frequency");
     if (childQuestions.isEmpty()) {
       return null;
     }
@@ -522,9 +482,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
       convertToQuestionVOReducedDetailsList(childQuestions);
     if (!childFrequencyNodes.isEmpty()) {
       for (QuestionVO qVO : childFrequencyNodes) {
-        //System.out.println(qVO.getName());
         for (PossibleAnswerVO ansVO : qVO.getChildNodes()) {
-          //System.out.println(ansVO.getName());
           List<QuestionVO> childFrequencyNodes2 = getChildFrequencyNodes(String.valueOf(ansVO.getIdNode()), ansVO);
           ansVO.setChildNodes(childFrequencyNodes2);
         }
@@ -534,8 +492,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
   }
 
   public List<QuestionVO> getChildLinkNodes(String idNode, PossibleAnswerVO answerVO) {
-    //System.out.println(answerVO.getName());
-    List<Question> childQuestions = moduleDao.getChildLinkNodes(String.valueOf(answerVO.getIdNode()));
+    List<Question> childQuestions = questionDao.findByParentIdAndTypeContaining(answerVO.getIdNode(),"linked");
     if (childQuestions.isEmpty()) {
       return null;
     }
@@ -543,9 +500,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
       convertToQuestionVOReducedDetailsList(childQuestions);
     if (!childFrequencyNodes.isEmpty()) {
       for (QuestionVO qVO : childFrequencyNodes) {
-        //System.out.println(qVO.getName());
         for (PossibleAnswerVO ansVO : qVO.getChildNodes()) {
-          //System.out.println(ansVO.getName());
           List<QuestionVO> childFrequencyNodes2 = getChildLinkNodes(String.valueOf(ansVO.getIdNode()), ansVO);
           ansVO.setChildNodes(childFrequencyNodes2);
         }
@@ -580,7 +535,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
     }
 
 
-    Node node = moduleDao.getNodeById(Long.valueOf(parentId));
+    Node node = nodeDao.getById(Long.valueOf(parentId));
     if ("P".equals(node.getNodeclass())) {
       //parent is a answer
       PossibleAnswerVO possibleAnswerVO =
@@ -684,7 +639,7 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 
   @Override
   public void populateNodeidList(Long nodeId) {
-    Node node = moduleDao.getNodeById(Long.valueOf(nodeId));
+    Node node = nodeDao.getById(nodeId);
     if ("P".equals(node.getNodeclass())) {
       //parent is a answer
       PossibleAnswerVO possibleAnswerVO = posAnsMapper.convertToPossibleAnswerVOExcQuestionAnsChild((PossibleAnswer) node);

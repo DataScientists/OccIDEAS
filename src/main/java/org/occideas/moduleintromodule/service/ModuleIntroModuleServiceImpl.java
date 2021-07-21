@@ -4,7 +4,7 @@ import org.occideas.entity.JobModule;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.mapper.ModuleIntroModuleMapper;
 import org.occideas.mapper.ModuleMapper;
-import org.occideas.module.dao.IModuleDao;
+import org.occideas.module.dao.ModuleDao;
 import org.occideas.modulefragment.service.ModuleFragmentService;
 import org.occideas.moduleintromodule.dao.IModuleIntroModuleDao;
 import org.occideas.vo.FragmentVO;
@@ -25,7 +25,7 @@ public class ModuleIntroModuleServiceImpl implements ModuleIntroModuleService {
   @Autowired
   private IModuleIntroModuleDao dao;
   @Autowired
-  private IModuleDao moduleDao;
+  private ModuleDao moduleDao;
   @Autowired
   private ModuleMapper moduleMapper;
   @Autowired
@@ -42,7 +42,7 @@ public class ModuleIntroModuleServiceImpl implements ModuleIntroModuleService {
 
   @Override
   public List<ModuleVO> findByIdWithFragments(Long id) {
-    JobModule module = moduleDao.get(id);
+    JobModule module = moduleDao.getById(id);
     ModuleVO moduleVO = moduleMapper.convertToModuleVO(module, true);
     List<ModuleVO> list = new ArrayList<ModuleVO>();
     List<ModuleFragmentVO> moduleFragmentList = moduleFragmentService.getModuleFragmentByModuleId(id);
