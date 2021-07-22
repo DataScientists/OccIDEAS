@@ -11,7 +11,7 @@
     </parent>
     <groupId>org.occideas</groupId>
     <artifactId>occideas</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <version>2.0-SNAPSHOT</version>
     <name>occideas</name>
 
@@ -73,7 +73,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -262,6 +261,18 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/webapp</directory>
+                <targetPath>META-INF/resources</targetPath>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
