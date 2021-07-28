@@ -9,10 +9,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.transaction.Transactional;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 public class DaoServiceAuthenticator implements ExternalServiceAuthenticator {
 
   private Logger log = LogManager.getLogger(DaoServiceAuthenticator.class);

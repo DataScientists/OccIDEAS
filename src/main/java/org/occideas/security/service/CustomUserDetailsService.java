@@ -14,13 +14,13 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service("customUserDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
   @Autowired
   private UserService userService;
 
-  @Transactional
   public UserDetails loadUserByUsername(String ssoId)
     throws UsernameNotFoundException {
     User user = userService.findBySso(ssoId);
