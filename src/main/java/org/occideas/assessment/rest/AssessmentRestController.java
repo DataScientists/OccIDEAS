@@ -484,12 +484,16 @@ public class AssessmentRestController {
     writeReport(fullPath, reportHistoryVO, csvVO);
     List<InterviewAnswerVO> allAnswers = new ArrayList<InterviewAnswerVO>();
     List<InterviewQuestionVO> allQuestions = new ArrayList<InterviewQuestionVO>();
+    int iSize = uniqueInterviews.size();
+    int iCount = 0;
     for (Interview interview : uniqueInterviews) {
     	List<InterviewAnswerVO> answers = interviewAnswerService.findByInterviewId(interview.getIdinterview());
         List<InterviewQuestionVO> questions = interviewQuestionService
           .findByInterviewId(interview.getIdinterview());
         allAnswers.addAll(answers);
         allQuestions.addAll(questions);
+        iCount++;
+        System.out.println("Assessment report processing "+ iCount +" of "+ iSize);
     }
     Map<Long, NodeVO> nodeVoList = new HashMap<>();
     String[] modules = filterModuleVO.getFilterModule();

@@ -696,17 +696,30 @@ public class InterviewServiceImpl implements InterviewService {
         return listAgentIds.stream()
                 .map(id -> {
                     if (Objects.nonNull(listOfFiredRules) && !listOfFiredRules.isEmpty()) {
-                        Optional<Rule> ruleOptional = listOfFiredRules.stream()
-                                .filter(Objects::nonNull)
-                                .filter(ruleFired -> ruleFired.getAgentId() == id)
-                                .filter(ruleFired -> ruleFired.getLevel() < 5)
-                                .findFirst();
-                        if (ruleOptional.isPresent()) {
+                    	Rule lowestLevel = null;
+                        for(Rule rule: listOfFiredRules){
+                        	if(Objects.isNull(rule) || rule.getAgentId() != id){
+                        		continue;
+                        	}
+                        	if(Objects.isNull(lowestLevel)){
+                        		lowestLevel = rule;
+                        	}
+                        	if(rule.getLevel() < lowestLevel.getLevel()){
+                        		lowestLevel = rule;
+                        	}
+                        }
+                        
+                        if (Objects.nonNull(lowestLevel)) {
                             Rule rule = new Rule();
                             rule.setAgentId(id);
-                            rule.setLevel(ruleOptional.get().getLevel());
-                            rule.setAgentId(ruleOptional.get().getAgentId());
-                            rule.setLegacyRuleId(ruleOptional.get().getIdRule());
+                            rule.setLevel(lowestLevel.getLevel());
+                            rule.setAgentId(lowestLevel.getAgentId());
+                            rule.setLegacyRuleId(lowestLevel.getIdRule());
+                            return rule;
+                        }else{
+                        	Rule rule = new Rule();
+                            rule.setLevel(5);                           
+                            rule.setAgentId(id);
                             return rule;
                         }
                     }
@@ -730,7 +743,9 @@ public class InterviewServiceImpl implements InterviewService {
                             .collect(Collectors.toSet());
                     rulesToDelete.addAll(rules);
                 });
-        ruleDao.deleteAll(new ArrayList<>(rulesToDelete));
+        if(rulesToDelete.size()>0){
+        	ruleDao.deleteAll(new ArrayList<>(rulesToDelete));
+        } 
         log.info("Completed deleting old rules in old assessments");
     }
 
@@ -745,7 +760,9 @@ public class InterviewServiceImpl implements InterviewService {
                 .map(Rule::getIdRule)
                 .collect(Collectors.toSet());
         rulesToDelete.addAll(rules);
-        ruleDao.deleteAll(new ArrayList<>(rulesToDelete));
+        if(rulesToDelete.size()>0){
+        	ruleDao.deleteAll(new ArrayList<>(rulesToDelete));
+        }  
         log.info("Completed deleting old rules in old assessments for interview {}", interview.getIdinterview());
     }
 
