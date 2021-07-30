@@ -21,9 +21,9 @@ public class AssessmentServiceImpl implements AssessmentService {
 
   @Override
   public PageVO<AssessmentAnswerSummary> getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter) {
-    List<AssessmentAnswerSummary> list = dao.getAnswerSummaryByName(filter);
+    List<AssessmentAnswerSummary> list = dao.getAnswerSummary(filter);
     PageVO<AssessmentAnswerSummary> page = pageUtilIntMod.populatePage(list, filter.getPageNumber(), filter.getSize());
-    page.setTotalSize(dao.getAnswerSummaryByNameTotalCount(filter).intValue());
+    page.setTotalSize(dao.getAnswerSummaryTotalCount(filter).intValue());
     return page;
   }
 

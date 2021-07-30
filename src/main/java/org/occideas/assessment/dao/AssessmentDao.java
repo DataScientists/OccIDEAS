@@ -49,76 +49,17 @@ public class AssessmentDao {
             .getResultList();
   }
 
-  public List<AssessmentAnswerSummary> getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter) {
+  public Long getAnswerSummaryTotalCount(AssessmentAnswerSummaryFilterVO filter) {
     final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(AssessmentAnswerSummary.class);
-//		.setProjection(
-//			    Projections.distinct(Projections.projectionList()
-//			    	    .add(Projections.property("idinterview"), "idinterview")
-//			    	    .add(Projections.property("answerId"), "answerId")
-//			    	    .add(Projections.property("name"), "name")
-//			    	    .add(Projections.property("idParticipant"), "idParticipant")
-//			    	    .add(Projections.property("reference"), "reference")
-//			    	    .add(Projections.property("assessedStatus"), "assessedStatus")
-//			    	    .add(Projections.property("status"), "status")));
-    if (filter.getAnswerId() != null) {
-      crit.add(Restrictions.eq("answerId", filter.getAnswerId()));
-    }
-    if (filter.getName() != null) {
-      crit.add(Restrictions.eq("name", filter.getName()));
-    }
-    if (filter.getModuleName() != null) {
-      crit.add(Restrictions.eq("interviewModuleName", filter.getModuleName()));
-    }
-    if (filter.getIdinterview() != null) {
-      crit.add(Restrictions.like("idinterview", filter.getIdinterview()));
-    }
-    if (filter.getIdParticipant() != null) {
-      crit.add(Restrictions.like("idParticipant", filter.getIdParticipant()));
-    }
-    if (filter.getReference() != null) {
-      crit.add(Restrictions.like("reference", filter.getReference(), MatchMode.ANYWHERE));
-    }
-    if (filter.getAssessedStatus() != null) {
-      crit.add(Restrictions.like("assessedStatus", filter.getAssessedStatus(), MatchMode.ANYWHERE));
-    }
-    if (filter.getStatus() != null) {
-      crit.add(Restrictions.like("status", filter.getStatus()));
-    }
-    crit.setFirstResult(pageUtil.calculatePageIndex(filter.getPageNumber(),
-      filter.getSize()));
-    crit.setMaxResults(filter.getSize());
-    return crit.list();
-  }
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+    Root<AssessmentAnswerSummary> root = criteria.from(AssessmentAnswerSummary.class);
 
-  public Long getAnswerSummaryByNameTotalCount(AssessmentAnswerSummaryFilterVO filter) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(AssessmentAnswerSummary.class);
-    if (filter.getAnswerId() != null) {
-      crit.add(Restrictions.eq("answerId", filter.getAnswerId()));
-    }
-    if (filter.getName() != null) {
-      crit.add(Restrictions.eq("name", filter.getName()));
-    }
-    if (filter.getIdinterview() != null) {
-      crit.add(Restrictions.like("idinterview", filter.getIdinterview()));
-    }
-    if (filter.getIdParticipant() != null) {
-      crit.add(Restrictions.like("idParticipant", filter.getIdParticipant()));
-    }
-    if (filter.getReference() != null) {
-      crit.add(Restrictions.like("reference", filter.getReference(), MatchMode.ANYWHERE));
-    }
-    if (filter.getModuleName() != null) {
-      crit.add(Restrictions.eq("interviewModuleName", filter.getModuleName()));
-    }
-    if (filter.getAssessedStatus() != null) {
-      crit.add(Restrictions.like("assessedStatus", filter.getAssessedStatus(), MatchMode.ANYWHERE));
-    }
-    if (filter.getStatus() != null) {
-      crit.add(Restrictions.like("status", filter.getStatus()));
-    }
-    crit.setProjection(Projections.rowCount());
-    return (Long) crit.uniqueResult();
+    List<Predicate> listOfRestrictions = filter.getListOfRestrictions(builder,root);
+
+    criteria.select(builder.count(root.get(AssessmentAnswerSummary_.primaryKey)));
+    criteria.where(listOfRestrictions.toArray(new Predicate[0]));
+
+    return sessionFactory.getCurrentSession().createQuery(criteria).getSingleResult();
   }
 }

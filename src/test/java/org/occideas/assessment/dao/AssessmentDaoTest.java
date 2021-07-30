@@ -143,8 +143,20 @@ class AssessmentDaoTest {
         answerSummaryFilterVO.setPageNumber(1);
         answerSummaryFilterVO.setSize(10);
 
-        Long count = assessmentDao.getAnswerSummaryByNameTotalCount(answerSummaryFilterVO);
+        Long count = assessmentDao.getAnswerSummaryTotalCount(answerSummaryFilterVO);
 
         assertEquals(1, count);
+    }
+
+    @Test
+    void givenNonExistingData_whenGetAnswerSummaryByNameTotalCount_shouldReturnCount() {
+        AssessmentAnswerSummaryFilterVO answerSummaryFilterVO = new AssessmentAnswerSummaryFilterVO();
+        answerSummaryFilterVO.setName("Not Existing");
+        answerSummaryFilterVO.setPageNumber(1);
+        answerSummaryFilterVO.setSize(10);
+
+        Long count = assessmentDao.getAnswerSummaryTotalCount(answerSummaryFilterVO);
+
+        assertEquals(0, count);
     }
 }
