@@ -26,3 +26,21 @@ spring.datasource.password=
 - profile = embedded
 - mvn clean install
 - java -jar target/occideas-2.0-SNAPSHOT.jar org.occideas.OccideasApplication --spring.profiles.active=embedded
+
+## Enable Metamodel in IDE
+### Eclipse
+-> properties / Java Compiler/ Annotation Processing
+- Enable project specific settings -> checked
+- Enable annotation processing -> checked
+- Enable processing in editor -> checked
+- Generated source directory = "target/metamodel"
+- Click "Apply"
+### Intellij
+-> preference / Build, Execution,Deployment / Annotation Processors
+- Enable annotation processing -> checked
+- Obtain processors from project classpath -> checked
+  Under “Annotation processors”
+- add “org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor”
+  Click Apply
+- Run “mvn clean install”
+- You might also need to
