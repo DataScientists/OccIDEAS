@@ -3,6 +3,7 @@ package org.occideas.entity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,7 +31,7 @@ public class InterviewFiredRules implements Serializable {
   @Column(name = "idRule")
   private long idRule;
 
-  @OneToMany(fetch = FetchType.LAZY)
+  @OneToMany(fetch = FetchType.EAGER)
   @JoinColumns({
     @JoinColumn(name = "idRule", referencedColumnName = "idRule", insertable = false, updatable = false)})
   private List<Rule> rules;

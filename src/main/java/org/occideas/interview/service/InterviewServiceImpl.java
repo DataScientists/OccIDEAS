@@ -31,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -363,7 +364,7 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public List<RandomInterviewReport> createRandomInterviews(int count, Boolean isRandomAnswers,
                                                               String[] filterModuleVO) {
         // get active intro
@@ -801,7 +802,7 @@ public class InterviewServiceImpl implements InterviewService {
         updateNotes(interview);
         updateManualAssessedRules(interview);
         determineFiredRules(interview);
-        List<InterviewFiredRules> firedRules = interviewFiredRulesDao.findByInterviewId(interview.getIdinterview());
+        List<InterviewFiredRules> firedRules = interviewFiredRulesDao.findByInterviewIdWithRules(interview.getIdinterview());
         Set<Rule> listOfFiredRules = firedRules.stream()
                 .map(InterviewFiredRules::getRules)
                 .filter(Objects::nonNull)

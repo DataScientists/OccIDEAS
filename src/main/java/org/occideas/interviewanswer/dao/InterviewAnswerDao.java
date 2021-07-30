@@ -20,7 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
   }
 
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public List<InterviewAnswer> saveAnswerAndQueueQuestions(List<InterviewAnswer> ia) {
     List<InterviewAnswer> list = new ArrayList<>();
@@ -261,7 +262,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
   }
 
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public List<InterviewQuestion> saveIntervewAnswersAndGetChildQuestion(List<InterviewAnswer> ia) {
     List<InterviewQuestion> list = new ArrayList<>();
@@ -299,7 +300,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
 
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_Answer").executeUpdate();
   }

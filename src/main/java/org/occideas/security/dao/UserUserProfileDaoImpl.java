@@ -7,7 +7,8 @@ import org.occideas.security.model.UserUserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class UserUserProfileDaoImpl implements UserUserProfileDao {
   @Autowired
   private SessionFactory sessionFactory;
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void save(UserUserProfile profile) {
     final Session session = sessionFactory.getCurrentSession();
     session.saveOrUpdate(profile);

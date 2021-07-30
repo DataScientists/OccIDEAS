@@ -10,7 +10,8 @@ import org.occideas.vo.InterviewQuestionVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class InterviewAnswerServiceImpl implements InterviewAnswerService {
     return qmapper.convertToInterviewQuestionVOList(dao.saveIntervewAnswersAndGetChildQuestion(mapper.convertToInterviewAnswerList(o)));
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public InterviewAnswerVO saveOrUpdate(InterviewAnswerVO answerVO) {
     return mapper.convertToInterviewAnswerVO(dao.saveOrUpdate(mapper.convertToInterviewAnswer(answerVO)));

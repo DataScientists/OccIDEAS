@@ -1,13 +1,7 @@
 package org.occideas.assessment.dao;
 
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.occideas.base.dao.GenericBaseDao;
 import org.occideas.entity.AssessmentAnswerSummary;
 import org.occideas.entity.AssessmentAnswerSummary_;
 import org.occideas.utilities.PageUtil;
@@ -20,7 +14,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository

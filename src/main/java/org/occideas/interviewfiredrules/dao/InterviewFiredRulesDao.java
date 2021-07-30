@@ -4,13 +4,17 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.occideas.base.dao.GenericBaseDao;
-import org.occideas.entity.Agent;
+import org.occideas.entity.AssessmentAnswerSummary;
 import org.occideas.entity.InterviewFiredRules;
+import org.occideas.entity.InterviewFiredRules_;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,24 @@ public class InterviewFiredRulesDao {
       crit.add(Restrictions.eq("idinterview", interviewId));
     }
     return crit.list();
+  }
+
+  @Transactional
+  public List<InterviewFiredRules> findByInterviewIdWithRules(Long interviewId) {
+    final Session session = sessionFactory.getCurrentSession();
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<InterviewFiredRules> criteria = builder.createQuery(InterviewFiredRules.class);
+    Root<InterviewFiredRules> root = criteria.from(InterviewFiredRules.class);
+    root.fetch(InterviewFiredRules_.RULES);
+    criteria.select(root);
+    if (interviewId != null) {
+      criteria.where(builder.equal(root.get(InterviewFiredRules_.id), interviewId));
+    }
+
+    List<InterviewFiredRules> resultList = sessionFactory.getCurrentSession()
+            .createQuery(criteria)
+            .getResultList();
+    return resultList;
   }
 
   public void delete(InterviewFiredRules interviewFiredRule) {

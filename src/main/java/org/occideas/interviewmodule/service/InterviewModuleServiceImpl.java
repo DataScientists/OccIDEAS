@@ -5,7 +5,7 @@ import org.occideas.mapper.InterviewModuleMapper;
 import org.occideas.vo.InterviewModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

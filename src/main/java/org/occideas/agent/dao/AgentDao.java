@@ -14,7 +14,8 @@ import org.occideas.entity.AgentPlain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
@@ -46,14 +47,14 @@ public class AgentDao implements IAgentDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public long saveOrUpdate(Agent module) {
     sessionFactory.getCurrentSession().saveOrUpdate(module);
     return module.getIdAgent();
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveBatchAgents(List<Agent> agents) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();
@@ -102,19 +103,19 @@ public class AgentDao implements IAgentDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Long saveAgentGroup(AgentGroup group) {
     return (Long) sessionFactory.getCurrentSession().save(group);
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table AgentInfo").executeUpdate();
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveBatchAgentsPlain(List<AgentPlain> copyAgentInfoPlainFromDB) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();

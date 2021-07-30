@@ -14,7 +14,8 @@ import org.occideas.entity.RulePlain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,13 +25,13 @@ public class RuleDao implements IRuleDao {
   @Autowired
   private SessionFactory sessionFactory;
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public Long save(Rule rule) {
     return (Long) sessionFactory.getCurrentSession().save(rule);
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public void delete(Rule rule) {
     rule.setDeleted(1);
@@ -45,26 +46,26 @@ public class RuleDao implements IRuleDao {
     query.executeUpdate();
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public Rule get(Long id) {
     return (Rule) sessionFactory.getCurrentSession().get(Rule.class, id);
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public Rule merge(Rule rule) {
     return (Rule) sessionFactory.getCurrentSession().merge(rule);
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public void saveOrUpdate(Rule rule) {
     sessionFactory.getCurrentSession().saveOrUpdate(rule);
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveBatchRule(List<RulePlain> rules) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();
@@ -97,7 +98,7 @@ public class RuleDao implements IRuleDao {
 
   @Override
   @SuppressWarnings("unchecked")
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Long getMaxRuleId() {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Rule.class)
@@ -115,7 +116,7 @@ public class RuleDao implements IRuleDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();

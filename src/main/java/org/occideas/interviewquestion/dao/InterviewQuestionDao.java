@@ -26,7 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -116,7 +117,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     return (InterviewQuestion) sessionFactory.getCurrentSession().merge(iq);
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public InterviewQuestion saveOrUpdate(InterviewQuestion iq) {
     sessionFactory.getCurrentSession().saveOrUpdate(iq);
@@ -140,7 +141,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void preloadAllModules() {
     List<JobModule> modules = moduleDao.getAll(false);
     List<ModuleVO> voList = moduleMapper.convertToModuleVOList(modules, false);
@@ -164,7 +165,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     }
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public SystemPropertyVO preloadActiveIntro() {
     SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
@@ -183,7 +184,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
     return filterStudyAgentFlag;
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public SystemPropertyVO preloadFilterStudyAgent(Long idNode) {
     SystemPropertyVO filterStudyAgentFlag = systemPropertyService.getByName(Constant.FILTER_STUDY_AGENTS);
@@ -265,7 +266,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public InterviewQuestion saveInterviewLinkAndQueueQuestions(InterviewQuestion iq) {
     iq.setProcessed(true);
@@ -555,7 +556,7 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_Question").executeUpdate();
   }
