@@ -32,15 +32,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Autowired
   private ParticipantMapper mapper;
-
-  @Autowired
-  private PageUtil<ParticipantIntMod> pageUtilIntMod;
-
-  @Autowired
-  private PageUtil<AssessmentIntMod> pageAssessmentUtilIntMod;
-
-  @Autowired
-  private PageUtil<ParticipantVO> pageUtil;
+  private PageUtil<ParticipantIntMod> pageUtilIntMod = new PageUtil<>();
+  private PageUtil<AssessmentIntMod> pageAssessmentUtilIntMod = new PageUtil<>();
+  private PageUtil<ParticipantVO> pageUtil = new PageUtil<>();
 
   @Override
   public List<ParticipantVO> listAll() {

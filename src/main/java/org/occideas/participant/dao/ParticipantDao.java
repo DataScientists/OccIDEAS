@@ -57,8 +57,7 @@ public class ParticipantDao implements IParticipantDao {
     + " and p.deleted = 0";
   @Autowired
   private SessionFactory sessionFactory;
-  @Autowired
-  private PageUtil<ParticipantVO> pageUtil;
+  private PageUtil<ParticipantVO> pageUtil = new PageUtil<>();
 
   @Override
   @Transactional(Transactional.TxType.REQUIRES_NEW)

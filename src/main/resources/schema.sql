@@ -353,6 +353,7 @@ CREATE TABLE SYS_CONFIG
     PRIMARY KEY (id)
 );
 
+
 DROP VIEW IF EXISTS ModuleRule;
 CREATE VIEW ModuleRule AS
 SELECT concat(m.idNode, ':',nr.idRule, ':',r.agentId, ':',n.idNode)  as primaryKey,

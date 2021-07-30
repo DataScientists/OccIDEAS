@@ -17,9 +17,7 @@ public class AssessmentServiceImpl implements AssessmentService {
 
   @Autowired
   private AssessmentDao dao;
-
-  @Autowired
-  private PageUtil<AssessmentAnswerSummary> pageUtilIntMod;
+  private PageUtil<AssessmentAnswerSummary> pageUtilIntMod = new PageUtil<>();
 
   @Override
   public PageVO<AssessmentAnswerSummary> getAnswerSummaryByName(AssessmentAnswerSummaryFilterVO filter) {

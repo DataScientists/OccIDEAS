@@ -53,24 +53,28 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
   @Autowired
   private SessionFactory sessionFactory;
   @Autowired
+  @Lazy
   private QuestionService questionService;
   @Autowired
+  @Lazy
   private SystemPropertyService systemPropertyService;
   @Autowired
   private SystemPropertyDao systemPropertyDao;
   @Autowired
+  @Lazy
   private ModuleService moduleService;
   @Autowired
+  @Lazy
   private StudyAgentUtil studyAgentUtil;
   @Autowired
   private IModuleDao moduleDao;
   @Autowired
   private IFragmentDao fragmentDao;
   @Autowired
-  private QuestionMapper qMapper;
-  @Autowired
+  @Lazy
   private ModuleMapper moduleMapper;
   @Autowired
+  @Lazy
   private FragmentMapper fragmentMapper;
 
   @Override

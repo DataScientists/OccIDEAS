@@ -35,6 +35,7 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
   private SessionFactory sessionFactory;
 
   @Autowired
+  @Lazy
   private PossibleAnswerService possibleAnswerService;
 
   @Autowired
@@ -42,13 +43,8 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
   private SystemPropertyService systemPropertyService;
 
   @Autowired
+  @Lazy
   private StudyAgentUtil studyAgentUtil;
-
-  @Autowired
-  private IPossibleAnswerDao answerDao;
-
-  @Autowired
-  private PossibleAnswerMapper answerMapper;
 
 
   @Override
