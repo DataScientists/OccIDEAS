@@ -17,9 +17,7 @@ public class GenericBaseDao<T, I> {
     protected SessionFactory sessionFactory;
 
     public T save(T entity){
-        CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
-        CriteriaQuery<?> criteriaQuery = criteriaBuilder.createQuery(entity.getClass());
-        sessionFactory.getCurrentSession().save(entity);
+        sessionFactory.getCurrentSession().saveOrUpdate(entity);
         return entity;
     }
 

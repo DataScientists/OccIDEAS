@@ -15,9 +15,7 @@ import org.occideas.interviewmanualassessment.dao.InterviewManualAssessmentDao;
 import org.occideas.modulerule.dao.ModuleRuleDao;
 import org.occideas.utilities.AssessmentStatusEnum;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -97,6 +95,60 @@ class InterviewServiceImplTest {
         assertEquals(interview.getIdinterview(), enrichedInterview.getIdinterview());
         assertEquals(interview.getAssessedStatus(), enrichedInterview.getAssessedStatus());
     }
+
+    @Test
+    void givenRulesWithMultiCondition_whenDeriveFiredRulesByAnswersProvided_shouldPopulateFiredRules() {
+        Interview interview = buildSampleInterviewEntity(1L, AssessmentStatusEnum.NOTASSESSED);
+        Interview enrichedInterview = buildSampleInterviewEntity(1L, AssessmentStatusEnum.NOTASSESSED);
+        when(interviewAnswerDao.findByInterviewId(interview.getIdinterview())).thenReturn(buildSampleInterviewAnswers(interview));
+        when(moduleRuleDao.getRulesByIdNode(anyLong())).thenReturn(buildSampleModuleRules(1L));
+
+        interviewService.determineFiredRules(enrichedInterview);
+
+        assertNotNull(enrichedInterview);
+        assertEquals(interview.getIdinterview(), enrichedInterview.getIdinterview());
+        assertEquals(interview.getAssessedStatus(), enrichedInterview.getAssessedStatus());
+    }
+
+
+
+    @Test
+    void givenMultipleConditions_whenDeriveFiredRulesByAnswersProvided_shouldReturnFiredRule() {
+        List<PossibleAnswer> conditions = new ArrayList<>();
+        PossibleAnswer possibleAnswer1 = buildPossibleAnswer(1L);
+        PossibleAnswer possibleAnswer2 = buildPossibleAnswer(2L);
+        conditions.add(possibleAnswer1);
+        conditions.add(possibleAnswer2);
+        List<ModuleRule> moduleRules = buildSampleModuleRules(1L);
+        moduleRules.get(0).getRule().setConditions(conditions);
+        when(moduleRuleDao.getRulesByIdNode(anyLong())).thenReturn(moduleRules);
+        Set<Long> actualAnswers = new HashSet<>();
+        actualAnswers.add(possibleAnswer1.getIdNode());
+        actualAnswers.add(possibleAnswer2.getIdNode());
+
+        List<InterviewFiredRules> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+
+        assertEquals(1, interviewFiredRules.size());
+    }
+
+    @Test
+    void givenMultipleConditions_whenDeriveFiredRulesByAnswersProvided_shouldNotReturnFiredRule() {
+        List<PossibleAnswer> conditions = new ArrayList<>();
+        PossibleAnswer possibleAnswer1 = buildPossibleAnswer(1L);
+        PossibleAnswer possibleAnswer2 = buildPossibleAnswer(2L);
+        conditions.add(possibleAnswer1);
+        conditions.add(possibleAnswer2);
+        List<ModuleRule> moduleRules = buildSampleModuleRules(1L);
+        moduleRules.get(0).getRule().setConditions(conditions);
+        when(moduleRuleDao.getRulesByIdNode(anyLong())).thenReturn(moduleRules);
+        Set<Long> actualAnswers = new HashSet<>();
+        actualAnswers.add(possibleAnswer1.getIdNode());
+
+        List<InterviewFiredRules> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+
+        assertTrue(interviewFiredRules.isEmpty());
+    }
+
 
     private List<InterviewManualAssessment> buildManualAssessedRules(
             Interview interview) {
@@ -203,15 +255,15 @@ class InterviewServiceImplTest {
     List<PossibleAnswer> buildPossibleAnswers() {
         List<PossibleAnswer> possibleAnswers =
                 new ArrayList<>();
-        PossibleAnswer possibleAnswer = buildPossibleAnswer();
+        PossibleAnswer possibleAnswer = buildPossibleAnswer(1L);
         possibleAnswers.add(possibleAnswer);
         return possibleAnswers;
     }
 
-    private PossibleAnswer buildPossibleAnswer() {
+    private PossibleAnswer buildPossibleAnswer(long idNode) {
         PossibleAnswer possibleAnswer =
                 new PossibleAnswer();
-        possibleAnswer.setIdNode(1L);
+        possibleAnswer.setIdNode(idNode);
         possibleAnswer.setDeleted(0);
         possibleAnswer.setDescription("Answer A");
         possibleAnswer.setLink(0);
@@ -225,6 +277,5 @@ class InterviewServiceImplTest {
         possibleAnswer.setParentId("1");
         return possibleAnswer;
     }
-
 
 }

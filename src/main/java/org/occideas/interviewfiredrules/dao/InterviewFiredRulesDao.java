@@ -4,15 +4,18 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+import org.occideas.base.dao.GenericBaseDao;
 import org.occideas.entity.Agent;
 import org.occideas.entity.InterviewFiredRules;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
+@Transactional
 public class InterviewFiredRulesDao {
 
   @Autowired

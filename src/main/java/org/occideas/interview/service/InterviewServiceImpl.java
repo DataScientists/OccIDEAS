@@ -692,7 +692,7 @@ public class InterviewServiceImpl implements InterviewService {
         log.info("Completed assessing the rules count {}.", interviews.size());
     }
 
-    private List<Rule> getRuleLevelNoExposure(List<Long> listAgentIds, Set<Rule> listOfFiredRules) {
+    protected List<Rule> getRuleLevelNoExposure(List<Long> listAgentIds, Set<Rule> listOfFiredRules) {
         return listAgentIds.stream()
                 .map(id -> {
                     if (Objects.nonNull(listOfFiredRules) && !listOfFiredRules.isEmpty()) {
@@ -812,7 +812,7 @@ public class InterviewServiceImpl implements InterviewService {
         return mapper.convertToInterviewVO(interview);
     }
 
-    private List<InterviewFiredRules> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers, long interviewId) {
+    protected List<InterviewFiredRules> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers, long interviewId) {
         List<Rule> derivedRulesBasedOnAnswers = allActualAnswers
                 .stream()
                 .map(ia -> moduleRuleDao.getRulesByIdNode(ia))
@@ -828,35 +828,30 @@ public class InterviewServiceImpl implements InterviewService {
         derivedRulesBasedOnAnswers.stream()
                 .filter(rule -> Objects.nonNull(rule.getConditions()))
                 .forEach(rule -> {
-                    for (PossibleAnswer answer : rule.getConditions()) {
-                        if (allActualAnswers.contains(answer.getIdNode())
-                                && RuleLevelEnum.NoExposure.getValue() != rule.getLevel()) {
-                            InterviewFiredRules interviewFiredRules
-                                    = new InterviewFiredRules();
-                            interviewFiredRules.setIdRule(rule.getIdRule());
-                            interviewFiredRules.setIdinterview(interviewId);
-                            if (firedRules.isEmpty()) {
-                                firedRules.add(interviewFiredRules);
-                            } else if (!firedRules.isEmpty() && firedRules.contains(interviewFiredRules)) {
-                                firedRules.add(interviewFiredRules);
-                            }
+                    List<PossibleAnswer> conditions = rule.getConditions();
+                    int numberConditionsMet = 0;
+                    for (PossibleAnswer answer : conditions) {
+                        if (allActualAnswers.contains(answer.getIdNode())) {
+                            numberConditionsMet++;
                         }
+                    }
+                    if(numberConditionsMet == conditions.size()) {
+                        addFiredRule(interviewId, firedRules, rule);
                     }
                 });
         return firedRules;
     }
 
-    private Rule createNewRule(Rule rule) {
-        Rule newRule = new Rule();
-        newRule.setDeleted(0);
-        newRule.setAgent(rule.getAgent());
-        newRule.setConditions(rule.getConditions());
-        newRule.setAgentId(rule.getAgentId());
-        newRule.setType(rule.getType());
-        newRule.setLevel(rule.getLevel());
-        newRule.setLegacyRuleId(rule.getIdRule());
-        newRule.setRuleAdditionalfields(rule.getRuleAdditionalfields());
-        return newRule;
+    private void addFiredRule(long interviewId, List<InterviewFiredRules> firedRules, Rule rule) {
+        InterviewFiredRules interviewFiredRules
+                = new InterviewFiredRules();
+        interviewFiredRules.setIdRule(rule.getIdRule());
+        interviewFiredRules.setIdinterview(interviewId);
+        if (firedRules.isEmpty()) {
+            firedRules.add(interviewFiredRules);
+        } else if (!firedRules.isEmpty() && !firedRules.contains(interviewFiredRules)) {
+            firedRules.add(interviewFiredRules);
+        }
     }
 
     private Note getDefaultNote(long interviewId) {
