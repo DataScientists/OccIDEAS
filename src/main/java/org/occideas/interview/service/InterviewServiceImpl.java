@@ -770,7 +770,11 @@ public class InterviewServiceImpl implements InterviewService {
         deleteOldAutoAssessments(interview);
         updateNotes(interview);
         updateManualAssessedRules(interview);
-        interview.setFiredRules(determineFiredRules(interview));
+        List<Rule> firedRules = determineFiredRules(interview);
+        log.info("fired rules identified for interview {} is {}"
+                , interview.getIdinterview()
+                , firedRules.size());
+        interview.setFiredRules(firedRules);
         update(interview);
         return mapper.convertToInterviewVO(interview);
     }
