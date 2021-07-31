@@ -8,7 +8,6 @@ import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +15,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class InterviewDao implements IInterviewDao {
@@ -315,6 +315,19 @@ public class InterviewDao implements IInterviewDao {
       .setResultTransformer(Transformers.aliasToBean(Interview.class));
     List<Interview> temp = crit.list();
     return temp;
+  }
+
+  @Override
+  public void deleteAutoAssessments() {
+    sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_AutoAssessedRules").executeUpdate();
+  }
+
+  @Override
+  public void deleteAutoAssessment(long id) {
+    Interview interview = sessionFactory.getCurrentSession().find(Interview.class, id);
+    if(Objects.nonNull(interview)){
+      interview.getAutoAssessedRules().clear();
+    }
   }
 
   @Override

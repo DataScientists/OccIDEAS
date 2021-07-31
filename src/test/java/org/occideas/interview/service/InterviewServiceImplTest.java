@@ -20,8 +20,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.occideas.utilities.AssessmentStatusEnum.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,7 +50,7 @@ class InterviewServiceImplTest {
         when(interviewDao.getAllInterviewsWithoutAnswers())
                 .thenReturn(processInterviews);
         when(agentDao.getStudyAgents()).thenReturn(buildSampleAgents());
-        doNothing().when(interviewService).determineFiredRules(any());
+        doReturn(Collections.singletonList(new Rule())).when(interviewService).determineFiredRules(any());
         doNothing().when(interviewService).update(any(Interview.class));
 
         interviewService.autoAssessedRules();
@@ -70,7 +69,7 @@ class InterviewServiceImplTest {
         when(interviewDao.getAllInterviewsWithoutAnswers())
                 .thenReturn(processInterviews);
         when(agentDao.getStudyAgents()).thenReturn(buildSampleAgents());
-        doNothing().when(interviewService).determineFiredRules(any());
+        doReturn(Collections.singletonList(new Rule())).when(interviewService).determineFiredRules(any());
         doNothing().when(interviewService).update(any(Interview.class));
 
         interviewService.autoAssessedRules();
@@ -126,7 +125,7 @@ class InterviewServiceImplTest {
         actualAnswers.add(possibleAnswer1.getIdNode());
         actualAnswers.add(possibleAnswer2.getIdNode());
 
-        List<InterviewFiredRules> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
 
         assertEquals(1, interviewFiredRules.size());
     }
@@ -144,7 +143,7 @@ class InterviewServiceImplTest {
         Set<Long> actualAnswers = new HashSet<>();
         actualAnswers.add(possibleAnswer1.getIdNode());
 
-        List<InterviewFiredRules> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
 
         assertTrue(interviewFiredRules.isEmpty());
     }

@@ -4,36 +4,35 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.occideas.entity.AssessmentAnswerSummary;
 import org.occideas.entity.InterviewFiredRules;
 import org.occideas.entity.InterviewFiredRules_;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
-@Transactional
 public class InterviewFiredRulesDao {
 
   @Autowired
   private SessionFactory sessionFactory;
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public InterviewFiredRules save(InterviewFiredRules entity) {
     sessionFactory.getCurrentSession().saveOrUpdate(entity);
     return entity;
   }
 
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public List<InterviewFiredRules> saveAll(List<InterviewFiredRules> interviewFiredRules) {
-    return interviewFiredRules.stream()
-            .map(interviewFiredRule ->  save(interviewFiredRule))
-            .collect(Collectors.toList());
+     interviewFiredRules.stream()
+            .forEach(ir -> sessionFactory.getCurrentSession().save(ir));
+     return interviewFiredRules;
   }
 
   public List<InterviewFiredRules> findByInterviewId(Long interviewId) {
@@ -45,7 +44,7 @@ public class InterviewFiredRulesDao {
     return crit.list();
   }
 
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public List<InterviewFiredRules> findByInterviewIdWithRules(Long interviewId) {
     final Session session = sessionFactory.getCurrentSession();
     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -57,10 +56,7 @@ public class InterviewFiredRulesDao {
       criteria.where(builder.equal(root.get(InterviewFiredRules_.id), interviewId));
     }
 
-    List<InterviewFiredRules> resultList = sessionFactory.getCurrentSession()
-            .createQuery(criteria)
-            .getResultList();
-    return resultList;
+    return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
   }
 
   public void delete(InterviewFiredRules interviewFiredRule) {

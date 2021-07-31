@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +56,7 @@ class InterviewFiredRulesDaoTest {
 
         List<InterviewFiredRules> actual = interviewFiredRulesDao.findByInterviewIdWithRules(1l);
 
+        assertFalse(actual.isEmpty());
         assertNotNull(actual.get(0).getRules());
         assertFalse(actual.get(0).getRules().isEmpty());
     }

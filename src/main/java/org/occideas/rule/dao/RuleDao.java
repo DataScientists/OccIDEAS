@@ -8,12 +8,10 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
-import org.occideas.entity.Participant;
 import org.occideas.entity.Rule;
 import org.occideas.entity.RulePlain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +23,8 @@ public class RuleDao implements IRuleDao {
   @Autowired
   private SessionFactory sessionFactory;
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Long save(Rule rule) {
     return (Long) sessionFactory.getCurrentSession().save(rule);
   }
@@ -46,7 +44,6 @@ public class RuleDao implements IRuleDao {
     query.executeUpdate();
   }
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public Rule get(Long id) {
     return (Rule) sessionFactory.getCurrentSession().get(Rule.class, id);
