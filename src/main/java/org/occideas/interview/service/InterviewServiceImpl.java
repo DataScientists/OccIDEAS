@@ -38,9 +38,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -690,6 +691,7 @@ public class InterviewServiceImpl implements InterviewService {
         AtomicInteger count = new AtomicInteger();
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.setReadOnly(true);
+        Executor executor = Executors.newFixedThreadPool(5);
 
         for (Interview interview : interviews) {
             int countVar = count.incrementAndGet();
@@ -699,15 +701,14 @@ public class InterviewServiceImpl implements InterviewService {
                                 log.info("completed processing interview id {} and is {} of {}"
                                         , processedInterview.getIdinterview(), countVar, interviews.size());
                                 return processedInterview;
-                            });
+                            }, executor);
             interviewsToBeAssessed[countVar - 1] = asyncAssessedRule;
         }
 
-
-        List<Interview> interviewsToBeProcessed = Stream.of(interviewsToBeAssessed)
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
-        bulkUpdate(interviewsToBeProcessed);
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(interviewsToBeAssessed);
+        if(allFutures.isDone()) {
+            bulkUpdate(interviews);
+        }
         log.info("Completed assessing the rules count {}.", interviews.size());
     }
 
