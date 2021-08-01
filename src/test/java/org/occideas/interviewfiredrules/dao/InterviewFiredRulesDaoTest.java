@@ -3,7 +3,6 @@ package org.occideas.interviewfiredrules.dao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.occideas.entity.InterviewFiredRules;
-import org.occideas.entity.Rule;
 import org.occideas.rule.dao.RuleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,13 +47,10 @@ class InterviewFiredRulesDaoTest {
 
     @Test
     void givenExistingInterviews_whenFindByInterviewId_shouldReturnIncludingRules() {
-        Rule rule = new Rule();
-        rule.setType("test");
-        ruleDao.save(rule);
-        InterviewFiredRules interviewFiredRules = buildInterviewFiredRules(1l, 1l);
+        InterviewFiredRules interviewFiredRules = buildInterviewFiredRules(2600, 6000);
         interviewFiredRulesDao.save(interviewFiredRules);
 
-        List<InterviewFiredRules> actual = interviewFiredRulesDao.findByInterviewIdWithRules(1l);
+        List<InterviewFiredRules> actual = interviewFiredRulesDao.findByInterviewIdWithRules(2600l);
 
         assertFalse(actual.isEmpty());
         assertNotNull(actual.get(0).getRules());

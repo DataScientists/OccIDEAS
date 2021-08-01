@@ -8,58 +8,64 @@ import java.util.List;
 
 public interface IInterviewDao {
 
-  void saveNewTransaction(Interview interview);
+    void saveNewTransaction(Interview interview);
 
-  BigInteger getAnswerCount(Long interviewId, Long nodeId);
+    BigInteger getAnswerCount(Long interviewId, Long nodeId);
 
-  BigInteger getAssessmentCount(String assessmentStatus);
+    BigInteger getAssessmentCount(String assessmentStatus);
 
-  Long getCountForModules(String[] modules);
+    Long getCountForModules(String[] modules);
 
-  List<Interview> getAllInterviewsWithoutAnswers();
+    List<Interview> getAllInterviewsWithoutAnswers();
 
-  List<Interview> getInterviewIdList();
+    List<Interview> getInterviewIdList();
 
-  List<Interview> getInterviews(Long[] interviewIds);
+    List<Interview> getInterviews(Long[] interviewIds);
 
-  List<Interview> getInterview(Long interviewId);
+    List<Interview> getInterview(Long interviewId);
 
-  List<Interview> findByReferenceNumber(String referenceNumber);
+    List<Interview> findByReferenceNumber(String referenceNumber);
 
-  List<Interview> getAssessments();
+    List<Interview> getAssessments();
 
-  List<Interview> getAllWithModules(String[] modules);
+    List<Interview> getAllWithModules(String[] modules);
 
-  List<Interview> getAll(String assessmentStatus);
+    List<Interview> getAll(String assessmentStatus);
 
-  List<Interview> getAll();
+    List<Interview> getAll();
 
-  void saveOrUpdate(Interview interview);
+    void saveOrUpdate(Interview interview);
 
-  Interview merge(Interview interview);
+    void saveOrUpdate(List<Interview> interviews);
 
-  Interview get(Long id);
+    Interview merge(Interview interview);
 
-  void delete(Interview interview);
+    Interview get(Long id);
 
-  void save(Interview interview);
+    void delete(Interview interview);
 
-  List<Interview> getAssessmentsForNotes(String[] modules);
+    void save(Interview interview);
 
-  List<String> getNoteTypes();
+    List<Interview> getAssessmentsForNotes(String[] modules);
 
-  List<Long> getLinksByAnswerId(long answerId);
+    List<String> getNoteTypes();
 
-  List<Question> getLinksByModule(Long id);
+    List<Long> getLinksByAnswerId(long answerId);
 
-  List<Interview> getAllInterviewsNotAssessed();
+    List<Question> getLinksByModule(Long id);
 
-  List<Interview> getAllInterviewsAssessed();
+    List<Interview> getAllInterviewsWithAnswersAndAssessments();
 
-  void deleteAutoAssessments();
+    Interview getInterviewWithAnswersAndAssessments(long id);
 
-  void deleteAutoAssessment(long id);
+    List<Interview> getAllInterviewsNotAssessed();
 
-  void deleteAll();
+    List<Interview> getAllInterviewsAssessed();
+
+    void deleteAutoAssessments();
+
+    void deleteAutoAssessment(long id);
+
+    void deleteAll();
 
 }

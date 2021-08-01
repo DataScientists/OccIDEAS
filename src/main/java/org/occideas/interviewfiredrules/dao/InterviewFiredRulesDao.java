@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
@@ -45,6 +47,22 @@ public class InterviewFiredRulesDao {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public List<InterviewFiredRules> findAll(){
+    CriteriaBuilder cb = sessionFactory.getCurrentSession().getCriteriaBuilder();
+    CriteriaQuery<InterviewFiredRules> cq = cb.createQuery(InterviewFiredRules.class);
+    Root<InterviewFiredRules> rootEntry = cq.from(InterviewFiredRules.class);
+    CriteriaQuery<InterviewFiredRules> all = cq.select(rootEntry);
+
+    TypedQuery<InterviewFiredRules> allQuery = sessionFactory.getCurrentSession().createQuery(all);
+    return allQuery.getResultList();
+  }
+
+  @Transactional
+  public long count(){
+    return sessionFactory.getCurrentSession().createQuery("select count(r) from InterviewFiredRules r", Long.class).uniqueResult();
+  }
+
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public List<InterviewFiredRules> findByInterviewIdWithRules(Long interviewId) {
     final Session session = sessionFactory.getCurrentSession();
     CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -53,7 +71,7 @@ public class InterviewFiredRulesDao {
     root.fetch(InterviewFiredRules_.RULES);
     criteria.select(root);
     if (interviewId != null) {
-      criteria.where(builder.equal(root.get(InterviewFiredRules_.id), interviewId));
+      criteria.where(builder.equal(root.get(InterviewFiredRules_.idinterview), interviewId));
     }
 
     return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
@@ -64,8 +82,12 @@ public class InterviewFiredRulesDao {
   }
 
   public void deleteAllByInterviewId(long interviewId) {
-    List<InterviewFiredRules> firedRules = findByInterviewId(interviewId);
-    firedRules.stream().forEach(interviewFiredRule->delete(interviewFiredRule));
+    final Session session = sessionFactory.getCurrentSession();
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaDelete<InterviewFiredRules> criteriaDelete = builder.createCriteriaDelete(InterviewFiredRules.class);
+    Root<InterviewFiredRules> root = criteriaDelete.from(InterviewFiredRules.class);
+    criteriaDelete.where(builder.equal(root.get(InterviewFiredRules_.IDINTERVIEW), interviewId));
+    session.createQuery(criteriaDelete).executeUpdate();
   }
 
 }

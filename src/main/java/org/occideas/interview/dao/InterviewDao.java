@@ -1,6 +1,7 @@
 package org.occideas.interview.dao;
 
 import org.hibernate.*;
+import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.*;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.*;
@@ -107,6 +108,12 @@ public class InterviewDao implements IInterviewDao {
   @Override
   public void saveOrUpdate(Interview interview) {
     sessionFactory.getCurrentSession().saveOrUpdate(interview);
+  }
+
+  @Override
+  public void saveOrUpdate(List<Interview> interviews) {
+    sessionFactory.getCurrentSession().setJdbcBatchSize(30);
+    interviews.stream().forEach(interview -> sessionFactory.getCurrentSession().saveOrUpdate(interview));
   }
 
   @Override
@@ -267,7 +274,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public List<Interview> getAllInterviewsWithoutAnswers() {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Interview.class)
@@ -281,6 +288,43 @@ public class InterviewDao implements IInterviewDao {
       .setResultTransformer(Transformers.aliasToBean(Interview.class));
     List<Interview> temp = crit.list();
     return temp;
+  }
+
+  @Override
+  public List<Interview> getAllInterviewsWithAnswersAndAssessments(){
+    final Session session = sessionFactory.getCurrentSession();
+    String JOIN_ANSWERS = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.answerHistory ";
+    List<Interview> interviews = session.createQuery(JOIN_ANSWERS, Interview.class)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
+    String JOIN_MANUAL_ASSESSED_RULES = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.manualAssessedRules "
+            + "WHERE interview IN (:interviews) ";
+    interviews = session.createQuery(JOIN_MANUAL_ASSESSED_RULES, Interview.class)
+            .setParameter("interviews", interviews)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
+    return interviews;
+  }
+
+  @Override
+  public Interview getInterviewWithAnswersAndAssessments(long id){
+    final Session session = sessionFactory.getCurrentSession();
+    String JOIN_ANSWERS = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.answerHistory WHERE interview.idinterview = :id";
+    Interview interview = session.createQuery(JOIN_ANSWERS, Interview.class)
+            .setParameter("id", id)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getSingleResult();
+    String JOIN_MANUAL_ASSESSED_RULES = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.manualAssessedRules "
+            + "WHERE interview = :existingInterview ";
+    interview = session.createQuery(JOIN_MANUAL_ASSESSED_RULES, Interview.class)
+            .setParameter("existingInterview", interview)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getSingleResult();
+    return interview;
   }
 
   @Override

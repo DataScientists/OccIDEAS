@@ -32,6 +32,10 @@ public class HibernateConfig {
         hibernateProperties.setProperty("hibernate.connection.characterEncoding","utf8");
         hibernateProperties.setProperty("hibernate.id.new_generator_mappings","false");
         hibernateProperties.setProperty("hibernate.ddl-auto","none");
+        hibernateProperties.setProperty("hibernate.jdbc.batch_size","30");
+        hibernateProperties.setProperty("hibernate.enhancer.enableDirtyTracking","true");
+        hibernateProperties.setProperty("hibernate.enhancer.enableLazyInitialization","true");
+        hibernateProperties.setProperty("hibernate.enhancer.enableAssociationManagement","true");
         return hibernateProperties;
     }
 

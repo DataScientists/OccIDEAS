@@ -7,7 +7,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "Interview_Answer")
@@ -57,10 +56,6 @@ public class InterviewAnswer implements java.io.Serializable {
   @Temporal(TemporalType.TIMESTAMP)
   @UpdateTimestamp
   private Date lastUpdated;
-
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumns({@JoinColumn(name = "idNode", referencedColumnName = "answerId", insertable = false, updatable = false)})
-  private List<ModuleRule> rules;
 
   public long getId() {
     return id;
@@ -165,14 +160,6 @@ public class InterviewAnswer implements java.io.Serializable {
 
   public void setLink(long link) {
     this.link = link;
-  }
-
-  public List<ModuleRule> getRules() {
-    return rules;
-  }
-
-  public void setRules(List<ModuleRule> rules) {
-    this.rules = rules;
   }
 
   public boolean isProcessed() {

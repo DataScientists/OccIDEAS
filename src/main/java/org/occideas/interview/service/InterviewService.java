@@ -14,6 +14,8 @@ import java.util.List;
 public interface InterviewService extends BaseService<InterviewVO> {
   void update(Interview interview);
 
+  void merge(Interview interview);
+
   void merge(InterviewVO o);
 
   List<InterviewVO> listAssessments();
@@ -89,6 +91,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
   List<Rule> determineFiredRules(Interview interview);
 
   InterviewVO updateFiredRule(long interviewId);
+
+  Interview autoAssessedRule(List<Long> listAgentIds, Interview interview);
 
   void deleteOldAutoAssessments();
 }

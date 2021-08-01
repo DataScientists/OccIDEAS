@@ -14,13 +14,15 @@ import org.occideas.interviewfiredrules.dao.InterviewFiredRulesDao;
 import org.occideas.interviewmanualassessment.dao.InterviewManualAssessmentDao;
 import org.occideas.modulerule.dao.ModuleRuleDao;
 import org.occideas.utilities.AssessmentStatusEnum;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.occideas.utilities.AssessmentStatusEnum.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,6 +40,8 @@ class InterviewServiceImplTest {
     InterviewManualAssessmentDao interviewManualAssessmentDao;
     @Mock
     InterviewFiredRulesDao interviewFiredRulesDao;
+    @Mock
+    PlatformTransactionManager platformTransactionManager;
 
     @Spy
     @InjectMocks
@@ -45,39 +49,29 @@ class InterviewServiceImplTest {
 
     @Test
     void givenListOfInterviews_whenAutoAssessedRules_shouldReturnNoExposure() {
-        final long ID = 1L;
-        List<Interview> processInterviews = buildSampleInterviews(1L, NEEDSREVIEW);
-        when(interviewDao.getAllInterviewsWithoutAnswers())
-                .thenReturn(processInterviews);
-        when(agentDao.getStudyAgents()).thenReturn(buildSampleAgents());
+        Interview processInterview = buildSampleInterviewEntity(1L, NEEDSREVIEW);
         doReturn(Collections.singletonList(new Rule())).when(interviewService).determineFiredRules(any());
-        doNothing().when(interviewService).update(any(Interview.class));
 
-        interviewService.autoAssessedRules();
+        interviewService.autoAssessedRule(buildSampleAgents()
+                        .stream().map(AgentInfo::getIdAgent).collect(Collectors.toList()),
+                processInterview);
 
-        Optional<Interview> needsReviewInterview = processInterviews.stream().filter(interview -> interview.getIdinterview() == ID).findFirst();
-        assertTrue(needsReviewInterview.isPresent());
-        assertEquals(NEEDSREVIEW.getDisplay(), needsReviewInterview.get().getAssessedStatus());
-        List<Rule> autoAssessedRulesFromNeedsReviewInterview = needsReviewInterview.get().getAutoAssessedRules();
+        assertEquals(NEEDSREVIEW.getDisplay(), processInterview.getAssessedStatus());
+        List<Rule> autoAssessedRulesFromNeedsReviewInterview = processInterview.getAutoAssessedRules();
         assertNotNull(autoAssessedRulesFromNeedsReviewInterview);
     }
 
     @Test
     void givenListOfInterviews_whenAutoAssessedRules_shouldReturnExposure() {
-        final long ID = 1L;
-        List<Interview> processInterviews = buildSampleInterviews(1L, NOTASSESSED);
-        when(interviewDao.getAllInterviewsWithoutAnswers())
-                .thenReturn(processInterviews);
-        when(agentDao.getStudyAgents()).thenReturn(buildSampleAgents());
+        Interview processInterview = buildSampleInterviewEntity(1L, NOTASSESSED);
         doReturn(Collections.singletonList(new Rule())).when(interviewService).determineFiredRules(any());
-        doNothing().when(interviewService).update(any(Interview.class));
 
-        interviewService.autoAssessedRules();
+        interviewService.autoAssessedRule(buildSampleAgents()
+                        .stream().map(AgentInfo::getIdAgent).collect(Collectors.toList()),
+                processInterview);
 
-        Optional<Interview> needsReviewInterview = processInterviews.stream().filter(interview -> interview.getIdinterview() == ID).findFirst();
-        assertTrue(needsReviewInterview.isPresent());
-        assertEquals(AUTOASSESSED.getDisplay(), needsReviewInterview.get().getAssessedStatus());
-        List<Rule> autoAssessedRulesFromNeedsReviewInterview = needsReviewInterview.get().getAutoAssessedRules();
+        assertEquals(AUTOASSESSED.getDisplay(), processInterview.getAssessedStatus());
+        List<Rule> autoAssessedRulesFromNeedsReviewInterview = processInterview.getAutoAssessedRules();
         assertNotNull(autoAssessedRulesFromNeedsReviewInterview);
     }
 
@@ -85,8 +79,8 @@ class InterviewServiceImplTest {
     void givenInterview_whenDetermineFiredRules_shouldPopulateFiredRules() {
         Interview interview = buildSampleInterviewEntity(1L, AssessmentStatusEnum.NOTASSESSED);
         Interview enrichedInterview = buildSampleInterviewEntity(1L, AssessmentStatusEnum.NOTASSESSED);
-        when(interviewAnswerDao.findByInterviewId(interview.getIdinterview())).thenReturn(buildSampleInterviewAnswers(interview));
-        when(moduleRuleDao.getRulesByIdNode(anyLong())).thenReturn(buildSampleModuleRules(1L));
+        enrichedInterview.setAnswerHistory(buildSampleInterviewAnswers(interview));
+        when(moduleRuleDao.getRulesByUniqueAnswers(any())).thenReturn(buildRules(3));
 
         interviewService.determineFiredRules(enrichedInterview);
 
@@ -99,8 +93,8 @@ class InterviewServiceImplTest {
     void givenRulesWithMultiCondition_whenDeriveFiredRulesByAnswersProvided_shouldPopulateFiredRules() {
         Interview interview = buildSampleInterviewEntity(1L, AssessmentStatusEnum.NOTASSESSED);
         Interview enrichedInterview = buildSampleInterviewEntity(1L, AssessmentStatusEnum.NOTASSESSED);
-        when(interviewAnswerDao.findByInterviewId(interview.getIdinterview())).thenReturn(buildSampleInterviewAnswers(interview));
-        when(moduleRuleDao.getRulesByIdNode(anyLong())).thenReturn(buildSampleModuleRules(1L));
+        enrichedInterview.setAnswerHistory(buildSampleInterviewAnswers(interview));
+        when(moduleRuleDao.getRulesByUniqueAnswers(any())).thenReturn(buildRules(3));
 
         interviewService.determineFiredRules(enrichedInterview);
 
@@ -118,9 +112,30 @@ class InterviewServiceImplTest {
         PossibleAnswer possibleAnswer2 = buildPossibleAnswer(2L);
         conditions.add(possibleAnswer1);
         conditions.add(possibleAnswer2);
-        List<ModuleRule> moduleRules = buildSampleModuleRules(1L);
-        moduleRules.get(0).getRule().setConditions(conditions);
-        when(moduleRuleDao.getRulesByIdNode(anyLong())).thenReturn(moduleRules);
+        List<Rule> rules = buildRules(3);
+        rules.get(0).setConditions(conditions);
+        when(moduleRuleDao.getRulesByUniqueAnswers(any())).thenReturn(rules);
+        Set<Long> actualAnswers = new HashSet<>();
+        actualAnswers.add(possibleAnswer1.getIdNode());
+        actualAnswers.add(possibleAnswer2.getIdNode());
+
+        List<Rule> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+
+        assertEquals(1, interviewFiredRules.size());
+    }
+
+    @Test
+    void givenMultipleConditions_whenDeriveFiredRulesByAnswersProvided_shouldReturnFiredRuleAndUnique() {
+        List<PossibleAnswer> conditions = new ArrayList<>();
+        PossibleAnswer possibleAnswer1 = buildPossibleAnswer(1L);
+        PossibleAnswer possibleAnswer2 = buildPossibleAnswer(2L);
+        conditions.add(possibleAnswer1);
+        conditions.add(possibleAnswer2);
+        List<Rule> rules = buildRules(3);
+        rules.get(0).setConditions(conditions);
+        rules.add(buildRule(1));
+        rules.get(1).setConditions(conditions);
+        when(moduleRuleDao.getRulesByUniqueAnswers(any())).thenReturn(rules);
         Set<Long> actualAnswers = new HashSet<>();
         actualAnswers.add(possibleAnswer1.getIdNode());
         actualAnswers.add(possibleAnswer2.getIdNode());
@@ -137,9 +152,9 @@ class InterviewServiceImplTest {
         PossibleAnswer possibleAnswer2 = buildPossibleAnswer(2L);
         conditions.add(possibleAnswer1);
         conditions.add(possibleAnswer2);
-        List<ModuleRule> moduleRules = buildSampleModuleRules(1L);
-        moduleRules.get(0).getRule().setConditions(conditions);
-        when(moduleRuleDao.getRulesByIdNode(anyLong())).thenReturn(moduleRules);
+        List<Rule> rules = buildRules(3);
+        rules.get(0).setConditions(conditions);
+        when(moduleRuleDao.getRulesByUniqueAnswers(any())).thenReturn(rules);
         Set<Long> actualAnswers = new HashSet<>();
         actualAnswers.add(possibleAnswer1.getIdNode());
 
@@ -238,6 +253,19 @@ class InterviewServiceImplTest {
         agent.setDeleted(0);
         agent.setName("1,3 butadiene");
         return agent;
+    }
+
+    List<Rule> buildRules(int level){
+        List<Rule> rules = new ArrayList<>();
+        Rule rule = new Rule();
+        rule.setIdRule(1L);
+        rule.setDeleted(0);
+        rule.setLevel(level);
+        rule.setAgentId(72);
+        rule.setAgent(buildAgent());
+        rule.setConditions(buildPossibleAnswers());
+        rules.add(rule);
+        return rules;
     }
 
     Rule buildRule(int level){

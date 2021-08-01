@@ -2,6 +2,7 @@ package org.occideas.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,9 +24,9 @@ public class InterviewFiredRules implements Serializable {
   @Column(name = "idRule")
   private long idRule;
 
-  @OneToMany(fetch = FetchType.EAGER)
+  @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "idRule", insertable=false, updatable=false, referencedColumnName = "idRule")
-  private List<Rule> rules;
+  private List<Rule> rules = new ArrayList<>();
 
   public long getId() {
     return id;

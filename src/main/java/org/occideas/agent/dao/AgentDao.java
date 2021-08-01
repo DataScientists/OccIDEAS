@@ -1,9 +1,9 @@
 package org.occideas.agent.dao;
 
 import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -13,16 +13,16 @@ import org.occideas.entity.AgentGroup;
 import org.occideas.entity.AgentPlain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class AgentDao implements IAgentDao {
 
-  private final String STUDY_AGENTS_SQL = "SELECT * FROM AgentInfo "
-    + " WHERE idAgent in (SELECT value from SYS_CONFIG WHERE type='studyagent')";
   @Autowired
   private SessionFactory sessionFactory;
 
@@ -93,13 +93,37 @@ public class AgentDao implements IAgentDao {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public List<Agent> getStudyAgents() {
     final Session session = sessionFactory.getCurrentSession();
-    SQLQuery sqlQuery = session.createSQLQuery(STUDY_AGENTS_SQL).addEntity(Agent.class);
+    String SELECT_STUDY_AGENTS = "SELECT s.value from SystemProperty s WHERE s.type='studyagent'";
+    List<String> studyAgents = session.createQuery(SELECT_STUDY_AGENTS, String.class)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
+    if(studyAgents.isEmpty()){
+      return Collections.emptyList();
+    }
+    String SELECT_AGENT_IDS = "SELECT a FROM Agent a WHERE a.idAgent in :studyAgents ";
+    return session.createQuery(SELECT_AGENT_IDS, Agent.class)
+            .setParameter("studyAgents", studyAgents.stream().map(s->Long.valueOf(s)).collect(Collectors.toList()))
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
+  }
 
-    List<Agent> list = sqlQuery.list();
-    return list;
+  @Override
+  public List<Long> getStudyAgentIds() {
+    final Session session = sessionFactory.getCurrentSession();
+    String SELECT_STUDY_AGENTS = "SELECT s.value from SystemProperty s WHERE s.type='studyagent'";
+    List<String> studyAgents = session.createQuery(SELECT_STUDY_AGENTS, String.class)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
+    if(studyAgents.isEmpty()){
+      return Collections.emptyList();
+    }
+    String SELECT_AGENT_IDS = "SELECT a.idAgent FROM AgentInfo a WHERE a.idAgent in :studyAgents ";
+    return session.createQuery(SELECT_AGENT_IDS, Long.class)
+            .setParameter("studyAgents", studyAgents.stream().map(s->Long.valueOf(s)).collect(Collectors.toList()))
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
   }
 
   @Override
