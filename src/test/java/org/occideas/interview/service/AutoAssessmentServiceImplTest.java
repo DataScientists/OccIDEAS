@@ -6,15 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.occideas.agent.dao.IAgentDao;
 import org.occideas.entity.*;
-import org.occideas.interview.dao.InterviewDao;
-import org.occideas.interviewanswer.dao.InterviewAnswerDao;
-import org.occideas.interviewfiredrules.dao.InterviewFiredRulesDao;
-import org.occideas.interviewmanualassessment.dao.InterviewManualAssessmentDao;
 import org.occideas.modulerule.dao.ModuleRuleDao;
 import org.occideas.utilities.AssessmentStatusEnum;
-import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,33 +20,21 @@ import static org.mockito.Mockito.when;
 import static org.occideas.utilities.AssessmentStatusEnum.*;
 
 @ExtendWith(MockitoExtension.class)
-class InterviewServiceImplTest {
+class AutoAssessmentServiceImplTest {
 
     @Mock
-    InterviewDao interviewDao;
-    @Mock
-    IAgentDao agentDao;
-    @Mock
-    InterviewAnswerDao interviewAnswerDao;
-    @Mock
     ModuleRuleDao moduleRuleDao;
-    @Mock
-    InterviewManualAssessmentDao interviewManualAssessmentDao;
-    @Mock
-    InterviewFiredRulesDao interviewFiredRulesDao;
-    @Mock
-    PlatformTransactionManager platformTransactionManager;
 
     @Spy
     @InjectMocks
-    InterviewServiceImpl interviewService;
+    AutoAssessmentService autoAssessmentService;
 
     @Test
     void givenListOfInterviews_whenAutoAssessedRules_shouldReturnNoExposure() {
         Interview processInterview = buildSampleInterviewEntity(1L, NEEDSREVIEW);
-        doReturn(Collections.singletonList(new Rule())).when(interviewService).determineFiredRules(any());
+        doReturn(Collections.singletonList(new Rule())).when(autoAssessmentService).determineFiredRules(any());
 
-        interviewService.autoAssessedRule(buildSampleAgents()
+        autoAssessmentService.autoAssessedRule(buildSampleAgents()
                         .stream().map(AgentInfo::getIdAgent).collect(Collectors.toList()),
                 processInterview);
 
@@ -64,9 +46,9 @@ class InterviewServiceImplTest {
     @Test
     void givenListOfInterviews_whenAutoAssessedRules_shouldReturnExposure() {
         Interview processInterview = buildSampleInterviewEntity(1L, NOTASSESSED);
-        doReturn(Collections.singletonList(new Rule())).when(interviewService).determineFiredRules(any());
+        doReturn(Collections.singletonList(new Rule())).when(autoAssessmentService).determineFiredRules(any());
 
-        interviewService.autoAssessedRule(buildSampleAgents()
+        autoAssessmentService.autoAssessedRule(buildSampleAgents()
                         .stream().map(AgentInfo::getIdAgent).collect(Collectors.toList()),
                 processInterview);
 
@@ -82,7 +64,7 @@ class InterviewServiceImplTest {
         enrichedInterview.setAnswerHistory(buildSampleInterviewAnswers(interview));
         when(moduleRuleDao.getRulesByUniqueAnswers(any())).thenReturn(buildRules(3));
 
-        interviewService.determineFiredRules(enrichedInterview);
+        autoAssessmentService.determineFiredRules(enrichedInterview);
 
         assertNotNull(enrichedInterview);
         assertEquals(interview.getIdinterview(), enrichedInterview.getIdinterview());
@@ -96,7 +78,7 @@ class InterviewServiceImplTest {
         enrichedInterview.setAnswerHistory(buildSampleInterviewAnswers(interview));
         when(moduleRuleDao.getRulesByUniqueAnswers(any())).thenReturn(buildRules(3));
 
-        interviewService.determineFiredRules(enrichedInterview);
+        autoAssessmentService.determineFiredRules(enrichedInterview);
 
         assertNotNull(enrichedInterview);
         assertEquals(interview.getIdinterview(), enrichedInterview.getIdinterview());
@@ -119,7 +101,7 @@ class InterviewServiceImplTest {
         actualAnswers.add(possibleAnswer1.getIdNode());
         actualAnswers.add(possibleAnswer2.getIdNode());
 
-        List<Rule> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
 
         assertEquals(1, interviewFiredRules.size());
     }
@@ -140,7 +122,7 @@ class InterviewServiceImplTest {
         actualAnswers.add(possibleAnswer1.getIdNode());
         actualAnswers.add(possibleAnswer2.getIdNode());
 
-        List<Rule> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
 
         assertEquals(1, interviewFiredRules.size());
     }
@@ -158,7 +140,7 @@ class InterviewServiceImplTest {
         Set<Long> actualAnswers = new HashSet<>();
         actualAnswers.add(possibleAnswer1.getIdNode());
 
-        List<Rule> interviewFiredRules = interviewService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
 
         assertTrue(interviewFiredRules.isEmpty());
     }

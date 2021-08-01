@@ -28,12 +28,10 @@ import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -92,6 +90,9 @@ public class InterviewServiceImpl implements InterviewService {
     private InterviewFiredRulesDao interviewFiredRulesDao;
     @Autowired
     private PlatformTransactionManager transactionManager;
+    @Autowired
+    @Lazy
+    private AutoAssessmentService autoAssessmentService;
 
     @Override
     public SystemPropertyVO preloadActiveIntro() {
@@ -688,19 +689,13 @@ public class InterviewServiceImpl implements InterviewService {
         List<Long> listAgentIds = agentDao.getStudyAgentIds();
         CompletableFuture<Interview>[] interviewsToBeAssessed = new CompletableFuture[interviews.size()];
         AtomicInteger count = new AtomicInteger();
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.setReadOnly(true);
 
         for (Interview interview : interviews) {
             int countVar = count.incrementAndGet();
-            CompletableFuture<Interview> asyncAssessedRule =
-                    CompletableFuture.supplyAsync(() -> transactionTemplate.execute((status) -> autoAssessedRule(listAgentIds, interview)))
-                            .thenApplyAsync((processedInterview) -> {
-                                log.info("completed processing interview id {} and is {} of {}"
-                                        , processedInterview.getIdinterview(), countVar, interviews.size());
-                                return processedInterview;
-                            });
-            interviewsToBeAssessed[countVar - 1] = asyncAssessedRule;
+            interviewsToBeAssessed[countVar - 1] = autoAssessmentService.autoAssessedRule(listAgentIds, interview)
+                    .whenComplete((i, e) ->  log.info("completed processing interview id {} and is {} of {}"
+                            , i.getIdinterview(), countVar, interviews.size()));
+
         }
 
         List<Interview> interviewsToBeProcessed = Stream.of(interviewsToBeAssessed)
@@ -711,106 +706,12 @@ public class InterviewServiceImpl implements InterviewService {
     }
 
     @Override
-    @Async
-    public Interview autoAssessedRule(List<Long> listAgentIds, Interview interview) {
-        updateNotes(interview);
-        List<Rule> listOfFiredRules = determineFiredRules(interview);
-        List<Rule> autoAssessedRules = new ArrayList<>();
-        autoAssessedRules.addAll(getRuleLevelNoExposure(
-                listAgentIds
-                , listOfFiredRules));
-        evaluateAssessmentStatus(interview);
-        interview.setFiredRules(listOfFiredRules);
-        interview.setAutoAssessedRules(autoAssessedRules);
-        if (StringUtils.isEmpty(interview.getAssessedStatus())) {
-            interview.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
-        }
-        return interview;
-    }
-
-    protected List<Rule> getRuleLevelNoExposure(List<Long> listAgentIds, List<Rule> listOfFiredRules) {
-        return listAgentIds.stream()
-                .map(id -> {
-                    if (Objects.nonNull(listOfFiredRules) && !listOfFiredRules.isEmpty()) {
-                        Rule lowestLevel = null;
-                        for (Rule rule : listOfFiredRules) {
-                            if (Objects.isNull(rule) || rule.getAgentId() != id) {
-                                continue;
-                            }
-                            if (Objects.isNull(lowestLevel)) {
-                                lowestLevel = rule;
-                            }
-                            if (rule.getLevel() < lowestLevel.getLevel()) {
-                                lowestLevel = rule;
-                            }
-                        }
-
-                        if (Objects.nonNull(lowestLevel)) {
-                            Rule rule = new Rule();
-                            rule.setAgentId(id);
-                            rule.setLevel(lowestLevel.getLevel());
-                            rule.setAgentId(lowestLevel.getAgentId());
-                            rule.setLegacyRuleId(lowestLevel.getIdRule());
-                            return rule;
-                        } else {
-                            Rule rule = new Rule();
-                            rule.setLevel(5);
-                            rule.setAgentId(id);
-                            return rule;
-                        }
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void deleteOldAutoAssessments() {
-        log.info("Start deleting old rules in old assessments");
-        interviewDao.deleteAutoAssessments();
-        log.info("Completed deleting old rules in old assessments");
-    }
-
-    @Override
-    public void deleteOldAutoAssessments(Interview interview) {
-        log.info("Start deleting old rules in old assessments for interview {}", interview.getIdinterview());
-        interviewDao.deleteAutoAssessment(interview.getIdinterview());
-        log.info("Completed deleting old rules in old assessments for interview {}", interview.getIdinterview());
-    }
-
-    @Override
-    public List<Rule> determineFiredRules(Interview interview) {
-        Set<Long> allActualAnswers = interview.getAnswerHistory()
-                .stream()
-                .filter(interviewAnswer -> interviewAnswer.getDeleted() == 0)
-                .map(InterviewAnswer::getAnswerId)
-                .collect(Collectors.toSet());
-        return deriveFiredRulesByAnswersProvided(allActualAnswers, interview.getIdinterview());
-    }
-
-    private void updateManualAssessedRules(Interview interview) {
-        List<InterviewManualAssessment> assessmentRules = interviewManualAssessmentDao.findByInterviewId(interview.getIdinterview());
-        interview.setManualAssessedRules(assessmentRules
-                .stream()
-                .map(InterviewManualAssessment::getRule)
-                .collect(Collectors.toList()));
-    }
-
-    private void updateNotes(Interview interview) {
-        if (Objects.isNull(interview.getNotes())) {
-            interview.setNotes(new ArrayList<>());
-        }
-        interview.getNotes().add(getDefaultNote(interview.getIdinterview()));
-    }
-
-    @Override
     public InterviewVO updateFiredRule(long interviewId) {
         Interview interview = interviewDao.getInterviewWithAnswersAndAssessments(interviewId);
-        deleteOldAutoAssessments(interview);
-        updateNotes(interview);
-        updateManualAssessedRules(interview);
-        List<Rule> firedRules = determineFiredRules(interview);
+        autoAssessmentService.deleteOldAutoAssessments(interview);
+        autoAssessmentService.updateNotes(interview);
+        autoAssessmentService.updateManualAssessedRules(interview);
+        List<Rule> firedRules = autoAssessmentService.determineFiredRules(interview);
         log.info("fired rules identified for interview {} is {}"
                 , interview.getIdinterview()
                 , firedRules.size());
@@ -819,73 +720,5 @@ public class InterviewServiceImpl implements InterviewService {
         return mapper.convertToInterviewVO(interview);
     }
 
-    protected List<Rule> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers, long interviewId) {
-        List<Rule> derivedRulesBasedOnAnswers = moduleRuleDao.getRulesByUniqueAnswers(allActualAnswers);
-        Set<Rule> firedRules = new HashSet<>();
-        derivedRulesBasedOnAnswers.stream()
-                .filter(rule -> Objects.nonNull(rule.getConditions()))
-                .distinct()
-                .forEach(rule -> {
-                    List<PossibleAnswer> conditions = rule.getConditions();
-                    int numberConditionsMet = 0;
-                    for (PossibleAnswer answer : conditions) {
-                        if (allActualAnswers.contains(answer.getIdNode())) {
-                            numberConditionsMet++;
-                        }
-                    }
-                    if (numberConditionsMet == conditions.size()) {
-                        firedRules.add(rule);
-                    }
-                });
-        return firedRules.stream().collect(Collectors.toList());
-    }
 
-    private void addFiredRule(long interviewId, List<InterviewFiredRules> firedRules, Rule rule) {
-        InterviewFiredRules interviewFiredRules
-                = new InterviewFiredRules();
-        interviewFiredRules.setIdRule(rule.getIdRule());
-        interviewFiredRules.setIdinterview(interviewId);
-        if (firedRules.isEmpty()) {
-            firedRules.add(interviewFiredRules);
-        } else if (!firedRules.isEmpty() && !firedRules.contains(interviewFiredRules)) {
-            firedRules.add(interviewFiredRules);
-        }
-    }
-
-    private Note getDefaultNote(long interviewId) {
-        Note note = new Note();
-        note.setInterviewId(interviewId);
-        note.setText("Ran determineFiredRules");
-        note.setType("System");
-        return note;
-    }
-
-    private List<InterviewAnswerVO> removeDeletedAnswers(List<InterviewAnswerVO> allActualAnswers) {
-        ArrayList<InterviewAnswerVO> retValue = new ArrayList<InterviewAnswerVO>();
-        for (InterviewAnswerVO answer : allActualAnswers) {
-            if (answer.getDeleted() == 0) {
-                retValue.add(answer);
-            }
-        }
-        return retValue;
-    }
-
-    @Override
-    public void evaluateAssessmentStatus(Interview interview) {
-        if (hasManualAssessedRules(interview)) {
-            interview.setAssessedStatus(AssessmentStatusEnum.MANUALLYASSESSED.getDisplay());
-        } else {
-            if (interview.getAssessedStatus().equalsIgnoreCase(AssessmentStatusEnum.NOTASSESSED.getDisplay())) {
-                interview.setAssessedStatus(AssessmentStatusEnum.AUTOASSESSED.getDisplay());
-            } else {
-                //leave status the same for now
-            }
-
-        }
-    }
-
-    private boolean hasManualAssessedRules(Interview interview) {
-        return interview.getManualAssessedRules() != null &&
-                !interview.getManualAssessedRules().isEmpty();
-    }
 }

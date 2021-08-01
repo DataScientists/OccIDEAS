@@ -2,7 +2,6 @@ package org.occideas.interview.service;
 
 import org.occideas.base.service.BaseService;
 import org.occideas.entity.Interview;
-import org.occideas.entity.Rule;
 import org.occideas.vo.InterviewVO;
 import org.occideas.vo.QuestionVO;
 import org.occideas.vo.RandomInterviewReport;
@@ -84,15 +83,5 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   void autoAssessedRules();
 
-  void evaluateAssessmentStatus(Interview interview);
-
-  void deleteOldAutoAssessments(Interview interview);
-
-  List<Rule> determineFiredRules(Interview interview);
-
   InterviewVO updateFiredRule(long interviewId);
-
-  Interview autoAssessedRule(List<Long> listAgentIds, Interview interview);
-
-  void deleteOldAutoAssessments();
 }
