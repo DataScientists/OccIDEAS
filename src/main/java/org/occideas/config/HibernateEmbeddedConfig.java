@@ -32,9 +32,9 @@ public class HibernateEmbeddedConfig {
         hibernateProperties.setProperty("hibernate.connection.characterEncoding","utf8");
         hibernateProperties.setProperty("hibernate.id.new_generator_mappings","false");
         hibernateProperties.setProperty("hibernate.ddl-auto","create-drop");
-        hibernateProperties.setProperty("hibernate.format_sql","true");
+//        hibernateProperties.setProperty("hibernate.format_sql","true");
         hibernateProperties.setProperty("hibernate.jdbc.batch_size","100");
-        hibernateProperties.setProperty("hibernate.generate_statistics","true");
+//        hibernateProperties.setProperty("hibernate.generate_statistics","true");
         hibernateProperties.setProperty("hibernate.enhancer.enableDirtyTracking","true");
         hibernateProperties.setProperty("hibernate.enhancer.enableLazyInitialization","true");
         hibernateProperties.setProperty("hibernate.enhancer.enableAssociationManagement","true");
