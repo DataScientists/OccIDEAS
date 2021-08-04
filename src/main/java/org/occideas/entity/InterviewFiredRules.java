@@ -1,19 +1,13 @@
 package org.occideas.entity;
 
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
-
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "Interview_FiredRules")
-@DynamicUpdate(value = true)
-@DynamicInsert(value = true)
-@SelectBeforeUpdate(value = true)
 public class InterviewFiredRules implements Serializable {
 
   /**
@@ -31,14 +25,8 @@ public class InterviewFiredRules implements Serializable {
   private long idRule;
 
   @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumns({
-    @JoinColumn(name = "idRule", referencedColumnName = "idRule", insertable = false, updatable = false)})
-  private List<Rule> rules;
-
-  //@OneToMany(fetch = FetchType.LAZY)
-  //@JoinColumns({
-  //  @JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)})
-  //private List<Interview> interviews;
+  @JoinColumn(name = "idRule", insertable=false, updatable=false, referencedColumnName = "idRule")
+  private List<Rule> rules = new ArrayList<>();
 
   public long getId() {
     return id;

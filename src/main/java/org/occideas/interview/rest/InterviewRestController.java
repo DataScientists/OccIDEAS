@@ -7,6 +7,7 @@ import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.fragment.service.FragmentService;
+import org.occideas.interview.service.AutoAssessmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.module.service.ModuleService;
@@ -20,7 +21,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 @Path("/interview")
 public class InterviewRestController implements BaseRestController<InterviewVO> {
@@ -41,6 +41,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
   @Autowired
   private FragmentService fragmentService;
+
+  @Autowired
+  private AutoAssessmentService autoAssessmentService;
 
   @GET
   @Path(value = "/getlist")
@@ -243,7 +246,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response updateAutoAssessments() {
     try {
-      service.deleteOldAutoAssessments();
+      autoAssessmentService.deleteOldAutoAssessments();
       service.autoAssessedRules();
       return Response.ok(true).build();
     } catch (Throwable e) {

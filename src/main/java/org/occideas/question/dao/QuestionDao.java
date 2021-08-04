@@ -14,7 +14,8 @@ import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -35,7 +36,7 @@ public class QuestionDao implements IQuestionDao {
     + " and a.idAgent = :param";
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveOrUpdate(Question question) {
     sessionFactory.getCurrentSession().saveOrUpdate(question);
   }
@@ -46,7 +47,7 @@ public class QuestionDao implements IQuestionDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveOrUpdateIgnoreFK(Question question) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
       .executeUpdate();

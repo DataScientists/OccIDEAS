@@ -37,7 +37,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,7 +86,7 @@ public class QSFServiceImpl implements IQSFService {
     private StudyAgentUtil studyAgentUtil;
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String save(String surveyId, long idNode, String path) {
         return dao.save(surveyId, idNode, path);
     }

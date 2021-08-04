@@ -1,13 +1,15 @@
 package org.occideas.interviewmanualassessment.dao;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.InterviewManualAssessment;
+import org.occideas.entity.InterviewManualAssessment_;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
@@ -31,11 +33,15 @@ public class InterviewManualAssessmentDao {
 
   public List<InterviewManualAssessment> findByInterviewId(Long interviewId) {
     final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewManualAssessment.class);
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<InterviewManualAssessment> criteria = builder.createQuery(InterviewManualAssessment.class);
+    Root<InterviewManualAssessment> root = criteria.from(InterviewManualAssessment.class);
+    criteria.select(root);
     if (interviewId != null) {
-      crit.add(Restrictions.eq("idInterview", interviewId));
+      criteria.where(builder.equal(root.get(InterviewManualAssessment_.ID_INTERVIEW), interviewId));
     }
-    return crit.list();
+
+    return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
   }
 
 }

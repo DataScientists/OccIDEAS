@@ -13,7 +13,8 @@ import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ModuleDao implements IModuleDao {
     return (JobModule) sessionFactory.getCurrentSession().save(module);
   }
 
-  //    @Transactional(Transactional.TxType.REQUIRES_NEW)
+  //    @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveCopy(JobModule module) {
     sessionFactory.getCurrentSession().save(module);
   }
@@ -75,12 +76,12 @@ public class ModuleDao implements IModuleDao {
     return (JobModule) sessionFactory.getCurrentSession().merge(module);
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveOrUpdate(JobModule module) {
     sessionFactory.getCurrentSession().saveOrUpdate(module);
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public void saveOrUpdateIgnoreFK(JobModule module) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
@@ -97,7 +98,7 @@ public class ModuleDao implements IModuleDao {
     return crit.list();
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public long create(JobModule module) {
     sessionFactory.getCurrentSession().save(module);
     return module.getIdNode();
@@ -137,7 +138,7 @@ public class ModuleDao implements IModuleDao {
   }
 
   @SuppressWarnings("unchecked")
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Long generateIdNode() {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Node.class)

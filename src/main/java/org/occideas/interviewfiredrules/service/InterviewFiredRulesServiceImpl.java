@@ -9,7 +9,7 @@ import org.occideas.vo.GenericNodeVO;
 import org.occideas.vo.InterviewFiredRulesVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class InterviewFiredRulesServiceImpl implements InterviewFiredRulesServic
 
   @Override
   public List<InterviewFiredRulesVO> findByInterviewId(Long interviewId) {
-    List<InterviewFiredRules> entity = dao.findByInterviewId(interviewId);
+    List<InterviewFiredRules> entity = dao.findByInterviewIdWithRules(interviewId);
     List<InterviewFiredRulesVO> retValue = mapper.convertToInterviewFiredRulesVOWithRulesList(entity);
     return retValue;
   }

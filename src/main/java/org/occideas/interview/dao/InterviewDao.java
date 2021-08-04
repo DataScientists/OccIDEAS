@@ -1,6 +1,7 @@
 package org.occideas.interview.dao;
 
 import org.hibernate.*;
+import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.*;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.*;
@@ -8,13 +9,14 @@ import org.occideas.utilities.AssessmentStatusEnum;
 import org.occideas.utilities.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class InterviewDao implements IInterviewDao {
@@ -92,7 +94,7 @@ public class InterviewDao implements IInterviewDao {
     sessionFactory.getCurrentSession().delete(interview);
   }
 
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public Interview get(Long id) {
     return (Interview) sessionFactory.getCurrentSession().get(Interview.class, id);
@@ -109,7 +111,13 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  public void saveOrUpdate(List<Interview> interviews) {
+    sessionFactory.getCurrentSession().setJdbcBatchSize(30);
+    interviews.stream().forEach(interview -> sessionFactory.getCurrentSession().saveOrUpdate(interview));
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void saveNewTransaction(Interview interview) {
     sessionFactory.getCurrentSession().saveOrUpdate(interview);
   }
@@ -231,7 +239,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @SuppressWarnings("unchecked")
   public List<Interview> getInterview(Long interviewId) {
     final Session session = sessionFactory.getCurrentSession();
@@ -266,7 +274,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public List<Interview> getAllInterviewsWithoutAnswers() {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Interview.class)
@@ -280,6 +288,43 @@ public class InterviewDao implements IInterviewDao {
       .setResultTransformer(Transformers.aliasToBean(Interview.class));
     List<Interview> temp = crit.list();
     return temp;
+  }
+
+  @Override
+  public List<Interview> getAllInterviewsWithAnswersAndAssessments(){
+    final Session session = sessionFactory.getCurrentSession();
+    String JOIN_ANSWERS = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.answerHistory ";
+    List<Interview> interviews = session.createQuery(JOIN_ANSWERS, Interview.class)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
+    String JOIN_MANUAL_ASSESSED_RULES = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.manualAssessedRules "
+            + "WHERE interview IN (:interviews) ";
+    interviews = session.createQuery(JOIN_MANUAL_ASSESSED_RULES, Interview.class)
+            .setParameter("interviews", interviews)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getResultList();
+    return interviews;
+  }
+
+  @Override
+  public Interview getInterviewWithAnswersAndAssessments(long id){
+    final Session session = sessionFactory.getCurrentSession();
+    String JOIN_ANSWERS = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.answerHistory WHERE interview.idinterview = :id";
+    Interview interview = session.createQuery(JOIN_ANSWERS, Interview.class)
+            .setParameter("id", id)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getSingleResult();
+    String JOIN_MANUAL_ASSESSED_RULES = "SELECT DISTINCT interview FROM Interview interview "
+            + "LEFT JOIN FETCH interview.manualAssessedRules "
+            + "WHERE interview = :existingInterview ";
+    interview = session.createQuery(JOIN_MANUAL_ASSESSED_RULES, Interview.class)
+            .setParameter("existingInterview", interview)
+            .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
+            .getSingleResult();
+    return interview;
   }
 
   @Override
@@ -314,6 +359,19 @@ public class InterviewDao implements IInterviewDao {
       .setResultTransformer(Transformers.aliasToBean(Interview.class));
     List<Interview> temp = crit.list();
     return temp;
+  }
+
+  @Override
+  public void deleteAutoAssessments() {
+    sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview_AutoAssessedRules").executeUpdate();
+  }
+
+  @Override
+  public void deleteAutoAssessment(long id) {
+    Interview interview = sessionFactory.getCurrentSession().find(Interview.class, id);
+    if(Objects.nonNull(interview)){
+      interview.getAutoAssessedRules().clear();
+    }
   }
 
   @Override
@@ -459,7 +517,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public List<Long> getLinksByAnswerId(long answerId) {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(Node.class)
@@ -481,7 +539,7 @@ public class InterviewDao implements IInterviewDao {
   }
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void deleteAll() {
     sessionFactory.getCurrentSession().createSQLQuery("truncate table Interview").executeUpdate();
   }

@@ -10,6 +10,8 @@ public interface IAgentDao {
 
   void deleteAll();
 
+  List<Long> getStudyAgentIds();
+
   Long saveAgentGroup(AgentGroup group);
 
   List<Agent> getStudyAgents();

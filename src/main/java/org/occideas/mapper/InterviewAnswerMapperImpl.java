@@ -60,7 +60,6 @@ public class InterviewAnswerMapperImpl implements InterviewAnswerMapper {
     vo.setTopNodeId(answer.getTopNodeId());
     vo.setType(answer.getType());
     vo.setAnswerFreetext(answer.getAnswerFreetext());
-    vo.setRules(moduleRuleMapper.convertToModuleRuleVOList(answer.getRules()));
     vo.setIsProcessed(answer.isProcessed());
     return vo;
   }

@@ -8,7 +8,8 @@ import org.occideas.vo.NodeQSFFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -24,7 +25,7 @@ public class NodeQSFDao implements INodeQSFDao {
     private SessionFactory sessionFactory;
 
     @Override
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String save(String surveyId, long idNode, String results) {
         sessionFactory.getCurrentSession().saveOrUpdate(new NodeQSF(surveyId, idNode, results));
         return surveyId;

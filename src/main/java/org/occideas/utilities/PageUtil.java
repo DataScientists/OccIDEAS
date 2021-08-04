@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class PageUtil<T> {
 
   public PageVO<T> populatePage(List<T> content, int pageNumber, int sizePerPage) {

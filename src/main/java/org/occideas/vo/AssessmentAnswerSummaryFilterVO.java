@@ -1,6 +1,17 @@
 package org.occideas.vo;
 
-public class AssessmentAnswerSummaryFilterVO {
+import org.apache.commons.lang3.StringUtils;
+import org.occideas.entity.AssessmentAnswerSummary;
+import org.occideas.entity.AssessmentAnswerSummary_;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public class AssessmentAnswerSummaryFilterVO implements SearchFilter {
 
   private Long answerId;
   private String name;
@@ -113,6 +124,56 @@ public class AssessmentAnswerSummaryFilterVO {
       return;
     }
     this.status = null;
+  }
+
+  @Override
+  public List<Predicate> getListOfRestrictions(CriteriaBuilder builder,
+                                               Root<AssessmentAnswerSummary> root) {
+    List<Predicate> predicateList = new ArrayList<>();
+
+    Predicate nameRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.name), this.getName()));
+    Predicate answerIdRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.answerId), this.getAnswerId()));
+    Predicate participantIdRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.idParticipant), this.getIdParticipant()));
+    Predicate assessedStatusRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.assessedStatus), this.getAssessedStatus()));
+    Predicate moduleNameRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.interviewModuleName), this.getModuleName()));
+    Predicate referenceRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.reference), this.getReference()));
+    Predicate interviewIdRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.idinterview), this.getIdinterview()));
+    Predicate statusRestriction = builder.and(builder.equal(root.get(AssessmentAnswerSummary_.status), this.getStatus()));
+
+
+    if(StringUtils.isNotEmpty(this.getName())) {
+      predicateList.add(nameRestriction);
+    }
+
+    if(Objects.nonNull(this.getAnswerId())) {
+      predicateList.add(answerIdRestriction);
+    }
+
+    if(Objects.nonNull(this.getIdParticipant())) {
+      predicateList.add(participantIdRestriction);
+    }
+
+    if(StringUtils.isNotEmpty(this.getAssessedStatus())) {
+      predicateList.add(assessedStatusRestriction);
+    }
+
+    if(StringUtils.isNotEmpty(this.getModuleName())) {
+      predicateList.add(moduleNameRestriction);
+    }
+
+    if(StringUtils.isNotEmpty(this.getReference())) {
+      predicateList.add(referenceRestriction);
+    }
+
+    if(Objects.nonNull(this.getIdinterview())) {
+      predicateList.add(interviewIdRestriction);
+    }
+
+    if(StringUtils.isNotEmpty(this.getStatusDescription())) {
+      predicateList.add(statusRestriction);
+    }
+
+    return predicateList;
   }
 
 }

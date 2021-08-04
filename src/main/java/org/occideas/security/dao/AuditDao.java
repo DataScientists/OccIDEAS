@@ -6,7 +6,8 @@ import org.occideas.security.model.AuditLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class AuditDao implements IAuditDao {
@@ -15,7 +16,7 @@ public class AuditDao implements IAuditDao {
   private SessionFactory sessionFactory;
 
   @Override
-  @Transactional(Transactional.TxType.REQUIRES_NEW)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void save(AuditLog auditLog) {
     final Session session = sessionFactory.getCurrentSession();
     session.saveOrUpdate(auditLog);

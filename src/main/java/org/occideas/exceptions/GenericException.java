@@ -1,6 +1,6 @@
 package org.occideas.exceptions;
 
-public class GenericException extends Throwable {
+public class GenericException extends RuntimeException {
 
   /**
    *

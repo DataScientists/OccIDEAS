@@ -5,6 +5,7 @@ import org.hibernate.annotations.*;
 
 import javax.persistence.Entity;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public class Interview implements java.io.Serializable {
   @OneToMany(mappedBy = "interviewId", targetEntity = Note.class)
   @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.PERSIST})
   @Where(clause = "deleted = 0")
-  private List<Note> notes;
+  private List<Note> notes = new ArrayList<>();
 
   // @OneToMany
   // @JoinColumn(name = "idinterview", referencedColumnName =
@@ -64,7 +65,7 @@ public class Interview implements java.io.Serializable {
 
   @OneToMany
   @JoinColumn(name = "idinterview", referencedColumnName = "idinterview", insertable = false, updatable = false)
-  private List<InterviewAnswer> answerHistory;
+  private List<InterviewAnswer> answerHistory = new ArrayList<>();
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "Interview_FiredRules", joinColumns = {
