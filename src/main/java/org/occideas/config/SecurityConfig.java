@@ -8,12 +8,8 @@ import org.occideas.security.provider.DomainUsernamePasswordAuthenticationProvid
 import org.occideas.security.provider.TokenAuthenticationProvider;
 import org.occideas.security.service.DaoServiceAuthenticator;
 import org.occideas.security.service.ExternalServiceAuthenticator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -37,10 +33,6 @@ import java.util.concurrent.Executor;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-
-  @Value("${backend.admin.role}")
-  private String backendAdminRole;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {

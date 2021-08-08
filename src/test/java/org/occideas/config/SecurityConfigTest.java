@@ -8,8 +8,6 @@ import org.occideas.security.filter.WSConstants;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -17,8 +15,6 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.TestPropertySources;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.net.MalformedURLException;
@@ -58,6 +54,15 @@ class SecurityConfigTest {
     public void givenApplicationIsUp_whenCheckActuator_thenReturnSuccess(){
         ResponseEntity<String> response =
                 restTemplate.getForEntity(base.toString()+"/actuator/health", String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void givenApplicationIsUp_whenRequestsOpenAPIPage_thenReturnSuccess()
+            throws IllegalStateException  {
+        ResponseEntity<String> response =
+                restTemplate.getForEntity(base.toString()+"/swagger-ui.html", String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
