@@ -14,12 +14,11 @@ import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.occideas.config.QualtricsConfig;
 import org.occideas.qsf.payload.*;
-import org.occideas.qsf.request.SurveyCreateRequest;
-import org.occideas.qsf.request.SurveyExportRequest;
-import org.occideas.qsf.request.SurveyPublishRequest;
-import org.occideas.qsf.request.SurveyUpdateRequest;
+import org.occideas.qsf.request.*;
 import org.occideas.qsf.response.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -37,10 +36,10 @@ public class QSFClient implements IQSFClient {
 
     private Logger log = LogManager.getLogger(this.getClass());
 
-    private static final String API_TOKEN = "TwWDAeQCPgsGmXdmSPdlwF1zvUu5txoSzzHGLRmV";
+    @Autowired
+    private QualtricsConfig qualtricsConfig;
     private static final String MULTI_FORM = "multipart/form-data";
     private static final String APPLICATION_JSON = "application/json";
-    private static final String QSF_PATH = "https://au1.qualtrics.com";
 
     private ObjectMapper JSON_MAPPER = new ObjectMapper();
     private ClientConfig clientConfig = new ClientConfig();
@@ -59,7 +58,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response uploadQSF(File file, String surveyName) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", MULTI_FORM);
 
         final FileDataBodyPart filePart = new FileDataBodyPart("file", file);
@@ -73,7 +72,7 @@ public class QSFClient implements IQSFClient {
                 .withConfig(clientConfig)
                 .register(MultiPartFeature.class)
                 .build()
-                .target(QSF_PATH)
+                .target(qualtricsConfig.getUrl())
                 .path("API/v3/surveys")
                 .request()
                 .accept(javax.ws.rs.core.MediaType.APPLICATION_JSON)
@@ -87,7 +86,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response createSurvey(SurveyCreateRequest surveyRequest) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -95,7 +94,7 @@ public class QSFClient implements IQSFClient {
             SurveyCreateResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
                     .headers(headers)
@@ -112,13 +111,13 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response createQuestion(String surveyId, SimpleQuestionPayload questionPayload, String blockId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
         try {
             SurveyCreateResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("questions")
@@ -137,7 +136,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response copySurvey(CopySurveyPayload payload, String surveyId, String userId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
         headers.add("X-COPY-SOURCE",surveyId);
         headers.add("X-COPY-DESTINATION-OWNER",userId);
@@ -146,7 +145,7 @@ public class QSFClient implements IQSFClient {
             CopySurveyResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/surveys")
                     .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
                     .headers(headers)
@@ -163,14 +162,14 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response getSurveyOptions(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
             SurveyOptionResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("options")
@@ -189,14 +188,14 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response updateSurveyOptions(String surveyId, SurveyOptionPayload optionPayload) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
             SurveyOptionResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("options")
@@ -215,7 +214,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response createBlock(String surveyId, Default defaultElement) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -223,7 +222,7 @@ public class QSFClient implements IQSFClient {
             BlockCreateResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("blocks")
@@ -242,7 +241,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response updateBlock(String surveyId, String blockId, GetBlockElementResult element) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -250,7 +249,7 @@ public class QSFClient implements IQSFClient {
             BaseResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("blocks")
@@ -270,14 +269,14 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response getBlock(String surveyId, String blockId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
             GetBlockElementResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("blocks")
@@ -297,7 +296,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response getFlow(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -305,7 +304,7 @@ public class QSFClient implements IQSFClient {
             GetFlowResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("flow")
@@ -323,7 +322,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response publishSurvey(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -332,7 +331,7 @@ public class QSFClient implements IQSFClient {
             SurveyPublishResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("versions")
@@ -351,7 +350,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response createExportResponse(String surveyId, SurveyExportRequest surveyExportRequest) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -359,7 +358,7 @@ public class QSFClient implements IQSFClient {
             SurveyExportResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/surveys")
                     .path(surveyId)
                     .path("export-responses")
@@ -378,14 +377,14 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response getExportResponseProgress(String surveyId, String progressId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
             SurveyExportResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/surveys")
                     .path(surveyId)
                     .path("export-responses")
@@ -405,14 +404,14 @@ public class QSFClient implements IQSFClient {
     @Override
     public File getExportResponseFile(String surveyId, String fileId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
             InputStream inputStream = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/surveys")
                     .path(surveyId)
                     .path("export-responses")
@@ -429,18 +428,71 @@ public class QSFClient implements IQSFClient {
             fos.flush();
             fos.close();
             IOUtils.closeQuietly(inputStream);
-            log.info("surveyId:"+surveyId+"-fileId:"+fileId);
+            log.info("surveyId:" + surveyId + "-fileId:" + fileId);
             return downloadfile;
         } catch (Exception e) {
-            log.error("getExportResponseFile:"+e.getMessage(), e);
+            log.error("getExportResponseFile:" + e.getMessage(), e);
             return null;
         }
     }
 
     @Override
+    public Response listDistribution(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
+        headers.add("Content-type", APPLICATION_JSON);
+
+        DistributionListResponse response = ClientBuilder.newBuilder()
+                .withConfig(clientConfig)
+                .build()
+                .target(qualtricsConfig.getUrl())
+                .path("API/v3/distributions")
+                .queryParam("surveyId", surveyId)
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .get()
+                .readEntity(DistributionListResponse.class);
+
+        return handleResponse(response, "/list", "listDistribution");
+    }
+
+    @Override
+    public Response listenToSurveyResponse(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
+        headers.add("Content-type", APPLICATION_JSON);
+
+        SurveyListenRequest surveyListenerRequest = new SurveyListenRequest();
+        surveyListenerRequest.setEncrypt(false);
+        surveyListenerRequest.setPublicationUrl(qualtricsConfig.getTopic().getPublicationUrl());
+        surveyListenerRequest.setTopics(qualtricsConfig
+                .getTopic().getPrefix() + surveyId);
+        log.info("surveyListenerRequest sent: {}", surveyListenerRequest);
+        String request = null;
+        try {
+            request = JSON_MAPPER.writeValueAsString(surveyListenerRequest);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        SurveyListenResponse response = ClientBuilder.newBuilder()
+                .withConfig(clientConfig)
+                .build()
+                .target(qualtricsConfig.getUrl())
+                .path("API/v3/eventsubscriptions/")
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .post(Entity.entity(request, MediaType.APPLICATION_JSON))
+                .readEntity(SurveyListenResponse.class);
+
+
+        return handleResponse(response, "/list", "listenSurveyResponse");
+    }
+
+    @Override
     public Response activateSurvey(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -448,7 +500,7 @@ public class QSFClient implements IQSFClient {
             BaseResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/surveys")
                     .path(surveyId)
                     .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
@@ -466,13 +518,13 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response deleteSurvey(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         BaseResponse response = ClientBuilder.newBuilder()
                 .withConfig(clientConfig)
                 .build()
-                .target(QSF_PATH)
+                .target(qualtricsConfig.getUrl())
                 .path("API/v3/surveys")
                 .path(surveyId)
                 .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
@@ -486,13 +538,13 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response copySurvey(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         BaseResponse response = ClientBuilder.newBuilder()
                 .withConfig(clientConfig)
                 .build()
-                .target(QSF_PATH)
+                .target(qualtricsConfig.getUrl())
                 .path("API/v3/surveys")
                 .path(surveyId)
                 .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
@@ -506,13 +558,13 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response listSurvey() {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         SurveyListResponse response = ClientBuilder.newBuilder()
                 .withConfig(clientConfig)
                 .build()
-                .target(QSF_PATH)
+                .target(qualtricsConfig.getUrl())
                 .path("API/v3/surveys")
                 .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
                 .headers(headers)
@@ -526,7 +578,7 @@ public class QSFClient implements IQSFClient {
     @Override
     public Response updateFlow(String surveyId, Flow flow) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
-        headers.add("X-API-TOKEN", API_TOKEN);
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
@@ -534,7 +586,7 @@ public class QSFClient implements IQSFClient {
             BaseResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()
-                    .target(QSF_PATH)
+                    .target(qualtricsConfig.getUrl())
                     .path("API/v3/survey-definitions")
                     .path(surveyId)
                     .path("flow")
@@ -559,7 +611,7 @@ public class QSFClient implements IQSFClient {
 
     private  Response handleResponse(BaseResponse response, String requestBody, String function) {
         if ("200 - OK".equals(response.getMeta().getHttpStatus())) {
-            log.info(response);
+            log.info(function + ":" + response);
             return Response.ok(response).build();
         } else {
             log.error(function + ":" + response.getMeta().getHttpStatus() + "->error:" + response.getMeta().getError().getErrorMessage() + " --> " + requestBody);

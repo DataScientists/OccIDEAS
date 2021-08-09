@@ -1,4 +1,4 @@
-package org.occideas.qsf.topic;
+package org.occideas.qsf.subscriber;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,9 +26,8 @@ public class QualtricsSurveyResponseListener {
                             ) {
         try {
             logMessageReceived(completedDate, status, responseId, brandId, topic, surveyId);
-
         } catch (Throwable e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body(e.getMessage());
         }
         return ResponseEntity.ok().build();

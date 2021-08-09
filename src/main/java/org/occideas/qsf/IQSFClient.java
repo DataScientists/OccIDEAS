@@ -49,4 +49,8 @@ public interface IQSFClient {
     Response getExportResponseProgress(String surveyId, String progressId);
 
     File getExportResponseFile(String surveyId, String fileId);
+
+    Response listDistribution(String surveyId);
+
+    Response listenToSurveyResponse(String surveyId);
 }

@@ -1,6 +1,6 @@
 package org.occideas.config;
 
-import org.occideas.qsf.topic.QualtricsTopic;
+import org.occideas.qsf.subscriber.topic.QualtricsTopic;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,16 +8,16 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("qualtrics")
 public class QualtricsConfig {
 
-    private String subscription;
+    private String url;
     private String apiToken;
     private QualtricsTopic topic;
 
-    public String getSubscription() {
-        return subscription;
+    public String getUrl() {
+        return url;
     }
 
-    public void setSubscription(String subscription) {
-        this.subscription = subscription;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getApiToken() {

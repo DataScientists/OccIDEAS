@@ -1,4 +1,4 @@
-package org.occideas.qsf.topic;
+package org.occideas.qsf.subscriber.topic;
 
 public class QualtricsTopic {
 

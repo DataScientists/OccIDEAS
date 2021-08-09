@@ -22,7 +22,7 @@ import org.occideas.nodelanguage.rest.NodeLanguageRestController;
 import org.occideas.note.rest.NoteRestController;
 import org.occideas.participant.rest.ParticipantRestController;
 import org.occideas.possibleanswer.rest.PossibleAnswerRestController;
-import org.occideas.qsf.topic.QualtricsSurveyResponseListener;
+import org.occideas.qsf.subscriber.QualtricsSurveyResponseListener;
 import org.occideas.question.rest.QuestionRestController;
 import org.occideas.reporthistory.rest.ReportHistoryRestController;
 import org.occideas.rule.rest.RuleRestController;
