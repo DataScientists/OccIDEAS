@@ -42,7 +42,7 @@ class QualtricsSurveySubscriptionDaoTest {
     }
 
     @Test
-    void givenSurveyIdExist_whenFindBySurveyId_shouldNotReturnRecord() {
+    void givenSurveyIdNotExist_whenFindBySurveyId_shouldNotReturnRecord() {
         Optional<QualtricsSurveySubscription> optionalSurveySubscription = qualtricsSurveySubscriptionDao.findBySurveyId("1");
 
         assertTrue(optionalSurveySubscription.isEmpty());

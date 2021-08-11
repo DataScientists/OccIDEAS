@@ -18,7 +18,7 @@ import java.util.Optional;
 public class QualtricsSurveySubscriptionDao extends GenericBaseDao<QualtricsSurveySubscription, String> {
 
     public QualtricsSurveySubscriptionDao() {
-        super(QualtricsSurveySubscription.class);
+        super(QualtricsSurveySubscription.class, QualtricsSurveySubscription_.SUBSCRIPTION_ID);
     }
 
     public Optional<QualtricsSurveySubscription> findBySurveyId(String surveyId) {

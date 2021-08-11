@@ -1,45 +1,48 @@
 package org.occideas.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "QUALTRICS_SURVEY")
 public class QualtricsSurvey implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String distributionId;
+    private String responseId;
+    private String brandId;
+    private String topic;
     private String surveyId;
-    private String participantEmail;
-    private LocalDateTime sentAssessmentDate;
-    private LocalDateTime createdDate;
-    private LocalDateTime surveyExpiryDate;
-    private String ownerId;
-    private String orgId;
-    private LocalDateTime distributionSentDate;
-    private String mailingListId;
-    private String libraryId;
-    private String status;
+    private LocalDateTime completedDate;
+    private String qualtricsStatus;
+    @Lob
+    private byte[] response;
 
-    public long getId() {
-        return id;
+    public String getResponseId() {
+        return responseId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setResponseId(String responseId) {
+        this.responseId = responseId;
     }
 
-    public String getDistributionId() {
-        return distributionId;
+    public String getBrandId() {
+        return brandId;
     }
 
-    public void setDistributionId(String distributionId) {
-        this.distributionId = distributionId;
+    public void setBrandId(String brandId) {
+        this.brandId = brandId;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
     public String getSurveyId() {
@@ -50,83 +53,39 @@ public class QualtricsSurvey implements Serializable {
         this.surveyId = surveyId;
     }
 
-    public String getParticipantEmail() {
-        return participantEmail;
+    public LocalDateTime getCompletedDate() {
+        return completedDate;
     }
 
-    public void setParticipantEmail(String participantEmail) {
-        this.participantEmail = participantEmail;
+    public void setCompletedDate(LocalDateTime completedDate) {
+        this.completedDate = completedDate;
     }
 
-    public LocalDateTime getSentAssessmentDate() {
-        return sentAssessmentDate;
+    public String getQualtricsStatus() {
+        return qualtricsStatus;
     }
 
-    public void setSentAssessmentDate(LocalDateTime sentAssessmentDate) {
-        this.sentAssessmentDate = sentAssessmentDate;
+    public void setQualtricsStatus(String qualtricsStatus) {
+        this.qualtricsStatus = qualtricsStatus;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public byte[] getResponse() {
+        return response;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setResponse(byte[] response) {
+        this.response = response;
     }
 
-    public LocalDateTime getSurveyExpiryDate() {
-        return surveyExpiryDate;
-    }
-
-    public void setSurveyExpiryDate(LocalDateTime surveyExpiryDate) {
-        this.surveyExpiryDate = surveyExpiryDate;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public String getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(String orgId) {
-        this.orgId = orgId;
-    }
-
-    public LocalDateTime getDistributionSentDate() {
-        return distributionSentDate;
-    }
-
-    public void setDistributionSentDate(LocalDateTime distributionSentDate) {
-        this.distributionSentDate = distributionSentDate;
-    }
-
-    public String getMailingListId() {
-        return mailingListId;
-    }
-
-    public void setMailingListId(String mailingListId) {
-        this.mailingListId = mailingListId;
-    }
-
-    public String getLibraryId() {
-        return libraryId;
-    }
-
-    public void setLibraryId(String libraryId) {
-        this.libraryId = libraryId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    @Override
+    public String toString() {
+        return "QualtricsSurvey{" +
+                " responseId='" + responseId + '\'' +
+                ", brandId='" + brandId + '\'' +
+                ", topic='" + topic + '\'' +
+                ", surveyId='" + surveyId + '\'' +
+                ", completedDate=" + completedDate +
+                ", qualtricsStatus='" + qualtricsStatus + '\'' +
+                '}';
     }
 }
