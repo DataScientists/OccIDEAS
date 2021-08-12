@@ -1,11 +1,14 @@
-package org.occideas.qsf.subscriber;
+package org.occideas.qsf.subscriber.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.QualtricsSurveySubscription;
 import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.dao.QualtricsSurveySubscriptionDao;
-import org.occideas.qsf.response.*;
+import org.occideas.qsf.response.Element;
+import org.occideas.qsf.response.SurveyListResponse;
+import org.occideas.qsf.response.SurveyListenResponse;
+import org.occideas.qsf.subscriber.constant.QualtricsSubscriptionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -31,11 +34,11 @@ public class QualtricsSurveySubscriberService {
     public void subscribeActiveDistributions() {
         log.info("Started distribution subscriber");
         List<String> activeSurveys = getActiveSurveys();
-        activeSurveys.forEach(this::listenToDistributedSurveys);
+        activeSurveys.forEach(this::listenToSurvey);
         log.info("Successfully subscribed to active distributions");
     }
 
-    protected List<String> getActiveSurveys() {
+    public List<String> getActiveSurveys() {
         log.info("Getting list of active surveys");
         Response listSurveyResponse = iqsfClient.listSurvey();
         SurveyListResponse surveyListResponse = (SurveyListResponse) listSurveyResponse.getEntity();
@@ -49,23 +52,17 @@ public class QualtricsSurveySubscriberService {
         return activeSurveys;
     }
 
-    protected void listenToDistributedSurveys(String surveyId) {
+    public void listenToSurvey(String surveyId) {
         Optional<QualtricsSurveySubscription> survey = qualtricsSurveySubscriptionDao.findBySurveyId(surveyId);
         if (survey.isPresent()) {
             log.info("Skip , already listening to survey {}", surveyId);
             return;
         }
-        log.info("Getting distribution lists for survey {}", surveyId);
-        Response listDistributionResponse = iqsfClient.listDistribution(surveyId);
-        DistributionListResponse distributionListResponse = (DistributionListResponse) listDistributionResponse.getEntity();
-        log.info("Distribution list for survey {} , {}", surveyId, distributionListResponse.toString());
-        List<DistributionListElement> distributionListElements = distributionListResponse.getResult().getElements();
-        if (!distributionListElements.isEmpty()) {
-            log.info("Start waiting for response {}", distributionListElements.size());
-            Response listenToSurveyResponse = iqsfClient.listenToSurveyResponse(surveyId);
-            SurveyListenResponse surveyListenResponse = (SurveyListenResponse) listenToSurveyResponse.getEntity();
-            qualtricsSurveySubscriptionDao.save(createSubscription(surveyId, surveyListenResponse));
-        }
+
+        Response listenToSurveyResponse = iqsfClient.listenToSurveyResponse(surveyId);
+        SurveyListenResponse surveyListenResponse = (SurveyListenResponse) listenToSurveyResponse.getEntity();
+        qualtricsSurveySubscriptionDao.save(createSubscription(surveyId, surveyListenResponse));
+        log.info("successfully listening to survey {}", surveyId);
     }
 
     private QualtricsSurveySubscription createSubscription(String surveyId, SurveyListenResponse surveyListenResponse) {

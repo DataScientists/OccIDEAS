@@ -437,6 +437,32 @@ public class QSFClient implements IQSFClient {
     }
 
     @Override
+    public String getResponse(String responseId, String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
+        headers.add("Content-type", APPLICATION_JSON);
+
+        try {
+            String response = ClientBuilder.newBuilder()
+                    .withConfig(clientConfig)
+                    .build()
+                    .target(qualtricsConfig.getUrl())
+                    .path("API/v3/surveys")
+                    .path(surveyId)
+                    .path("responses")
+                    .path(responseId)
+                    .request(MediaType.APPLICATION_JSON)
+                    .headers(headers)
+                    .get().toString();
+
+            return response;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
     public Response listDistribution(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
         headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());

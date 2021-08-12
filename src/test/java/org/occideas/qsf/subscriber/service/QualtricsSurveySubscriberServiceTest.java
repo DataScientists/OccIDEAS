@@ -1,4 +1,4 @@
-package org.occideas.qsf.subscriber;
+package org.occideas.qsf.subscriber.service;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
@@ -55,13 +55,6 @@ class QualtricsSurveySubscriberServiceTest {
 
     @Test
     void givenDistributionExist_whenListenToDistributedSurveys_shouldSubscribeToResponse() {
-        DistributionListResponse distributionListResponse = new DistributionListResponse();
-        DistributionListResult distributionListResult = new DistributionListResult();
-        DistributionListElement distributionListElement = new DistributionListElement();
-        distributionListElement.setId("1");
-        distributionListResult.setElements(Arrays.asList(distributionListElement));
-        distributionListResponse.setResult(distributionListResult);
-        when(iqsfClient.listDistribution(anyString())).thenReturn(Response.ok(distributionListResponse).build());
         SurveyListenResponse surveyListenResponse = new SurveyListenResponse();
         SurveyListenResult surveyListenResult = new SurveyListenResult();
         surveyListenResult.setId("1");
@@ -69,7 +62,7 @@ class QualtricsSurveySubscriberServiceTest {
         when(iqsfClient.listenToSurveyResponse(anyString())).thenReturn(Response.ok(surveyListenResponse).build());
         when(qualtricsSurveySubscriptionDao.findBySurveyId("1")).thenReturn(Optional.ofNullable(null));
 
-        qualtricsSurveySubscriberService.listenToDistributedSurveys("1");
+        qualtricsSurveySubscriberService.listenToSurvey("1");
 
         verify(iqsfClient, times(1)).listenToSurveyResponse(any());
         verify(qualtricsSurveySubscriptionDao, times(1)).save(any(QualtricsSurveySubscription.class));
@@ -79,7 +72,7 @@ class QualtricsSurveySubscriberServiceTest {
     void givenDistributionExistAndSurveyAlreadyListening_whenListenToDistributedSurveys_shouldNotSubscribeToResponse() {
         when(qualtricsSurveySubscriptionDao.findBySurveyId("1")).thenReturn(Optional.of(new QualtricsSurveySubscription()));
 
-        qualtricsSurveySubscriberService.listenToDistributedSurveys("1");
+        qualtricsSurveySubscriberService.listenToSurvey("1");
 
         verify(iqsfClient, times(0)).listenToSurveyResponse(any());
     }

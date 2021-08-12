@@ -1,6 +1,6 @@
 package org.occideas.entity;
 
-import org.occideas.qsf.subscriber.QualtricsSubscriptionStatus;
+import org.occideas.qsf.subscriber.constant.QualtricsSubscriptionStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;

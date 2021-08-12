@@ -1,8 +1,7 @@
-package org.occideas.qsf.subscriber;
+package org.occideas.qsf.subscriber.constant;
 
 public enum QualtricsProcessStatus {
 
-    IN_PROGRESS,
     COMPLETED
 
 }
