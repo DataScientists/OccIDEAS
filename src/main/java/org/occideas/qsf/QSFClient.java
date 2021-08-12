@@ -453,7 +453,8 @@ public class QSFClient implements IQSFClient {
                     .path(responseId)
                     .request(MediaType.APPLICATION_JSON)
                     .headers(headers)
-                    .get().toString();
+                    .get()
+                    .readEntity(String.class);
 
             return response;
         } catch (Exception e) {
