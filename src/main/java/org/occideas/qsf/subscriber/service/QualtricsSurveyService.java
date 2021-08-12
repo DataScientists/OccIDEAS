@@ -27,7 +27,7 @@ public class QualtricsSurveyService {
 
     public void consumeSurveyResponse(QualtricsSurvey qualtricsSurvey) {
 
-        if (!QualtricsProcessStatus.COMPLETED.name().equalsIgnoreCase(qualtricsSurvey.getQualtricsStatus())) {
+        if (!QualtricsProcessStatus.COMPLETE.name().equalsIgnoreCase(qualtricsSurvey.getQualtricsStatus())) {
             log.info("survey response status is not completed for {} and is {}",
                     qualtricsSurvey.getResponseId(),
                     qualtricsSurvey.getQualtricsStatus());

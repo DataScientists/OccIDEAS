@@ -36,7 +36,7 @@ class QualtricsSurveyServiceTest {
         qualtricsSurvey.setBrandId("1");
         qualtricsSurvey.setTopic("topic");
         qualtricsSurvey.setCompletedDate(LocalDateTime.now());
-        qualtricsSurvey.setQualtricsStatus("Completed");
+        qualtricsSurvey.setQualtricsStatus("Complete");
         when(qualtricsSurveyDao.findById("1r")).thenReturn(Optional.empty());
         when(iqsfClient.getResponse(anyString(), anyString())).thenReturn("{test: test}");
 
@@ -69,7 +69,7 @@ class QualtricsSurveyServiceTest {
         qualtricsSurvey.setBrandId("1");
         qualtricsSurvey.setTopic("topic");
         qualtricsSurvey.setCompletedDate(LocalDateTime.now());
-        qualtricsSurvey.setQualtricsStatus("Completed");
+        qualtricsSurvey.setQualtricsStatus("Complete");
         when(qualtricsSurveyDao.findById("1r")).thenReturn(Optional.empty());
         when(iqsfClient.getResponse(anyString(), anyString())).thenReturn(null);
 
