@@ -51,6 +51,7 @@ public class QualtricsSurveyService {
         }
 
         qualtricsSurveyDao.save(qualtricsSurvey);
+        log.info("survey response was saved successfully for response id {}", qualtricsSurvey.getResponseId());
     }
 
     private byte[] getResponse(QualtricsSurvey survey) {
