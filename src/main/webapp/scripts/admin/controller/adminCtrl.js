@@ -27,7 +27,44 @@
       password: ''
     };
 
-    self.importLibraryDialog = function() {
+    self.importSurveyResponsesDialog = function () {
+      self.importSurveyDisabled = false;
+      self.importSurveyProgress = false;
+      self.surveyResponse = {};
+      $mdDialog.show({
+        scope: $scope,
+        preserveScope: true,
+        templateUrl: 'scripts/admin/partials/importSurvey.html',
+        clickOutsideToClose: false
+      });
+    };
+
+    self.importSurveyResponses = (surveyId) => {
+      self.importSurveyDisabled = true;
+      self.importSurveyProgress = true;
+      AdminService.importSurveyResponse(surveyId).then(function (response) {
+        if (response.status == '200') {
+          $ngToast.create({
+            className: 'success',
+            content: 'Import surveys successful.',
+            animation: 'slide'
+          });
+        } else {
+          $ngToast.create({
+            className: 'danger',
+            content: 'Import surveys failed, check the logs.',
+            dismissButton: true,
+            dismissOnClick: false,
+            animation: 'slide'
+          });
+        }
+        $mdDialog.cancel();
+        self.importSurveyDisabled = false;
+        self.importSurveyProgress = false;
+      });
+    }
+
+    self.importLibraryDialog = function () {
       $scope.importLibraryDisabled = false;
       $scope.importLibraryProgress = false;
       $mdDialog.show({

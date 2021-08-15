@@ -27,7 +27,7 @@
       return request.then(handleSuccess, handleError);
     };
 
-    var importLibrary = function(data) {
+    var importLibrary = function (data) {
       var restSaveUrl = adminEndpoint + '/importLibrary';
       var request = $http({
         method: 'POST',
@@ -37,7 +37,16 @@
       return request.then(handleSuccess, handleError);
     };
 
-    var updateUser = function(data) {
+    var importSurveyResponse = (surveyId) => {
+      var restSaveUrl = adminEndpoint + '/qsf/sync/' + surveyId;
+      var request = $http({
+        method: 'GET',
+        url: restSaveUrl
+      });
+      return request.then(handleSuccess, handleError);
+    };
+
+    var updateUser = function (data) {
       var restSaveUrl = adminEndpoint + '/updateUser';
       var request = $http({
         method: 'POST',
@@ -220,7 +229,8 @@
       importVoxcoResponse: importVoxcoResponse,
       validateVoxcoQuestions: validateVoxcoQuestions,
       createQSFTranslationModule: createQSFTranslationModule,
-      importIPSOSResponse: importIPSOSResponse
+      importIPSOSResponse: importIPSOSResponse,
+      importSurveyResponse: importSurveyResponse
     };
   }
 

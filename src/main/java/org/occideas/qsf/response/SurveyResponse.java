@@ -6,13 +6,13 @@ import org.occideas.qsf.BaseResponse;
 public class SurveyResponse extends BaseResponse {
 
     @JsonProperty(value = "result")
-    private SurveyResult result;
+    private Response result;
 
-    public SurveyResult getResult() {
+    public Response getResult() {
         return result;
     }
 
-    public void setResult(SurveyResult result) {
+    public void setResult(Response result) {
         this.result = result;
     }
 }

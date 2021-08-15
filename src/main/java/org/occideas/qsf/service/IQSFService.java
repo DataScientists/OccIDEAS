@@ -1,8 +1,12 @@
 package org.occideas.qsf.service;
 
 import org.occideas.entity.NodeQSF;
-import org.occideas.qsf.results.SurveyResponses;
+import org.occideas.qsf.response.Response;
+import org.occideas.qsf.response.SurveyResponses;
+import org.occideas.vo.NodeVO;
 import org.springframework.scheduling.annotation.Async;
+
+import java.io.IOException;
 
 public interface IQSFService {
 
@@ -18,6 +22,8 @@ public interface IQSFService {
     @Async("threadPoolTaskExecutor")
     void exportResponseQSF(Long id) throws InterruptedException;
 
+    void importResponseQSF(String surveyId) throws InterruptedException, IOException;
+
     SurveyResponses exportQSFResponses(long idNode) throws InterruptedException;
 
     void consumeQSFResponse(SurveyResponses surveyResponses);
@@ -29,6 +35,10 @@ public interface IQSFService {
     void importQSFResponsesForIntro();
 
     void cleanSurveyResponses();
+
+    void processResponse(NodeVO nodeVO, Response response);
+
+    void processResponse(Response response);
 
     void createQSFTranslationModule();
 }

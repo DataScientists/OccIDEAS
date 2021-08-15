@@ -371,6 +371,7 @@ CREATE TABLE QUALTRICS_SURVEY
     qualtricsStatus varchar(255)  NOT NULL,
     completedDate   timestamp     NOT NULL,
     response        TEXT DEFAULT NULL,
+    isProcessed     BIT  DEFAULT NULL,
     PRIMARY KEY (responseId)
 );
 

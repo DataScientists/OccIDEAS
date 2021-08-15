@@ -1,5 +1,5 @@
 
-package org.occideas.qsf.results;
+package org.occideas.qsf.response;
 
 import com.fasterxml.jackson.annotation.*;
 

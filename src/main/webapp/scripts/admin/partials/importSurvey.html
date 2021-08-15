@@ -1,0 +1,42 @@
+<md-dialog aria-label="Import Survey" ng-cloak
+           style="margin:0 0 0 0;padding:0 0 0 0;"> <!-- <pre>{{data | json}}</pre> -->
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Import Survey Responses from QSF</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()"><span
+                        aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="width:510px;">
+            <div class="md-dialog-content">
+                <div class="md-inline-form" layout="column" ng-cloak>
+                    <md-content>
+                        <form class="navbar-form navbar-left" id="importSurveyForm"
+                              name="importSurveyForm">
+                            <div layout-gt-sm="row">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label for="surveyId">Survey Id</label>
+                                    <input maxlength="100" name="surveyId" id="surveyId"
+                                           ng-model="vm.surveyResponse.surveyId">
+                                </md-input-container>
+                            </div>
+                            <div layout-gt-sm="row">
+                                <md-dialog-actions layout="row">
+                                    <md-button class="md-raised" ng-click="cancel()"
+                                               ng-disabled="vm.importSurveyDisabled">Cancel
+                                    </md-button>
+                                    <md-button class="md-raised"
+                                               ng-click="vm.importSurveyResponses(vm.surveyResponse.surveyId)"
+                                               type="submit" ng-disabled="vm.importSurveyDisabled">Submit
+                                    </md-button>
+                                </md-dialog-actions>
+                            </div>
+                        </form>
+                    </md-content>
+                </div>
+            </div>
+        </md-dialog-content>
+    </form>
+</md-dialog>

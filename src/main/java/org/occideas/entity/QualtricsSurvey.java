@@ -6,6 +6,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "QUALTRICS_SURVEY")
@@ -20,6 +21,7 @@ public class QualtricsSurvey implements Serializable {
     private String qualtricsStatus;
     @Lob
     private byte[] response;
+    private boolean isProcessed;
 
     public String getResponseId() {
         return responseId;
@@ -77,15 +79,25 @@ public class QualtricsSurvey implements Serializable {
         this.response = response;
     }
 
+    public boolean isProcessed() {
+        return isProcessed;
+    }
+
+    public void setProcessed(boolean processed) {
+        isProcessed = processed;
+    }
+
     @Override
     public String toString() {
         return "QualtricsSurvey{" +
-                " responseId='" + responseId + '\'' +
+                "responseId='" + responseId + '\'' +
                 ", brandId='" + brandId + '\'' +
                 ", topic='" + topic + '\'' +
                 ", surveyId='" + surveyId + '\'' +
                 ", completedDate=" + completedDate +
                 ", qualtricsStatus='" + qualtricsStatus + '\'' +
+                ", response=" + Arrays.toString(response) +
+                ", isProcessed=" + isProcessed +
                 '}';
     }
 }
