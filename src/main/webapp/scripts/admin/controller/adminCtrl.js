@@ -40,6 +40,17 @@
     };
 
     self.importSurveyResponses = (surveyId) => {
+      if (!surveyId) {
+        $ngToast.create({
+          className: 'danger',
+          content: 'Survey id cannot be empty.',
+          dismissButton: true,
+          dismissOnClick: false,
+          animation: 'slide'
+        });
+        return;
+      }
+
       self.importSurveyDisabled = true;
       self.importSurveyProgress = true;
       AdminService.importSurveyResponse(surveyId).then(function (response) {

@@ -11,6 +11,10 @@ public class QualtricsConfig {
     private String url;
     private String apiToken;
     private QualtricsTopic topic;
+    private boolean hideNodeKeys;
+    private boolean includeTranslations;
+    private boolean expandModules;
+    private String translationsPath;
 
     public String getUrl() {
         return url;
@@ -36,4 +40,35 @@ public class QualtricsConfig {
         this.topic = topic;
     }
 
+    public boolean isHideNodeKeys() {
+        return hideNodeKeys;
+    }
+
+    public void setHideNodeKeys(boolean hideNodeKeys) {
+        this.hideNodeKeys = hideNodeKeys;
+    }
+
+    public boolean isIncludeTranslations() {
+        return includeTranslations;
+    }
+
+    public void setIncludeTranslations(boolean includeTranslations) {
+        this.includeTranslations = includeTranslations;
+    }
+
+    public boolean isExpandModules() {
+        return expandModules;
+    }
+
+    public void setExpandModules(boolean expandModules) {
+        this.expandModules = expandModules;
+    }
+
+    public String getTranslationsPath() {
+        return translationsPath;
+    }
+
+    public void setTranslationsPath(String translationsPath) {
+        this.translationsPath = translationsPath;
+    }
 }

@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
@@ -19,7 +20,6 @@ import org.occideas.qsf.service.IQSFService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -37,14 +37,8 @@ public class StudyAgentUtil {
 
     public static final String COMMA = ",";
 
-    @Value("${qualtrics.hide.nodekeys}")
-    private boolean hideNodeKeys;
-
-    @Value("${qualtrics.include.translations}")
-    private boolean includeTranslations;
-
-    @Value("${translations.path}")
-    private String translationsPath;
+    @Autowired
+    private QualtricsConfig qualtricsConfig;
 
     @Autowired
     ServletContext context;
@@ -84,7 +78,7 @@ public class StudyAgentUtil {
     }
 
     private List<String> getAvailableLanguages() {
-        if (includeTranslations && numberTranslationsMap != null && !numberTranslationsMap.isEmpty()) {
+        if (qualtricsConfig.isIncludeTranslations() && numberTranslationsMap != null && !numberTranslationsMap.isEmpty()) {
             for (Map.Entry<String, Map<String, String>> entry : numberTranslationsMap.entrySet()) {
                 return new ArrayList<>(entry.getValue().keySet());
             }
@@ -94,7 +88,7 @@ public class StudyAgentUtil {
 
     private void loadTranslations() {
         try {
-            List<String[]> extract = CsvUtil.readAll(translationsPath);
+            List<String[]> extract = CsvUtil.readAll(qualtricsConfig.getTranslationsPath());
             numberTranslationsMap = new LinkedHashMap<>();
             String[] labels = extract.get(0);
             int index = 0;
@@ -121,7 +115,7 @@ public class StudyAgentUtil {
     public String buildQSF(ModuleVO moduleVO, boolean filter, boolean translation) {
 
         if ("M_IntroModule".equals(moduleVO.getType())) {
-            if (includeTranslations && !StringUtils.isBlank(translationsPath)) {
+            if (qualtricsConfig.isIncludeTranslations() && !StringUtils.isBlank(qualtricsConfig.getTranslationsPath())) {
                 loadTranslations();
             }
 
@@ -172,6 +166,11 @@ public class StudyAgentUtil {
             }
 
             iqsfClient.updateSurveyOptions(surveyId, options.getResult());
+
+            if (qualtricsConfig.isExpandModules()) {
+                iqsfClient.publishSurvey(surveyId);
+                iqsfClient.activateSurvey(surveyId);
+            }
 
             return surveyId;
         } else {
@@ -247,139 +246,202 @@ public class StudyAgentUtil {
         }
     }
 
-    private void createManualQuestionIntro
-            (NodeVO node, QuestionVO qVO, DisplayLogic logic,
+    public void createManualQuestionIntro
+            (NodeVO rootNode, QuestionVO qVO, DisplayLogic logic,
              List<SimpleQuestionPayload> questionPayloads,
              String parentSurveyId,
              AtomicInteger qidCount) {
-            if (qVO.getLink() == 0L) {
-                if (!idNodeQIDMapIntro.containsKey(qVO.getIdNode())) {
-                    String qidStrCount = "QID" + qidCount.incrementAndGet();
-                    idNodeQIDMapIntro.put(qVO.getIdNode(), qidStrCount);
-                }
-                String numberKey = node.getName().substring(0, 4) + "_" + qVO.getNumber();
-                String questionTextKey = numberKey + " - ";
-                String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
-                String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
-                List<Language> languages = hasTranslations(numberKey) ? buildLanguages(node.getName(), qVO) : new ArrayList<>();
-                SimpleQuestionPayload payload = null;
-                if (logic == null) {
-                    payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                            new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
-                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
-                } else {
-                    payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
-                            new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
-                            buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
-                }
-                questionPayloads.add(payload);
+        if (qVO.getLink() == 0L) {
+            questionPayloads.add(buildSimpleQuestionPayloadWithAnswers(rootNode, qVO, logic, qidCount));
+        }
+        processChildNodes(rootNode, qVO, questionPayloads, parentSurveyId, qidCount);
+    }
+
+    public void processChildNodes(NodeVO rootNode,
+                                  QuestionVO questionNode,
+                                  List<SimpleQuestionPayload> questionPayloads,
+                                  String parentSurveyId,
+                                  AtomicInteger qidCount) {
+        int ansCount = 1;
+        for (PossibleAnswerVO answer : questionNode.getChildNodes()) {
+            if (answer.getDeleted() != 0) {
+                continue;
             }
-            int ansCount = 1;
-            for (PossibleAnswerVO answer : qVO.getChildNodes()) {
-                if (answer.getDeleted() != 0) {
-                    continue;
-                }
-                if (!answer.getChildNodes().isEmpty()) {
-                    for (QuestionVO childQuestionVO : answer.getChildNodes()) {
-                        if (childQuestionVO.getDeleted() != 0) {
-                            continue;
+            if (!answer.getChildNodes().isEmpty()) {
+                for (QuestionVO childQuestionVO : answer.getChildNodes()) {
+                    if (childQuestionVO.getDeleted() != 0) {
+                        continue;
+                    }
+
+                    if (childQuestionVO.getLink() == 0L) {
+                        //if (shouldExcludeNode(filter,childQuestionVO.getIdNode())) {
+                        //	System.out.println("4-EXCLUDING!!" + questionNode.getIdNode() + questionNode.getName());
+                        //    continue;
+                        //}
+                        if (!idNodeQIDMapIntro.containsKey(childQuestionVO.getIdNode())) {
+                            String qidStrCount = "QID" + qidCount.incrementAndGet();
+                            idNodeQIDMapIntro.put(childQuestionVO.getIdNode(), qidStrCount);
+                        }
+                        String childQidCount = idNodeQIDMapIntro.get(Long.valueOf(answer.getParentId()));
+                        String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
+
+                        List<Logic> logics = new ArrayList<>();
+                        if (Constant.Q_FREQUENCY.equals(questionNode.getType())) {
+                            handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
+                        } else {
+                            logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
+                                    childQidCount, choiceLocator, "Expression", childQuestionVO.getName()));
                         }
 
-                        if (childQuestionVO.getLink() == 0L) {
-                            //if (shouldExcludeNode(filter,childQuestionVO.getIdNode())) {
-                            //	System.out.println("4-EXCLUDING!!" + qVO.getIdNode() + qVO.getName());
-                            //    continue;
-                            //}
-                            if (!idNodeQIDMapIntro.containsKey(childQuestionVO.getIdNode())) {
-                                String qidStrCount = "QID" + qidCount.incrementAndGet();
-                                idNodeQIDMapIntro.put(childQuestionVO.getIdNode(), qidStrCount);
-                            }
-                            String childQidCount = idNodeQIDMapIntro.get(Long.valueOf(answer.getParentId()));
-                            String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
-
-                            List<Logic> logics = new ArrayList<>();
-                            if(Constant.Q_FREQUENCY.equals(qVO.getType())){
-                                handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
-                            }else {
-                                logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
-                                        childQidCount, choiceLocator, "Expression", childQuestionVO.getName()));
-                            }
-
-                            createManualQuestionIntro(node, childQuestionVO,
-                                    new DisplayLogic("BooleanExpression", false, new Condition(buildLogicMap(logics),"If")), questionPayloads, parentSurveyId, qidCount);
-                        } else if (childQuestionVO.getLink() != 0L) {
-                            List<String> listOfIdNodes = null;
-                            //if (filter != null) {
-                                listOfIdNodes = moduleService.getFilterStudyAgent(childQuestionVO.getLink());
-                            //}
-                            if (listOfIdNodes == null ) {
-                            	System.err.println("5-EXCLUDING MODULE MJOR ERROR!!" + childQuestionVO.getIdNode() + childQuestionVO.getName());
-                                continue;
-                            }
-                            NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
-                            String childQidCount = idNodeQIDMapIntro.get(Long.valueOf(answer.getParentId()));
-                            String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
-
-                            List<Logic> logics = new ArrayList<>();
-                            if(Constant.Q_FREQUENCY.equals(qVO.getType())){
-                                handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
-                            }else {
-                                logics.add(new Logic("Question", childQidCount, "no", choiceLocator,
-                                        "Selected", childQidCount, choiceLocator, "Expression",
-                                        childQuestionVO.getName()));
-                            }
-
-                            if ("F".equals(linkModule.getNodeclass())) {
-                            	System.err.println("THIS SHOULD NEVER BE TRUE MAJOR ERROR!!" + linkModule.getIdNode() + linkModule.getName());
-
-                                for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
-                                    createManualQuestionIntro(node, linkQuestion,
-                                            new DisplayLogic("BooleanExpression", false,
-                                                    new Condition(buildLogicMap(logics), "If")), questionPayloads,
-                                            parentSurveyId, qidCount);
-                                }
-                            } else {
-                                if (flowResult == null) {
-                                    Response getFlowResponse = iqsfClient.getFlow(parentSurveyId);
-                                    flowResult = ((GetFlowResponse) getFlowResponse.getEntity()).getResult();
-                                }
-                                if (!flowResult.getFlows().contains(new Flow(String.valueOf(linkModule.getIdNode())))) {
-                                    String linkModSurveyId = publishJobModules((ModuleVO) linkModule, listOfIdNodes);
-                                    String url = iqsfClient.buildRedirectUrl(linkModSurveyId) + "?IDAnswer=${q://QID1/ChoiceTextEntryValue/1}";
-                                    List<Logic> introLogics = new ArrayList<>();
-                                    Logic introLogic = new Logic("Question",
-                                            childQidCount, "no",
-                                            choiceLocator, "Selected",
-                                            childQidCount,
-                                            choiceLocator, "Expression", childQuestionVO.getName());
-                                    introLogics.add(introLogic);
-                                    List<Condition> conditions = new ArrayList<>();
-                                    Condition condition = new Condition(introLogics, "If");
-                                    conditions.add(condition);
-                                    BranchLogic branchLogic = new BranchLogic(conditions, "BooleanExpression");
-                                    List<Flow> flows = new ArrayList<>();
-                                    int branchFlow = flowResult.getFlows().size() + 1;
-                                    Flow flow = new Flow(null, "EndSurvey", "FL_" + (branchFlow + 1),
-                                            null, null, "Advanced", new Options("true",
-                                            "Redirect", url), null);
-                                    flows.add(flow);
-                                    flowResult.getFlows().add(new Flow(null,
-                                            "Branch",
-                                            "FL_" + (branchFlow), branchLogic, flows, null, null,
-                                            String.valueOf(linkModule.getIdNode())));
-                                    Flow mainFlow = new Flow(null, "Root", flowResult.getFlowId(),
-                                            null, flowResult.getFlows(), null, null,
-                                            null);
-                                    iqsfClient.updateFlow(parentSurveyId, mainFlow);
-                                }
-                            }
-
-                        }
+                        createManualQuestionIntro(rootNode, childQuestionVO,
+                                new DisplayLogic("BooleanExpression", false, new Condition(buildLogicMap(logics), "If")), questionPayloads, parentSurveyId, qidCount);
+                    } else if (childQuestionVO.getLink() != 0L) {
+                        processLinks(rootNode, questionNode, questionPayloads, parentSurveyId, qidCount, ansCount, answer, childQuestionVO);
                     }
                 }
-                ansCount++;
             }
+            ansCount++;
+        }
+    }
+
+    public void processLinks(NodeVO rootNode,
+                             QuestionVO parentQuestionNode,
+                             List<SimpleQuestionPayload> questionPayloads,
+                             String parentSurveyId,
+                             AtomicInteger qidCount,
+                             int ansCount,
+                             PossibleAnswerVO childAnswerNode,
+                             QuestionVO childQuestionVO) {
+        List<String> listOfIdNodes = null;
+        //if (filter != null) {
+        listOfIdNodes = moduleService.getFilterStudyAgent(childQuestionVO.getLink());
         //}
+        if (listOfIdNodes == null) {
+            System.err.println("5-EXCLUDING MODULE MJOR ERROR!!" + childQuestionVO.getIdNode() + childQuestionVO.getName());
+            return;
+        }
+        NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
+        String childQidCount = idNodeQIDMapIntro.get(Long.valueOf(childAnswerNode.getParentId()));
+        String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
+
+        List<Logic> logics = new ArrayList<>();
+        if (Constant.Q_FREQUENCY.equals(parentQuestionNode.getType())) {
+            handleDisplayLogicFreq(childAnswerNode, childQuestionVO, childQidCount, logics);
+        } else {
+            logics.add(new Logic("Question", childQidCount, "no", choiceLocator,
+                    "Selected", childQidCount, choiceLocator, "Expression",
+                    childQuestionVO.getName()));
+        }
+
+        if ("F".equals(linkModule.getNodeclass())) {
+            System.err.println("THIS SHOULD NEVER BE TRUE MAJOR ERROR!!" + linkModule.getIdNode() + linkModule.getName());
+            processFragments(rootNode, questionPayloads, parentSurveyId, qidCount, (FragmentVO) linkModule, logics);
+        } else {
+            if (qualtricsConfig.isExpandModules()) {
+                expandModule(rootNode, questionPayloads, parentSurveyId, qidCount, ansCount, childQuestionVO, linkModule, childAnswerNode);
+            } else {
+                if (flowResult == null) {
+                    Response getFlowResponse = iqsfClient.getFlow(parentSurveyId);
+                    flowResult = ((GetFlowResponse) getFlowResponse.getEntity()).getResult();
+                }
+                if (!flowResult.getFlows().contains(new Flow(String.valueOf(linkModule.getIdNode())))) {
+                    publishLinksAsNewModules(parentSurveyId, childQuestionVO, listOfIdNodes, linkModule, childQidCount, choiceLocator);
+                }
+            }
+        }
+    }
+
+    private void expandModule(NodeVO rootNode, List<SimpleQuestionPayload> questionPayloads,
+                              String parentSurveyId, AtomicInteger qidCount,
+                              int ansCount,
+                              QuestionVO childQuestionVO, NodeVO linkModule, PossibleAnswerVO answer) {
+        linkModule.getChildNodes().forEach(node -> {
+            if (node instanceof QuestionVO) {
+                QuestionVO question = (QuestionVO) node;
+                if (question.getLink() > 0) {
+                    question.getChildNodes().forEach(childAns -> processLinks(rootNode, question, questionPayloads, parentSurveyId, qidCount, ansCount, childAns, childQuestionVO));
+                } else {
+                    question.getChildNodes().forEach(childAns -> {
+                        String childQidCount = idNodeQIDMapIntro.get(Long.valueOf(answer.getParentId()));
+                        String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
+                        List<Logic> logics = new ArrayList<>();
+                        if (Constant.Q_FREQUENCY.equals(question.getType())) {
+                            handleDisplayLogicFreq(childAns, childQuestionVO, childQidCount, logics);
+                        } else {
+                            logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
+                                    childQidCount, choiceLocator, "Expression", childQuestionVO.getName()));
+                        }
+                        createManualQuestionIntro(rootNode, question,
+                                new DisplayLogic("BooleanExpression", false, new Condition(buildLogicMap(logics), "If")),
+                                questionPayloads,
+                                parentSurveyId,
+                                qidCount);
+                    });
+                }
+            }
+        });
+    }
+
+    private void publishLinksAsNewModules(String parentSurveyId, QuestionVO childQuestionVO, List<String> listOfIdNodes, NodeVO linkModule, String childQidCount, String choiceLocator) {
+        String linkModSurveyId = publishJobModules((ModuleVO) linkModule, listOfIdNodes);
+        String url = iqsfClient.buildRedirectUrl(linkModSurveyId) + "?IDAnswer=${q://QID1/ChoiceTextEntryValue/1}";
+        List<Logic> introLogics = new ArrayList<>();
+        Logic introLogic = new Logic("Question",
+                childQidCount, "no",
+                choiceLocator, "Selected",
+                childQidCount,
+                choiceLocator, "Expression", childQuestionVO.getName());
+        introLogics.add(introLogic);
+        List<Condition> conditions = new ArrayList<>();
+        Condition condition = new Condition(introLogics, "If");
+        conditions.add(condition);
+        BranchLogic branchLogic = new BranchLogic(conditions, "BooleanExpression");
+        List<Flow> flows = new ArrayList<>();
+        int branchFlow = flowResult.getFlows().size() + 1;
+        Flow flow = new Flow(null, "EndSurvey", "FL_" + (branchFlow + 1),
+                null, null, "Advanced", new Options("true",
+                "Redirect", url), null);
+        flows.add(flow);
+        flowResult.getFlows().add(new Flow(null,
+                "Branch",
+                "FL_" + (branchFlow), branchLogic, flows, null, null,
+                String.valueOf(linkModule.getIdNode())));
+        Flow mainFlow = new Flow(null, "Root", flowResult.getFlowId(),
+                null, flowResult.getFlows(), null, null,
+                null);
+        iqsfClient.updateFlow(parentSurveyId, mainFlow);
+    }
+
+    private void processFragments(NodeVO rootNode, List<SimpleQuestionPayload> questionPayloads, String parentSurveyId, AtomicInteger qidCount, FragmentVO linkModule, List<Logic> logics) {
+        for (QuestionVO linkQuestion : linkModule.getChildNodes()) {
+            createManualQuestionIntro(rootNode, linkQuestion,
+                    new DisplayLogic("BooleanExpression", false,
+                            new Condition(buildLogicMap(logics), "If")), questionPayloads,
+                    parentSurveyId, qidCount);
+        }
+    }
+
+    private SimpleQuestionPayload buildSimpleQuestionPayloadWithAnswers(NodeVO node, QuestionVO qVO, DisplayLogic logic, AtomicInteger qidCount) {
+        if (!idNodeQIDMapIntro.containsKey(qVO.getIdNode())) {
+            String qidStrCount = "QID" + qidCount.incrementAndGet();
+            idNodeQIDMapIntro.put(qVO.getIdNode(), qidStrCount);
+        }
+        String numberKey = node.getName().substring(0, 4) + "_" + qVO.getNumber();
+        String questionTextKey = numberKey + " - ";
+        String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
+        String questionTxt = (qualtricsConfig.isHideNodeKeys() ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
+        List<Language> languages = hasTranslations(numberKey) ? buildLanguages(node.getName(), qVO) : new ArrayList<>();
+        SimpleQuestionPayload payload = null;
+        if (logic == null) {
+            payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
+                    new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
+                    buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
+        } else {
+            payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
+                    new Configuration("UseText"), qVO.getName(), buildChoices(qVO, node.getName(), null),
+                    buildChoiceOrder(qVO), new Validation(new Setting("ON", "ON", "None")), languages, logic);
+        }
+        return payload;
     }
 
     private void createQSFTranslationModule(NodeVO node, QuestionVO qVO, DisplayLogic logic,
@@ -396,7 +458,7 @@ public class StudyAgentUtil {
             }
             String questionTextKey = node.getName().substring(0, 4) + "_" + qVO.getNumber() + " - ";
             String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
-            String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
+            String questionTxt = (qualtricsConfig.isHideNodeKeys() ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
             SimpleQuestionPayload payload = null;
             if (logic == null) {
                 payload = new SimpleQuestionPayload(questionTxt, qVO.getNumber(), "MC", QuestionSelector.get(qVO.getType()), "TX",
@@ -507,7 +569,7 @@ public class StudyAgentUtil {
     }
 
     public String manualBuildQSF(ModuleVO moduleVO, String surveyId,List<String> filter) {
-        if (includeTranslations && !StringUtils.isBlank(translationsPath)) {
+        if (qualtricsConfig.isIncludeTranslations() && !StringUtils.isBlank(qualtricsConfig.getTranslationsPath())) {
             loadTranslations();
         }
 
@@ -763,7 +825,7 @@ public class StudyAgentUtil {
             String numberKey = node.getName().substring(0, 4) + "_" + qVO.getNumber();
             String questionTextKey = numberKey + " - ";
             String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
-            String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
+            String questionTxt = (qualtricsConfig.isHideNodeKeys() ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
 
             List<Language> languages = hasTranslations(numberKey) ? buildLanguages(node.getName(), qVO) : new ArrayList<>();
             SimpleQuestionPayload payload = null;
@@ -982,7 +1044,7 @@ public class StudyAgentUtil {
                         answer.setName(String.valueOf(i));
                         String choiceKey = name.substring(0, 4) + "_" + answerVO.getNumber();
                         String translation = StringUtils.isBlank(lang) ? null : numberTranslationsMap.get(choiceKey).get(lang);
-                        choiceList.add(ChoiceFactory.create(answer, name, hideNodeKeys, translation));
+                        choiceList.add(ChoiceFactory.create(answer, name, qualtricsConfig.isHideNodeKeys(), translation));
                     }
                 }
             }
@@ -996,7 +1058,7 @@ public class StudyAgentUtil {
         for (PossibleAnswerVO answerVO : qVO.getChildNodes()) {
             String choiceKey = name.substring(0, 4) + "_" + answerVO.getNumber();
             String translation = StringUtils.isBlank(lang) ? null : numberTranslationsMap.get(choiceKey).get(lang);
-            choiceList.add(ChoiceFactory.create(answerVO, name, hideNodeKeys, translation));
+            choiceList.add(ChoiceFactory.create(answerVO, name, qualtricsConfig.isHideNodeKeys(), translation));
         }
         return choiceList;
     }
@@ -1030,7 +1092,7 @@ public class StudyAgentUtil {
         List<Language> languages = new ArrayList<>();
         translations.forEach((lang, value) -> {
             String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
-            String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + value;
+            String questionTxt = (qualtricsConfig.isHideNodeKeys() ? hiddenQuestionTextKey : questionTextKey) + value;
             Language language = new Language(lang, questionTxt, buildChoices(qVO, nodeName, lang));
             languages.add(language);
         });
@@ -1281,4 +1343,19 @@ public class StudyAgentUtil {
         }
     }
 
+    public Map<Long, String> getIdNodeQIDMap() {
+        return idNodeQIDMap;
+    }
+
+    public void setIdNodeQIDMap(Map<Long, String> idNodeQIDMap) {
+        this.idNodeQIDMap = idNodeQIDMap;
+    }
+
+    public Map<Long, String> getIdNodeQIDMapIntro() {
+        return idNodeQIDMapIntro;
+    }
+
+    public void setIdNodeQIDMapIntro(Map<Long, String> idNodeQIDMapIntro) {
+        this.idNodeQIDMapIntro = idNodeQIDMapIntro;
+    }
 }
