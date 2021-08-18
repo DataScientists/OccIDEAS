@@ -75,7 +75,7 @@ function newNote(element, $itemScope, $compile) {
 
   var wrapper = angular.element('#allModuleRulesOfAgent').parent().parent()[0];
   var maxDialogNum = 5;
-  var leftPoint = 965;
+  var leftPoint = 265;
 
   if(wrapper != null) {
     var position = wrapper.getBoundingClientRect();
