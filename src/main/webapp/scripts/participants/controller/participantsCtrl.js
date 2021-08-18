@@ -170,12 +170,12 @@
       {
         getData: function(params) {
           var currentPage = $scope.participantFilter.pageNumber;
-          $scope.participantFilter.idParticipant = lengthGreaterThan2(params
-            .filter().idParticipant);
-          $scope.participantFilter.interviewId = lengthGreaterThan2(params
-            .filter().idinterview);
-          $scope.participantFilter.reference = lengthGreaterThan2(params
-            .filter().reference);
+          $scope.participantFilter.idParticipant = params
+            .filter().idParticipant;
+          $scope.participantFilter.interviewId = params
+            .filter().idinterview;
+          $scope.participantFilter.reference = params
+            .filter().reference;
           /*
           if(lengthGreaterThan2(params.filter().status)){
             if(params.filter().status.startsWith('run') ){
