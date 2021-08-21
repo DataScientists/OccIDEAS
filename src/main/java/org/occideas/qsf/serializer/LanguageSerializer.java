@@ -3,7 +3,6 @@ package org.occideas.qsf.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.occideas.qsf.payload.Choice;
 import org.occideas.qsf.payload.Language;
 
 import java.io.IOException;
@@ -22,18 +21,21 @@ public class LanguageSerializer extends JsonSerializer<List<Language>> {
 
             jsonGenerator.writeFieldName("Choices");
             jsonGenerator.writeStartObject();
-            for( int i=0; i < language.getChoicesList().size();i++){
-                Choice choice = language.getChoicesList().get(i);
-                int index = i + 1;
-                jsonGenerator.writeFieldId(index);
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("Display",choice.getDisplay());
-                if(choice.getTextEntry() != null){
-                    jsonGenerator.writeStringField("TextEntry", choice.getTextEntry());
+            language.getChoicesList().forEach((key, choice) -> {
+                try {
+                    jsonGenerator.writeFieldName(key);
+                    jsonGenerator.writeStartObject();
+                    jsonGenerator.writeStringField("Display", choice.getDisplay());
+                    if (choice.getTextEntry() != null) {
+                        jsonGenerator.writeStringField("TextEntry", choice.getTextEntry());
+                    }
+                    jsonGenerator.writeEndObject();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                jsonGenerator.writeEndObject();
-            }
+            });
             jsonGenerator.writeEndObject();
+
 
             jsonGenerator.writeEndObject();
         }

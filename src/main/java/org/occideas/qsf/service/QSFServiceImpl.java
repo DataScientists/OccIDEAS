@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.entity.NodeQSF;
 import org.occideas.entity.QualtricsSurvey;
@@ -694,7 +695,7 @@ public class QSFServiceImpl implements IQSFService {
         }
         interviewQuestionVO.setProcessed(true);
         interviewQuestionVO.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestionVO.setType(Constant.Q_LINKEDMODULE);
+        interviewQuestionVO.setType(NodeType.Q_LINKEDMODULE.getDescription());
         return interviewQuestionVO;
     }
 
@@ -715,7 +716,7 @@ public class QSFServiceImpl implements IQSFService {
         interviewQuestionVO.setParentAnswerId(0L);
         interviewQuestionVO.setProcessed(true);
         interviewQuestionVO.setTopNodeId(linkedAJSM.getIdNode());
-        interviewQuestionVO.setType(Constant.Q_LINKEDAJSM);
+        interviewQuestionVO.setType(NodeType.Q_LINKEDAJSM.getDescription());
         return interviewQuestionVO;
     }
 

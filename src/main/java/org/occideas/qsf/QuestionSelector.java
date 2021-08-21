@@ -1,11 +1,11 @@
 package org.occideas.qsf;
 
-import org.occideas.entity.Constant;
+import org.occideas.common.NodeType;
 
 public enum QuestionSelector {
 
-    MULTIPLE("Q_multiple","MAVR"),
-    FREQUENCY(Constant.Q_FREQUENCY,"DL");
+    MULTIPLE(NodeType.Q_LINKEDMODULE.getDescription(), QSFQuestionSelector.MAVR.name()),
+    FREQUENCY(NodeType.Q_FREQUENCY.getDescription(), QSFQuestionSelector.DL.name());
 
     QuestionSelector(String type, String selector) {
         this.type = type;
@@ -29,6 +29,6 @@ public enum QuestionSelector {
                 return questionSelector.selector;
             }
         }
-        return "SAVR";
+        return QSFQuestionSelector.SAVR.name();
     }
 }

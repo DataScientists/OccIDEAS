@@ -15,6 +15,7 @@ public class QualtricsConfig {
     private boolean includeTranslations;
     private boolean expandModules;
     private String translationsPath;
+    private NodeSurveyConfig node;
 
     public String getUrl() {
         return url;
@@ -70,5 +71,13 @@ public class QualtricsConfig {
 
     public void setTranslationsPath(String translationsPath) {
         this.translationsPath = translationsPath;
+    }
+
+    public NodeSurveyConfig getNode() {
+        return node;
+    }
+
+    public void setNode(NodeSurveyConfig node) {
+        this.node = node;
     }
 }

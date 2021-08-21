@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.entity.NodeVoxco;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
@@ -23,18 +24,7 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CsvUtil;
 import org.occideas.utilities.ZipUtil;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.InterviewAnswerVO;
-import org.occideas.vo.InterviewQuestionVO;
-import org.occideas.vo.InterviewVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
-import org.occideas.vo.NodeVoxcoVO;
-import org.occideas.vo.NoteVO;
-import org.occideas.vo.ParticipantVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.SystemPropertyVO;
+import org.occideas.vo.*;
 import org.occideas.voxco.dao.INodeVoxcoDao;
 import org.occideas.voxco.model.*;
 import org.occideas.voxco.request.SurveyImportRequest;
@@ -55,18 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -331,7 +310,7 @@ public class VoxcoService implements IVoxcoService {
             Set<String> filteredQuestions = new HashSet<>();
             filterIds.stream().forEach(id -> {
                 NodeVO node = nodeService.getNode(Long.valueOf(id));
-                if (node != null && !Constant.Q_LINKEDAJSM.equals(node.getType()) && "Q".equals(node.getNodeclass())) {
+                if (node != null && !NodeType.Q_LINKEDAJSM.getDescription().equals(node.getType()) && "Q".equals(node.getNodeclass())) {
                     filteredQuestions.add(id);
                 }
             });
@@ -348,13 +327,13 @@ public class VoxcoService implements IVoxcoService {
                 continue;
             }
 
-            if (Constant.Q_FREQUENCY.equals(question.getType())) {
+            if (NodeType.Q_FREQUENCY.getDescription().equals(question.getType())) {
                 log.warn("{} with idNode={} will not be included in uploading to Voxco", question.getType(), question.getIdNode());
                 continue;
             }
 
             if (question.getDeleted() == 0 && "Q".equals(question.getNodeclass())) {
-                if (Constant.Q_LINKEDAJSM.equals(question.getType()) && question.getLink() != 0L) {
+                if (NodeType.Q_LINKEDAJSM.getDescription().equals(question.getType()) && question.getLink() != 0L) {
                     NodeVO linkModule = nodeService.getNode(question.getLink());
                     if ("F".equals(linkModule.getNodeclass())) {
                         List<String> linkedFilteredIdNodes = moduleService.getFilterStudyAgent(question.getLink());
@@ -854,13 +833,13 @@ public class VoxcoService implements IVoxcoService {
 
             PossibleAnswerVO nodeAnswer = null;
             try {
-                if (Constant.Q_MULTIPLE.equals(nodeQuestion.getType())) {
+                if (NodeType.Q_MULTIPLE.getDescription().equals(nodeQuestion.getType())) {
                     int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
                     List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
                     nodeAnswer = possibleAnswers.get(answerIndex);
-                // issue_8293 workaround
-                } else if ((Constant.Q_SINGLE.equals(nodeQuestion.getType()) || Constant.Q_SIMPLE.equals(nodeQuestion.getType()))
-                    && "CHECK".equals(qType)) {
+                    // issue_8293 workaround
+                } else if ((NodeType.Q_SINGLE.getDescription().equals(nodeQuestion.getType()) || NodeType.Q_SIMPLE.getDescription().equals(nodeQuestion.getType()))
+                        && "CHECK".equals(qType)) {
                     int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
                     List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
                     nodeAnswer = possibleAnswers.get(answerIndex);
@@ -956,7 +935,7 @@ public class VoxcoService implements IVoxcoService {
         interviewQuestion.setParentAnswerId(0L);
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkAJSM.getIdNode());
-        interviewQuestion.setType(Constant.Q_LINKEDAJSM);
+        interviewQuestion.setType(NodeType.Q_LINKEDAJSM.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
@@ -979,7 +958,7 @@ public class VoxcoService implements IVoxcoService {
         }
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestion.setType(Constant.Q_LINKEDMODULE);
+        interviewQuestion.setType(NodeType.Q_LINKEDMODULE.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 

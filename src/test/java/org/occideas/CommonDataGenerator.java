@@ -1,8 +1,11 @@
 package org.occideas;
 
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
+import org.occideas.common.NodeType;
+import org.occideas.entity.JobModule;
+import org.occideas.entity.PossibleAnswer;
+import org.occideas.entity.Question;
+import org.occideas.mapper.ModuleMapperImpl;
+import org.occideas.mapper.PossibleAnswerMapperImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,76 +17,81 @@ public class CommonDataGenerator {
     private static String[] letters = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
             "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
 
-    public static ModuleVO createModuleVO(int numberOfChildQuestions, int numberOfAnswers) {
-        ModuleVO moduleVO = new ModuleVO();
+    private static ModuleMapperImpl moduleMapper = new ModuleMapperImpl();
+    private static PossibleAnswerMapperImpl answerMapper = new PossibleAnswerMapperImpl();
+
+
+    public static JobModule createModule(int numberOfChildQuestions, int numberOfAnswers) {
+        JobModule module = new JobModule();
         long generatedIdNode = CommonDataGenerator.idNode.incrementAndGet();
-        moduleVO.setName("Sample Intro Module " + generatedIdNode);
-        moduleVO.setIdNode(generatedIdNode);
-        moduleVO.setChildNodes(createQuestionVOs(numberOfChildQuestions, numberOfAnswers));
-        return moduleVO;
+        module.setName("Sample Intro Module " + generatedIdNode);
+        module.setIdNode(generatedIdNode);
+        module.setChildNodes(createQuestions(numberOfChildQuestions, numberOfAnswers));
+        return module;
     }
 
-    public static QuestionVO createQuestionVO(String nodeNumber, int numberOfAnswers) {
-        QuestionVO questionVO = new QuestionVO();
+    public static Question createQuestion(String nodeNumber, int numberOfAnswers) {
+        Question question = new Question();
         long generatedIdNode = CommonDataGenerator.idNode.incrementAndGet();
-        questionVO.setIdNode(generatedIdNode);
-        questionVO.setName("Sample Question " + generatedIdNode);
-        questionVO.setNumber(nodeNumber);
-        questionVO.setChildNodes(createPossibleAnswerVOs(numberOfAnswers));
-        return questionVO;
+        question.setIdNode(generatedIdNode);
+        question.setName("Sample Question " + generatedIdNode);
+        question.setNumber(nodeNumber);
+        question.setType(NodeType.Q_MULTIPLE.getDescription());
+        question.setChildNodes(createPossibleAnswer(numberOfAnswers));
+        return question;
     }
 
-    public static List<QuestionVO> createQuestionVOs(int numberOfQuestions, int numberOfAnswers) {
-        List<QuestionVO> questions = new ArrayList<>();
+    public static List<Question> createQuestions(int numberOfQuestions, int numberOfAnswers) {
+        List<Question> questions = new ArrayList<>();
         int letterInd = 0;
         for (int i = 0; i < numberOfQuestions; i++) {
             if (letterInd == letters.length - 1) {
                 letterInd = 0;
             }
-            questions.add(createQuestionVO(i + 1 + letters[letterInd], numberOfAnswers));
+            questions.add(createQuestion(i + 1 + letters[letterInd], numberOfAnswers));
         }
         return questions;
     }
 
-    public static PossibleAnswerVO createPossibleAnswerVO(String nodeNumber) {
-        PossibleAnswerVO possibleAnswerVO = new PossibleAnswerVO();
+    public static PossibleAnswer createPossibleAnswer(String nodeNumber) {
+        PossibleAnswer possibleAnswer = new PossibleAnswer();
         long generatedIdNode = CommonDataGenerator.idNode.incrementAndGet();
-        possibleAnswerVO.setIdNode(generatedIdNode);
-        possibleAnswerVO.setName("Sample Answer " + generatedIdNode);
-        possibleAnswerVO.setNumber(nodeNumber);
-        return possibleAnswerVO;
+        possibleAnswer.setIdNode(generatedIdNode);
+        possibleAnswer.setName("Sample Answer " + generatedIdNode);
+        possibleAnswer.setNumber(nodeNumber);
+        return possibleAnswer;
     }
 
-    public static PossibleAnswerVO createPossibleAnswerVO(String nodeNumber, int numberOfChildQuestions, int numberOfChildAnswers) {
-        PossibleAnswerVO possibleAnswerVO = new PossibleAnswerVO();
+    public static PossibleAnswer createPossibleAnswer(String nodeNumber, int numberOfChildQuestions, int numberOfChildAnswers) {
+        PossibleAnswer possibleAnswer = new PossibleAnswer();
         long generatedIdNode = CommonDataGenerator.idNode.incrementAndGet();
-        possibleAnswerVO.setIdNode(generatedIdNode);
-        possibleAnswerVO.setName("Sample Answer " + generatedIdNode);
-        possibleAnswerVO.setNumber(nodeNumber);
-        possibleAnswerVO.setChildNodes(createQuestionVOs(numberOfChildQuestions, numberOfChildAnswers));
-        return possibleAnswerVO;
+        possibleAnswer.setIdNode(generatedIdNode);
+        possibleAnswer.setName("Sample Answer " + generatedIdNode);
+        possibleAnswer.setNumber(nodeNumber);
+        possibleAnswer.setChildNodes(createQuestions(numberOfChildQuestions, numberOfChildAnswers));
+        return possibleAnswer;
     }
 
-    public static List<PossibleAnswerVO> createPossibleAnswerVOs(int numberOfAnswers) {
-        List<PossibleAnswerVO> possibleAnswers = new ArrayList<>();
+    public static List<PossibleAnswer> createPossibleAnswer(int numberOfAnswers) {
+        List<PossibleAnswer> possibleAnswers = new ArrayList<>();
         int letterInd = 0;
         for (int i = 0; i < numberOfAnswers; i++) {
             if (letterInd == letters.length - 1) {
                 letterInd = 0;
             }
-            possibleAnswers.add(createPossibleAnswerVO(i + 1 + letters[letterInd]));
+            possibleAnswers.add(createPossibleAnswer(i + 1 + letters[letterInd]));
         }
         return possibleAnswers;
     }
 
-    public static List<PossibleAnswerVO> createPossibleAnswerVOs(int numberOfChildAnswers, int numberOfChildQuestions) {
-        List<PossibleAnswerVO> possibleAnswers = new ArrayList<>();
+    public static List<PossibleAnswer> createPossibleAnswers(int numberOfChildAnswers, int numberOfChildQuestions) {
+        List<PossibleAnswer> possibleAnswers = new ArrayList<>();
         int letterInd = 0;
         for (int i = 0; i < numberOfChildAnswers; i++) {
             if (letterInd == letters.length - 1) {
                 letterInd = 0;
             }
-            possibleAnswers.add(createPossibleAnswerVO(i + 1 + letters[letterInd], numberOfChildQuestions, numberOfChildAnswers));
+            possibleAnswers.add(createPossibleAnswer(i + 1 + letters[letterInd], numberOfChildQuestions, numberOfChildAnswers));
         }
         return possibleAnswers;
     }
