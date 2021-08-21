@@ -82,7 +82,7 @@ public class QSFConversionService {
                                 QuestionAnswerWrapper parent) {
         questions.stream()
                 .filter(question -> filterIds.contains(String.valueOf(question.getIdNode())) ||
-                        String.valueOf(question.getIdNode()).equalsIgnoreCase(qualtricsConfig.getNode().getEmail()))
+                        ignoreEmailNode(question))
                 .filter(question -> question.getDeleted() == 0)
                 .forEach(question -> {
                     if (question.getLink() > 0) {
@@ -109,6 +109,13 @@ public class QSFConversionService {
                         }
                     }
                 });
+    }
+
+    private boolean ignoreEmailNode(Question question) {
+        if (Objects.isNull(qualtricsConfig.getNode())) {
+            return false;
+        }
+        return String.valueOf(question.getIdNode()).equalsIgnoreCase(qualtricsConfig.getNode().getEmail());
     }
 
     public void createQuestions(List<Question> questions, String surveyId, PossibleAnswer dependsOn, QuestionAnswerWrapper parent) {

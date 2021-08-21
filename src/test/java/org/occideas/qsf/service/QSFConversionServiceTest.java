@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.occideas.CommonDataGenerator;
 import org.occideas.common.NodeType;
+import org.occideas.config.NodeSurveyConfig;
+import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.JobModule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
@@ -35,7 +37,8 @@ class QSFConversionServiceTest {
     NodeDao nodeDao;
     @Mock
     IQSFClient iqsfClient;
-
+    @Mock
+    QualtricsConfig qualtricsConfig;
     @InjectMocks
     QSFConversionService qsfConversionService;
 
@@ -170,6 +173,7 @@ class QSFConversionServiceTest {
         filterIds.add(String.valueOf(introModule.getChildNodes().get(0).getIdNode()));
         SurveyCreateResponse surveyCreateResponse = new SurveyCreateResponse();
         surveyCreateResponse.setResult(new SurveyCreateResult());
+        qualtricsConfig.setNode(new NodeSurveyConfig());
         when(iqsfClient.createQuestion(anyString(), any(SimpleQuestionPayload.class), any())).thenReturn(Response.ok(surveyCreateResponse).build());
 
         qsfConversionService.createQuestions(filterIds, introModule.getChildNodes(), surveyId, null, null);
