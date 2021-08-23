@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.serializer.ChoicesSerializer;
 
-import java.util.List;
+import java.util.Map;
 
 public class Language {
 
@@ -20,12 +20,12 @@ public class Language {
     @JsonProperty(value = "Choices")
     @JsonSerialize(using = ChoicesSerializer.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Choice> choicesList;
+    private Map<String, Choice> choicesList;
 
     public Language() {
     }
 
-    public Language(String language, String questionText, List<Choice> choicesList) {
+    public Language(String language, String questionText, Map<String, Choice> choicesList) {
         this.language = language;
         this.questionText = questionText;
         this.choicesList = choicesList;
@@ -47,11 +47,11 @@ public class Language {
         this.questionText = questionText;
     }
 
-    public List<Choice> getChoicesList() {
+    public Map<String, Choice> getChoicesList() {
         return choicesList;
     }
 
-    public void setChoicesList(List<Choice> choicesList) {
+    public void setChoicesList(Map<String, Choice> choicesList) {
         this.choicesList = choicesList;
     }
 }

@@ -4,13 +4,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.BaseQSF;
-import org.occideas.qsf.serializer.ChoicesSerializer;
 import org.occideas.qsf.serializer.LanguageSerializer;
 
 import java.util.List;
+import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SimpleQuestionPayload extends BaseQSF implements Payload {
 
+    @JsonProperty(value = "QuestionID")
+    private String questionId;
     @JsonProperty(value = "QuestionText")
     private String questionText;
     @JsonProperty(value = "DataExportTag")
@@ -26,8 +29,7 @@ public class SimpleQuestionPayload extends BaseQSF implements Payload {
     @JsonProperty(value = "QuestionDescription")
     private String questionDescription;
     @JsonProperty(value = "Choices")
-    @JsonSerialize(using = ChoicesSerializer.class)
-    private List<Choice> choicesList;
+    private Map<String, Choice> choices;
     @JsonProperty(value = "ChoiceOrder")
     private String[] choiceOrderList;
     @JsonProperty(value = "Validation")
@@ -42,7 +44,7 @@ public class SimpleQuestionPayload extends BaseQSF implements Payload {
     public SimpleQuestionPayload() {
     }
 
-    public SimpleQuestionPayload(String questionText, String dataExportTag, String questionType, String selector, String subSelector, Configuration configuration, String questionDescription, List<Choice> choicesList, String[] choiceOrderList, Validation validation, List<Language> languageList, DisplayLogic logic) {
+    public SimpleQuestionPayload(String questionText, String dataExportTag, String questionType, String selector, String subSelector, Configuration configuration, String questionDescription, Map<String, Choice> choicesList, String[] choiceOrderList, Validation validation, List<Language> languageList, DisplayLogic logic) {
         this.questionText = questionText;
         this.dataExportTag = dataExportTag;
         this.questionType = questionType;
@@ -50,7 +52,7 @@ public class SimpleQuestionPayload extends BaseQSF implements Payload {
         this.subSelector = subSelector;
         this.configuration = configuration;
         this.questionDescription = questionDescription;
-        this.choicesList = choicesList;
+        this.choices = choicesList;
         this.choiceOrderList = choiceOrderList;
         this.validation = validation;
         this.languageList = languageList;
@@ -113,12 +115,12 @@ public class SimpleQuestionPayload extends BaseQSF implements Payload {
         this.questionDescription = questionDescription;
     }
 
-    public List<Choice> getChoicesList() {
-        return choicesList;
+    public Map<String, Choice> getChoices() {
+        return choices;
     }
 
-    public void setChoicesList(List<Choice> choicesList) {
-        this.choicesList = choicesList;
+    public void setChoices(Map<String, Choice> choices) {
+        this.choices = choices;
     }
 
     public String[] getChoiceOrderList() {
@@ -153,4 +155,11 @@ public class SimpleQuestionPayload extends BaseQSF implements Payload {
         this.logic = logic;
     }
 
+    public String getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
+    }
 }

@@ -2,11 +2,10 @@ package org.occideas.qsf.payload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.BaseQSF;
-import org.occideas.qsf.serializer.ChoicesSerializer;
 
 import java.util.List;
+import java.util.Map;
 
 public class QuestionPayload extends BaseQSF implements Payload {
 
@@ -25,8 +24,7 @@ public class QuestionPayload extends BaseQSF implements Payload {
     @JsonProperty(value = "QuestionDescription")
     private String questionDescription;
     @JsonProperty(value = "Choices")
-    @JsonSerialize(using = ChoicesSerializer.class)
-    private List<Choice> choicesList;
+    private Map<String, Choice> choicesList;
     @JsonProperty(value = "ChoiceOrder")
     private String[] choiceOrderList;
     @JsonProperty(value = "Validation")
@@ -46,7 +44,7 @@ public class QuestionPayload extends BaseQSF implements Payload {
     public QuestionPayload() {
     }
 
-    public QuestionPayload(String questionText, String dataExportTag, String questionType, String selector, String subSelector, Configuration configuration, String questionDescription, List<Choice> choicesList, String[] choiceOrderList, Validation validation, List<Language> languageList, int nextChoiceId, int nextAnswerId, String questionId,DisplayLogic logic) {
+    public QuestionPayload(String questionText, String dataExportTag, String questionType, String selector, String subSelector, Configuration configuration, String questionDescription, Map<String, Choice> choicesList, String[] choiceOrderList, Validation validation, List<Language> languageList, int nextChoiceId, int nextAnswerId, String questionId, DisplayLogic logic) {
         this.questionText = questionText;
         this.dataExportTag = dataExportTag;
         this.questionType = questionType;
@@ -120,11 +118,11 @@ public class QuestionPayload extends BaseQSF implements Payload {
         this.questionDescription = questionDescription;
     }
 
-    public List<Choice> getChoicesList() {
+    public Map<String, Choice> getChoicesList() {
         return choicesList;
     }
 
-    public void setChoicesList(List<Choice> choicesList) {
+    public void setChoicesList(Map<String, Choice> choicesList) {
         this.choicesList = choicesList;
     }
 

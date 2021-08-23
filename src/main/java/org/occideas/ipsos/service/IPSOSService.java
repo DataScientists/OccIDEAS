@@ -3,6 +3,7 @@ package org.occideas.ipsos.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
 import org.occideas.fragment.service.FragmentService;
@@ -16,16 +17,7 @@ import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CsvUtil;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.InterviewAnswerVO;
-import org.occideas.vo.InterviewQuestionVO;
-import org.occideas.vo.InterviewVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
-import org.occideas.vo.ParticipantVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.SystemPropertyVO;
+import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,13 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -391,7 +377,7 @@ public class IPSOSService implements IIPSOSService {
         }
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestion.setType(Constant.Q_LINKEDMODULE);
+        interviewQuestion.setType(NodeType.Q_LINKEDMODULE.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
@@ -412,7 +398,7 @@ public class IPSOSService implements IIPSOSService {
         interviewQuestion.setParentAnswerId(0L);
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkAJSM.getIdNode());
-        interviewQuestion.setType(Constant.Q_LINKEDAJSM);
+        interviewQuestion.setType(NodeType.Q_LINKEDAJSM.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 

@@ -22,19 +22,37 @@ import org.occideas.nodelanguage.rest.NodeLanguageRestController;
 import org.occideas.note.rest.NoteRestController;
 import org.occideas.participant.rest.ParticipantRestController;
 import org.occideas.possibleanswer.rest.PossibleAnswerRestController;
+import org.occideas.qsf.subscriber.listener.QualtricsSurveyResponseListener;
 import org.occideas.question.rest.QuestionRestController;
 import org.occideas.reporthistory.rest.ReportHistoryRestController;
 import org.occideas.rule.rest.RuleRestController;
 import org.occideas.security.rest.AdminRestController;
 import org.occideas.security.rest.UserLoginRestController;
 import org.occideas.securityproperty.rest.SystemPropertyController;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.ws.rs.ApplicationPath;
 
 @Configuration
 @ApplicationPath("/web/rest")
+@EnableSwagger2
 public class JerseyConfig extends ResourceConfig {
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build();
+    }
+
 
     public JerseyConfig() {
         register(AgentRestController.class);
@@ -64,5 +82,6 @@ public class JerseyConfig extends ResourceConfig {
         register(AdminRestController.class);
         register(UserLoginRestController.class);
         register(SystemPropertyController.class);
+        register(QualtricsSurveyResponseListener.class);
     }
 }

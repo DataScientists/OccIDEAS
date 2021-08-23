@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.IAgentDao;
 import org.occideas.base.service.IQuestionCopier;
+import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.*;
 import org.occideas.fragment.dao.IFragmentDao;
 import org.occideas.mapper.FragmentMapper;
@@ -15,6 +16,7 @@ import org.occideas.mapper.RuleMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.nodelanguage.dao.INodeLanguageDao;
 import org.occideas.noderule.dao.INodeRuleDao;
+import org.occideas.qsf.service.QSFConversionService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.reporthistory.service.ReportHistoryService;
 import org.occideas.rule.dao.IRuleDao;
@@ -40,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -82,6 +85,10 @@ public class ModuleServiceImpl implements ModuleService {
 	private INodeLanguageDao nodeLanguageDao;
 	@Autowired
 	private ReportHistoryService reportHistoryService;
+	@Autowired
+	private QSFConversionService qsfConversionService;
+	@Autowired
+	private QualtricsConfig qualtricsConfig;
 
 	@Override
 	public List<ModuleVO> listAll() {
@@ -531,8 +538,17 @@ public class ModuleServiceImpl implements ModuleService {
 	@Override
 	@Async("threadPoolTaskExecutor")
 	public void manualBuildQSF(Long id, boolean filter) {
-		List<ModuleVO> modules = this.findById(id);
-		if (!modules.isEmpty()) { studyAgentUtil.buildQSF(modules.get(0),filter, false);
+		JobModule jobModule = dao.get(id);
+		if (Objects.nonNull(jobModule)) {
+			if (qualtricsConfig.isExpandModules()) {
+				List<String> filterIdNodes = new ArrayList<>();
+				if (filter) {
+					filterIdNodes = getFilterStudyAgent(id);
+				}
+				qsfConversionService.uploadQSF(jobModule, filterIdNodes);
+			} else {
+				studyAgentUtil.buildQSF(mapper.convertToModuleVO(jobModule, true), filter, false);
+			}
 		}
 	}
 

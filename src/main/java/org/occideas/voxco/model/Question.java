@@ -2,7 +2,7 @@ package org.occideas.voxco.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.occideas.entity.Constant;
+import org.occideas.common.NodeType;
 
 import java.util.List;
 
@@ -56,15 +56,14 @@ public class Question {
     }
 
     public static Type getType(String questionType) {
-        switch (questionType) {
-            case Constant.Q_SIMPLE:
-            case Constant.Q_SINGLE:
-                return Type.RadioButton;
-            case Constant.Q_MULTIPLE:
-                return Type.CheckBox;
-            default:
-                return null;
+        if (NodeType.Q_SIMPLE.getDescription().equalsIgnoreCase(questionType) ||
+                NodeType.Q_SINGLE.getDescription().equalsIgnoreCase(questionType)) {
+            return Type.RadioButton;
         }
+        if (NodeType.Q_MULTIPLE.getDescription().equalsIgnoreCase(questionType)) {
+            return Type.CheckBox;
+        }
+        return null;
     }
 
     public String getName() {

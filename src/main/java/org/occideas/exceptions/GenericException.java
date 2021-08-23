@@ -14,6 +14,10 @@ public class GenericException extends RuntimeException {
     this.e = e;
   }
 
+  public GenericException(String message) {
+    this.message = message;
+  }
+
   public String getMessage() {
     return message;
   }

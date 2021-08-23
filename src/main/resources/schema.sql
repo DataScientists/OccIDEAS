@@ -353,15 +353,37 @@ CREATE TABLE SYS_CONFIG
     PRIMARY KEY (id)
 );
 
+CREATE TABLE QUALTRICS_SURVEY_SUBSCRIPTION
+(
+    subscriptionId   varchar(2048) NOT NULL,
+    surveyId         varchar(255) DEFAULT NULL,
+    status           varchar(255) DEFAULT NULL,
+    subscriptionDate timestamp     NOT NULL,
+    PRIMARY KEY (subscriptionId)
+);
+
+CREATE TABLE QUALTRICS_SURVEY
+(
+    responseId      varchar(2048) NOT NULL,
+    topic           varchar(2048) NOT NULL,
+    brandId         varchar(255)  NOT NULL,
+    surveyId        varchar(255)  NOT NULL,
+    qualtricsStatus varchar(255)  NOT NULL,
+    completedDate   timestamp     NOT NULL,
+    response        TEXT DEFAULT NULL,
+    isProcessed     BIT  DEFAULT NULL,
+    PRIMARY KEY (responseId)
+);
+
 
 DROP VIEW IF EXISTS ModuleRule;
 CREATE VIEW ModuleRule AS
-SELECT concat(m.idNode, ':',nr.idRule, ':',r.agentId, ':',n.idNode)  as primaryKey,
-       m.idNode as idModule,
-       m.name as moduleName,
+SELECT concat(m.idNode, ':', nr.idRule, ':', r.agentId, ':', n.idNode) as primaryKey,
+       m.idNode                                                        as idModule,
+       m.name                                                          as moduleName,
        nr.idRule,
-       r.level as ruleLevel,
-       r.agentId as idAgent,
+       r.level                                                         as ruleLevel,
+       r.agentId                                                       as idAgent,
        a.name as agentName,
        n.idNode,
        n.number as nodeNumber
