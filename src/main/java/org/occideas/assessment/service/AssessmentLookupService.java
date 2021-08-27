@@ -36,11 +36,12 @@ public class AssessmentLookupService {
     @Autowired
     private ReportHistoryDao reportHistoryDao;
 
-    @Async
+    @Async("autoAssessmentTaskExecutor")
     public void writeLookup(String fullPath,
                             List<Interview> uniqueInterviews,
                             String[] filteredModule,
                             String requestorId) {
+        log.info("Assessment started writing lookup file ");
         List<InterviewAnswer> allAnswers = new ArrayList<>();
         List<InterviewQuestion> allQuestions = new ArrayList<>();
         int iSize = uniqueInterviews.size();
@@ -66,6 +67,7 @@ public class AssessmentLookupService {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+        log.info("Assessment completed writing lookup file ");
     }
 
     private void writeLookupNew(String fullPath,

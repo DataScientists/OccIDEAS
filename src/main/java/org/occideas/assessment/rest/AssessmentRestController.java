@@ -462,7 +462,7 @@ public class AssessmentRestController {
   @Path(value = "/exportAssessmentsCSV")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response exportAssessmentsCSV(FilterModuleVO filterModuleVO) {
-    assessmentReportService.exportAssessmentReport(filterModuleVO);
+    assessmentReportService.exportAssessmentReport(filterModuleVO, extractUserFromToken());
     return Response.ok().build();
   }
 
