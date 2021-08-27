@@ -1,6 +1,6 @@
 package org.occideas.utilities;
 
-public enum ParticipantsStatusEnum {
+public enum ProgressStatusEnum {
 
   RUNNING(0, "Running"),
   PARTIAL(1, "Partial"),
@@ -9,28 +9,26 @@ public enum ParticipantsStatusEnum {
 
   private int status;
   private String display;
-  ParticipantsStatusEnum(int status, String display) {
+
+  ProgressStatusEnum(int status, String display) {
     this.status = status;
     this.display = display;
   }
 
   public static String getDisplayByStatus(int status) {
-    String display = "Invalid Status";
-    for (ParticipantsStatusEnum enums : ParticipantsStatusEnum.values()) {
+    for (ProgressStatusEnum enums : ProgressStatusEnum.values()) {
       if (enums.getStatus() == status) {
-        display = enums.getDisplay();
-        break;
+        return enums.getDisplay();
       }
     }
-    return display;
+    return RUNNING.getDisplay();
   }
 
   public static int getStatusByDisplay(String display) {
     int results = 0;
-    for (ParticipantsStatusEnum enums : ParticipantsStatusEnum.values()) {
+    for (ProgressStatusEnum enums : ProgressStatusEnum.values()) {
       if (enums.getDisplay().equals(display)) {
-        results = enums.getStatus();
-        break;
+        return enums.getStatus();
       }
     }
     return results;

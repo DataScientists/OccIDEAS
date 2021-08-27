@@ -6,7 +6,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.assessment.service.AssessmentReportService;
 import org.occideas.assessment.service.AssessmentService;
+import org.occideas.config.ReportConfig;
 import org.occideas.entity.*;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.interview.service.InterviewService;
@@ -69,6 +71,10 @@ public class AssessmentRestController {
   private AssessmentService assessmentService;
   @Autowired
   private InterviewFiredRulesService firedRulesService;
+  @Autowired
+  private ReportConfig reportConfig;
+  @Autowired
+  private AssessmentReportService assessmentReportService;
 
   private DecimalFormat df = new DecimalFormat("#.0");
 
@@ -319,7 +325,7 @@ public class AssessmentRestController {
   private void writeReport(String fullPath, ReportHistoryVO reportHistoryVO, ExportCSVVO csvVO) {
     CSVWriter writer;
     try {
-        File csvDirFile = new File(Constant.REPORT_EXPORT_CSV_DIR);
+      File csvDirFile = new File(reportConfig.getExportDir());
 
       if (!csvDirFile.exists()) {
         csvDirFile.mkdir();
@@ -456,58 +462,7 @@ public class AssessmentRestController {
   @Path(value = "/exportAssessmentsCSV")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response exportAssessmentsCSV(FilterModuleVO filterModuleVO) {
-
-    // check if we have the directory TreeSet ins sys prop
-
-    String exportFileCSV = createFileName(filterModuleVO.getFileName());
-
-    ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
-      ReportsEnum.REPORT_ASSESSMENT_EXPORT.getValue());
-      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
-    reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
-      ReportsEnum.REPORT_ASSESSMENT_EXPORT.getValue());
-
-    Long count = interviewService.getAllWithRulesCount(filterModuleVO.getFilterModule());
-
-    reportHistoryVO.setRecordCount(count);
-
-    updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.11, new Date(),
-      INITIAL_DURATION_MIN);
-
-    long msPerInterview = getMsPerInterview(count.intValue(), reportHistoryVO,
-      ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);
-
-    List<Interview> uniqueInterviews = interviewService.listAllWithAssessments(filterModuleVO.getFilterModule());
-
-    ExportCSVVO csvVO = populateAssessmentCSV(uniqueInterviews, reportHistoryVO, msPerInterview,
-      filterModuleVO.getFilterModule());
-    writeReport(fullPath, reportHistoryVO, csvVO);
-    List<InterviewAnswerVO> allAnswers = new ArrayList<InterviewAnswerVO>();
-    List<InterviewQuestionVO> allQuestions = new ArrayList<InterviewQuestionVO>();
-    int iSize = uniqueInterviews.size();
-    int iCount = 0;
-    for (Interview interview : uniqueInterviews) {
-    	List<InterviewAnswerVO> answers = interviewAnswerService.findByInterviewId(interview.getIdinterview());
-        List<InterviewQuestionVO> questions = interviewQuestionService
-          .findByInterviewId(interview.getIdinterview());
-        allAnswers.addAll(answers);
-        allQuestions.addAll(questions);
-        iCount++;
-        System.out.println("Assessment report processing "+ iCount +" of "+ iSize);
-    }
-    Map<Long, NodeVO> nodeVoList = new HashMap<>();
-    String[] modules = filterModuleVO.getFilterModule();
-    // Initialize map to prevent multiple re-queries
-    for (String module : modules) {
-      nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));
-    }
-    try {
-		writeLookupNew(fullPath, allAnswers, nodeVoList, allQuestions);
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    
+    assessmentReportService.exportAssessmentReport(filterModuleVO);
     return Response.ok().build();
   }
 
