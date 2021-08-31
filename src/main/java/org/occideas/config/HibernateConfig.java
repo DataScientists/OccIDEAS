@@ -27,15 +27,18 @@ public class HibernateConfig {
 
     private Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.enable_lazy_load_no_trans","true");
-        hibernateProperties.setProperty("hibernate.connection.CharSet","utf8");
-        hibernateProperties.setProperty("hibernate.connection.characterEncoding","utf8");
-        hibernateProperties.setProperty("hibernate.id.new_generator_mappings","false");
-        hibernateProperties.setProperty("hibernate.ddl-auto","none");
-        hibernateProperties.setProperty("hibernate.jdbc.batch_size","100");
-        hibernateProperties.setProperty("hibernate.enhancer.enableDirtyTracking","true");
-        hibernateProperties.setProperty("hibernate.enhancer.enableLazyInitialization","true");
-        hibernateProperties.setProperty("hibernate.enhancer.enableAssociationManagement","true");
+        hibernateProperties.setProperty("hibernate.enable_lazy_load_no_trans", "true");
+        hibernateProperties.setProperty("hibernate.connection.CharSet", "utf8");
+        hibernateProperties.setProperty("hibernate.connection.characterEncoding", "utf8");
+        hibernateProperties.setProperty("hibernate.id.new_generator_mappings", "false");
+        hibernateProperties.setProperty("hibernate.ddl-auto", "none");
+//        hibernateProperties.setProperty("hibernate.format_sql","true");
+        hibernateProperties.setProperty("hibernate.jdbc.batch_size", "100");
+        hibernateProperties.setProperty("hibernate.order_updates", "true");
+        hibernateProperties.setProperty("hibernate.batch_versioned_data", "true");
+        hibernateProperties.setProperty("hibernate.enhancer.enableDirtyTracking", "true");
+        hibernateProperties.setProperty("hibernate.enhancer.enableLazyInitialization", "true");
+        hibernateProperties.setProperty("hibernate.enhancer.enableAssociationManagement", "true");
         return hibernateProperties;
     }
 

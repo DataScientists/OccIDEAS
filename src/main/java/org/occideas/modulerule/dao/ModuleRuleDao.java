@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -114,7 +111,7 @@ public class ModuleRuleDao {
             .setHint(QueryHints.PASS_DISTINCT_THROUGH, false)
             .getResultList();
 
-    return moduleRules.stream().map(ModuleRule::getRule).collect(Collectors.toList());
+    return moduleRules.stream().map(ModuleRule::getRule).filter(Objects::nonNull).collect(Collectors.toList());
   }
 
   @SuppressWarnings("unchecked")

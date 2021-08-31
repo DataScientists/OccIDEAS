@@ -47,7 +47,9 @@ public class AutoAssessmentService {
                 , listOfFiredRules));
         evaluateAssessmentStatus(interview);
         interview.setFiredRules(listOfFiredRules);
-        interview.setAutoAssessedRules(autoAssessedRules);
+        if (!autoAssessedRules.isEmpty()) {
+            interview.setAutoAssessedRules(autoAssessedRules);
+        }
         if (StringUtils.isEmpty(interview.getAssessedStatus())) {
             interview.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
         }
@@ -82,7 +84,7 @@ public class AutoAssessmentService {
         List<Rule> derivedRulesBasedOnAnswers = moduleRuleDao.getRulesByUniqueAnswers(allActualAnswers);
         Set<Rule> firedRules = new HashSet<>();
         derivedRulesBasedOnAnswers.stream()
-                .filter(rule -> Objects.nonNull(rule.getConditions()))
+                .filter(rule -> Objects.nonNull(rule.getConditions()) && !rule.getConditions().isEmpty())
                 .distinct()
                 .forEach(rule -> {
                     List<PossibleAnswer> conditions = rule.getConditions();
@@ -96,7 +98,7 @@ public class AutoAssessmentService {
                         firedRules.add(rule);
                     }
                 });
-        return firedRules.stream().collect(Collectors.toList());
+        return firedRules.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public List<Rule> getRuleLevelNoExposure(List<Long> listAgentIds, List<Rule> listOfFiredRules) {
@@ -120,7 +122,6 @@ public class AutoAssessmentService {
                             Rule rule = new Rule();
                             rule.setAgentId(id);
                             rule.setLevel(lowestLevel.getLevel());
-                            rule.setAgentId(lowestLevel.getAgentId());
                             rule.setLegacyRuleId(lowestLevel.getIdRule());
                             return rule;
                         } else {

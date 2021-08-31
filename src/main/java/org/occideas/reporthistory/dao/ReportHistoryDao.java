@@ -10,7 +10,7 @@ import org.occideas.entity.ReportHistory;
 import org.occideas.utilities.ReportsStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -107,6 +107,14 @@ public class ReportHistoryDao implements IReportHistoryDao {
 
   @Override
   public ReportHistory save(ReportHistory entity) {
+    Session session = sessionFactory.getCurrentSession();
+    session.saveOrUpdate(entity);
+    return entity;
+  }
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public ReportHistory saveNewTransaction(ReportHistory entity) {
     Session session = sessionFactory.getCurrentSession();
     session.saveOrUpdate(entity);
     return entity;

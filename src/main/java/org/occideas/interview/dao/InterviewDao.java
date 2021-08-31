@@ -1,5 +1,7 @@
 package org.occideas.interview.dao;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.annotations.QueryHints;
 import org.hibernate.criterion.*;
@@ -21,13 +23,15 @@ import java.util.Objects;
 @Repository
 public class InterviewDao implements IInterviewDao {
 
+  private final Logger log = LogManager.getLogger(this.getClass());
+
   private final String ASSESSMENT_BASE_COUNT =
-    " select count(*) from Participant p"
-      + " join Interview i join InterviewIntroModule_Module im"
-      + " where p.idParticipant = i.idParticipant"
-      + " and i.idinterview = im.interviewId"
-      + " and im.moduleType != 'M_IntroModule'"
-      + " and p.deleted = 0";
+          " select count(*) from Participant p"
+                  + " join Interview i join InterviewIntroModule_Module im"
+                  + " where p.idParticipant = i.idParticipant"
+                  + " and i.idinterview = im.interviewId"
+                  + " and im.moduleType != 'M_IntroModule'"
+                  + " and p.deleted = 0";
 
   private final String NOT_ASSESSED_COUNT =
     ASSESSMENT_BASE_COUNT
