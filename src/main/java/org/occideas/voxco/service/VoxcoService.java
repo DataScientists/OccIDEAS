@@ -237,11 +237,13 @@ public class VoxcoService implements IVoxcoService {
             if (complete) {
                 downloadExtractionFiles();
                 processResponses();
+            }else {
+            	log.info("Not enough wait time given, try increasing voxco.extracton.result.fetch.retry");
             }
         } catch (Exception e) {
             log.error("Import response encountered error. ", e);
         }
-        log.debug("done importing voxco responses");
+        log.info("done importing voxco responses");
     }
 
     @Override
@@ -542,7 +544,8 @@ public class VoxcoService implements IVoxcoService {
             voxcoDao.updateAll(surveys);
             surveys = voxcoDao.getAllActiveWithPendingExtraction();
             resultFetchCounter++;
-            Thread.currentThread().sleep(5000);
+            log.info("resultFetchCounter={}",resultFetchCounter);
+            Thread.currentThread().sleep(10000);
         }
         return CollectionUtils.isEmpty(surveys);
     }
