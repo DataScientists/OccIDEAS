@@ -122,7 +122,7 @@ public class IPSOSService implements IIPSOSService {
 
         String moduleKey = getNodeKey(module.getName());
         responses.forEach((responseKey, answers) -> {
-            String responseId = answers.get("RESPONSE_ID");
+            String responseId = answers.get("Respondent_Serial") == null ? responseKey : answers.get("Respondent_Serial");
             uniqueModules = new HashMap<>();
             if (hasAnyAnswer(answers)) {
                 if (participantService.getByReferenceNumber(responseId) == null) {
