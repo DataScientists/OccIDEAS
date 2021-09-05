@@ -1,6 +1,8 @@
 package org.occideas.assessment.service;
 
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,6 +10,8 @@ import org.occideas.config.ReportConfig;
 import org.occideas.entity.*;
 import org.occideas.exceptions.GenericException;
 import org.occideas.interview.dao.InterviewDao;
+import org.occideas.interviewanswer.dao.InterviewAnswerDao;
+import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.mapper.RuleMapperImpl;
 import org.occideas.question.dao.QuestionDao;
 import org.occideas.reporthistory.dao.ReportHistoryDao;
@@ -17,15 +21,11 @@ import org.occideas.utilities.ReportsEnum;
 import org.occideas.utilities.ReportsStatusEnum;
 import org.occideas.vo.ExportCSVVO;
 import org.occideas.vo.FilterModuleVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,21 +41,28 @@ public class AssessmentReportService {
 
     private static final float INITIAL_DURATION_MIN = 60;
 
-    @Autowired
-    private ReportConfig reportConfig;
-    @Autowired
-    private ReportHistoryDao reportHistoryDao;
-    @Autowired
-    private InterviewDao interviewDao;
-    @Autowired
-    private SystemPropertyDao systemPropertyDao;
-    @Autowired
-    private QuestionDao questionDao;
-    @Autowired
-    private AssessmentLookupService assessmentLookupService;
+    private final ReportConfig reportConfig;
+    private final ReportHistoryDao reportHistoryDao;
+    private final InterviewDao interviewDao;
+    private final InterviewQuestionDao interviewQuestionDao;
+    private final InterviewAnswerDao interviewAnswerDao;
+    private final SystemPropertyDao systemPropertyDao;
+    private final QuestionDao questionDao;
+    private final AssessmentLookupService assessmentLookupService;
 
     private final DecimalFormat df = new DecimalFormat("#.0");
     private static final long MS_PER_MIN = 60 * 1000;
+
+    public AssessmentReportService(ReportConfig reportConfig, ReportHistoryDao reportHistoryDao, InterviewDao interviewDao, InterviewQuestionDao interviewQuestionDao, InterviewAnswerDao interviewAnswerDao, SystemPropertyDao systemPropertyDao, QuestionDao questionDao, AssessmentLookupService assessmentLookupService) {
+        this.reportConfig = reportConfig;
+        this.reportHistoryDao = reportHistoryDao;
+        this.interviewDao = interviewDao;
+        this.interviewQuestionDao = interviewQuestionDao;
+        this.interviewAnswerDao = interviewAnswerDao;
+        this.systemPropertyDao = systemPropertyDao;
+        this.questionDao = questionDao;
+        this.assessmentLookupService = assessmentLookupService;
+    }
 
     @Async("autoAssessmentTaskExecutor")
     public void exportAssessmentReport(FilterModuleVO filterModuleVO, String requestorId) {
@@ -77,7 +84,7 @@ public class AssessmentReportService {
         updateProgress(reportHistory, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.11, new Date(), INITIAL_DURATION_MIN);
 
         long msPerInterview = getMsPerInterview(count.intValue(), reportHistory,
-                ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue());
+                ReportsEnum.REPORT_ASSESSMENT_EXPORT.getValue());
 
         List<Interview> uniqueInterviews = interviewDao.getAllWithModules(filterModuleVO.getFilterModule());
         log.info("Export Assessment is for number of interviews {}", uniqueInterviews.size());
@@ -88,6 +95,179 @@ public class AssessmentReportService {
 
         assessmentLookupService.writeLookup(fullPath, uniqueInterviews, filterModuleVO.getFilterModule(), requestorId);
         log.info("Completed export assessment with export directory {}", reportConfig.getExportDir());
+    }
+
+    public void exportInterviewsCSVReport(FilterModuleVO filterModuleVO, String requestorId) {
+        validateDirectory(reportConfig.getExportDir());
+        log.info("Started export interview with export directory {}", reportConfig.getExportDir());
+        String exportFileCSV = createFileName(filterModuleVO.getFileName());
+        ReportHistory reportHistory = insertToReportHistory(exportFileCSV, "", null, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);
+        String fullPath = reportConfig.getExportDir() + "/" + reportHistory.getId() + "_" + exportFileCSV;
+        log.info("Export interview full path {}", fullPath);
+        reportHistory = insertToReportHistory(exportFileCSV, fullPath, reportHistory.getId(),
+                ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);
+
+        Long count = interviewQuestionDao.getUniqueInterviewQuestionCount(filterModuleVO.getFilterModule());
+        reportHistory.setRecordCount(count);
+
+        updateProgress(reportHistory, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.11, new Date(),
+                INITIAL_DURATION_MIN);
+
+        long msPerInterview = getMsPerInterview(count.intValue(), reportHistory,
+                ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue());
+
+        List<Interview> uniqueInterviews = interviewDao.getAllWithModules(filterModuleVO.getFilterModule());
+        log.info("Export interview is for number of interviews {}", uniqueInterviews.size());
+
+        Map<Long, Node> nodeList = new HashMap<>();
+        String[] modules = filterModuleVO.getFilterModule();
+        for (String module : modules) {
+            nodeList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));
+        }
+        try {
+            long startTime = System.currentTimeMillis();
+            long elapsedTime = 0;
+            int currentCount = 0;
+
+            String tempFolder = reportConfig.getExportDir() + "/" + reportHistory.getId() + "/";
+            File temp = new File(tempFolder);
+            temp.mkdir();
+            int iCount = 0;
+            List<InterviewAnswer> allAnswers = new ArrayList<>();
+            List<InterviewQuestion> allQuestions = new ArrayList<>();
+            for (Interview interview : uniqueInterviews) {
+
+                currentCount++;
+
+                updateProgress(uniqueInterviews.size(), reportHistory, currentCount, elapsedTime, msPerInterview);
+
+                File file = new File(tempFolder + iCount + ".csv");
+                CSVWriter writer = new CSVWriter(
+                        new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8),
+                        ',',
+                        CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                        CSVWriter.DEFAULT_LINE_END
+                );
+                List<InterviewAnswer> answers = interviewAnswerDao.findByInterviewId(interview.getIdinterview());
+                List<InterviewQuestion> questions = interviewQuestionDao
+                        .findByInterviewId(interview.getIdinterview());
+                allAnswers.addAll(answers);
+                allQuestions.addAll(questions);
+                List<String> headerList = new ArrayList<String>();
+                headerList.add("InterviewID");
+                headerList.add("ParticipantID");
+                headerList.add("Participant Status");
+                headerList.add("Assessment Status");
+                List<String> answerList = new ArrayList<String>();
+                answerList.add(String.valueOf(interview.getIdinterview()));
+                answerList.add(String.valueOf(interview.getReferenceNumber()));
+                String pStatus = "ERROR";
+                try {
+                    pStatus = ProgressStatusEnum.getDisplayByStatus(interview.getParticipant().getStatus());
+                } catch (Exception e) {
+                    log.error("no participant at interview " + interview.getIdinterview(), e);
+                }
+                answerList.add(pStatus);
+                answerList.add(interview.getAssessedStatus());
+
+                for (InterviewAnswer ia : answers) {
+                    String headerKey = generateHeaderKey(ia, nodeList);
+                    boolean ignore = false;
+                    if (headerList.contains(headerKey)) {
+                        ignore = true;
+                    } else {
+                        headerList.add(headerKey);
+                    }
+                    if (!ignore) {
+                        answerList.add(ia.getAnswerFreetext());
+                    }
+                }
+                writer.writeNext(headerList.toArray(new String[headerList.size()]));
+                writer.writeNext(answerList.toArray(new String[answerList.size()]));
+                writer.close();
+                iCount++;
+                log.info("Write count for export interview {} of {}", iCount, uniqueInterviews.size());
+            }
+            File folder = new File(tempFolder);
+
+            File[] listOfFiles = folder.listFiles();
+            List<String> fullHeaderList = new ArrayList<>();
+            for (File rfile : listOfFiles) {
+                if (rfile.isFile()) {
+                    CSVReader reader = new CSVReader(new FileReader(rfile));
+                    String[] line;
+                    iCount = 0;
+                    String[] headerKeys;
+                    while ((line = reader.readNext()) != null) {
+                        if (iCount == 0) {
+                            headerKeys = line;
+                            for (String headerKey : headerKeys) {
+                                if (!fullHeaderList.contains(headerKey)) {
+                                    fullHeaderList.add(headerKey);
+                                }
+                            }
+                        } else if (iCount == 1) {
+
+                        } else {
+                            log.error("Export Interview: Error more lines than there should be");
+                        }
+                        iCount++;
+                    }
+                    reader.close();
+
+                }
+            }
+            File fileOut = new File(fullPath);
+            CSVWriter writer = new CSVWriter(
+                    new OutputStreamWriter(new FileOutputStream(fileOut), StandardCharsets.UTF_8),
+                    ',',
+                    CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                    CSVWriter.DEFAULT_LINE_END
+            );
+            writer.writeNext(fullHeaderList.toArray(new String[fullHeaderList.size()]));
+            for (File rfile : listOfFiles) {
+                if (rfile.isFile()) {
+                    CSVReader reader = new CSVReader(new FileReader(rfile));
+                    iCount = 0;
+                    String[] headerKeys = null;
+                    String[] answers = null;
+                    String[] record;
+                    while ((record = reader.readNext()) != null) {
+                        if (iCount == 0) {
+                            headerKeys = record;
+                        } else if (iCount == 1) {
+                            answers = record;
+                        } else {
+                            log.error("Export Interview: Error more lines than there should be");
+                        }
+                        iCount++;
+                    }
+                    reader.close();
+                    Map<String, String> answerMap = new HashMap<>();
+                    for (int i = 0; i < headerKeys.length; i++) {
+                        answerMap.put(headerKeys[i], answers[i]);
+                    }
+                    List<String> fullAnswerList = new ArrayList();
+                    for (String header : fullHeaderList) {
+                        String answer = "-NA-";
+                        if (answerMap.get(header) != null) {
+                            answer = answerMap.get(header);
+                        }
+                        fullAnswerList.add(answer);
+                    }
+                    writer.writeNext(fullAnswerList.toArray(new String[fullAnswerList.size()]));
+                }
+            }
+            writer.close();
+            FileUtils.deleteDirectory(temp);
+            assessmentLookupService.writeLookup(fullPath, uniqueInterviews, filterModuleVO.getFilterModule(), requestorId);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        updateProgress(reportHistory, ReportsStatusEnum.COMPLETED.getValue(), 100);
+        log.info("Completed export interview with export directory {}", reportConfig.getExportDir());
     }
 
     private void writeReport(String fullPath, ReportHistory reportHistory, ExportCSVVO csvVO, String requestorId) {
@@ -133,6 +313,34 @@ public class AssessmentReportService {
         }
         log.info("Export Assessment completed writing to CSV {}", fullPath);
 
+    }
+
+    private String generateHeaderKey(InterviewAnswer interviewAnswer,
+                                     Map<Long, Node> nodeList) {
+        Node topModule = deriveTopModule(interviewAnswer, nodeList);
+        return deriveHeader(topModule, interviewAnswer.getNumber());
+    }
+
+    private String deriveHeader(Node topModule, String number) {
+        StringBuilder header = new StringBuilder();
+        String headerName = topModule.getName().substring(0, 4);
+        if (headerName.charAt(0) == '_') {
+            headerName = headerName.replaceFirst("_", "");
+        }
+        header.append(headerName);
+        header.append("_");
+        header.append(number);
+        return header.toString();
+    }
+
+    private Node deriveTopModule(InterviewAnswer interviewAnswer, Map<Long, Node> nodeList) {
+        long topNodeId = interviewAnswer.getTopNodeId();
+        Node topModule = nodeList.get(topNodeId);
+        if (topModule == null) {
+            topModule = getTopModuleByTopNodeId(topNodeId);
+            nodeList.put(topNodeId, topModule);
+        }
+        return topModule;
     }
 
     private void writeLookup(String fullPath, ExportCSVVO csvVO, String[] headers, String requestorId) throws IOException {
@@ -387,5 +595,6 @@ public class AssessmentReportService {
     private String createFileName(String filename) {
         return filename + ".csv";
     }
+
 
 }

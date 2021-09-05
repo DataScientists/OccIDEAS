@@ -1,8 +1,6 @@
 package org.occideas.assessment.rest;
 
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +33,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -82,243 +83,14 @@ public class AssessmentRestController {
   @Path(value = "/exportInterviewsCSV")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response exportInterviewsCSV(FilterModuleVO filterModuleVO) {
-
     if (filterModuleVO.getFilterModule() == null || filterModuleVO.getFilterModule().length < 1) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain")
-        .entity("No module was selected in the filter dialog.").build();
+      return Response.status(Response.Status.BAD_REQUEST).type("text/plain")
+              .entity("No module was selected in the filter dialog.").build();
     }
-
     if (StringUtils.isEmpty(filterModuleVO.getFileName())) {
-      return Response.status(Status.BAD_REQUEST).type("text/plain").entity("Filename cannot be empty.").build();
+      return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity("Filename cannot be empty.").build();
     }
-
-    String exportFileCSV = createFileName(filterModuleVO.getFileName());
-
-    ReportHistoryVO reportHistoryVO = insertToReportHistory(exportFileCSV, "", null, 0,
-      ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue());
-    // filename saved on the report would be different from the one saved in
-    // dir
-    // this is to avoid overwritten reports
-      String fullPath = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "_" + exportFileCSV;
-    reportHistoryVO = insertToReportHistory(exportFileCSV, fullPath, reportHistoryVO.getId(), 0,
-      ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue());
-
-    Long count = interviewQuestionService.getUniqueInterviewQuestionCount(filterModuleVO.getFilterModule());
-
-    reportHistoryVO.setRecordCount(count);
-
-    updateProgress(reportHistoryVO, ReportsStatusEnum.IN_PROGRESS.getValue(), 0.11, new Date(),
-      INITIAL_DURATION_MIN);
-
-    long msPerInterview = getMsPerInterview(count.intValue(), reportHistoryVO,
-      ReportsEnum.REPORT_NOISE_ASSESSMENT_EXPORT.getValue(), 0.2);
-
-    // log.info("[Report] before getting unique interview questions ");
-    // List<InterviewQuestion> uniqueInterviewQuestions =
-    // interviewQuestionService.getUniqueInterviewQuestions(filterModuleVO.getFilterModule());
-    System.out.println("About to  get interviews");
-    List<Interview> uniqueInterviews = interviewService.listAllWithRules(filterModuleVO.getFilterModule());
-    System.out.println("found interviews " + uniqueInterviews.size());
-
-    // log.info("[Report] after getting unique interview questions ");
-    Map<Long, NodeVO> nodeVoList = new HashMap<>();
-    String[] modules = filterModuleVO.getFilterModule();
-    // Initialize map to prevent multiple re-queries
-    for (String module : modules) {
-      nodeVoList.put(Long.valueOf(module), getTopModuleByTopNodeId(Long.valueOf(module)));
-    }
-    try {
-      long startTime = System.currentTimeMillis();
-      long elapsedTime = 0;
-      int currentCount = 0;
-
-      System.out.println("About to  create folder");
-        String tempFolder = Constant.REPORT_EXPORT_CSV_DIR + reportHistoryVO.getId() + "/";
-      File temp = new File(tempFolder);
-      // FileUtils.deleteDirectory(temp);
-      temp.mkdir();
-      System.out.println("done creating folder");
-      int iCount = 0;
-      List<InterviewAnswerVO> allAnswers = new ArrayList<InterviewAnswerVO>();
-      List<InterviewQuestionVO> allQuestions = new ArrayList<InterviewQuestionVO>();
-      for (Interview interview : uniqueInterviews) {
-
-        currentCount++;
-
-        updateProgress(uniqueInterviews.size(), reportHistoryVO, currentCount, elapsedTime, msPerInterview);
-
-        File file = new File(tempFolder + iCount + ".csv");
-        CSVWriter writer = new CSVWriter(
-          new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8),
-          ',',
-          CSVWriter.DEFAULT_QUOTE_CHARACTER,
-          CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-          CSVWriter.DEFAULT_LINE_END
-        );
-        List<InterviewAnswerVO> answers = interviewAnswerService.findByInterviewId(interview.getIdinterview());
-        List<InterviewQuestionVO> questions = interviewQuestionService
-          .findByInterviewId(interview.getIdinterview());
-        allAnswers.addAll(answers);
-        allQuestions.addAll(questions);
-        List<String> headerList = new ArrayList<String>();
-        headerList.add("InterviewID");
-        headerList.add("ParticipantID");
-        headerList.add("Participant Status");
-        headerList.add("Assessment Status");
-        List<String> answerList = new ArrayList<String>();
-        answerList.add(String.valueOf(interview.getIdinterview()));
-        answerList.add(String.valueOf(interview.getReferenceNumber()));
-        String pStatus = "ERROR";
-        try {
-          pStatus = String.valueOf(getStatusDescription(interview.getParticipant().getStatus()));
-        } catch (Exception e) {
-          System.out.println("no participant at interview" + interview.getIdinterview());
-          log.error("no participant at interview" + interview.getIdinterview(), e);
-        }
-        answerList.add(pStatus);
-        answerList.add(interview.getAssessedStatus());
-
-        for (InterviewAnswerVO ia : answers) {
-          // InterviewQuestionVO iq =
-          // interviewQuestionService.findById(ia.getInterviewQuestionId()).get(0);
-          String headerKey = generateHeaderKey(ia, nodeVoList, questions);
-          // System.out.println(interview.getReferenceNumber());
-          // System.out.println(interview.getIdinterview());
-          // System.out.println(headerKey);
-          // System.out.println(ia.getAnswerFreetext());
-          boolean ignore = false;
-          if (headerList.contains(headerKey)) {
-            // String dupSufix = "DUP";
-            /*
-             * String last4Char =
-             * headerKey.substring(headerKey.length() - 4);
-             * if(last4Char.startsWith("DUP")){ String lastChar =
-             * last4Char.substring(last4Char.length()-1);
-             * if(NumberUtils.isNumber(lastChar)){ Integer dupCount
-             * = Integer.valueOf(lastChar); dupCount = dupCount+1;
-             * dupSufix = "DUP"+dupCount; } }else{
-             */
-            // headerList.add("ERROR-"+headerKey+"-"+dupSufix);
-            // }
-            ignore = true;
-          } else {
-            headerList.add(headerKey);
-
-          }
-          if (!ignore) {
-            answerList.add(ia.getAnswerFreetext());
-          }
-        }
-        writer.writeNext(headerList.toArray(new String[headerList.size()]));
-        writer.writeNext(answerList.toArray(new String[answerList.size()]));
-        writer.close();
-        iCount++;
-        //			if (iCount > 200) {
-        //				updateProgress(uniqueInterviews.size(), reportHistoryVO, uniqueInterviews.size(), elapsedTime,
-        //						msPerInterview);
-        //				updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
-
-        //				break;
-        //			}
-        System.out.println(iCount);
-      }
-      File folder = new File(tempFolder);
-
-      File[] listOfFiles = folder.listFiles();
-      List<String> fullHeaderList = new ArrayList<String>();
-      for (File rfile : listOfFiles) {
-        if (rfile.isFile()) {
-          // System.out.println(rfile.getName());
-          CSVReader reader = new CSVReader(new FileReader(rfile));
-          String[] line = null;
-          iCount = 0;
-          String[] headerKeys = null;
-          while ((line = reader.readNext()) != null) {
-            // if(!line.isEmpty()){
-            if (iCount == 0) {
-              headerKeys = line;
-              for (String headerKey : headerKeys) {
-                if (!fullHeaderList.contains(headerKey)) {
-                  fullHeaderList.add(headerKey);
-                }
-              }
-            } else if (iCount == 1) {
-
-            } else {
-              System.out.println("Error more lines than there should be");
-            }
-            // }
-            iCount++;
-          }
-          reader.close();
-
-        }
-      }
-      File fileOut = new File(fullPath);
-      CSVWriter writer = new CSVWriter(
-        new OutputStreamWriter(new FileOutputStream(fileOut), StandardCharsets.UTF_8),
-        ',',
-        CSVWriter.DEFAULT_QUOTE_CHARACTER,
-        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-        CSVWriter.DEFAULT_LINE_END
-      );
-      // Collections.sort(fullHeaderList);
-      writer.writeNext(fullHeaderList.toArray(new String[fullHeaderList.size()]));
-      for (File rfile : listOfFiles) {
-        if (rfile.isFile()) {
-          // System.out.println(rfile.getName());
-          // BufferedReader br = new BufferedReader(new
-          // FileReader(rfile));
-          CSVReader reader = new CSVReader(new FileReader(rfile));
-          iCount = 0;
-          String[] headerKeys = null;
-          String[] answers = null;
-          String[] record = null;
-          while ((record = reader.readNext()) != null) {
-            // if(!line.isEmpty()){
-            if (iCount == 0) {
-              headerKeys = record;
-            } else if (iCount == 1) {
-              answers = record;
-            } else {
-              System.out.println("Error more lines than there should be");
-            }
-            // }
-            iCount++;
-          }
-          reader.close();
-          Map<String, String> answerMap = new HashMap<String, String>();
-          for (int i = 0; i < headerKeys.length; i++) {
-            answerMap.put(headerKeys[i], answers[i]);
-          }
-          List<String> fullAnswerList = new ArrayList<String>();
-          for (String header : fullHeaderList) {
-            String answer = "-NA-";
-            if (answerMap.get(header) != null) {
-              answer = answerMap.get(header);
-            }
-            fullAnswerList.add(answer);
-          }
-          writer.writeNext(fullAnswerList.toArray(new String[fullAnswerList.size()]));
-        }
-      }
-      writer.close();
-      FileUtils.deleteDirectory(temp);
-      writeLookupNew(fullPath, allAnswers, nodeVoList, allQuestions);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      log.error(e.getMessage(), e);
-    }
-    updateProgress(reportHistoryVO, ReportsStatusEnum.COMPLETED.getValue(), 100);
-
-    System.out.println("Report Done");
-    // ExportCSVVO csvVO =
-    // populateCSV(uniqueInterviewQuestions,reportHistoryVO,filterModuleVO.getFilterModule(),
-    // count);
-
-    // writeReport(fullPath, reportHistoryVO, csvVO);
-
+    assessmentReportService.exportInterviewsCSVReport(filterModuleVO, extractUserFromToken());
     return Response.ok().build();
   }
 
@@ -397,52 +169,6 @@ public class AssessmentRestController {
 
       String[] nameArray = names[j].split("\\|");
       String[] line = new String[]{headers[i], (nameArray.length == 1) ? names[j] : nameArray[0]};
-      lookupWriter.writeNext(line);
-    }
-
-    lookupWriter.close();
-    lookupVO.setRequestor(extractUserFromToken());
-    lookupVO.setName(fileLookup.getName());
-    lookupVO.setPath(fullPath);
-    lookupVO.setEndDt(new Date());
-    lookupVO.setDuration(lookupVO.getEndDt().getTime() - lookupVO.getStartDt().getTime());
-    lookupVO.setStatus(ReportsStatusEnum.COMPLETED.getValue());
-    lookupVO.setProgress("100.0%");
-
-    reportHistoryService.save(lookupVO);
-  }
-
-  private void writeLookupNew(String fullPath, List<InterviewAnswerVO> allAnswers, Map<Long, NodeVO> nodeVoList,
-                              List<InterviewQuestionVO> questions) throws IOException {
-
-    List<String> aNames = new ArrayList<String>();
-    List<String> fullHeaderList = new ArrayList<String>();
-    for (InterviewAnswerVO ia : allAnswers) {
-      String header = generateHeaderKeyLookUp(ia, nodeVoList, questions);
-      if (!fullHeaderList.contains(header)) {
-        fullHeaderList.add(header);
-      }
-
-    }
-
-    ReportHistoryVO lookupVO = new ReportHistoryVO();
-    lookupVO.setType("Lookup");
-    lookupVO.setStartDt(new Date());
-
-    // Write lookup file
-    File fileLookup = new File(fullPath.substring(0, fullPath.length() - 4) + "-Lookup.csv");
-    CSVWriter lookupWriter = new CSVWriter(
-      new OutputStreamWriter(new FileOutputStream(fileLookup), StandardCharsets.UTF_8),
-      ',',
-      CSVWriter.DEFAULT_QUOTE_CHARACTER,
-      CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-      CSVWriter.DEFAULT_LINE_END
-    );
-
-    String[] lookupHeader = new String[]{"Id", "Name"};
-    lookupWriter.writeNext(lookupHeader);
-    for (String lookupkeyvalue : fullHeaderList) {
-      String[] line = lookupkeyvalue.split("<>");
       lookupWriter.writeNext(line);
     }
 

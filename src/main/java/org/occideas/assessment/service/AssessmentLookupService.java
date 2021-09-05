@@ -9,7 +9,6 @@ import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.question.dao.QuestionDao;
 import org.occideas.reporthistory.dao.ReportHistoryDao;
 import org.occideas.utilities.ReportsStatusEnum;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +26,17 @@ public class AssessmentLookupService {
 
     private final Logger log = LogManager.getLogger(this.getClass());
 
-    @Autowired
-    private InterviewAnswerDao interviewAnswerDao;
-    @Autowired
-    private InterviewQuestionDao interviewQuestionDao;
-    @Autowired
-    private QuestionDao questionDao;
-    @Autowired
-    private ReportHistoryDao reportHistoryDao;
+    private final InterviewAnswerDao interviewAnswerDao;
+    private final InterviewQuestionDao interviewQuestionDao;
+    private final QuestionDao questionDao;
+    private final ReportHistoryDao reportHistoryDao;
+
+    public AssessmentLookupService(InterviewAnswerDao interviewAnswerDao, InterviewQuestionDao interviewQuestionDao, QuestionDao questionDao, ReportHistoryDao reportHistoryDao) {
+        this.interviewAnswerDao = interviewAnswerDao;
+        this.interviewQuestionDao = interviewQuestionDao;
+        this.questionDao = questionDao;
+        this.reportHistoryDao = reportHistoryDao;
+    }
 
     @Async("autoAssessmentTaskExecutor")
     public void writeLookup(String fullPath,
@@ -144,31 +146,15 @@ public class AssessmentLookupService {
         }
 
         StringBuilder header = new StringBuilder();
-        if ("Q_multiple".equals(interviewQuestion.getType())) {
-            String headerName = topModule.getName().substring(0, 4);
-            if (headerName.charAt(0) == '_') {
-                headerName = headerName.replaceFirst("_", "");
-            }
-            header.append(headerName);
-            header.append("_");
-            // header.append(interviewQuestionVO.getNumber());
-            // header.append("_");
-            header.append(interviewAnswer.getNumber());
-            key = header.toString();
-            name = interviewQuestion.getName() + " " + interviewAnswer.getName();
-
-        } else {
-            String headerName = topModule.getName().substring(0, 4);
-            if (headerName.charAt(0) == '_') {
-                headerName = headerName.replaceFirst("_", "");
-            }
-            header.append(headerName);
-            header.append("_");
-            header.append(interviewQuestion.getNumber());
-            key = header.toString();
-            name = interviewQuestion.getName();
-
+        String headerName = topModule.getName().substring(0, 4);
+        if (headerName.charAt(0) == '_') {
+            headerName = headerName.replaceFirst("_", "");
         }
+        header.append(headerName);
+        header.append("_");
+        header.append(interviewAnswer.getNumber());
+        key = header.toString();
+        name = interviewQuestion.getName() + " " + interviewAnswer.getName();
         retValue = key + "<>" + name;
         return retValue;
 
@@ -178,5 +164,4 @@ public class AssessmentLookupService {
         // todo the getTopModuleByTopNodeId should be moved to NodeDao
         return questionDao.getTopModuleByTopNodeId(topNodeId);
     }
-
 }
