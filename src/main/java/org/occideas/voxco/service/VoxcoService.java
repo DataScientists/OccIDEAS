@@ -6,7 +6,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.entity.NodeVoxco;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
@@ -20,6 +19,7 @@ import org.occideas.node.service.INodeService;
 import org.occideas.note.service.NoteService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
+import org.occideas.qsf.QSFNodeTypeMapper;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CsvUtil;
@@ -312,7 +312,7 @@ public class VoxcoService implements IVoxcoService {
             Set<String> filteredQuestions = new HashSet<>();
             filterIds.stream().forEach(id -> {
                 NodeVO node = nodeService.getNode(Long.valueOf(id));
-                if (node != null && !NodeType.Q_LINKEDAJSM.getDescription().equals(node.getType()) && "Q".equals(node.getNodeclass())) {
+                if (node != null && !QSFNodeTypeMapper.Q_LINKEDAJSM.getDescription().equals(node.getType()) && "Q".equals(node.getNodeclass())) {
                     filteredQuestions.add(id);
                 }
             });
@@ -329,13 +329,13 @@ public class VoxcoService implements IVoxcoService {
                 continue;
             }
 
-            if (NodeType.Q_FREQUENCY.getDescription().equals(question.getType())) {
+            if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(question.getType())) {
                 log.warn("{} with idNode={} will not be included in uploading to Voxco", question.getType(), question.getIdNode());
                 continue;
             }
 
             if (question.getDeleted() == 0 && "Q".equals(question.getNodeclass())) {
-                if (NodeType.Q_LINKEDAJSM.getDescription().equals(question.getType()) && question.getLink() != 0L) {
+                if (QSFNodeTypeMapper.Q_LINKEDAJSM.getDescription().equals(question.getType()) && question.getLink() != 0L) {
                     NodeVO linkModule = nodeService.getNode(question.getLink());
                     if ("F".equals(linkModule.getNodeclass())) {
                         List<String> linkedFilteredIdNodes = moduleService.getFilterStudyAgent(question.getLink());
@@ -836,12 +836,12 @@ public class VoxcoService implements IVoxcoService {
 
             PossibleAnswerVO nodeAnswer = null;
             try {
-                if (NodeType.Q_MULTIPLE.getDescription().equals(nodeQuestion.getType())) {
+                if (QSFNodeTypeMapper.Q_MULTIPLE.getDescription().equals(nodeQuestion.getType())) {
                     int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
                     List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
                     nodeAnswer = possibleAnswers.get(answerIndex);
                     // issue_8293 workaround
-                } else if ((NodeType.Q_SINGLE.getDescription().equals(nodeQuestion.getType()) || NodeType.Q_SIMPLE.getDescription().equals(nodeQuestion.getType()))
+                } else if ((QSFNodeTypeMapper.Q_SINGLE.getDescription().equals(nodeQuestion.getType()) || QSFNodeTypeMapper.Q_SIMPLE.getDescription().equals(nodeQuestion.getType()))
                         && "CHECK".equals(qType)) {
                     int answerIndex = Integer.valueOf(aNumber.substring(1)) - 1;
                     List<PossibleAnswerVO> possibleAnswers = nodeQuestion.getChildNodes();
@@ -938,7 +938,7 @@ public class VoxcoService implements IVoxcoService {
         interviewQuestion.setParentAnswerId(0L);
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkAJSM.getIdNode());
-        interviewQuestion.setType(NodeType.Q_LINKEDAJSM.getDescription());
+        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDAJSM.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
@@ -961,7 +961,7 @@ public class VoxcoService implements IVoxcoService {
         }
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestion.setType(NodeType.Q_LINKEDMODULE.getDescription());
+        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDMODULE.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 

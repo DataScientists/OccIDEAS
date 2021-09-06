@@ -10,6 +10,9 @@ public class Choice {
     @JsonProperty(value = "TextEntry")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String textEntry;
+    @JsonProperty(value = "TextEntryValidation")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String textEntryValidation;
 
     public Choice() {
     }
@@ -21,6 +24,12 @@ public class Choice {
     public Choice(String display, String textEntry) {
         this.display = display;
         this.textEntry = textEntry;
+    }
+
+    public Choice(String display, String textEntry, String textEntryValidation) {
+        this.display = display;
+        this.textEntry = textEntry;
+        this.textEntryValidation = textEntryValidation;
     }
 
     public String getDisplay() {
@@ -37,5 +46,13 @@ public class Choice {
 
     public void setTextEntry(String textEntry) {
         this.textEntry = textEntry;
+    }
+
+    public String getTextEntryValidation() {
+        return textEntryValidation;
+    }
+
+    public void setTextEntryValidation(String textEntryValidation) {
+        this.textEntryValidation = textEntryValidation;
     }
 }

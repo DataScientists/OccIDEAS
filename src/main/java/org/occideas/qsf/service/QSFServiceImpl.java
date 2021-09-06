@@ -7,7 +7,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.entity.NodeQSF;
 import org.occideas.entity.QualtricsSurvey;
@@ -23,6 +22,7 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.qsf.IQSFClient;
+import org.occideas.qsf.QSFNodeTypeMapper;
 import org.occideas.qsf.dao.INodeQSFDao;
 import org.occideas.qsf.payload.CopySurveyPayload;
 import org.occideas.qsf.request.SurveyExportRequest;
@@ -695,7 +695,7 @@ public class QSFServiceImpl implements IQSFService {
         }
         interviewQuestionVO.setProcessed(true);
         interviewQuestionVO.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestionVO.setType(NodeType.Q_LINKEDMODULE.getDescription());
+        interviewQuestionVO.setType(QSFNodeTypeMapper.Q_LINKEDMODULE.getDescription());
         return interviewQuestionVO;
     }
 
@@ -716,7 +716,7 @@ public class QSFServiceImpl implements IQSFService {
         interviewQuestionVO.setParentAnswerId(0L);
         interviewQuestionVO.setProcessed(true);
         interviewQuestionVO.setTopNodeId(linkedAJSM.getIdNode());
-        interviewQuestionVO.setType(NodeType.Q_LINKEDAJSM.getDescription());
+        interviewQuestionVO.setType(QSFNodeTypeMapper.Q_LINKEDAJSM.getDescription());
         return interviewQuestionVO;
     }
 

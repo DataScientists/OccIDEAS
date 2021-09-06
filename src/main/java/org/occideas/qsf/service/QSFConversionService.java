@@ -3,7 +3,6 @@ package org.occideas.qsf.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.common.NodeType;
 import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
@@ -12,9 +11,7 @@ import org.occideas.entity.Question;
 import org.occideas.exceptions.GenericException;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.dao.NodeDao;
-import org.occideas.qsf.BlockElement;
-import org.occideas.qsf.IQSFClient;
-import org.occideas.qsf.QSFQuestionType;
+import org.occideas.qsf.*;
 import org.occideas.qsf.dao.NodeQSFDao;
 import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
@@ -148,12 +145,15 @@ public class QSFConversionService {
     }
 
     private boolean isChoicesRequired(PossibleAnswer possibleAnswer) {
-        return !NodeType.P_FREETEXT.getDescription().equalsIgnoreCase(possibleAnswer.getType());
+        return !QSFNodeTypeMapper.P_FREETEXT.getDescription().equalsIgnoreCase(possibleAnswer.getType());
     }
 
     public SimpleQuestionPayload buildQuestionPayload(QuestionAnswerWrapper questionAnswerWrapper) {
-        SimpleQuestionPayload simpleQuestionPayload = new SimpleQuestionPayload();
         Question question = questionAnswerWrapper.getQuestion();
+        if (Objects.isNull(question.getChildNodes()) || question.getChildNodes().isEmpty()) {
+            throw new GenericException("Question with child nodes are not allowed " + question.getIdNode());
+        }
+        SimpleQuestionPayload simpleQuestionPayload = new SimpleQuestionPayload();
         simpleQuestionPayload.setQuestionId(String.valueOf(question.getIdNode()));
         simpleQuestionPayload.setQuestionText(question.getName());
         QSFQuestionType questionTypeBaseOnAnswers = getQuestionTypeBaseOnAnswers(question);
@@ -162,19 +162,14 @@ public class QSFConversionService {
         simpleQuestionPayload.setSubSelector(questionTypeBaseOnAnswers.getSubSelector());
         simpleQuestionPayload.setConfiguration(getDefaultConfiguration());
         simpleQuestionPayload.setQuestionDescription(question.getName());
-        simpleQuestionPayload.setDataExportTag(question.getNumber());
-        Map<String, Choice> choices = new HashMap<>();
-        List<String> choiceOrder = new LinkedList<>();
-        question.getChildNodes().forEach(answer -> {
-            choices.put(String.valueOf(answer.getIdNode()), new Choice(answer.getName()));
-            choiceOrder.add(String.valueOf(answer.getIdNode()));
-        });
-        simpleQuestionPayload.setChoices(choices);
-        simpleQuestionPayload.setChoiceOrderList(choiceOrder.toArray(new String[0]));
+        simpleQuestionPayload.setDataExportTag(question.getIdNode() + "-" + question.getNumber());
+        QSFQuestionChoices derivedChoices = QSFNodeTypeMapper.getBaseOnType(question.getChildNodes().get(0).getType()).getBuildChoices().apply(question);
+        simpleQuestionPayload.setChoices(derivedChoices.getChoices());
+        simpleQuestionPayload.setChoiceOrderList(derivedChoices.getChoiceOrder().toArray(new String[0]));
         simpleQuestionPayload.setLanguageList(new ArrayList<>());
         simpleQuestionPayload.setValidation(new Validation(new Setting("ON", "ON", "None")));
         if (Objects.nonNull(questionAnswerWrapper.getDependsOn())) {
-            List<Logic> logics = NodeType.getBaseOnType(questionAnswerWrapper.getQuestion().getType()).getBuildLogic().apply(questionAnswerWrapper);
+            List<Logic> logics = QSFNodeTypeMapper.getBaseOnType(questionAnswerWrapper.getQuestion().getType()).getBuildLogic().apply(questionAnswerWrapper);
             simpleQuestionPayload.setLogic(new DisplayLogic("BooleanExpression", false,
                     new Condition(buildLogicMap(logics), "If")));
         }
@@ -187,7 +182,7 @@ public class QSFConversionService {
             if (StringUtils.isEmpty(type)) {
                 return QSFQuestionType.MULTIPLE_CHOICE;
             }
-            return NodeType.getBaseOnType(type).getQualtricsType();
+            return QSFNodeTypeMapper.getBaseOnType(type).getQualtricsType();
         }
         return QSFQuestionType.MULTIPLE_CHOICE;
     }

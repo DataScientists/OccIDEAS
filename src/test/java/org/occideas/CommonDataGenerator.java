@@ -1,11 +1,11 @@
 package org.occideas;
 
-import org.occideas.common.NodeType;
 import org.occideas.entity.JobModule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.mapper.ModuleMapperImpl;
 import org.occideas.mapper.PossibleAnswerMapperImpl;
+import org.occideas.qsf.QSFNodeTypeMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class CommonDataGenerator {
         question.setIdNode(generatedIdNode);
         question.setName("Sample Question " + generatedIdNode);
         question.setNumber(nodeNumber);
-        question.setType(NodeType.Q_MULTIPLE.getDescription());
+        question.setType(QSFNodeTypeMapper.Q_MULTIPLE.getDescription());
         question.setChildNodes(createPossibleAnswer(numberOfAnswers));
         return question;
     }

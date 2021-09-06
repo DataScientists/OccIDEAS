@@ -3,7 +3,6 @@ package org.occideas.ipsos.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
 import org.occideas.fragment.service.FragmentService;
@@ -14,6 +13,7 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
+import org.occideas.qsf.QSFNodeTypeMapper;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CsvUtil;
@@ -377,7 +377,7 @@ public class IPSOSService implements IIPSOSService {
         }
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestion.setType(NodeType.Q_LINKEDMODULE.getDescription());
+        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDMODULE.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
@@ -398,7 +398,7 @@ public class IPSOSService implements IIPSOSService {
         interviewQuestion.setParentAnswerId(0L);
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkAJSM.getIdNode());
-        interviewQuestion.setType(NodeType.Q_LINKEDAJSM.getDescription());
+        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDAJSM.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 

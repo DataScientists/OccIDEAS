@@ -23,6 +23,7 @@ public enum QSFQuestionType {
     Slider(QSFQuestionSelector.HSLIDER.name(), null, "Slider"),
     SS(null, null, null),
     TEXT_ENTRY(QSFQuestionSelector.SL.name(), null, "TE"),
+    TEXT_ENTRY_FORM(QSFQuestionSelector.FORM.name(), null, "TE"),
     Timing(QSFQuestionSelector.PageTimer.name(), null, "Timing"),
     TreeSelect(null, null, null);
 

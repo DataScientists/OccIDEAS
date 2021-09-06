@@ -7,7 +7,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.common.NodeType;
 import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.Constant;
 import org.occideas.module.service.ModuleService;
@@ -282,7 +281,7 @@ public class StudyAgentUtil {
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 
                         List<Logic> logics = new ArrayList<>();
-                        if (NodeType.Q_FREQUENCY.getDescription().equals(questionNode.getType())) {
+                        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(questionNode.getType())) {
                             handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                         } else {
                             logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
@@ -321,7 +320,7 @@ public class StudyAgentUtil {
         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 
         List<Logic> logics = new ArrayList<>();
-        if (NodeType.Q_FREQUENCY.getDescription().equals(parentQuestionNode.getType())) {
+        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(parentQuestionNode.getType())) {
             handleDisplayLogicFreq(childAnswerNode, childQuestionVO, childQidCount, logics);
         } else {
             logics.add(new Logic("Question", childQidCount, "no", choiceLocator,
@@ -358,7 +357,7 @@ public class StudyAgentUtil {
                         String childQidCount = idNodeQIDMapIntro.get(Long.valueOf(answer.getParentId()));
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
                         List<Logic> logics = new ArrayList<>();
-                        if (NodeType.Q_FREQUENCY.getDescription().equals(question.getType())) {
+                        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(question.getType())) {
                             handleDisplayLogicFreq(childAns, childQuestionVO, childQidCount, logics);
                         } else {
                             logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
@@ -500,7 +499,7 @@ public class StudyAgentUtil {
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 
                         List<Logic> logics = new ArrayList<>();
-                        if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+                        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
                             handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                         } else {
                             logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
@@ -518,7 +517,7 @@ public class StudyAgentUtil {
                             String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 
                             List<Logic> logics = new ArrayList<>();
-                            if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+                            if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
                                 handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                             } else {
                                 logics.add(new Logic("Question", childQidCount, "no", choiceLocator,
@@ -759,7 +758,7 @@ public class StudyAgentUtil {
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 
                         List<Logic> logics = new ArrayList<>();
-                        if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+                        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
                             handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                         } else {
                             logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
@@ -776,7 +775,7 @@ public class StudyAgentUtil {
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 
                         List<Logic> logics = new ArrayList<>();
-                        if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+                        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
                             handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                         } else {
                             logics.add(new Logic("Question", childQidCount, "no", choiceLocator,
@@ -882,7 +881,7 @@ public class StudyAgentUtil {
                         String choiceLocator = "q://" + childQidCount + "/SelectableChoice/" + ansCount;
 
                         List<Logic> logics = new ArrayList<>();
-                        if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+                        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
                             handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                         } else {
                             logics.add(new Logic("Question", childQidCount, "no", choiceLocator, "Selected",
@@ -906,7 +905,7 @@ public class StudyAgentUtil {
                         if ("F".equals(linkModule.getNodeclass())) {
                             for (QuestionVO linkQuestion : ((FragmentVO) linkModule).getChildNodes()) {
                                 List<Logic> logics = new ArrayList<>();
-                                if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+                                if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
                                     handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                                 } else {
                                     logics.add(new Logic("Question", childQidCount, "no", choiceLocator,
@@ -923,7 +922,7 @@ public class StudyAgentUtil {
                                 //    continue;
                                 // }
                                 List<Logic> logics = new ArrayList<>();
-                                if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+                                if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
                                     handleDisplayLogicFreq(answer, childQuestionVO, childQidCount, logics);
                                 } else {
                                     logics.add(new Logic("Question", childQidCount, "no", choiceLocator,
@@ -964,7 +963,7 @@ public class StudyAgentUtil {
     }
 
     private String[] buildChoiceOrder(QuestionVO qVO) {
-        if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
             String[] choiceOrder = handlePossibleAnswersFrequencyOrder(qVO);
             return choiceOrder;
         } else {
@@ -1010,11 +1009,11 @@ public class StudyAgentUtil {
 
     // choices should be object s of object and not array
     private Map<String, Choice> buildChoices(QuestionVO qVO, String name, String lang) {
-        if (NodeType.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
+        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equals(qVO.getType())) {
             return null;
 //            return handleFrequency(qVO, name, lang);
         }
-        if (NodeType.Q_SIMPLE.getDescription().equals(qVO.getType()) || NodeType.Q_MULTIPLE.getDescription().equals(qVO.getType()) || NodeType.Q_SINGLE.getDescription().equals(qVO.getType())) {
+        if (QSFNodeTypeMapper.Q_SIMPLE.getDescription().equals(qVO.getType()) || QSFNodeTypeMapper.Q_MULTIPLE.getDescription().equals(qVO.getType()) || QSFNodeTypeMapper.Q_SINGLE.getDescription().equals(qVO.getType())) {
 //            return handlePossibleAnswers(qVO, name, lang);
             return null;
         }

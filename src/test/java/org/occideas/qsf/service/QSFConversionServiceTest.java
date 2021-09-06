@@ -6,17 +6,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.occideas.CommonDataGenerator;
-import org.occideas.common.NodeType;
 import org.occideas.config.NodeSurveyConfig;
 import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.JobModule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.node.dao.NodeDao;
-import org.occideas.qsf.IQSFClient;
-import org.occideas.qsf.QSFQuestionSubSelector;
-import org.occideas.qsf.QSFQuestionType;
-import org.occideas.qsf.QuestionSelector;
+import org.occideas.qsf.*;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.response.SurveyCreateResponse;
 import org.occideas.qsf.response.SurveyCreateResult;
@@ -152,9 +148,9 @@ class QSFConversionServiceTest {
     void givenDifferentTypesOfAnswers_whenGetQuestionTypeBaseOnAnswers_shouldReturnCorrectType() {
         Question multiAnswerQuestion = CommonDataGenerator.createQuestion("1q", 2);
         Question freetextAnswerQuestion = CommonDataGenerator.createQuestion("1q", 1);
-        freetextAnswerQuestion.getChildNodes().get(0).setType(NodeType.P_FREETEXT.getDescription());
+        freetextAnswerQuestion.getChildNodes().get(0).setType(QSFNodeTypeMapper.P_FREETEXT.getDescription());
         Question frequencyAnswerQuestion = CommonDataGenerator.createQuestion("1q", 1);
-        frequencyAnswerQuestion.getChildNodes().get(0).setType(NodeType.P_FREQUENCY_HOURS.getDescription());
+        frequencyAnswerQuestion.getChildNodes().get(0).setType(QSFNodeTypeMapper.P_FREQUENCY_HOURS.getDescription());
 
         QSFQuestionType multiChoice = qsfConversionService.getQuestionTypeBaseOnAnswers(multiAnswerQuestion);
         QSFQuestionType freetext = qsfConversionService.getQuestionTypeBaseOnAnswers(freetextAnswerQuestion);

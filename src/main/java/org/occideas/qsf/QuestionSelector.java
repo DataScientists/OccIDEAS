@@ -1,11 +1,9 @@
 package org.occideas.qsf;
 
-import org.occideas.common.NodeType;
-
 public enum QuestionSelector {
 
-    MULTIPLE(NodeType.Q_LINKEDMODULE.getDescription(), QSFQuestionSelector.MAVR.name()),
-    FREQUENCY(NodeType.Q_FREQUENCY.getDescription(), QSFQuestionSelector.DL.name());
+    MULTIPLE(QSFNodeTypeMapper.Q_LINKEDMODULE.getDescription(), QSFQuestionSelector.MAVR.name()),
+    FREQUENCY(QSFNodeTypeMapper.Q_FREQUENCY.getDescription(), QSFQuestionSelector.DL.name());
 
     QuestionSelector(String type, String selector) {
         this.type = type;
