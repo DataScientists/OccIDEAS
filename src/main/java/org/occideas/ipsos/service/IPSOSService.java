@@ -1,5 +1,9 @@
 package org.occideas.ipsos.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +18,10 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.node.service.INodeService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
+import org.occideas.qsf.ApplicationQSF;
+import org.occideas.qsf.SurveyElement;
+import org.occideas.qsf.payload.Choice;
+import org.occideas.qsf.payload.Logic;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CsvUtil;
@@ -40,6 +48,9 @@ public class IPSOSService implements IIPSOSService {
     private static final String FREETEXT = "FREETEXT";
     private static final String RADIO = "RADIO";
     private static final String CHECK = "CHECK";
+
+    private static final String TAB = "\t";
+    private static final String NEXT_LINE = "\n";
 
     @Autowired
     private ModuleService moduleService;
@@ -71,8 +82,13 @@ public class IPSOSService implements IIPSOSService {
     @Autowired
     private SystemPropertyService systemPropertyService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Value("${ipsos.input.path}")
     private String input;
+
+    @Value("${ipsos.qsf.path}")
+    private String qsfPath;
 
     @Value("#{'${ipsos.non.question.labels}'.split(',')}")
     private List<String> nonQuestionLabels;
@@ -90,6 +106,24 @@ public class IPSOSService implements IIPSOSService {
         log.info("initiating ipsos responses");
         processCSV();
         log.debug("done importing ipsos responses");
+    }
+
+    @Override
+    public void generateIPSOSJobModuleDataFile() throws IOException {
+        log.info("initiating generating ipsos data file");
+        List<File> files = Files.list(Paths.get(qsfPath + "/input/")).map(Path::toFile).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(files)) {
+            files.forEach(file -> {
+                try {
+                    ApplicationQSF data = objectMapper.readValue(file, ApplicationQSF.class);
+                    processQSFData(data);
+                    log.trace("data={}", data);
+                } catch (IOException e) {
+                    log.error("unable to convert json file to object. filename=" +  file.getName(), e);
+                }
+            });
+        }
+        log.info("done generating ipsos data file");
     }
 
     private void processCSV() throws IOException {
@@ -433,4 +467,55 @@ public class IPSOSService implements IIPSOSService {
         }
 
     }
+
+    private void processQSFData(ApplicationQSF data) throws IOException {
+        if (!CollectionUtils.isEmpty(data.getSurveyElementsList())) {
+            StringBuilder builder = new StringBuilder();
+            Map<String, SurveyElement> questions = new HashMap<>();
+            SurveyElement qc = null;
+            for (SurveyElement element : data.getSurveyElementsList()) {
+                if ("QC".equals(element.getElement())) {
+                    qc = element;
+                } else if ("SQ".equals(element.getElement())) {
+                    questions.put(element.getPrimaryAttribute(), element);
+                }
+            }
+
+            builder.append("Module: ").append(data.getSurveyEntry().getSurveyName()).append(NEXT_LINE);
+            builder.append("Number of Questions: ").append(qc.getSecondaryAttribute()).append(NEXT_LINE);
+            int count = Integer.valueOf(qc.getSecondaryAttribute());
+            for (int i = 1; i <= count; i++) {
+                String qid = "QID" + i;
+                SurveyElement element = questions.get(qid);
+                Map<String, Object> payload = (Map<String, Object>) element.getPayload();
+                Map<String, Choice> choices = objectMapper.convertValue(payload.get("Choices"), new TypeReference<>() {});
+
+                // Filter
+                if (payload.get("DisplayLogic") == null) {
+                    builder.append("Filter: None").append(NEXT_LINE);
+                } else {
+                    JsonNode node = objectMapper.valueToTree(payload.get("DisplayLogic"));
+                    Logic logic = objectMapper.treeToValue(node.get("0").get("0"), Logic.class);
+                    SurveyElement parentQ = questions.get(logic.getQuestionId());
+                    Map<String, Object> parentQPayload = (Map<String, Object>) parentQ.getPayload();
+                    Map<String, Choice> parentQChoices = objectMapper.convertValue(parentQPayload.get("Choices"), new TypeReference<>() {});
+                    String qNumber = String.valueOf(parentQPayload.get("QuestionText")).split(" - ")[0];
+                    String choicePosition = logic.getChoiceLocator().substring(logic.getChoiceLocator().lastIndexOf("/") + 1);
+                    Map.Entry<String, Choice> choiceMapEntry = parentQChoices.entrySet().stream().filter(e -> choicePosition.equals(e.getKey())).findFirst().orElse(null);
+                    if (choiceMapEntry != null) {
+                        String aNumber = choiceMapEntry.getValue().getDisplay().split(" ")[0];
+                        builder.append("Filter: If ").append(qNumber).append(" = ").append(aNumber).append(NEXT_LINE);
+                    } else {
+                        log.warn("Not able to get Filter. qid={}, choicePosition={}, choiceLocator={}", qid, choicePosition, logic.getChoiceLocator());
+                    }
+                }
+                // Question
+                builder.append(payload.get("QuestionText")).append(NEXT_LINE);
+                // Possible Answers
+                choices.forEach((number, choice) -> builder.append(TAB).append(choice.getDisplay()).append(NEXT_LINE));
+            }
+            FileUtils.writeStringToFile(new File(qsfPath + "/output/" + data.getSurveyEntry().getSurveyName() + ".txt"), builder.toString(), "UTF-8");
+        }
+    }
+
 }
