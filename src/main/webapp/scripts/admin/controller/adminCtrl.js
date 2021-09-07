@@ -257,6 +257,26 @@
         });
     };
 
+    self.generateIPSOSJobModuleDataFile = function(){
+        AdminService.generateIPSOSJobModuleDataFile().then(function(response){
+            if (response.status == '200') {
+              $ngToast.create({
+                className: 'success',
+                content: 'Generate IPSOS Data File Successful , check result in a few minutes.',
+                animation: 'slide'
+              });
+            } else {
+              $ngToast.create({
+                className: 'danger',
+                content: 'Generate IPSOS Data File failed, check the logs.',
+                dismissButton: true,
+                dismissOnClick: false,
+                animation: 'slide'
+              });
+            }
+        });
+    };
+
     self.purgeParticipantsBtn = function() {
         $mdDialog.show({
             scope: $scope,
