@@ -195,13 +195,15 @@ public class StudyAgentUtil {
         String surveyId = result.getSurveyId();
         String blockId = result.getDefaultBlockId();
 
+        String moduleKey = moduleVO.getName().substring(0, 4);
         List<SimpleQuestionPayload> questionPayloads = new ArrayList<>();
         for (QuestionVO qVO : moduleVO.getChildNodes()) {
             if (shouldExcludeNode(filter,qVO.getIdNode())) {
             	System.out.println("7-EXCLUDING!!" + qVO.getIdNode() + qVO.getName());
                 continue;
             }
-            createManualQuestion(moduleVO, qVO, null, questionPayloads, qidCount,filter, null);
+            createManualQuestion(moduleVO, qVO, null, questionPayloads, qidCount,filter, null, moduleKey);
+            
         }
 
         int i = 0;
@@ -532,7 +534,7 @@ public class StudyAgentUtil {
             //	System.out.println("6-EXCLUDING!!" + qVO.getIdNode() + qVO.getName());
             //    continue;
             //}
-            createManualQuestion(moduleVO, qVO, null, questionPayloads, qidCount, filter, null);
+            createManualQuestion(moduleVO, qVO, null, questionPayloads, qidCount, filter, null, "");
         }
         int i = 0;
         int size = questionPayloads.size();
@@ -757,7 +759,8 @@ public class StudyAgentUtil {
 
     private void createManualQuestion
             (NodeVO node, QuestionVO qVO, DisplayLogic logic,
-             List<SimpleQuestionPayload> questionPayloads, AtomicInteger qidCount, List<String> filter, String linkedQNumber) {
+             List<SimpleQuestionPayload> questionPayloads, AtomicInteger qidCount, 
+             List<String> filter, String linkedQNumber, String moduleKey) {
         if (qVO.getLink() == 0L) {
         	if(shouldExcludeNode(filter,qVO.getIdNode())){
         		System.out.println("1-EXCLUDING!!" + qVO.getIdNode() + qVO.getName());
@@ -770,7 +773,7 @@ public class StudyAgentUtil {
             String qType = Constant.Q_MULTIPLE.equals(qVO.getType()) ? CHECK : RADIO;
             String numberKey = StringUtils.isBlank(linkedQNumber)
                     ? node.getName().substring(0, 4) + "_" + qType + "_" + qVO.getNumber()
-                    : node.getName().substring(0, 4) + "_" + qType + "_" + linkedQNumber + "_" + qVO.getNumber();
+                    : node.getName().substring(0, 4) + "_" + qType + "_" + linkedQNumber + "_" + qVO.getNumber() + "_" + moduleKey;
             String questionTextKey = numberKey + " - ";
             String hiddenQuestionTextKey = Constant.SPAN_START_DISPLAY_NONE + questionTextKey + Constant.SPAN_END;
             String questionTxt = (hideNodeKeys ? hiddenQuestionTextKey : questionTextKey) + qVO.getName();
@@ -804,7 +807,7 @@ public class StudyAgentUtil {
                         	continue;
                         }
 
-                        createManualQuestion(linkModule, linkQuestion, null, questionPayloads, qidCount, filterIdNodes, qVO.getNumber());
+                        createManualQuestion(linkModule, linkQuestion, null, questionPayloads, qidCount, filterIdNodes, qVO.getNumber(),moduleKey);
                     }
                 } else {
                     System.out.println("Something not right here!!");
@@ -848,7 +851,7 @@ public class StudyAgentUtil {
                         createManualQuestion(node, childQuestionVO,
                                 new DisplayLogic("BooleanExpression", false, new Condition(
                                         buildLogicMap(logics),
-                                        "If")), questionPayloads, qidCount, filter, linkedQNumber);
+                                        "If")), questionPayloads, qidCount, filter, linkedQNumber,moduleKey);
                     } else if (childQuestionVO.getLink() != 0L) {
                     	System.out.println(childQuestionVO.getName());
                         NodeVO linkModule = nodeService.getNode(childQuestionVO.getLink());
@@ -871,7 +874,7 @@ public class StudyAgentUtil {
 
                                 createManualQuestion(linkModule, linkQuestion,
                                         new DisplayLogic("BooleanExpression", false,new Condition(buildLogicMap(logics), "If")),
-                                        questionPayloads, qidCount, filterIdNodes, childQuestionVO.getNumber());
+                                        questionPayloads, qidCount, filterIdNodes, childQuestionVO.getNumber(),moduleKey);
                             }
                         } else {
                             for (QuestionVO linkQuestion : ((ModuleVO) linkModule).getChildNodes()) {
@@ -889,7 +892,7 @@ public class StudyAgentUtil {
                                 createManualQuestion(linkModule, linkQuestion,
                                         new DisplayLogic("BooleanExpression", false,
                                                 new Condition(buildLogicMap(logics), "If")), questionPayloads, qidCount,
-                                        filter, childQuestionVO.getNumber());
+                                        filter, childQuestionVO.getNumber(),moduleKey);
                             }
                         }
 
