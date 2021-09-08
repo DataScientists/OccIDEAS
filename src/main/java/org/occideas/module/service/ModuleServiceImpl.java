@@ -525,14 +525,19 @@ public class ModuleServiceImpl implements ModuleService {
 		if(moduleName.isPresent()){
 			String truncatedName = moduleName.get().substring(0,length);
 			List<JobModule> modules = dao.findByNameLength(name);
-			if(!modules.isEmpty() && modules.size() == 1){
-				return mapper.convertToModuleVO(modules.get(0),false);
-			}
-			else if(!modules.isEmpty() && modules.size() > 1){
+			if (!modules.isEmpty() && modules.size() == 1) {
+				return mapper.convertToModuleVO(modules.get(0), false);
+			} else if (!modules.isEmpty() && modules.size() > 1) {
 				log.error("Cleanup database their are 2 modules with same {} length for {}", length, truncatedName);
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ModuleVO getModuleByName(String name) {
+		JobModule module = dao.getModuleByName(name);
+		return mapper.convertToModuleVO(module, false);
 	}
 
 	@Override

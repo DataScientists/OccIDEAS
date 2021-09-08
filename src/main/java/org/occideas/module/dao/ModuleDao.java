@@ -8,13 +8,17 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.occideas.entity.JobModule;
+import org.occideas.entity.JobModule_;
 import org.occideas.entity.Node;
 import org.occideas.entity.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -85,8 +89,20 @@ public class ModuleDao implements IModuleDao {
   @Override
   public void saveOrUpdateIgnoreFK(JobModule module) {
     sessionFactory.getCurrentSession().createSQLQuery("SET foreign_key_checks = 0")
-      .executeUpdate();
+            .executeUpdate();
     sessionFactory.getCurrentSession().saveOrUpdate(module);
+  }
+
+  @Override
+  public JobModule getModuleByName(String name) {
+    final Session session = sessionFactory.getCurrentSession();
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<JobModule> criteria = builder.createQuery(JobModule.class);
+    Root<JobModule> root = criteria.from(JobModule.class);
+    criteria.select(root);
+    criteria.where(builder.and(builder.equal(root.get(JobModule_.NAME), name), builder.equal(root.get(JobModule_.DELETED), 0)));
+
+    return sessionFactory.getCurrentSession().createQuery(criteria).getSingleResult();
   }
 
   @Override

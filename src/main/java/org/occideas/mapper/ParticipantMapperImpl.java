@@ -26,6 +26,7 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     participantVO.setReference(participant.getReference());
     participantVO.setStatus(participant.getStatus());
     participantVO.setDeleted(participant.getDeleted());
+    participantVO.setResponseId(participant.getResponseId());
     List<Interview> interviews = participant.getInterviews();
     if (includeInterviews && !CommonUtil.isListEmpty(interviews)) {
       participantVO.setInterviews(interviewMapper.convertToInterviewVOList(interviews));
@@ -44,6 +45,7 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     participantVO.setReference(participant.getReference());
     participantVO.setStatus(participant.getStatus());
     participantVO.setDeleted(participant.getDeleted());
+    participantVO.setResponseId(participant.getResponseId());
 
     participantVO.setInterviews(interviewMapper.convertToInterviewVOList(participant.getInterviews()));
 
@@ -74,6 +76,8 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     participant.setReference(participantVO.getReference());
     participant.setStatus(participantVO.getStatus());
     participant.setDeleted(participantVO.getDeleted());
+    participant.setResponseId(participantVO.getResponseId());
+
     if (includeInterviews) {
       participant.setInterviews(interviewMapper.convertToInterviewList(participantVO.getInterviews()));
     }
@@ -116,6 +120,7 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     participantVO.setReference(participant.getReference());
     participantVO.setStatus(participant.getStatus());
     participantVO.setDeleted(participant.getDeleted());
+    participantVO.setResponseId(participant.getResponseId());
 
     participantVO.setInterviews(interviewMapper.convertToInterviewVOnoQsList(participant.getInterviews()));
 
@@ -144,6 +149,7 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     participantVO.setReference(participant.getReference());
     participantVO.setStatus(participant.getStatus());
     participantVO.setDeleted(participant.getDeleted());
+    participantVO.setResponseId(participant.getResponseId());
     participantVO.setInterviews(interviewMapper.convertToInterviewVOnoQsList(participant.getInterviews()));
     return participantVO;
   }

@@ -38,7 +38,7 @@ public interface IQSFService {
 
     void processResponse(NodeVO nodeVO, Response response);
 
-    void processResponse(Response response);
+    void processResponse(String surveyId, Response response);
 
     void createQSFTranslationModule();
 }

@@ -32,6 +32,7 @@ public class Participant implements Serializable {
     @UpdateTimestamp
     private Date lastUpdated;
   private Integer deleted;
+    private String responseId;
 
   public Participant() {
 
@@ -80,12 +81,19 @@ public class Participant implements Serializable {
     this.status = status;
   }
 
-  public String getReference() {
-    return reference;
-  }
+    public String getReference() {
+        return reference;
+    }
 
-  public void setReference(String reference) {
-    this.reference = reference;
-  }
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
+    public String getResponseId() {
+        return responseId;
+    }
+
+    public void setResponseId(String responseId) {
+        this.responseId = responseId;
+    }
 }

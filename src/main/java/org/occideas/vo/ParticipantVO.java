@@ -18,6 +18,7 @@ public class ParticipantVO {
   private String statusDescription;
   private Date lastUpdated;
   private Integer deleted;
+    private String responseId;
 
   public Date getLastUpdated() {
     return lastUpdated;
@@ -93,21 +94,29 @@ public class ParticipantVO {
           allnotes.addAll(interview.getNotes());
         }
       }
-      this.notes = allnotes;
+        this.notes = allnotes;
     }
 
-    return notes;
+      return notes;
   }
 
-  public void setNotes(List<NoteVO> notes) {
-    this.notes = notes;
-  }
+    public void setNotes(List<NoteVO> notes) {
+        this.notes = notes;
+    }
 
-  @Override
-  public String toString() {
-    return "ParticipantVO [idParticipant=" + idParticipant + ", status=" + status + ", reference=" + reference
-      + ", statusDescription=" + statusDescription + "]";
-  }
+    public String getResponseId() {
+        return responseId;
+    }
+
+    public void setResponseId(String responseId) {
+        this.responseId = responseId;
+    }
+
+    @Override
+    public String toString() {
+        return "ParticipantVO [idParticipant=" + idParticipant + ", status=" + status + ", reference=" + reference
+                + ", statusDescription=" + statusDescription + "]";
+    }
 
 
 }

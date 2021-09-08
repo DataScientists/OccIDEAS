@@ -26,10 +26,7 @@ import org.occideas.qsf.QSFNodeTypeMapper;
 import org.occideas.qsf.dao.INodeQSFDao;
 import org.occideas.qsf.payload.CopySurveyPayload;
 import org.occideas.qsf.request.SurveyExportRequest;
-import org.occideas.qsf.response.Response;
-import org.occideas.qsf.response.SurveyExportResponse;
-import org.occideas.qsf.response.SurveyListResponse;
-import org.occideas.qsf.response.SurveyResponses;
+import org.occideas.qsf.response.*;
 import org.occideas.qsf.subscriber.constant.QualtricsProcessStatus;
 import org.occideas.qsf.subscriber.service.QualtricsSurveyService;
 import org.occideas.question.service.QuestionService;
@@ -262,15 +259,18 @@ public class QSFServiceImpl implements IQSFService {
     }
 
     @Override
-    public void processResponse(Response response) {
-        SystemPropertyVO introModule = Optional.ofNullable(systemPropertyService.getByName(Constant.STUDY_INTRO))
-                .orElseThrow(StudyIntroModuleNotFoundException::new);
-        NodeVO nodeVO = moduleService.getNodeById(Long.valueOf(introModule.getValue()));
-        String referenceNumber = getIDAnswer(response);
-        ParticipantVO participantVO = createParticipant(referenceNumber);
-        InterviewVO newInterview = createNewInterview(referenceNumber, participantVO);
-        createIntroQuestion(newInterview, nodeVO);
-        processResponseAnswers(response, referenceNumber, newInterview, nodeVO);
+    public void processResponse(String surveyId, Response response) {
+        javax.ws.rs.core.Response responseSurveyMetadata = iqsfClient.getSurveyMetadata(surveyId);
+        SurveyMetadata surveyMetadata = (SurveyMetadata) responseSurveyMetadata.getEntity();
+        String moduleName = surveyMetadata.getMetadata().getSurveyName();
+        String responseId = response.getResponseId();
+        log.info("started processing response for survey {} , response id {}, module {}", surveyId, responseId, moduleName);
+        ModuleVO module = moduleService.getModuleByName(moduleName);
+        String referenceNumber = module.getName().substring(0, 4) + "_" + module.getIdNode();
+        ParticipantVO participantVO = createParticipant(referenceNumber, responseId);
+//        InterviewVO newInterview = createNewInterview(referenceNumber, participantVO);
+//        createIntroQuestion(newInterview, module);
+//        processResponseAnswers(response, referenceNumber, newInterview, module);
     }
 
     @Override
@@ -508,6 +508,14 @@ public class QSFServiceImpl implements IQSFService {
         ParticipantVO partVO = new ParticipantVO();
         partVO.setReference(referenceNumber);
         partVO.setStatus(2);
+        return participantService.create(partVO);
+    }
+
+    public ParticipantVO createParticipant(String referenceNumber, String responseId) {
+        ParticipantVO partVO = new ParticipantVO();
+        partVO.setReference(referenceNumber);
+        partVO.setStatus(2);
+        partVO.setResponseId(responseId);
         return participantService.create(partVO);
     }
 

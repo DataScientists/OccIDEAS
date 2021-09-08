@@ -1,0 +1,320 @@
+{
+  "result": {
+    "responseId": "R_2ASUe3iVMV8wOYE",
+    "values": {
+      "startDate": "2021-08-12T10:38:22Z",
+      "endDate": "2021-08-12T10:39:01Z",
+      "status": 0,
+      "ipAddress": "219.74.213.197",
+      "progress": 100,
+      "duration": 38,
+      "finished": 1,
+      "recordedDate": "2021-08-12T10:39:01.761Z",
+      "locationLatitude": "1.30650329590",
+      "locationLongitude": "103.889892578",
+      "distributionChannel": "anonymous",
+      "userLanguage": "EN",
+      "QID1": 2,
+      "QID1_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID14": 2,
+      "QID14_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID19": 2,
+      "QID19_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID24": 3,
+      "QID24_DO": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "QID27": 2,
+      "QID27_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID31": 2,
+      "QID31_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID49": 2,
+      "QID49_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID67": 2,
+      "QID67_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID78": 2,
+      "QID78_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID85": 2,
+      "QID85_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID90": [
+        "7"
+      ],
+      "QID90_DO": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "QID91": 2,
+      "QID91_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID93": 2,
+      "QID93_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID96": 2,
+      "QID96_DO": [
+        "1",
+        "2",
+        "3"
+      ],
+      "QID98": 2,
+      "QID98_DO": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "labels": {
+      "status": "IP Address",
+      "finished": "True",
+      "QID1": "aWEL_1B No",
+      "QID1_DO": [
+        "<span style=\"display:none;\">aWEL_1A </span>Yes",
+        "<span style=\"display:none;\">aWEL_1B </span>No",
+        "<span style=\"display:none;\">aWEL_1C </span>Don't know"
+      ],
+      "QID14": "aSLD_1B No",
+      "QID14_DO": [
+        "<span style=\"display:none;\">aSLD_1A </span>Yes",
+        "<span style=\"display:none;\">aSLD_1B </span>No",
+        "<span style=\"display:none;\">aSLD_1C </span>Don't know"
+      ],
+      "QID19": "WELD_3B No",
+      "QID19_DO": [
+        "<span style=\"display:none;\">WELD_3A </span>Yes",
+        "<span style=\"display:none;\">WELD_3B </span>No",
+        "<span style=\"display:none;\">WELD_3C </span>Don't know"
+      ],
+      "QID24": "aXRY_1C No",
+      "QID24_DO": [
+        "<span style=\"display:none;\">aXRY_1A </span>Yes I use X-rays",
+        "<span style=\"display:none;\">aXRY_1B </span>Yes I use another type of radiation",
+        "<span style=\"display:none;\">aXRY_1C </span>No",
+        "<span style=\"display:none;\">aXRY_1D </span>Don't know"
+      ],
+      "QID27": "aCTO_1B No",
+      "QID27_DO": [
+        "<span style=\"display:none;\">aCTO_1A </span>Yes",
+        "<span style=\"display:none;\">aCTO_1B </span>No",
+        "<span style=\"display:none;\">aCTO_1C </span>Don't know"
+      ],
+      "QID31": "aDEG_1B No",
+      "QID31_DO": [
+        "<span style=\"display:none;\">aDEG_1A </span>Yes",
+        "<span style=\"display:none;\">aDEG_1B </span>No",
+        "<span style=\"display:none;\">aDEG_1C </span>Don't know"
+      ],
+      "QID49": "aUVR_1B No",
+      "QID49_DO": [
+        "<span style=\"display:none;\">aUVR_1A </span>Yes",
+        "<span style=\"display:none;\">aUVR_1B </span>No",
+        "<span style=\"display:none;\">aUVR_1C </span>Don't know"
+      ],
+      "QID67": "aDVM_1B No",
+      "QID67_DO": [
+        "<span style=\"display:none;\">aDVM_1A </span>Yes",
+        "<span style=\"display:none;\">aDVM_1B </span>No",
+        "<span style=\"display:none;\">aDVM_1C </span>Don't know"
+      ],
+      "QID78": "aGEX_1B No",
+      "QID78_DO": [
+        "<span style=\"display:none;\">aGEX_1A </span>Yes",
+        "<span style=\"display:none;\">aGEX_1B </span>No",
+        "<span style=\"display:none;\">aGEX_1C </span>Don't know"
+      ],
+      "QID85": "aVEX_1B No",
+      "QID85_DO": [
+        "<span style=\"display:none;\">aVEX_1A </span>Yes",
+        "<span style=\"display:none;\">aVEX_1B </span>No",
+        "<span style=\"display:none;\">aVEX_1C </span>Don't know"
+      ],
+      "QID90": [
+        "aCLH_1G Don't know"
+      ],
+      "QID90_DO": [
+        "<span style=\"display:none;\">aCLH_1A </span>Industrial hand cleaner",
+        "<span style=\"display:none;\">aCLH_1B </span>Mineral turpentine, mineral spirits or white spirit or paint thinner",
+        "<span style=\"display:none;\">aCLH_1C </span>Petrol",
+        "<span style=\"display:none;\">aCLH_1D </span>Diesel",
+        "<span style=\"display:none;\">aCLH_1E </span>Chlorhexidine, hibitane, or hibiscrub",
+        "<span style=\"display:none;\">aCLH_1F </span>None of the above",
+        "<span style=\"display:none;\">aCLH_1G </span>Don't know"
+      ],
+      "QID91": "aCLE_1B No",
+      "QID91_DO": [
+        "<span style=\"display:none;\">aCLE_1A </span>Yes",
+        "<span style=\"display:none;\">aCLE_1B </span>No",
+        "<span style=\"display:none;\">aCLE_1C </span>Don't know"
+      ],
+      "QID93": "aETS_1B No",
+      "QID93_DO": [
+        "<span style=\"display:none;\">aETS_1A </span>Yes",
+        "<span style=\"display:none;\">aETS_1B </span>No",
+        "<span style=\"display:none;\">aETS_1C </span>Don't know"
+      ],
+      "QID96": "aETS_2B No",
+      "QID96_DO": [
+        "<span style=\"display:none;\">aETS_2A </span>Yes",
+        "<span style=\"display:none;\">aETS_2B </span>No",
+        "<span style=\"display:none;\">aETS_2C </span>Don't know"
+      ],
+      "QID98": "aETS_3B No",
+      "QID98_DO": [
+        "<span style=\"display:none;\">aETS_3A </span>Yes",
+        "<span style=\"display:none;\">aETS_3B </span>No",
+        "<span style=\"display:none;\">aETS_3C </span>Don't know"
+      ]
+    },
+    "displayedFields": [
+      "QID1",
+      "QID19",
+      "QID49",
+      "QID27",
+      "QID93",
+      "QID91",
+      "QID90",
+      "QID14",
+      "QID24",
+      "QID67",
+      "QID78",
+      "QID98",
+      "QID31",
+      "QID85",
+      "QID96"
+    ],
+    "displayedValues": {
+      "QID1": [
+        1,
+        2,
+        3
+      ],
+      "QID19": [
+        1,
+        2,
+        3
+      ],
+      "QID49": [
+        1,
+        2,
+        3
+      ],
+      "QID27": [
+        1,
+        2,
+        3
+      ],
+      "QID93": [
+        1,
+        2,
+        3
+      ],
+      "QID91": [
+        1,
+        2,
+        3
+      ],
+      "QID90": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "QID14": [
+        1,
+        2,
+        3
+      ],
+      "QID24": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "QID67": [
+        1,
+        2,
+        3
+      ],
+      "QID78": [
+        1,
+        2,
+        3
+      ],
+      "QID98": [
+        1,
+        2,
+        3
+      ],
+      "QID31": [
+        1,
+        2,
+        3
+      ],
+      "QID85": [
+        1,
+        2,
+        3
+      ],
+      "QID96": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "meta": {
+    "requestId": "549c76b7-4ab1-4a5d-9c6e-d0af58225b58",
+    "httpStatus": "200 - OK"
+  }
+}

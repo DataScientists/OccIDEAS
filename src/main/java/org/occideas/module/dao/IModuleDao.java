@@ -42,15 +42,17 @@ public interface IModuleDao {
 
   List<Question> getAllLinkingQuestionByModId(Long modId);
 
-  List<Question> getChildLinkNodes(String idNode);
+    List<Question> getChildLinkNodes(String idNode);
 
-  List<? extends Node> getDistinctNodeNameByIdNode(String idNode);
+    List<? extends Node> getDistinctNodeNameByIdNode(String idNode);
 
-  List<String> getNodeNameByIdNode(String idNode);
+    List<String> getNodeNameByIdNode(String idNode);
 
-  List<? extends Node> getNodeByType(String type);
+    List<? extends Node> getNodeByType(String type);
 
-  void saveOrUpdateIgnoreFK(JobModule module);
+    void saveOrUpdateIgnoreFK(JobModule module);
 
-  List<JobModule> findByNameLength(String name);
+    JobModule getModuleByName(String name);
+
+    List<JobModule> findByNameLength(String name);
 }
