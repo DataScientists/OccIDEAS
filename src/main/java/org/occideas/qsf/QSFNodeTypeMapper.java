@@ -93,6 +93,10 @@ public enum QSFNodeTypeMapper {
     }
 
     public static QSFNodeTypeMapper getBaseOnType(String type) {
+        if (Objects.isNull(type)) {
+            return Q_MULTIPLE;
+        }
+
         Optional<QSFNodeTypeMapper> nodeTypeOptional = Arrays.stream(QSFNodeTypeMapper.values()).filter(t -> t.description.equalsIgnoreCase(type)).findFirst();
         if (nodeTypeOptional.isPresent()) {
             return nodeTypeOptional.get();

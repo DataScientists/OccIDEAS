@@ -158,7 +158,7 @@ class QSFConversionServiceTest {
 
         assertEquals(QSFQuestionType.TEXT_ENTRY, freetext);
         assertEquals(QSFQuestionType.MULTIPLE_CHOICE, multiChoice);
-        assertEquals(QSFQuestionType.TEXT_ENTRY, frequency);
+        assertEquals(QSFQuestionType.TEXT_ENTRY_FORM, frequency);
     }
 
     @Test
