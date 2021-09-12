@@ -35,6 +35,5 @@ public class QualtricsStartupSurveyListener implements ApplicationListener<Conte
             return;
         }
         qualtricsSurveySubscriberService.listenToSurvey(topic.getSurvey());
-
     }
 }

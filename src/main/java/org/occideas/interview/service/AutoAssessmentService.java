@@ -69,7 +69,7 @@ public class AutoAssessmentService {
                 .filter(interviewAnswer -> interviewAnswer.getDeleted() == 0)
                 .map(InterviewAnswer::getAnswerId)
                 .collect(Collectors.toSet());
-        return deriveFiredRulesByAnswersProvided(allActualAnswers, interview.getIdinterview());
+        return deriveFiredRulesByAnswersProvided(allActualAnswers);
     }
 
     public Note getDefaultNote(long interviewId) {
@@ -80,7 +80,7 @@ public class AutoAssessmentService {
         return note;
     }
 
-    public List<Rule> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers, long interviewId) {
+    public List<Rule> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers) {
         List<Rule> derivedRulesBasedOnAnswers = moduleRuleDao.getRulesByUniqueAnswers(allActualAnswers);
         Set<Rule> firedRules = new HashSet<>();
         derivedRulesBasedOnAnswers.stream()
@@ -99,6 +99,11 @@ public class AutoAssessmentService {
                     }
                 });
         return firedRules.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public List<Rule> deriveFiredRulesByAnswerProvided(Long answerId) {
+        List<Rule> rules = deriveFiredRulesByAnswersProvided(Collections.singleton(answerId));
+        return rules;
     }
 
     public List<Rule> getRuleLevelNoExposure(List<Long> listAgentIds, List<Rule> listOfFiredRules) {

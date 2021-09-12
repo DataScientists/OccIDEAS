@@ -18,7 +18,6 @@ public class ParticipantVO {
   private String statusDescription;
   private Date lastUpdated;
   private Integer deleted;
-    private String responseId;
 
   public Date getLastUpdated() {
     return lastUpdated;
@@ -102,14 +101,6 @@ public class ParticipantVO {
 
     public void setNotes(List<NoteVO> notes) {
         this.notes = notes;
-    }
-
-    public String getResponseId() {
-        return responseId;
-    }
-
-    public void setResponseId(String responseId) {
-        this.responseId = responseId;
     }
 
     @Override

@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS QUALTRICS_QUESTION_MAPPER;
+
+CREATE TABLE QUALTRICS_QUESTION_MAPPER
+(
+    surveyId        varchar(255)  NOT NULL,
+    questionId      varchar(255)  NOT NULL,
+    idNode          bigint(20) NOT NULL,
+    questionText    varchar(2048) NOT NULL,
+    type            varchar(255)  NOT NULL,
+    frequencyIdNode bigint(20) DEFAULT NULL,
+    PRIMARY KEY (surveyId, questionId)
+);

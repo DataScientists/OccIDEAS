@@ -37,17 +37,18 @@
       "occIDEASApp.ModuleRule",
       "occIDEASApp.Login",
       "occIDEASApp.Logout",
-      "occIDEASApp.Admin",
-      "occIDEASApp.FiredRules",
-      "occIDEASApp.ManualAssessment",
-      "occIDEASApp.AutoAssessment",
-      "occIDEASApp.SystemProperty",
-      "occIDEASApp.Reports",
-      "occIDEASApp.angular.translate",
-      "occIDEASApp.angular.translate.service",
-      "occIDEASApp.Notes",
-      "occIDEASApp.NodeLanguage",
-      "occIDEASApp.JMeter"
+        "occIDEASApp.Admin",
+        "occIDEASApp.FiredRules",
+        "occIDEASApp.ManualAssessment",
+        "occIDEASApp.AutoAssessment",
+        "occIDEASApp.SystemProperty",
+        "occIDEASApp.Reports",
+        "occIDEASApp.angular.translate",
+        "occIDEASApp.angular.translate.service",
+        "occIDEASApp.Notes",
+        "occIDEASApp.NodeLanguage",
+        "occIDEASApp.JMeter",
+        "occIDEASApp.Results"
     ], function($rootScopeProvider) {
       $rootScopeProvider.digestTtl(100);
     })

@@ -4,15 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.config.QualtricsConfig;
-import org.occideas.entity.JobModule;
-import org.occideas.entity.Node;
-import org.occideas.entity.PossibleAnswer;
-import org.occideas.entity.Question;
+import org.occideas.entity.*;
 import org.occideas.exceptions.GenericException;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.dao.NodeDao;
 import org.occideas.qsf.*;
 import org.occideas.qsf.dao.NodeQSFDao;
+import org.occideas.qsf.dao.QSFQuestionMapperDao;
 import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.response.*;
@@ -42,6 +40,8 @@ public class QSFConversionService {
     private ModuleService moduleService;
     @Autowired
     private QualtricsConfig qualtricsConfig;
+    @Autowired
+    private QSFQuestionMapperDao qsfQuestionMapperDao;
 
     private final Configuration configuration = new Configuration("UseText");
 
@@ -53,6 +53,7 @@ public class QSFConversionService {
             throw new GenericException(message);
         }
         String surveyId = surveyCreateResult.getSurveyId();
+        qsfQuestionMapperDao.deleteBySurveyId(surveyId);
         String blockId = surveyCreateResult.getDefaultBlockId();
         if (Objects.isNull(filterIds) || filterIds.isEmpty()) {
             createQuestions(jobModule.getChildNodes(), surveyId, null, null);
@@ -66,6 +67,8 @@ public class QSFConversionService {
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton("true");
+        options.getResult().setEosRedirectURL(qualtricsConfig.getRedirectUrl());
+        options.getResult().setSurveyTermination("EOSRedirectURL");
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);
@@ -89,8 +92,16 @@ public class QSFConversionService {
                         QuestionAnswerWrapper questionAnswerWrapper = new QuestionAnswerWrapper(question, dependsOn);
                         questionAnswerWrapper.setParent(parent);
 
-                        Response responseQuestion = iqsfClient.createQuestion(surveyId, buildQuestionPayload(questionAnswerWrapper), null);
+                        SimpleQuestionPayload questionPayload = buildQuestionPayload(questionAnswerWrapper);
+                        Response responseQuestion = iqsfClient.createQuestion(surveyId, questionPayload, null);
+
                         if (!question.getChildNodes().isEmpty()) {
+                            Long freetextIdNode = null;
+                            if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
+                                freetextIdNode = question.getChildNodes().get(0).getIdNode();
+                            }
+
+                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, questionPayload.getQuestionId()), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
                             question.getChildNodes()
                                     .stream()
@@ -125,9 +136,15 @@ public class QSFConversionService {
                         QuestionAnswerWrapper questionAnswerWrapper = new QuestionAnswerWrapper(question, dependsOn);
                         questionAnswerWrapper.setParent(parent);
 
-                        Response responseQuestion = iqsfClient.createQuestion(surveyId, buildQuestionPayload(questionAnswerWrapper), null);
+                        SimpleQuestionPayload questionPayload = buildQuestionPayload(questionAnswerWrapper);
+                        Response responseQuestion = iqsfClient.createQuestion(surveyId, questionPayload, null);
+                        SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
                         if (!question.getChildNodes().isEmpty()) {
-                            SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
+                            Long freetextIdNode = null;
+                            if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
+                                freetextIdNode = question.getChildNodes().get(0).getIdNode();
+                            }
+                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, surveyCreateResponse.getResult().getQuestionId()), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             question.getChildNodes()
                                     .stream()
                                     .filter(possibleAnswer -> possibleAnswer.getDeleted() == 0)

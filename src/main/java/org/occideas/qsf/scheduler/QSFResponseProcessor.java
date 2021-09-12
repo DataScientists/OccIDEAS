@@ -25,11 +25,11 @@ public class QSFResponseProcessor {
     @Autowired
     private IQSFService iqsfService;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 10000)
     public void processQSFResponse() {
-        log.info("Started to check for unprocessed surveys");
         List<QualtricsSurvey> unprocessedSurveys = qualtricsSurveyDao.findByIsProcessed(false);
         if (!unprocessedSurveys.isEmpty()) {
+            log.info("Started to check for unprocessed surveys " + unprocessedSurveys.size());
             unprocessedSurveys.forEach(unprocessedSurvey -> {
                 SurveyResponse surveyResponse = null;
                 try {
@@ -41,8 +41,8 @@ public class QSFResponseProcessor {
                 unprocessedSurvey.setProcessed(true);
                 qualtricsSurveyDao.save(unprocessedSurvey);
             });
+            log.info("End processing of unprocessed surveys count {}", unprocessedSurveys.size());
         }
-        log.info("End processing of unprocessed surveys count {}", unprocessedSurveys.size());
     }
 
     public SurveyResponse translateQSFResponse(byte[] response) throws IOException {

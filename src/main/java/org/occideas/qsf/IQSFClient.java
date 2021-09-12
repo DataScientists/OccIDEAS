@@ -18,6 +18,8 @@ public interface IQSFClient {
 
     Response createQuestion(String surveyId, SimpleQuestionPayload questionPayload, String blockId);
 
+    Response getQuestions(String surveyId);
+
     Response copySurvey(CopySurveyPayload payload, String surveyId, String userId);
 
     Response getSurveyOptions(String surveyId);

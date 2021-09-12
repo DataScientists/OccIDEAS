@@ -15,6 +15,7 @@ public class QualtricsConfig {
     private boolean includeTranslations;
     private boolean expandModules;
     private String translationsPath;
+    private String redirectUrl;
     private NodeSurveyConfig node;
 
     public String getUrl() {
@@ -79,5 +80,13 @@ public class QualtricsConfig {
 
     public void setNode(NodeSurveyConfig node) {
         this.node = node;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 }

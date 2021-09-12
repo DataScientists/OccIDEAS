@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.BaseQSF;
 import org.occideas.qsf.serializer.AvailableLanguageSerializer;
 
-import java.util.List;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SurveyOptionPayload extends BaseQSF implements Payload{
 
@@ -28,6 +26,8 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     private String surveyExpiration;
     @JsonProperty(value = "SurveyTermination")
     private String surveyTermination;
+    @JsonProperty(value = "EOSRedirectURL")
+    private String eosRedirectURL;
     @JsonProperty(value = "SurveyTitle")
     private String surveyTitle;
     @JsonProperty(value = "Header")
@@ -248,5 +248,13 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
 
     public void setAvailableLanguages(AvailableLanguage availableLanguages) {
         this.availableLanguages = availableLanguages;
+    }
+
+    public String getEosRedirectURL() {
+        return eosRedirectURL;
+    }
+
+    public void setEosRedirectURL(String eosRedirectURL) {
+        this.eosRedirectURL = eosRedirectURL;
     }
 }

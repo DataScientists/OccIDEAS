@@ -14,72 +14,71 @@ import java.util.List;
 @DynamicInsert(value = true)
 @SelectBeforeUpdate(value = true)
 public class Participant implements Serializable {
-  /**
-   *
-   */
-  private static final long serialVersionUID = 1L;
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private long idParticipant;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long idParticipant;
 
-  @OneToMany(mappedBy = "participant", fetch = FetchType.EAGER)
-  @Where(clause = "parentId = 0")
-  @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.PERSIST})
-  private List<Interview> interviews;
-  private int status;
-  private String reference;
+    @OneToMany(mappedBy = "participant", fetch = FetchType.EAGER)
+    @Where(clause = "parentId = 0")
+    @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.PERSIST})
+    private List<Interview> interviews;
+    private int status;
+    private String reference;
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date lastUpdated;
-  private Integer deleted;
-    private String responseId;
+    private Integer deleted;
 
-  public Participant() {
+    public Participant() {
 
-  }
-
-  public Date getLastUpdated() {
-    return lastUpdated;
-  }
-
-  public void setLastUpdated(Date lastUpdated) {
-    this.lastUpdated = lastUpdated;
-  }
-
-  public Integer getDeleted() {
-    if (deleted == null) {
-      deleted = 0;
     }
-    return deleted;
-  }
 
-  public void setDeleted(Integer deleted) {
-    this.deleted = deleted;
-  }
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
 
-  public long getIdParticipant() {
-    return idParticipant;
-  }
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 
-  public void setIdParticipant(long idParticipant) {
-    this.idParticipant = idParticipant;
-  }
+    public Integer getDeleted() {
+        if (deleted == null) {
+            deleted = 0;
+        }
+        return deleted;
+    }
 
-  public List<Interview> getInterviews() {
-    return interviews;
-  }
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }
 
-  public void setInterviews(List<Interview> interviews) {
-    this.interviews = interviews;
-  }
+    public long getIdParticipant() {
+        return idParticipant;
+    }
 
-  public int getStatus() {
-    return status;
-  }
+    public void setIdParticipant(long idParticipant) {
+        this.idParticipant = idParticipant;
+    }
 
-  public void setStatus(int status) {
-    this.status = status;
-  }
+    public List<Interview> getInterviews() {
+        return interviews;
+    }
+
+    public void setInterviews(List<Interview> interviews) {
+        this.interviews = interviews;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public String getReference() {
         return reference;
@@ -87,13 +86,5 @@ public class Participant implements Serializable {
 
     public void setReference(String reference) {
         this.reference = reference;
-    }
-
-    public String getResponseId() {
-        return responseId;
-    }
-
-    public void setResponseId(String responseId) {
-        this.responseId = responseId;
     }
 }

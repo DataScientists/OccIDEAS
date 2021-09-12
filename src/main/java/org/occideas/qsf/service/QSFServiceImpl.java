@@ -7,23 +7,26 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.entity.Constant;
-import org.occideas.entity.NodeQSF;
-import org.occideas.entity.QualtricsSurvey;
-import org.occideas.entity.SystemProperty;
+import org.occideas.agent.dao.AgentDao;
+import org.occideas.entity.*;
 import org.occideas.exceptions.GenericException;
 import org.occideas.exceptions.NodeNotFoundException;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
 import org.occideas.fragment.service.FragmentService;
+import org.occideas.interview.service.AutoAssessmentService;
 import org.occideas.interview.service.InterviewService;
+import org.occideas.interview.service.result.assessor.NoiseAssessmentService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
+import org.occideas.mapper.RuleMapperImpl;
 import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.QSFNodeTypeMapper;
 import org.occideas.qsf.dao.INodeQSFDao;
+import org.occideas.qsf.dao.QSFQuestionMapperDao;
+import org.occideas.qsf.dao.QualtricsSurveyResponseDao;
 import org.occideas.qsf.payload.CopySurveyPayload;
 import org.occideas.qsf.request.SurveyExportRequest;
 import org.occideas.qsf.response.*;
@@ -44,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -89,6 +93,18 @@ public class QSFServiceImpl implements IQSFService {
     private StudyAgentUtil studyAgentUtil;
     @Autowired
     private QualtricsSurveyService qualtricsSurveyService;
+    @Autowired
+    private QSFQuestionMapperDao qsfQuestionMapperDao;
+    @Autowired
+    private AutoAssessmentService autoAssessmentService;
+    @Autowired
+    private QualtricsSurveyResponseDao qualtricsSurveyResponseDao;
+    @Autowired
+    private AgentDao agentDao;
+    @Autowired
+    private NoiseAssessmentService noiseAssessmentService;
+    @Autowired
+    private RuleMapperImpl ruleMapper;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -262,15 +278,125 @@ public class QSFServiceImpl implements IQSFService {
     public void processResponse(String surveyId, Response response) {
         javax.ws.rs.core.Response responseSurveyMetadata = iqsfClient.getSurveyMetadata(surveyId);
         SurveyMetadata surveyMetadata = (SurveyMetadata) responseSurveyMetadata.getEntity();
+
         String moduleName = surveyMetadata.getMetadata().getSurveyName();
+        validateModuleExist(moduleName);
+
         String responseId = response.getResponseId();
+
+        Map<String, QSFQuestionMapper> questionBySurveyId = qsfQuestionMapperDao.getQuestionBySurveyId(surveyId);
         log.info("started processing response for survey {} , response id {}, module {}", surveyId, responseId, moduleName);
-        ModuleVO module = moduleService.getModuleByName(moduleName);
-        String referenceNumber = module.getName().substring(0, 4) + "_" + module.getIdNode();
-        ParticipantVO participantVO = createParticipant(referenceNumber, responseId);
-//        InterviewVO newInterview = createNewInterview(referenceNumber, participantVO);
-//        createIntroQuestion(newInterview, module);
-//        processResponseAnswers(response, referenceNumber, newInterview, module);
+
+        Map<String, Object> values = response.getValues();
+        LinkedList<QuestionAnswerResponse> queue = getQSFQuestionAnswerResponses(questionBySurveyId, values);
+
+        List<Long> listAgentIds = agentDao.getStudyAgentIds();
+        Map<String, Object> labels = response.getLabels();
+        Map<String, ResponseSummary> summary = createResponseSummary(responseId, questionBySurveyId, queue, listAgentIds, labels);
+
+        saveAssessmentResults(surveyId, responseId, values, listAgentIds, summary);
+    }
+
+    private void saveAssessmentResults(String surveyId, String responseId, Map<String, Object> values, List<Long> listAgentIds, Map<String, ResponseSummary> summary) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        byte[] questionAnswers = new byte[0];
+        byte[] results = new byte[0];
+        try {
+            questionAnswers = objectMapper.writeValueAsString(summary).getBytes(StandardCharsets.UTF_8);
+            results = objectMapper.writeValueAsString(noiseAssessmentService.getResults(listAgentIds, summary)).getBytes(StandardCharsets.UTF_8);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+        }
+        QualtricsSurveyResponse responderDetails = new QualtricsSurveyResponse(
+                surveyId,
+                responseId,
+                values.get("ipAddress").toString(),
+                values.get("progress").toString(),
+                values.get("duration").toString(),
+                values.get("finished").toString(),
+                values.get("recordedDate").toString(),
+                values.get("locationLatitude").toString(),
+                values.get("locationLongitude").toString(),
+                questionAnswers,
+                results
+        );
+        qualtricsSurveyResponseDao.save(responderDetails);
+    }
+
+    private Map<String, ResponseSummary> createResponseSummary(String responseId, Map<String, QSFQuestionMapper> questionBySurveyId, LinkedList<QuestionAnswerResponse> queue, List<Long> listAgentIds, Map<String, Object> labels) {
+        Map<String, ResponseSummary> summary = new LinkedHashMap<>();
+        while (Objects.nonNull(queue.peek())) {
+            QuestionAnswerResponse questionAnswerResponse = queue.poll();
+            log.info("processing question {} and answer {} for response {}", questionAnswerResponse.getQsfQuestionId(),
+                    questionAnswerResponse.getOccideasAnswerIdNode(),
+                    responseId);
+            QSFQuestionMapper qsfQuestionMapper = questionBySurveyId.get(questionAnswerResponse.getQsfQuestionId());
+            ResponseSummary responseSummary = new ResponseSummary();
+            responseSummary.setQuestion(qsfQuestionMapper.getQuestionText());
+            responseSummary.setQuestionIdNode(String.valueOf(qsfQuestionMapper.getIdNode()));
+            responseSummary.setQuestionType(qsfQuestionMapper.getType());
+            responseSummary.setAnswerIdNode(questionAnswerResponse.getOccideasAnswerIdNode());
+            Object answer = labels.get(questionAnswerResponse.getQsfQuestionId());
+            if (Objects.nonNull(answer)) {
+                responseSummary.setAnswer(answer.toString());
+            } else {
+                responseSummary.setAnswer(questionAnswerResponse.getFreeTextAnswer());
+            }
+            List<Rule> listOfFiredRules = autoAssessmentService.deriveFiredRulesByAnswerProvided(Long.valueOf(questionAnswerResponse.getOccideasAnswerIdNode()));
+            List<Rule> autoAssessedRules = new ArrayList<>();
+            autoAssessedRules.addAll(autoAssessmentService.getRuleLevelNoExposure(
+                    listAgentIds
+                    , listOfFiredRules));
+            responseSummary.setFiredRules(ruleMapper.convertToRuleVOList(listOfFiredRules));
+            responseSummary.setAutoAssessedRules(ruleMapper.convertToRuleVOList(autoAssessedRules));
+
+            summary.put(questionAnswerResponse.getQsfQuestionId(), responseSummary);
+        }
+        return summary;
+    }
+
+    private LinkedList<QuestionAnswerResponse> getQSFQuestionAnswerResponses(Map<String, QSFQuestionMapper> questionBySurveyId, Map<String, Object> values) {
+        LinkedList<QuestionAnswerResponse> queue = new LinkedList<>();
+        values.entrySet().forEach(entry -> {
+            if (isNormalQuestion(entry)) {
+                queue.add(new QuestionAnswerResponse(entry.getKey(), entry.getValue().toString()));
+            } else if (isFrequencyQuestion(entry)) {
+                String[] key = entry.getKey().split("_");
+                QSFQuestionMapper qsfQuestionMapper = questionBySurveyId.get(key[0]);
+                String frequency = deriveFrequencyVFormValue(values, entry);
+                Long frequencyIdNode = qsfQuestionMapper.getFrequencyIdNode();
+                if (Objects.nonNull(frequencyIdNode)) {
+                    queue.add(new QuestionAnswerResponse(key[0], String.valueOf(frequencyIdNode), frequency));
+                }
+            }
+        });
+        return queue;
+    }
+
+    private String deriveFrequencyVFormValue(Map<String, Object> values, Map.Entry<String, Object> entry) {
+        String frequency = entry.getValue().toString();
+        String[] splittedQID = entry.getKey().split("_");
+        String qid2 = splittedQID[0] + "_2";
+        if (values.containsKey(qid2)) {
+            frequency = frequency + "." + values.get(qid2).toString();
+        }
+        return frequency;
+    }
+
+    private boolean isFrequencyQuestion(Map.Entry<String, Object> entry) {
+        return entry.getKey().contains("QID") && entry.getKey().contains("_") && entry.getKey().contains("_1") && !entry.getKey().contains("_DO");
+    }
+
+    private boolean isNormalQuestion(Map.Entry<String, Object> entry) {
+        return entry.getKey().contains("QID") && !entry.getKey().contains("_DO") & !entry.getKey().contains("_");
+    }
+
+    private void validateModuleExist(String moduleName) {
+        ModuleVO moduleByName = moduleService.getModuleByName(moduleName);
+        if (Objects.isNull(moduleByName)) {
+            log.error("Module name does not exist in occideas - " + moduleName);
+            throw new GenericException("Module name does not exist in occideas - " + moduleName);
+        }
     }
 
     @Override
@@ -508,14 +634,6 @@ public class QSFServiceImpl implements IQSFService {
         ParticipantVO partVO = new ParticipantVO();
         partVO.setReference(referenceNumber);
         partVO.setStatus(2);
-        return participantService.create(partVO);
-    }
-
-    public ParticipantVO createParticipant(String referenceNumber, String responseId) {
-        ParticipantVO partVO = new ParticipantVO();
-        partVO.setReference(referenceNumber);
-        partVO.setStatus(2);
-        partVO.setResponseId(responseId);
         return participantService.create(partVO);
     }
 
