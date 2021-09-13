@@ -4,27 +4,45 @@
     <meta charset="UTF-8"/>
     <title>Survey-Results</title>
     <link rel="shortcut icon" href="#"/>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-
-    <link href="styles/style.css" rel="stylesheet"/>
-    <link href="styles/bootstrap-theme.css" rel="stylesheet"/>
-    <link href="styles/bootstrap.css" rel="stylesheet"/>
-    <link href="styles/angular-material.css" rel="stylesheet"/>
-    <link href="styles/loading-bar.css" rel="stylesheet"/>
-    <link href="styles/ngToast.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/>
 
+    <style>
+        .container {
+            height: 500px;
+            position: relative;
+            border: 3px solid black;
+        }
+
+        .vertical-center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+    </style>
 </head>
-<body ng-app="surveyResultsApp" ng-controller="resultCtrl">
-<div class="container">
-    <div>
-        {{results}}
+<body ng-app="surveyResultsApp">
+<div ng-controller="resultCtrl" class="container" ng-cloak>
+    <div class="vertical-center">
+        <md-content layout-padding>
+
+            <md-progress-circular md-diameter="100%"
+                                  ng-if="progress"
+                                  md-mode="indeterminate"></md-progress-circular>
+        </md-content>
+        <div ng-if="!progress">{{results}}</div>
     </div>
 </div>
 

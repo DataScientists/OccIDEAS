@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -29,6 +30,10 @@ public class QualtricsSurveyResponseDao extends GenericBaseDao<QualtricsSurveyRe
                 builder.equal(root.get(QualtricsSurveyResponse_.SURVEY_ID), surveyId),
                 builder.equal(root.get(QualtricsSurveyResponse_.RESPONSE_ID), responseId)
         ));
-        return sessionFactory.getCurrentSession().createQuery(criteria).getSingleResult();
+        List<QualtricsSurveyResponse> resultList = sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
+        if (resultList.isEmpty()) {
+            return null;
+        }
+        return resultList.get(0);
     }
 }
