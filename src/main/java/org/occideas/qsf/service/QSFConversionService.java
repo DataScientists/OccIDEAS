@@ -67,6 +67,7 @@ public class QSFConversionService {
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton("true");
+        options.getResult().setAdvanced("true");
         options.getResult().setEosRedirectURL(qualtricsConfig.getRedirectUrl());
         options.getResult().setSurveyTermination("EOSRedirectURL");
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());

@@ -6,12 +6,14 @@ import org.occideas.entity.QualtricsSurveyResponse;
 import org.occideas.qsf.dao.QualtricsSurveyResponseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
 
 @RestController
+@RequestMapping("/view-results")
 public class QSFResultsController {
 
     private final Logger log = LogManager.getLogger(this.getClass());
@@ -19,13 +21,11 @@ public class QSFResultsController {
     @Autowired
     private QualtricsSurveyResponseDao qualtricsSurveyResponseDao;
 
-    @GetMapping("/results")
-    public String get(@RequestParam("SID") String surveyId, @RequestParam("RID") String responseId) {
+    @GetMapping
+    public String getResults(@RequestParam("SID") String surveyId, @RequestParam("RID") String responseId) {
         log.info("survey id {} , responseId {}", surveyId, responseId);
         QualtricsSurveyResponse bySurveyAndResponseId = qualtricsSurveyResponseDao.findBySurveyAndResponseId(surveyId, responseId);
-        String s = new String(bySurveyAndResponseId.getQuestionAnswers(), StandardCharsets.UTF_8);
-
-        return s;
+        String response = new String(bySurveyAndResponseId.getQuestionAnswers(), StandardCharsets.UTF_8);
+        return response;
     }
-
 }

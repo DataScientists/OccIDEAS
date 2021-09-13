@@ -52,6 +52,8 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     private String skin;
     @JsonProperty(value = "NewScoring")
     private int newScoring;
+    @JsonProperty(value = "Advanced")
+    private String advanced;
     @JsonProperty(value = "AvailableLanguages")
     @JsonSerialize(using = AvailableLanguageSerializer.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -256,5 +258,13 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
 
     public void setEosRedirectURL(String eosRedirectURL) {
         this.eosRedirectURL = eosRedirectURL;
+    }
+
+    public String getAdvanced() {
+        return advanced;
+    }
+
+    public void setAdvanced(String advanced) {
+        this.advanced = advanced;
     }
 }
