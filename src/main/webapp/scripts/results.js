@@ -15,6 +15,8 @@
             url: "/view-results",
             method: "GET",
             params: {SID: sid, RID: rid}
-        }).then(response => $scope.results = JSON.parse(response.data));
+        }).then(response => {
+            $scope.results = response.data
+        });
     });
 })();
