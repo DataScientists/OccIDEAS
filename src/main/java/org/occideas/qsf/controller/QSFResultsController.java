@@ -25,7 +25,7 @@ public class QSFResultsController {
     public String getResults(@RequestParam("SID") String surveyId, @RequestParam("RID") String responseId) {
         log.info("survey id {} , responseId {}", surveyId, responseId);
         QualtricsSurveyResponse bySurveyAndResponseId = qualtricsSurveyResponseDao.findBySurveyAndResponseId(surveyId, responseId);
-        String response = new String(bySurveyAndResponseId.getQuestionAnswers(), StandardCharsets.UTF_8);
+        String response = new String(bySurveyAndResponseId.getResults(), StandardCharsets.UTF_8);
         return response;
     }
 }
