@@ -3,17 +3,22 @@ package org.occideas.interview.service.result;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.config.AgentConfig;
+import org.occideas.entity.Rule;
 import org.occideas.exceptions.GenericException;
+import org.occideas.interview.dao.InterviewDao;
 import org.occideas.vo.AssessmentResult;
-import org.occideas.vo.ResponseSummary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-public abstract class AssessmentResultsService {
+@Service
+@Transactional
+public abstract class AssessmentResultsService<T> {
 
+    public static final String N_A = "N/A";
     protected final Logger log = LogManager.getLogger(this.getClass());
 
     protected enum AgentTypes {
@@ -22,17 +27,18 @@ public abstract class AssessmentResultsService {
 
     @Autowired
     protected AgentConfig agentConfig;
+    @Autowired
+    protected InterviewDao interviewDao;
 
-    protected abstract AssessmentResult deriveResult(List<Long> agentIds, Map<String, ResponseSummary> responseSummary);
+    protected abstract AssessmentResult<T> deriveResult(long interviewId, List<Long> agentIds, List<Rule> firedRules, String workshift);
 
-    public AssessmentResult getResults(List<Long> agentIds, Map<String, ResponseSummary> responseSummary) {
+    public AssessmentResult<T> getResults(long interviewId, List<Long> agentIds, List<Rule> firedRules, String workshift) {
         validateAgentConfigExist();
-
-        return deriveResult(agentIds, responseSummary);
+        return deriveResult(interviewId, agentIds, firedRules, workshift);
     }
 
-    protected AssessmentResult emptyResults() {
-        return new AssessmentResult("This feature is under development.");
+    protected AssessmentResult<T> emptyResults() {
+        return new AssessmentResult<T>(N_A, N_A, N_A, N_A, N_A);
     }
 
 

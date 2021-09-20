@@ -21,13 +21,11 @@ public class QualtricsSurveyResponse implements Serializable {
     private String locationLongitude;
     @Lob
     private byte[] questionAnswers;
-    @Lob
-    private byte[] results;
 
     public QualtricsSurveyResponse() {
     }
 
-    public QualtricsSurveyResponse(String surveyId, String responseId, String ipAddress, String progress, String duration, String finished, String recordedDate, String locationLatitude, String locationLongitude, byte[] questionAnswers, byte[] results) {
+    public QualtricsSurveyResponse(String surveyId, String responseId, String ipAddress, String progress, String duration, String finished, String recordedDate, String locationLatitude, String locationLongitude, byte[] questionAnswers) {
         this.surveyId = surveyId;
         this.responseId = responseId;
         this.ipAddress = ipAddress;
@@ -38,7 +36,6 @@ public class QualtricsSurveyResponse implements Serializable {
         this.locationLatitude = locationLatitude;
         this.locationLongitude = locationLongitude;
         this.questionAnswers = questionAnswers;
-        this.results = results;
     }
 
     public long getId() {
@@ -129,11 +126,4 @@ public class QualtricsSurveyResponse implements Serializable {
         this.questionAnswers = questionAnswers;
     }
 
-    public byte[] getResults() {
-        return results;
-    }
-
-    public void setResults(byte[] results) {
-        this.results = results;
-    }
 }

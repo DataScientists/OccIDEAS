@@ -69,7 +69,7 @@ public class QSFConversionService {
         options.getResult().setBackButton("true");
         options.getResult().setAdvanced("true");
         options.getResult().setEosRedirectURL(qualtricsConfig.getRedirectUrl());
-        options.getResult().setSurveyTermination("EOSRedirectURL");
+        options.getResult().setSurveyTermination("Redirect");
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);

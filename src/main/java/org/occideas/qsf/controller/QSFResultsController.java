@@ -2,9 +2,8 @@ package org.occideas.qsf.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.entity.QualtricsSurveyResponse;
-import org.occideas.qsf.dao.QualtricsSurveyResponseDao;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.occideas.entity.InterviewResults;
+import org.occideas.interview.dao.InterviewResultDao;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,18 +18,20 @@ public class QSFResultsController {
 
     private final Logger log = LogManager.getLogger(this.getClass());
 
-    @Autowired
-    private QualtricsSurveyResponseDao qualtricsSurveyResponseDao;
+    private final InterviewResultDao interviewResultDao;
+
+    public QSFResultsController(InterviewResultDao interviewResultDao) {
+        this.interviewResultDao = interviewResultDao;
+    }
 
     @GetMapping
-    public String getResults(@RequestParam("SID") String surveyId, @RequestParam("RID") String responseId) {
-        log.info("survey id {} , responseId {}", surveyId, responseId);
-        QualtricsSurveyResponse bySurveyAndResponseId = qualtricsSurveyResponseDao.findBySurveyAndResponseId(surveyId, responseId);
-        if (Objects.isNull(bySurveyAndResponseId)) {
+    public String getResults(@RequestParam("RID") String responseId) {
+        log.info("getResults responseId {}", responseId);
+        InterviewResults interviewResults = interviewResultDao.findByReferenceNumber(responseId);
+        if (Objects.isNull(interviewResults)) {
             return null;
         }
 
-        String response = new String(bySurveyAndResponseId.getQuestionAnswers(), StandardCharsets.UTF_8);
-        return response;
+        return new String(interviewResults.getResults(), StandardCharsets.UTF_8);
     }
 }

@@ -8,11 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.AgentDao;
+import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.*;
 import org.occideas.exceptions.GenericException;
 import org.occideas.exceptions.NodeNotFoundException;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
 import org.occideas.fragment.service.FragmentService;
+import org.occideas.interview.dao.InterviewDao;
+import org.occideas.interview.dao.InterviewResultDao;
 import org.occideas.interview.service.AutoAssessmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interview.service.result.assessor.NoiseAssessmentService;
@@ -105,6 +108,14 @@ public class QSFServiceImpl implements IQSFService {
     private NoiseAssessmentService noiseAssessmentService;
     @Autowired
     private RuleMapperImpl ruleMapper;
+    @Autowired
+    private QSFInterviewReplicationService qsfInterviewReplicationService;
+    @Autowired
+    private InterviewDao interviewDao;
+    @Autowired
+    private QualtricsConfig qualtricsConfig;
+    @Autowired
+    private InterviewResultDao interviewResultDao;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -285,25 +296,85 @@ public class QSFServiceImpl implements IQSFService {
         String responseId = response.getResponseId();
 
         Map<String, QSFQuestionMapper> questionBySurveyId = qsfQuestionMapperDao.getQuestionBySurveyId(surveyId);
+        if (questionBySurveyId.isEmpty()) {
+            String message = "Occideas question mapper with qualtrics is empty.";
+            log.error(message);
+            throw new GenericException(message);
+        }
+
         log.info("started processing response for survey {} , response id {}, module {}", surveyId, responseId, moduleName);
 
         Map<String, Object> values = response.getValues();
         LinkedList<QuestionAnswerResponse> queue = getQSFQuestionAnswerResponses(questionBySurveyId, values);
 
+        if (queue.isEmpty()) {
+            String message = "Occideas question answer response with qualtrics is empty.";
+            log.error(message);
+            throw new GenericException(message);
+        }
+
         List<Long> listAgentIds = agentDao.getStudyAgentIds();
         Map<String, Object> labels = response.getLabels();
         Map<String, ResponseSummary> summary = createResponseSummary(responseId, questionBySurveyId, queue, listAgentIds, labels);
 
-        saveAssessmentResults(surveyId, responseId, values, listAgentIds, summary);
+        long interviewId = qsfInterviewReplicationService.replicateQualtricsInterviewIntoOccideas(responseId, moduleName, summary);
+        Interview interview = interviewDao.get(interviewId);
+        autoAssessmentService.syncAutoAssessedRule(listAgentIds, interview);
+        saveQualtricsResponse(surveyId, responseId, values, summary);
+        String workshift = getWorkshift(interview);
+        saveAssessmentResults(responseId, listAgentIds, interview, workshift);
+        interviewDao.saveNewTransaction(interview);
     }
 
-    private void saveAssessmentResults(String surveyId, String responseId, Map<String, Object> values, List<Long> listAgentIds, Map<String, ResponseSummary> summary) {
+    @Override
+    public String getWorkshift(Interview interview) {
+        if (StringUtils.isEmpty(qualtricsConfig.getNode().getLastShiftHours())) {
+            return "N/A";
+        }
+
+        Optional<InterviewAnswer> answer = interview.getAnswerHistory().stream()
+                .filter(interviewAnswer -> qualtricsConfig.getNode().getLastShiftHours().equalsIgnoreCase(String.valueOf(interviewAnswer.getAnswerId())))
+                .findFirst();
+
+        if (answer.isEmpty()) {
+            return "N/A";
+        }
+
+        return answer.get().getAnswerFreetext();
+    }
+
+    @Override
+    public void saveAssessmentResults(String referenceNumber,
+                                      List<Long> listAgentIds,
+                                      Interview interview,
+                                      String workshift) {
+        log.info("started updating assessment results for {} and interview id {}", referenceNumber, interview.getIdinterview());
         ObjectMapper objectMapper = new ObjectMapper();
-        byte[] questionAnswers = new byte[0];
         byte[] results = new byte[0];
         try {
+            results = objectMapper.writeValueAsString(noiseAssessmentService.getResults(interview.getIdinterview(), listAgentIds, interview.getFiredRules(), workshift)).getBytes(StandardCharsets.UTF_8);
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage(), e);
+        }
+        interviewResultDao.deleteByReferenceNumber(referenceNumber);
+        InterviewResults interviewResults = new InterviewResults();
+        interviewResults.setInterviewId(interview.getIdinterview());
+        interviewResults.setReferenceNumber(referenceNumber);
+        interviewResults.setResults(results);
+        interviewResultDao.save(interviewResults);
+        log.info("completed updating assessment results for {} ", referenceNumber);
+
+    }
+
+    @Override
+    public void saveQualtricsResponse(String surveyId,
+                                      String responseId,
+                                      Map<String, Object> values,
+                                      Map<String, ResponseSummary> summary) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        byte[] questionAnswers = new byte[0];
+        try {
             questionAnswers = objectMapper.writeValueAsString(summary).getBytes(StandardCharsets.UTF_8);
-            results = objectMapper.writeValueAsString(noiseAssessmentService.getResults(listAgentIds, summary)).getBytes(StandardCharsets.UTF_8);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
         }
@@ -317,9 +388,9 @@ public class QSFServiceImpl implements IQSFService {
                 values.get("recordedDate").toString(),
                 values.get("locationLatitude").toString(),
                 values.get("locationLongitude").toString(),
-                questionAnswers,
-                results
+                questionAnswers
         );
+        qualtricsSurveyResponseDao.deleteByResponseId(responseId);
         qualtricsSurveyResponseDao.save(responderDetails);
     }
 
@@ -414,7 +485,8 @@ public class QSFServiceImpl implements IQSFService {
         return value == null ? null : (String) value;
     }
 
-    private void processResponseAnswers(Response response, String referenceNumber, InterviewVO newInterview, NodeVO nodeVO) {
+    @Override
+    public void processResponseAnswers(Response response, String referenceNumber, InterviewVO newInterview, NodeVO nodeVO) {
 
         PriorityQueue<String> answersQueue = new PriorityQueue<>();
         response.getLabels().entrySet().stream()

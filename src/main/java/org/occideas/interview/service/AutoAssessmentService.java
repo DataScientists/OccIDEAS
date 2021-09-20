@@ -56,6 +56,25 @@ public class AutoAssessmentService {
         return CompletableFuture.completedFuture(interview);
     }
 
+    public Interview syncAutoAssessedRule(List<Long> listAgentIds, Interview interview) {
+        log.info("sync processing interview {}", interview.getIdinterview());
+        updateNotes(interview);
+        List<Rule> listOfFiredRules = determineFiredRules(interview);
+        List<Rule> autoAssessedRules = new ArrayList<>();
+        autoAssessedRules.addAll(getRuleLevelNoExposure(
+                listAgentIds
+                , listOfFiredRules));
+        evaluateAssessmentStatus(interview);
+        interview.setFiredRules(listOfFiredRules);
+        if (!autoAssessedRules.isEmpty()) {
+            interview.setAutoAssessedRules(autoAssessedRules);
+        }
+        if (StringUtils.isEmpty(interview.getAssessedStatus())) {
+            interview.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
+        }
+        return interview;
+    }
+
     public void updateNotes(Interview interview) {
         if (Objects.isNull(interview.getNotes())) {
             interview.setNotes(new ArrayList<>());

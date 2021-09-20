@@ -13,7 +13,16 @@
     <link rel="stylesheet"
           href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link crossorigin="anonymous" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" rel="stylesheet">
+    <link crossorigin="anonymous" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" rel="stylesheet">
     <link href='//fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <link href="styles/style.css" rel="stylesheet"/>
+    <link href="styles/bootstrap-theme.css" rel="stylesheet"/>
+    <link href="styles/bootstrap.css" rel="stylesheet"/>
+    <link href="styles/ng-table.css" rel="stylesheet"/>
+
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport"/>
 
     <style>
@@ -34,18 +43,56 @@
     </style>
 </head>
 <body ng-app="surveyResultsApp">
-<div ng-controller="resultCtrl" class="container" ng-cloak>
-    <div class="vertical-center">
-        <md-content layout-padding>
+<div ng-controller="resultCtrl">
+    <div ng-if="progress" class="container" ng-cloak>
+        <div class="vertical-center">
+            <md-content layout-padding>
 
-            <md-progress-circular md-diameter="100%"
-                                  ng-if="progress"
-                                  md-mode="indeterminate"></md-progress-circular>
-        </md-content>
-        <div ng-if="!progress">{{results}}</div>
+                <md-progress-circular md-diameter="100%"
+                                      md-mode="indeterminate"></md-progress-circular>
+            </md-content>
+
+        </div>
+    </div>
+    <div ng-if="!progress" class="container" ng-cloak>
+        <div>
+            Here are your results
+        </div>
+        <div>
+            Shift Hours: {{results.shiftHours}}
+        </div>
+        <div class="noiseAssessmentWrapper">
+            <table class="table table-bordered ">
+                <thead>
+                <tr>
+                    <td>Id Node</td>
+                    <td>Name</td>
+                    <td>Module Name</td>
+                    <td>Top Node Id</td>
+                    <td>Node Number</td>
+                    <td>dB</td>
+                    <td>Hours</td>
+                    <td>Partial Exposure</td>
+                </tr>
+                </thead>
+                <tr class={{noiseRow.type}} ng-repeat="noiseRow in results.results">
+                    <td>{{noiseRow.idNode}}</td>
+                    <td>{{noiseRow.nodeText}}</td>
+                    <td>{{noiseRow.moduleName}}</td>
+                    <td>{{noiseRow.topNodeId}}</td>
+                    <td>{{noiseRow.nodeNumber}}</td>
+                    <td>{{noiseRow.dB}}</td>
+                    <td>{{noiseRow.backgroundhours}}</td>
+                    <td>{{noiseRow.partialExposure}}</td>
+                </tr>
+            </table>
+            <div>Total Frequency: {{results.totalFrequency}}</div>
+            <div>Total Partial Exposure: {{results.totalPartialExposure}}</div>
+            <div>Auto Exposure Level: {{autoExposureLevel}}</div>
+            <div>Peak Noise: {{results.peak}}</div>
+        </div>
     </div>
 </div>
-
 </body>
 <script src="scripts/results.js"></script>
 </html>
