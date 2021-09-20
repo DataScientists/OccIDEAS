@@ -13,6 +13,7 @@ import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.node.dao.NodeDao;
 import org.occideas.qsf.*;
+import org.occideas.qsf.dao.QSFQuestionMapperDao;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.response.SurveyCreateResponse;
 import org.occideas.qsf.response.SurveyCreateResult;
@@ -35,6 +36,8 @@ class QSFConversionServiceTest {
     IQSFClient iqsfClient;
     @Mock
     QualtricsConfig qualtricsConfig;
+    @Mock
+    QSFQuestionMapperDao qsfQuestionMapperDao;
     @InjectMocks
     QSFConversionService qsfConversionService;
 
