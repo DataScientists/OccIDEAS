@@ -29,6 +29,7 @@ public class QSFResultsController {
         log.info("getResults responseId {}", responseId);
         InterviewResults interviewResults = interviewResultDao.findByReferenceNumber(responseId);
         if (Objects.isNull(interviewResults)) {
+        	log.info("No results");
             return null;
         }
 

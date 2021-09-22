@@ -21,6 +21,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Path("/admin")
@@ -83,9 +86,23 @@ public class AdminRestController {
                 int iSize = surveyListResponse.getResult().getElements().size();
                 for (Element element : surveyListResponse.getResult().getElements()) {
                 	System.out.println(i+ " of " + iSize);
-                    iqsfClient.deleteSurvey(element.getId());
+                	Calendar myCalendar = new GregorianCalendar(2021, 9, 11);
+                	Date myDate = myCalendar.getTime();
+                	Calendar mySurveyCalendar = new GregorianCalendar();
+                	mySurveyCalendar.setTime(element.getCreationDate());
+                	mySurveyCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                	mySurveyCalendar.set(Calendar.MINUTE, 0);
+                	mySurveyCalendar.set(Calendar.SECOND, 0);
+                	mySurveyCalendar.set(Calendar.MILLISECOND, 0);
+                	if(mySurveyCalendar.compareTo(myCalendar)==0) {
+                		System.out.println("Not deleting "+element.getName());
+                	}else {
+                		System.out.println("Will delete"+element.getName());
+                        iqsfClient.deleteSurvey(element.getId());
+                	}
                     i++;
                 }
+                
             }
         } catch (Throwable e) {
             e.printStackTrace();

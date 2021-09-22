@@ -436,15 +436,19 @@ public class InterviewQuestionDao implements IInterviewQuestionDao {
         return iqs;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    @SuppressWarnings("unchecked")
     public List<InterviewQuestion> findByInterviewId(Long interviewId) {
-        final Session session = sessionFactory.getCurrentSession();
-        final Criteria crit = session.createCriteria(InterviewQuestion.class);
-        if (interviewId != null) {
-            crit.add(Restrictions.eq("idInterview", interviewId));
+    	final Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<InterviewQuestion> criteria = builder.createQuery(InterviewQuestion.class);
+        Root<InterviewQuestion> root = criteria.from(InterviewQuestion.class);
+        criteria.select(root);
+        if (interviewId != null) {         
+          criteria.where(builder.and(builder.equal(root.get(InterviewQuestion_.ID_INTERVIEW), interviewId), builder.equal(root.get(InterviewQuestion_.DELETED), 0)));
+
         }
-        return crit.list();
+        return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
     }
 
     @Override
