@@ -20,14 +20,14 @@
             const params = $location.search();
             const rid = params.RID;
             $http({
-                url: "/view-results",
+                url: "./view-results",
                 method: "GET",
                 params: {RID: rid}
             }).then(response => {
                 $scope.results = response.data
                 if ($scope.results) {
                     let autoExposureLevel = 10 * (Math.log10($scope.results.totalPartialExposure / (3.2 * (Math.pow(10, -9)))));
-                    $scope.autoExposureLevel = autoExposureLevel.toFixed(2);
+                    $scope.autoExposureLevel = autoExposureLevel.toFixed(4);
                     $interval.cancel($scope.interval);
                     $scope.progress = false;
                 }
