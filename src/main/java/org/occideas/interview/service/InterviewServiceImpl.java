@@ -36,7 +36,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -712,6 +714,7 @@ public class InterviewServiceImpl implements InterviewService {
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
         bulkUpdate(interviewsToBeProcessed);
+        interviewsToBeProcessed.forEach(interview -> updateQualtricsResults(interview.getIdinterview()));
         log.info("Completed assessing the rules count {}.", interviews.size());
     }
 
@@ -734,7 +737,7 @@ public class InterviewServiceImpl implements InterviewService {
     public void updateQualtricsResults(long interviewId) {
         Interview interview = interviewDao.get(interviewId);
         List<Long> listAgentIds = agentDao.getStudyAgentIds();
-        String workshift = iqsfService.getWorkshift(interview);
+        BigDecimal workshift = new BigDecimal(iqsfService.getWorkshift(interview)).setScale(4, RoundingMode.HALF_UP);
         iqsfService.saveAssessmentResults(interview.getReferenceNumber(), listAgentIds, interview, workshift);
     }
 

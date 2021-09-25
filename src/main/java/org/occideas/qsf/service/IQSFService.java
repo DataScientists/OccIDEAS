@@ -10,6 +10,7 @@ import org.occideas.vo.ResponseSummary;
 import org.springframework.scheduling.annotation.Async;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -45,15 +46,16 @@ public interface IQSFService {
 
     void processResponse(NodeVO nodeVO, Response response);
 
-    void processResponse(String surveyId, Response response);
+    long processResponse(String surveyId, Response response);
 
     String getWorkshift(Interview interview);
+
+    Long getWorkshiftIdNode(Interview interview);
 
     void saveAssessmentResults(String referenceNumber,
                                List<Long> listAgentIds,
                                Interview interview,
-                               String workshift);
-
+                               BigDecimal workshift);
 
     void saveQualtricsResponse(String surveyId,
                                String responseId,

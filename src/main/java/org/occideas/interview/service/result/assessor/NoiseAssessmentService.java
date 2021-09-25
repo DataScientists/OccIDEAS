@@ -1,6 +1,5 @@
 package org.occideas.interview.service.result.assessor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.occideas.entity.*;
 import org.occideas.interview.service.result.AssessmentResultsService;
@@ -30,7 +29,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
     private InterviewQuestionDao interviewQuestionDao;
 
     @Override
-    protected AssessmentResult<NoiseView> deriveResult(long interviewId, List<Long> agentIds, List<Rule> firedRules, String workShift) {
+    protected AssessmentResult<NoiseView> deriveResult(long interviewId, List<Long> agentIds, List<Rule> firedRules, BigDecimal shiftHours) {
 
         List<String> noiseAgents = agentConfig.getIds().get(AgentTypes.noise.name());
         if (Objects.isNull(noiseAgents) || noiseAgents.isEmpty() || Objects.isNull(firedRules) || firedRules.isEmpty()) {
@@ -41,14 +40,13 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                 .filter(rule -> noiseAgents.contains(String.valueOf(rule.getAgent().getIdAgent())))
                 .collect(Collectors.toList());
 
-        if (noiseRules.isEmpty() || StringUtils.isEmpty(workShift)) {
+        if (noiseRules.isEmpty()) {
             return emptyResults();
         }
 
         BigDecimal totalPartialExposure = BigDecimal.ZERO;
         BigDecimal maxBackgroundPartialExposure = BigDecimal.ZERO;
         BigDecimal maxBackgroundHours = BigDecimal.ZERO;
-        BigDecimal shiftHours = new BigDecimal(Double.valueOf(workShift)).setScale(2,RoundingMode.FLOOR);
 
         List<NoiseView> noiseRow = new ArrayList<>();
 
@@ -101,7 +99,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                             if (answerOption.isPresent() && NumberUtils.isNumber(answerOption.get().getAnswerFreetext())) {
                                 frequencyhours = frequencyhours.add(new BigDecimal(answerOption.get().getAnswerFreetext()));
                                 if ("P_frequencyseconds".equalsIgnoreCase(answerOption.get().getType())) {
-                                    frequencyhours = frequencyhours.divide(new BigDecimal(3600)); //convert seconds to hours
+                                    frequencyhours = frequencyhours.divide(new BigDecimal(3600), 4, RoundingMode.HALF_UP); //convert seconds to hours
                                 }
                             }
                         }
@@ -109,7 +107,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
 
                 }
                 if (useRatio) {
-                    hours = frequencyhours.divide(ratio,4,RoundingMode.HALF_UP).setScale(4, RoundingMode.FLOOR);
+                    hours = frequencyhours.divide(ratio, 4, RoundingMode.HALF_UP);
                 } else {
                     hours = frequencyhours.setScale(4, RoundingMode.FLOOR);
                 }
@@ -121,8 +119,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                 if (rule.getRuleAdditionalfields() != null && !rule.getRuleAdditionalfields().isEmpty()) {
                     level = new BigDecimal(Integer.valueOf(rule.getRuleAdditionalfields().get(0).getValue()));
                 }
-                BigDecimal partialExposure = derivePartialExposure(level, hours).setScale(4, RoundingMode.FLOOR);
-                ;
+                BigDecimal partialExposure = derivePartialExposure(level, hours).setScale(4, RoundingMode.HALF_UP);
 
                 String modHours;
                 if (useRatio) {
@@ -158,7 +155,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
 //        BigDecimal autoExposureLevel = deriveAutoExposure(totalPartialExposure);
 
         AssessmentResult<NoiseView> noiseViewAssessmentResult =
-                new AssessmentResult<>(workShift, totalPartialExposure.toPlainString(),
+                new AssessmentResult<>(shiftHours.toPlainString(), totalPartialExposure.toPlainString(),
                         null,
                         peakNoise.setScale(4, RoundingMode.FLOOR).toPlainString(),
                         totalFrequency.setScale(4, RoundingMode.FLOOR).toPlainString());
@@ -206,7 +203,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
     private BigDecimal getRatioValue(BigDecimal shiftHours, BigDecimal totalFrequency, boolean useRatio) {
         BigDecimal ratio = new BigDecimal(1.0).setScale(4, RoundingMode.CEILING);
         if (useRatio) {
-            ratio = totalFrequency.setScale(4,RoundingMode.FLOOR).divide(shiftHours,4,RoundingMode.HALF_UP);
+            ratio = totalFrequency.divide(shiftHours, 4, RoundingMode.CEILING);
         }
         return ratio;
     }
@@ -233,4 +230,6 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
         }
         return totalFrequency;
     }
+
+
 }

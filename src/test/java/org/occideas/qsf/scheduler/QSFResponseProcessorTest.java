@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.occideas.entity.QualtricsSurvey;
+import org.occideas.interview.service.InterviewService;
 import org.occideas.qsf.dao.QualtricsSurveyDao;
 import org.occideas.qsf.response.SurveyResponse;
 import org.occideas.qsf.service.IQSFService;
@@ -26,6 +27,8 @@ class QSFResponseProcessorTest {
 
     @Mock
     QualtricsSurveyDao qualtricsSurveyDao;
+    @Mock
+    InterviewService interviewService;
     @Mock
     IQSFService iqsfService;
 

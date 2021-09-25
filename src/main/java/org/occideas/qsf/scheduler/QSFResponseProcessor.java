@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.entity.QualtricsSurvey;
+import org.occideas.interview.service.InterviewService;
 import org.occideas.qsf.dao.QualtricsSurveyDao;
 import org.occideas.qsf.response.SurveyResponse;
 import org.occideas.qsf.service.IQSFService;
@@ -24,6 +25,8 @@ public class QSFResponseProcessor {
     private QualtricsSurveyDao qualtricsSurveyDao;
     @Autowired
     private IQSFService iqsfService;
+    @Autowired
+    private InterviewService interviewService;
 
     @Scheduled(fixedRate = 10000)
     public void processQSFResponse() {
@@ -37,7 +40,7 @@ public class QSFResponseProcessor {
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);
                 }
-                iqsfService.processResponse(unprocessedSurvey.getSurveyId(), surveyResponse.getResult());
+                interviewService.updateQualtricsResults(iqsfService.processResponse(unprocessedSurvey.getSurveyId(), surveyResponse.getResult()));
                 unprocessedSurvey.setProcessed(true);
                 qualtricsSurveyDao.save(unprocessedSurvey);
             });

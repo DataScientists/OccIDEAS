@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +22,7 @@ public abstract class AssessmentResultsService<T> {
     public static final String N_A = "N/A";
     protected final Logger log = LogManager.getLogger(this.getClass());
 
+
     protected enum AgentTypes {
         noise
     }
@@ -30,9 +32,13 @@ public abstract class AssessmentResultsService<T> {
     @Autowired
     protected InterviewDao interviewDao;
 
-    protected abstract AssessmentResult<T> deriveResult(long interviewId, List<Long> agentIds, List<Rule> firedRules, String workshift);
+    protected abstract AssessmentResult<T> deriveResult(long interviewId,
+                                                        List<Long> agentIds,
+                                                        List<Rule> firedRules,
+                                                        BigDecimal workshift);
 
-    public AssessmentResult<T> getResults(long interviewId, List<Long> agentIds, List<Rule> firedRules, String workshift) {
+    public AssessmentResult<T> getResults(long interviewId, List<Long> agentIds, List<Rule> firedRules, BigDecimal workshift) {
+        validateWorkshiftExist(workshift);
         validateAgentConfigExist();
         return deriveResult(interviewId, agentIds, firedRules, workshift);
     }
@@ -41,11 +47,19 @@ public abstract class AssessmentResultsService<T> {
         return new AssessmentResult<T>(N_A, N_A, N_A, N_A, N_A);
     }
 
+    private void validateWorkshiftExist(BigDecimal workshift) {
+        if (Objects.isNull(workshift)) {
+            String message = "application.properties qualtrics.node.lastShiftHours could be missing.";
+            log.error(message);
+            throw new GenericException(message);
+        }
+    }
 
     private void validateAgentConfigExist() {
         if (Objects.isNull(agentConfig.getIds()) || agentConfig.getIds().isEmpty()) {
-            log.error("application.properties is missing agents props.");
-            throw new GenericException("application.properties is missing agents props.");
+            String message = "application.properties is missing agents props.";
+            log.error(message);
+            throw new GenericException(message);
         }
     }
 

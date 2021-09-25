@@ -38,6 +38,7 @@ import org.occideas.qsf.subscriber.service.QualtricsSurveyService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
+import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.utilities.ZipUtil;
 import org.occideas.vo.*;
@@ -50,6 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -286,7 +288,7 @@ public class QSFServiceImpl implements IQSFService {
     }
 
     @Override
-    public void processResponse(String surveyId, Response response) {
+    public long processResponse(String surveyId, Response response) {
         javax.ws.rs.core.Response responseSurveyMetadata = iqsfClient.getSurveyMetadata(surveyId);
         SurveyMetadata surveyMetadata = (SurveyMetadata) responseSurveyMetadata.getEntity();
 
@@ -321,9 +323,8 @@ public class QSFServiceImpl implements IQSFService {
         Interview interview = interviewDao.get(interviewId);
         autoAssessmentService.syncAutoAssessedRule(listAgentIds, interview);
         saveQualtricsResponse(surveyId, responseId, values, summary);
-        String workshift = getWorkshift(interview);
-        saveAssessmentResults(responseId, listAgentIds, interview, workshift);
         interviewDao.saveNewTransaction(interview);
+        return interview.getIdinterview();
     }
 
     @Override
@@ -339,15 +340,32 @@ public class QSFServiceImpl implements IQSFService {
         if (answer.isEmpty()) {
             return "N/A";
         }
-
+        log.info("last shift hours is {}", answer.get().getAnswerFreetext());
         return answer.get().getAnswerFreetext();
+    }
+
+    @Override
+    public Long getWorkshiftIdNode(Interview interview) {
+        if (StringUtils.isEmpty(qualtricsConfig.getNode().getLastShiftHours())) {
+            return null;
+        }
+
+        Optional<InterviewAnswer> answer = interview.getAnswerHistory().stream()
+                .filter(interviewAnswer -> qualtricsConfig.getNode().getLastShiftHours().equalsIgnoreCase(String.valueOf(interviewAnswer.getAnswerId())))
+                .findFirst();
+
+        if (answer.isEmpty()) {
+            return null;
+        }
+
+        return answer.get().getAnswerId();
     }
 
     @Override
     public void saveAssessmentResults(String referenceNumber,
                                       List<Long> listAgentIds,
                                       Interview interview,
-                                      String workshift) {
+                                      BigDecimal workshift) {
         log.info("started updating assessment results for {} and interview id {}", referenceNumber, interview.getIdinterview());
         ObjectMapper objectMapper = new ObjectMapper();
         byte[] results = new byte[0];
@@ -411,7 +429,11 @@ public class QSFServiceImpl implements IQSFService {
             if (Objects.nonNull(answer)) {
                 responseSummary.setAnswer(answer.toString());
             } else {
-                responseSummary.setAnswer(questionAnswerResponse.getFreeTextAnswer());
+                if (qualtricsConfig.getNode().getLastShiftHours().equalsIgnoreCase(questionAnswerResponse.getOccideasAnswerIdNode())) {
+                    responseSummary.setAnswer(CommonUtil.deriveWorkshift(questionAnswerResponse.getFreeTextAnswer()).toPlainString());
+                } else {
+                    responseSummary.setAnswer(questionAnswerResponse.getFreeTextAnswer());
+                }
             }
             List<Rule> listOfFiredRules = autoAssessmentService.deriveFiredRulesByAnswerProvided(Long.valueOf(questionAnswerResponse.getOccideasAnswerIdNode()));
             List<Rule> autoAssessedRules = new ArrayList<>();

@@ -2,6 +2,8 @@ package org.occideas.utilities;
 
 import org.occideas.entity.Node;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -114,5 +116,17 @@ public class CommonUtil {
     return temp.toLowerCase().trim();
   }
 
+  public static BigDecimal deriveWorkshift(String workShift) {
+    if (workShift.contains(".")) {
+      String[] split = workShift.split("\\.");
+      String wholeNumber = split[0];
+      String decimal = split[1];
+      BigDecimal decimalValue = new BigDecimal(decimal).divide(new BigDecimal(60), 4, RoundingMode.HALF_UP);
+      BigDecimal wholeNumberValue = new BigDecimal(wholeNumber);
+      return wholeNumberValue.add(decimalValue).setScale(4, RoundingMode.HALF_UP);
+    }
 
+    return new BigDecimal(Integer.parseInt(workShift)).setScale(4, RoundingMode.HALF_UP);
+
+  }
 }
