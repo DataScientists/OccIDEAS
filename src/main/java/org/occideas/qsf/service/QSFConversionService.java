@@ -101,15 +101,16 @@ public class QSFConversionService {
                             if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
                                 freetextIdNode = question.getChildNodes().get(0).getIdNode();
                             }
-
-                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, questionPayload.getQuestionId()), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
+                            String qualtricsQID = surveyCreateResponse.getResult().getQuestionId();
+                            questionAnswerWrapper.setQualtricsQID(qualtricsQID);
+                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, qualtricsQID), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             question.getChildNodes()
                                     .stream()
                                     .filter(possibleAnswer -> possibleAnswer.getDeleted() == 0)
                                     .forEach(possibleAnswer -> {
                                         if (isChoicesRequired(possibleAnswer)) {
-                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + surveyCreateResponse.getResult().getQuestionId() + "/SelectableChoice/" + possibleAnswer.getIdNode());
+                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + qualtricsQID + "/SelectableChoice/" + possibleAnswer.getIdNode());
                                             if (Objects.nonNull(possibleAnswer.getChildNodes())) {
                                                 createQuestions(filterIds, possibleAnswer.getChildNodes(), surveyId, possibleAnswer, questionAnswerWrapper);
                                             }
@@ -140,18 +141,20 @@ public class QSFConversionService {
                         SimpleQuestionPayload questionPayload = buildQuestionPayload(questionAnswerWrapper);
                         Response responseQuestion = iqsfClient.createQuestion(surveyId, questionPayload, null);
                         SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
+                        String qualtricsQID = surveyCreateResponse.getResult().getQuestionId();
+                        questionAnswerWrapper.setQualtricsQID(qualtricsQID);
                         if (!question.getChildNodes().isEmpty()) {
                             Long freetextIdNode = null;
                             if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
                                 freetextIdNode = question.getChildNodes().get(0).getIdNode();
                             }
-                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, surveyCreateResponse.getResult().getQuestionId()), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
+                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, qualtricsQID), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             question.getChildNodes()
                                     .stream()
                                     .filter(possibleAnswer -> possibleAnswer.getDeleted() == 0)
                                     .forEach(possibleAnswer -> {
                                         if (isChoicesRequired(possibleAnswer)) {
-                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + surveyCreateResponse.getResult().getQuestionId() + "/SelectableChoice/" + possibleAnswer.getIdNode());
+                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + qualtricsQID + "/SelectableChoice/" + possibleAnswer.getIdNode());
                                             if (Objects.nonNull(possibleAnswer.getChildNodes())) {
                                                 createQuestions(possibleAnswer.getChildNodes(), surveyId, possibleAnswer, questionAnswerWrapper);
                                             }

@@ -81,7 +81,7 @@ public enum QSFNodeTypeMapper {
         return questionAnswerWrapper -> {
             List<Logic> logics = new ArrayList<>();
             String choiceLocator = questionAnswerWrapper.getParent().getChoiceSelectors().get(questionAnswerWrapper.getDependsOn());
-            String parentQuestions = String.valueOf(questionAnswerWrapper.getParent().getQuestion().getIdNode());
+            String parentQuestions = String.valueOf(questionAnswerWrapper.getParent().getQualtricsQID());
             logics.add(new Logic("Question",
                     parentQuestions,
                     "no",

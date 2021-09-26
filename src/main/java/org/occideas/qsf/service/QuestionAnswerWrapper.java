@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class QuestionAnswerWrapper {
 
+    private String qualtricsQID;
     private Question question;
     private PossibleAnswer dependsOn;
     private Map<PossibleAnswer, String> choiceSelectors = new HashMap<>();
@@ -48,5 +49,13 @@ public class QuestionAnswerWrapper {
 
     public void setParent(QuestionAnswerWrapper parent) {
         this.parent = parent;
+    }
+
+    public String getQualtricsQID() {
+        return qualtricsQID;
+    }
+
+    public void setQualtricsQID(String qualtricsQID) {
+        this.qualtricsQID = qualtricsQID;
     }
 }
