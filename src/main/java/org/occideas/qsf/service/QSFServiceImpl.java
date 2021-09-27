@@ -52,6 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -471,7 +472,9 @@ public class QSFServiceImpl implements IQSFService {
         String[] splittedQID = entry.getKey().split("_");
         String qid2 = splittedQID[0] + "_2";
         if (values.containsKey(qid2)) {
-            frequency = frequency + "." + values.get(qid2).toString();
+        	BigDecimal hours = new BigDecimal(frequency);
+        	BigDecimal minutes = new BigDecimal(values.get(qid2).toString()).divide(new BigDecimal(60), 15, RoundingMode.CEILING);
+            frequency = hours.add(minutes).toString();
         }
         return frequency;
     }

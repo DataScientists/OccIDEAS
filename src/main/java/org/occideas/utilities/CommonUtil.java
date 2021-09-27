@@ -117,7 +117,8 @@ public class CommonUtil {
   }
 
   public static BigDecimal deriveWorkshift(String workShift) {
-    if (workShift.contains(".")) {
+ /*
+	if (workShift.contains(".")) {
       String[] split = workShift.split("\\.");
       String wholeNumber = split[0];
       String decimal = split[1];
@@ -125,8 +126,8 @@ public class CommonUtil {
       BigDecimal wholeNumberValue = new BigDecimal(wholeNumber);
       return wholeNumberValue.add(decimalValue).setScale(4, RoundingMode.HALF_UP);
     }
-
-    return new BigDecimal(Integer.parseInt(workShift)).setScale(4, RoundingMode.HALF_UP);
+*/
+    return new BigDecimal(workShift).setScale(15);
 
   }
 }

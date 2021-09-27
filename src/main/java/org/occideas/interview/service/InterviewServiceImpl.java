@@ -737,8 +737,11 @@ public class InterviewServiceImpl implements InterviewService {
     public void updateQualtricsResults(long interviewId) {
         Interview interview = interviewDao.get(interviewId);
         List<Long> listAgentIds = agentDao.getStudyAgentIds();
-        BigDecimal workshift = new BigDecimal(iqsfService.getWorkshift(interview)).setScale(4, RoundingMode.HALF_UP);
-        iqsfService.saveAssessmentResults(interview.getReferenceNumber(), listAgentIds, interview, workshift);
+        String strWorkShiftHours = iqsfService.getWorkshift(interview);
+        if(!strWorkShiftHours.equalsIgnoreCase("N/A")) {
+        	BigDecimal workshift = new BigDecimal(strWorkShiftHours);
+            iqsfService.saveAssessmentResults(interview.getReferenceNumber(), listAgentIds, interview, workshift);
+        }      
     }
 
 

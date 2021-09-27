@@ -17,23 +17,23 @@ class NoiseAssessmentServiceTest {
     @Test
     void givenTotalFrequency_whenDeriveBackgroundHours_shouldReturnCorrectValue() {
         BigDecimal actual = noiseAssessmentService.deriveBackgroundHours(
-                new BigDecimal(10.5),
-                new BigDecimal(5.583333333333334));
+                new BigDecimal(8.083333333333334),
+                new BigDecimal(4.083333333333334));
 
-        assertEquals(new BigDecimal(4.9167).setScale(4, RoundingMode.UP), actual);
+        assertEquals(new BigDecimal(4.0000).setScale(4, RoundingMode.CEILING), actual.setScale(4, RoundingMode.CEILING));
     }
 
     @Test
     void givenLevelAndBackgroundHours_whenDerivePartialExposure_shouldReturnCorrectValue() {
         BigDecimal actual = noiseAssessmentService.derivePartialExposure(new BigDecimal(65),
-                new BigDecimal(4.9167).setScale(4, RoundingMode.UP));
+                new BigDecimal(4.0000).setScale(4, RoundingMode.CEILING));
 
-        assertEquals(new BigDecimal(0.0062191882286999483).setScale(19, RoundingMode.FLOOR), actual);
+        assertEquals(new BigDecimal(0.00509).setScale(4, RoundingMode.CEILING), actual.setScale(4, RoundingMode.CEILING));
     }
 
     void givenTotalPartialExposure_whenDeriveAutoExposure_shouldReturnCorrectValue() {
-        BigDecimal actual = noiseAssessmentService.deriveAutoExposure(new BigDecimal(3.3254).setScale(4, RoundingMode.FLOOR));
+        BigDecimal actual = noiseAssessmentService.deriveAutoExposure(new BigDecimal(3.2640).setScale(4, RoundingMode.CEILING));
 
-        assertEquals(new BigDecimal(90.1700).setScale(4, RoundingMode.FLOOR), actual);
+        assertEquals(new BigDecimal(90.0900).setScale(4, RoundingMode.CEILING), actual.setScale(4, RoundingMode.CEILING));
     }
 }

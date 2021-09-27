@@ -46,11 +46,10 @@ public class CommonUtilTest {
 		assertTrue("1ZA1".equals(CommonUtil.getNextQuestionByCurrentNumber("1ZA")));
 	}
 
-
-	@Test
 	void givenWorkShift_whenDeriveWorkShift_shouldReturnCorrectValue() {
 		assertEquals(new BigDecimal(8.0833).setScale(4, RoundingMode.HALF_UP), CommonUtil.deriveWorkshift("8.5"));
 		assertEquals(new BigDecimal(8.0000).setScale(4, RoundingMode.HALF_UP), CommonUtil.deriveWorkshift("8.0"));
 		assertEquals(new BigDecimal(8.0000).setScale(4, RoundingMode.HALF_UP), CommonUtil.deriveWorkshift("8"));
 	}
+	
 }
