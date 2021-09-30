@@ -15,6 +15,7 @@ public class QualtricsConfig {
     private boolean includeTranslations;
     private boolean expandModules;
     private String translationsPath;
+    private boolean ipsosEnableLabel;
     private NodeSurveyConfig node;
 
     public String getUrl() {
@@ -71,6 +72,14 @@ public class QualtricsConfig {
 
     public void setTranslationsPath(String translationsPath) {
         this.translationsPath = translationsPath;
+    }
+
+    public boolean isIpsosEnableLabel() {
+        return ipsosEnableLabel;
+    }
+
+    public void setIpsosEnableLabel(boolean ipsosEnableLabel) {
+        this.ipsosEnableLabel = ipsosEnableLabel;
     }
 
     public NodeSurveyConfig getNode() {
