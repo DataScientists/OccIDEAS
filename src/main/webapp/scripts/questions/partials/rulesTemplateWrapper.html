@@ -1,0 +1,11 @@
+<script id="rules-template-wrapper" type="text/x-custom-template">
+    <div ng-attr-id="{{ruleWrapper.idNode+'-'+ruleWrapper.idAgent}}" id="rulesTemplateWrapper"
+         class="noteWrapper {{activeRuleWrapperDialog === (ruleWrapper.idNode+'-'+ruleWrapper.idAgent)?'activeRuleWrapper':''}}"
+         prevent-right-click ng-click="setActiveRuleWrapper(ruleWrapper,this)">
+        <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleWrapperDialog(this,$event)"
+                aria-label="Left Align">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button>
+        <div class="wrapperTitle">{{ruleWrapper.moduleName}} - {{ruleWrapper.agentName}}</div>
+    </div>
+</script>

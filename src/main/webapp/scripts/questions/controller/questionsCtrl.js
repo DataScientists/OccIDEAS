@@ -11,7 +11,7 @@
     '$q', 'QuestionsService', 'ModulesService',
     '$anchorScroll', '$location', '$mdMedia', '$window', '$state',
     'AgentsService', 'RulesService', '$compile',
-    '$rootScope', 'ModuleRuleService', '$log', '$timeout',
+    '$rootScope', 'ModuleRuleService', '$log', '$timeout', '$filter',
     'AuthenticationService', '$document', 'InterviewsService',
     'SystemPropertyService', 'ngToast', '$translate',
     'NodeLanguageService', '$sessionStorage', 'lang', 'scrollTo', '$http', 'bsLoadingOverlayService'];
@@ -20,7 +20,7 @@
                          $q, QuestionsService, ModulesService,
                          $anchorScroll, $location, $mdMedia, $window, $state,
                          AgentsService, RulesService, $compile, $rootScope,
-                         ModuleRuleService, $log, $timeout, auth, $document, InterviewsService,
+                         ModuleRuleService, $log, $timeout, $filter, auth, $document, InterviewsService,
                          SystemPropertyService, ngToast, $translate,
                          NodeLanguageService, $sessionStorage, lang, scrollTo, $http, bsLoadingOverlayService) {
     var self = this;
@@ -356,6 +356,12 @@
         var dialogRules = angular.element(".note");
         _.each(dialogRules, function(e) {
           if(_.includes(e.id, '-' + agents.idAgent + '-')) {
+            e.remove();
+          }
+        })
+        var wrapperDialog = angular.element(".noteWrapper");
+        _.each(wrapperDialog, function(e) {
+          if(_.includes(e.id, '-' + agents.idAgent)) {
             e.remove();
           }
         })
@@ -1323,7 +1329,7 @@
       if(node.nodeclass == 'M') {
         var menu = $scope.moduleMenuOptions;
         if(node.type != 'M_IntroModule') {
-        	
+
           _.remove(menu, {
             0: 'Set Active Intro Module'
           });
@@ -2251,9 +2257,26 @@
           var promise = getUpdatedModuleRulesForWholeModuleForThisAgent(agentId, deffered);
           promise.then(function(data) {
             var mRules = data;
+            var ruleWrapperScope = $itemScope.$new();
+            ruleWrapperScope.ruleWrapper = {
+                moduleName: mRules[0].moduleName,
+                agentName: mRules[0].agentName,
+                idNode: mRules[0].idModule,
+                idAgent: mRules[0].idAgent
+            };
+            var moduleWrapper = angular.element("#allModuleRulesOfAgent" + mRules[0].idModule);
+            newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+
             if(mRules.length > 0) {
               $scope.scrollToTop();
               var uniqueRules = [];
+              var noteInitialConfig = {
+                leftPoint: 0,
+                topPoint: 50,
+                maxHeight: 0,
+                tplWidth: 0,
+                tplHeight: 0
+              }
               for(var i = 0; i < mRules.length; i++) {
                 var theRule = mRules[i].rule;
                 var bFound = false;
@@ -2272,8 +2295,8 @@
                   var x = scope.rule.conditions;
                   x.idRule = scope.rule.idRule;
                   addPopoverInfo(x, scope.rule.idRule);
-                  var targetDiv = angular.element("#allModuleRulesOfAgent" + mRules[i].idModule);
-                  newNote(targetDiv, scope, $compile);
+                  var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
+                  newNote(targetDiv, scope, $compile, noteInitialConfig);
                   $scope.activeRule = scope.rule;
                 }
               }
@@ -2290,7 +2313,6 @@
         }
         ]
       ];
-
 
 		    $scope.possibleAnswerMenuOptions = [
 				[ 'Add Question', function($itemScope) {
@@ -2996,6 +3018,22 @@
           }
         });
       }
+    };
+
+    $scope.setActiveRuleWrapper = function(ruleWrapper, el) {
+        $scope.activeRuleWrapperDialog = el.ruleWrapper.idNode + '-' + el.ruleWrapper.idAgent;
+        if(!$scope.activeRuleWrapperDialog.$$phase) {
+          try {
+            $scope.activeRuleWrapperDialog.$digest();
+          } catch(e) {
+          }
+        }
+    };
+
+    $scope.closeRuleWrapperDialog = function(elem, $event) {
+      $($event.target).closest('.noteWrapper').remove();
+      $scope.activeRuleWrapperDialog = '';
+      safeDigest($scope.activeRuleWrapperDialog);
     };
 
     function resize() {

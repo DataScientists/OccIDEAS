@@ -1399,3 +1399,65 @@ li.borderless {
 pre, code{
     white-space:normal;
 }
+
+.noteWrapper {
+	float: left;
+	display: block;
+	position: absolute;
+	top:0px;
+	right:230px;
+	padding: 0 0 0 0;
+	width: 970px;
+	height:auto !important;
+	min-height: 450px;
+	overflow: auto;
+	margin: 0 30px 30px 0;
+	background: #fff;
+	box-shadow: 0px 0px 8px rgba(68, 140, 160, 0.5);
+	font-size:11px;
+	z-index: 1050;
+	@extend .noflick;
+
+	&:hover {
+		cursor: move;
+	}
+	&.ui-draggable-dragging:nth-child(n) {
+		box-shadow: 5px 5px 15px 0 rgba(0,0,0,.3);
+		transform: scale(1.125) !important;
+		z-index: 1050;
+		cursor: move;
+		transition: transform .150s;
+	}
+}
+
+.noteWrapper .panel-body{
+	padding: 0 0 0 0;
+}
+
+.noteWrapper .wrapperTitle {
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #cce5ff;
+  border-width: 0px 0px 1px 0px;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding: 0px 16px;
+  background: #80bdff;
+  box-shadow: 0px 1px 4px rgba(68, 120, 160, 0.1);
+  font-size: 12px;
+  line-height:2em;
+  border-radius: 10px;
+}
+
+.activeRuleWrapper {
+	border: 2px solid rgb(204, 226, 255);
+	border-radius: 10px;
+	background-color: rgb(230, 241, 255) !important;
+}
+
+.activeRuleWrapper .wrapperTitle{
+	background-color:rgb(0, 74, 153) !important;
+}
