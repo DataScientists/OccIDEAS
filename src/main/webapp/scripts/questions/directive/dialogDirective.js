@@ -32,21 +32,6 @@
   angular
     .module('occIDEASApp.Questions')
     .directive(
-      'newRuleWrapper',
-      function() {
-        return {
-          restrict: 'A',
-          link: function(scope, element, attrs) {
-            element.on("click", function() {
-              newRuleWrapper();
-            });
-          }
-        };
-      });
-
-  angular
-    .module('occIDEASApp.Questions')
-    .directive(
       'showRuleDialog',
       function() {
         return {

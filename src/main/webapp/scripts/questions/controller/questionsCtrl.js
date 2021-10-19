@@ -2264,7 +2264,8 @@
                 idNode: mRules[0].idModule,
                 idAgent: mRules[0].idAgent
             };
-            var moduleWrapper = angular.element("#allModuleRulesOfAgent" + mRules[0].idModule);
+            //var moduleWrapper = angular.element("#allModuleRulesOfAgent" + mRules[0].idModule);
+            var moduleWrapper = angular.element("#rulesContainer");
             newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
 
             if(mRules.length > 0) {
