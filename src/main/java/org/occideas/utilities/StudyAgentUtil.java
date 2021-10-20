@@ -158,7 +158,7 @@ public class StudyAgentUtil {
             iqsfClient.updateBlock(surveyId, blockId, getBlockElementResult);
             final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
             SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
-            options.getResult().setBackButton("true");
+            options.getResult().setBackButton(true);
 
             List<String> availableLanguages = getAvailableLanguages();
             if (availableLanguages != null) {
@@ -224,7 +224,7 @@ public class StudyAgentUtil {
 
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
-        options.getResult().setBackButton("true");
+        options.getResult().setBackButton(true);
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
 
         iqsfClient.publishSurvey(surveyId);
@@ -591,7 +591,7 @@ public class StudyAgentUtil {
 
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
-        options.getResult().setBackButton("true");
+        options.getResult().setBackButton(true);
 
         List<String> availableLanguages = getAvailableLanguages();
         if (availableLanguages != null) {
@@ -666,7 +666,7 @@ public class StudyAgentUtil {
 
         SurveyElement surveyOptions = new SurveyElement(surveyId, QSFElementTypes.OPTIONS.getAbbr(),
                 QSFElementTypes.OPTIONS.getDesc(), null, null,
-                buildPayload(new SurveyOptionPayload("true", "true", "PublicSurvey", "false", "Yes", "true", "None",
+                buildPayload(new SurveyOptionPayload(true, true, "PublicSurvey", "false", "Yes", "true", "None",
                         "DefaultMessage", "", "", "None", "+1 week", "", "\u2190", "\u2192", "curtin", "MQ", "curtin1",
                         1)));
 

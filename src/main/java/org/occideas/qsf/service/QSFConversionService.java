@@ -65,11 +65,14 @@ public class QSFConversionService {
         createPageBreaks(getBlockElementResult);
         iqsfClient.updateBlock(surveyId, blockId, getBlockElementResult);
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
+        log.info("Current survey options {}", surveyOptions);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
-        options.getResult().setBackButton("true");
-        options.getResult().setAdvanced("true");
+        options.getResult().setBackButton(true);
+        options.getResult().setSaveAndContinue(true);
+        options.getResult().setPreviousButton("<-");
         options.getResult().setEosRedirectURL(qualtricsConfig.getRedirectUrl());
         options.getResult().setSurveyTermination("Redirect");
+        log.info("New survey options {}", options.getResult());
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);
@@ -201,11 +204,11 @@ public class QSFConversionService {
         if (!question.getChildNodes().isEmpty()) {
             String type = question.getChildNodes().get(0).getType();
             if (StringUtils.isEmpty(type)) {
-                return QSFQuestionType.MULTIPLE_CHOICE;
+                return QSFQuestionType.SINGLE_CHOICE;
             }
             return QSFNodeTypeMapper.getBaseOnType(type).getQualtricsType();
         }
-        return QSFQuestionType.MULTIPLE_CHOICE;
+        return QSFQuestionType.SINGLE_CHOICE;
     }
 
     private Map<Integer, Logic> buildLogicMap(List<Logic> list) {

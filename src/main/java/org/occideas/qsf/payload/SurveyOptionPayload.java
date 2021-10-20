@@ -11,9 +11,9 @@ import org.occideas.qsf.serializer.AvailableLanguageSerializer;
 public class SurveyOptionPayload extends BaseQSF implements Payload{
 
     @JsonProperty(value = "BackButton")
-    private String backButton;
+    private boolean backButton;
     @JsonProperty(value = "SaveAndContinue")
-    private String saveAndContinue;
+    private boolean saveAndContinue;
     @JsonProperty(value = "SurveyProtection")
     private String surveyProtection;
     @JsonProperty(value = "BallotBoxStuffingPrevention")
@@ -52,8 +52,6 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     private String skin;
     @JsonProperty(value = "NewScoring")
     private int newScoring;
-    @JsonProperty(value = "Advanced")
-    private String advanced;
     @JsonProperty(value = "AvailableLanguages")
     @JsonSerialize(using = AvailableLanguageSerializer.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -62,7 +60,7 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     public SurveyOptionPayload() {
     }
 
-    public SurveyOptionPayload(String backButton, String saveAndContinue, String surveyProtection, String ballotBoxStuffingPrevention, String noIndex, String secureResponseFiles, String surveyExpiration, String surveyTermination, String header, String footer, String progressBarDisplay, String partialData, String validationMessage, String previousButton, String nextButton, String skinLibrary, String skinType, String skin, int newScoring) {
+    public SurveyOptionPayload(boolean backButton, boolean saveAndContinue, String surveyProtection, String ballotBoxStuffingPrevention, String noIndex, String secureResponseFiles, String surveyExpiration, String surveyTermination, String header, String footer, String progressBarDisplay, String partialData, String validationMessage, String previousButton, String nextButton, String skinLibrary, String skinType, String skin, int newScoring) {
         this.backButton = backButton;
         this.saveAndContinue = saveAndContinue;
         this.surveyProtection = surveyProtection;
@@ -84,19 +82,19 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
         this.newScoring = newScoring;
     }
 
-    public String getBackButton() {
+    public boolean isBackButton() {
         return backButton;
     }
 
-    public void setBackButton(String backButton) {
+    public void setBackButton(boolean backButton) {
         this.backButton = backButton;
     }
 
-    public String getSaveAndContinue() {
+    public boolean isSaveAndContinue() {
         return saveAndContinue;
     }
 
-    public void setSaveAndContinue(String saveAndContinue) {
+    public void setSaveAndContinue(boolean saveAndContinue) {
         this.saveAndContinue = saveAndContinue;
     }
 
@@ -180,14 +178,6 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
         this.partialData = partialData;
     }
 
-    public String getValidationMessage() {
-        return validationMessage;
-    }
-
-    public void setValidationMessage(String validationMessage) {
-        this.validationMessage = validationMessage;
-    }
-
     public String getPreviousButton() {
         return previousButton;
     }
@@ -260,11 +250,4 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
         this.eosRedirectURL = eosRedirectURL;
     }
 
-    public String getAdvanced() {
-        return advanced;
-    }
-
-    public void setAdvanced(String advanced) {
-        this.advanced = advanced;
-    }
 }

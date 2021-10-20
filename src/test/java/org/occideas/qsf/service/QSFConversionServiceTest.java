@@ -117,7 +117,7 @@ class QSFConversionServiceTest {
         assertNotNull(simpleQuestionPayload);
         assertEquals(String.valueOf(question1.getIdNode()), simpleQuestionPayload.getQuestionId());
         assertEquals(question1.getName(), simpleQuestionPayload.getQuestionText());
-        assertEquals(QSFQuestionType.MULTIPLE_CHOICE.getType(), simpleQuestionPayload.getQuestionType());
+        assertEquals(QSFQuestionType.SINGLE_CHOICE.getType(), simpleQuestionPayload.getQuestionType());
         assertEquals(QuestionSelector.get(question1.getType()), simpleQuestionPayload.getSelector());
         assertEquals(QSFQuestionSubSelector.TX.name(), simpleQuestionPayload.getSubSelector());
         assertEquals(qsfConversionService.getDefaultConfiguration(), simpleQuestionPayload.getConfiguration());
@@ -160,7 +160,7 @@ class QSFConversionServiceTest {
         QSFQuestionType frequency = qsfConversionService.getQuestionTypeBaseOnAnswers(frequencyAnswerQuestion);
 
         assertEquals(QSFQuestionType.TEXT_ENTRY, freetext);
-        assertEquals(QSFQuestionType.MULTIPLE_CHOICE, multiChoice);
+        assertEquals(QSFQuestionType.SINGLE_CHOICE, multiChoice);
         assertEquals(QSFQuestionType.TEXT_ENTRY_FORM, frequency);
     }
 

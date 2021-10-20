@@ -11,19 +11,19 @@ import java.util.function.Function;
 
 public enum QSFNodeTypeMapper {
 
-    Q_LINKEDMODULE("Q_linkedmodule", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE),
-    Q_LINKEDAJSM("Q_linkedajsm", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE),
-    Q_FREQUENCY("Q_frequency", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE),
-    Q_SIMPLE("Q_simple", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE),
+    Q_LINKEDMODULE("Q_linkedmodule", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    Q_LINKEDAJSM("Q_linkedajsm", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    Q_FREQUENCY("Q_frequency", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    Q_SIMPLE("Q_simple", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
     Q_MULTIPLE("Q_multiple", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE),
-    Q_SINGLE("Q_single", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE),
+    Q_SINGLE("Q_single", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
     P_FREETEXT("P_freetext", null, multiChoiceCreator(), QSFQuestionType.TEXT_ENTRY),
     P_FREQUENCY_WEEKS("P_frequencyweeks", null, singleNumberChoiceCreator("Weeks"), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_HOURS("P_frequencyhours", null, singleNumberChoiceCreator("Hours"), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_HOURS_MINUTES("P_frequencyhoursminute", null, shiftHoursChoiceCreator(), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_SHIFT_HOURS("P_frequencyshifthours", null, shiftHoursChoiceCreator(), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_SECONDS("P_frequencyseconds", null, singleNumberChoiceCreator("Seconds"), QSFQuestionType.TEXT_ENTRY_FORM),
-    P_SIMPLE_TYPE("P_simple", null, multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE);
+    P_SIMPLE_TYPE("P_simple", null, multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE);
 
 
     QSFNodeTypeMapper(String description, Function<QuestionAnswerWrapper, List<Logic>> buildLogic, Function<Question, QSFQuestionChoices> buildChoices, QSFQuestionType qualtricsType) {
@@ -85,7 +85,8 @@ public enum QSFNodeTypeMapper {
             logics.add(new Logic("Question",
                     parentQuestions,
                     "no",
-                    choiceLocator, "Selected",
+                    choiceLocator,
+                    "Selected",
                     parentQuestions,
                     choiceLocator, "Expression", questionAnswerWrapper.getQuestion().getName()));
             return logics;
