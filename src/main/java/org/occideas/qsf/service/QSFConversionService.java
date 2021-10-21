@@ -210,6 +210,12 @@ public class QSFConversionService {
                 return QSFNodeTypeMapper.getBaseOnType(type).getQualtricsType();
             }
     	}else {
+    		if (!question.getChildNodes().isEmpty()) {
+                String possibleAnswerType = question.getChildNodes().get(0).getType();
+                if (possibleAnswerType.equalsIgnoreCase("P_freetext")) {
+                	return QSFNodeTypeMapper.getBaseOnType(possibleAnswerType).getQualtricsType();
+                }              
+            }
     		return QSFNodeTypeMapper.getBaseOnType(question.getType()).getQualtricsType();
     	}
         
