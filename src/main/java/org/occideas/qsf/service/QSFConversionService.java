@@ -201,14 +201,19 @@ public class QSFConversionService {
     }
 
     protected QSFQuestionType getQuestionTypeBaseOnAnswers(Question question) {
-        if (!question.getChildNodes().isEmpty()) {
-            String type = question.getChildNodes().get(0).getType();
-            if (StringUtils.isEmpty(type)) {
-                return QSFQuestionType.SINGLE_CHOICE;
+    	if(question.getType().equalsIgnoreCase("Q_frequency")) {
+    		if (!question.getChildNodes().isEmpty()) {
+                String type = question.getChildNodes().get(0).getType();
+                if (StringUtils.isEmpty(type)) {
+                    return QSFQuestionType.SINGLE_CHOICE;
+                }
+                return QSFNodeTypeMapper.getBaseOnType(type).getQualtricsType();
             }
-            return QSFNodeTypeMapper.getBaseOnType(type).getQualtricsType();
-        }
-        return QSFQuestionType.MULTIPLE_CHOICE;
+    	}else {
+    		return QSFNodeTypeMapper.getBaseOnType(question.getType()).getQualtricsType();
+    	}
+        
+        return QSFQuestionType.SINGLE_CHOICE;
     }
 
     private Map<Integer, Logic> buildLogicMap(List<Logic> list) {
