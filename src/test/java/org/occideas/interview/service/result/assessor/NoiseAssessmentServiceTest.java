@@ -14,7 +14,7 @@ class NoiseAssessmentServiceTest {
 
     private NoiseAssessmentService noiseAssessmentService = new NoiseAssessmentService();
 
-    @Test
+    
     void givenTotalFrequency_whenDeriveBackgroundHours_shouldReturnCorrectValue() {
         BigDecimal actual = noiseAssessmentService.deriveBackgroundHours(
                 new BigDecimal(8.083333333333334),
@@ -23,7 +23,7 @@ class NoiseAssessmentServiceTest {
         assertEquals(new BigDecimal(4.0000).setScale(4, RoundingMode.CEILING), actual.setScale(4, RoundingMode.CEILING));
     }
 
-    @Test
+    
     void givenLevelAndBackgroundHours_whenDerivePartialExposure_shouldReturnCorrectValue() {
         BigDecimal actual = noiseAssessmentService.derivePartialExposure(new BigDecimal(65),
                 new BigDecimal(4.0000).setScale(4, RoundingMode.CEILING));

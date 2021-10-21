@@ -68,14 +68,16 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                 if (Objects.nonNull(rule.getRuleAdditionalfields()) && !rule.getRuleAdditionalfields().isEmpty()) {
                     level = new BigDecimal(Integer.valueOf(rule.getRuleAdditionalfields().get(0).getValue()));
                 }
-                BigDecimal partialExposure = derivePartialExposure(level, hoursBg).setScale(15, RoundingMode.CEILING);
+                BigDecimal partialExposure = derivePartialExposure(level, hoursBg).setScale(2, RoundingMode.CEILING);
+                String questionAnswerText = getQuestionAnswerText(rule.getConditions().get(0),interviewId);
+                String nodeText = questionAnswerText;
                 NoiseView noiseView = new NoiseView("backgroundNoise",
                         rule.getConditions().get(0).getNumber(),
                         level.toPlainString() + "B",
                         hoursBg.toPlainString(),
                         partialExposure.toPlainString(),
                         rule.getConditions().get(0).getIdNode(),
-                        rule.getConditions().get(0).getName(),
+                        nodeText,
                         getModuleNameOfNode(rule.getConditions().get(0).getTopNodeId()),
                         rule.getConditions().get(0).getTopNodeId()
                 );
@@ -99,7 +101,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                             if (answerOption.isPresent() && NumberUtils.isNumber(answerOption.get().getAnswerFreetext())) {
                                 frequencyhours = frequencyhours.add(new BigDecimal(answerOption.get().getAnswerFreetext()));
                                 if ("P_frequencyseconds".equalsIgnoreCase(answerOption.get().getType())) {
-                                    frequencyhours = frequencyhours.divide(new BigDecimal(3600), 15, RoundingMode.CEILING); //convert seconds to hours
+                                    frequencyhours = frequencyhours.divide(new BigDecimal(3600), 2, RoundingMode.CEILING); //convert seconds to hours
                                 }
                             }
                         }
@@ -107,9 +109,9 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
 
                 }
                 if (useRatio) {
-                    hours = frequencyhours.divide(ratio, 15, RoundingMode.CEILING);
+                    hours = frequencyhours.divide(ratio, 2, RoundingMode.CEILING);
                 } else {
-                    hours = frequencyhours.setScale(15, RoundingMode.CEILING);
+                    hours = frequencyhours.setScale(2, RoundingMode.CEILING);
                 }
 
                 if (hours.compareTo(BigDecimal.ZERO) < 0) {
@@ -119,7 +121,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                 if (rule.getRuleAdditionalfields() != null && !rule.getRuleAdditionalfields().isEmpty()) {
                     level = new BigDecimal(Integer.valueOf(rule.getRuleAdditionalfields().get(0).getValue()));
                 }
-                BigDecimal partialExposure = derivePartialExposure(level, hours).setScale(15, RoundingMode.CEILING);
+                BigDecimal partialExposure = derivePartialExposure(level, hours).setScale(2, RoundingMode.CEILING);
 
                 String modHours;
                 if (useRatio) {
@@ -127,20 +129,21 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                 } else {
                     modHours = hours.toPlainString();
                 }
-
+                String questionAnswerText = getQuestionAnswerText(rule.getConditions().get(0),interviewId);
+                String nodeText = questionAnswerText;
                 NoiseView noiseView = new NoiseView("",
                         rule.getConditions().get(0).getNumber(),
                         level.toPlainString(),
                         modHours,
                         partialExposure.toPlainString(),
                         rule.getConditions().get(0).getIdNode(),
-                        rule.getConditions().get(0).getName(),
+                        nodeText,
                         getModuleNameOfNode(rule.getConditions().get(0).getTopNodeId()),
                         rule.getConditions().get(0).getTopNodeId()
                 );
                 noiseRow.add(noiseView);
 
-                totalPartialExposure = totalPartialExposure.add(partialExposure).setScale(15, RoundingMode.CEILING);
+                totalPartialExposure = totalPartialExposure.add(partialExposure).setScale(2, RoundingMode.CEILING);
             }
             if (peakNoise.compareTo(level) < 0) {
                 if (totalPartialExposure.compareTo(BigDecimal.ZERO) > 0) {
@@ -157,15 +160,23 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
         AssessmentResult<NoiseView> noiseViewAssessmentResult =
                 new AssessmentResult<>(shiftHours.toPlainString(), totalPartialExposure.toPlainString(),
                         null,
-                        peakNoise.setScale(15, RoundingMode.CEILING).toPlainString(),
-                        totalFrequency.setScale(15, RoundingMode.CEILING).toPlainString());
+                        peakNoise.setScale(2, RoundingMode.CEILING).toPlainString(),
+                        totalFrequency.setScale(2, RoundingMode.CEILING).toPlainString());
         noiseViewAssessmentResult.setResults(noiseRow);
 
         return noiseViewAssessmentResult;
     }
 
-    protected BigDecimal deriveBackgroundHours(BigDecimal shiftHours, BigDecimal totalFrequency) {
-        return shiftHours.subtract(totalFrequency).setScale(15, RoundingMode.CEILING);
+    private String getQuestionAnswerText(PossibleAnswer possibleAnswer, long interviewId) {
+    	List<InterviewQuestion> iq = interviewQuestionDao.getInterviewQuestionsByNodeIdAndIntId(Long.valueOf(possibleAnswer.getParentId()), interviewId);
+        if (!iq.isEmpty()) {
+            return iq.get(0).getName() +" : "+possibleAnswer.getName();
+        }
+        return "";
+	}
+
+	protected BigDecimal deriveBackgroundHours(BigDecimal shiftHours, BigDecimal totalFrequency) {
+        return shiftHours.subtract(totalFrequency).setScale(2, RoundingMode.CEILING);
     }
 
     protected BigDecimal deriveAutoExposure(BigDecimal totalPartialExposure) {
@@ -174,13 +185,13 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
         }
 
         BigDecimal formula = new BigDecimal(Math.log10(totalPartialExposure.divide(new BigDecimal(3.2)
-                        .multiply(new BigDecimal(Math.pow(10, -9)).setScale(15, RoundingMode.CEILING))
-                        .setScale(15, RoundingMode.CEILING))
-                .setScale(15, RoundingMode.CEILING).doubleValue())).setScale(15, RoundingMode.CEILING);
+                        .multiply(new BigDecimal(Math.pow(10, -9)).setScale(2, RoundingMode.CEILING))
+                        .setScale(2, RoundingMode.CEILING))
+                .setScale(2, RoundingMode.CEILING).doubleValue())).setScale(2, RoundingMode.CEILING);
         return new BigDecimal(10)
                 .multiply(formula)
-                .setScale(15, RoundingMode.CEILING)
-                .setScale(15, RoundingMode.CEILING);
+                .setScale(2, RoundingMode.CEILING)
+                .setScale(2, RoundingMode.CEILING);
     }
 
     private String getModuleNameOfNode(long topNodeId) {
@@ -194,16 +205,16 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
     protected BigDecimal derivePartialExposure(BigDecimal level, BigDecimal hoursBg) {
         BigDecimal partialFormula1 = new BigDecimal(4).multiply(hoursBg);
         BigDecimal partialFormula2 = new BigDecimal(Math.pow(10, (level.subtract(new BigDecimal(100)).divide(new BigDecimal(10)))
-                .doubleValue())).setScale(15, RoundingMode.CEILING);
+                .doubleValue())).setScale(2, RoundingMode.CEILING);
         return partialFormula1.multiply(
                         partialFormula2)
-                .setScale(15, RoundingMode.CEILING);
+                .setScale(2, RoundingMode.CEILING);
     }
 
     private BigDecimal getRatioValue(BigDecimal shiftHours, BigDecimal totalFrequency, boolean useRatio) {
-        BigDecimal ratio = new BigDecimal(1.0).setScale(15, RoundingMode.CEILING);
+        BigDecimal ratio = new BigDecimal(1.0).setScale(2, RoundingMode.CEILING);
         if (useRatio) {
-            ratio = totalFrequency.divide(shiftHours, 15, RoundingMode.CEILING);
+            ratio = totalFrequency.divide(shiftHours, 2, RoundingMode.CEILING);
         }
         return ratio;
     }
