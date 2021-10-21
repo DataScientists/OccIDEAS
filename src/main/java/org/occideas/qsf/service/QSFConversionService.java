@@ -208,7 +208,7 @@ public class QSFConversionService {
             }
             return QSFNodeTypeMapper.getBaseOnType(type).getQualtricsType();
         }
-        return QSFQuestionType.SINGLE_CHOICE;
+        return QSFQuestionType.MULTIPLE_CHOICE;
     }
 
     private Map<Integer, Logic> buildLogicMap(List<Logic> list) {
