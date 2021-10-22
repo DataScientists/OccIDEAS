@@ -1408,7 +1408,6 @@ pre, code{
 	right:230px;
 	padding: 0 0 0 0;
 	width: 970px;
-	resize: both;
 	height:auto !important;
 	min-height: 450px;
 	overflow: auto;
@@ -1466,10 +1465,16 @@ pre, code{
 #rulesContainer {
     position: fixed;
     z-index: 50000;
-    height: 80%;
+    width: 10px;
+    height: 100%;
     left: 0px;
-    bottom: 5%;
+    top: 0px;
     transition-property: all;
     transition-duration: .5s;
     transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+
+.minimizeWrapper {
+    max-height: 30px;
+    min-height: 30px;
 }

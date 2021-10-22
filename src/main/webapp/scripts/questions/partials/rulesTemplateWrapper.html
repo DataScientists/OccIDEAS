@@ -7,6 +7,14 @@
                     aria-label="Left Align">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
+            <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="minimizeRulesContainer(this,$event)"
+                    aria-label="Left Align">
+                <span class="glyphicon glyphicon-resize-small" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="maximizeRulesContainer(this,$event)"
+                    aria-label="Left Align">
+                <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span>
+            </button>
             <div class="wrapperTitle">{{ruleWrapper.moduleName}} - {{ruleWrapper.agentName}}</div>
         </div>
     </script>

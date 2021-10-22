@@ -3037,6 +3037,14 @@
       safeDigest($scope.activeRuleWrapperDialog);
     };
 
+    $scope.minimizeRulesContainer = function(elem, $event) {
+      $($event.target).closest('.noteWrapper')[0].classList.add('minimizeWrapper');
+    };
+
+    $scope.maximizeRulesContainer = function(elem, $event) {
+      $($event.target).closest('.noteWrapper')[0].classList.remove('minimizeWrapper');
+    };
+
     function resize() {
       //get element
 
