@@ -13,6 +13,7 @@ import org.occideas.participant.dao.ParticipantDao;
 import org.occideas.possibleanswer.dao.PossibleAnswerDao;
 import org.occideas.qsf.QSFNodeTypeMapper;
 import org.occideas.question.dao.QuestionDao;
+import org.occideas.utilities.QualtricsUtil;
 import org.occideas.vo.ResponseSummary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -78,66 +79,69 @@ public class QSFInterviewReplicationService {
     }
 
     private void handleSimpleAnswer(Interview newInterview, AtomicInteger questionCounter, ResponseSummary responseSummary, Set<Long> uniqueModules, Map<String, ResponseSummary> responses) {
-        PossibleAnswer possibleAnswer = possibleAnswerDao.get(Long.parseLong(responseSummary.getAnswerIdNode()));
-        Node node = nodeDao.getNode(possibleAnswer.getTopNodeId());
-        if (Objects.nonNull(node)) {
-            if (!uniqueModules.contains(node.getIdNode()) && node.getNodeclass().equals("M")) {
-                interviewQuestionDao.saveOrUpdate(createInterviewModuleQuestion(possibleAnswer, node, newInterview.getIdinterview(), questionCounter.incrementAndGet()));
-                uniqueModules.add(node.getIdNode());
-            } else if (!uniqueModules.contains(node.getIdNode()) && node.getNodeclass().equals("F")) {
-                final Fragment linkedModule = fragmentDao.get(node.getIdNode());
-                if (Objects.nonNull(linkedModule)) {
-                    if (!uniqueModules.contains(linkedModule.getIdNode())) {
-                        interviewQuestionDao.saveOrUpdate(createInterviewAJSMQuestion(
-                                node,
-                                linkedModule,
-                                newInterview.getIdinterview(),
-                                questionCounter.incrementAndGet()));
-                        uniqueModules.add(linkedModule.getIdNode());
+        List<Long> answers = QualtricsUtil.parseAnswers(responseSummary.getAnswerIdNode());
+        for (Long occideasAnswer : answers) {
+            PossibleAnswer possibleAnswer = possibleAnswerDao.get(occideasAnswer);
+            Node node = nodeDao.getNode(possibleAnswer.getTopNodeId());
+            if (Objects.nonNull(node)) {
+                if (!uniqueModules.contains(node.getIdNode()) && node.getNodeclass().equals("M")) {
+                    interviewQuestionDao.saveOrUpdate(createInterviewModuleQuestion(possibleAnswer, node, newInterview.getIdinterview(), questionCounter.incrementAndGet()));
+                    uniqueModules.add(node.getIdNode());
+                } else if (!uniqueModules.contains(node.getIdNode()) && node.getNodeclass().equals("F")) {
+                    final Fragment linkedModule = fragmentDao.get(node.getIdNode());
+                    if (Objects.nonNull(linkedModule)) {
+                        if (!uniqueModules.contains(linkedModule.getIdNode())) {
+                            interviewQuestionDao.saveOrUpdate(createInterviewAJSMQuestion(
+                                    node,
+                                    linkedModule,
+                                    newInterview.getIdinterview(),
+                                    questionCounter.incrementAndGet()));
+                            uniqueModules.add(linkedModule.getIdNode());
+                        }
+                    } else {
+                        log.error("Cant find linked module {}", node.getIdNode());
                     }
-                } else {
-                    log.error("Cant find linked module {}", node.getIdNode());
                 }
-            }
 
 
-            List<Question> childNodes = possibleAnswer.getChildNodes();
-            final Set<Long> linkModules = childNodes.stream().map(Question::getLink).filter(link -> link > 0L).collect(Collectors.toSet());
+                List<Question> childNodes = possibleAnswer.getChildNodes();
+                final Set<Long> linkModules = childNodes.stream().map(Question::getLink).filter(link -> link > 0L).collect(Collectors.toSet());
 
-            if (!linkModules.isEmpty()) {
-                linkModules.stream()
-                        .forEach(idNode -> {
-                            final Fragment linkedModule = fragmentDao.get(idNode);
-                            if (Objects.nonNull(linkedModule)) {
-                                if (!uniqueModules.contains(linkedModule.getIdNode())) {
-                                    interviewQuestionDao.save(createInterviewAJSMQuestion(
-                                            node,
-                                            linkedModule,
-                                            newInterview.getIdinterview(),
-                                            questionCounter.incrementAndGet()));
-                                    uniqueModules.add(linkedModule.getIdNode());
+                if (!linkModules.isEmpty()) {
+                    linkModules.stream()
+                            .forEach(idNode -> {
+                                final Fragment linkedModule = fragmentDao.get(idNode);
+                                if (Objects.nonNull(linkedModule)) {
+                                    if (!uniqueModules.contains(linkedModule.getIdNode())) {
+                                        interviewQuestionDao.save(createInterviewAJSMQuestion(
+                                                node,
+                                                linkedModule,
+                                                newInterview.getIdinterview(),
+                                                questionCounter.incrementAndGet()));
+                                        uniqueModules.add(linkedModule.getIdNode());
+                                    }
+                                } else {
+                                    log.warn("Cant find linked module {}", idNode);
                                 }
-                            } else {
-                                log.warn("Cant find linked module {}", idNode);
-                            }
-                        });
-            }
+                            });
+                }
 
-            Question question = questionDao.get(Long.parseLong(possibleAnswer.getParentId()));
-            if (Objects.nonNull(question)) {
-                InterviewQuestion interviewQuestion =
-                        interviewQuestionDao.saveOrUpdate(createInterviewQuestion(question,
-                                newInterview.getIdinterview(),
-                                questionCounter.incrementAndGet()));
-                String answer = findAnswer(responses, possibleAnswer);
-                interviewAnswerDao.saveOrUpdate(createInterviewAnswer(
-                        newInterview.getIdinterview(),
-                        possibleAnswer,
-                        interviewQuestion.getId(),
-                        answer));
-            } else {
-                log.error("Unable to find question in survey {} with answer id {} and parent id node {}",
-                        possibleAnswer.getIdNode(), newInterview.getReferenceNumber(), possibleAnswer.getParentId());
+                Question question = questionDao.get(Long.parseLong(possibleAnswer.getParentId()));
+                if (Objects.nonNull(question)) {
+                    InterviewQuestion interviewQuestion =
+                            interviewQuestionDao.saveOrUpdate(createInterviewQuestion(question,
+                                    newInterview.getIdinterview(),
+                                    questionCounter.incrementAndGet()));
+                    String answer = findAnswer(responses, possibleAnswer);
+                    interviewAnswerDao.saveOrUpdate(createInterviewAnswer(
+                            newInterview.getIdinterview(),
+                            possibleAnswer,
+                            interviewQuestion.getId(),
+                            answer));
+                } else {
+                    log.error("Unable to find question in survey {} with answer id {} and parent id node {}",
+                            possibleAnswer.getIdNode(), newInterview.getReferenceNumber(), possibleAnswer.getParentId());
+                }
             }
         }
     }

@@ -39,6 +39,7 @@ import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.utilities.QualtricsUtil;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.utilities.ZipUtil;
 import org.occideas.vo.*;
@@ -436,18 +437,21 @@ public class QSFServiceImpl implements IQSFService {
                     responseSummary.setAnswer(questionAnswerResponse.getFreeTextAnswer());
                 }
             }
-            List<Rule> listOfFiredRules = autoAssessmentService.deriveFiredRulesByAnswerProvided(Long.valueOf(questionAnswerResponse.getOccideasAnswerIdNode()));
-            List<Rule> autoAssessedRules = new ArrayList<>();
-            autoAssessedRules.addAll(autoAssessmentService.getRuleLevelNoExposure(
-                    listAgentIds
-                    , listOfFiredRules));
-            responseSummary.setFiredRules(ruleMapper.convertToRuleVOList(listOfFiredRules));
-            responseSummary.setAutoAssessedRules(ruleMapper.convertToRuleVOList(autoAssessedRules));
-
-            summary.put(questionAnswerResponse.getQsfQuestionId(), responseSummary);
+            List<Long> answers = QualtricsUtil.parseAnswers(questionAnswerResponse.getOccideasAnswerIdNode());
+            for (Long answerId : answers) {
+                List<Rule> listOfFiredRules = autoAssessmentService.deriveFiredRulesByAnswerProvided(answerId);
+                List<Rule> autoAssessedRules = new ArrayList<>();
+                autoAssessedRules.addAll(autoAssessmentService.getRuleLevelNoExposure(
+                        listAgentIds
+                        , listOfFiredRules));
+                responseSummary.setFiredRules(ruleMapper.convertToRuleVOList(listOfFiredRules));
+                responseSummary.setAutoAssessedRules(ruleMapper.convertToRuleVOList(autoAssessedRules));
+                summary.put(questionAnswerResponse.getQsfQuestionId(), responseSummary);
+            }
         }
         return summary;
     }
+
 
     private LinkedList<QuestionAnswerResponse> getQSFQuestionAnswerResponses(Map<String, QSFQuestionMapper> questionBySurveyId, Map<String, Object> values) {
         LinkedList<QuestionAnswerResponse> queue = new LinkedList<>();
