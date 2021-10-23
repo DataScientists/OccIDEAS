@@ -401,13 +401,13 @@ public class QSFServiceImpl implements IQSFService {
         QualtricsSurveyResponse responderDetails = new QualtricsSurveyResponse(
                 surveyId,
                 responseId,
-                values.get("ipAddress").toString(),
-                values.get("progress").toString(),
-                values.get("duration").toString(),
-                values.get("finished").toString(),
-                values.get("recordedDate").toString(),
-                values.get("locationLatitude").toString(),
-                values.get("locationLongitude").toString(),
+                CommonUtil.getValue(values.get("ipAddress")),
+                CommonUtil.getValue(values.get("progress")),
+                CommonUtil.getValue(values.get("duration")),
+                CommonUtil.getValue(values.get("finished")),
+                CommonUtil.getValue(values.get("recordedDate")),
+                CommonUtil.getValue(values.get("locationLatitude")),
+                CommonUtil.getValue(values.get("locationLongitude")),
                 questionAnswers
         );
         qualtricsSurveyResponseDao.deleteByResponseId(responseId);
@@ -457,7 +457,12 @@ public class QSFServiceImpl implements IQSFService {
         LinkedList<QuestionAnswerResponse> queue = new LinkedList<>();
         values.entrySet().forEach(entry -> {
             if (isNormalQuestion(entry)) {
-                queue.add(new QuestionAnswerResponse(entry.getKey(), entry.getValue().toString()));
+                queue.add(new QuestionAnswerResponse(entry.getKey(), CommonUtil.getValue(entry.getValue())));
+            } else if (isTextQuestion(entry)) {
+                String[] key = entry.getKey().split("_");
+                QSFQuestionMapper qsfQuestionMapper = questionBySurveyId.get(key[0]);
+                Long answerId = qsfQuestionMapper.getFrequencyIdNode();
+                queue.add(new QuestionAnswerResponse(key[0], String.valueOf(answerId), CommonUtil.getValue(entry.getValue())));
             } else if (isFrequencyQuestion(entry)) {
                 String[] key = entry.getKey().split("_");
                 QSFQuestionMapper qsfQuestionMapper = questionBySurveyId.get(key[0]);
@@ -489,6 +494,10 @@ public class QSFServiceImpl implements IQSFService {
 
     private boolean isNormalQuestion(Map.Entry<String, Object> entry) {
         return entry.getKey().contains("QID") && !entry.getKey().contains("_DO") & !entry.getKey().contains("_");
+    }
+
+    private boolean isTextQuestion(Map.Entry<String, Object> entry) {
+        return entry.getKey().contains("QID") && entry.getKey().contains("_") && entry.getKey().contains("TEXT") && !entry.getKey().contains("_DO");
     }
 
     private void validateModuleExist(String moduleName) {

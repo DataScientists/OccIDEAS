@@ -69,7 +69,6 @@ public class QSFConversionService {
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton(true);
         options.getResult().setSaveAndContinue(true);
-        options.getResult().setPreviousButton("<-");
         options.getResult().setEosRedirectURL(qualtricsConfig.getRedirectUrl());
         options.getResult().setSurveyTermination("Redirect");
         log.info("New survey options {}", options.getResult());
@@ -100,10 +99,7 @@ public class QSFConversionService {
                         Response responseQuestion = iqsfClient.createQuestion(surveyId, questionPayload, null);
 
                         if (!question.getChildNodes().isEmpty()) {
-                            Long freetextIdNode = null;
-                            if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
-                                freetextIdNode = question.getChildNodes().get(0).getIdNode();
-                            }
+                            Long freetextIdNode = getFreeTextIdNode(question);
                             SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
                             String qualtricsQID = surveyCreateResponse.getResult().getQuestionId();
                             questionAnswerWrapper.setQualtricsQID(qualtricsQID);
@@ -122,6 +118,21 @@ public class QSFConversionService {
                         }
                     }
                 });
+    }
+
+    private Long getFreeTextIdNode(Question question) {
+        Long freetextIdNode = null;
+        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
+            freetextIdNode = question.getChildNodes().get(0).getIdNode();
+        }
+        if (QSFNodeTypeMapper.Q_SINGLE.getDescription().equalsIgnoreCase(question.getType()) ||
+                QSFNodeTypeMapper.Q_SIMPLE.getDescription().equalsIgnoreCase(question.getType())) {
+            PossibleAnswer answer = question.getChildNodes().get(0);
+            if (QSFNodeTypeMapper.P_FREETEXT.getDescription().equalsIgnoreCase(answer.getType())) {
+                freetextIdNode = question.getChildNodes().get(0).getIdNode();
+            }
+        }
+        return freetextIdNode;
     }
 
     private boolean ignoreEmailNode(Question question) {
@@ -147,10 +158,7 @@ public class QSFConversionService {
                         String qualtricsQID = surveyCreateResponse.getResult().getQuestionId();
                         questionAnswerWrapper.setQualtricsQID(qualtricsQID);
                         if (!question.getChildNodes().isEmpty()) {
-                            Long freetextIdNode = null;
-                            if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
-                                freetextIdNode = question.getChildNodes().get(0).getIdNode();
-                            }
+                            Long freetextIdNode = getFreeTextIdNode(question);
                             qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, qualtricsQID), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             question.getChildNodes()
                                     .stream()

@@ -70,8 +70,8 @@ public class QSFInterviewReplicationService {
                                         Interview newInterview) {
         AtomicInteger questionCounter = new AtomicInteger(1);
 
-        Question topQuestion = questionDao.get(Long.parseLong(responseSummary.get("QID1").getQuestionIdNode()));
-        createInterviewQuestionFromQuestion(topQuestion, newInterview.getIdinterview(), questionCounter, responseSummary);
+//        Question topQuestion = questionDao.get(Long.parseLong(responseSummary.get("QID1").getQuestionIdNode()));
+//        createInterviewQuestionFromQuestion(topQuestion, newInterview.getIdinterview(), questionCounter, responseSummary);
 
         AtomicInteger newQuestionCounter = new AtomicInteger();
         Set<Long> uniqueModules = new HashSet<>();
