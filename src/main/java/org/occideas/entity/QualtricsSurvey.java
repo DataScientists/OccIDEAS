@@ -1,9 +1,6 @@
 package org.occideas.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -13,6 +10,8 @@ import java.util.Arrays;
 public class QualtricsSurvey implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String responseId;
     private String brandId;
     private String topic;
@@ -22,6 +21,14 @@ public class QualtricsSurvey implements Serializable {
     @Lob
     private byte[] response;
     private boolean isProcessed;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getResponseId() {
         return responseId;
@@ -90,7 +97,8 @@ public class QualtricsSurvey implements Serializable {
     @Override
     public String toString() {
         return "QualtricsSurvey{" +
-                "responseId='" + responseId + '\'' +
+                "id=" + id +
+                ", responseId='" + responseId + '\'' +
                 ", brandId='" + brandId + '\'' +
                 ", topic='" + topic + '\'' +
                 ", surveyId='" + surveyId + '\'' +

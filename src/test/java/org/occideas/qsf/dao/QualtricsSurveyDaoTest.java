@@ -10,7 +10,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,16 +38,16 @@ class QualtricsSurveyDaoTest {
         qualtricsSurvey.setResponse("{test: test}".getBytes());
         qualtricsSurveyDao.save(qualtricsSurvey);
 
-        Optional<QualtricsSurvey> optionalSurvey = qualtricsSurveyDao.findById("1");
+        List<QualtricsSurvey> listOfSurvey = qualtricsSurveyDao.findByResponseId("1");
 
-        assertTrue(optionalSurvey.isPresent());
+        assertFalse(listOfSurvey.isEmpty());
     }
 
     @Test
     void givenResponseIdNotExist_whenFindById_shouldNotReturnRecord() {
-        Optional<QualtricsSurvey> optionalSurvey = qualtricsSurveyDao.findById("1");
+        List<QualtricsSurvey> listOfSurvey = qualtricsSurveyDao.findByResponseId("1");
 
-        assertTrue(optionalSurvey.isEmpty());
+        assertTrue(listOfSurvey.isEmpty());
     }
 
     @Test

@@ -30,6 +30,7 @@ public class InterviewResultDao extends GenericBaseDao<InterviewResults, Long> {
         criteria.where(builder.and(
                 builder.equal(root.get(InterviewResults_.REFERENCE_NUMBER), referenceNumber)
         ));
+        criteria.orderBy(builder.desc(root.get(InterviewResults_.INTERVIEW_ID)));
         List<InterviewResults> resultList = sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
         if (resultList.isEmpty()) {
             return null;

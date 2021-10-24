@@ -181,7 +181,7 @@ public class QSFServiceImpl implements IQSFService {
                 try {
                     qualtricsSurvey.setResponse(objectMapper.writeValueAsString(response).getBytes());
                 } catch (JsonProcessingException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
                 qualtricsSurveyService.consumeSurveyResponse(qualtricsSurvey);
             });

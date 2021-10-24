@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -32,15 +31,6 @@ public class QualtricsSurveyService {
                     qualtricsSurvey.getResponseId(),
                     qualtricsSurvey.getQualtricsStatus());
             return;
-        }
-
-        Optional<QualtricsSurvey> optionalResponse = qualtricsSurveyDao.findById(qualtricsSurvey.getResponseId());
-        if (optionalResponse.isPresent()) {
-            QualtricsSurvey survey = optionalResponse.get();
-            if (Objects.nonNull(survey.getResponse())) {
-                log.info("survey response is already there possible duplicate response {}", survey.getResponseId());
-                return;
-            }
         }
 
         qualtricsSurvey.setResponse(getResponse(qualtricsSurvey));
