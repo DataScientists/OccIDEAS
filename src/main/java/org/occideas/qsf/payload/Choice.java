@@ -13,6 +13,10 @@ public class Choice {
     @JsonProperty(value = "TextEntryValidation")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String textEntryValidation;
+    @JsonProperty(value = "ExclusiveAnswer")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean exclusiveAnswer;
+
 
     public Choice() {
     }
@@ -24,6 +28,11 @@ public class Choice {
     public Choice(String display, String textEntry) {
         this.display = display;
         this.textEntry = textEntry;
+    }
+
+    public Choice(String display, Boolean exclusiveAnswer) {
+        this.display = display;
+        this.exclusiveAnswer = exclusiveAnswer;
     }
 
     public Choice(String display, String textEntry, String textEntryValidation) {
@@ -54,5 +63,23 @@ public class Choice {
 
     public void setTextEntryValidation(String textEntryValidation) {
         this.textEntryValidation = textEntryValidation;
+    }
+
+    public Boolean getExclusiveAnswer() {
+        return exclusiveAnswer;
+    }
+
+    public void setExclusiveAnswer(Boolean exclusiveAnswer) {
+        this.exclusiveAnswer = exclusiveAnswer;
+    }
+
+    @Override
+    public String toString() {
+        return "Choice{" +
+                "display='" + display + '\'' +
+                ", textEntry='" + textEntry + '\'' +
+                ", textEntryValidation='" + textEntryValidation + '\'' +
+                ", exclusiveAnswer=" + exclusiveAnswer +
+                '}';
     }
 }

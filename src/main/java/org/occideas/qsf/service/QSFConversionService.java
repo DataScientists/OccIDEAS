@@ -195,13 +195,13 @@ public class QSFConversionService {
         simpleQuestionPayload.setConfiguration(getDefaultConfiguration());
         simpleQuestionPayload.setQuestionDescription(question.getName());
         simpleQuestionPayload.setDataExportTag(question.getIdNode() + "-" + question.getNumber());
-        QSFQuestionChoices derivedChoices = QSFNodeTypeMapper.getBaseOnType(question.getChildNodes().get(0).getType()).getBuildChoices().apply(question);
+        QSFQuestionChoices derivedChoices = QSFNodeTypeMapper.getBaseOnType(question.getType(), question.getChildNodes().get(0).getType()).getBuildChoices().apply(question);
         simpleQuestionPayload.setChoices(derivedChoices.getChoices());
         simpleQuestionPayload.setChoiceOrderList(derivedChoices.getChoiceOrder().toArray(new String[0]));
         simpleQuestionPayload.setLanguageList(new ArrayList<>());
         simpleQuestionPayload.setValidation(new Validation(new Setting("ON", "ON", "None")));
         if (Objects.nonNull(questionAnswerWrapper.getDependsOn())) {
-            List<Logic> logics = QSFNodeTypeMapper.getBaseOnType(questionAnswerWrapper.getQuestion().getType()).getBuildLogic().apply(questionAnswerWrapper);
+            List<Logic> logics = QSFNodeTypeMapper.getBaseOnType(question.getType(), questionAnswerWrapper.getQuestion().getType()).getBuildLogic().apply(questionAnswerWrapper);
             simpleQuestionPayload.setLogic(new DisplayLogic("BooleanExpression", false,
                     new Condition(buildLogicMap(logics), "If")));
         }
@@ -215,10 +215,10 @@ public class QSFConversionService {
                 return QSFQuestionType.SINGLE_CHOICE;
             }
             if (!QSFNodeTypeMapper.P_SIMPLE_TYPE.getDescription().equalsIgnoreCase(type)) {
-                return QSFNodeTypeMapper.getBaseOnType(type).getQualtricsType();
+                return QSFNodeTypeMapper.getBaseOnType(question.getType(), type).getQualtricsType();
             }
         }
-        return QSFNodeTypeMapper.getBaseOnType(question.getType()).getQualtricsType();
+        return QSFNodeTypeMapper.getBaseOnType(question.getType(), question.getType()).getQualtricsType();
     }
 
     private Map<Integer, Logic> buildLogicMap(List<Logic> list) {

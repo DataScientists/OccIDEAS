@@ -11,19 +11,19 @@ import java.util.function.Function;
 
 public enum QSFNodeTypeMapper {
 
-    Q_LINKEDMODULE("Q_linkedmodule", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
-    Q_LINKEDAJSM("Q_linkedajsm", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
-    Q_FREQUENCY("Q_frequency", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
-    Q_SIMPLE("Q_simple", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    Q_LINKEDMODULE("Q_linkedmodule", singleSelectionLogic(), singleChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    Q_LINKEDAJSM("Q_linkedajsm", singleSelectionLogic(), singleChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    Q_FREQUENCY("Q_frequency", singleSelectionLogic(), singleChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    Q_SIMPLE("Q_simple", singleSelectionLogic(), singleChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
     Q_MULTIPLE("Q_multiple", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.MULTIPLE_CHOICE),
-    Q_SINGLE("Q_single", singleSelectionLogic(), multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
-    P_FREETEXT("P_freetext", null, multiChoiceCreator(), QSFQuestionType.TEXT_ENTRY),
+    Q_SINGLE("Q_single", singleSelectionLogic(), singleChoiceCreator(), QSFQuestionType.SINGLE_CHOICE),
+    P_FREETEXT("P_freetext", null, singleChoiceCreator(), QSFQuestionType.TEXT_ENTRY),
     P_FREQUENCY_WEEKS("P_frequencyweeks", null, singleNumberChoiceCreator("Weeks"), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_HOURS("P_frequencyhours", null, singleNumberChoiceCreator("Hours"), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_HOURS_MINUTES("P_frequencyhoursminute", null, shiftHoursChoiceCreator(), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_SHIFT_HOURS("P_frequencyshifthours", null, shiftHoursChoiceCreator(), QSFQuestionType.TEXT_ENTRY_FORM),
     P_FREQUENCY_SECONDS("P_frequencyseconds", null, singleNumberChoiceCreator("Seconds"), QSFQuestionType.TEXT_ENTRY_FORM),
-    P_SIMPLE_TYPE("P_simple", null, multiChoiceCreator(), QSFQuestionType.SINGLE_CHOICE);
+    P_SIMPLE_TYPE("P_simple", null, singleChoiceCreator(), QSFQuestionType.SINGLE_CHOICE);
 
 
     QSFNodeTypeMapper(String description, Function<QuestionAnswerWrapper, List<Logic>> buildLogic, Function<Question, QSFQuestionChoices> buildChoices, QSFQuestionType qualtricsType) {
@@ -64,13 +64,30 @@ public enum QSFNodeTypeMapper {
         };
     }
 
-    private static Function<Question, QSFQuestionChoices> multiChoiceCreator() {
+    private static Function<Question, QSFQuestionChoices> singleChoiceCreator() {
         return question -> {
             Map<String, Choice> choices = new HashMap<>();
 
             List<String> choiceOrder = new LinkedList<>();
             question.getChildNodes().forEach(answer -> {
                 choices.put(String.valueOf(answer.getIdNode()), new Choice(answer.getName()));
+                choiceOrder.add(String.valueOf(answer.getIdNode()));
+            });
+            return new QSFQuestionChoices(choices, choiceOrder);
+        };
+    }
+
+    private static Function<Question, QSFQuestionChoices> multiChoiceCreator() {
+        return question -> {
+            Map<String, Choice> choices = new HashMap<>();
+
+            List<String> choiceOrder = new LinkedList<>();
+            question.getChildNodes().forEach(answer -> {
+                if (QSFExclusiveAnswer.isAnswerExclusive(answer.getName())) {
+                    choices.put(String.valueOf(answer.getIdNode()), new Choice(answer.getName(), true));
+                } else {
+                    choices.put(String.valueOf(answer.getIdNode()), new Choice(answer.getName()));
+                }
                 choiceOrder.add(String.valueOf(answer.getIdNode()));
             });
             return new QSFQuestionChoices(choices, choiceOrder);
@@ -93,16 +110,16 @@ public enum QSFNodeTypeMapper {
         };
     }
 
-    public static QSFNodeTypeMapper getBaseOnType(String type) {
-        if (Objects.isNull(type)) {
+    public static QSFNodeTypeMapper getBaseOnType(String questionType, String answerType) {
+        if (Objects.isNull(answerType) || Q_MULTIPLE.getDescription().equalsIgnoreCase(questionType)) {
             return Q_MULTIPLE;
         }
 
-        Optional<QSFNodeTypeMapper> nodeTypeOptional = Arrays.stream(QSFNodeTypeMapper.values()).filter(t -> t.description.equalsIgnoreCase(type)).findFirst();
+        Optional<QSFNodeTypeMapper> nodeTypeOptional = Arrays.stream(QSFNodeTypeMapper.values()).filter(t -> t.description.equalsIgnoreCase(answerType)).findFirst();
         if (nodeTypeOptional.isPresent()) {
             return nodeTypeOptional.get();
         }
-        throw new GenericException(type + " type is unsupported");
+        throw new GenericException(answerType + " answerType is unsupported");
     }
 
     public String getDescription() {

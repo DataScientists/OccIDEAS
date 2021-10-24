@@ -30,4 +30,12 @@ public class QSFQuestionChoices {
     public void setChoiceOrder(List<String> choiceOrder) {
         this.choiceOrder = choiceOrder;
     }
+
+    @Override
+    public String toString() {
+        return "QSFQuestionChoices{" +
+                "choices=" + choices +
+                ", choiceOrder=" + choiceOrder +
+                '}';
+    }
 }
