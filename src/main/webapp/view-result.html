@@ -113,24 +113,31 @@ color: #efebeb;
 						<td>{{noiseRow.partialExposure}}</td>
 					</tr>
 				</table>
-				
-				<div>Estimated noise over the whole day: {{autoExposureLevel}}</div>
-				<div>Peak Noise: {{results.peak}}</div>
-				
+
+				<div>Estimated noise over the whole day:
+					{{autoExposureLevel ? autoExposureLevel.substring(0, autoExposureLevel.indexOf('.')) + 'dB' : ''}}
+				</div>
+				<div>Peak Noise: {{results.peak ? results.peak.substring(0, results.peak.indexOf('.')) + 'dB' : ''}}
+				</div>
+
 				<div>
-				On your last working day you were exposed to noise
+					On your last working day you were exposed to noise
 				</div>
 				<div ng-if="autoExposureLevel > 85">
-				- above the occupational limit (for over 85)
-				</div >
+					- above the occupational limit (over 85dB)
+				</div>
 				<div ng-if="autoExposureLevel <= 85 && autoExposureLevel >= 80">
-				- in the concern area (for 80-85)
+					- in the concern area (for 80-85)
 				</div>
 				<div ng-if="autoExposureLevel < 80">
 				- below the occupational limit (for less than 80)
 				</div>
 				<div>
-				Noise levels often vary from day to day, so you should not assume that every day will give you this level of noise. There are several things you can do to reduce your noise level. Based on your answers, we suggest that you check out the following websites
+					<p style="white-space:pre-line">Noise levels often vary from day to day, so you should not assume
+						that every day will give you this level of noise.
+						There are several things you can do to reduce your noise level. Based on your answers, we
+						suggest that you check out the following websites
+					</p>
 				</div>
 			</div>
 		</div>

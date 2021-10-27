@@ -73,7 +73,7 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
                 String nodeText = questionAnswerText;
                 NoiseView noiseView = new NoiseView("backgroundNoise",
                         rule.getConditions().get(0).getNumber(),
-                        level.toPlainString() + "B",
+                        level.toPlainString() + " Background",
                         hoursBg.toPlainString(),
                         partialExposure.toPlainString(),
                         rule.getConditions().get(0).getIdNode(),
