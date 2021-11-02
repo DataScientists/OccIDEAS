@@ -23,7 +23,16 @@
                 method: "GET",
                 params: {RID: rid}
             }).then(response => {
-                $scope.results = response.data
+                const derivedResponseData = {
+                    ...response.data,
+                    results: response.data?.results?.map(result => {
+                        return {
+                            ...result,
+                            partialExposure: derivePercentage(result.partialExposure, response.data.totalPartialExposure)
+                        }
+                    })
+                }
+                $scope.results = derivedResponseData;
                 if ($scope.results) {
                     let autoExposureLevel = 10 * (Math.log10($scope.results.totalPartialExposure / (3.2 * (Math.pow(10, -9)))));
                     $scope.autoExposureLevel = autoExposureLevel.toFixed(2);
@@ -38,4 +47,13 @@
 
         $timeout(getResults, 10000);
     }]);
+
+    function derivePercentage(value, total) {
+        if (!value || !total) {
+            return 'N/A';
+        }
+        const val = parseFloat(value).toFixed(2);
+        const tot = parseFloat(total).toFixed(2);
+        return Math.round((val / tot) * 100) + '%';
+    }
 })();

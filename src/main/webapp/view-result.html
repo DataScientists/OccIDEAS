@@ -79,7 +79,7 @@
 <div ng-controller="resultCtrl">
     <div class="header" ng-if="error">{{error}}</div>
     <div ng-if="!error">
-        <div class="header">Your results will be shown below shortly...
+        <div ng-if="progress" class="header">Your results will be shown below shortly...
         </div>
         <div ng-if="progress" class="container" ng-cloak>
             <div class="vertical-center">
