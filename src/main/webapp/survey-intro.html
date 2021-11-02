@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>Survey-Results</title>
+    <title>Occideas</title>
     <link rel="shortcut icon" href="#"/>
     <script
             src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
@@ -59,6 +59,7 @@
             background-repeat: repeat-x;
             background-position: 0 0;
             box-sizing: border-box;
+            padding: 10px 10px;
         }
 
         .headerBlue {
@@ -68,6 +69,12 @@
             font-family: Overlock, sans-serif;
         }
 
+        .headerBlack {
+            color: rgb(96, 96, 96);
+            font-size: 1em;
+            font-weight: bold;
+        }
+
         .error {
             color: #ff0000c2;
             font-size: 2em;
@@ -75,23 +82,22 @@
             margin: 0 auto;
         }
 
-        .resultProgress {
-            background-color: #FFFFFF;
-            min-height: 200px;
-            font-size: 1.5em;
-            width: 50%;
-            margin: 0 auto;
-            font-family: Overlock, sans-serif;
+        .normalText {
+            padding: 10px 10px;
+        }
+
+        .button {
+
         }
     </style>
 </head>
-<body ng-app="surveyResultsApp">
+<body ng-app="surveyIntroApp">
 <div ng-controller="resultCtrl">
     <header>
         <img src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png/v1/fill/w_451,h_170,al_c,q_85,usm_0.66_1.00_0.01/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.webp"
              alt="" style="width: 230px; height: 85px; object-fit: contain; object-position: center center;">
     </header>
-    <div class="container" style="margin-bottom: 10px">
+    <div class="container">
         <div class="error" ng-if="error">
             <div>
                 <div style="font-size: 2em;text-align: center;"><i class="fas fa-exclamation-triangle"></i></div>
@@ -100,82 +106,42 @@
                 </div>
             </div>
         </div>
-        <div ng-if="!error && progress" class="header">
-            <div class="resultProgress">
-                <div ng-if="progress" style="text-align: center;">
-                    Your results will be shown below shortly...
-                </div>
-                <div ng-if="progress" ng-cloak>
-                    <div layout="row" layout-sm="column" layout-align="space-around">
-                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
-                    </div>
-                </div>
+        <div class="resultContainer" ng-if="!error">
+            <div class="headerBlue">WELCOME TO THE WELDERS NOISE APP</div>
+            <div class="normalText">Welcome to our app which helps welders find out how much noise they are exposed to
+                at work. Our app will ask you questions about the sorts of tasks you usually do at work. From that, our
+                app estimates the noise you will be exposed to at work. Please take your time to carefully read the
+                questions before you answer them.
             </div>
-        </div>
-        <div ng-if="!progress && !error" style="color: rgb(96, 96, 96); font-size: 1.2em;"><strong>Shift Hours:</strong><span> {{results.shiftHours | number}}</span>
-        </div>
-        <div class="resultContainer">
-            <div ng-if="!progress && !error" ng-cloak>
-                <div class="noiseAssessmentWrapper">
-                    <table class="table table-bordered ">
-                        <thead>
-                        <tr class="headerBlue">
-                            <!-- <td>Question</td> -->
-                            <td>Question : Answer</td>
-                            <!-- <td>Module Name</td>
-                            <td>Top Node Id</td>
-                            <td>Node Number</td> -->
-                            <td>Task noise level (dB)</td>
-                            <td>Hours (adjusted to your working day)</td>
-                            <td>Percent of total noise due to this task</td>
-                        </tr>
-                        </thead>
-                        <tr ng-repeat="noiseRow in results.results">
-                            <!-- <td>{{noiseRow.idNode}}</td> -->
-                            <td>{{noiseRow.nodeText}}</td>
-                            <!-- <td>{{noiseRow.moduleName}}</td>
-                            <td>{{noiseRow.topNodeId}}</td>
-                            <td>{{noiseRow.nodeNumber}}</td> -->
-                            <td>{{noiseRow.dB}}</td>
-                            <td>{{noiseRow.backgroundhours}}</td>
-                            <td>{{noiseRow.partialExposure}}</td>
-                        </tr>
-                    </table>
-
-                    <div>
-                        <strong>Estimated noise over the whole day:</strong>
-                        <span>{{autoExposureLevel ? autoExposureLevel.substring(0, autoExposureLevel.indexOf('.')) + 'dB' : ''}}</span>
-                    </div>
-                    <div>
-                        <strong>Peak Noise:</strong>
-                        <span>{{results.peak ? results.peak.substring(0, results.peak.indexOf('.')) + 'dB' : ''}}</span>
-                    </div>
-
-                    <div>
-                        <strong>On your last working day you were exposed to noise</strong>
-                    </div>
-                    <div ng-if="autoExposureLevel > 85">
-                        - above the occupational limit (over 85dB)
-                    </div>
-                    <div ng-if="autoExposureLevel <= 85 && autoExposureLevel >= 80">
-                        - in the concern area (for 80-85)
-                    </div>
-                    <div ng-if="autoExposureLevel < 80">
-                        - below the occupational limit (for less than 80)
-                    </div>
-                    <div>
-                        <p style="white-space:pre-line;">
-                            Noise levels often vary from day to day, so you should not assume that every day will give
-                            you this level of noise.
-                            There are several things you can do to reduce your noise level.
-                            Based on your answers, we suggest that you check out the following websites
-                        </p>
-                    </div>
-                </div>
+            <div class="headerBlack">COMPLETING THE SURVEY</div>
+            <div class="normalText">The questionnaire should take about 10 minutes to complete. As you move through the
+                questions, please use the Save and Continue buttons - do not use your browser buttons.
             </div>
+            <div class="normalText">
+                <span>More information about who is doing this survey and the background can be found  </span><span><a
+                    href="{{results.surveyInfoLink}}" target="_blank">here</a></span>
+            </div>
+            <div class="normalText">
+                <span>If you have any questions, please email </span><span><a href="{{results.emailLink}}"
+                                                                              target="_blank">{{results.emailLink}}</a></span>
+            </div>
+            <div class="headerBlack">CONFIDENTIALITY</div>
+            <div class="normalText">
+                It is important to note that your participation in this survey is completely voluntary and at any time
+                you can choose to exit this questionnaire. No data that identifies you as an individual are being
+                collected.
+            </div>
+            <div class="normalText">
+                The answers you provide are completely confidential and anonymous. Your personal noise result will be
+                reported back to you. We will also provide you with a comparison with similar workers so you can see how
+                the noise level at your work compares with other similar workers. In order to do this, we would like
+                your permission to store the results of your questionnaire anonymously.
+            </div>
+
+        </div>
+        <div style="text-align: center;"><a href="{{results.surveyLink}}" class="btn btn-primary">Click to Begin</a>
         </div>
     </div>
-</div>
 </body>
-<script src="scripts/results.js"></script>
+<script src="intro.js"></script>
 </html>

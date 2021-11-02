@@ -17,6 +17,7 @@ public class QualtricsConfig {
     private String translationsPath;
     private String redirectUrl;
     private NodeSurveyConfig node;
+    private SurveyLinkConfig survey;
 
     public String getUrl() {
         return url;
@@ -88,5 +89,13 @@ public class QualtricsConfig {
 
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
+    }
+
+    public SurveyLinkConfig getSurvey() {
+        return survey;
+    }
+
+    public void setSurvey(SurveyLinkConfig survey) {
+        this.survey = survey;
     }
 }

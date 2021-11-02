@@ -41,6 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/").permitAll()
             .antMatchers("/results").permitAll()
             .antMatchers("/view-results").permitAll()
+            .antMatchers("/survey-link").permitAll()
+            .antMatchers("/survey-intro").permitAll()
+            .antMatchers("/intro.js").permitAll()
             .antMatchers(actuatorEndpoints()).authenticated();
     http.antMatcher("/web/**")
             .addFilterBefore(new AuthenticationFilter(authenticationManager()), BasicAuthenticationFilter.class)
