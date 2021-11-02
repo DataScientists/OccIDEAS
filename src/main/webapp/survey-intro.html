@@ -86,16 +86,36 @@
             padding: 10px 10px;
         }
 
-        .button {
+        @media screen and (min-device-width: 980px) {
+            .logoContainer {
+                position: relative;
+                left: 46px;
+                margin: 38px 0px 19px calc((100% - 980px) * 0.5);
+                grid-area: 1 / 1 / 2 / 2;
+                justify-self: start;
+                align-self: start;
+            }
+        }
 
+        @media screen and (min-device-width: 1200px) {
+            .logoContainer {
+                position: relative;
+                left: 46px;
+                margin: 38px 0px 19px calc((100% - 1200px) * 0.5);
+                grid-area: 1 / 1 / 2 / 2;
+                justify-self: start;
+                align-self: start;
+            }
         }
     </style>
 </head>
 <body ng-app="surveyIntroApp">
 <div ng-controller="resultCtrl">
     <header>
-        <img src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png/v1/fill/w_451,h_170,al_c,q_85,usm_0.66_1.00_0.01/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.webp"
-             alt="" style="width: 230px; height: 85px; object-fit: contain; object-position: center center;">
+        <div class="logoContainer">
+            <img src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png/v1/fill/w_451,h_170,al_c,q_85,usm_0.66_1.00_0.01/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.webp"
+                 alt="" style="width: 230px; height: 85px; object-fit: contain; object-position: center center;">
+        </div>
     </header>
     <div class="container">
         <div class="error" ng-if="error">
