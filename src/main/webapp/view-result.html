@@ -1,147 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>Survey-Results</title>
-<link rel="shortcut icon" href="#" />
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+    <meta charset="UTF-8"/>
+    <title>Survey-Results</title>
+    <link rel="shortcut icon" href="#"/>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
 
-<link rel="stylesheet"
-	href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
-<link
-	href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
-	rel="stylesheet">
-<link crossorigin="anonymous"
-	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
-	rel="stylesheet">
-<link crossorigin="anonymous"
-	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
-	integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
-	rel="stylesheet">
-<link href='//fonts.googleapis.com/css?family=Varela+Round'
-	rel='stylesheet' type='text/css'>
-<link href="styles/style.css" rel="stylesheet" />
-<link href="styles/bootstrap-theme.css" rel="stylesheet" />
-<link href="styles/bootstrap.css" rel="stylesheet" />
-<link href="styles/ng-table.css" rel="stylesheet" />
+    <link rel="stylesheet"
+          href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+    <link
+            href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
+            rel="stylesheet">
+    <link crossorigin="anonymous"
+          href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          rel="stylesheet">
+    <link crossorigin="anonymous"
+          href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+          rel="stylesheet">
+    <link href='//fonts.googleapis.com/css?family=Varela+Round'
+          rel='stylesheet' type='text/css'>
+    <link href="styles/style.css" rel="stylesheet"/>
+    <link href="styles/bootstrap-theme.css" rel="stylesheet"/>
+    <link href="styles/bootstrap.css" rel="stylesheet"/>
+    <link href="styles/ng-table.css" rel="stylesheet"/>
 
-<meta content="width=device-width, initial-scale=1, maximum-scale=1"
-	name="viewport" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1"
+          name="viewport"/>
 
-<style>
-.header {
-	height: 100px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border: 1px solid grey;
-	
-}
+    <style>
+        .header {
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid grey;
 
-.container {
-	height: 95%;
-	position: relative;
-	border: 3px solid white;
-}
+        }
 
-.vertical-center {
-	margin: 0;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
-}
-body {
-background-image: url(./img/starbg.png);
-background-repeat: no-repeat;
-background-size: cover;
-color: #efebeb;
-}
-.backgroundNoise {
-    background: #8c8f98;
-}
-</style>
+        .container {
+            height: 95%;
+            position: relative;
+            border: 3px solid white;
+        }
+
+        .vertical-center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+        }
+
+        body {
+            background-image: url(./img/starbg.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: #efebeb;
+        }
+
+        .backgroundNoise {
+            background: #8c8f98;
+        }
+    </style>
 </head>
-<body ng-app="surveyResultsApp" >
-	<div ng-controller="resultCtrl">
-		<div class="header">Your results will be shown below shortly...
-		</div>
-		<div ng-if="progress" class="container" ng-cloak>
-			<div class="vertical-center">
-				<md-content layout-padding> <md-progress-circular
-					md-diameter="100%" md-mode="indeterminate"></md-progress-circular>
-				</md-content>
+<body ng-app="surveyResultsApp">
+<div ng-controller="resultCtrl">
+    <div class="header" ng-if="error">{{error}}</div>
+    <div ng-if="!error">
+        <div class="header">Your results will be shown below shortly...
+        </div>
+        <div ng-if="progress" class="container" ng-cloak>
+            <div class="vertical-center">
+                <md-content layout-padding>
+                    <md-progress-circular
+                            md-diameter="100%" md-mode="indeterminate"></md-progress-circular>
+                </md-content>
 
-			</div>
-		</div>
-		<div ng-if="!progress" class="container" ng-cloak>
+            </div>
+        </div>
+        <div ng-if="!progress" class="container" ng-cloak>
 
-			<div>Shift Hours: {{results.shiftHours | number}}</div>
-			<div class="noiseAssessmentWrapper">
-				<table class="table table-bordered ">
-					<thead>
-						<tr>
-							<!-- <td>Question</td> -->
-							<td>Question : Answer</td>
-							<!-- <td>Module Name</td>
-							<td>Top Node Id</td>
-							<td>Node Number</td> -->
-							<td>Task noise level (dB)</td>
-							<td>Hours (adjusted to your working day)</td>
-							<td>Percent of total noise due to this task</td>
-						</tr>
-					</thead>
-					<tr ng-repeat="noiseRow in results.results">
-						<!-- <td>{{noiseRow.idNode}}</td> -->
-						<td>{{noiseRow.nodeText}}</td>
-						<!-- <td>{{noiseRow.moduleName}}</td>
-						<td>{{noiseRow.topNodeId}}</td>
-						<td>{{noiseRow.nodeNumber}}</td> -->
-						<td>{{noiseRow.dB}}</td>
-						<td>{{noiseRow.backgroundhours}}</td>
-						<td>{{noiseRow.partialExposure}}</td>
-					</tr>
-				</table>
+            <div>Shift Hours: {{results.shiftHours | number}}</div>
+            <div class="noiseAssessmentWrapper">
+                <table class="table table-bordered ">
+                    <thead>
+                    <tr>
+                        <!-- <td>Question</td> -->
+                        <td>Question : Answer</td>
+                        <!-- <td>Module Name</td>
+                        <td>Top Node Id</td>
+                        <td>Node Number</td> -->
+                        <td>Task noise level (dB)</td>
+                        <td>Hours (adjusted to your working day)</td>
+                        <td>Percent of total noise due to this task</td>
+                    </tr>
+                    </thead>
+                    <tr ng-repeat="noiseRow in results.results">
+                        <!-- <td>{{noiseRow.idNode}}</td> -->
+                        <td>{{noiseRow.nodeText}}</td>
+                        <!-- <td>{{noiseRow.moduleName}}</td>
+                        <td>{{noiseRow.topNodeId}}</td>
+                        <td>{{noiseRow.nodeNumber}}</td> -->
+                        <td>{{noiseRow.dB}}</td>
+                        <td>{{noiseRow.backgroundhours}}</td>
+                        <td>{{noiseRow.partialExposure}}</td>
+                    </tr>
+                </table>
 
-				<div>Estimated noise over the whole day:
-					{{autoExposureLevel ? autoExposureLevel.substring(0, autoExposureLevel.indexOf('.')) + 'dB' : ''}}
-				</div>
-				<div>Peak Noise: {{results.peak ? results.peak.substring(0, results.peak.indexOf('.')) + 'dB' : ''}}
-				</div>
+                <div>Estimated noise over the whole day:
+                    {{autoExposureLevel ? autoExposureLevel.substring(0, autoExposureLevel.indexOf('.')) + 'dB' : ''}}
+                </div>
+                <div>Peak Noise: {{results.peak ? results.peak.substring(0, results.peak.indexOf('.')) + 'dB' : ''}}
+                </div>
 
-				<div>
-					On your last working day you were exposed to noise
-				</div>
-				<div ng-if="autoExposureLevel > 85">
-					- above the occupational limit (over 85dB)
-				</div>
-				<div ng-if="autoExposureLevel <= 85 && autoExposureLevel >= 80">
-					- in the concern area (for 80-85)
-				</div>
-				<div ng-if="autoExposureLevel < 80">
-				- below the occupational limit (for less than 80)
-				</div>
-				<div>
-					<p style="white-space:pre-line">Noise levels often vary from day to day, so you should not assume
-						that every day will give you this level of noise.
-						There are several things you can do to reduce your noise level. Based on your answers, we
-						suggest that you check out the following websites
-					</p>
-				</div>
-			</div>
-		</div>
-	</div>
+                <div>
+                    On your last working day you were exposed to noise
+                </div>
+                <div ng-if="autoExposureLevel > 85">
+                    - above the occupational limit (over 85dB)
+                </div>
+                <div ng-if="autoExposureLevel <= 85 && autoExposureLevel >= 80">
+                    - in the concern area (for 80-85)
+                </div>
+                <div ng-if="autoExposureLevel < 80">
+                    - below the occupational limit (for less than 80)
+                </div>
+                <div>
+                    <p style="white-space:pre-line">Noise levels often vary from day to day, so you should not assume
+                        that every day will give you this level of noise.
+                        There are several things you can do to reduce your noise level. Based on your answers, we
+                        suggest that you check out the following websites
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <script src="scripts/results.js"></script>
 </html>

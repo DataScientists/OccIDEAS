@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.ws.rs.NotFoundException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -29,8 +30,8 @@ public class QSFResultsController {
         log.info("getResults responseId {}", responseId);
         InterviewResults interviewResults = interviewResultDao.findByReferenceNumber(responseId);
         if (Objects.isNull(interviewResults)) {
-        	log.info("No results");
-            return null;
+            log.error("No results for {}", responseId);
+            throw new NotFoundException();
         }
 
         return new String(interviewResults.getResults(), StandardCharsets.UTF_8);

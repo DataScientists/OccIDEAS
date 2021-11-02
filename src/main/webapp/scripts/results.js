@@ -11,11 +11,10 @@
             requireBase: false
         })
     }]);
-    app.controller('resultCtrl', ['$scope', '$http', '$location', '$interval', ($scope, $http, $location, $interval) => {
+    app.controller('resultCtrl', ['$scope', '$http', '$location', '$timeout', ($scope, $http, $location, $timeout) => {
         $scope.results = null;
         $scope.progress = true;
-
-        $scope.interval;
+        $scope.error = null;
         const getResults = () => {
             const params = $location.search();
             const rid = params.RID;
@@ -28,14 +27,15 @@
                 if ($scope.results) {
                     let autoExposureLevel = 10 * (Math.log10($scope.results.totalPartialExposure / (3.2 * (Math.pow(10, -9)))));
                     $scope.autoExposureLevel = autoExposureLevel.toFixed(2);
-					
-                    $interval.cancel($scope.interval);
                     $scope.progress = false;
                 }
+            }, response => {
+                console.error(response);
+                $scope.error = 'Something went wrong';
+                $scope.progress = false;
             });
         }
 
-        $scope.interval = $interval(
-            getResults, 5000, 5);
+        $timeout(getResults, 10000);
     }]);
 })();
