@@ -151,7 +151,7 @@ class QSFConversionServiceTest {
     void givenDifferentTypesOfAnswers_whenGetQuestionTypeBaseOnAnswers_shouldReturnCorrectType() {
         Question multiAnswerQuestion = CommonDataGenerator.createQuestionPSimple("1q", QSFNodeTypeMapper.Q_MULTIPLE.getDescription(), 2);
         Question singleAnswerQuestion = CommonDataGenerator.createQuestionPSimple("1q", QSFNodeTypeMapper.Q_SINGLE.getDescription(), 2);
-        Question freetextAnswerQuestion = CommonDataGenerator.createQuestionPFreetext("1q", QSFNodeTypeMapper.Q_MULTIPLE.getDescription(), 1);
+        Question freetextAnswerQuestion = CommonDataGenerator.createQuestionPFreetext("1q", QSFNodeTypeMapper.Q_SINGLE.getDescription(), 1);
         freetextAnswerQuestion.getChildNodes().get(0).setType(QSFNodeTypeMapper.P_FREETEXT.getDescription());
         Question frequencyAnswerQuestion = CommonDataGenerator.createQuestionPSimple("1q", QSFNodeTypeMapper.Q_FREQUENCY.getDescription(), 1);
         frequencyAnswerQuestion.getChildNodes().get(0).setType(QSFNodeTypeMapper.P_FREQUENCY_HOURS.getDescription());
