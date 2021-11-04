@@ -52,8 +52,12 @@
         if (!value || !total) {
             return 'N/A';
         }
-        const val = parseFloat(value).toFixed(2);
-        const tot = parseFloat(total).toFixed(2);
-        return Math.round((val / tot) * 100) + '%';
+        const val = parseFloat(value).toFixed(4);
+        const tot = parseFloat(total).toFixed(4);
+		var fraction = (val / tot);
+		var percentage = fraction * 100;
+		var roundedPerctage = Math.round(percentage);
+		var retValue = '~'+roundedPerctage + '%';
+        return retValue;
     }
 })();
