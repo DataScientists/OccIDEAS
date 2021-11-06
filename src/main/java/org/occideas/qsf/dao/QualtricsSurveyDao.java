@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
@@ -44,5 +45,16 @@ public class QualtricsSurveyDao extends GenericBaseDao<QualtricsSurvey, Long> {
         ));
         criteria.orderBy(builder.desc(root.get(QualtricsSurvey_.ID)));
         return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
+    }
+
+    public void deleteByResponseId(String responseId) {
+        final Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaDelete<QualtricsSurvey> criteria = builder.createCriteriaDelete(QualtricsSurvey.class);
+        Root<QualtricsSurvey> root = criteria.from(QualtricsSurvey.class);
+        criteria.where(builder.and(
+                builder.equal(root.get(QualtricsSurvey_.RESPONSE_ID), responseId)
+        ));
+        sessionFactory.getCurrentSession().createQuery(criteria).executeUpdate();
     }
 }

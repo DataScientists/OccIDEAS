@@ -107,4 +107,34 @@ class QualtricsSurveyDaoTest {
 
         assertTrue(list.isEmpty());
     }
+
+    @Test
+    void givenResponseIdExist_whenDeleteByResponseId_shouldSuccess() {
+        QualtricsSurvey qualtricsSurvey
+                = new QualtricsSurvey();
+        qualtricsSurvey.setResponseId("12345");
+        qualtricsSurvey.setSurveyId("1");
+        qualtricsSurvey.setBrandId("1B");
+        qualtricsSurvey.setTopic("topic");
+        qualtricsSurvey.setCompletedDate(LocalDateTime.now());
+        qualtricsSurvey.setQualtricsStatus("Completed");
+        qualtricsSurvey.setResponse("{test: test}".getBytes());
+        qualtricsSurveyDao.save(qualtricsSurvey);
+        List<QualtricsSurvey> listOfSurvey = qualtricsSurveyDao.findByResponseId("12345");
+        assertFalse(listOfSurvey.isEmpty());
+
+        qualtricsSurveyDao.deleteByResponseId("12345");
+
+        List<QualtricsSurvey> actual = qualtricsSurveyDao.findByResponseId("12345");
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void givenResponseIdNotExist_whenDeleteByResponseId_shouldSuccess() {
+
+        qualtricsSurveyDao.deleteByResponseId("12345");
+
+        List<QualtricsSurvey> actual = qualtricsSurveyDao.findByResponseId("12345");
+        assertTrue(actual.isEmpty());
+    }
 }

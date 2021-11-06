@@ -39,7 +39,7 @@ public class QualtricsSurveyService {
             log.info("survey response is not available from qualtrics {}", qualtricsSurvey.getResponseId());
             return;
         }
-
+        qualtricsSurveyDao.deleteByResponseId(qualtricsSurvey.getResponseId());
         qualtricsSurveyDao.save(qualtricsSurvey);
         log.info("survey response was saved successfully for response id {}", qualtricsSurvey.getResponseId());
     }
