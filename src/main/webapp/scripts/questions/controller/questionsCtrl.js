@@ -2904,10 +2904,16 @@
       }, 2000, 'swing');
     };
 
+    $scope.prevNode = 0;
     $scope.highlightNode = function(idNode) {
+      if ($scope.prevNode > 0) {
+        $('#node-' + $scope.prevNode).toggleClass('highlight-rulenode');
+      }
       var elementId = 'node-' + idNode;
       $scope.scrollTo(elementId);
       $('#' + elementId).toggleClass('highlight');
+      $('#' + elementId).toggleClass('highlight-rulenode');
+      $scope.prevNode = idNode;
     };
 
     $scope.highlight = function(idNode) {
