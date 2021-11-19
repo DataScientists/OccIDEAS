@@ -2178,10 +2178,30 @@
           var deffered = $q.defer();
           var promise = getUpdatedModuleRule(model, deffered);
           promise.then(function(data) {
-            var mRules = _.filter(data, function(r) {
+            var mRulesFilter = _.filter(data, function(r) {
               return $itemScope.$parent.obj.idAgent === r.idAgent;
             });
+            var mRules = $filter('orderBy')(mRulesFilter, 'rule.levelValue', true);
+            var ruleWrapperScope = $itemScope.$new();
+            ruleWrapperScope.ruleWrapper = {
+                moduleName: mRules[0].moduleName,
+                agentName: mRules[0].agentName,
+                idNode: mRules[0].idModule,
+                idAgent: mRules[0].idAgent,
+                isRuleMenu: true,
+                nodeNumber: mRules[0].nodeNumber
+            };
+            var moduleWrapper = angular.element("#rulesContainer");
+            newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+
             if(mRules.length > 0) {
+              var noteInitialConfig = {
+                leftPoint: 0,
+                topPoint: 50,
+                maxHeight: 0,
+                tplWidth: 0,
+                tplHeight: 0
+              }
               for(var i = 0; i < mRules.length; i++) {
                 var scope = $itemScope.$new();
                 scope.model = model;
@@ -2190,7 +2210,8 @@
                 var x = scope.rule.conditions;
                 x.idRule = scope.rule.idRule;
                 addPopoverInfo(x, scope.rule.idRule);
-                showRuleDialog($event.currentTarget.parentElement, scope, $compile);
+                var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
+                newNote(targetDiv, scope, $compile, noteInitialConfig);
                 $scope.activeRule = scope.rule;
               }
             }
@@ -2256,13 +2277,15 @@
           var deffered = $q.defer();
           var promise = getUpdatedModuleRulesForWholeModuleForThisAgent(agentId, deffered);
           promise.then(function(data) {
-            var mRules = data;
+            var mRules = $filter('orderBy')(data, 'rule.levelValue', true);
             var ruleWrapperScope = $itemScope.$new();
             ruleWrapperScope.ruleWrapper = {
                 moduleName: mRules[0].moduleName,
                 agentName: mRules[0].agentName,
                 idNode: mRules[0].idModule,
-                idAgent: mRules[0].idAgent
+                isRuleMenu: false,
+                idAgent: mRules[0].idAgent,
+                nodeNumber: 0
             };
             //var moduleWrapper = angular.element("#allModuleRulesOfAgent" + mRules[0].idModule);
             var moduleWrapper = angular.element("#rulesContainer");
@@ -3028,7 +3051,7 @@
     };
 
     $scope.setActiveRuleWrapper = function(ruleWrapper, el) {
-        $scope.activeRuleWrapperDialog = el.ruleWrapper.idNode + '-' + el.ruleWrapper.idAgent;
+        $scope.activeRuleWrapperDialog = el.ruleWrapper.idNode + '-' + el.ruleWrapper.idAgent + '-' + el.ruleWrapper.nodeNumber;
         if(!$scope.activeRuleWrapperDialog.$$phase) {
           try {
             $scope.activeRuleWrapperDialog.$digest();
