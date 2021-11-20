@@ -23,25 +23,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-//import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-//import org.apache.http.HttpResponse;
-//import org.apache.http.NameValuePair;
-//import org.apache.http.client.HttpClient;
-//import org.apache.http.client.entity.UrlEncodedFormEntity;
-//import org.apache.http.client.methods.CloseableHttpResponse;
-//import org.apache.http.client.methods.HttpGet;
-//import org.apache.http.client.methods.HttpUriRequest;
-//import org.apache.http.client.methods.RequestBuilder;
-//import org.apache.http.client.utils.URIBuilder;
-//import org.apache.http.entity.mime.MultipartEntity;
-//import org.apache.http.entity.mime.content.FileBody;
-//import org.apache.http.impl.client.CloseableHttpClient;
-//import org.apache.http.impl.client.HttpClientBuilder;
-//import org.apache.http.impl.client.HttpClients;
-//import org.apache.http.message.BasicNameValuePair;
-//import org.apache.http.params.BasicHttpParams;
-//import org.apache.http.params.HttpParams;
-
 @Path("/reportHistory")
 public class ReportHistoryRestController {
 
@@ -116,11 +97,11 @@ public class ReportHistoryRestController {
     @Path(value = "/getAll")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public Response getAll() {
-        List<ReportHistoryVO> list = new ArrayList<>();
+        List<ReportHistoryVO> list;
         try {
             list = service.getAll();
         } catch (Throwable e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
         return Response.ok(list).build();

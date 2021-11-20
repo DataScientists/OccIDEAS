@@ -5,17 +5,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.occideas.entity.Constant;
+import org.occideas.config.ReportConfig;
 import org.occideas.fragment.service.FragmentService;
-import org.occideas.mapper.FragmentMapper;
-import org.occideas.mapper.ModuleMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.module.service.ModuleService;
-import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
 import org.occideas.vo.NodeVO;
-import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,11 +33,7 @@ public class MSWordGenerator {
   private Logger log = LogManager.getLogger(this.getClass());
 
   @Autowired
-  private SystemPropertyService systemPropertyService;
-  @Autowired
-  private ModuleMapper mapper;
-  @Autowired
-  private FragmentMapper fragmentMapper;
+  private ReportConfig reportConfig;
   @Autowired
   private StudyAgentUtil studyAgentUtil;
   @Autowired
@@ -59,7 +51,7 @@ public class MSWordGenerator {
     // Blank Document
     map = new HashMap<>();
     XWPFDocument document = new XWPFDocument();
-    String path = Constant.REPORT_EXPORT_CSV_DIR;
+    String path = reportConfig.getExportDir();
     
     LocalDateTime localDateTime = LocalDateTime.now();
     String formatDate = DateTimeFormatter.ofPattern("yyy_MM_dd_HH_mm_ss").format(localDateTime);

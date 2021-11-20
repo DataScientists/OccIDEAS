@@ -208,8 +208,8 @@
 
     $scope.exportInterviewRules = function(fileName) {
       var filterAgent = [];
-      _.each($scope.agentcheckboxes.items, function(value, key) {
-        if(value) {
+      _.each($scope.agentcheckboxes.items, function (value, key) {
+        if (value) {
           filterAgent.push(key);
         }
       });
@@ -218,26 +218,16 @@
         fileName: fileName,
         filterAgent: filterAgent
       };
-
-      InterviewsService.exportInterviewRules(data).then(function(response) {
-        if(response.status == '200') {
-          ngToast.create({
-            className: 'success',
-            content: 'Reports are being generated. Please come back later and refresh the page.',
-            animation: 'slide',
-            timeout: 7000
-          });
-        } else {
-          ngToast.create({
-            className: 'danger',
-            content: 'Unable to generate report with status ' + response.status + '. Please take screenshot and report to IT.',
-            dismissButton: true,
-            dismissOnClick: false,
-            animation: 'slide'
-          });
-        }
+      InterviewsService.exportInterviewRules(data);
+      ngToast.create({
+        className: 'success',
+        content: 'Reports are being generated. Please come back later and refresh the page.',
+        animation: 'slide',
+        timeout: 7000
       });
       $scope.cancel();
+      $scope.reloadWithDelay(500);
+      $scope.refreshPage();
     };
 
     $scope.newExportAssessmentNoiseCSVButton = function() {
@@ -277,15 +267,15 @@
     };
 
 
-    $scope.exportCSVInterviews = function(fileName) {
+    $scope.exportCSVInterviews = async function (fileName) {
       var checkedItems = false;
-      _.each($scope.checkboxes.items, function(value, key) {
-        if(value) {
+      _.each($scope.checkboxes.items, function (value, key) {
+        if (value) {
           checkedItems = true;
         }
       });
 
-      if(!checkedItems) {
+      if (!checkedItems) {
         ngToast.create({
           className: 'warning',
           content: 'Please choose at least one module',
@@ -293,9 +283,6 @@
           dismissButton: true
         });
       } else {
-       // SystemPropertyService.getByName("REPORT_EXPORT_CSV_DIR").then(function(response) {
-       //   if(response.status == '200') {
-       //     if(response.data) {
               $scope.cancel();
               ngToast.create({
                 className: 'success',
@@ -308,81 +295,60 @@
                 }
               });
               if($scope.exportType == "ASSESSMENT") {
-                InterviewsService.exportAssessmentsCSV(filterModule, fileName).then(function(response) {
-                });
-              } else if($scope.exportType == "ASSESSMENTNOISE") {
-                InterviewsService.exportAssessmentsNoiseCSV(filterModule, fileName).then(function(response) {
-                });
-              } else if($scope.exportType == "ASSESSMENTVIBRATION") {
-                InterviewsService.exportAssessmentsVibrationCSV(filterModule, fileName).then(function(response) {
-                });
-              } else if($scope.exportType == "NOTES") {
-                InterviewsService.exportNotesCSV(filterModule, fileName).then(function(response) {
-                });
+                await InterviewsService.exportAssessmentsCSV(filterModule, fileName);
+              } else if ($scope.exportType == "ASSESSMENTNOISE") {
+                await InterviewsService.exportAssessmentsNoiseCSV(filterModule, fileName);
+              } else if ($scope.exportType == "ASSESSMENTVIBRATION") {
+                await InterviewsService.exportAssessmentsVibrationCSV(filterModule, fileName);
+              } else if ($scope.exportType == "NOTES") {
+                await InterviewsService.exportNotesCSV(filterModule, fileName);
               } else {
-                InterviewsService.exportInterviewsCSV(filterModule, fileName).then(function(response) {
-                });
+                await InterviewsService.exportInterviewsCSV(filterModule, fileName);
               }
 
-              //Reflect new row
-              $timeout(function() {
-                self.tableParams.shouldGetData = true;
-                self.tableParams.reload().then(function(data) {
-                  allCompleted = false;
-                  self.tableParams.reload();
-                });
-              }, 500);
-
-              //Check if everything is completed
-              $scope.interval = $interval(function() {
-                self.tableParams.shouldGetData = true;
-                self.tableParams.reload().then(function(data) {
-                  self.tableParams.reload();
-
-                  allCompleted = true;
-                  _.each(data, function(value, key) {
-                    if(value.status !== 'Completed') {
-                      allCompleted = false;
-                    }
-                  });
-
-                  if(allCompleted) {
-                    $scope.cancelInterval();
-                  }
-                });
-              }, 1000 * 30); //Update every 30 seconds, just to know if it's completed already
-
-      //      } else {
-       //       ngToast.create({
-      //          className: 'danger',
-      //          content: 'Unable to generate report no directory path defined. SystemProperty "REPORT_EXPORT_CSV_DIR" is not defined.',
-      //          dismissButton: true,
-      //          dismissOnClick: false,
-      //          animation: 'slide'
-      //        });
-     //       }
-      //    }
-      //  });
+        $scope.reloadWithDelay(500);
+        $scope.refreshPage();
       }
     };
 
-    //Cancel refresh
-    $scope.cancelInterval = function() {
-      if(angular.isDefined($scope.interval)) {
-        $interval.cancel($scope.interval);
-        $scope.interval = undefined;
-      }
-    };
+    $scope.reloadWithDelay = (delay) => {
+      $timeout(function () {
+        self.tableParams.shouldGetData = true;
+        self.tableParams.reload().then(function () {
+          self.tableParams.reload();
+        });
+      }, delay);
+    }
 
-    $scope.cancel = function() {
+    $scope.refreshPage = () => {
+      const interval = $interval(function () {
+        self.tableParams.shouldGetData = true;
+        self.tableParams.reload().then(function (data) {
+          self.tableParams.reload();
+
+          let allCompleted = false;
+          _.each(data, function (value) {
+            if (value.status === 'Completed') {
+              allCompleted = true;
+            }
+          });
+
+          if (allCompleted) {
+            $interval.cancel(interval);
+          }
+        });
+      }, 1000 * 30, 10);
+    }
+
+    $scope.cancel = function () {
       $mdDialog.cancel();
     };
     self.filterModTableParams = new NgTableParams(
-      {},
-      {
-        getData: function(params) {
-          if(params.filter().interviewModuleName) {
-            return $filter('filter')(self.filterModTableParams.settings().dataset, params.filter());
+        {},
+        {
+          getData: function (params) {
+            if (params.filter().interviewModuleName) {
+              return $filter('filter')(self.filterModTableParams.settings().dataset, params.filter());
           }
           if(!self.filterModTableParams.shouldGetData) {
             return self.filterModTableParams.settings().dataset;

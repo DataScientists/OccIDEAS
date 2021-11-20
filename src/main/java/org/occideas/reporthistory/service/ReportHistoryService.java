@@ -14,11 +14,11 @@ public interface ReportHistoryService {
 
   ReportHistoryVO save(ReportHistoryVO entity);
 
+  ReportHistoryVO saveNewTransaction(ReportHistoryVO entity);
+
   void delete(ReportHistoryVO entity);
 
-  void generateInterviewRuleReport(String fullPath) throws Exception;
-
-  void generateInterviewRuleFilterReport(String filepath, List<Long> agentIds) throws Exception;
+  Integer generateInterviewRuleFilterReport(String filepath, List<Long> agentIds) throws Exception;
 
   long getMaxId();
 

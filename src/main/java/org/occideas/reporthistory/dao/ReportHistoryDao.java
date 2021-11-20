@@ -129,11 +129,9 @@ public class ReportHistoryDao implements IReportHistoryDao {
   @Override
   public List<InterviewRuleReport> getInterviewRuleReportFilter(List<Long> agentIds) {
     final Session session = sessionFactory.getCurrentSession();
-    SQLQuery sqlQuery = session.createSQLQuery(interviewRuleReportFilterSQL)
-      .addEntity(InterviewRuleReport.class);
-    sqlQuery.setParameterList("agentIds", agentIds);
-    List<InterviewRuleReport> list = sqlQuery.list();
-    return list;
+    return session.createNativeQuery(interviewRuleReportFilterSQL, InterviewRuleReport.class)
+            .setParameterList("agentIds", agentIds)
+            .getResultList();
   }
 
   @Override
