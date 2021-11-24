@@ -2189,7 +2189,8 @@
                 idNode: mRules[0].idModule,
                 idAgent: mRules[0].idAgent,
                 isRuleMenu: true,
-                nodeNumber: mRules[0].nodeNumber
+                nodeNumber: mRules[0].nodeNumber,
+                styleOverride: getNoteWrapperOverrideSize(mRules.length)
             };
             var moduleWrapper = angular.element("#rulesContainer");
             newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
@@ -2285,7 +2286,8 @@
                 idNode: mRules[0].idModule,
                 isRuleMenu: false,
                 idAgent: mRules[0].idAgent,
-                nodeNumber: 0
+                nodeNumber: 0,
+                styleOverride: getNoteWrapperOverrideSize(mRules.length)
             };
             //var moduleWrapper = angular.element("#allModuleRulesOfAgent" + mRules[0].idModule);
             var moduleWrapper = angular.element("#rulesContainer");
@@ -2986,6 +2988,7 @@
         } catch(e) {
         }
       }
+      removeAllOtherNodePopover();
     };
     $scope.addToActiveRule = function(node, rules) {
 
@@ -3058,7 +3061,26 @@
           } catch(e) {
           }
         }
+        removeAllOtherNodePopover();
     };
+
+    function removeAllOtherNodePopover() {
+      var popups = $document[0].querySelectorAll('.nodepopover');
+      if (popups) {
+        for (var i = 0; i < popups.length; i++) {
+          var popup = popups[i];
+          var popupElement = angular.element(popup);
+          //console.log('popupElement.scope()', popupElement.scope())
+          //console.log('popupElement.scope().$parent', popupElement.scope().$parent)
+          var popupNode = popupElement.scope().$parent.node;
+          _.forEach(Object.keys(popupNode.info), function(key){
+            if (key.startsWith('Node' + popupNode.idNode)) {
+              popupElement.scope().$parent.node.info[key].nodePopover.isOpen = false;
+            }
+          });
+        }
+      }
+    }
 
     $scope.closeRuleWrapperDialog = function(elem, $event) {
       $($event.target).closest('.noteWrapper').remove();
@@ -3068,6 +3090,7 @@
 
     $scope.minimizeRulesContainer = function(elem, $event) {
       $($event.target).closest('.noteWrapper')[0].classList.add('minimizeWrapper');
+      removeAllOtherNodePopover();
     };
 
     $scope.maximizeRulesContainer = function(elem, $event) {
@@ -4007,6 +4030,22 @@
         count = getNumberOfChildNode(x, count);
       });
       return count;
+    }
+
+    function getNoteWrapperOverrideSize(rulesCount) {
+        if (rulesCount === 3) {
+            return 'noteWrapper-635';
+        }
+
+        if (rulesCount === 2) {
+            return 'noteWrapper-435';
+        }
+
+        if (rulesCount === 1) {
+            return 'noteWrapper-245'
+        }
+
+        return '';
     }
 
 //       $timeout(function() {

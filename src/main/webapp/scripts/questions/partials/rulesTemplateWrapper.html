@@ -1,7 +1,7 @@
 <div id="rulesContainer">
     <script id="rules-template-wrapper" type="text/x-custom-template">
         <div ng-attr-id="{{ruleWrapper.idNode+'-'+ruleWrapper.idAgent+'-'+ruleWrapper.nodeNumber}}" id="rulesTemplateWrapper"
-             class="noteWrapper {{activeRuleWrapperDialog === (ruleWrapper.idNode+'-'+ruleWrapper.idAgent+'-'+ruleWrapper.nodeNumber)?'activeRuleWrapper':''}}"
+             class="noteWrapper {{ruleWrapper.styleOverride}} {{activeRuleWrapperDialog === (ruleWrapper.idNode+'-'+ruleWrapper.idAgent+'-'+ruleWrapper.nodeNumber)?'activeRuleWrapper':''}}"
              prevent-right-click ng-click="setActiveRuleWrapper(ruleWrapper,this)">
             <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleWrapperDialog(this,$event)"
                     aria-label="Left Align">
