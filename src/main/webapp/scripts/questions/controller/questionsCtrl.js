@@ -2983,12 +2983,12 @@
     $scope.closeRuleDialog = function(rule, elem, $event) {
       if ($scope.activeRule && $scope.activeRule.idRule === rule.idRule) {
         $scope.activeRule = null;
+        $scope.activeRuleDialog = '';
+        $scope.activeRuleCell = '';
+        safeDigest($scope.activeRuleDialog);
+        safeDigest($scope.activeRuleCell);
       }
       $($event.target).closest('.note').remove();
-      $scope.activeRuleDialog = '';
-      $scope.activeRuleCell = '';
-      safeDigest($scope.activeRuleDialog);
-      safeDigest($scope.activeRuleCell);
     };
 
     $scope.setActiveRule = function(rule, el) {
