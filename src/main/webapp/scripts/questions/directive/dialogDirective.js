@@ -87,8 +87,8 @@ function newNote(element, $itemScope, $compile, config) {
     config.leftPoint = 25;
   }
 
-  var temp = noteZindex - zFactor;
-  if ((temp % maxDialogNum) === 1) {
+  config.ruleCounter = config.ruleCounter + 1;
+  if (!config.newRule && (config.ruleCounter % maxDialogNum) === 1) {
     config.topPoint = config.topPoint + config.maxHeight;
     config.leftPoint = 25;
     config.maxHeight = 0;

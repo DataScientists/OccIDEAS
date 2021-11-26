@@ -247,7 +247,10 @@
         })
       },
       close: function close(x, idRule) {
-        x.info["Node" + x.idNode + idRule].nodePopover.isOpen = false;
+        var nodeName = "Node" + x.idNode + idRule;
+        if (x.info && nodeName in x.info) {
+            x.info[nodeName].nodePopover.isOpen = false;
+        }
       }
     };
     $scope.studyAgent = [];
@@ -2201,7 +2204,9 @@
                 topPoint: 50,
                 maxHeight: 0,
                 tplWidth: 0,
-                tplHeight: 0
+                tplHeight: 0,
+                ruleCounter: 0,
+                newRule: false
               }
               for(var i = 0; i < mRules.length; i++) {
                 var scope = $itemScope.$new();
@@ -2213,7 +2218,7 @@
                 addPopoverInfo(x, scope.rule.idRule);
                 var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
                 newNote(targetDiv, scope, $compile, noteInitialConfig);
-                $scope.activeRule = scope.rule;
+                //$scope.activeRule = scope.rule;
               }
             }
           });
@@ -2235,7 +2240,16 @@
                     $itemScope.agentName = result.agentName;
                     var x = $itemScope.rule.conditions;
                     addPopoverInfo(x, $itemScope.rule.idRule);
-                    newNote($event.currentTarget.parentElement, $itemScope, $compile);
+                    var noteInitialConfig = {
+                      leftPoint: -100,
+                      topPoint: 50,
+                      maxHeight: 0,
+                      tplWidth: 0,
+                      tplHeight: 0,
+                      ruleCounter: 0,
+                      newRule: true
+                    }
+                    newNote($event.currentTarget.parentElement, $itemScope, $compile, noteInitialConfig);
                     $scope.activeRule = result.rule;
                     if($itemScope.rules == null) {
                       $itemScope.rules = [];
@@ -2301,7 +2315,9 @@
                 topPoint: 50,
                 maxHeight: 0,
                 tplWidth: 0,
-                tplHeight: 0
+                tplHeight: 0,
+                ruleCounter: 0,
+                newRule: false
               }
               for(var i = 0; i < mRules.length; i++) {
                 var theRule = mRules[i].rule;
@@ -2323,7 +2339,7 @@
                   addPopoverInfo(x, scope.rule.idRule);
                   var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
                   newNote(targetDiv, scope, $compile, noteInitialConfig);
-                  $scope.activeRule = scope.rule;
+                  //$scope.activeRule = scope.rule;
                 }
               }
             } else {
@@ -2964,7 +2980,10 @@
 
     $rootScope.tabsLoading = false;
 
-    $scope.closeRuleDialog = function(elem, $event) {
+    $scope.closeRuleDialog = function(rule, elem, $event) {
+      if ($scope.activeRule && $scope.activeRule.idRule === rule.idRule) {
+        $scope.activeRule = null;
+      }
       $($event.target).closest('.note').remove();
       $scope.activeRuleDialog = '';
       $scope.activeRuleCell = '';
@@ -2993,6 +3012,15 @@
     $scope.addToActiveRule = function(node, rules) {
 
       var rule = $scope.activeRule;
+      if(!rule) {
+        ngToast.create({
+          className: 'warning',
+          content: 'No active rule to add.',
+          dismissOnTimeout: true,
+          dismissButton: true
+        });
+        return;
+      }
       var bAlreadyInRule = false;
       var nodeNumbers = [];
       for(var i = 0; i < rule.conditions.length; i++) {
@@ -3082,7 +3110,15 @@
       }
     }
 
-    $scope.closeRuleWrapperDialog = function(elem, $event) {
+    $scope.closeRuleWrapperDialog = function(ruleWrapper, elem, $event) {
+      if ($scope.activeRule && $scope.activeRule.agentId === ruleWrapper.idAgent
+            && $scope.activeRuleDialog && $scope.activeRuleDialog != ''
+            && $scope.activeRuleDialog.endsWith('-' + $scope.activeRule.idRule)) {
+        $scope.activeRule = null;
+        $scope.activeRuleDialog = '';
+        safeDigest($scope.activeRuleDialog);
+      }
+
       $($event.target).closest('.noteWrapper').remove();
       $scope.activeRuleWrapperDialog = '';
       safeDigest($scope.activeRuleWrapperDialog);
@@ -3474,7 +3510,7 @@
     };
 
     $scope.deleteRule = function(rule, model, $event) {
-      $scope.closeRuleDialog(model, $event);
+      $scope.closeRuleDialog(rule, model, $event);
       RulesService.remove(rule).then(function(response) {
         if(response.status === 200) {
           $log.info('Rule Save was Successful!' + rule);

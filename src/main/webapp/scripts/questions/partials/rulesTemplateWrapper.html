@@ -3,7 +3,7 @@
         <div ng-attr-id="{{ruleWrapper.idNode+'-'+ruleWrapper.idAgent+'-'+ruleWrapper.nodeNumber}}" id="rulesTemplateWrapper"
              class="noteWrapper {{ruleWrapper.styleOverride}} {{activeRuleWrapperDialog === (ruleWrapper.idNode+'-'+ruleWrapper.idAgent+'-'+ruleWrapper.nodeNumber)?'activeRuleWrapper':''}}"
              prevent-right-click ng-click="setActiveRuleWrapper(ruleWrapper,this)">
-            <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleWrapperDialog(this,$event)"
+            <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="closeRuleWrapperDialog(ruleWrapper, this,$event)"
                     aria-label="Left Align">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
