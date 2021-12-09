@@ -90,6 +90,26 @@ class QualtricsSurveyDaoTest {
     }
 
     @Test
+    void givenErrorNotEmpty_whenFindByIsProcessed_shouldNotReturnSurvey() {
+        QualtricsSurvey qualtricsSurvey
+                = new QualtricsSurvey();
+        qualtricsSurvey.setResponseId("1");
+        qualtricsSurvey.setSurveyId("1");
+        qualtricsSurvey.setBrandId("1B");
+        qualtricsSurvey.setTopic("topic");
+        qualtricsSurvey.setCompletedDate(LocalDateTime.now());
+        qualtricsSurvey.setQualtricsStatus("Completed");
+        qualtricsSurvey.setResponse("{test: test}".getBytes());
+        qualtricsSurvey.setProcessed(false);
+        qualtricsSurvey.setError("Error");
+        qualtricsSurveyDao.save(qualtricsSurvey);
+
+        List<QualtricsSurvey> list = qualtricsSurveyDao.findByIsProcessed(false);
+
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
     void givenIsProcessedAndResponseIsNull_whenFindByIsProcessed_shouldReturnSurvey() {
         QualtricsSurvey qualtricsSurvey
                 = new QualtricsSurvey();

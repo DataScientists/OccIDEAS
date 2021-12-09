@@ -21,6 +21,7 @@ public class QualtricsSurvey implements Serializable {
     @Lob
     private byte[] response;
     private boolean isProcessed;
+    private String error;
 
     public long getId() {
         return id;
@@ -94,6 +95,14 @@ public class QualtricsSurvey implements Serializable {
         isProcessed = processed;
     }
 
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
     @Override
     public String toString() {
         return "QualtricsSurvey{" +
@@ -106,6 +115,8 @@ public class QualtricsSurvey implements Serializable {
                 ", qualtricsStatus='" + qualtricsStatus + '\'' +
                 ", response=" + Arrays.toString(response) +
                 ", isProcessed=" + isProcessed +
+                ", error='" + error + '\'' +
                 '}';
     }
+
 }

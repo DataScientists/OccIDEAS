@@ -228,6 +228,10 @@ public class NoiseAssessmentService extends AssessmentResultsService<NoiseView> 
         BigDecimal totalFrequency = BigDecimal.ZERO;
         for (Rule noiseRule : nonBackgroundRules) {
             PossibleAnswer parentNode = noiseRule.getConditions().get(0);
+            if (Objects.isNull(parentNode.getChildNodes()) || parentNode.getChildNodes().isEmpty()) {
+                log.error("There is no child nodes for {}", parentNode.getIdNode());
+                continue;
+            }
             Optional<InterviewQuestion> childQuestion = questionHistory.stream()
                     .filter(question -> question.getQuestionId() == parentNode.getChildNodes().get(0).getIdNode())
                     .filter(question -> "Q_frequency".equalsIgnoreCase(question.getType()))

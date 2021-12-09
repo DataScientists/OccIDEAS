@@ -28,9 +28,11 @@ public class QualtricsSurveyDao extends GenericBaseDao<QualtricsSurvey, Long> {
         Root<QualtricsSurvey> root = criteria.from(QualtricsSurvey.class);
         criteria.select(root);
         criteria.where(builder.and(
-                builder.equal(root.get(QualtricsSurvey_.IS_PROCESSED), isProcessed),
-                builder.isNotNull(root.get(QualtricsSurvey_.RESPONSE))
-        ));
+                        builder.equal(root.get(QualtricsSurvey_.IS_PROCESSED), isProcessed),
+                        builder.isNotNull(root.get(QualtricsSurvey_.RESPONSE)),
+                        builder.isNull(root.get(QualtricsSurvey_.ERROR))
+                )
+        );
         return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
     }
 

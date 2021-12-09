@@ -37,11 +37,13 @@ public class QSFResponseProcessor {
                 SurveyResponse surveyResponse = null;
                 try {
                     surveyResponse = translateQSFResponse(unprocessedSurvey.getResponse());
-                } catch (IOException e) {
+                    interviewService.updateQualtricsResults(iqsfService.processResponse(unprocessedSurvey.getSurveyId(), surveyResponse.getResult()));
+                    unprocessedSurvey.setProcessed(true);
+                } catch (Throwable e) {
                     log.error(e.getMessage(), e);
+                    unprocessedSurvey.setError(e.getMessage());
                 }
-                interviewService.updateQualtricsResults(iqsfService.processResponse(unprocessedSurvey.getSurveyId(), surveyResponse.getResult()));
-                unprocessedSurvey.setProcessed(true);
+
                 qualtricsSurveyDao.save(unprocessedSurvey);
             });
             log.info("End processing of unprocessed surveys count {}", unprocessedSurveys.size());
