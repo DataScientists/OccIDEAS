@@ -2185,18 +2185,22 @@
               return $itemScope.$parent.obj.idAgent === r.idAgent;
             });
             var mRules = $filter('orderBy')(mRulesFilter, 'rule.levelValue', true);
-            var ruleWrapperScope = $itemScope.$new();
-            ruleWrapperScope.ruleWrapper = {
-                moduleName: mRules[0].moduleName,
-                agentName: mRules[0].agentName,
-                idNode: mRules[0].idModule,
-                idAgent: mRules[0].idAgent,
-                isRuleMenu: true,
-                nodeNumber: mRules[0].nodeNumber,
-                styleOverride: getNoteWrapperOverrideSize(mRules.length)
-            };
-            var moduleWrapper = angular.element("#rulesContainer");
-            newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+
+            var hasMoreThanOneRules = mRules.length > 1;
+            if (hasMoreThanOneRules) {
+                var ruleWrapperScope = $itemScope.$new();
+                ruleWrapperScope.ruleWrapper = {
+                    moduleName: mRules[0].moduleName,
+                    agentName: mRules[0].agentName,
+                    idNode: mRules[0].idModule,
+                    idAgent: mRules[0].idAgent,
+                    isRuleMenu: true,
+                    nodeNumber: mRules[0].nodeNumber,
+                    styleOverride: getNoteWrapperOverrideSize(mRules.length)
+                };
+                var moduleWrapper = angular.element("#rulesContainer");
+                newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+            }
 
             if(mRules.length > 0) {
               var noteInitialConfig = {
@@ -2216,8 +2220,13 @@
                 var x = scope.rule.conditions;
                 x.idRule = scope.rule.idRule;
                 addPopoverInfo(x, scope.rule.idRule);
-                var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
-                newNote(targetDiv, scope, $compile, noteInitialConfig);
+                if (hasMoreThanOneRules) {
+                    var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'});
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                } else {
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                    showRuleDialog($event.currentTarget.parentElement, scope, $compile);
+                }
                 //$scope.activeRule = scope.rule;
               }
             }
@@ -2293,19 +2302,23 @@
           var promise = getUpdatedModuleRulesForWholeModuleForThisAgent(agentId, deffered);
           promise.then(function(data) {
             var mRules = $filter('orderBy')(data, 'rule.levelValue', true);
-            var ruleWrapperScope = $itemScope.$new();
-            ruleWrapperScope.ruleWrapper = {
-                moduleName: mRules[0].moduleName,
-                agentName: mRules[0].agentName,
-                idNode: mRules[0].idModule,
-                isRuleMenu: false,
-                idAgent: mRules[0].idAgent,
-                nodeNumber: 0,
-                styleOverride: getNoteWrapperOverrideSize(mRules.length)
-            };
-            //var moduleWrapper = angular.element("#allModuleRulesOfAgent" + mRules[0].idModule);
-            var moduleWrapper = angular.element("#rulesContainer");
-            newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+
+            var hasMoreThanOneRules = mRules.length > 1;
+            if (hasMoreThanOneRules) {
+                var ruleWrapperScope = $itemScope.$new();
+                ruleWrapperScope.ruleWrapper = {
+                    moduleName: mRules[0].moduleName,
+                    agentName: mRules[0].agentName,
+                    idNode: mRules[0].idModule,
+                    isRuleMenu: false,
+                    idAgent: mRules[0].idAgent,
+                    nodeNumber: 0,
+                    styleOverride: getNoteWrapperOverrideSize(mRules.length)
+                };
+
+                var moduleWrapper = angular.element("#rulesContainer");
+                newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+            }
 
             if(mRules.length > 0) {
               $scope.scrollToTop();
@@ -2337,8 +2350,14 @@
                   var x = scope.rule.conditions;
                   x.idRule = scope.rule.idRule;
                   addPopoverInfo(x, scope.rule.idRule);
-                  var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
-                  newNote(targetDiv, scope, $compile, noteInitialConfig);
+                  if (hasMoreThanOneRules) {
+                    var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                  } else {
+                    var targetDiv = angular.element("#allModuleRulesOfAgent" + mRules[i].idModule);
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                  }
+
                   //$scope.activeRule = scope.rule;
                 }
               }
