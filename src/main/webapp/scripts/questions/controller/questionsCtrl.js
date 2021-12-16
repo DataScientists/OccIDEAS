@@ -876,33 +876,31 @@
     $scope.toggleMultipleChoice = function(scope) {
       recordAction($scope.data);
 
-      var nodeExists = false;
+      
       $scope.interviewExist = false;
-      $scope.validationInProgress = true;
+      
 
       if(scope.$modelValue) {
 
-        $mdDialog.show({
-          scope: $scope,
-          preserveScope: true,
-          templateUrl: 'scripts/questions/partials/validateChangeDialog.html',
-          clickOutsideToClose: false
-        });
         //Check if node exists in interview
-        InterviewsService.findQuestionsByNodeId(scope.$modelValue.idNode).then(function(response) {
-          if(response.status == 200) {
-            $scope.validationInProgress = false;
-            if(response.data.length > 0) {
-              $scope.interviewExist = true;
-              $scope.nodesForUpdate = response.data;
-              $scope.nodeScope = scope;
-            } else {
+		  InterviewsService.findQuestionsByNodeId(scope.$modelValue.idNode).then(function(response) {
+			  if (response.status == 200) {
+				  
+				  if (response.data.length > 0) {
+					  ngToast.create({
+						  className: 'danger',
+						  content: 'Cannot change the type of question without purging interviews',
+						  dismissButton: true,
+						  dismissOnClick: false,
+						  animation: 'slide'
+					  });
+				  } else {
 
-              //Proceed, no interviews to be updated
-              updateScope(scope);
-            }
-          }
-        });
+					  //Proceed, no interviews to be updated
+					  updateScope(scope);
+				  }
+			  }
+		  });
       }
     };
 
