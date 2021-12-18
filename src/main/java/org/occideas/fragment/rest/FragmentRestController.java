@@ -7,6 +7,7 @@ import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.fragment.service.FragmentService;
 import org.occideas.module.service.ModuleService;
+import org.occideas.modulerule.dao.ModuleRuleDao;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,6 +31,9 @@ public class FragmentRestController implements BaseRestController<FragmentVO> {
 
   @Autowired
   private ModuleService moduleService;
+  
+  @Autowired
+  private ModuleRuleDao moduleRuleDao;
 
   @GET
   @Path(value = "/getlist")
@@ -200,6 +204,9 @@ public class FragmentRestController implements BaseRestController<FragmentVO> {
       vo.setIdNode(fragment.getIdNode());
       report.setVo(vo);
       populateQuestions(fragment.getChildNodes(), report);
+      Number fragmentId = fragment.getIdNode();
+      Number iRuleCount = moduleRuleDao.getRuleCountById(fragmentId.longValue());
+      report.setTotalRules(iRuleCount.intValue());
       reports.add(report);
     }
 
@@ -228,11 +235,7 @@ public class FragmentRestController implements BaseRestController<FragmentVO> {
       report.setTotalAnswers(report.getTotalAnswers() + 1);
       if (vo.getType().equals("P_freetext") && !pattern.matcher(vo.getName()).find()) {
         report.addIssue(vo.getNumber() + " " + vo.getName());
-      }
-
-      if (!vo.getModuleRule().isEmpty()) {
-        populateRules(vo.getModuleRule(), report);
-      }
+      }   
       if (!vo.getChildNodes().isEmpty()) {
         populateQuestions(vo.getChildNodes(), report);
       }

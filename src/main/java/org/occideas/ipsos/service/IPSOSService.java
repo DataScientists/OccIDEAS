@@ -1,8 +1,25 @@
 package org.occideas.ipsos.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
 import org.occideas.fragment.service.FragmentService;
@@ -10,27 +27,33 @@ import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.module.service.ModuleService;
-import org.occideas.node.service.INodeService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
-import org.occideas.qsf.QSFNodeTypeMapper;
+import org.occideas.qsf.ApplicationQSF;
+import org.occideas.qsf.SurveyElement;
+import org.occideas.qsf.payload.Choice;
+import org.occideas.qsf.payload.Logic;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CsvUtil;
-import org.occideas.vo.*;
+import org.occideas.vo.FragmentVO;
+import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewQuestionVO;
+import org.occideas.vo.InterviewVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.ParticipantVO;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.QuestionVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class IPSOSService implements IIPSOSService {
@@ -41,11 +64,11 @@ public class IPSOSService implements IIPSOSService {
     private static final String RADIO = "RADIO";
     private static final String CHECK = "CHECK";
 
-    @Autowired
-    private ModuleService moduleService;
+    private static final String TAB = "\t";
+    private static final String NEXT_LINE = "\n";
 
     @Autowired
-    private INodeService nodeService;
+    private ModuleService moduleService;
 
     @Autowired
     private ParticipantService participantService;
@@ -71,8 +94,13 @@ public class IPSOSService implements IIPSOSService {
     @Autowired
     private SystemPropertyService systemPropertyService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Value("${ipsos.input.path}")
     private String input;
+
+    @Value("${ipsos.qsf.path}")
+    private String qsfPath;
 
     @Value("#{'${ipsos.non.question.labels}'.split(',')}")
     private List<String> nonQuestionLabels;
@@ -89,22 +117,42 @@ public class IPSOSService implements IIPSOSService {
     public void importResponse() throws IOException {
         log.info("initiating ipsos responses");
         processCSV();
-        log.debug("done importing ipsos responses");
+        log.info("done importing ipsos responses");
+    }
+
+    @Override
+    public void generateIPSOSJobModuleDataFile() throws IOException {
+        log.info("initiating generating ipsos data file");
+        List<File> files = Files.list(Paths.get(qsfPath + "/input/")).map(Path::toFile).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(files)) {
+            files.forEach(file -> {
+                try {
+                    ApplicationQSF data = objectMapper.readValue(file, ApplicationQSF.class);
+                    processQSFData(data);
+                    log.trace("data={}", data);
+                } catch (IOException e) {
+                    log.error("unable to convert json file to object. filename=" +  file.getName(), e);
+                }
+            });
+        }
+        log.info("done generating ipsos data file");
     }
 
     private void processCSV() throws IOException {
         List<File> files = Files.list(Paths.get(input)).map(Path::toFile).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(files)) {
+        	Collections.sort(files);
             SystemPropertyVO introModule = Optional.ofNullable(systemPropertyService.getByName(Constant.STUDY_INTRO))
                     .orElseThrow(StudyIntroModuleNotFoundException::new);
             NodeVO node = moduleService.getNodeById(Long.valueOf(introModule.getValue()));
             files.forEach(file -> {
                 try {
+                	log.info("Processing: "+file.getAbsolutePath());
                     Map<String, Map<String, String>> responses = convertToObject(file);
                     if (!CollectionUtils.isEmpty(responses)) processResponses(node, file.getName(), responses);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
-                    log.error("Unable to read file ", e.getMessage());
+                    log.error("Issue processing a file ", e.getMessage());
                 }
             });
         }
@@ -116,17 +164,22 @@ public class IPSOSService implements IIPSOSService {
         String fileNameKey = getNodeKey(fileName.toUpperCase());
         ModuleVO module = moduleService.getModuleByNameLength(fileNameKey, 4);
         if (module == null) {
-            log.info("Not able to find module for key={}", fileNameKey);
+            log.error("Not able to find module for key={}", fileNameKey);
             return;
         }
 
         String moduleKey = getNodeKey(module.getName());
+     //   AtomicInteger debugCounter = new AtomicInteger(0);
         responses.forEach((responseKey, answers) -> {
-            String responseId = answers.get("Respondent_Serial") == null ? responseKey : answers.get("Respondent_Serial");
+    //    	int row = debugCounter.incrementAndGet();
+     //       if (row>=50) {
+    //       	return;
+     //       }
+        	String responseId = answers.get("Serial") == null ? responseKey : answers.get("Serial");      	
             uniqueModules = new HashMap<>();
             if (hasAnyAnswer(answers)) {
-                if (participantService.getByReferenceNumber(responseId) == null) {
-                    ParticipantVO participant = createParticipant(responseId);
+                if (participantService.getByReferenceNumber(moduleKey+responseId) == null) {
+                    ParticipantVO participant = createParticipant(moduleKey+responseId);
                     InterviewVO interview = createInterview(participant);
 
                     String introModuleIUniqueKey = getInterviewUniqueKey(node.getIdNode(), interview.getInterviewId());
@@ -144,9 +197,12 @@ public class IPSOSService implements IIPSOSService {
                     }
 
                     AtomicInteger qCounter = new AtomicInteger(1);
+                    
+                    AtomicInteger skipCounter = new AtomicInteger(0);
                     answers.forEach((label, answer) -> {
-                        if (!nonQuestionLabels.contains(label)) {
-                            log.debug("participantId={}, label={}, answer={}", responseId, label, answer);
+                    	int column = skipCounter.incrementAndGet();
+                        if (column!=1 && column!=2) {
+                            log.debug("participantId={}, label={}, answer={}", participant.getReference(), label, answer);
                             String[] labelKeys = label.split("_");
                             String nodeKey = labelKeys[0];
                             String qType = labelKeys[1];
@@ -159,9 +215,13 @@ public class IPSOSService implements IIPSOSService {
                                     qNumber = isJobModule ? labelKeys[2] : labelKeys[3];
                                     if (label.endsWith(FREETEXT)) {
                                         freetext = answer;
-                                        aNumber = labelKeys[3];
+                                        aNumber = isJobModule ? labelKeys[3] : labelKeys[4];
                                     } else {
+                                    	 try {
                                         aNumber = answer.split("_")[1];
+                                    	 } catch (Exception e) {
+                                             log.error("malformed answer label on participantId={}, label={}, answer={}", participant.getReference(), label, answer);                                            
+                                         }
                                     }
                                 } else if (CHECK.equals(qType)) {
                                     qNumber = isJobModule ? labelKeys[2] : labelKeys[3];
@@ -171,11 +231,14 @@ public class IPSOSService implements IIPSOSService {
                                     }
                                 }
                             }
-
-                            if (qNumber != null && aNumber != null) {
+                            
+                            if (qNumber != null && aNumber != null)  {
+                            	if(qNumber.equalsIgnoreCase(aNumber)) {
+                                	log.error("participantId={}, label={}, answer={}", participant.getReference(), label, answer);                              
+                                }
                                 if (isJobModule) {
                                     // job module questions
-                                    createInterviewQuestionsAndAnswers(module.getIdNode(), interview.getInterviewId(),
+                                    createInterviewQuestionsAndAnswers(participant.getReference(),nodeKey,module.getIdNode(), interview.getInterviewId(),
                                             qNumber, aNumber, qCounter, freetext);
                                 } else {
                                     // linked task module questions
@@ -191,7 +254,7 @@ public class IPSOSService implements IIPSOSService {
                                                 createAJSMInterviewQuestion(linkAJSM, fragment, interview.getInterviewId(), qCounter.incrementAndGet());
                                                 uniqueModules.put(fragmentIUniqueKey, null);
                                             }
-                                            createInterviewQuestionsAndAnswers(fragment.getIdNode(), interview.getInterviewId(),
+                                            createInterviewQuestionsAndAnswers(participant.getReference(),nodeKey,fragment.getIdNode(), interview.getInterviewId(),
                                                     qNumber, aNumber, qCounter, freetext);
                                         }
                                     }
@@ -202,13 +265,15 @@ public class IPSOSService implements IIPSOSService {
                         }
                     });
                 } else {
-                    log.debug("ParticipantId={} found. will not process", responseId);
+                    log.info("ParticipantId={} found. will not process", responseId);
                 }
             }
         });
     }
 
     private boolean hasAnyAnswer(Map<String, String> answers) {
+    	
+
         return answers.entrySet().stream().anyMatch(entry -> entry.getValue() != null && !StringUtils.EMPTY.equals(entry.getValue()));
     }
 
@@ -217,10 +282,11 @@ public class IPSOSService implements IIPSOSService {
         Map<String, Map<String, String>> formatted = new LinkedHashMap<>();
         String[] labels = extract.get(0);
         int index = 0;
+        int dataIndex = 0;
         for (String[] data : extract) {
             if (index > 0) {
                 Map<String, String> entry = new LinkedHashMap<>();
-                int dataIndex = 0;
+                dataIndex = 0;
                 for (String value : data) {
                     entry.put(labels[dataIndex], value);
                     dataIndex++;
@@ -229,6 +295,8 @@ public class IPSOSService implements IIPSOSService {
             }
             index++;
         }
+        log.info("Row count:{}:Column count:{}", index,dataIndex);
+    	
         log.debug("formatted={}", formatted);
         return formatted;
     }
@@ -267,20 +335,30 @@ public class IPSOSService implements IIPSOSService {
     private void processIntroModule(ModuleVO module, NodeVO node, long interviewId) {
         AtomicInteger introQCounter = new AtomicInteger(1);
         QuestionVO topQuestion = getParentQuestions(module.getIdNode(), node);
-        createInterviewQuestionFromQuestion(topQuestion, interviewId, introQCounter);
+        if(topQuestion!=null) {
+        	createInterviewQuestionFromQuestion(topQuestion, interviewId, introQCounter);
+        }else {
+        	log.error("Not found in Intro Module interviewId={}, module={}, node={}", interviewId, module.getName(), node.getName());
+        }
+        
     }
 
     private QuestionVO getParentQuestions(long moduleIdNode, NodeVO node) {
         QuestionVO linkQuestion = questionService
                 .getNearestQuestionByLinkIdAndTopId(moduleIdNode, node.getIdNode());
-        PossibleAnswerVO parentAnswer = possibleAnswerService.findByIdExcludeChildren(Long.valueOf(linkQuestion.getParentId()));
-        QuestionVO parentQuestion = questionService.findByIdExcludeChildren(Long.valueOf(parentAnswer.getParentId()));
-        parentQuestion.setChildNodes(Arrays.asList(parentAnswer));
-        if (Long.valueOf(parentQuestion.getParentId()) != node.getIdNode()) {
-            return getTopQuestion(node.getIdNode(), parentQuestion);
-        } else {
-            return parentQuestion;
+        if(linkQuestion!=null) {
+        	PossibleAnswerVO parentAnswer = possibleAnswerService.findByIdExcludeChildren(Long.valueOf(linkQuestion.getParentId()));
+            QuestionVO parentQuestion = questionService.findByIdExcludeChildren(Long.valueOf(parentAnswer.getParentId()));
+            parentQuestion.setChildNodes(Arrays.asList(parentAnswer));
+            if (Long.valueOf(parentQuestion.getParentId()) != node.getIdNode()) {
+                return getTopQuestion(node.getIdNode(), parentQuestion);
+            } else {
+                return parentQuestion;
+            }
+        }else {
+        	return null;
         }
+        
     }
 
     private QuestionVO getTopQuestion(long topNodeId, QuestionVO question) {
@@ -377,7 +455,7 @@ public class IPSOSService implements IIPSOSService {
         }
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDMODULE.getDescription());
+        interviewQuestion.setType(NodeType.Q_LINKEDMODULE.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
@@ -398,11 +476,11 @@ public class IPSOSService implements IIPSOSService {
         interviewQuestion.setParentAnswerId(0L);
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkAJSM.getIdNode());
-        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDAJSM.getDescription());
+        interviewQuestion.setType(NodeType.Q_LINKEDAJSM.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
-    private void createInterviewQuestionsAndAnswers(long idNode, long interviewId, String qNumber, String aNumber,
+    private void createInterviewQuestionsAndAnswers(String participantReference,String nodeKey, long idNode, long interviewId, String qNumber, String aNumber,
                                                     AtomicInteger qCounter, String freetext) {
         QuestionVO nodeQuestion = questionService.getQuestionByTopIdAndNumber(idNode, qNumber);
         if (nodeQuestion != null) {
@@ -426,11 +504,63 @@ public class IPSOSService implements IIPSOSService {
                     uniqueModules.put(answerIUniqueKey, interviewAnswer.getId());
                 }
             } else {
-                log.warn("Answer not found for qNumber={}, aNumber={}.", qNumber, aNumber);
+            	log.error("Answer not found for interview={}, module={}, qNumber={}, aNumber={}, idNode={}.", participantReference, nodeKey, qNumber, aNumber,idNode);             
             }
         } else {
-            log.warn("Question not found for idNode={}, number={}", idNode, qNumber);
+            log.error("Question not found for interview={}, module={}, number={}", participantReference, nodeKey, qNumber);
+          //  throw new GenericException("IPSOS question does not exist.");
         }
 
     }
+
+    private void processQSFData(ApplicationQSF data) throws IOException {
+        if (!CollectionUtils.isEmpty(data.getSurveyElementsList())) {
+            StringBuilder builder = new StringBuilder();
+            Map<String, SurveyElement> questions = new HashMap<>();
+            SurveyElement qc = null;
+            for (SurveyElement element : data.getSurveyElementsList()) {
+                if ("QC".equals(element.getElement())) {
+                    qc = element;
+                } else if ("SQ".equals(element.getElement())) {
+                    questions.put(element.getPrimaryAttribute(), element);
+                }
+            }
+
+            builder.append("Module: ").append(data.getSurveyEntry().getSurveyName()).append(NEXT_LINE);
+            builder.append("Number of Questions: ").append(qc.getSecondaryAttribute()).append(NEXT_LINE);
+            int count = Integer.valueOf(qc.getSecondaryAttribute());
+            for (int i = 1; i <= count; i++) {
+                String qid = "QID" + i;
+                SurveyElement element = questions.get(qid);
+                Map<String, Object> payload = (Map<String, Object>) element.getPayload();
+                Map<String, Choice> choices = objectMapper.convertValue(payload.get("Choices"), new TypeReference<>() {});
+
+                // Filter
+                if (payload.get("DisplayLogic") == null) {
+                    builder.append("Filter: None").append(NEXT_LINE);
+                } else {
+                    JsonNode node = objectMapper.valueToTree(payload.get("DisplayLogic"));
+                    Logic logic = objectMapper.treeToValue(node.get("0").get("0"), Logic.class);
+                    SurveyElement parentQ = questions.get(logic.getQuestionId());
+                    Map<String, Object> parentQPayload = (Map<String, Object>) parentQ.getPayload();
+                    Map<String, Choice> parentQChoices = objectMapper.convertValue(parentQPayload.get("Choices"), new TypeReference<>() {});
+                    String qNumber = String.valueOf(parentQPayload.get("QuestionText")).split(" - ")[0];
+                    String choicePosition = logic.getChoiceLocator().substring(logic.getChoiceLocator().lastIndexOf("/") + 1);
+                    Map.Entry<String, Choice> choiceMapEntry = parentQChoices.entrySet().stream().filter(e -> choicePosition.equals(e.getKey())).findFirst().orElse(null);
+                    if (choiceMapEntry != null) {
+                        String aNumber = choiceMapEntry.getValue().getDisplay().split(" ")[0];
+                        builder.append("Filter: If ").append(qNumber).append(" = ").append(aNumber).append(NEXT_LINE);
+                    } else {
+                        log.warn("Not able to get Filter. qid={}, choicePosition={}, choiceLocator={}", qid, choicePosition, logic.getChoiceLocator());
+                    }
+                }
+                // Question
+                builder.append(payload.get("QuestionText")).append(NEXT_LINE);
+                // Possible Answers
+                choices.forEach((number, choice) -> builder.append(TAB).append(choice.getDisplay()).append(NEXT_LINE));
+            }
+            FileUtils.writeStringToFile(new File(qsfPath + "/output/" + data.getSurveyEntry().getSurveyName() + ".txt"), builder.toString(), "UTF-8");
+        }
+    }
+
 }

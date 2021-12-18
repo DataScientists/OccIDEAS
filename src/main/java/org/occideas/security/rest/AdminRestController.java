@@ -100,9 +100,9 @@ public class AdminRestController {
                 		System.out.println("Will delete"+element.getName());
                         iqsfClient.deleteSurvey(element.getId());
                 	}
+             
                     i++;
                 }
-                
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -180,6 +180,18 @@ public class AdminRestController {
     public Response importIPSOSResponse() {
         try {
             iIPSOSService.importResponse();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path(value = "/generateIPSOSJobModuleDataFile")
+    public Response generateIPSOSJobModuleDataFile() {
+        try {
+            iIPSOSService.generateIPSOSJobModuleDataFile();
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

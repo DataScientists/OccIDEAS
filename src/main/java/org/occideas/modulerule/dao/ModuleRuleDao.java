@@ -37,7 +37,8 @@ public class ModuleRuleDao {
   public ModuleRule get(Long id) {
     return (ModuleRule) sessionFactory.getCurrentSession().get(ModuleRule.class, id);
   }
-
+  
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public Number getRuleCountById(Long id) {
     final Session session = sessionFactory.getCurrentSession();
     final Criteria crit = session.createCriteria(ModuleRule.class);

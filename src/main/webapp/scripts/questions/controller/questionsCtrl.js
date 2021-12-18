@@ -11,7 +11,7 @@
     '$q', 'QuestionsService', 'ModulesService',
     '$anchorScroll', '$location', '$mdMedia', '$window', '$state',
     'AgentsService', 'RulesService', '$compile',
-    '$rootScope', 'ModuleRuleService', '$log', '$timeout',
+    '$rootScope', 'ModuleRuleService', '$log', '$timeout', '$filter',
     'AuthenticationService', '$document', 'InterviewsService',
     'SystemPropertyService', 'ngToast', '$translate',
     'NodeLanguageService', '$sessionStorage', 'lang', 'scrollTo', '$http', 'bsLoadingOverlayService'];
@@ -20,7 +20,7 @@
                          $q, QuestionsService, ModulesService,
                          $anchorScroll, $location, $mdMedia, $window, $state,
                          AgentsService, RulesService, $compile, $rootScope,
-                         ModuleRuleService, $log, $timeout, auth, $document, InterviewsService,
+                         ModuleRuleService, $log, $timeout, $filter, auth, $document, InterviewsService,
                          SystemPropertyService, ngToast, $translate,
                          NodeLanguageService, $sessionStorage, lang, scrollTo, $http, bsLoadingOverlayService) {
     var self = this;
@@ -247,7 +247,10 @@
         })
       },
       close: function close(x, idRule) {
-        x.info["Node" + x.idNode + idRule].nodePopover.isOpen = false;
+        var nodeName = "Node" + x.idNode + idRule;
+        if (x.info && nodeName in x.info) {
+            x.info[nodeName].nodePopover.isOpen = false;
+        }
       }
     };
     $scope.studyAgent = [];
@@ -356,6 +359,12 @@
         var dialogRules = angular.element(".note");
         _.each(dialogRules, function(e) {
           if(_.includes(e.id, '-' + agents.idAgent + '-')) {
+            e.remove();
+          }
+        })
+        var wrapperDialog = angular.element(".noteWrapper");
+        _.each(wrapperDialog, function(e) {
+          if(_.includes(e.id, '-' + agents.idAgent)) {
             e.remove();
           }
         })
@@ -867,33 +876,31 @@
     $scope.toggleMultipleChoice = function(scope) {
       recordAction($scope.data);
 
-      var nodeExists = false;
+      
       $scope.interviewExist = false;
-      $scope.validationInProgress = true;
+      
 
       if(scope.$modelValue) {
 
-        $mdDialog.show({
-          scope: $scope,
-          preserveScope: true,
-          templateUrl: 'scripts/questions/partials/validateChangeDialog.html',
-          clickOutsideToClose: false
-        });
         //Check if node exists in interview
-        InterviewsService.findQuestionsByNodeId(scope.$modelValue.idNode).then(function(response) {
-          if(response.status == 200) {
-            $scope.validationInProgress = false;
-            if(response.data.length > 0) {
-              $scope.interviewExist = true;
-              $scope.nodesForUpdate = response.data;
-              $scope.nodeScope = scope;
-            } else {
+		  InterviewsService.findQuestionsByNodeId(scope.$modelValue.idNode).then(function(response) {
+			  if (response.status == 200) {
+				  
+				  if (response.data.length > 0) {
+					  ngToast.create({
+						  className: 'danger',
+						  content: 'Cannot change the type of question without purging interviews',
+						  dismissButton: true,
+						  dismissOnClick: false,
+						  animation: 'slide'
+					  });
+				  } else {
 
-              //Proceed, no interviews to be updated
-              updateScope(scope);
-            }
-          }
-        });
+					  //Proceed, no interviews to be updated
+					  updateScope(scope);
+				  }
+			  }
+		  });
       }
     };
 
@@ -1323,7 +1330,7 @@
       if(node.nodeclass == 'M') {
         var menu = $scope.moduleMenuOptions;
         if(node.type != 'M_IntroModule') {
-        	
+
           _.remove(menu, {
             0: 'Set Active Intro Module'
           });
@@ -2172,10 +2179,37 @@
           var deffered = $q.defer();
           var promise = getUpdatedModuleRule(model, deffered);
           promise.then(function(data) {
-            var mRules = _.filter(data, function(r) {
+            var mRulesFilter = _.filter(data, function(r) {
               return $itemScope.$parent.obj.idAgent === r.idAgent;
             });
+            var mRules = $filter('orderBy')(mRulesFilter, 'rule.levelValue', true);
+
+            var hasMoreThanOneRules = mRules.length > 1;
+            if (hasMoreThanOneRules) {
+                var ruleWrapperScope = $itemScope.$new();
+                ruleWrapperScope.ruleWrapper = {
+                    moduleName: mRules[0].moduleName,
+                    agentName: mRules[0].agentName,
+                    idNode: mRules[0].idModule,
+                    idAgent: mRules[0].idAgent,
+                    isRuleMenu: true,
+                    nodeNumber: mRules[0].nodeNumber,
+                    styleOverride: getNoteWrapperOverrideSize(mRules.length)
+                };
+                var moduleWrapper = angular.element("#rulesContainer");
+                newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+            }
+
             if(mRules.length > 0) {
+              var noteInitialConfig = {
+                leftPoint: 0,
+                topPoint: 50,
+                maxHeight: 0,
+                tplWidth: 0,
+                tplHeight: 0,
+                ruleCounter: 0,
+                newRule: false
+              }
               for(var i = 0; i < mRules.length; i++) {
                 var scope = $itemScope.$new();
                 scope.model = model;
@@ -2184,8 +2218,14 @@
                 var x = scope.rule.conditions;
                 x.idRule = scope.rule.idRule;
                 addPopoverInfo(x, scope.rule.idRule);
-                showRuleDialog($event.currentTarget.parentElement, scope, $compile);
-                $scope.activeRule = scope.rule;
+                if (hasMoreThanOneRules) {
+                    var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'});
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                } else {
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                    showRuleDialog($event.currentTarget.parentElement, scope, $compile);
+                }
+                //$scope.activeRule = scope.rule;
               }
             }
           });
@@ -2207,7 +2247,16 @@
                     $itemScope.agentName = result.agentName;
                     var x = $itemScope.rule.conditions;
                     addPopoverInfo(x, $itemScope.rule.idRule);
-                    newNote($event.currentTarget.parentElement, $itemScope, $compile);
+                    var noteInitialConfig = {
+                      leftPoint: -100,
+                      topPoint: 50,
+                      maxHeight: 0,
+                      tplWidth: 0,
+                      tplHeight: 0,
+                      ruleCounter: 0,
+                      newRule: true
+                    }
+                    newNote($event.currentTarget.parentElement, $itemScope, $compile, noteInitialConfig);
                     $scope.activeRule = result.rule;
                     if($itemScope.rules == null) {
                       $itemScope.rules = [];
@@ -2250,10 +2299,37 @@
           var deffered = $q.defer();
           var promise = getUpdatedModuleRulesForWholeModuleForThisAgent(agentId, deffered);
           promise.then(function(data) {
-            var mRules = data;
+            var mRules = $filter('orderBy')(data, 'rule.levelValue', true);
+
+            var hasMoreThanOneRules = mRules.length > 1;
+            if (hasMoreThanOneRules) {
+                var ruleWrapperScope = $itemScope.$new();
+                ruleWrapperScope.ruleWrapper = {
+                    moduleName: mRules[0].moduleName,
+                    agentName: mRules[0].agentName,
+                    idNode: mRules[0].idModule,
+                    isRuleMenu: false,
+                    idAgent: mRules[0].idAgent,
+                    nodeNumber: 0,
+                    styleOverride: getNoteWrapperOverrideSize(mRules.length)
+                };
+
+                var moduleWrapper = angular.element("#rulesContainer");
+                newRuleWrapper(moduleWrapper, ruleWrapperScope, $compile);
+            }
+
             if(mRules.length > 0) {
               $scope.scrollToTop();
               var uniqueRules = [];
+              var noteInitialConfig = {
+                leftPoint: 0,
+                topPoint: 50,
+                maxHeight: 0,
+                tplWidth: 0,
+                tplHeight: 0,
+                ruleCounter: 0,
+                newRule: false
+              }
               for(var i = 0; i < mRules.length; i++) {
                 var theRule = mRules[i].rule;
                 var bFound = false;
@@ -2272,9 +2348,15 @@
                   var x = scope.rule.conditions;
                   x.idRule = scope.rule.idRule;
                   addPopoverInfo(x, scope.rule.idRule);
-                  var targetDiv = angular.element("#allModuleRulesOfAgent" + mRules[i].idModule);
-                  newNote(targetDiv, scope, $compile);
-                  $scope.activeRule = scope.rule;
+                  if (hasMoreThanOneRules) {
+                    var targetDiv = $filter('filter')(moduleWrapper[0].children, {'id': 'rulesTemplateWrapper'})
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                  } else {
+                    var targetDiv = angular.element("#allModuleRulesOfAgent" + mRules[i].idModule);
+                    newNote(targetDiv, scope, $compile, noteInitialConfig);
+                  }
+
+                  //$scope.activeRule = scope.rule;
                 }
               }
             } else {
@@ -2290,7 +2372,6 @@
         }
         ]
       ];
-
 
 		    $scope.possibleAnswerMenuOptions = [
 				[ 'Add Question', function($itemScope) {
@@ -2881,10 +2962,16 @@
       }, 2000, 'swing');
     };
 
+    $scope.prevNode = 0;
     $scope.highlightNode = function(idNode) {
+      if ($scope.prevNode > 0) {
+        $('#node-' + $scope.prevNode).toggleClass('highlight-rulenode');
+      }
       var elementId = 'node-' + idNode;
       $scope.scrollTo(elementId);
       $('#' + elementId).toggleClass('highlight');
+      $('#' + elementId).toggleClass('highlight-rulenode');
+      $scope.prevNode = idNode;
     };
 
     $scope.highlight = function(idNode) {
@@ -2910,12 +2997,15 @@
 
     $rootScope.tabsLoading = false;
 
-    $scope.closeRuleDialog = function(elem, $event) {
+    $scope.closeRuleDialog = function(rule, elem, $event) {
+      if ($scope.activeRule && $scope.activeRule.idRule === rule.idRule) {
+        $scope.activeRule = null;
+        $scope.activeRuleDialog = '';
+        $scope.activeRuleCell = '';
+        safeDigest($scope.activeRuleDialog);
+        safeDigest($scope.activeRuleCell);
+      }
       $($event.target).closest('.note').remove();
-      $scope.activeRuleDialog = '';
-      $scope.activeRuleCell = '';
-      safeDigest($scope.activeRuleDialog);
-      safeDigest($scope.activeRuleCell);
     };
 
     $scope.setActiveRule = function(rule, el) {
@@ -2934,10 +3024,20 @@
         } catch(e) {
         }
       }
+      removeAllOtherNodePopover();
     };
     $scope.addToActiveRule = function(node, rules) {
 
       var rule = $scope.activeRule;
+      if(!rule) {
+        ngToast.create({
+          className: 'warning',
+          content: 'No active rule to add.',
+          dismissOnTimeout: true,
+          dismissButton: true
+        });
+        return;
+      }
       var bAlreadyInRule = false;
       var nodeNumbers = [];
       for(var i = 0; i < rule.conditions.length; i++) {
@@ -2996,6 +3096,58 @@
           }
         });
       }
+    };
+
+    $scope.setActiveRuleWrapper = function(ruleWrapper, el) {
+        $scope.activeRuleWrapperDialog = el.ruleWrapper.idNode + '-' + el.ruleWrapper.idAgent + '-' + el.ruleWrapper.nodeNumber;
+        if(!$scope.activeRuleWrapperDialog.$$phase) {
+          try {
+            $scope.activeRuleWrapperDialog.$digest();
+          } catch(e) {
+          }
+        }
+        removeAllOtherNodePopover();
+    };
+
+    function removeAllOtherNodePopover() {
+      var popups = $document[0].querySelectorAll('.nodepopover');
+      if (popups) {
+        for (var i = 0; i < popups.length; i++) {
+          var popup = popups[i];
+          var popupElement = angular.element(popup);
+          //console.log('popupElement.scope()', popupElement.scope())
+          //console.log('popupElement.scope().$parent', popupElement.scope().$parent)
+          var popupNode = popupElement.scope().$parent.node;
+          _.forEach(Object.keys(popupNode.info), function(key){
+            if (key.startsWith('Node' + popupNode.idNode)) {
+              popupElement.scope().$parent.node.info[key].nodePopover.isOpen = false;
+            }
+          });
+        }
+      }
+    }
+
+    $scope.closeRuleWrapperDialog = function(ruleWrapper, elem, $event) {
+      if ($scope.activeRule && $scope.activeRule.agentId === ruleWrapper.idAgent
+            && $scope.activeRuleDialog && $scope.activeRuleDialog != ''
+            && $scope.activeRuleDialog.endsWith('-' + $scope.activeRule.idRule)) {
+        $scope.activeRule = null;
+        $scope.activeRuleDialog = '';
+        safeDigest($scope.activeRuleDialog);
+      }
+
+      $($event.target).closest('.noteWrapper').remove();
+      $scope.activeRuleWrapperDialog = '';
+      safeDigest($scope.activeRuleWrapperDialog);
+    };
+
+    $scope.minimizeRulesContainer = function(elem, $event) {
+      $($event.target).closest('.noteWrapper')[0].classList.add('minimizeWrapper');
+      removeAllOtherNodePopover();
+    };
+
+    $scope.maximizeRulesContainer = function(elem, $event) {
+      $($event.target).closest('.noteWrapper')[0].classList.remove('minimizeWrapper');
     };
 
     function resize() {
@@ -3375,7 +3527,7 @@
     };
 
     $scope.deleteRule = function(rule, model, $event) {
-      $scope.closeRuleDialog(model, $event);
+      $scope.closeRuleDialog(rule, model, $event);
       RulesService.remove(rule).then(function(response) {
         if(response.status === 200) {
           $log.info('Rule Save was Successful!' + rule);
@@ -3931,6 +4083,22 @@
         count = getNumberOfChildNode(x, count);
       });
       return count;
+    }
+
+    function getNoteWrapperOverrideSize(rulesCount) {
+        if (rulesCount === 3) {
+            return 'noteWrapper-635';
+        }
+
+        if (rulesCount === 2) {
+            return 'noteWrapper-435';
+        }
+
+        if (rulesCount === 1) {
+            return 'noteWrapper-245'
+        }
+
+        return '';
     }
 
 //       $timeout(function() {

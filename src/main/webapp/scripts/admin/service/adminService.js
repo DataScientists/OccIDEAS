@@ -190,6 +190,14 @@
       });
     }
 
+    var generateIPSOSJobModuleDataFile = function(){
+      return $http.get(adminEndpoint + '/generateIPSOSJobModuleDataFile', {
+        cache: false
+      }).then(function(response) {
+        return response;
+      });
+    }
+
     var createQSFTranslationModule = function() {
         return $http.get(adminEndpoint + '/createQSFTranslationModule', {
             cache: false
@@ -230,7 +238,8 @@
       validateVoxcoQuestions: validateVoxcoQuestions,
       createQSFTranslationModule: createQSFTranslationModule,
       importIPSOSResponse: importIPSOSResponse,
-      importSurveyResponse: importSurveyResponse
+      importSurveyResponse: importSurveyResponse,
+      generateIPSOSJobModuleDataFile: generateIPSOSJobModuleDataFile
     };
   }
 

@@ -1,5 +1,12 @@
 package org.occideas.participant.dao;
 
+import java.math.BigInteger;
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -18,12 +25,8 @@ import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigInteger;
-import java.util.List;
 
 @Repository
 public class ParticipantDao implements IParticipantDao {
@@ -82,14 +85,19 @@ public class ParticipantDao implements IParticipantDao {
 
   @Override
   public Participant getByReferenceNumber(String referenceNumber) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(Participant.class)
-      .add(Restrictions.eq("reference", referenceNumber))
-      .add(Restrictions.eq("deleted", 0));
-    if (crit.list() != null && !crit.list().isEmpty()) {
-      return (Participant) crit.list().get(0);
-    }
-    return null;
+
+    CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+    CriteriaQuery<Participant> criteria = builder.createQuery(Participant.class);
+    Root<Participant> root = criteria.from(Participant.class);
+    final CriteriaQuery<Participant> select = criteria.select(root);
+    select.where(builder.equal(root.get("reference"), referenceNumber),
+            builder.equal(root.get("deleted"), 0));
+    Query<Participant> query = sessionFactory.getCurrentSession().createQuery(criteria);
+    
+    if (!query.getResultList().isEmpty()) {
+    	return (Participant) query.getResultList().get(0);
+    }   
+    return null;   
   }
 
   @Override

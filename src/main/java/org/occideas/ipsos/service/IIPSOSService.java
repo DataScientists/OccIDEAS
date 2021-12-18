@@ -6,4 +6,5 @@ public interface IIPSOSService {
 
     void importResponse() throws IOException;
 
+    void generateIPSOSJobModuleDataFile() throws IOException;
 }

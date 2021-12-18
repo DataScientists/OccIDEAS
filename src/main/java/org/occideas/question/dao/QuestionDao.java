@@ -11,6 +11,7 @@ import org.occideas.entity.JobModule;
 import org.occideas.entity.Node;
 import org.occideas.entity.NodesAgent;
 import org.occideas.entity.Question;
+import org.occideas.exceptions.GenericException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -78,7 +79,12 @@ public class QuestionDao implements IQuestionDao {
             builder.equal(root.get("deleted"), 0));
     select.orderBy(builder.asc(root.get("number")));
     Query<Question> query = sessionFactory.getCurrentSession().createQuery(criteria);
-    return query.getResultList().get(0);
+    
+    if(query.getResultList().size()>0) {
+    	return query.getResultList().get(0);
+    }else {
+    	return null;
+    }        
   }
 
   public Question getQuestionByModuleIdAndNumber(String parentId, String number) {
@@ -93,14 +99,19 @@ public class QuestionDao implements IQuestionDao {
   }
 
   public Question getQuestionByTopIdAndNumber(Long topNodeId, String number) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(Question.class).add(Restrictions.eq("topNodeId", topNodeId))
-            .add(Restrictions.eq("number", number)).add(Restrictions.eq("deleted", 0));
-    if (!crit.list().isEmpty()) {
-      return (Question) crit.list().get(0);
-    }
+    CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+    CriteriaQuery<Question> criteria = builder.createQuery(Question.class);
+    Root<Question> root = criteria.from(Question.class);
+    final CriteriaQuery<Question> select = criteria.select(root);
+    select.where(builder.equal(root.get("number"), number),
+            builder.equal(root.get("topNodeId"), topNodeId),
+            builder.equal(root.get("deleted"), 0));
+    Query<Question> query = sessionFactory.getCurrentSession().createQuery(criteria);
+    
+    if (!query.getResultList().isEmpty()) {
+    	return query.getResultList().get(0);
+    }   
     return null;
-
   }
 
   public List<Question> getQuestionsByParentId(String parentId) {
