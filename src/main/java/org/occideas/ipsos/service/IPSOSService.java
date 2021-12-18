@@ -1,25 +1,12 @@
 package org.occideas.ipsos.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.common.NodeType;
 import org.occideas.entity.Constant;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
 import org.occideas.fragment.service.FragmentService;
@@ -30,30 +17,27 @@ import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.qsf.ApplicationQSF;
+import org.occideas.qsf.QSFNodeTypeMapper;
 import org.occideas.qsf.SurveyElement;
 import org.occideas.qsf.payload.Choice;
 import org.occideas.qsf.payload.Logic;
 import org.occideas.question.service.QuestionService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.CsvUtil;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.InterviewAnswerVO;
-import org.occideas.vo.InterviewQuestionVO;
-import org.occideas.vo.InterviewVO;
-import org.occideas.vo.ModuleVO;
-import org.occideas.vo.NodeVO;
-import org.occideas.vo.ParticipantVO;
-import org.occideas.vo.PossibleAnswerVO;
-import org.occideas.vo.QuestionVO;
-import org.occideas.vo.SystemPropertyVO;
+import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class IPSOSService implements IIPSOSService {
@@ -455,7 +439,7 @@ public class IPSOSService implements IIPSOSService {
         }
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkedModule.getIdNode());
-        interviewQuestion.setType(NodeType.Q_LINKEDMODULE.getDescription());
+        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDMODULE.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
@@ -476,7 +460,7 @@ public class IPSOSService implements IIPSOSService {
         interviewQuestion.setParentAnswerId(0L);
         interviewQuestion.setProcessed(true);
         interviewQuestion.setTopNodeId(linkAJSM.getIdNode());
-        interviewQuestion.setType(NodeType.Q_LINKEDAJSM.getDescription());
+        interviewQuestion.setType(QSFNodeTypeMapper.Q_LINKEDAJSM.getDescription());
         return interviewQuestionService.updateIntQ(interviewQuestion);
     }
 
