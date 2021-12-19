@@ -1,7 +1,5 @@
 package org.occideas.security.rest;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.occideas.admin.service.IAdminService;
 import org.occideas.admin.service.IDbConnectService;
 import org.occideas.entity.NodePlain;
@@ -26,8 +24,6 @@ import java.util.*;
 
 @Path("/admin")
 public class AdminRestController {
-
-    private Logger log = LogManager.getLogger(this.getClass());
 
     @Autowired
     private UserService service;
