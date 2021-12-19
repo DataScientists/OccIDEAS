@@ -83,7 +83,7 @@
 </head>
 <body ng-app="occIDEASApp">
 <toast></toast>
-<div class="container">
+<div class="container" ng-init="onLoad()">
   <header ng-cloak ng-include="'nav.html'"></header>
   <div ui-view>
   </div>

@@ -5,26 +5,31 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
-import org.occideas.entity.Constant;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.entity.SystemProperty;
+import org.occideas.entity.SystemProperty_;
+import org.occideas.systemproperty.SystemConfigTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
 public class SystemPropertyDao {
 
   private final String POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM Node where idNode in"
-    + " (SELECT idNode FROM ModuleRule where idModule=:param "
-    + " and idAgent in (select value from SYS_CONFIG where type='studyagent'"
-    + "))";
+          + " (SELECT idNode FROM ModuleRule where idModule=:param "
+          + " and idAgent in (select value from SYS_CONFIG where type=" + SystemConfigTypes.studyagent.name()
+          + "))";
   private final String QUESTION_ON_POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM Node where idNode in"
-    + " (SELECT idNode FROM ModuleRule where idNode=:param "
-    + " and idAgent in (select value from SYS_CONFIG where type='studyagent'"
-    + "))";
+          + " (SELECT idNode FROM ModuleRule where idNode=:param "
+          + " and idAgent in (select value from SYS_CONFIG where type=" + SystemConfigTypes.studyagent.name()
+          + "))";
   private final String POS_ANS_WITH_AGENT_SQL = "SELECT * FROM Node where idNode in"
     + " (SELECT idNode FROM ModuleRule where idModule=:idModule "
     + " and idAgent = :idAgent)";
@@ -81,23 +86,18 @@ public class SystemPropertyDao {
 
   public List<SystemProperty> getByType(String type) {
     final Session session = sessionFactory.getCurrentSession();
-    Criteria criteria = session.createCriteria(SystemProperty.class);
-    criteria.add(Restrictions.eq("type", type));
-
-    List<SystemProperty> list = criteria.list();
-    if (list.isEmpty()) {
-      return null;
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<SystemProperty> criteria = builder.createQuery(SystemProperty.class);
+    Root<SystemProperty> root = criteria.from(SystemProperty.class);
+    criteria.select(root);
+    criteria.where(builder.and(
+            builder.equal(root.get(SystemProperty_.type), type)
+    ));
+    List<SystemProperty> resultList = sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
+    if (resultList.isEmpty()) {
+      return Collections.emptyList();
     }
-    return list;
-  }
-
-  public boolean isStudyAgent(long agentId) {
-    final Session session = sessionFactory.getCurrentSession();
-    Criteria criteria = session.createCriteria(SystemProperty.class);
-    criteria.add(Restrictions.eq("type", Constant.STUDY_AGENT_SYS_PROP));
-    criteria.add(Restrictions.eq("value", String.valueOf(agentId)));
-    SystemProperty sysProp = (SystemProperty) criteria.uniqueResult();
-    return sysProp != null;
+    return resultList;
   }
 
   public List<PossibleAnswer> getPosAnsWithStudyAgentsByIdMod(long idModule) {

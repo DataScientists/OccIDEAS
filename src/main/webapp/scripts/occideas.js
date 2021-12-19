@@ -97,21 +97,39 @@
           }
       });
 
-  configureDefaults.$inject = ['ngTableDefaults', '$state', '$rootScope', 'AuthenticationService', 'dataBeanService', '$window', '$sessionStorage', 'bsLoadingOverlayService'];
+  configureDefaults.$inject = ['ngTableDefaults', '$state', '$rootScope', 'AuthenticationService', 'dataBeanService', '$window', '$sessionStorage', 'bsLoadingOverlayService', '$http'];
 
-  function configureDefaults(ngTableDefaults, $state, $rootScope, AuthenticationService, dataBeanService, $window, $sessionStorage, bsLoadingOverlayService) {
-    $rootScope._ = window._;
-    ngTableDefaults.params.count = 5;
-    ngTableDefaults.settings.counts = [];
-    $rootScope.isReadOnly = false;
-    $rootScope.storage = $sessionStorage;
-    $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
-      event.preventDefault();
-      $state.get('error').error = {code: 123, description: 'Exception stack trace'};
-      $state.get('displayError').error = {code: 123, description: 'Exception stack trace'};
-      return $state.go('displayError');
-    });
-    document.addEventListener("keyup", function(e) {
+    function configureDefaults(ngTableDefaults, $state, $rootScope, AuthenticationService, dataBeanService, $window, $sessionStorage, bsLoadingOverlayService, $http) {
+        $rootScope._ = window._;
+        ngTableDefaults.params.count = 5;
+        ngTableDefaults.settings.counts = [];
+
+        $rootScope.onLoad = () => {
+            $http.get('style/list').then(function (response) {
+                if (response.status === 200) {
+                    console.log('response', response.data);
+                    if (response.data && Object.keys(response.data).length > 0) {
+                        const sheet = document.createElement('style');
+                        const styles = Object.entries(response.data).map(arr => arr[1]).join("\r\n");
+                        console.log('styles', styles);
+
+                        sheet.innerHTML = styles;
+                        document.body.appendChild(sheet);
+                    }
+
+                }
+            });
+        };
+
+        $rootScope.isReadOnly = false;
+        $rootScope.storage = $sessionStorage;
+        $rootScope.$on('$stateChangeError', function (event, toState, toParams, fromState, fromParams, error) {
+            event.preventDefault();
+            $state.get('error').error = {code: 123, description: 'Exception stack trace'};
+            $state.get('displayError').error = {code: 123, description: 'Exception stack trace'};
+            return $state.go('displayError');
+        });
+        document.addEventListener("keyup", function (e) {
       if(e.keyCode === 27)
         $rootScope.$broadcast("escapePressed", e.target);
     });
