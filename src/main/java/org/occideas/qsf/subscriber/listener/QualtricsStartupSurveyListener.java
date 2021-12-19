@@ -25,16 +25,24 @@ public class QualtricsStartupSurveyListener implements ApplicationListener<Conte
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        if (!qualtricsConfig.isEnableListener()) {
+            log.info("Qualtrics listener is not enabled. Check config properties qualtrics.enableListener .");
+            return;
+        }
+
         QualtricsTopic topic = qualtricsConfig.getTopic();
         if (Objects.isNull(topic)) {
-            log.warn("topic config is not setup in application.properties");
+            log.warn("Topic config is not setup in application.properties");
             return;
+        } else {
+            log.info("Topic config is PublicationUrl {}", topic.getPublicationUrl());
         }
         if (StringUtils.isEmpty(topic.getSurvey())) {
-            log.warn("survey id is not setup in application.properties, nothing to listen to.");
+            log.warn("Survey id is not setup in application.properties, nothing to listen to.");
             return;
+        }else {
+        	log.info("All good with survey {}",topic.getSurvey());
         }
         qualtricsSurveySubscriberService.listenToSurvey(topic.getSurvey());
-
     }
 }

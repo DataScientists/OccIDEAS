@@ -24,20 +24,20 @@ public class ReportHistoryDao implements IReportHistoryDao {
     " WHEN r.level = 2 THEN 'probLow' " +
     " WHEN r.level = 3 THEN 'probUnknown' " +
     " WHEN r.level = 4 THEN 'possUnknown' " +
-    " WHEN r.level = 5 THEN 'noExposure' " +
     " END as level, nt.name as modName " +
-    " FROM Interview i,Interview_FiredRules f," +
-    " Rule r,AgentInfo a,Node_Rule nr,Node n," +
-    " Node nt " +
-    " where f.idinterview = i.idinterview " +
-    " and f.idRule = r.idRule " +
-    " and r.agentId = a.idAgent " +
-    " and a.idAgent IN (:agentIds)" +
-    " and nr.idRule = r.idRule " +
-    " and nr.idNode = n.idNode " +
-    " and nt.idNode = n.topNodeId " +
-    " group by i.idinterview,i.referenceNumber,f.idRule, a.name, level, modName"
-    + " order by i.referenceNumber";
+          " FROM Interview i,Interview_FiredRules f," +
+          " Rule r,AgentInfo a,Node_Rule nr,Node n," +
+          " Node nt " +
+          " where f.idinterview = i.idinterview " +
+          " and f.idRule = r.idRule " +
+          " and r.agentId = a.idAgent " +
+          " and a.idAgent IN (:agentIds)" +
+          " and nr.idRule = r.idRule " +
+          " and nr.idNode = n.idNode " +
+          " and nt.idNode = n.topNodeId " +
+          " and r.level != 5 " +
+          " group by i.idinterview,i.referenceNumber,f.idRule, a.name, level, modName"
+          + " order by i.referenceNumber";
   private final String interviewRuleReportSQL = "SELECT CONCAT(CONVERT(i.idinterview, CHAR(250)), '_', CONVERT(f.idRule, CHAR(250))) as id,i.idinterview,i.referenceNumber,f.idRule,"
     + " a.name,CASE WHEN r.level = 0 THEN 'probHigh'" +
     " WHEN r.level = 1 THEN 'probMedium' " +
@@ -129,11 +129,9 @@ public class ReportHistoryDao implements IReportHistoryDao {
   @Override
   public List<InterviewRuleReport> getInterviewRuleReportFilter(List<Long> agentIds) {
     final Session session = sessionFactory.getCurrentSession();
-    SQLQuery sqlQuery = session.createSQLQuery(interviewRuleReportFilterSQL)
-      .addEntity(InterviewRuleReport.class);
-    sqlQuery.setParameterList("agentIds", agentIds);
-    List<InterviewRuleReport> list = sqlQuery.list();
-    return list;
+    return session.createNativeQuery(interviewRuleReportFilterSQL, InterviewRuleReport.class)
+            .setParameterList("agentIds", agentIds)
+            .getResultList();
   }
 
   @Override

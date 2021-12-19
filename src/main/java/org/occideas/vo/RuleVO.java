@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties({"agentName"})
+@JsonInclude(Include.NON_EMPTY)
 public class RuleVO {
 
   private long idRule;
@@ -18,10 +19,10 @@ public class RuleVO {
   private String type;
   private String level;
   private Date lastUpdated;
-  @JsonInclude(Include.NON_NULL)
+    @JsonInclude(Include.NON_EMPTY)
   private List<PossibleAnswerVO> conditions;
   private Long legacyRuleId;
-  @JsonInclude(Include.NON_NULL)
+    @JsonInclude(Include.NON_EMPTY)
   private List<RuleAdditionalFieldVO> ruleAdditionalfields = new ArrayList<>();
   private int levelValue;
   private Integer deleted;

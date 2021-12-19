@@ -1,0 +1,1095 @@
+{
+  "result": {
+    "responseId": "R_3EKEQZMaXFbzeDz",
+    "values": {
+      "startDate": "2021-09-08T15:34:24Z",
+      "endDate": "2021-09-08T15:37:46Z",
+      "status": 0,
+      "ipAddress": "219.74.213.197",
+      "progress": 100,
+      "duration": 201,
+      "finished": 1,
+      "recordedDate": "2021-09-08T15:37:47.333Z",
+      "locationLatitude": "1.30650329590",
+      "locationLongitude": "103.889892578",
+      "distributionChannel": "anonymous",
+      "userLanguage": "EN",
+      "QID1": 28286,
+      "QID1_DO": [
+        "28286",
+        "28346",
+        "28347"
+      ],
+      "QID2": 28299,
+      "QID2_DO": [
+        "28288",
+        "28295",
+        "28289",
+        "28296",
+        "28299",
+        "60011",
+        "28301"
+      ],
+      "QID4": 63337,
+      "QID4_DO": [
+        "28314",
+        "39639",
+        "63906",
+        "63837",
+        "63937",
+        "61902",
+        "63938",
+        "28315",
+        "39645",
+        "39638",
+        "60012",
+        "63337"
+      ],
+      "QID6": 28324,
+      "QID6_DO": [
+        "28319",
+        "28324",
+        "28325"
+      ],
+      "QID8": 28328,
+      "QID8_DO": [
+        "28327",
+        "28328",
+        "28329"
+      ],
+      "QID9": 28332,
+      "QID9_DO": [
+        "28331",
+        "28332",
+        "28345"
+      ],
+      "QID10": 63338,
+      "QID10_DO": [
+        "28334",
+        "28335",
+        "63338"
+      ],
+      "QID11": 28339,
+      "QID11_DO": [
+        "28338",
+        "28339",
+        "63339"
+      ],
+      "QID12": 28343,
+      "QID12_DO": [
+        "28342",
+        "28343",
+        "41866"
+      ],
+      "QID13": 63340,
+      "QID13_DO": [
+        "38550",
+        "38551",
+        "63340"
+      ],
+      "QID14": 38567,
+      "QID14_DO": [
+        "38566",
+        "38567",
+        "38568"
+      ],
+      "QID15": 40535,
+      "QID15_DO": [
+        "40534",
+        "40535",
+        "40536"
+      ],
+      "QID17": 26841,
+      "QID17_DO": [
+        "26831",
+        "26841",
+        "26842"
+      ],
+      "QID23": 70031,
+      "QID23_DO": [
+        "70030",
+        "70031",
+        "70032"
+      ],
+      "QID25": 5897,
+      "QID25_DO": [
+        "5894",
+        "5897",
+        "5898"
+      ],
+      "QID30": 38189,
+      "QID30_DO": [
+        "38184",
+        "70152",
+        "38189",
+        "38190"
+      ],
+      "QID33": 18581,
+      "QID33_DO": [
+        "18573",
+        "18581",
+        "18582"
+      ],
+      "QID37": 28799,
+      "QID37_DO": [
+        "28702",
+        "28798",
+        "28799"
+      ],
+      "QID55": 62550,
+      "QID55_DO": [
+        "18904",
+        "18996",
+        "62550"
+      ],
+      "QID73": 27121,
+      "QID73_DO": [
+        "27063",
+        "27120",
+        "27121"
+      ],
+      "QID86": 27147,
+      "QID86_DO": [
+        "27124",
+        "27146",
+        "27147"
+      ],
+      "QID93": 27263,
+      "QID93_DO": [
+        "27242",
+        "27262",
+        "27263"
+      ],
+      "QID98": 63239,
+      "QID98_DO": [
+        "18562",
+        "18563",
+        "18564",
+        "18565",
+        "18568",
+        "18570",
+        "63239"
+      ],
+      "QID99": 18619,
+      "QID99_DO": [
+        "18590",
+        "18619",
+        "18620"
+      ],
+      "QID105": 19150,
+      "QID105_DO": [
+        "19129",
+        "19150",
+        "19151"
+      ],
+      "QID108": 36953,
+      "QID108_DO": [
+        "36951",
+        "36953",
+        "62552"
+      ],
+      "QID111": 18730,
+      "QID111_DO": [
+        "18725",
+        "18730",
+        "18731"
+      ],
+      "QID113": 18740,
+      "QID113_DO": [
+        "18733",
+        "18740",
+        "18741"
+      ],
+      "QID115": 41792,
+      "QID115_DO": [
+        "41792"
+      ],
+      "QID116": 41951,
+      "QID116_DO": [
+        "41951"
+      ],
+      "QID117_1": 1,
+      "QID117_2": 1,
+      "QID117_DO": [
+        "1",
+        "2"
+      ],
+      "QID118": 41596,
+      "QID118_DO": [
+        "41595",
+        "41596"
+      ],
+      "QID130": 35943,
+      "QID130_DO": [
+        "35939",
+        "35940",
+        "35941",
+        "35942",
+        "35943"
+      ],
+      "QID239": 35948,
+      "QID239_DO": [
+        "35945",
+        "35946",
+        "35947",
+        "35948"
+      ],
+      "QID263": 35951,
+      "QID263_DO": [
+        "35950",
+        "35951"
+      ],
+      "QID359": 35964,
+      "QID359_DO": [
+        "35961",
+        "59767",
+        "35962",
+        "35963",
+        "35964"
+      ],
+      "QID542": 35968,
+      "QID542_DO": [
+        "35966",
+        "35967",
+        "35968"
+      ],
+      "QID553": 35971,
+      "QID553_DO": [
+        "35970",
+        "35971"
+      ],
+      "QID559": 19687,
+      "QID559_DO": [
+        "19686",
+        "19687",
+        "63559"
+      ],
+      "QID562": 26671,
+      "QID562_DO": [
+        "26670",
+        "26671",
+        "62560"
+      ],
+      "QID566": 16575,
+      "QID566_DO": [
+        "16560",
+        "16575",
+        "16576"
+      ],
+      "QID575": 42051,
+      "QID575_DO": [
+        "42048",
+        "42051",
+        "63540",
+        "43757"
+      ],
+      "QID577": 42058,
+      "QID577_DO": [
+        "42053",
+        "42058",
+        "42059",
+        "43756"
+      ],
+      "QID579": 42061,
+      "QID579_DO": [
+        "42061",
+        "42062",
+        "42063",
+        "42064",
+        "43754",
+        "43755"
+      ],
+      "QID583": 43745,
+      "QID583_DO": [
+        "39076",
+        "39077",
+        "39078",
+        "39079",
+        "39080",
+        "43745"
+      ],
+      "QID584": 61899,
+      "QID584_DO": [
+        "61898",
+        "61899"
+      ],
+      "QID585": 38920,
+      "QID585_DO": [
+        "38889",
+        "38891",
+        "38892",
+        "38893",
+        "38894",
+        "38895",
+        "38896",
+        "38897",
+        "38898",
+        "38899",
+        "38900",
+        "38902",
+        "38903",
+        "38904",
+        "38905",
+        "38906",
+        "38907",
+        "38908",
+        "38909",
+        "38910",
+        "38911",
+        "38912",
+        "38913",
+        "38914",
+        "38915",
+        "38916",
+        "38919",
+        "38920"
+      ],
+      "QID587_TEXT": "2012",
+      "QID588": 38949,
+      "QID588_DO": [
+        "38949",
+        "38950",
+        "38951",
+        "38952",
+        "38953",
+        "38954",
+        "38955",
+        "38956",
+        "38957",
+        "38958",
+        "38959",
+        "38962",
+        "38963"
+      ],
+      "QID590": 38979,
+      "QID590_DO": [
+        "38968",
+        "38969",
+        "38972",
+        "38974",
+        "38971",
+        "38978",
+        "38979"
+      ]
+    },
+    "labels": {
+      "status": "IP Address",
+      "finished": "True",
+      "QID1": "Yes",
+      "QID1_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID2": "Robotic or mechanized",
+      "QID2_DO": [
+        "Shielded metal arc, stick or manual arc, flux core",
+        "Oxyacetylene",
+        "MIG/ gas metal arc, TIG/tungsten arc, plasma arc",
+        "Brazing",
+        "Robotic or mechanized",
+        "Other, please describe [Freetext]",
+        "Don't know"
+      ],
+      "QID4": "Don't know",
+      "QID4_DO": [
+        "Aluminium",
+        "Brass or bronze",
+        "Beryllium or Beryllium alloys",
+        "Cobalt or Cobalt alloys",
+        "Hard metal alloys (e.g., Tungsten carbide or Stellite)",
+        "Iron or Steel",
+        "Lead or lead alloys",
+        "Nickel or Nickel alloys",
+        "Titanium based alloys",
+        "Zinc coated metals",
+        "Other, please describe [Freetext]",
+        "Don't know"
+      ],
+      "QID6": "No",
+      "QID6_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID8": "No",
+      "QID8_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID9": "No",
+      "QID9_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID10": "Don't know",
+      "QID10_DO": [
+        "More than half the time",
+        "Less than half the time (includes never)",
+        "Don't know"
+      ],
+      "QID11": "Less than half the time (includes never)",
+      "QID11_DO": [
+        "More than half the time",
+        "Less than half the time (includes never)",
+        "Don't know"
+      ],
+      "QID12": "No",
+      "QID12_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID13": "Don't know",
+      "QID13_DO": [
+        "More than half the time",
+        "Less than half the time (includes never)",
+        "Don't know"
+      ],
+      "QID14": "No",
+      "QID14_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID15": "No",
+      "QID15_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID17": "No",
+      "QID17_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID23": "No",
+      "QID23_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID25": "No",
+      "QID25_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID30": "No",
+      "QID30_DO": [
+        "Yes I use X-rays",
+        "Yes I use another type of radiation",
+        "No",
+        "Don't know"
+      ],
+      "QID33": "No",
+      "QID33_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID37": "Don't know",
+      "QID37_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID55": "Don't know",
+      "QID55_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID73": "Don't know",
+      "QID73_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID86": "Don't know",
+      "QID86_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID93": "Don't know",
+      "QID93_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID98": "Don't know",
+      "QID98_DO": [
+        "Industrial hand cleaner",
+        "Mineral turpentine, mineral spirits or white spirit or paint thinner",
+        "Petrol",
+        "Diesel",
+        "Chlorhexidine, hibitane, or hibiscrub",
+        "None of the above",
+        "Don't know"
+      ],
+      "QID99": "No",
+      "QID99_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID105": "No",
+      "QID105_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID108": "No",
+      "QID108_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID111": "No",
+      "QID111_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID113": "No",
+      "QID113_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID115": "Click me once you have established when their last working day was",
+      "QID115_DO": [
+        "Click me once you have established when their last working day was"
+      ],
+      "QID116": "Click me to continue",
+      "QID116_DO": [
+        "Click me to continue"
+      ],
+      "QID117_DO": [
+        "Hours",
+        "Minutes"
+      ],
+      "QID118": "No",
+      "QID118_DO": [
+        "Yes",
+        "No"
+      ],
+      "QID130": "No",
+      "QID130_DO": [
+        "Welding (Note: do not include welding underwater whilst diving if they did so)",
+        "Metal working",
+        "Paint or powder coating",
+        "Abrasive blasting or peening",
+        "No"
+      ],
+      "QID239": "No",
+      "QID239_DO": [
+        "Powered buffing or polishing equipment",
+        "Pressurised spraying or blowing equipment",
+        "Any type of vacuum system",
+        "No"
+      ],
+      "QID263": "No",
+      "QID263_DO": [
+        "Yes (or not sure) [Note: do not include tools used underwater whilst diving if they did so]",
+        "No"
+      ],
+      "QID359": "No",
+      "QID359_DO": [
+        "Lifting machinery",
+        "Construction Vehicles",
+        "Trucks",
+        "Work vans or utes",
+        "No"
+      ],
+      "QID542": "No",
+      "QID542_DO": [
+        "Noise from pumps, compressors or generators",
+        "Ventilation systems, fans or range-hoods that emit a noise loud enough that you have to raise your voice to be heard",
+        "No"
+      ],
+      "QID553": "No",
+      "QID553_DO": [
+        "Yes",
+        "No"
+      ],
+      "QID559": "No",
+      "QID559_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID562": "No",
+      "QID562_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID566": "No",
+      "QID566_DO": [
+        "Yes",
+        "No",
+        "Don't know"
+      ],
+      "QID575": "No",
+      "QID575_DO": [
+        "Yes",
+        "No",
+        "Don't know",
+        "Refused"
+      ],
+      "QID577": "No",
+      "QID577_DO": [
+        "Yes",
+        "No",
+        "Don't know",
+        "Refused"
+      ],
+      "QID579": "No",
+      "QID579_DO": [
+        "No",
+        "Yes - sometimes",
+        "Yes - often",
+        "Yes - all the time",
+        "Don't know",
+        "Refused"
+      ],
+      "QID583": "Refused",
+      "QID583_DO": [
+        "1 (just me)",
+        "2-5 (micro business)",
+        "5-19 (small)",
+        "20-200 (medium business)",
+        "200 or more (large)",
+        "Refused"
+      ],
+      "QID584": "No",
+      "QID584_DO": [
+        "Yes",
+        "No"
+      ],
+      "QID585": "Refused",
+      "QID585_DO": [
+        "New Zealand",
+        "United Kingdom",
+        "Africa",
+        "China",
+        "Croatia",
+        "Fiji",
+        "Germany",
+        "Greece",
+        "Hong Kong",
+        "India",
+        "Indonesia",
+        "Italy",
+        "Japan",
+        "Lebanon",
+        "Malaysia",
+        "Malta",
+        "Netherlands",
+        "Philippines",
+        "Poland",
+        "Singapore",
+        "South Africa",
+        "South Korea",
+        "Sri Lanka",
+        "USA",
+        "Vietnam",
+        "Other",
+        "Don't know",
+        "Refused"
+      ],
+      "QID588": "English",
+      "QID588_DO": [
+        "English",
+        "Chinese",
+        "Japanese",
+        "French",
+        "Italian",
+        "German",
+        "Arabic",
+        "Indonesian",
+        "Spanish",
+        "Vietnamese",
+        "Other",
+        "Don't know",
+        "Refused"
+      ],
+      "QID590": "Refused",
+      "QID590_DO": [
+        "Year 10 high school or below (or equivalent)",
+        "Year 11 or 12 highschool  (or equivalent)",
+        "Diploma or certificate (or equivalent)",
+        "Trade or apprenticeship qualification (or equivalent)",
+        "University degree or higher (or equivalent)",
+        "Unsure/ don't know/ can't remember",
+        "Refused"
+      ]
+    },
+    "displayedFields": [
+      "QID37",
+      "QID108",
+      "QID588",
+      "QID105",
+      "QID583",
+      "QID584",
+      "QID585",
+      "QID33",
+      "QID542",
+      "QID30",
+      "QID73",
+      "QID263",
+      "QID1",
+      "QID2",
+      "QID9",
+      "QID8",
+      "QID4",
+      "QID6",
+      "QID118",
+      "QID239",
+      "QID559",
+      "QID115",
+      "QID116",
+      "QID359",
+      "QID111",
+      "QID553",
+      "QID113",
+      "QID590",
+      "QID86",
+      "QID17",
+      "QID15",
+      "QID93",
+      "QID566",
+      "QID14",
+      "QID13",
+      "QID562",
+      "QID12",
+      "QID55",
+      "QID11",
+      "QID99",
+      "QID10",
+      "QID98",
+      "QID117_1",
+      "QID117_2",
+      "QID577",
+      "QID579",
+      "QID587_TEXT",
+      "QID25",
+      "QID23",
+      "QID575",
+      "QID130"
+    ],
+    "displayedValues": {
+      "QID37": [
+        28702,
+        28798,
+        28799
+      ],
+      "QID108": [
+        36951,
+        36953,
+        62552
+      ],
+      "QID588": [
+        38949,
+        38950.0,
+        38951,
+        38952,
+        38953,
+        38954,
+        38955,
+        38956,
+        38957,
+        38958,
+        38959,
+        38962,
+        38963
+      ],
+      "QID105": [
+        19129,
+        19150.0,
+        19151
+      ],
+      "QID583": [
+        39076,
+        39077,
+        39078,
+        39079,
+        39080.0,
+        43745
+      ],
+      "QID584": [
+        61898,
+        61899
+      ],
+      "QID585": [
+        38889,
+        38891,
+        38892,
+        38893,
+        38894,
+        38895,
+        38896,
+        38897,
+        38898,
+        38899,
+        38900.0,
+        38902,
+        38903,
+        38904,
+        38905,
+        38906,
+        38907,
+        38908,
+        38909,
+        38910.0,
+        38911,
+        38912,
+        38913,
+        38914,
+        38915,
+        38916,
+        38919,
+        38920.0
+      ],
+      "QID33": [
+        18573,
+        18581,
+        18582
+      ],
+      "QID542": [
+        35966,
+        35967,
+        35968
+      ],
+      "QID30": [
+        38184,
+        70152,
+        38189,
+        38190.0
+      ],
+      "QID73": [
+        27063,
+        27120.0,
+        27121
+      ],
+      "QID263": [
+        35950.0,
+        35951
+      ],
+      "QID1": [
+        28286,
+        28346,
+        28347
+      ],
+      "QID2": [
+        28288,
+        28295,
+        28289,
+        28296,
+        28299,
+        60011,
+        28301
+      ],
+      "QID9": [
+        28331,
+        28332,
+        28345
+      ],
+      "QID8": [
+        28327,
+        28328,
+        28329
+      ],
+      "QID4": [
+        28314,
+        39639,
+        63906,
+        63837,
+        63937,
+        61902,
+        63938,
+        28315,
+        39645,
+        39638,
+        60012,
+        63337
+      ],
+      "QID6": [
+        28319,
+        28324,
+        28325
+      ],
+      "QID118": [
+        41595,
+        41596
+      ],
+      "QID239": [
+        35945,
+        35946,
+        35947,
+        35948
+      ],
+      "QID559": [
+        19686,
+        19687,
+        63559
+      ],
+      "QID115": [
+        41792
+      ],
+      "QID116": [
+        41951
+      ],
+      "QID359": [
+        35961,
+        59767,
+        35962,
+        35963,
+        35964
+      ],
+      "QID111": [
+        18725,
+        18730.0,
+        18731
+      ],
+      "QID553": [
+        35970.0,
+        35971
+      ],
+      "QID113": [
+        18733,
+        18740.0,
+        18741
+      ],
+      "QID590": [
+        38968,
+        38969,
+        38972,
+        38974,
+        38971,
+        38978,
+        38979
+      ],
+      "QID86": [
+        27124,
+        27146,
+        27147
+      ],
+      "QID17": [
+        26831,
+        26841,
+        26842
+      ],
+      "QID15": [
+        40534,
+        40535,
+        40536
+      ],
+      "QID93": [
+        27242,
+        27262,
+        27263
+      ],
+      "QID566": [
+        16560.0,
+        16575,
+        16576
+      ],
+      "QID14": [
+        38566,
+        38567,
+        38568
+      ],
+      "QID13": [
+        38550.0,
+        38551,
+        63340.0
+      ],
+      "QID562": [
+        26670.0,
+        26671,
+        62560.0
+      ],
+      "QID12": [
+        28342,
+        28343,
+        41866
+      ],
+      "QID55": [
+        18904,
+        18996,
+        62550.0
+      ],
+      "QID11": [
+        28338,
+        28339,
+        63339
+      ],
+      "QID99": [
+        18590.0,
+        18619,
+        18620.0
+      ],
+      "QID10": [
+        28334,
+        28335,
+        63338
+      ],
+      "QID98": [
+        18562,
+        18563,
+        18564,
+        18565,
+        18568,
+        18570.0,
+        63239
+      ],
+      "QID577": [
+        42053,
+        42058,
+        42059,
+        43756
+      ],
+      "QID579": [
+        42061,
+        42062,
+        42063,
+        42064,
+        43754,
+        43755
+      ],
+      "QID25": [
+        5894,
+        5897,
+        5898
+      ],
+      "QID23": [
+        70030.0,
+        70031,
+        70032
+      ],
+      "QID575": [
+        42048,
+        42051,
+        63540.0,
+        43757
+      ],
+      "QID130": [
+        35939,
+        35940.0,
+        35941,
+        35942,
+        35943
+      ]
+    }
+  },
+  "meta": {
+    "requestId": "30faea6b-62ee-4c81-93c8-61ee38f7bfff",
+    "httpStatus": "200 - OK"
+  }
+}

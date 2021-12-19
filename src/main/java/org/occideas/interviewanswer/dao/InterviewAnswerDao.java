@@ -1,5 +1,13 @@
 package org.occideas.interviewanswer.dao;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
@@ -9,23 +17,21 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.occideas.entity.Constant;
 import org.occideas.entity.InterviewAnswer;
+import org.occideas.entity.InterviewAnswer_;
 import org.occideas.entity.InterviewQuestion;
-import org.occideas.mapper.PossibleAnswerMapper;
-import org.occideas.possibleanswer.dao.IPossibleAnswerDao;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.StudyAgentUtil;
-import org.occideas.vo.*;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.QuestionVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
-
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Repository
 public class InterviewAnswerDao implements IInterviewAnswerDao {
@@ -233,19 +239,19 @@ public class InterviewAnswerDao implements IInterviewAnswerDao {
     return isExist;
   }
 
-
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
   public List<InterviewAnswer> findByInterviewId(Long interviewId) {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(InterviewAnswer.class);
-    if (interviewId != null) {
-      crit.add(Restrictions.eq("idInterview", interviewId));
-      crit.add(Restrictions.eq("deleted", 0));
-      crit.addOrder(Order.desc("id"));
-    }
-    List<InterviewAnswer> retValue = crit.list();
-    session.clear();
-    return retValue;
+	  final Session session = sessionFactory.getCurrentSession();
+      CriteriaBuilder builder = session.getCriteriaBuilder();
+      CriteriaQuery<InterviewAnswer> criteria = builder.createQuery(InterviewAnswer.class);
+      Root<InterviewAnswer> root = criteria.from(InterviewAnswer.class);
+      criteria.select(root);
+      if (interviewId != null) {
+    	  criteria.where(builder.and(builder.equal(root.get(InterviewAnswer_.ID_INTERVIEW), interviewId), builder.equal(root.get(InterviewAnswer_.DELETED), 0)));
+
+      }
+      return sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
   }
 
 

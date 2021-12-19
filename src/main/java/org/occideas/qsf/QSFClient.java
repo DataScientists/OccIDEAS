@@ -109,6 +109,26 @@ public class QSFClient implements IQSFClient {
     }
 
     @Override
+    public Response getSurveyMetadata(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
+        headers.add("Content-type", APPLICATION_JSON);
+
+        SurveyMetadata response = ClientBuilder.newBuilder()
+                .withConfig(clientConfig)
+                .build()
+                .target(qualtricsConfig.getUrl())
+                .path("API/v3/survey-definitions")
+                .path(surveyId)
+                .path("metadata")
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .get(SurveyMetadata.class);
+
+        return handleResponse(response, surveyId, "getMetadata");
+    }
+
+    @Override
     public Response createQuestion(String surveyId, SimpleQuestionPayload questionPayload, String blockId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
         headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
@@ -134,12 +154,32 @@ public class QSFClient implements IQSFClient {
     }
 
     @Override
+    public Response getQuestions(String surveyId) {
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
+        headers.add("Content-type", APPLICATION_JSON);
+
+        SurveyQuestionsResponse response = ClientBuilder.newBuilder()
+                .withConfig(clientConfig)
+                .build()
+                .target(qualtricsConfig.getUrl())
+                .path("API/v3/survey-definitions")
+                .path(surveyId)
+                .path("questions")
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON)
+                .headers(headers)
+                .get(SurveyQuestionsResponse.class);
+
+        return handleResponse(response, surveyId, "getQuestions");
+    }
+
+    @Override
     public Response copySurvey(CopySurveyPayload payload, String surveyId, String userId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
         headers.add("X-API-TOKEN", qualtricsConfig.getApiToken());
         headers.add("Content-type", APPLICATION_JSON);
-        headers.add("X-COPY-SOURCE",surveyId);
-        headers.add("X-COPY-DESTINATION-OWNER",userId);
+        headers.add("X-COPY-SOURCE", surveyId);
+        headers.add("X-COPY-DESTINATION-OWNER", userId);
 
         try {
             CopySurveyResponse response = ClientBuilder.newBuilder()
@@ -286,7 +326,7 @@ public class QSFClient implements IQSFClient {
                     .get()
                     .readEntity(GetBlockElementResponse.class);
 
-            return handleResponse(response, "API/v3/survey-definitions/"+surveyId+"/blocks/"+blockId, "updateBlock");
+            return handleResponse(response, "API/v3/survey-definitions/" + surveyId + "/blocks/" + blockId, "updateBlock");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -367,7 +407,7 @@ public class QSFClient implements IQSFClient {
                     .post(Entity.entity(request, MediaType.APPLICATION_JSON))
                     .readEntity(SurveyExportResponse.class);
 
-            return handleResponse(response, "surveyId:"+surveyId+" request:"+request, "createExportResponse");
+            return handleResponse(response, "surveyId:" + surveyId + " request:" + request, "createExportResponse");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -394,7 +434,7 @@ public class QSFClient implements IQSFClient {
                     .get()
                     .readEntity(SurveyExportResponse.class);
 
-            return handleResponse(response, "surveyId:"+surveyId+"-progressId:"+progressId, "getExportResponseProgress");
+            return handleResponse(response, "surveyId:" + surveyId + "-progressId:" + progressId, "getExportResponseProgress");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return Response.status(Response.Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -421,7 +461,7 @@ public class QSFClient implements IQSFClient {
                     .headers(headers)
                     .get()
                     .readEntity(InputStream.class);
-            File downloadfile = new File("/tmp/"+surveyId+".zip");
+            File downloadfile = new File("/tmp/" + surveyId + ".zip");
             byte[] byteArray = IOUtils.toByteArray(inputStream);
             FileOutputStream fos = new FileOutputStream(downloadfile);
             fos.write(byteArray);
@@ -558,10 +598,10 @@ public class QSFClient implements IQSFClient {
                 .headers(headers)
                 .delete()
                 .readEntity(BaseResponse.class);
-        log.info("deleting survey "+surveyId);
+        log.info("deleting survey " + surveyId);
         return handleResponse(response, surveyId + "/delete", "deleteSurvey");
     }
-    
+
     @Override
     public Response copySurvey(String surveyId) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
@@ -578,7 +618,7 @@ public class QSFClient implements IQSFClient {
                 .headers(headers)
                 .delete()
                 .readEntity(BaseResponse.class);
-        log.info("copying survey "+surveyId);
+        log.info("copying survey " + surveyId);
         return handleResponse(response, surveyId + "/delete", "deleteSurvey");
     }
 
@@ -636,7 +676,7 @@ public class QSFClient implements IQSFClient {
     }
 
 
-    private  Response handleResponse(BaseResponse response, String requestBody, String function) {
+    private Response handleResponse(BaseResponse response, String requestBody, String function) {
         if ("200 - OK".equals(response.getMeta().getHttpStatus())) {
             log.info(function + ":" + response);
             return Response.ok(response).build();

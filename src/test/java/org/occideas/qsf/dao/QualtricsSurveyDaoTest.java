@@ -10,7 +10,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,16 +38,16 @@ class QualtricsSurveyDaoTest {
         qualtricsSurvey.setResponse("{test: test}".getBytes());
         qualtricsSurveyDao.save(qualtricsSurvey);
 
-        Optional<QualtricsSurvey> optionalSurvey = qualtricsSurveyDao.findById("1");
+        List<QualtricsSurvey> listOfSurvey = qualtricsSurveyDao.findByResponseId("1");
 
-        assertTrue(optionalSurvey.isPresent());
+        assertFalse(listOfSurvey.isEmpty());
     }
 
     @Test
     void givenResponseIdNotExist_whenFindById_shouldNotReturnRecord() {
-        Optional<QualtricsSurvey> optionalSurvey = qualtricsSurveyDao.findById("1");
+        List<QualtricsSurvey> listOfSurvey = qualtricsSurveyDao.findByResponseId("1");
 
-        assertTrue(optionalSurvey.isEmpty());
+        assertTrue(listOfSurvey.isEmpty());
     }
 
     @Test
@@ -91,6 +90,26 @@ class QualtricsSurveyDaoTest {
     }
 
     @Test
+    void givenErrorNotEmpty_whenFindByIsProcessed_shouldNotReturnSurvey() {
+        QualtricsSurvey qualtricsSurvey
+                = new QualtricsSurvey();
+        qualtricsSurvey.setResponseId("1");
+        qualtricsSurvey.setSurveyId("1");
+        qualtricsSurvey.setBrandId("1B");
+        qualtricsSurvey.setTopic("topic");
+        qualtricsSurvey.setCompletedDate(LocalDateTime.now());
+        qualtricsSurvey.setQualtricsStatus("Completed");
+        qualtricsSurvey.setResponse("{test: test}".getBytes());
+        qualtricsSurvey.setProcessed(false);
+        qualtricsSurvey.setError("Error");
+        qualtricsSurveyDao.save(qualtricsSurvey);
+
+        List<QualtricsSurvey> list = qualtricsSurveyDao.findByIsProcessed(false);
+
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
     void givenIsProcessedAndResponseIsNull_whenFindByIsProcessed_shouldReturnSurvey() {
         QualtricsSurvey qualtricsSurvey
                 = new QualtricsSurvey();
@@ -107,5 +126,35 @@ class QualtricsSurveyDaoTest {
         List<QualtricsSurvey> list = qualtricsSurveyDao.findByIsProcessed(false);
 
         assertTrue(list.isEmpty());
+    }
+
+    @Test
+    void givenResponseIdExist_whenDeleteByResponseId_shouldSuccess() {
+        QualtricsSurvey qualtricsSurvey
+                = new QualtricsSurvey();
+        qualtricsSurvey.setResponseId("12345");
+        qualtricsSurvey.setSurveyId("1");
+        qualtricsSurvey.setBrandId("1B");
+        qualtricsSurvey.setTopic("topic");
+        qualtricsSurvey.setCompletedDate(LocalDateTime.now());
+        qualtricsSurvey.setQualtricsStatus("Completed");
+        qualtricsSurvey.setResponse("{test: test}".getBytes());
+        qualtricsSurveyDao.save(qualtricsSurvey);
+        List<QualtricsSurvey> listOfSurvey = qualtricsSurveyDao.findByResponseId("12345");
+        assertFalse(listOfSurvey.isEmpty());
+
+        qualtricsSurveyDao.deleteByResponseId("12345");
+
+        List<QualtricsSurvey> actual = qualtricsSurveyDao.findByResponseId("12345");
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void givenResponseIdNotExist_whenDeleteByResponseId_shouldSuccess() {
+
+        qualtricsSurveyDao.deleteByResponseId("12345");
+
+        List<QualtricsSurvey> actual = qualtricsSurveyDao.findByResponseId("12345");
+        assertTrue(actual.isEmpty());
     }
 }

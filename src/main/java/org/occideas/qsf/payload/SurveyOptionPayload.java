@@ -7,15 +7,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.occideas.qsf.BaseQSF;
 import org.occideas.qsf.serializer.AvailableLanguageSerializer;
 
-import java.util.List;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SurveyOptionPayload extends BaseQSF implements Payload{
 
     @JsonProperty(value = "BackButton")
-    private String backButton;
+    private boolean backButton;
     @JsonProperty(value = "SaveAndContinue")
-    private String saveAndContinue;
+    private boolean saveAndContinue;
     @JsonProperty(value = "SurveyProtection")
     private String surveyProtection;
     @JsonProperty(value = "BallotBoxStuffingPrevention")
@@ -28,6 +26,8 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     private String surveyExpiration;
     @JsonProperty(value = "SurveyTermination")
     private String surveyTermination;
+    @JsonProperty(value = "EOSRedirectURL")
+    private String eosRedirectURL;
     @JsonProperty(value = "SurveyTitle")
     private String surveyTitle;
     @JsonProperty(value = "Header")
@@ -60,7 +60,7 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     public SurveyOptionPayload() {
     }
 
-    public SurveyOptionPayload(String backButton, String saveAndContinue, String surveyProtection, String ballotBoxStuffingPrevention, String noIndex, String secureResponseFiles, String surveyExpiration, String surveyTermination, String header, String footer, String progressBarDisplay, String partialData, String validationMessage, String previousButton, String nextButton, String skinLibrary, String skinType, String skin, int newScoring) {
+    public SurveyOptionPayload(boolean backButton, boolean saveAndContinue, String surveyProtection, String ballotBoxStuffingPrevention, String noIndex, String secureResponseFiles, String surveyExpiration, String surveyTermination, String header, String footer, String progressBarDisplay, String partialData, String validationMessage, String previousButton, String nextButton, String skinLibrary, String skinType, String skin, int newScoring) {
         this.backButton = backButton;
         this.saveAndContinue = saveAndContinue;
         this.surveyProtection = surveyProtection;
@@ -82,19 +82,19 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
         this.newScoring = newScoring;
     }
 
-    public String getBackButton() {
+    public boolean isBackButton() {
         return backButton;
     }
 
-    public void setBackButton(String backButton) {
+    public void setBackButton(boolean backButton) {
         this.backButton = backButton;
     }
 
-    public String getSaveAndContinue() {
+    public boolean isSaveAndContinue() {
         return saveAndContinue;
     }
 
-    public void setSaveAndContinue(String saveAndContinue) {
+    public void setSaveAndContinue(boolean saveAndContinue) {
         this.saveAndContinue = saveAndContinue;
     }
 
@@ -178,14 +178,6 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
         this.partialData = partialData;
     }
 
-    public String getValidationMessage() {
-        return validationMessage;
-    }
-
-    public void setValidationMessage(String validationMessage) {
-        this.validationMessage = validationMessage;
-    }
-
     public String getPreviousButton() {
         return previousButton;
     }
@@ -249,4 +241,13 @@ public class SurveyOptionPayload extends BaseQSF implements Payload{
     public void setAvailableLanguages(AvailableLanguage availableLanguages) {
         this.availableLanguages = availableLanguages;
     }
+
+    public String getEosRedirectURL() {
+        return eosRedirectURL;
+    }
+
+    public void setEosRedirectURL(String eosRedirectURL) {
+        this.eosRedirectURL = eosRedirectURL;
+    }
+
 }

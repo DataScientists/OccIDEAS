@@ -85,4 +85,6 @@ public interface ModuleService {
 
 	ModuleVO getModuleByNameLength(String name, int length);
 
+	ModuleVO getModuleByName(String name);
+
 }

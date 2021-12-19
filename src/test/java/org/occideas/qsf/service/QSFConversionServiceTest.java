@@ -6,17 +6,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.occideas.CommonDataGenerator;
-import org.occideas.common.NodeType;
 import org.occideas.config.NodeSurveyConfig;
 import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.JobModule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.node.dao.NodeDao;
-import org.occideas.qsf.IQSFClient;
-import org.occideas.qsf.QSFQuestionSubSelector;
-import org.occideas.qsf.QSFQuestionType;
-import org.occideas.qsf.QuestionSelector;
+import org.occideas.qsf.*;
+import org.occideas.qsf.dao.QSFQuestionMapperDao;
 import org.occideas.qsf.payload.SimpleQuestionPayload;
 import org.occideas.qsf.response.SurveyCreateResponse;
 import org.occideas.qsf.response.SurveyCreateResult;
@@ -39,6 +36,8 @@ class QSFConversionServiceTest {
     IQSFClient iqsfClient;
     @Mock
     QualtricsConfig qualtricsConfig;
+    @Mock
+    QSFQuestionMapperDao qsfQuestionMapperDao;
     @InjectMocks
     QSFConversionService qsfConversionService;
 
@@ -111,14 +110,14 @@ class QSFConversionServiceTest {
 
     @Test
     public void givenQuestionAnswerWrapper_whenBuildQuestionPayload_shouldReturnQuestionPayload() {
-        Question question1 = CommonDataGenerator.createQuestion("1", 1);
+        Question question1 = CommonDataGenerator.createQuestionPSimple("1", QSFNodeTypeMapper.Q_SINGLE.getDescription(), 1);
 
         SimpleQuestionPayload simpleQuestionPayload = qsfConversionService.buildQuestionPayload(new QuestionAnswerWrapper(question1, null));
 
         assertNotNull(simpleQuestionPayload);
         assertEquals(String.valueOf(question1.getIdNode()), simpleQuestionPayload.getQuestionId());
         assertEquals(question1.getName(), simpleQuestionPayload.getQuestionText());
-        assertEquals(QSFQuestionType.MULTIPLE_CHOICE.getType(), simpleQuestionPayload.getQuestionType());
+        assertEquals(QSFQuestionType.SINGLE_CHOICE.getType(), simpleQuestionPayload.getQuestionType());
         assertEquals(QuestionSelector.get(question1.getType()), simpleQuestionPayload.getSelector());
         assertEquals(QSFQuestionSubSelector.TX.name(), simpleQuestionPayload.getSubSelector());
         assertEquals(qsfConversionService.getDefaultConfiguration(), simpleQuestionPayload.getConfiguration());
@@ -135,10 +134,10 @@ class QSFConversionServiceTest {
 
     @Test
     public void givenQuestionAnswerWrapper_whenBuildQuestionPayload_shouldReturnQuestionPayloadWithDisplayLogic() {
-        Question question1 = CommonDataGenerator.createQuestion("1", 1);
-        PossibleAnswer answer = CommonDataGenerator.createPossibleAnswer("1a");
+        Question question1 = CommonDataGenerator.createQuestionPSimple("1", QSFNodeTypeMapper.Q_MULTIPLE.getDescription(), 1);
+        PossibleAnswer answer = CommonDataGenerator.createPossibleAnswer("1a", "P_simple");
         QuestionAnswerWrapper questionAnswerWrapper = new QuestionAnswerWrapper(question1, answer);
-        questionAnswerWrapper.setParent(new QuestionAnswerWrapper(CommonDataGenerator.createQuestion("0", 1), null));
+        questionAnswerWrapper.setParent(new QuestionAnswerWrapper(CommonDataGenerator.createQuestionPSimple("0", QSFNodeTypeMapper.Q_MULTIPLE.getDescription(), 1), null));
 
         SimpleQuestionPayload simpleQuestionPayload = qsfConversionService.buildQuestionPayload(questionAnswerWrapper);
 
@@ -150,19 +149,22 @@ class QSFConversionServiceTest {
 
     @Test
     void givenDifferentTypesOfAnswers_whenGetQuestionTypeBaseOnAnswers_shouldReturnCorrectType() {
-        Question multiAnswerQuestion = CommonDataGenerator.createQuestion("1q", 2);
-        Question freetextAnswerQuestion = CommonDataGenerator.createQuestion("1q", 1);
-        freetextAnswerQuestion.getChildNodes().get(0).setType(NodeType.P_FREETEXT.getDescription());
-        Question frequencyAnswerQuestion = CommonDataGenerator.createQuestion("1q", 1);
-        frequencyAnswerQuestion.getChildNodes().get(0).setType(NodeType.P_FREQUENCY_HOURS.getDescription());
+        Question multiAnswerQuestion = CommonDataGenerator.createQuestionPSimple("1q", QSFNodeTypeMapper.Q_MULTIPLE.getDescription(), 2);
+        Question singleAnswerQuestion = CommonDataGenerator.createQuestionPSimple("1q", QSFNodeTypeMapper.Q_SINGLE.getDescription(), 2);
+        Question freetextAnswerQuestion = CommonDataGenerator.createQuestionPFreetext("1q", QSFNodeTypeMapper.Q_SINGLE.getDescription(), 1);
+        freetextAnswerQuestion.getChildNodes().get(0).setType(QSFNodeTypeMapper.P_FREETEXT.getDescription());
+        Question frequencyAnswerQuestion = CommonDataGenerator.createQuestionPSimple("1q", QSFNodeTypeMapper.Q_FREQUENCY.getDescription(), 1);
+        frequencyAnswerQuestion.getChildNodes().get(0).setType(QSFNodeTypeMapper.P_FREQUENCY_HOURS.getDescription());
 
+        QSFQuestionType singleChoice = qsfConversionService.getQuestionTypeBaseOnAnswers(singleAnswerQuestion);
         QSFQuestionType multiChoice = qsfConversionService.getQuestionTypeBaseOnAnswers(multiAnswerQuestion);
         QSFQuestionType freetext = qsfConversionService.getQuestionTypeBaseOnAnswers(freetextAnswerQuestion);
         QSFQuestionType frequency = qsfConversionService.getQuestionTypeBaseOnAnswers(frequencyAnswerQuestion);
 
         assertEquals(QSFQuestionType.TEXT_ENTRY, freetext);
+        assertEquals(QSFQuestionType.SINGLE_CHOICE, singleChoice);
         assertEquals(QSFQuestionType.MULTIPLE_CHOICE, multiChoice);
-        assertEquals(QSFQuestionType.TEXT_ENTRY, frequency);
+        assertEquals(QSFQuestionType.TEXT_ENTRY_FORM, frequency);
     }
 
     @Test

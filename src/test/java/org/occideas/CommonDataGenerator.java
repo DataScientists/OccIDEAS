@@ -1,11 +1,11 @@
 package org.occideas;
 
-import org.occideas.common.NodeType;
 import org.occideas.entity.JobModule;
 import org.occideas.entity.PossibleAnswer;
 import org.occideas.entity.Question;
 import org.occideas.mapper.ModuleMapperImpl;
 import org.occideas.mapper.PossibleAnswerMapperImpl;
+import org.occideas.qsf.QSFNodeTypeMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +30,28 @@ public class CommonDataGenerator {
         return module;
     }
 
-    public static Question createQuestion(String nodeNumber, int numberOfAnswers) {
+    public static Question createQuestionPSimple(String nodeNumber, String type, int numberOfAnswers) {
         Question question = new Question();
         long generatedIdNode = CommonDataGenerator.idNode.incrementAndGet();
         question.setIdNode(generatedIdNode);
         question.setName("Sample Question " + generatedIdNode);
         question.setNumber(nodeNumber);
-        question.setType(NodeType.Q_MULTIPLE.getDescription());
-        question.setChildNodes(createPossibleAnswer(numberOfAnswers));
+        question.setType(type);
+        question.setChildNodes(createPossibleAnswer(numberOfAnswers, "P_simple"));
         return question;
     }
+
+    public static Question createQuestionPFreetext(String nodeNumber, String type, int numberOfAnswers) {
+        Question question = new Question();
+        long generatedIdNode = CommonDataGenerator.idNode.incrementAndGet();
+        question.setIdNode(generatedIdNode);
+        question.setName("Sample Question " + generatedIdNode);
+        question.setNumber(nodeNumber);
+        question.setType(type);
+        question.setChildNodes(createPossibleAnswer(numberOfAnswers, "P_freetext"));
+        return question;
+    }
+
 
     public static List<Question> createQuestions(int numberOfQuestions, int numberOfAnswers) {
         List<Question> questions = new ArrayList<>();
@@ -48,17 +60,18 @@ public class CommonDataGenerator {
             if (letterInd == letters.length - 1) {
                 letterInd = 0;
             }
-            questions.add(createQuestion(i + 1 + letters[letterInd], numberOfAnswers));
+            questions.add(createQuestionPSimple(i + 1 + letters[letterInd], QSFNodeTypeMapper.Q_MULTIPLE.getDescription(), numberOfAnswers));
         }
         return questions;
     }
 
-    public static PossibleAnswer createPossibleAnswer(String nodeNumber) {
+    public static PossibleAnswer createPossibleAnswer(String nodeNumber, String type) {
         PossibleAnswer possibleAnswer = new PossibleAnswer();
         long generatedIdNode = CommonDataGenerator.idNode.incrementAndGet();
         possibleAnswer.setIdNode(generatedIdNode);
         possibleAnswer.setName("Sample Answer " + generatedIdNode);
         possibleAnswer.setNumber(nodeNumber);
+        possibleAnswer.setType(type);
         return possibleAnswer;
     }
 
@@ -72,14 +85,14 @@ public class CommonDataGenerator {
         return possibleAnswer;
     }
 
-    public static List<PossibleAnswer> createPossibleAnswer(int numberOfAnswers) {
+    public static List<PossibleAnswer> createPossibleAnswer(int numberOfAnswers, String type) {
         List<PossibleAnswer> possibleAnswers = new ArrayList<>();
         int letterInd = 0;
         for (int i = 0; i < numberOfAnswers; i++) {
             if (letterInd == letters.length - 1) {
                 letterInd = 0;
             }
-            possibleAnswers.add(createPossibleAnswer(i + 1 + letters[letterInd]));
+            possibleAnswers.add(createPossibleAnswer(i + 1 + letters[letterInd], type));
         }
         return possibleAnswers;
     }

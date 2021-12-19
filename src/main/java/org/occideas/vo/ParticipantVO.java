@@ -93,21 +93,21 @@ public class ParticipantVO {
           allnotes.addAll(interview.getNotes());
         }
       }
-      this.notes = allnotes;
+        this.notes = allnotes;
     }
 
-    return notes;
+      return notes;
   }
 
-  public void setNotes(List<NoteVO> notes) {
-    this.notes = notes;
-  }
+    public void setNotes(List<NoteVO> notes) {
+        this.notes = notes;
+    }
 
-  @Override
-  public String toString() {
-    return "ParticipantVO [idParticipant=" + idParticipant + ", status=" + status + ", reference=" + reference
-      + ", statusDescription=" + statusDescription + "]";
-  }
+    @Override
+    public String toString() {
+        return "ParticipantVO [idParticipant=" + idParticipant + ", status=" + status + ", reference=" + reference
+                + ", statusDescription=" + statusDescription + "]";
+    }
 
 
 }

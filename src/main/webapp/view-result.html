@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Survey-Results</title>
+    <link rel="shortcut icon" href="#"/>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-animate.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-aria.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.6/angular-messages.min.js"></script>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.js"></script>
+
+    <link rel="stylesheet"
+          href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.12/angular-material.min.css">
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
+            rel="stylesheet">
+    <link crossorigin="anonymous"
+          href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
+          rel="stylesheet">
+    <link crossorigin="anonymous"
+          href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r"
+          rel="stylesheet">
+    <link href='//fonts.googleapis.com/css?family=Varela+Round'
+          rel='stylesheet' type='text/css'>
+    <link href="styles/style.css" rel="stylesheet"/>
+    <link href="styles/bootstrap-theme.css" rel="stylesheet"/>
+    <link href="styles/bootstrap.css" rel="stylesheet"/>
+    <link href="styles/ng-table.css" rel="stylesheet"/>
+
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1"
+          name="viewport"/>
+
+    <style>
+        header {
+            background-color: #FFFFFF;
+            padding: 10px 10px;
+        }
+
+        .container {
+            border-radius: 5px;
+            background-color: #FFFFFF;
+            margin-top: 30px;
+            padding: 10px 10px;
+            font-size: 15px;
+            font-family: "Open Sans", sans-serif;
+            min-height: 300px;
+        }
+
+        .resultContainer {
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAAEwK2r2AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIFdpbmRvd3MiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MzdDNUE3MDQyRkM0MTFFMThGMjdFNDIwRTdDRkVFODQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MzdDNUE3MDUyRkM0MTFFMThGMjdFNDIwRTdDRkVFODQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozN0M1QTcwMjJGQzQxMUUxOEYyN0U0MjBFN0NGRUU4NCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozN0M1QTcwMzJGQzQxMUUxOEYyN0U0MjBFN0NGRUU4NCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqFzOEIAAACoSURBVHjaFMRZCgAQFABAS5KSJLn/TZ9mPiZFROLp6mhraWqoq6mqKH8BBCLEQYQoiBAGEYIggh9E8IIILhDBASLYQAQLQi9AAMHtFYezROHOEIa7RRDVQbxwV3HDjeeE28EOt4gVbhuac8EEA0CAtufoBAAQBmKo6AD1S9x/UhFqwx1mgrz25FsPlr4wxBVr9jdLHrVrz4xzbwQcYBDBwjZU2T/eRN8OXo4KQa+0dfMAAAAASUVORK5CYII=);
+            background-repeat: repeat-x;
+            background-position: 0 0;
+            box-sizing: border-box;
+        }
+
+        .headerBlue {
+            color: rgb(0, 123, 154);
+            font-size: 1em;
+            font-weight: bold;
+            font-family: Overlock, sans-serif;
+        }
+
+        .error {
+            color: #ff0000c2;
+            font-size: 2em;
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .resultProgress {
+            background-color: #FFFFFF;
+            min-height: 200px;
+            font-size: 1.5em;
+            width: 50%;
+            margin: 0 auto;
+            font-family: Overlock, sans-serif;
+        }
+
+        .noLineBreaks {
+            margin: 0px;
+        }
+
+        @media screen and (min-device-width: 980px) {
+            .logoContainer {
+                position: relative;
+                left: 46px;
+                margin: 38px 0px 19px calc((100% - 980px) * 0.5);
+                grid-area: 1 / 1 / 2 / 2;
+                justify-self: start;
+                align-self: start;
+            }
+        }
+
+        @media screen and (min-device-width: 1200px) {
+            .logoContainer {
+                position: relative;
+                left: 46px;
+                margin: 38px 0px 19px calc((100% - 1200px) * 0.5);
+                grid-area: 1 / 1 / 2 / 2;
+                justify-self: start;
+                align-self: start;
+            }
+        }
+    </style>
+</head>
+<body ng-app="surveyResultsApp">
+<div ng-controller="resultCtrl">
+    <header>
+        <div class="logoContainer">
+            <img src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png/v1/fill/w_451,h_170,al_c,q_85,usm_0.66_1.00_0.01/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.webp"
+                 alt="" style="width: 230px; height: 85px; object-fit: contain; object-position: center center;">
+        </div>
+    </header>
+    <div class="container" style="margin-bottom: 10px">
+        <div class="error" ng-if="error">
+            <div>
+                <div style="font-size: 2em;text-align: center;"><i class="fas fa-exclamation-triangle"></i></div>
+                <div style="text-align: center;">
+                    {{error}}
+                </div>
+            </div>
+        </div>
+        <div ng-if="!error && progress" class="header">
+            <div class="resultProgress">
+                <div ng-if="progress" style="text-align: center;">
+                    Your results will be shown below shortly...
+                </div>
+                <div ng-if="progress" ng-cloak>
+                    <div layout="row" layout-sm="column" layout-align="space-around">
+                        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-if="!progress && !error" style="color: rgb(96, 96, 96); font-size: 1.2em;"><strong>Shift Hours:</strong><span> {{results.shiftHours | number}}</span>
+        </div>
+        <div class="resultContainer">
+            <div ng-if="!progress && !error" ng-cloak>
+                <div class="noiseAssessmentWrapper">
+                    <table class="table table-bordered ">
+                        <thead>
+                        <tr class="headerBlue">
+                            <!-- <td>Question</td> -->
+                            <td>Question : Answer</td>
+                            <!-- <td>Module Name</td>
+                            <td>Top Node Id</td>
+                            <td>Node Number</td> -->
+                            <td>Task noise level (dB)</td>
+                            <td>Hours (adjusted to your working day)</td>
+                            <td>Percent of total noise due to this task</td>
+                        </tr>
+                        </thead>
+                        <tr ng-repeat="noiseRow in results.results">
+                            <!-- <td>{{noiseRow.idNode}}</td> -->
+                            <td>{{noiseRow.nodeText}}</td>
+                            <!-- <td>{{noiseRow.moduleName}}</td>
+                            <td>{{noiseRow.topNodeId}}</td>
+                            <td>{{noiseRow.nodeNumber}}</td> -->
+                            <td>{{noiseRow.dB}}</td>
+                            <td>{{noiseRow.backgroundhours}}</td>
+                            <td>{{noiseRow.partialExposure}}</td>
+                        </tr>
+                    </table>
+
+                    <div>
+                        <strong>Estimated noise over the whole day:</strong>
+                        <span>{{autoExposureLevel ? autoExposureLevel.substring(0, autoExposureLevel.indexOf('.')) + 'dB' : ''}}</span>
+                    </div>
+                    <div>
+                        <strong>Peak Noise:</strong>
+                        <span>{{results.peak ? results.peak.substring(0, results.peak.indexOf('.')) + 'dB' : ''}}</span>
+                    </div>
+
+                    <div>
+                        <strong>On your last working day you were exposed to noise</strong>
+                    </div>
+                    <div ng-if="autoExposureLevel > 85">
+                        - above the occupational limit (over 85dB)
+                    </div>
+                    <div ng-if="autoExposureLevel <= 85 && autoExposureLevel >= 80">
+                        - in the concern area (for 80-85)
+                    </div>
+                    <div ng-if="autoExposureLevel < 80">
+                        - below the occupational limit (for less than 80)
+                    </div>
+                    <br/>
+                    <div>
+                        <p class="noLineBreaks">
+                            Noise levels often vary from day to day, so you should not assume that every day will give
+                            you this level of noise.
+                        </p>
+                        <p class="noLineBreaks">
+                            There are several things you can do to reduce your noise level.
+                        </p>
+                        <p class="noLineBreaks">
+                            Based on your answers, we suggest that you check out the following websites
+                        </p>
+                    </div>
+                    <div>
+                        <p><a href="https://www.hse.gov.uk/welding/health-risks-welding.htm" target="_blank">https://www.hse.gov.uk/welding/health-risks-welding.htm</a>
+                        </p>
+                        <p><a href="https://safetynetwork.3m.com/blog/top-health-hazards-facing-welders/"
+                              target="_blank">https://safetynetwork.3m.com/blog/top-health-hazards-facing-welders/</a>
+                        </p>
+                        <p>
+                            <a href="https://www.thefabricator.com/thewelder/article/safety/the-invisible-risks-of-welding"
+                               target="_blank">https://www.thefabricator.com/thewelder/article/safety/the-invisible-risks-of-welding</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="scripts/results.js"></script>
+</html>

@@ -11,7 +11,6 @@ import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.dao.QualtricsSurveyDao;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -37,7 +36,6 @@ class QualtricsSurveyServiceTest {
         qualtricsSurvey.setTopic("topic");
         qualtricsSurvey.setCompletedDate(LocalDateTime.now());
         qualtricsSurvey.setQualtricsStatus("Complete");
-        when(qualtricsSurveyDao.findById("1r")).thenReturn(Optional.empty());
         when(iqsfClient.getResponse(anyString(), anyString())).thenReturn("{test: test}");
 
         qualtricsSurveyService.consumeSurveyResponse(qualtricsSurvey);
@@ -57,24 +55,7 @@ class QualtricsSurveyServiceTest {
 
         qualtricsSurveyService.consumeSurveyResponse(qualtricsSurvey);
 
-        verify(qualtricsSurveyDao, times(0)).findById(anyString());
-        verify(qualtricsSurveyDao, times(0)).save(qualtricsSurvey);
-    }
-
-    @Test
-    public void givenSurveyResponseCompletedAndResponseNotAvail_whenConsumeSurveyResponse_shouldNotSaveResponse() {
-        QualtricsSurvey qualtricsSurvey = new QualtricsSurvey();
-        qualtricsSurvey.setResponseId("1r");
-        qualtricsSurvey.setSurveyId("1s");
-        qualtricsSurvey.setBrandId("1");
-        qualtricsSurvey.setTopic("topic");
-        qualtricsSurvey.setCompletedDate(LocalDateTime.now());
-        qualtricsSurvey.setQualtricsStatus("Complete");
-        when(qualtricsSurveyDao.findById("1r")).thenReturn(Optional.empty());
-        when(iqsfClient.getResponse(anyString(), anyString())).thenReturn(null);
-
-        qualtricsSurveyService.consumeSurveyResponse(qualtricsSurvey);
-
+        verify(qualtricsSurveyDao, times(0)).findByResponseId(anyString());
         verify(qualtricsSurveyDao, times(0)).save(qualtricsSurvey);
     }
 

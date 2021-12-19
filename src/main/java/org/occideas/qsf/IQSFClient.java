@@ -14,7 +14,11 @@ public interface IQSFClient {
 
     Response createSurvey(SurveyCreateRequest surveyRequest);
 
+    Response getSurveyMetadata(String surveyId);
+
     Response createQuestion(String surveyId, SimpleQuestionPayload questionPayload, String blockId);
+
+    Response getQuestions(String surveyId);
 
     Response copySurvey(CopySurveyPayload payload, String surveyId, String userId);
 

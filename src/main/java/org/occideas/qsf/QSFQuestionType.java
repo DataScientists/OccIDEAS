@@ -2,7 +2,8 @@ package org.occideas.qsf;
 
 public enum QSFQuestionType {
 
-    MULTIPLE_CHOICE(QSFQuestionSelector.SAVR.name(), QSFQuestionSubSelector.TX.name(), "MC"),
+    SINGLE_CHOICE(QSFQuestionSelector.SAVR.name(), QSFQuestionSubSelector.TX.name(), "MC"),
+    MULTIPLE_CHOICE(QSFQuestionSelector.MAVR.name(), QSFQuestionSubSelector.TX.name(), "MC"),
     Matrix(QSFQuestionSelector.Likert.name(), QSFQuestionSubSelector.SingleAnswer.name(), "Matrix"),
     Captcha(null, null, null),
     CONSTANT_SUM(QSFQuestionSelector.VRTL.name(), QSFQuestionSubSelector.TX.name(), "CS"),
@@ -23,6 +24,7 @@ public enum QSFQuestionType {
     Slider(QSFQuestionSelector.HSLIDER.name(), null, "Slider"),
     SS(null, null, null),
     TEXT_ENTRY(QSFQuestionSelector.SL.name(), null, "TE"),
+    TEXT_ENTRY_FORM(QSFQuestionSelector.FORM.name(), null, "TE"),
     Timing(QSFQuestionSelector.PageTimer.name(), null, "Timing"),
     TreeSelect(null, null, null);
 

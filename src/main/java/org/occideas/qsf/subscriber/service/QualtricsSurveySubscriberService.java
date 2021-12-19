@@ -55,14 +55,14 @@ public class QualtricsSurveySubscriberService {
     public void listenToSurvey(String surveyId) {
         Optional<QualtricsSurveySubscription> survey = qualtricsSurveySubscriptionDao.findBySurveyId(surveyId);
         if (survey.isPresent()) {
-            log.info("Skip , already listening to survey {}", surveyId);
+            log.info("Skip, already listening to survey {}", surveyId);
             return;
         }
 
         Response listenToSurveyResponse = iqsfClient.listenToSurveyResponse(surveyId);
         SurveyListenResponse surveyListenResponse = (SurveyListenResponse) listenToSurveyResponse.getEntity();
         qualtricsSurveySubscriptionDao.save(createSubscription(surveyId, surveyListenResponse));
-        log.info("successfully listening to survey {}", surveyId);
+        log.info("Successfully listening to survey {}", surveyId);
     }
 
     private QualtricsSurveySubscription createSubscription(String surveyId, SurveyListenResponse surveyListenResponse) {

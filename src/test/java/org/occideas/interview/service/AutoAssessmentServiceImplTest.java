@@ -101,7 +101,7 @@ class AutoAssessmentServiceImplTest {
         actualAnswers.add(possibleAnswer1.getIdNode());
         actualAnswers.add(possibleAnswer2.getIdNode());
 
-        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers);
 
         assertEquals(1, interviewFiredRules.size());
     }
@@ -122,7 +122,7 @@ class AutoAssessmentServiceImplTest {
         actualAnswers.add(possibleAnswer1.getIdNode());
         actualAnswers.add(possibleAnswer2.getIdNode());
 
-        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers);
 
         assertEquals(1, interviewFiredRules.size());
     }
@@ -140,7 +140,7 @@ class AutoAssessmentServiceImplTest {
         Set<Long> actualAnswers = new HashSet<>();
         actualAnswers.add(possibleAnswer1.getIdNode());
 
-        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers, 1L);
+        List<Rule> interviewFiredRules = autoAssessmentService.deriveFiredRulesByAnswersProvided(actualAnswers);
 
         assertTrue(interviewFiredRules.isEmpty());
     }

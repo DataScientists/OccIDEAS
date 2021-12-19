@@ -7,6 +7,7 @@ import org.occideas.agent.dao.IAgentDao;
 import org.occideas.base.dao.BaseDao;
 import org.occideas.entity.*;
 import org.occideas.interview.dao.IInterviewDao;
+import org.occideas.interview.service.result.assessor.NoiseAssessmentService;
 import org.occideas.interviewanswer.dao.IInterviewAnswerDao;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
 import org.occideas.interviewautoassessment.dao.InterviewAutoAssessmentDao;
@@ -21,6 +22,8 @@ import org.occideas.mapper.QuestionMapper;
 import org.occideas.module.dao.IModuleDao;
 import org.occideas.modulerule.dao.ModuleRuleDao;
 import org.occideas.participant.service.ParticipantService;
+import org.occideas.qsf.dao.QualtricsSurveyResponseDao;
+import org.occideas.qsf.service.IQSFService;
 import org.occideas.question.service.QuestionService;
 import org.occideas.rule.dao.IRuleDao;
 import org.occideas.systemproperty.dao.SystemPropertyDao;
@@ -33,7 +36,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -93,6 +98,13 @@ public class InterviewServiceImpl implements InterviewService {
     @Autowired
     @Lazy
     private AutoAssessmentService autoAssessmentService;
+    @Autowired
+    private NoiseAssessmentService noiseAssessmentService;
+    @Autowired
+    private QualtricsSurveyResponseDao qualtricsSurveyResponseDao;
+    @Autowired
+    @Lazy
+    private IQSFService iqsfService;
 
     @Override
     public SystemPropertyVO preloadActiveIntro() {
@@ -702,6 +714,7 @@ public class InterviewServiceImpl implements InterviewService {
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
         bulkUpdate(interviewsToBeProcessed);
+        interviewsToBeProcessed.forEach(interview -> updateQualtricsResults(interview.getIdinterview()));
         log.info("Completed assessing the rules count {}.", interviews.size());
     }
 
@@ -718,6 +731,17 @@ public class InterviewServiceImpl implements InterviewService {
         interview.setFiredRules(firedRules);
         update(interview);
         return mapper.convertToInterviewVO(interview);
+    }
+
+    @Override
+    public void updateQualtricsResults(long interviewId) {
+        Interview interview = interviewDao.get(interviewId);
+        List<Long> listAgentIds = agentDao.getStudyAgentIds();
+        String strWorkShiftHours = iqsfService.getWorkshift(interview);
+        if(!strWorkShiftHours.equalsIgnoreCase("N/A")) {
+        	BigDecimal workshift = new BigDecimal(strWorkShiftHours);
+            iqsfService.saveAssessmentResults(interview.getReferenceNumber(), listAgentIds, interview, workshift);
+        }      
     }
 
 

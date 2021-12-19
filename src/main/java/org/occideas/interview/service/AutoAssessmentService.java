@@ -56,6 +56,25 @@ public class AutoAssessmentService {
         return CompletableFuture.completedFuture(interview);
     }
 
+    public Interview syncAutoAssessedRule(List<Long> listAgentIds, Interview interview) {
+        log.info("sync processing interview {}", interview.getIdinterview());
+        updateNotes(interview);
+        List<Rule> listOfFiredRules = determineFiredRules(interview);
+        List<Rule> autoAssessedRules = new ArrayList<>();
+        autoAssessedRules.addAll(getRuleLevelNoExposure(
+                listAgentIds
+                , listOfFiredRules));
+        evaluateAssessmentStatus(interview);
+        interview.setFiredRules(listOfFiredRules);
+        if (!autoAssessedRules.isEmpty()) {
+            interview.setAutoAssessedRules(autoAssessedRules);
+        }
+        if (StringUtils.isEmpty(interview.getAssessedStatus())) {
+            interview.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
+        }
+        return interview;
+    }
+
     public void updateNotes(Interview interview) {
         if (Objects.isNull(interview.getNotes())) {
             interview.setNotes(new ArrayList<>());
@@ -69,7 +88,7 @@ public class AutoAssessmentService {
                 .filter(interviewAnswer -> interviewAnswer.getDeleted() == 0)
                 .map(InterviewAnswer::getAnswerId)
                 .collect(Collectors.toSet());
-        return deriveFiredRulesByAnswersProvided(allActualAnswers, interview.getIdinterview());
+        return deriveFiredRulesByAnswersProvided(allActualAnswers);
     }
 
     public Note getDefaultNote(long interviewId) {
@@ -80,7 +99,7 @@ public class AutoAssessmentService {
         return note;
     }
 
-    public List<Rule> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers, long interviewId) {
+    public List<Rule> deriveFiredRulesByAnswersProvided(Set<Long> allActualAnswers) {
         List<Rule> derivedRulesBasedOnAnswers = moduleRuleDao.getRulesByUniqueAnswers(allActualAnswers);
         Set<Rule> firedRules = new HashSet<>();
         derivedRulesBasedOnAnswers.stream()
@@ -99,6 +118,11 @@ public class AutoAssessmentService {
                     }
                 });
         return firedRules.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public List<Rule> deriveFiredRulesByAnswerProvided(Long answerId) {
+        List<Rule> rules = deriveFiredRulesByAnswersProvided(Collections.singleton(answerId));
+        return rules;
     }
 
     public List<Rule> getRuleLevelNoExposure(List<Long> listAgentIds, List<Rule> listOfFiredRules) {

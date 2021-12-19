@@ -278,8 +278,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     try {
       InterviewVO interviewVO = service.updateFiredRule(id);
       list.add(interviewVO);
+      service.updateQualtricsResults(interviewVO.getInterviewId());
     } catch (Throwable e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
     }
     return Response.ok(list).build();

@@ -3,19 +3,14 @@ package org.occideas.qsf.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.occideas.common.NodeType;
 import org.occideas.config.QualtricsConfig;
-import org.occideas.entity.JobModule;
-import org.occideas.entity.Node;
-import org.occideas.entity.PossibleAnswer;
-import org.occideas.entity.Question;
+import org.occideas.entity.*;
 import org.occideas.exceptions.GenericException;
 import org.occideas.module.service.ModuleService;
 import org.occideas.node.dao.NodeDao;
-import org.occideas.qsf.BlockElement;
-import org.occideas.qsf.IQSFClient;
-import org.occideas.qsf.QSFQuestionType;
+import org.occideas.qsf.*;
 import org.occideas.qsf.dao.NodeQSFDao;
+import org.occideas.qsf.dao.QSFQuestionMapperDao;
 import org.occideas.qsf.payload.*;
 import org.occideas.qsf.request.SurveyCreateRequest;
 import org.occideas.qsf.response.*;
@@ -45,6 +40,8 @@ public class QSFConversionService {
     private ModuleService moduleService;
     @Autowired
     private QualtricsConfig qualtricsConfig;
+    @Autowired
+    private QSFQuestionMapperDao qsfQuestionMapperDao;
 
     private final Configuration configuration = new Configuration("UseText");
 
@@ -56,6 +53,7 @@ public class QSFConversionService {
             throw new GenericException(message);
         }
         String surveyId = surveyCreateResult.getSurveyId();
+        qsfQuestionMapperDao.deleteBySurveyId(surveyId);
         String blockId = surveyCreateResult.getDefaultBlockId();
         if (Objects.isNull(filterIds) || filterIds.isEmpty()) {
             createQuestions(jobModule.getChildNodes(), surveyId, null, null);
@@ -67,8 +65,13 @@ public class QSFConversionService {
         createPageBreaks(getBlockElementResult);
         iqsfClient.updateBlock(surveyId, blockId, getBlockElementResult);
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
+        log.info("Current survey options {}", surveyOptions);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
-        options.getResult().setBackButton("true");
+        options.getResult().setBackButton(true);
+        options.getResult().setSaveAndContinue(true);
+        options.getResult().setEosRedirectURL(qualtricsConfig.getRedirectUrl());
+        options.getResult().setSurveyTermination("Redirect");
+        log.info("New survey options {}", options.getResult());
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);
@@ -92,15 +95,21 @@ public class QSFConversionService {
                         QuestionAnswerWrapper questionAnswerWrapper = new QuestionAnswerWrapper(question, dependsOn);
                         questionAnswerWrapper.setParent(parent);
 
-                        Response responseQuestion = iqsfClient.createQuestion(surveyId, buildQuestionPayload(questionAnswerWrapper), null);
+                        SimpleQuestionPayload questionPayload = buildQuestionPayload(questionAnswerWrapper);
+                        Response responseQuestion = iqsfClient.createQuestion(surveyId, questionPayload, null);
+
                         if (!question.getChildNodes().isEmpty()) {
+                            Long freetextIdNode = getFreeTextIdNode(question);
                             SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
+                            String qualtricsQID = surveyCreateResponse.getResult().getQuestionId();
+                            questionAnswerWrapper.setQualtricsQID(qualtricsQID);
+                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, qualtricsQID), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             question.getChildNodes()
                                     .stream()
                                     .filter(possibleAnswer -> possibleAnswer.getDeleted() == 0)
                                     .forEach(possibleAnswer -> {
                                         if (isChoicesRequired(possibleAnswer)) {
-                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + surveyCreateResponse.getResult().getQuestionId() + "/SelectableChoice/" + possibleAnswer.getIdNode());
+                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + qualtricsQID + "/SelectableChoice/" + possibleAnswer.getIdNode());
                                             if (Objects.nonNull(possibleAnswer.getChildNodes())) {
                                                 createQuestions(filterIds, possibleAnswer.getChildNodes(), surveyId, possibleAnswer, questionAnswerWrapper);
                                             }
@@ -109,6 +118,21 @@ public class QSFConversionService {
                         }
                     }
                 });
+    }
+
+    private Long getFreeTextIdNode(Question question) {
+        Long freetextIdNode = null;
+        if (QSFNodeTypeMapper.Q_FREQUENCY.getDescription().equalsIgnoreCase(question.getType())) {
+            freetextIdNode = question.getChildNodes().get(0).getIdNode();
+        }
+        if (QSFNodeTypeMapper.Q_SINGLE.getDescription().equalsIgnoreCase(question.getType()) ||
+                QSFNodeTypeMapper.Q_SIMPLE.getDescription().equalsIgnoreCase(question.getType())) {
+            PossibleAnswer answer = question.getChildNodes().get(0);
+            if (QSFNodeTypeMapper.P_FREETEXT.getDescription().equalsIgnoreCase(answer.getType())) {
+                freetextIdNode = question.getChildNodes().get(0).getIdNode();
+            }
+        }
+        return freetextIdNode;
     }
 
     private boolean ignoreEmailNode(Question question) {
@@ -128,15 +152,20 @@ public class QSFConversionService {
                         QuestionAnswerWrapper questionAnswerWrapper = new QuestionAnswerWrapper(question, dependsOn);
                         questionAnswerWrapper.setParent(parent);
 
-                        Response responseQuestion = iqsfClient.createQuestion(surveyId, buildQuestionPayload(questionAnswerWrapper), null);
+                        SimpleQuestionPayload questionPayload = buildQuestionPayload(questionAnswerWrapper);
+                        Response responseQuestion = iqsfClient.createQuestion(surveyId, questionPayload, null);
+                        SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
+                        String qualtricsQID = surveyCreateResponse.getResult().getQuestionId();
+                        questionAnswerWrapper.setQualtricsQID(qualtricsQID);
                         if (!question.getChildNodes().isEmpty()) {
-                            SurveyCreateResponse surveyCreateResponse = (SurveyCreateResponse) responseQuestion.getEntity();
+                            Long freetextIdNode = getFreeTextIdNode(question);
+                            qsfQuestionMapperDao.save(new QSFQuestionMapper(new QSFQuestionMapperId(surveyId, qualtricsQID), question.getIdNode(), question.getType(), question.getName(), freetextIdNode));
                             question.getChildNodes()
                                     .stream()
                                     .filter(possibleAnswer -> possibleAnswer.getDeleted() == 0)
                                     .forEach(possibleAnswer -> {
                                         if (isChoicesRequired(possibleAnswer)) {
-                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + surveyCreateResponse.getResult().getQuestionId() + "/SelectableChoice/" + possibleAnswer.getIdNode());
+                                            questionAnswerWrapper.getChoiceSelectors().put(possibleAnswer, "q://" + qualtricsQID + "/SelectableChoice/" + possibleAnswer.getIdNode());
                                             if (Objects.nonNull(possibleAnswer.getChildNodes())) {
                                                 createQuestions(possibleAnswer.getChildNodes(), surveyId, possibleAnswer, questionAnswerWrapper);
                                             }
@@ -148,12 +177,15 @@ public class QSFConversionService {
     }
 
     private boolean isChoicesRequired(PossibleAnswer possibleAnswer) {
-        return !NodeType.P_FREETEXT.getDescription().equalsIgnoreCase(possibleAnswer.getType());
+        return !QSFNodeTypeMapper.P_FREETEXT.getDescription().equalsIgnoreCase(possibleAnswer.getType());
     }
 
     public SimpleQuestionPayload buildQuestionPayload(QuestionAnswerWrapper questionAnswerWrapper) {
-        SimpleQuestionPayload simpleQuestionPayload = new SimpleQuestionPayload();
         Question question = questionAnswerWrapper.getQuestion();
+        if (Objects.isNull(question.getChildNodes()) || question.getChildNodes().isEmpty()) {
+            throw new GenericException("Question with child nodes are not allowed " + question.getIdNode());
+        }
+        SimpleQuestionPayload simpleQuestionPayload = new SimpleQuestionPayload();
         simpleQuestionPayload.setQuestionId(String.valueOf(question.getIdNode()));
         simpleQuestionPayload.setQuestionText(question.getName());
         QSFQuestionType questionTypeBaseOnAnswers = getQuestionTypeBaseOnAnswers(question);
@@ -162,19 +194,14 @@ public class QSFConversionService {
         simpleQuestionPayload.setSubSelector(questionTypeBaseOnAnswers.getSubSelector());
         simpleQuestionPayload.setConfiguration(getDefaultConfiguration());
         simpleQuestionPayload.setQuestionDescription(question.getName());
-        simpleQuestionPayload.setDataExportTag(question.getNumber());
-        Map<String, Choice> choices = new HashMap<>();
-        List<String> choiceOrder = new LinkedList<>();
-        question.getChildNodes().forEach(answer -> {
-            choices.put(String.valueOf(answer.getIdNode()), new Choice(answer.getName()));
-            choiceOrder.add(String.valueOf(answer.getIdNode()));
-        });
-        simpleQuestionPayload.setChoices(choices);
-        simpleQuestionPayload.setChoiceOrderList(choiceOrder.toArray(new String[0]));
+        simpleQuestionPayload.setDataExportTag(question.getIdNode() + "-" + question.getNumber());
+        QSFQuestionChoices derivedChoices = QSFNodeTypeMapper.getBaseOnType(question.getType(), question.getChildNodes().get(0).getType()).getBuildChoices().apply(question);
+        simpleQuestionPayload.setChoices(derivedChoices.getChoices());
+        simpleQuestionPayload.setChoiceOrderList(derivedChoices.getChoiceOrder().toArray(new String[0]));
         simpleQuestionPayload.setLanguageList(new ArrayList<>());
         simpleQuestionPayload.setValidation(new Validation(new Setting("ON", "ON", "None")));
         if (Objects.nonNull(questionAnswerWrapper.getDependsOn())) {
-            List<Logic> logics = NodeType.getBaseOnType(questionAnswerWrapper.getQuestion().getType()).getBuildLogic().apply(questionAnswerWrapper);
+            List<Logic> logics = QSFNodeTypeMapper.getBaseOnType(question.getType(), questionAnswerWrapper.getQuestion().getType()).getBuildLogic().apply(questionAnswerWrapper);
             simpleQuestionPayload.setLogic(new DisplayLogic("BooleanExpression", false,
                     new Condition(buildLogicMap(logics), "If")));
         }
@@ -185,11 +212,13 @@ public class QSFConversionService {
         if (!question.getChildNodes().isEmpty()) {
             String type = question.getChildNodes().get(0).getType();
             if (StringUtils.isEmpty(type)) {
-                return QSFQuestionType.MULTIPLE_CHOICE;
+                return QSFQuestionType.SINGLE_CHOICE;
             }
-            return NodeType.getBaseOnType(type).getQualtricsType();
+            if (!QSFNodeTypeMapper.P_SIMPLE_TYPE.getDescription().equalsIgnoreCase(type)) {
+                return QSFNodeTypeMapper.getBaseOnType(question.getType(), type).getQualtricsType();
+            }
         }
-        return QSFQuestionType.MULTIPLE_CHOICE;
+        return QSFNodeTypeMapper.getBaseOnType(question.getType(), question.getType()).getQualtricsType();
     }
 
     private Map<Integer, Logic> buildLogicMap(List<Logic> list) {

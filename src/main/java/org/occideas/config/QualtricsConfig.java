@@ -16,7 +16,10 @@ public class QualtricsConfig {
     private boolean expandModules;
     private String translationsPath;
     private boolean ipsosEnableLabel;
+    private String redirectUrl;
     private NodeSurveyConfig node;
+    private SurveyLinkConfig survey;
+    private boolean enableListener;
 
     public String getUrl() {
         return url;
@@ -88,5 +91,29 @@ public class QualtricsConfig {
 
     public void setNode(NodeSurveyConfig node) {
         this.node = node;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
+
+    public SurveyLinkConfig getSurvey() {
+        return survey;
+    }
+
+    public void setSurvey(SurveyLinkConfig survey) {
+        this.survey = survey;
+    }
+
+    public boolean isEnableListener() {
+        return enableListener;
+    }
+
+    public void setEnableListener(boolean enableListener) {
+        this.enableListener = enableListener;
     }
 }

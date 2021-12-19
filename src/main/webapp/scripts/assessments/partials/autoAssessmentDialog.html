@@ -5,8 +5,8 @@
       <div class="md-toolbar-tools">
         <h2>Would you like to proceed with Update Auto Assessment?</h2>
         <span flex></span>
-        <md-button class="md-icon-button" ng-click="cancel()"> <span
-          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+        <md-button class="md-icon-button" ng-click="cancel()" ng-if="!processAutoAssessment"> <span
+                aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
       </div>
     </md-toolbar>
     <md-dialog-content>

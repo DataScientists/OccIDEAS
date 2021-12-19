@@ -75,13 +75,15 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   List<InterviewVO> listAllInterviewsNotAssessed();
 
-  List<InterviewVO> listAllInterviewsAssessed();
+    List<InterviewVO> listAllInterviewsAssessed();
 
-  void cleanDeletedAnswers(Long id);
+    void cleanDeletedAnswers(Long id);
 
-  SystemPropertyVO preloadFilterStudyAgent(Long idNode);
+    SystemPropertyVO preloadFilterStudyAgent(Long idNode);
 
-  void autoAssessedRules();
+    void autoAssessedRules();
 
-  InterviewVO updateFiredRule(long interviewId);
+    InterviewVO updateFiredRule(long interviewId);
+
+    void updateQualtricsResults(long interviewId);
 }

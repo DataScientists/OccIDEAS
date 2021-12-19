@@ -2,8 +2,11 @@ package org.occideas.utilities;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CommonUtilTest {
@@ -42,6 +45,11 @@ public class CommonUtilTest {
 		assertTrue("1ZA20".equals(CommonUtil.getNextQuestionByCurrentNumber("1ZA19")));
 		assertTrue("1ZA1".equals(CommonUtil.getNextQuestionByCurrentNumber("1ZA")));
 	}
-	
+
+	void givenWorkShift_whenDeriveWorkShift_shouldReturnCorrectValue() {
+		assertEquals(new BigDecimal(8.0833).setScale(4, RoundingMode.HALF_UP), CommonUtil.deriveWorkshift("8.5"));
+		assertEquals(new BigDecimal(8.0000).setScale(4, RoundingMode.HALF_UP), CommonUtil.deriveWorkshift("8.0"));
+		assertEquals(new BigDecimal(8.0000).setScale(4, RoundingMode.HALF_UP), CommonUtil.deriveWorkshift("8"));
+	}
 	
 }

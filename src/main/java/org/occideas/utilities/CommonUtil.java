@@ -1,10 +1,13 @@
 package org.occideas.utilities;
 
+import org.apache.commons.lang3.StringUtils;
 import org.occideas.entity.Node;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 
 public class CommonUtil {
 
@@ -114,5 +117,25 @@ public class CommonUtil {
     return temp.toLowerCase().trim();
   }
 
+  public static BigDecimal deriveWorkshift(String workShift) {
+ /*
+	if (workShift.contains(".")) {
+      String[] split = workShift.split("\\.");
+      String wholeNumber = split[0];
+      String decimal = split[1];
+      BigDecimal decimalValue = new BigDecimal(decimal).divide(new BigDecimal(60), 4, RoundingMode.HALF_UP);
+      BigDecimal wholeNumberValue = new BigDecimal(wholeNumber);
+      return wholeNumberValue.add(decimalValue).setScale(4, RoundingMode.HALF_UP);
+    }
+*/
+    return new BigDecimal(workShift).setScale(15);
 
+  }
+
+  public static String getValue(Object obj) {
+    if (Objects.nonNull(obj)) {
+      return obj.toString();
+    }
+    return StringUtils.EMPTY;
+  }
 }

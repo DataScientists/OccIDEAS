@@ -74,6 +74,7 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     participant.setReference(participantVO.getReference());
     participant.setStatus(participantVO.getStatus());
     participant.setDeleted(participantVO.getDeleted());
+
     if (includeInterviews) {
       participant.setInterviews(interviewMapper.convertToInterviewList(participantVO.getInterviews()));
     }

@@ -1,81 +1,81 @@
 (function() {
 
   angular
-    .module("occIDEASApp", [
-      "ui.router",
-      "ngMaterial",
-      "ngStorage",
-      "ui.tree",
-      "ngTable",
-      "ngSanitize",
-      "ngCsv",
-      "angular-confirm",
-      "sticky",
-      "ngToast",
-      "fsm",
-      "angular.filter",
-      "ngFileUpload",
-      "pascalprecht.translate",
-      "ui.bootstrap.contextMenu",
-      "ui.bootstrap",
-      "bsLoadingOverlay",
-      "bsLoadingOverlaySpinJs",
-      "ui.select",
-      'ngMessages',
-      "occIDEASApp.Tabs",
-      "occIDEASApp.Questions",
-      "occIDEASApp.Rules",
-      "occIDEASApp.Interviews",
-      "occIDEASApp.Modules",
-      "occIDEASApp.Agents",
-      "occIDEASApp.Rules",
-      "occIDEASApp.DisplayError",
-      "occIDEASApp.Fragments",
-      "occIDEASApp.Assessments",
-      "occIDEASApp.Participants",
-      "occIDEASApp.InterviewResults",
-      "occIDEASApp.ModuleRule",
-      "occIDEASApp.Login",
-      "occIDEASApp.Logout",
-      "occIDEASApp.Admin",
-      "occIDEASApp.FiredRules",
-      "occIDEASApp.ManualAssessment",
-      "occIDEASApp.AutoAssessment",
-      "occIDEASApp.SystemProperty",
-      "occIDEASApp.Reports",
-      "occIDEASApp.angular.translate",
-      "occIDEASApp.angular.translate.service",
-      "occIDEASApp.Notes",
-      "occIDEASApp.NodeLanguage",
-      "occIDEASApp.JMeter"
-    ], function($rootScopeProvider) {
-      $rootScopeProvider.digestTtl(100);
-    })
-    .constant('_', window._)
-    .config(['$urlRouterProvider', '$stateProvider', '$httpProvider', '$translateProvider',
-      function($urlRouterProvider, $stateProvider, $httpProvider, $translateProvider) {
-        $httpProvider.interceptors.push('ErrorHandler');
-        $httpProvider.interceptors.push('TokenRefreshInterceptor');
-        $urlRouterProvider.otherwise('/');
-        $stateProvider
-          .state('error', {
-            url: '/error',
-            templateUrl: 'scripts/error/view/error.html',
-            controller: 'ErrorCtrl as vm',
-            params: {
-              error: null
-            },
-            resolve: {
-              error: function($stateParams) {
-                console.log($stateParams.error);
-                return $stateParams.error;
-              }
-            }
-          });
+      .module("occIDEASApp", [
+          "ui.router",
+          "ngMaterial",
+          "ngStorage",
+          "ui.tree",
+          "ngTable",
+          "ngSanitize",
+          "ngCsv",
+          "angular-confirm",
+          "sticky",
+          "ngToast",
+          "fsm",
+          "angular.filter",
+          "ngFileUpload",
+          "pascalprecht.translate",
+          "ui.bootstrap.contextMenu",
+          "ui.bootstrap",
+          "bsLoadingOverlay",
+          "bsLoadingOverlaySpinJs",
+          "ui.select",
+          'ngMessages',
+          "occIDEASApp.Tabs",
+          "occIDEASApp.Questions",
+          "occIDEASApp.Rules",
+          "occIDEASApp.Interviews",
+          "occIDEASApp.Modules",
+          "occIDEASApp.Agents",
+          "occIDEASApp.Rules",
+          "occIDEASApp.DisplayError",
+          "occIDEASApp.Fragments",
+          "occIDEASApp.Assessments",
+          "occIDEASApp.Participants",
+          "occIDEASApp.InterviewResults",
+          "occIDEASApp.ModuleRule",
+          "occIDEASApp.Login",
+          "occIDEASApp.Logout",
+          "occIDEASApp.Admin",
+          "occIDEASApp.FiredRules",
+          "occIDEASApp.ManualAssessment",
+          "occIDEASApp.AutoAssessment",
+          "occIDEASApp.SystemProperty",
+          "occIDEASApp.Reports",
+          "occIDEASApp.angular.translate",
+          "occIDEASApp.angular.translate.service",
+          "occIDEASApp.Notes",
+          "occIDEASApp.NodeLanguage",
+          "occIDEASApp.JMeter"
+      ], function ($rootScopeProvider) {
+          $rootScopeProvider.digestTtl(100);
+      })
+      .constant('_', window._)
+      .config(['$urlRouterProvider', '$stateProvider', '$httpProvider', '$translateProvider',
+          function ($urlRouterProvider, $stateProvider, $httpProvider, $translateProvider) {
+              $httpProvider.interceptors.push('ErrorHandler');
+              $httpProvider.interceptors.push('TokenRefreshInterceptor');
+              $urlRouterProvider.otherwise('/');
+              $stateProvider
+                  .state('error', {
+                      url: '/error',
+                      templateUrl: 'scripts/error/view/error.html',
+                      controller: 'ErrorCtrl as vm',
+                      params: {
+                          error: null
+                      },
+                      resolve: {
+                          error: function ($stateParams) {
+                              console.log($stateParams.error);
+                              return $stateParams.error;
+                          }
+                      }
+                  });
 
-      }])
-    .run(configureDefaults)
-    .provider({
+          }])
+      .run(configureDefaults)
+      .provider({
 //	  $exceptionHandler: function(){
 //		   var $log =  angular.injector(['ng']).get('$log');
 //	        var handler = function(exception, cause) {
@@ -87,14 +87,15 @@
 //	            return handler;
 //	        };
 //	    }
-    })
-    .service(service)
-    .factory('TokenRefreshInterceptor', TokenRefreshInterceptor)
-    .factory('ErrorHandler', ErrorHandler)
-    .filter('trim', function() {
-  return function(str) {
-    return str.replace(/ /g,'');
-  }});
+      })
+      .service(service)
+      .factory('TokenRefreshInterceptor', TokenRefreshInterceptor)
+      .factory('ErrorHandler', ErrorHandler)
+      .filter('trim', function () {
+          return function (str) {
+              return str.replace(/ /g, '');
+          }
+      });
 
   configureDefaults.$inject = ['ngTableDefaults', '$state', '$rootScope', 'AuthenticationService', 'dataBeanService', '$window', '$sessionStorage', 'bsLoadingOverlayService'];
 
@@ -260,10 +261,10 @@
           if($rootScope['addErrorTab']) {
             $rootScope.addErrorTab(errorMessages);
           } else {
-            var msg = "Response Status returned:"
-              + response.status + " "
-              + response.statusText + " "
-              + response.data;
+              var msg = "Response Status returned:"
+                  + response.status + " "
+                  + response.statusText + " "
+                  + response.data;
             $ngToast.create({
               className: 'danger',
               content: msg,
