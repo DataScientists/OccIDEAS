@@ -1,6 +1,7 @@
 package org.occideas.entity;
 
 import org.hibernate.annotations.CascadeType;
+import org.occideas.utilities.AssessmentStatusEnum;
 import org.hibernate.annotations.*;
 
 import javax.persistence.Entity;
@@ -235,6 +236,9 @@ public class Interview implements java.io.Serializable {
   }
 
   public String getAssessedStatus() {
+	  if(assessedStatus==null) {
+		  assessedStatus = AssessmentStatusEnum.NOTASSESSED.getDisplay();
+	  }
     return assessedStatus;
   }
 
