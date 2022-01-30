@@ -20,11 +20,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 @Path("/admin")
 public class AdminRestController {
@@ -49,6 +45,7 @@ public class AdminRestController {
 
     @Autowired
     private IIPSOSService iIPSOSService;
+
 
     @GET
     @Path(value = "/qsf/sync/{surveyId}")
@@ -198,6 +195,7 @@ public class AdminRestController {
         }
         return Response.ok().build();
     }
+
 
     @POST
     @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
