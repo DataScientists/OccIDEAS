@@ -24,12 +24,12 @@ public class SystemPropertyDao {
 
   private final String POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM Node where idNode in"
           + " (SELECT idNode FROM ModuleRule where idModule=:param "
-          + " and idAgent in (select value from SYS_CONFIG where type=" + SystemConfigTypes.studyagent.name()
-          + "))";
+          + " and idAgent in (select value from SYS_CONFIG where type='" + SystemConfigTypes.studyagent.name()
+          + "'))";
   private final String QUESTION_ON_POS_ANS_WITH_STUDY_AGENTS_SQL = "SELECT * FROM Node where idNode in"
           + " (SELECT idNode FROM ModuleRule where idNode=:param "
-          + " and idAgent in (select value from SYS_CONFIG where type=" + SystemConfigTypes.studyagent.name()
-          + "))";
+          + " and idAgent in (select value from SYS_CONFIG where type='" + SystemConfigTypes.studyagent.name()
+          + "'))";
   private final String POS_ANS_WITH_AGENT_SQL = "SELECT * FROM Node where idNode in"
     + " (SELECT idNode FROM ModuleRule where idModule=:idModule "
     + " and idAgent = :idAgent)";
