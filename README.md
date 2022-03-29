@@ -1,4 +1,4 @@
-# OccIDEAS
+# OccIDEAS Application Config
 
 ## Running in jdk 11
 - install jdk 11 via https://www.oracle.com/sg/java/technologies/javase-jdk11-downloads.html
@@ -44,3 +44,38 @@ spring.datasource.password=
   Click Apply
 - Run “mvn clean install”
 - You might also need to
+
+
+# OccIDEAS Nectar Server Deployment
+- Launch a virtual server, recommended distro is Ubuntu 20.04 LTS.
+- apt install default-jdk (recommended version is Java 11)
+- apt install mysql-server (recommended version is MySQL 8)
+- mysql_secure_installation (secure mysql with root password)
+- mysql -u root -p
+- CREATE USER 'occideas'@'%' IDENTIFIED BY 'xxxx';
+- GRANT ALL PRIVILEGES ON * . * TO 'occideas'@'%';
+- FLUSH PRIVILEGES;
+- Deploy the database including views
+- apt install apache2
+- apt-get update
+- apt-get install certbot python3-certbot-apache
+- run cmd certbot enter domain name (no http...) and choose option 2 to redirect
+
+- a2enmod proxy_http 
+- systemctl restart apache2
+- nano /etc/apache2/sites-enabled/000-default-le-ssl.conf
+add
+ProxyPass / http://127.0.0.1:8080/
+ProxyPreserveHost On
+
+- upload the jar, e.g. scp -i ./Downloads/occideas.pem /home/heyzeus/git/OccIDEASMaster/target/occideas-2.0-SNAPSHOT.jar ubuntu@203.101.228.216:/home/ubuntu
+
+- apt install screen
+- screen, then spacebar
+
+- java -jar occideas-2.0-SNAPSHOT.jar org.occideas.OccideasApplication
+- ctrl a d
+- systemctl restart apache2
+
+Test at the URL
+ - Ensure file permission granted on /opt/data/modules and /opt/data/reports and any other folder in the application.properties config file
