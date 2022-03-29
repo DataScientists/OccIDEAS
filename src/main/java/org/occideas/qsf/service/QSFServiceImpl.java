@@ -422,6 +422,9 @@ public class QSFServiceImpl implements IQSFService {
                     questionAnswerResponse.getOccideasAnswerIdNode(),
                     responseId);
             QSFQuestionMapper qsfQuestionMapper = questionBySurveyId.get(questionAnswerResponse.getQsfQuestionId());
+            if(qsfQuestionMapper==null) {
+            	continue;
+            }
             ResponseSummary responseSummary = new ResponseSummary();
             responseSummary.setQuestion(qsfQuestionMapper.getQuestionText());
             responseSummary.setQuestionIdNode(String.valueOf(qsfQuestionMapper.getIdNode()));
