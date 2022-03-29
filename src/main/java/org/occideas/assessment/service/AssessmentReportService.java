@@ -172,7 +172,8 @@ public class AssessmentReportService {
                 answerList.add(interview.getAssessedStatus());
 
                 for (InterviewAnswer ia : answers) {
-                    String headerKey = generateHeaderKey(ia, nodeList);
+                	boolean isMulti = deriveIfMulti(ia, answers,allQuestions);
+                    String headerKey = generateHeaderKey(ia, nodeList,isMulti);
                     boolean ignore = false;
                     if (headerList.contains(headerKey)) {
                         ignore = true;
@@ -270,7 +271,26 @@ public class AssessmentReportService {
         log.info("Completed export interview with export directory {}", reportConfig.getExportDir());
     }
 
-    private void writeReport(String fullPath, ReportHistory reportHistory, ExportCSVVO csvVO, String requestorId) {
+    private boolean deriveIfMulti(InterviewAnswer ia, List<InterviewAnswer> answers, List<InterviewQuestion> allQuestions) {
+    	boolean retValue = false;
+    	InterviewQuestion interviewQuestionVO = null;
+        for (InterviewQuestion question : allQuestions) {
+          if (ia.getInterviewQuestionId() == question.getId()) {
+            interviewQuestionVO = question;
+            break;
+          }
+        }
+        if (interviewQuestionVO == null) {
+        	log.error("Error finding question");
+        }
+        if ("Q_multiple".equals(interviewQuestionVO.getType())) {
+        	retValue = true;
+        }
+        
+		return retValue;
+	}
+
+	private void writeReport(String fullPath, ReportHistory reportHistory, ExportCSVVO csvVO, String requestorId) {
         CSVWriter writer;
         try {
             File csvDirFile = new File(reportConfig.getExportDir());
@@ -316,20 +336,34 @@ public class AssessmentReportService {
     }
 
     private String generateHeaderKey(InterviewAnswer interviewAnswer,
-                                     Map<Long, Node> nodeList) {
+                                     Map<Long, Node> nodeList, boolean isMulti) {
         Node topModule = deriveTopModule(interviewAnswer, nodeList);
-        return deriveHeader(topModule, interviewAnswer.getNumber());
+        return deriveHeader(topModule, interviewAnswer.getNumber(),isMulti);
     }
 
-    private String deriveHeader(Node topModule, String number) {
+    private String deriveHeader(Node topModule, String number, boolean isMulti) {
         StringBuilder header = new StringBuilder();
         String headerName = topModule.getName().substring(0, 4);
         if (headerName.charAt(0) == '_') {
             headerName = headerName.replaceFirst("_", "");
         }
-        header.append(headerName);
-        header.append("_");
-        header.append(number);
+        if(isMulti) {
+        	header.append(headerName);
+            header.append("_");
+            header.append(number);
+        }else {
+        	String parentNumber = "";
+        	String[] parts = number.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");  //split on digits
+        	int iLength = parts.length;
+        	for(int i=0;i<iLength-1;i++) {  //add all except last
+        		parentNumber += parts[i];
+        	}
+        	//number = number;
+        	header.append(headerName);
+            header.append("_");
+            header.append(parentNumber);
+        }
+        
         return header.toString();
     }
 
