@@ -138,6 +138,10 @@ public class AssessmentLookupService {
             interviewQuestion = interviewQuestionDao.findIntQuestion(interviewAnswer.getIdInterview(),
                     interviewAnswer.getParentQuestionId());
         }
+        boolean isMulti = false;
+        if("Q_multiple".equals(interviewQuestion.getType())) {
+        	isMulti = true;
+        }
         long topNodeId = interviewAnswer.getTopNodeId();
         Node topModule = nodeList.get(topNodeId);
         if (topModule == null) {
@@ -150,11 +154,24 @@ public class AssessmentLookupService {
         if (headerName.charAt(0) == '_') {
             headerName = headerName.replaceFirst("_", "");
         }
-        header.append(headerName);
-        header.append("_");
-        header.append(interviewAnswer.getNumber());
+        //header.append(headerName);
+       // header.append("_");
+        //header.append(interviewAnswer.getNumber());
+        if(isMulti) {
+        	header.append(headerName);
+            header.append("_");
+            header.append(interviewAnswer.getNumber());
+            name = interviewQuestion.getName() + " " + interviewAnswer.getName();
+        }else {
+        	String parentNumber = interviewQuestion.getNumber();
+        	
+        	header.append(headerName);
+            header.append("_");
+            header.append(parentNumber);
+            name = interviewQuestion.getName();
+        }
         key = header.toString();
-        name = interviewQuestion.getName() + " " + interviewAnswer.getName();
+        //name = interviewQuestion.getName() + " " + interviewAnswer.getName();
         retValue = key + "<>" + name;
         return retValue;
 
