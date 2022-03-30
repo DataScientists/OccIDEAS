@@ -15,10 +15,10 @@
       var moduleRules = [];
       _.each(data, function(moduleRule) {
         var additionalFields = '';
-        if(moduleRule.rule.ruleAdditionalfields[0]) {
+        if(moduleRule.rule.ruleAdditionalfields) {
           additionalFields = moduleRule.rule.ruleAdditionalfields[0].value;
         }
-        if(moduleRule.rule.ruleAdditionalfields[1]) {
+        if(moduleRule.rule.ruleAdditionalfields) {
           additionalFields += ':' + moduleRule.rule.ruleAdditionalfields[1].value;
         }
 
