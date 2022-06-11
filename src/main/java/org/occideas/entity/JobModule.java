@@ -16,11 +16,6 @@ import java.util.List;
 @SelectBeforeUpdate(value = true)
 public class JobModule extends Node<Question> implements Serializable {
 
-  /**
-   *
-   */
-  private static final long serialVersionUID = -7963940691772676956L;
-
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "idModule", referencedColumnName = "idNode", updatable = false)
   protected List<ModuleRule> moduleRule;
@@ -62,5 +57,6 @@ public class JobModule extends Node<Question> implements Serializable {
   public void setModuleRule(List<ModuleRule> moduleRule) {
     this.moduleRule = moduleRule;
   }
+
 
 }
