@@ -28,6 +28,12 @@ public class CommitVersion implements Serializable {
         this.parent = parent;
     }
 
+    public CommitVersion(String author, LocalDateTime lastUpdated, String parent) {
+        this.author = author;
+        this.lastUpdated = lastUpdated;
+        this.parent = parent;
+    }
+
     public String getId() {
         return id;
     }

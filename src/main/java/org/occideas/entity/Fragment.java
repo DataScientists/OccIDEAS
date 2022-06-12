@@ -5,13 +5,14 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @DiscriminatorValue("F")
 @DynamicUpdate(value = true)
 @DynamicInsert(value = true)
-public class Fragment extends Node<Question> {
+public class Fragment extends Node<Question> implements Serializable {
 
   @OneToMany(fetch = FetchType.LAZY)
   @JoinColumn(name = "idModule", referencedColumnName = "idNode", updatable = false)

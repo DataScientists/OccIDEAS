@@ -16,8 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -40,8 +39,10 @@ class CommitVersionDaoTest {
     public void givenCommitId_whenGetCommitFilesByCommitId_thenReturnFiles() {
         commitVersionDao.save(new CommitVersion("12asd", "sample", LocalDateTime.now(), null));
         commitFileDao.save(new CommitFile(1l, "12asd", "testFile.txt", Hibernate.getLobCreator(sessionFactory.getCurrentSession()).createBlob(
-                SerializationUtils.serialize(new JobModule())
-        )));
+                SerializationUtils.serialize(new JobModule())),
+                1,
+                "Test"
+        ));
 
         final Optional<CommitVersion> commitVersionById = commitVersionDao.findById("12asd");
 
@@ -52,4 +53,14 @@ class CommitVersionDaoTest {
 
     }
 
+    @Test
+    public void givenGetMaster_whenGetCommitVersion_thenReturnCommitVersion() {
+        commitVersionDao.save(new CommitVersion("12asd", "sample", LocalDateTime.now(), null));
+        commitVersionDao.save(new CommitVersion("12zzz", "sample", LocalDateTime.now(), "12asd"));
+
+        Optional<CommitVersion> commitVersion = commitVersionDao.findMaster();
+
+        assertTrue(commitVersion.isPresent());
+        assertEquals("12asd", commitVersion.get().getId());
+    }
 }

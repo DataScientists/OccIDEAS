@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -42,16 +40,12 @@ class CommitFileDaoTest {
         jobModule.setDescription("test description");
         final byte[] serializeObject = getSerialize(jobModule);
         commitFileDao.save(new CommitFile(1l, "12asd", "",
-                commitFileDao.createBlob(serializeObject)));
+                commitFileDao.createBlob(serializeObject), jobModule.hashCode(), jobModule.getClass().getName()));
 
         final Optional<CommitFile> fileById = commitFileDao.findById(1l);
 
         assertFalse(fileById.isEmpty());
-        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(fileById.get().getHash()
-                .getBytes(1, (int) fileById.get().getHash().length()));
-        ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-        JobModule actual = (JobModule) objectInputStream.readObject();
-        assertEquals(serializeObject, getSerialize(actual));
+        assertEquals(jobModule.hashCode(), fileById.get().getHashCode());
     }
 
     private byte[] getSerialize(JobModule jobModule) {

@@ -14,18 +14,31 @@ public class CommitFile implements Serializable {
     private String commitId;
     @Column(name = "fileName")
     private String fileName;
-    @Column(name = "hash", columnDefinition = "BLOB")
+    @Column(name = "object", columnDefinition = "BLOB")
     @Lob
-    private Blob hash;
+    private Blob object;
+    @Column(name = "hashCode")
+    private Integer hashCode;
+    private String type;
 
     public CommitFile() {
     }
 
-    public CommitFile(long id, String commitId, String fileName, Blob hash) {
+    public CommitFile(long id, String commitId, String fileName, Blob object, Integer hashCode, String type) {
         this.id = id;
         this.commitId = commitId;
         this.fileName = fileName;
-        this.hash = hash;
+        this.object = object;
+        this.hashCode = hashCode;
+        this.type = type;
+    }
+
+    public CommitFile(String commitId, String fileName, Blob object, Integer hashCode, String type) {
+        this.commitId = commitId;
+        this.fileName = fileName;
+        this.object = object;
+        this.hashCode = hashCode;
+        this.type = type;
     }
 
     public String getFileName() {
@@ -52,13 +65,27 @@ public class CommitFile implements Serializable {
         this.commitId = commitId;
     }
 
-    public Blob getHash() {
-        return hash;
+    public Blob getObject() {
+        return object;
     }
 
-    public void setHash(Blob hash) {
-        this.hash = hash;
+    public void setObject(Blob object) {
+        this.object = object;
     }
 
+    public Integer getHashCode() {
+        return hashCode;
+    }
 
+    public void setHashCode(Integer hashCode) {
+        this.hashCode = hashCode;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

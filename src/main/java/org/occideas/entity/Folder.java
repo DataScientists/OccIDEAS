@@ -15,7 +15,19 @@ public class Folder implements Serializable {
     private String name;
     private String head;
     private long version;
+    private boolean isDefault;
     private LocalDateTime lastUpdated;
+
+    public Folder() {
+    }
+
+    public Folder(String name, String head, long version, boolean isDefault, LocalDateTime lastUpdated) {
+        this.name = name;
+        this.head = head;
+        this.version = version;
+        this.isDefault = isDefault;
+        this.lastUpdated = lastUpdated;
+    }
 
     public long getId() {
         return id;
@@ -47,5 +59,21 @@ public class Folder implements Serializable {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 }

@@ -11,9 +11,9 @@ import java.util.List;
 
 @Entity
 @DiscriminatorValue("M")
-@DynamicUpdate(value = true)
-@DynamicInsert(value = true)
-@SelectBeforeUpdate(value = true)
+@DynamicUpdate
+@DynamicInsert
+@SelectBeforeUpdate
 public class JobModule extends Node<Question> implements Serializable {
 
   @OneToMany(fetch = FetchType.LAZY)
