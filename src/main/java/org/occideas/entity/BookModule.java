@@ -5,40 +5,43 @@ import java.io.Serializable;
 import java.sql.Blob;
 
 @Entity
-@Table(name = "COMMIT_FILE")
-public class CommitFile implements Serializable {
+@Table(name = "BOOK_MODULE")
+public class BookModule implements Serializable {
 
     @Id
     private long id;
-    @Column(name = "commitId")
-    private String commitId;
+    @Column(name = "bookId")
+    private long bookId;
     @Column(name = "fileName")
     private String fileName;
-    @Column(name = "object", columnDefinition = "BLOB")
+    @Column(name = "json", columnDefinition = "BLOB")
     @Lob
-    private Blob object;
+    private Blob json;
     @Column(name = "hashCode")
     private Integer hashCode;
     private String type;
+    private String author;
 
-    public CommitFile() {
+    public BookModule() {
     }
 
-    public CommitFile(long id, String commitId, String fileName, Blob object, Integer hashCode, String type) {
+    public BookModule(long id, long bookId, String fileName, Blob json, Integer hashCode, String type, String author) {
         this.id = id;
-        this.commitId = commitId;
+        this.bookId = bookId;
         this.fileName = fileName;
-        this.object = object;
+        this.json = json;
         this.hashCode = hashCode;
         this.type = type;
+        this.author = author;
     }
 
-    public CommitFile(String commitId, String fileName, Blob object, Integer hashCode, String type) {
-        this.commitId = commitId;
+    public BookModule(long bookId, String fileName, Blob json, Integer hashCode, String type, String author) {
+        this.bookId = bookId;
         this.fileName = fileName;
-        this.object = object;
+        this.json = json;
         this.hashCode = hashCode;
         this.type = type;
+        this.author = author;
     }
 
     public String getFileName() {
@@ -57,20 +60,28 @@ public class CommitFile implements Serializable {
         this.id = id;
     }
 
-    public String getCommitId() {
-        return commitId;
+    public long getBookId() {
+        return bookId;
     }
 
-    public void setCommitId(String commitId) {
-        this.commitId = commitId;
+    public void setBookId(long bookId) {
+        this.bookId = bookId;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public Blob getObject() {
-        return object;
+        return json;
     }
 
-    public void setObject(Blob object) {
-        this.object = object;
+    public void setObject(Blob json) {
+        this.json = json;
     }
 
     public Integer getHashCode() {

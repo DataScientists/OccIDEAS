@@ -1,16 +1,17 @@
 package org.occideas.versioning.dao;
 
 import org.occideas.base.dao.GenericBaseDao;
-import org.occideas.entity.UserFolder;
-import org.occideas.entity.UserFolder_;
+import org.occideas.entity.Book;
+import org.occideas.entity.Book_;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public class UserFolderDao extends GenericBaseDao<UserFolder, String> {
+public class BookDao extends GenericBaseDao<Book, Long> {
 
-    public UserFolderDao() {
-        super(UserFolder.class, UserFolder_.USER_ID);
+    public BookDao() {
+        super(Book.class, Book_.ID);
     }
+
 }

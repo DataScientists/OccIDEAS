@@ -7,26 +7,29 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "FOLDER")
-public class Folder implements Serializable {
+@Table(name = "BOOK")
+public class Book implements Serializable {
 
     @Id
     private long id;
     private String name;
-    private String head;
-    private long version;
-    private boolean isDefault;
     private LocalDateTime lastUpdated;
+    private String createdBy;
 
-    public Folder() {
+    public Book() {
     }
 
-    public Folder(String name, String head, long version, boolean isDefault, LocalDateTime lastUpdated) {
+    public Book(long id, String name, LocalDateTime lastUpdated, String createdBy) {
+        this.id = id;
         this.name = name;
-        this.head = head;
-        this.version = version;
-        this.isDefault = isDefault;
         this.lastUpdated = lastUpdated;
+        this.createdBy = createdBy;
+    }
+
+    public Book(String name, LocalDateTime lastUpdated, String createdBy) {
+        this.name = name;
+        this.lastUpdated = lastUpdated;
+        this.createdBy = createdBy;
     }
 
     public long getId() {
@@ -45,22 +48,6 @@ public class Folder implements Serializable {
         this.name = name;
     }
 
-    public String getHead() {
-        return head;
-    }
-
-    public void setHead(String head) {
-        this.head = head;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public void setVersion(long version) {
-        this.version = version;
-    }
-
     public LocalDateTime getLastUpdated() {
         return lastUpdated;
     }
@@ -69,11 +56,11 @@ public class Folder implements Serializable {
         this.lastUpdated = lastUpdated;
     }
 
-    public boolean isDefault() {
-        return isDefault;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }
