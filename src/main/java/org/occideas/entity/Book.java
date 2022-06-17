@@ -1,8 +1,6 @@
 package org.occideas.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -11,6 +9,7 @@ import java.time.LocalDateTime;
 public class Book implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
     private LocalDateTime lastUpdated;

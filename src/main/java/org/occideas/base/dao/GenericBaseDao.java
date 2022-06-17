@@ -26,6 +26,17 @@ public class GenericBaseDao<T, I> {
         this.idFieldName = idFieldName;
     }
 
+    public List<T> list() {
+        final Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> criteria = builder.createQuery(clazz);
+        Root<T> root = criteria.from(clazz);
+        criteria.select(root);
+
+        List<T> resultList = sessionFactory.getCurrentSession().createQuery(criteria).getResultList();
+        return resultList;
+    }
+
     public Optional<T> findById(I id) {
         final Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();

@@ -1,0 +1,92 @@
+<div ng-cloak>
+    <div>
+        <table class="table table-bordered table-hover
+  table-condensed editable-table moduleTable"
+               demo-tracked-table="vm.tableTracker"
+               disable-filter="vm.isAdding" id="addBookId"
+               ng-form="tableForm" ng-table="vm.tableParams">
+            <div class="pull-left" style="padding:2px 2px 2px 2px;">
+                <button class="btn btn-default" ng-click='vm.addBook()' type="button"> Add Book</button>
+            </div>
+            <tbody ng-repeat="group in $groups">
+            <tr class="ng-table-group">
+                <td colspan="{{$columns.length}}">
+                    <a href="" ng-click="group.$hideRows = !group.$hideRows">
+          	<span
+                    class="glyphicon"
+                    ng-class="{ 'glyphicon-chevron-right': group.$hideRows,
+            'glyphicon-chevron-down': !group.$hideRows }"></span>
+                        <strong> {{ group.value }}</strong>
+                    </a>
+                    <div class="brn-group pull-right">
+                        <button class="btn btn-default" ng-click="vm.add(group)">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                        <button class="btn btn-default" ng-click="vm.toggleIsDeleting()">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </div>
+                </td>
+
+            </tr>
+            <tr demo-tracked-table-row="row" ng-form="rowForm"
+                ng-hide="group.$hideRows" ng-repeat="row in group.data">
+
+                <td data-title="'Books'" groupable="'book.name'"
+                    ng-if="false">{{row.name}}
+                </td>
+                <td demo-tracked-table-cell filter="{name: 'text'}"
+                    ng-class="name.$dirty ? 'bg-warning' : ''"
+                    ng-form="name" ng-switch="row.isEditing"
+                    title="'Name'">
+                    <div ng-click="row.isEditing = true">
+                        <span class="editable-text" ng-switch-default>{{row.name}}</span>
+                        <div class="controls"
+                             ng-class="name.$invalid && name.$dirty ? 'has-error' : ''"
+                             ng-switch-when="true">
+                            <input class="editable-input form-control input-sm" name="name" ng-model="row.name"
+                                   required type="text"/>
+                        </div>
+                    </div>
+                </td>
+                <td demo-tracked-table-cell filter="{description: 'text'}"
+                    ng-class="description.$dirty ? 'bg-warning' : ''"
+                    ng-form="description"
+                    ng-switch="row.isEditing" title="'Description'">
+                    <div ng-click="row.isEditing = true">
+                        <span class="editable-text" ng-switch-default>{{row.description}}</span>
+                        <div class="controls"
+                             ng-class="description.$invalid && description.$dirty ? 'has-error' : ''"
+                             ng-switch-when="true">
+                            <input class="editable-input form-control input-sm" name="description"
+                                   ng-model="row.description"
+                                   required type="text"/>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm"
+                            ng-click="vm.save(row, rowForm)" ng-disabled="rowForm.$pristine || rowForm.$invalid"
+                            ng-if="row.isEditing">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                    <button class="btn btn-default btn-sm"
+                            ng-click="vm.cancel(row, rowForm)" ng-if="row.isEditing">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                    <button class="btn btn-default btn-sm"
+                            ng-click="vm.checkAndAddAgentRulesTab(row)"
+                            ng-if="!row.isEditing">
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                    </button>
+                    <button class="btn btn-danger btn-sm" confirm="Delete agent {{row.name}}?"
+                            id="delete_{{row.name}}"
+                            ng-click="vm.del(row)" ng-if="vm.isDeleting">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

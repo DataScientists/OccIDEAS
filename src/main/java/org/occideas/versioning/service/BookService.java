@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
 import org.occideas.versioning.dao.BookDao;
 import org.occideas.versioning.dao.BookModuleDao;
@@ -27,6 +28,15 @@ public class BookService {
     private BookModuleDao bookModuleDao;
     @Autowired
     private BookDao bookDao;
+
+    public List<Book> getBooks() {
+        return bookDao.list();
+    }
+
+    public long createBook(Book book) {
+        Book newBook = bookDao.save(book);
+        return newBook.getId();
+    }
 
     public void addToBook(long bookId, Object object, String userId) {
         Blob serializedObject = null;

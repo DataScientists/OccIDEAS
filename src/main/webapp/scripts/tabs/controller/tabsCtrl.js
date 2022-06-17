@@ -44,9 +44,15 @@
       });
       $stickyState.reset('tabs.assessments');
     }
-    if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_ADMIN', 'ROLE_STUDYMANAGER'])) {
+    if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_ADMIN', 'ROLE_STUDYMANAGER'])) {
       $scope.tabOptions.push({
         state: "tabs.reports",
+        data: ""
+      });
+    }
+    if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])) {
+      $scope.tabOptions.push({
+        state: "tabs.book",
         data: ""
       });
     }
@@ -58,8 +64,8 @@
         });
     }
     */
-    if($sessionStorage.langEnabled) {
-      if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
+    if ($sessionStorage.langEnabled) {
+      if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV'])) {
         $scope.tabOptions.push({
           state: "tabs.languageSummary",
           data: ""
@@ -158,13 +164,19 @@
         viewName: 'reports@tabs'
       });
     }
-    if(auth.isLoggedIn() && $sessionStorage.langEnabled) {
-      if(auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_STUDYMANAGER'])) {
+    if (auth.isLoggedIn() && $sessionStorage.langEnabled) {
+      if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_STUDYMANAGER'])) {
         tabs.push({
           title: 'Language Summary',
           viewName: 'languageSummary@tabs'
         });
       }
+    }
+    if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])) {
+      tabs.push({
+        title: 'Book',
+        viewName: 'book@tabs'
+      });
     }
     /*
     if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])) {

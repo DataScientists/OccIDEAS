@@ -9,6 +9,7 @@ import java.sql.Blob;
 public class BookModule implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "bookId")
     private long bookId;
