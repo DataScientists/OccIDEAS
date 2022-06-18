@@ -1,4 +1,4 @@
-package org.occideas.versioning.dao;
+package org.occideas.book.dao;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Session;

@@ -147,7 +147,16 @@
                 views: {
                     'book@tabs': {
                         templateUrl: "scripts/book/view/bookTable.html",
-                        controller: 'BookCtrl as vm'
+                        controller: 'BookCtrl as vm',
+                        resolve: {
+                            data: function (BookService) {
+                                return BookService.get()
+                                    .then(function (response) {
+                                        $log.info("Loading books");
+                                        return response.data;
+                                    });
+                            }
+                        }
                     }
                 }
             })

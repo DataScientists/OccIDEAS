@@ -11,6 +11,7 @@
         const getBook = function () {
             return $http.get(bookEndPoint, {cache: false}).then(function (response) {
                 const data = response.data;
+                console.log('data', data);
                 return data;
             });
         };

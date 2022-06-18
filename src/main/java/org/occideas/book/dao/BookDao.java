@@ -1,4 +1,4 @@
-package org.occideas.versioning.dao;
+package org.occideas.book.dao;
 
 import org.occideas.base.dao.GenericBaseDao;
 import org.occideas.entity.Book;

@@ -2,10 +2,13 @@
     angular.module('occIDEASApp.Book')
         .controller('BookCtrl', BookCtrl);
 
-    BookCtrl.$inject = ['BookService', 'NgTableParams', '$state', '$scope', '$filter', '$rootScope', '$mdDialog', 'ngToast'];
+    BookCtrl.$inject = ['BookService', 'NgTableParams', '$state', '$scope', '$filter', 'data'];
 
-    function BookCtrl(BookService, NgTableParams, $state, $scope, $filter, $rootScope, $mdDialog, $ngToast) {
+    function BookCtrl(BookService, NgTableParams, $state, $scope, $filter, data) {
         const self = this;
+
+        self.data = data;
+
         self.tableParams = new NgTableParams({group: "book.name", count: 100}, {
             getData: function ($defer, params) {
                 if (params.filter().name || params.filter().description || params.filter().isChecked) {

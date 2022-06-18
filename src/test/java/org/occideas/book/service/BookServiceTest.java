@@ -1,4 +1,4 @@
-package org.occideas.versioning.service;
+package org.occideas.book.service;
 
 import com.mysql.cj.jdbc.Blob;
 import org.junit.jupiter.api.Test;
@@ -6,11 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.occideas.book.dao.BookDao;
+import org.occideas.book.dao.BookModuleDao;
 import org.occideas.entity.BookModule;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.JobModule;
-import org.occideas.versioning.dao.BookDao;
-import org.occideas.versioning.dao.BookModuleDao;
 
 import java.util.ArrayList;
 import java.util.List;

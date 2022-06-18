@@ -1,4 +1,4 @@
-package org.occideas.versioning.dao;
+package org.occideas.book.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

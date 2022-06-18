@@ -1,13 +1,13 @@
-package org.occideas.versioning.service;
+package org.occideas.book.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.occideas.book.dao.BookDao;
+import org.occideas.book.dao.BookModuleDao;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
-import org.occideas.versioning.dao.BookDao;
-import org.occideas.versioning.dao.BookModuleDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package org.occideas.versioning.dao;
+package org.occideas.book.dao;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
