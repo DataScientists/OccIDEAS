@@ -8,11 +8,15 @@ import org.occideas.book.dao.BookDao;
 import org.occideas.book.dao.BookModuleDao;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
+import org.occideas.security.handler.TokenManager;
+import org.occideas.security.model.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Blob;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +38,10 @@ public class BookService {
     }
 
     public long createBook(Book book) {
+        TokenManager tokenManager = new TokenManager();
+        String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+        book.setCreatedBy(tokenManager.parseUsernameFromToken(token));
+        book.setLastUpdated(LocalDateTime.now());
         Book newBook = bookDao.save(book);
         return newBook.getId();
     }

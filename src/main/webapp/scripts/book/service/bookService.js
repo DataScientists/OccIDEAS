@@ -16,8 +16,20 @@
             });
         };
 
+        const save = function (data) {
+            const request = $http({
+                method: 'POST',
+                url: bookEndPoint,
+                data
+            });
+            request.then(function (response) {
+                return response.data;
+            });
+        };
+
         return {
-            get: getBook
+            get: getBook,
+            save
         };
     }
 

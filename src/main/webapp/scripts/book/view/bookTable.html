@@ -1,18 +1,39 @@
 <div ng-cloak>
     <div>
+        <button id="addBook" class="btn btn-default"
+                ng-click="vm.add()"
+                type="button">Add Book <span class="glyphicon glyphicon-plus">
+      </span></button>
         <table class="table table-bordered table-hover table-condensed editable-table"
                ng-table="vm.tableParams"
                show-filter="true">
-
-            <tr ng-repeat="book in vm.data">
-                <td filter="{name: 'text'}" title="'Book Name'">{{book.name}}</td>
-                <td filter="{createdBy: 'text'}" title="'Created By'">{{book.createdBy}}</td>
-                <td ng-if="vm.showDelete" title="'Delete'">
-                    <button class="btn btn-default" ng-click="vm.confirmDelete(book)">
+            <tbody>
+            <tr ng-repeat="book in $data" demo-tracked-table-row="row">
+                <td filter="{name: 'text'}" title="'Book Name'" ng-if="!book.isEditing">{{book.name}}</td>
+                <td demo-tracked-table-cell
+                    filter="{name: 'text'}"
+                    ng-class="name.$dirty ? 'bg-warning' : ''"
+                    ng-form="name" ng-if="book.isEditing">
+                    <input class="editable-input form-control input-sm" name="name" ng-model="book.name"
+                           required type="text"/>
+                </td>
+                <!--                <td filter="{description: 'text'}" title="'Description'">{{book.description}}</td>-->
+                <td>
+                    <button class="btn btn-primary btn-sm" id="saveBtn"
+                            ng-click="vm.save(book)" ng-disabled="rowForm.$pristine || rowForm.$invalid"
+                            ng-if="book.isEditing">
+                        <span class="glyphicon glyphicon-ok"></span>
+                    </button>
+                    <button class="btn btn-default btn-sm"
+                            ng-click="vm.cancel(book)" ng-if="book.isEditing">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                    <button class="btn btn-default" ng-click="vm.confirmDelete(vm.newBook)" title="Delete">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                 </td>
             </tr>
+            </tbody>
         </table>
     </div>
 </div>
