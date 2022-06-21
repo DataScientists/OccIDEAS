@@ -8,6 +8,7 @@ import org.occideas.book.dao.BookDao;
 import org.occideas.book.dao.BookModuleDao;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
+import org.occideas.exceptions.BookNotExistException;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,15 @@ public class BookService {
     public List<Book> getBooks() {
         return bookDao.list();
     }
+
+    public Book findBookById(Long id) {
+        final Optional<Book> byId = bookDao.findById(id);
+        if (byId.isEmpty()) {
+            throw new BookNotExistException("Book does not exist");
+        }
+        return byId.get();
+    }
+
 
     public long createBook(Book book) {
         TokenManager tokenManager = new TokenManager();
@@ -82,4 +92,7 @@ public class BookService {
     }
 
 
+    public void delete(Book book) {
+        bookDao.delete(book);
+    }
 }

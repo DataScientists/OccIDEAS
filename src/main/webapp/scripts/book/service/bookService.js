@@ -11,7 +11,6 @@
         const getBook = function () {
             return $http.get(bookEndPoint, {cache: false}).then(function (response) {
                 const data = response.data;
-                console.log('data', data);
                 return data;
             });
         };
@@ -22,14 +21,21 @@
                 url: bookEndPoint,
                 data
             });
-            request.then(function (response) {
-                return response.data;
+            return request;
+        };
+
+        const deleteBook = function (data) {
+            const request = $http({
+                method: 'DELETE',
+                url: `${bookEndPoint}/${data.id}`,
             });
+            return request;
         };
 
         return {
             get: getBook,
-            save
+            save,
+            deleteBook
         };
     }
 

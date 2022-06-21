@@ -12,6 +12,7 @@ public class Book implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
+    private String description;
     private LocalDateTime lastUpdated;
     private String createdBy;
 
@@ -61,5 +62,13 @@ public class Book implements Serializable {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

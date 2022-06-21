@@ -31,7 +31,6 @@
         });
 
         self.add = () => {
-            self.isEditing = true;
             self.isAdding = true;
 
             self.tableParams.settings().dataset.unshift({
@@ -46,12 +45,35 @@
             self.isAdding = false;
         }
 
+        self.edit = book => {
+            book.isEditing = true;
+        }
+
         self.cancel = book => {
-            self.isEditing = false;
+            book.isEditing = false;
         }
 
         self.save = book => {
             BookService.save(book).then(response => {
+                if (response.status === 200) {
+                    book.isEditing = false;
+                    self.tableParams.shouldGetData = true;
+                    self.tableParams.reload().then(function (data) {
+                        if (data.length === 0 && self.tableParams.total() > 0) {
+                            self.tableParams.page(self.tableParams.page() - 1);
+                            self.tableParams.reload();
+                        }
+                    });
+                } else {
+                    alert('error occurred', response);
+                }
+            }).catch(e => {
+                alert('error occurred', e);
+            });
+        }
+
+        self.deleteBook = book => {
+            BookService.deleteBook(book).then(response => {
                 if (response.status === 200) {
                     self.tableParams.shouldGetData = true;
                     self.tableParams.reload().then(function (data) {
@@ -60,8 +82,14 @@
                             self.tableParams.reload();
                         }
                     });
+                } else {
+                    alert('error occurred', response);
                 }
+            }).catch(e => {
+                alert('error occurred', e);
             });
         }
+
+
     }
 })();

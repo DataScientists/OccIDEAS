@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 
 @Path("/book")
 public class BookController {
@@ -28,6 +25,15 @@ public class BookController {
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createBook(Book book) {
         bookService.createBook(book);
+        return ResponseEntity.ok().build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteBook(@PathParam("id") Long id) {
+        final Book bookById = bookService.findBookById(id);
+        bookService.delete(bookById);
         return ResponseEntity.ok().build();
     }
 

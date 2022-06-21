@@ -4,6 +4,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.occideas.agent.rest.AgentRestController;
 import org.occideas.assessment.rest.AssessmentRestController;
 import org.occideas.book.controller.BookController;
+import org.occideas.exceptions.CustomExceptionHandler;
 import org.occideas.fragment.rest.FragmentRestController;
 import org.occideas.interview.rest.InterviewRestController;
 import org.occideas.interviewanswer.rest.InterviewAnswerRestController;
@@ -85,5 +86,6 @@ public class JerseyConfig extends ResourceConfig {
         register(SystemPropertyController.class);
         register(QualtricsSurveyResponseListener.class);
         register(BookController.class);
+        register(CustomExceptionHandler.class);
     }
 }

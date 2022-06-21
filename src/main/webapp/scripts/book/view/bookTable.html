@@ -6,15 +6,27 @@
       </span></button>
         <table class="table table-bordered table-hover table-condensed editable-table"
                ng-table="vm.tableParams"
+               demo-tracked-table="vm.tableTracker"
+               ng-form="tableForm"
                show-filter="true">
             <tbody>
-            <tr ng-repeat="book in $data" demo-tracked-table-row="row">
+            <tr ng-repeat="book in $data" demo-tracked-table-row="book">
                 <td filter="{name: 'text'}" title="'Book Name'" ng-if="!book.isEditing">{{book.name}}</td>
                 <td demo-tracked-table-cell
                     filter="{name: 'text'}"
                     ng-class="name.$dirty ? 'bg-warning' : ''"
                     ng-form="name" ng-if="book.isEditing">
                     <input class="editable-input form-control input-sm" name="name" ng-model="book.name"
+                           required type="text"/>
+                </td>
+                <td filter="{description: 'text'}" title="'Book Description'" ng-if="!book.isEditing">
+                    {{book.description}}
+                </td>
+                <td demo-tracked-table-cell
+                    filter="{description: 'text'}"
+                    ng-class="description.$dirty ? 'bg-warning' : ''"
+                    ng-form="description" ng-if="book.isEditing">
+                    <input class="editable-input form-control input-sm" name="name" ng-model="book.description"
                            required type="text"/>
                 </td>
                 <!--                <td filter="{description: 'text'}" title="'Description'">{{book.description}}</td>-->
@@ -28,7 +40,11 @@
                             ng-click="vm.cancel(book)" ng-if="book.isEditing">
                         <span class="glyphicon glyphicon-remove"></span>
                     </button>
-                    <button class="btn btn-default" ng-click="vm.confirmDelete(vm.newBook)" title="Delete">
+                    <button class="btn btn-default" ng-click="vm.edit(book)" title="Edit" ng-if="!book.isEditing">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                    <button class="btn btn-default" ng-click="vm.deleteBook(book)" title="Delete"
+                            ng-if="!book.isEditing">
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
                 </td>
