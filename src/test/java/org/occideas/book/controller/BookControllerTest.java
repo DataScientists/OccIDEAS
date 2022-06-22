@@ -2,6 +2,7 @@ package org.occideas.book.controller;
 
 import org.junit.jupiter.api.Test;
 import org.occideas.book.response.BookResponse;
+import org.occideas.book.response.BookVO;
 import org.occideas.book.service.BookService;
 import org.occideas.config.TestSecurityConfig;
 import org.occideas.entity.Book;
@@ -50,7 +51,7 @@ class BookControllerTest {
 
     @Test
     public void deleteBook() {
-        when(bookService.findBookById(anyLong())).thenReturn(new Book());
+        when(bookService.findBookById(anyLong())).thenReturn(new BookVO());
         doNothing().when(bookService).delete(any(Book.class));
         ResponseEntity<Void> response = restTemplate.exchange("http://localhost:" + port + "/web/rest/book/1", HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());

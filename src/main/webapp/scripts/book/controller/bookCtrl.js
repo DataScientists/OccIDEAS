@@ -2,18 +2,18 @@
     angular.module('occIDEASApp.Book')
         .controller('BookCtrl', BookCtrl);
 
-    BookCtrl.$inject = ['BookService', 'NgTableParams', '$state', '$scope', '$filter'];
+    BookCtrl.$inject = ['BookService', 'NgTableParams', '$state', '$scope', '$filter', '$mdDialog'];
 
-    function BookCtrl(BookService, NgTableParams, $state, $scope, $filter) {
+    function BookCtrl(BookService, NgTableParams, $state, $scope, $filter, $mdDialog) {
         const self = this;
 
         self.newBook = {};
 
         const getDataFromResponse = response => {
-            return response?.body?.books;
+            return response?.body?.books?.map(b => b.book);
         }
 
-        self.tableParams = new NgTableParams({count: 100}, {
+        self.tableParams = new NgTableParams({group: "name", count: 100}, {
             getData: function ($defer, params) {
                 if (params.filter().name || params.filter().description) {
                     return $filter('filter')(self.tableParams.settings().dataset, params.filter());
@@ -31,18 +31,13 @@
         });
 
         self.add = () => {
-            self.isAdding = true;
-
-            self.tableParams.settings().dataset.unshift({
-                name: "New Book",
-                isEditing: true
+            console.log('adding');
+            $mdDialog.show({
+                scope: $scope,
+                preserveScope: true,
+                templateUrl: 'scripts/book/partials/addBookDialog.html',
+                clickOutsideToClose: false
             });
-            self.originalData = angular.copy(self.tableParams.settings().dataset);
-            self.tableParams.sorting({});
-            self.tableParams.page(1);
-            self.tableParams.shouldGetData = false;
-            self.tableParams.reload();
-            self.isAdding = false;
         }
 
         self.edit = book => {
@@ -54,6 +49,7 @@
         }
 
         self.save = book => {
+            console.log("saving")
             BookService.save(book).then(response => {
                 if (response.status === 200) {
                     book.isEditing = false;
@@ -70,6 +66,7 @@
             }).catch(e => {
                 alert('error occurred', e);
             });
+            $mdDialog.cancel();
         }
 
         self.deleteBook = book => {

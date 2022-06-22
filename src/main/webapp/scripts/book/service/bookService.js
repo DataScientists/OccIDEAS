@@ -32,10 +32,23 @@
             return request;
         };
 
+        const saveToBook = (idNode, bookId) => {
+            const request = $http({
+                method: 'POST',
+                url: `${bookEndPoint}/addToBook`,
+                data: {
+                    idNode,
+                    bookId
+                }
+            });
+            return request;
+        }
+
         return {
             get: getBook,
             save,
-            deleteBook
+            deleteBook,
+            saveToBook
         };
     }
 

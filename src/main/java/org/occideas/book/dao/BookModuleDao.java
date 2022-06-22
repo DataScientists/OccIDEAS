@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.sql.Blob;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -34,6 +35,19 @@ public class BookModuleDao extends GenericBaseDao<BookModule, Long> {
                 )
         );
         return sessionFactory.getCurrentSession().createQuery(criteria).uniqueResultOptional();
+    }
+
+    public List<BookModule> findByBookId(long bookId) {
+        final Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<BookModule> criteria = builder.createQuery(BookModule.class);
+        Root<BookModule> root = criteria.from(BookModule.class);
+        criteria.select(root);
+        criteria.where(builder.and(
+                        builder.equal(root.get(BookModule_.BOOK_ID), bookId)
+                )
+        );
+        return sessionFactory.getCurrentSession().createQuery(criteria).list();
     }
 
     public Blob createBlob(byte[] serializeObject) {

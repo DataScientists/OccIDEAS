@@ -6,11 +6,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.book.dao.BookDao;
 import org.occideas.book.dao.BookModuleDao;
+import org.occideas.book.request.BookRequest;
+import org.occideas.book.response.BookVO;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
+import org.occideas.entity.JobModule;
 import org.occideas.exceptions.BookNotExistException;
+import org.occideas.mapper.ModuleMapper;
+import org.occideas.module.dao.ModuleDao;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
+import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,17 +39,26 @@ public class BookService {
     private BookModuleDao bookModuleDao;
     @Autowired
     private BookDao bookDao;
+    @Autowired
+    private ModuleDao moduleDao;
+    @Autowired
+    private ModuleMapper moduleMapper;
 
-    public List<Book> getBooks() {
-        return bookDao.list();
+    public List<BookVO> getBooks() {
+        return bookDao.list().stream().map(book -> {
+            final List<BookModule> bookModules = bookModuleDao.findByBookId(book.getId());
+            return new BookVO(book, bookModules);
+        }).collect(Collectors.toList());
     }
 
-    public Book findBookById(Long id) {
+    public BookVO findBookById(Long id) {
         final Optional<Book> byId = bookDao.findById(id);
         if (byId.isEmpty()) {
             throw new BookNotExistException("Book does not exist");
         }
-        return byId.get();
+        final Book book = byId.get();
+        final List<BookModule> bookModules = bookModuleDao.findByBookId(book.getId());
+        return new BookVO(book, bookModules);
     }
 
 
@@ -89,6 +104,22 @@ public class BookService {
             }
         });
         return results;
+    }
+
+    public void addModuleToBook(BookRequest bookRequest) throws JsonProcessingException {
+        final Optional<Book> bookOptional = bookDao.findById(bookRequest.getBookId());
+        final JobModule module = moduleDao.get(bookRequest.getIdNode());
+        ModuleVO modVO = moduleMapper.convertToModuleVO(module, false);
+        final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(modVO);
+        TokenManager tokenManager = new TokenManager();
+        String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+        final BookModule bookModule = bookModuleDao.save(
+                new BookModule(bookRequest.getBookId(),
+                        modVO.getClass().getName(),
+                        bookModuleDao.createBlob(valueAsBytes), modVO.hashCode(),
+                        modVO.getClass().getName(),
+                        tokenManager.parseUsernameFromToken(token)));
+        bookModuleDao.save(bookModule);
     }
 
 

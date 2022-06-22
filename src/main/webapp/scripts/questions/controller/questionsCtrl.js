@@ -14,7 +14,8 @@
     '$rootScope', 'ModuleRuleService', '$log', '$timeout', '$filter',
     'AuthenticationService', '$document', 'InterviewsService',
     'SystemPropertyService', 'ngToast', '$translate',
-    'NodeLanguageService', '$sessionStorage', 'lang', 'scrollTo', '$http', 'bsLoadingOverlayService'];
+    'NodeLanguageService', '$sessionStorage', 'lang', 'scrollTo', '$http', 'bsLoadingOverlayService',
+    'BookService'];
 
   function QuestionsCtrl(data, $scope, $mdDialog, FragmentsService,
                          $q, QuestionsService, ModulesService,
@@ -22,7 +23,8 @@
                          AgentsService, RulesService, $compile, $rootScope,
                          ModuleRuleService, $log, $timeout, $filter, auth, $document, InterviewsService,
                          SystemPropertyService, ngToast, $translate,
-                         NodeLanguageService, $sessionStorage, lang, scrollTo, $http, bsLoadingOverlayService) {
+                         NodeLanguageService, $sessionStorage, lang, scrollTo, $http, bsLoadingOverlayService,
+                         BookService) {
     var self = this;
     self.lang = lang;
     self.data = data;
@@ -1973,17 +1975,50 @@
                     if (response.status == 200) {
                         ngToast.create({
                             className: 'success',
-                            content: "Voxco survey is being generated/uploaded, kindly check Voxco in a few minutes."
+                          content: "Voxco survey is being generated/uploaded, kindly check Voxco in a few minutes."
                         });
                     } else {
-                        ngToast.create({
-                            className: 'danger',
-                            content: "response was " + response.status + " - Unable to export to Voxco"
-                        });
+                      ngToast.create({
+                        className: 'danger',
+                        content: "response was " + response.status + " - Unable to export to Voxco"
+                      });
                     }
                 });
         }]);
-      }
+
+      $scope.moduleMenuOptions.push(['Save to Book', function ($itemScope) {
+        const saveToBook = selected => {
+          console.log("save to book ", $itemScope.$modelValue?.idNode, selected.$$mdSelectId);
+          BookService.saveToBook($itemScope.$modelValue?.idNode, selected.$$mdSelectId)
+            .then(function (response) {
+              if (response.status == 200) {
+                ngToast.create({
+                  className: 'success',
+                  content: "Saved to book."
+                });
+              } else {
+                ngToast.create({
+                  className: 'danger',
+                  content: "response was " + response.status + " - Unable to save to Book"
+                });
+              }
+              $mdDialog.cancel();
+            });
+        }
+        $itemScope.saveToBook = saveToBook;
+        $itemScope.bookModule = {};
+        BookService.get().then(function (data) {
+          const books = data?.body?.books?.map(b => b.book);
+          $itemScope.books = books;
+          $mdDialog.show({
+            scope: $itemScope,
+            preserveScope: true,
+            templateUrl: 'scripts/questions/partials/saveToBookDialog.html',
+            clickOutsideToClose: false
+          });
+        })
+      }]);
+    }
 /*
     if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN', 'ROLE_ADMIN'])) {
       $scope.moduleMenuOptions.unshift(['Export QSF Responses', function () {

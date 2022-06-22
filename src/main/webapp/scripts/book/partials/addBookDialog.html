@@ -1,0 +1,43 @@
+<md-dialog aria-label="Add Book">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Adding new Book</h2>
+                <span flex></span>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-input-container>
+                    <label>Name</label>
+                    <input class="form-control"
+                           name="name"
+                           ng-model="newBook.name"
+                           placeholder="book name"
+                           required
+                           type="text"/>
+                </md-input-container>
+                <md-input-container>
+                    <label>Descripton</label>
+                    <input class="form-control"
+                           ng-model="newBook.description"
+                           name="description"
+                           placeholder="description"
+                           required
+                           type="text"/>
+                </md-input-container>
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row"><span flex></span>
+            <md-button ng-click="vm.save(newBook)">
+                Add
+            </md-button>
+            <md-button ng-click="cancel()">
+                Cancel
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>
+
