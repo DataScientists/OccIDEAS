@@ -12,27 +12,27 @@ import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties({"editEnabled", "info", "warning", "placeholder", "isEditing", "showAgentSlider", "id",
-  "collapsed", "isOpen", "isSelected"})
+        "collapsed", "isOpen", "isSelected"})
 public abstract class NodeVO {
 
-  protected long idNode;
-  protected long anchorId;
-  protected String name;
-  protected String description;
-  protected String type;
-  protected int sequence = 1;
-  protected String number;
-  protected String parentId;
-  protected long link;
-  protected long topNodeId;
-  protected Date lastUpdated;
+  public long idNode;
+  public long anchorId;
+  public String name;
+  public String description;
+  public String type;
+  public int sequence = 1;
+  public String number;
+  public String parentId;
+  public long link;
+  public long topNodeId;
+  public Date lastUpdated;
   @JsonInclude(Include.NON_EMPTY)
-  protected List<NoteVO> notes;
-  protected long originalId;
-  protected Integer deleted = 0;
-  protected String nodeclass;
+  public List<NoteVO> notes;
+  public long originalId;
+  public Integer deleted = 0;
+  public String nodeclass;
   @JsonInclude(Include.NON_NULL)
-  protected List<ModuleRuleVO> moduleRule;
+  public List<ModuleRuleVO> moduleRule;
 
   public long getIdNode() {
     return idNode;

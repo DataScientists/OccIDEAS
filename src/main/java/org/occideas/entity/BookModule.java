@@ -2,7 +2,6 @@ package org.occideas.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Blob;
 
 @Entity
 @Table(name = "BOOK_MODULE")
@@ -17,7 +16,7 @@ public class BookModule implements Serializable {
     private String fileName;
     @Column(name = "json", columnDefinition = "BLOB")
     @Lob
-    private Blob json;
+    private byte[] json;
     @Column(name = "hashCode")
     private Integer hashCode;
     private String type;
@@ -26,7 +25,7 @@ public class BookModule implements Serializable {
     public BookModule() {
     }
 
-    public BookModule(long id, long bookId, String fileName, Blob json, Integer hashCode, String type, String author) {
+    public BookModule(long id, long bookId, String fileName, byte[] json, Integer hashCode, String type, String author) {
         this.id = id;
         this.bookId = bookId;
         this.fileName = fileName;
@@ -36,7 +35,7 @@ public class BookModule implements Serializable {
         this.author = author;
     }
 
-    public BookModule(long bookId, String fileName, Blob json, Integer hashCode, String type, String author) {
+    public BookModule(long bookId, String fileName, byte[] json, Integer hashCode, String type, String author) {
         this.bookId = bookId;
         this.fileName = fileName;
         this.json = json;
@@ -77,11 +76,11 @@ public class BookModule implements Serializable {
         this.author = author;
     }
 
-    public Blob getObject() {
+    public byte[] getObject() {
         return json;
     }
 
-    public void setObject(Blob json) {
+    public void setObject(byte[] json) {
         this.json = json;
     }
 

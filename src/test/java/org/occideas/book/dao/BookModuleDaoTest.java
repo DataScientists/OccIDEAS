@@ -40,7 +40,7 @@ class BookModuleDaoTest {
         jobModule.setDescription("test description");
         final byte[] json = getJson(jobModule);
         final BookModule bookModule = bookModuleDao.save(new BookModule(1l, jobModule.getClass().getName(),
-                bookModuleDao.createBlob(json), jobModule.hashCode(),
+                json, jobModule.hashCode(),
                 jobModule.getClass().getName(),
                 "u12345"));
 
@@ -54,7 +54,7 @@ class BookModuleDaoTest {
     void givenObject_whenFindByFileName_shouldReturnBookModule() throws JsonProcessingException {
         JobModule sampleObject = new JobModule();
         bookModuleDao.save(new BookModule(1l, sampleObject.getClass().getName(),
-                bookModuleDao.createBlob(getJson(sampleObject)),
+                getJson(sampleObject),
                 sampleObject.hashCode(),
                 sampleObject.getClass().getName(),
                 "u12345"));
@@ -62,6 +62,7 @@ class BookModuleDaoTest {
         final Optional<BookModule> byFileNameAndBookId = bookModuleDao.findByFileNameAndBookId(sampleObject.getClass().getName(), 1l);
 
         assertTrue(byFileNameAndBookId.isPresent());
+
     }
 
     private byte[] getJson(JobModule jobModule) throws JsonProcessingException {

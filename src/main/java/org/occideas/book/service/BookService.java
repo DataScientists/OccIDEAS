@@ -22,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,10 +44,7 @@ public class BookService {
     private ModuleMapper moduleMapper;
 
     public List<BookVO> getBooks() {
-        return bookDao.list().stream().map(book -> {
-            final List<BookModule> bookModules = bookModuleDao.findByBookId(book.getId());
-            return new BookVO(book, bookModules);
-        }).collect(Collectors.toList());
+        return bookDao.list().stream().map(book -> new BookVO(book)).collect(Collectors.toList());
     }
 
     public BookVO findBookById(Long id) {
@@ -57,8 +53,7 @@ public class BookService {
             throw new BookNotExistException("Book does not exist");
         }
         final Book book = byId.get();
-        final List<BookModule> bookModules = bookModuleDao.findByBookId(book.getId());
-        return new BookVO(book, bookModules);
+        return new BookVO(book);
     }
 
 
@@ -72,9 +67,9 @@ public class BookService {
     }
 
     public void addToBook(long bookId, Object object, String userId) {
-        Blob serializedObject = null;
+        byte[] serializedObject = null;
         try {
-            serializedObject = bookModuleDao.createBlob(new ObjectMapper().writeValueAsBytes(object));
+            serializedObject = new ObjectMapper().writeValueAsBytes(object);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
         }
@@ -115,8 +110,8 @@ public class BookService {
         String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
         final BookModule bookModule = bookModuleDao.save(
                 new BookModule(bookRequest.getBookId(),
-                        modVO.getClass().getName(),
-                        bookModuleDao.createBlob(valueAsBytes), modVO.hashCode(),
+                        modVO.getName(),
+                        valueAsBytes, modVO.hashCode(),
                         modVO.getClass().getName(),
                         tokenManager.parseUsernameFromToken(token)));
         bookModuleDao.save(bookModule);

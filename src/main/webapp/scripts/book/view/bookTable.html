@@ -26,15 +26,18 @@
             </tr>
 
             <tr demo-tracked-table-row="row" ng-form="rowForm"
-                ng-hide="group.$hideRows" ng-repeat="module in group.modules">
-                <td filter="{name: 'text'}" title="'Module Name'" ng-if="!module.isEditing">{{module.name}}</td>
-                <td demo-tracked-table-cell
-                    filter="{name: 'text'}"
-                    ng-class="name.$dirty ? 'bg-warning' : ''"
-                    ng-form="name" ng-if="book.isEditing">
-                    <input class="editable-input form-control input-sm" name="name" ng-model="module.name"
-                           required type="text"/>
+                ng-hide="group.$hideRows" ng-repeat="data in group.data">
+                <td colspan="{{$columns.length}}">
+                    <table>
+                        <tr ng-repeat="module in data.modules">
+                            <td title="'Module Name'" ng-if="!module.isEditing">
+                                {{module.fileName}}
+                            </td>
+                        </tr>
+                    </table>
                 </td>
+
+
                 <!--                <td filter="{description: 'text'}" title="'Book Description'" ng-if="!book.isEditing">-->
                 <!--                    {{book.description}}-->
                 <!--                </td>-->

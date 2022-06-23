@@ -3,6 +3,7 @@ package org.occideas.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "BOOK")
@@ -15,6 +16,9 @@ public class Book implements Serializable {
     private String description;
     private LocalDateTime lastUpdated;
     private String createdBy;
+    @OneToMany
+    @JoinColumn(name = "bookId", referencedColumnName = "id", updatable = false)
+    private List<BookModule> modules;
 
     public Book() {
     }
@@ -70,5 +74,13 @@ public class Book implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<BookModule> getModules() {
+        return modules;
+    }
+
+    public void setModules(List<BookModule> modules) {
+        this.modules = modules;
     }
 }
