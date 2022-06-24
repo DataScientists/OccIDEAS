@@ -36,7 +36,7 @@ public class BookController {
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteBook(@PathParam("id") Long id) {
         final BookVO bookById = bookService.findBookById(id);
-        bookService.delete(bookById.getBook());
+        bookService.delete(bookById);
         return ResponseEntity.ok().build();
     }
 

@@ -52,7 +52,7 @@ class BookControllerTest {
     @Test
     public void deleteBook() {
         when(bookService.findBookById(anyLong())).thenReturn(new BookVO());
-        doNothing().when(bookService).delete(any(Book.class));
+        doNothing().when(bookService).delete(any(BookVO.class));
         ResponseEntity<Void> response = restTemplate.exchange("http://localhost:" + port + "/web/rest/book/1", HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }

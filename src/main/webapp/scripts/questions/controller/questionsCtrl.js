@@ -2008,7 +2008,7 @@
         $itemScope.saveToBook = saveToBook;
         $itemScope.bookModule = {};
         BookService.get().then(function (data) {
-          const books = data?.body?.books?.map(b => b.book);
+          const books = data?.body?.books;
           $itemScope.books = books;
           $mdDialog.show({
             scope: $itemScope,

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.book.dao.BookDao;
 import org.occideas.book.dao.BookModuleDao;
+import org.occideas.book.mapper.BookMapper;
 import org.occideas.book.request.BookRequest;
 import org.occideas.book.response.BookVO;
 import org.occideas.entity.Book;
@@ -42,9 +43,12 @@ public class BookService {
     private ModuleDao moduleDao;
     @Autowired
     private ModuleMapper moduleMapper;
+    @Autowired
+    private BookMapper bookMapper;
 
     public List<BookVO> getBooks() {
-        return bookDao.list().stream().map(book -> new BookVO(book)).collect(Collectors.toList());
+        final List<Book> books = bookDao.list();
+        return bookMapper.toBookVOList(books);
     }
 
     public BookVO findBookById(Long id) {
@@ -53,7 +57,7 @@ public class BookService {
             throw new BookNotExistException("Book does not exist");
         }
         final Book book = byId.get();
-        return new BookVO(book);
+        return bookMapper.toBookVO(book);
     }
 
 
@@ -118,7 +122,7 @@ public class BookService {
     }
 
 
-    public void delete(Book book) {
-        bookDao.delete(book);
+    public void delete(BookVO bookVO) {
+        bookDao.delete(bookMapper.toBook(bookVO));
     }
 }

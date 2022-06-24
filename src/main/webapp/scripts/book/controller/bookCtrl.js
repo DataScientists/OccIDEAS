@@ -10,7 +10,7 @@
         self.newBook = {};
 
         const getDataFromResponse = response => {
-            return response?.body?.books?.map(b => b.book);
+            return response?.body?.books;
         }
 
         self.tableParams = new NgTableParams({group: "name", count: 100}, {

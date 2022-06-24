@@ -1,23 +1,65 @@
 package org.occideas.book.response;
 
-import org.occideas.entity.Book;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class BookVO {
 
-    private Book book;
+    private long id;
+    private String name;
+    private String description;
+    private LocalDateTime lastUpdated;
+    private String createdBy;
+    private List<BookModuleVO> modules;
 
     public BookVO() {
     }
 
-    public BookVO(Book book) {
-        this.book = book;
+    public long getId() {
+        return id;
     }
 
-    public Book getBook() {
-        return book;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public void setBook(Book book) {
-        this.book = book;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public List<BookModuleVO> getModules() {
+        return modules;
+    }
+
+    public void setModules(List<BookModuleVO> modules) {
+        this.modules = modules;
     }
 }
