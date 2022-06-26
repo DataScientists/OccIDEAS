@@ -1,0 +1,102 @@
+<md-dialog aria-label="Compare Book" style="width: 70%;height: 80%">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Comparison Books</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="compareScope.cancel()"><span
+                        aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="row" style="width: 50%;">
+                <md-input-container class="md-block">
+                    <md-select required ng-model="compareScope.selectedBook" placeholder="Select a book to compare"
+                               ng-change="compareScope.startComparison()"
+                               style="width: 100%;">
+                        <md-option ng-repeat="book in compareScope.books"
+                                   ng-value="book.id"
+                                   style="width: 100%;">
+                            {{book.name}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+
+            <div class="md-dialog-content">
+                <div ng-if="compareScope.secondBook"
+                     style="display: flex;flex-direction: row;justify-content: space-between; width: 100%;">
+                    <div style="width: 100%;">
+                        <strong>
+                            <underline><h4>Summary</h4></underline>
+                        </strong>
+                        <div style="display: grid;justify-content: space-between; border: 1px solid #2b669a; grid-template-columns: 1fr 1fr;">
+                            <div style="border: 1px solid #2b669a;">
+                                <div><strong>Missing Modules from {{compareScope.book.name}}</strong></div>
+                                <div>{{compareScope.results.firstBookMissingModules}}</div>
+                            </div>
+                            <div style="border: 1px solid #2b669a;" ng-if="compareScope.secondBook">
+                                <div><strong>Missing Modules from {{compareScope.compareToBook.name}}</strong></div>
+                                <div>{{compareScope.results.secondBookMissingModules}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex;flex-direction: row;justify-content: space-between; max-height: 500px; overflow: scroll;">
+                    <div style="width: 100%;height: 100%;padding: 5px;border: 1px solid #2e6da4;">
+                        <div><strong><h3>{{compareScope.book.name}} book</h3></strong></div>
+                        <div ng-repeat="module in compareScope.book.modules">
+                            <div ng-style="{'background-color':compareScope.notExistInBook(module,1)?'red':'#2e6da4', 'color': 'whitesmoke'}">
+                                <span style="color: black;padding-left: 5px;"
+                                      ng-if="compareScope.notExistInBook(module,1)">(+)</span>
+                                <strong>Module:</strong>
+                                {{module.fileName}}
+                            </div>
+                            <div ui-tree id="first-tree-root"
+                                 ng-if="compareScope.secondBook && !compareScope.notExistInBook(module, 1)">
+                                <ol ui-tree-nodes ng-model="module.jobModule.nodes">
+                                    <li id="first-book-tree-body"
+                                        ng-include="'comparisonTreeFirstBook.html'"
+                                        ng-repeat="node in module.jobModule.nodes" ui-tree-node></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width: 100%;height: 100%;padding: 5px;border: 1px solid #2e6da4;"
+                         ng-if="compareScope.secondBook">
+                        <div><h3>{{compareScope.compareToBook.name}} book</h3></div>
+                        <div ng-repeat="module in compareScope.secondBook">
+                            <div ng-style="{'background-color':compareScope.notExistInBook(module)?'red':'#2e6da4', 'color': 'whitesmoke'}">
+                                <span style="color: black;padding-left: 5px;"
+                                      ng-if="compareScope.notExistInBook(module)">(+)</span>
+                                <strong>Module:</strong>
+                                {{module.fileName}}
+                            </div>
+                            <div ui-tree id="second-tree-root" ng-if="!compareScope.notExistInBook(module)">
+                                <ol ui-tree-nodes ng-model="module.jobModule.nodes">
+                                    <li id="second-book-tree-body"
+                                        ng-include="'comparisonTreeFirstBook.html'"
+                                        ng-repeat="node in module.jobModule.nodes" ui-tree-node></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </md-dialog-content>
+    </form>
+</md-dialog>
+<script id="comparisonTreeFirstBook.html" type="text/ng-template">
+    <div class="angular-ui-tree" ng-attr-data-nodrag="true">
+        <div class="tree-node">
+            <span><strong>{{node.nodeType}}:</strong>&nbsp;{{node.name}}</span>
+        </div>
+    </div>
+    </div>
+    <div ui-tree-nodes ng-model="node.nodes" ng-class="{hidden: collapsed}">
+        <div ng-repeat="node in node.nodes | orderBy:'sequence' " ui-tree-node
+             ng-include="'comparisonTreeFirstBook.html'"
+             class="angular-ui-tree-node" collapsed="false"></div>
+    </div>
+</script>
+

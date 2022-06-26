@@ -554,6 +554,7 @@ CREATE TABLE BOOK_MODULE
     hashCode bigint(20) NOT NULL,
     type     varchar(255) NOT NULL,
     author   varchar(255) NOT NULL,
+    idNode   bigint(20) NOT NULL,
     PRIMARY KEY (id)
 );
 

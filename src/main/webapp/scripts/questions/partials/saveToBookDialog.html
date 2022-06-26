@@ -1,4 +1,4 @@
-<md-dialog aria-label="Fragment Module">
+<md-dialog aria-label="Save To Book">
     <form ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
@@ -15,9 +15,9 @@
                 </div>
                 <div class="row" ng-if="!loading">
                     <md-input-container class="md-block" flex-gt-sm>
-                        <md-select required ng-model="bookModule">
+                        <md-select required ng-model="bookModule" placeholder="Select Book">
                             <md-option ng-repeat="book in books"
-                                       ng-value="book.id">
+                                       ng-value="book">
                                 {{book.name}}
                             </md-option>
                         </md-select>
@@ -26,13 +26,20 @@
             </div>
         </md-dialog-content>
 
-        <md-dialog-actions layout="row"><span flex></span>
-            <md-button ng-click="saveToBook(bookModule)">
-                Add
-            </md-button>
-            <md-button ng-click="cancel()">
-                Cancel
-            </md-button>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <div ng-if="inProgress" style="text-align:center;">
+                <md-progress-circular class="col-md-offset-5" md-mode="indeterminate">
+                </md-progress-circular>
+            </div>
+            <div ng-if="!inProgress">
+                <md-button ng-click="saveToBook(bookModule)">
+                    Add
+                </md-button>
+                <md-button ng-click="cancel()">
+                    Cancel
+                </md-button>
+            </div>
         </md-dialog-actions>
     </form>
 </md-dialog>

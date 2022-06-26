@@ -1987,9 +1987,10 @@
         }]);
 
       $scope.moduleMenuOptions.push(['Save to Book', function ($itemScope) {
-        const saveToBook = selected => {
-          console.log("save to book ", $itemScope.$modelValue?.idNode, selected.$$mdSelectId);
-          BookService.saveToBook($itemScope.$modelValue?.idNode, selected.$$mdSelectId)
+        const saveToBook = bookModule => {
+          $itemScope.inProgress = true;
+          const bookId = $itemScope.books[$itemScope.bookModule.$$mdSelectId].id;
+          BookService.saveToBook($itemScope.$modelValue?.idNode, bookId)
             .then(function (response) {
               if (response.status == 200) {
                 ngToast.create({
@@ -2002,7 +2003,11 @@
                   content: "response was " + response.status + " - Unable to save to Book"
                 });
               }
+              $itemScope.inProgress = false;
               $mdDialog.cancel();
+            })
+            .catch(e => {
+              $itemScope.inProgress = false;
             });
         }
         $itemScope.saveToBook = saveToBook;

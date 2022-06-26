@@ -21,11 +21,12 @@ public class BookModule implements Serializable {
     private Integer hashCode;
     private String type;
     private String author;
+    private long idNode;
 
     public BookModule() {
     }
 
-    public BookModule(long id, long bookId, String fileName, byte[] json, Integer hashCode, String type, String author) {
+    public BookModule(long id, long bookId, String fileName, byte[] json, Integer hashCode, String type, String author, long idNode) {
         this.id = id;
         this.bookId = bookId;
         this.fileName = fileName;
@@ -33,15 +34,17 @@ public class BookModule implements Serializable {
         this.hashCode = hashCode;
         this.type = type;
         this.author = author;
+        this.idNode = idNode;
     }
 
-    public BookModule(long bookId, String fileName, byte[] json, Integer hashCode, String type, String author) {
+    public BookModule(long bookId, String fileName, byte[] json, Integer hashCode, String type, String author, long idNode) {
         this.bookId = bookId;
         this.fileName = fileName;
         this.json = json;
         this.hashCode = hashCode;
         this.type = type;
         this.author = author;
+        this.idNode = idNode;
     }
 
     public String getFileName() {
@@ -98,5 +101,21 @@ public class BookModule implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public byte[] getJson() {
+        return json;
+    }
+
+    public void setJson(byte[] json) {
+        this.json = json;
+    }
+
+    public long getIdNode() {
+        return idNode;
+    }
+
+    public void setIdNode(long idNode) {
+        this.idNode = idNode;
     }
 }

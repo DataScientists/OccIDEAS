@@ -27,7 +27,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -70,30 +69,6 @@ public class BookService {
         return newBook.getId();
     }
 
-    public void addToBook(long bookId, Object object, String userId) {
-        byte[] serializedObject = null;
-        try {
-            serializedObject = new ObjectMapper().writeValueAsBytes(object);
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-        }
-        bookModuleDao.save(new BookModule(bookId, object.getClass().getName(),
-                serializedObject, object.hashCode(), object.getClass().getName(),
-                userId));
-    }
-
-    public long addAllToBook(long bookId, List<Object> objects, String userId) {
-        objects.forEach(obj -> addToBook(bookId, obj, userId));
-        return bookId;
-    }
-
-    public List<Object> addAllToBookExcludeExisting(long bookId, List<Object> objects, String userId) {
-        final List<Object> existingBookModuleInBook = getExistingBookModuleInBook(bookId, objects);
-        final List<Object> filteredBookModule = objects.stream().filter(obj -> !existingBookModuleInBook.contains(obj)).collect(Collectors.toList());
-        addAllToBook(bookId, filteredBookModule, userId);
-        return existingBookModuleInBook;
-    }
-
     public List<Object> getExistingBookModuleInBook(long bookId, List<Object> objects) {
         List<Object> results = new ArrayList<>();
         objects.forEach(obj -> {
@@ -108,17 +83,24 @@ public class BookService {
     public void addModuleToBook(BookRequest bookRequest) throws JsonProcessingException {
         final Optional<Book> bookOptional = bookDao.findById(bookRequest.getBookId());
         final JobModule module = moduleDao.get(bookRequest.getIdNode());
-        ModuleVO modVO = moduleMapper.convertToModuleVO(module, false);
+        ModuleVO modVO = moduleMapper.convertToModuleVO(module, true);
         final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(modVO);
         TokenManager tokenManager = new TokenManager();
         String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
-        final BookModule bookModule = bookModuleDao.save(
-                new BookModule(bookRequest.getBookId(),
-                        modVO.getName(),
-                        valueAsBytes, modVO.hashCode(),
-                        modVO.getClass().getName(),
-                        tokenManager.parseUsernameFromToken(token)));
-        bookModuleDao.save(bookModule);
+        final BookModule bookModule = new BookModule(bookRequest.getBookId(),
+                modVO.getName(),
+                valueAsBytes, modVO.hashCode(),
+                modVO.getClass().getName(),
+                tokenManager.parseUsernameFromToken(token),
+                bookRequest.getIdNode());
+        final Optional<BookModule> byIdNodeAndBookId = bookModuleDao.findByIdNodeAndBookId(bookRequest.getIdNode(), bookRequest.getBookId());
+        if (byIdNodeAndBookId.isPresent()) {
+            bookModule.setId(byIdNodeAndBookId.get().getId());
+        }
+
+        final BookModule savedBookModule = bookModuleDao.save(
+                bookModule);
+        bookModuleDao.save(savedBookModule);
     }
 
 

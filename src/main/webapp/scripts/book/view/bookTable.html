@@ -14,15 +14,24 @@
             <tbody ng-repeat="group in $groups">
             <tr class="ng-table-group">
                 <td colspan="{{$columns.length}}">
-                    <a href="" ng-click="group.$hideRows = !group.$hideRows">
+                    <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <a href="" ng-click="group.$hideRows = !group.$hideRows">
           	<span
                     class="glyphicon"
                     ng-class="{ 'glyphicon-chevron-right': group.$hideRows,
             'glyphicon-chevron-down': !group.$hideRows }"></span>
-                        <strong> {{ group.value }}</strong>
-                    </a>
+                                <strong> {{ group.value }}</strong>
+                            </a>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-sm"
+                                    ng-click="vm.compareBooks(group)">
+                                <span class="glyphicon glyphicon-book"></span>
+                            </button>
+                        </div>
+                    </div>
                 </td>
-
             </tr>
 
             <tr demo-tracked-table-row="row" ng-form="rowForm"
@@ -36,42 +45,7 @@
                         </tr>
                     </table>
                 </td>
-
-
-                <!--                <td filter="{description: 'text'}" title="'Book Description'" ng-if="!book.isEditing">-->
-                <!--                    {{book.description}}-->
-                <!--                </td>-->
-                <!--                <td demo-tracked-table-cell-->
-                <!--                    filter="{description: 'text'}"-->
-                <!--                    ng-class="description.$dirty ? 'bg-warning' : ''"-->
-                <!--                    ng-form="description" ng-if="book.isEditing">-->
-                <!--                    <input class="editable-input form-control input-sm" name="name" ng-model="book.description"-->
-                <!--                           required type="text"/>-->
-                <!--                </td>-->
-                <!--                <td filter="{description: 'text'}" title="'Description'">{{book.description}}</td>-->
-                <!--                <td>-->
-                <!--                    <button class="btn btn-primary btn-sm" id="saveBtn"-->
-                <!--                            ng-click="vm.save(book)" ng-disabled="rowForm.$pristine || rowForm.$invalid"-->
-                <!--                            ng-if="book.isEditing">-->
-                <!--                        <span class="glyphicon glyphicon-ok"></span>-->
-                <!--                    </button>-->
-                <!--                    <button class="btn btn-default btn-sm"-->
-                <!--                            ng-click="vm.cancel(book)" ng-if="book.isEditing">-->
-                <!--                        <span class="glyphicon glyphicon-remove"></span>-->
-                <!--                    </button>-->
-                <!--                    <button class="btn btn-default" ng-click="vm.edit(book)" title="Edit" ng-if="!book.isEditing">-->
-                <!--                        <span class="glyphicon glyphicon-pencil"></span>-->
-                <!--                    </button>-->
-                <!--                    <button class="btn btn-default" ng-click="vm.deleteBook(book)" title="Delete"-->
-                <!--                            ng-if="!book.isEditing">-->
-                <!--                        <span class="glyphicon glyphicon-trash"></span>-->
-                <!--                    </button>-->
-                <!--                </td>-->
-
             </tr>
-            </tbody>
-
-            </tbody>
         </table>
     </div>
 </div>

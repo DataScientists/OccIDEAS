@@ -42,7 +42,7 @@ class BookModuleDaoTest {
         final BookModule bookModule = bookModuleDao.save(new BookModule(1l, jobModule.getClass().getName(),
                 json, jobModule.hashCode(),
                 jobModule.getClass().getName(),
-                "u12345"));
+                "u12345", 1l));
 
         final Optional<BookModule> fileById = bookModuleDao.findById(bookModule.getId());
 
@@ -57,7 +57,7 @@ class BookModuleDaoTest {
                 getJson(sampleObject),
                 sampleObject.hashCode(),
                 sampleObject.getClass().getName(),
-                "u12345"));
+                "u12345", 1l));
 
         final Optional<BookModule> byFileNameAndBookId = bookModuleDao.findByFileNameAndBookId(sampleObject.getClass().getName(), 1l);
 

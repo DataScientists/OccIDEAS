@@ -55,4 +55,19 @@ public class BookModuleDao extends GenericBaseDao<BookModule, Long> {
                 serializeObject
         );
     }
+
+    public Optional<BookModule> findByIdNodeAndBookId(long idNode, long bookId) {
+        final Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<BookModule> criteria = builder.createQuery(BookModule.class);
+        Root<BookModule> root = criteria.from(BookModule.class);
+        criteria.select(root);
+        criteria.where(builder.and(
+                        builder.equal(root.get(BookModule_.BOOK_ID), bookId),
+                        builder.equal(root.get(BookModule_.ID_NODE), idNode)
+                )
+        );
+        final Optional<BookModule> bookModule = sessionFactory.getCurrentSession().createQuery(criteria).uniqueResultOptional();
+        return bookModule;
+    }
 }
