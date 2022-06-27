@@ -14,13 +14,12 @@ DROP TABLE IF EXISTS BOOK_MODULE;
 
 CREATE TABLE BOOK_MODULE
 (
-    id       bigint(20) NOT NULL AUTO_INCREMENT,
     bookId   varchar(255) NOT NULL,
+    idNode   bigint(20) NOT NULL,
     fileName varchar(255) NOT NULL,
     json     blob         NOT NULL,
     hashCode bigint(20) NOT NULL,
     type     varchar(255) NOT NULL,
     author   varchar(255) NOT NULL,
-    idNode   bigint(20) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (bookId, idNode)
 );

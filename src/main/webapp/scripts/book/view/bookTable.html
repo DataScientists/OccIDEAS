@@ -14,7 +14,7 @@
             <tbody ng-repeat="group in $groups">
             <tr class="ng-table-group">
                 <td colspan="{{$columns.length}}">
-                    <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
                         <div>
                             <a href="" ng-click="group.$hideRows = !group.$hideRows">
           	<span
@@ -36,14 +36,17 @@
 
             <tr demo-tracked-table-row="row" ng-form="rowForm"
                 ng-hide="group.$hideRows" ng-repeat="data in group.data">
-                <td colspan="{{$columns.length}}">
-                    <table>
-                        <tr ng-repeat="module in data.modules">
-                            <td title="'Module Name'" ng-if="!module.isEditing">
-                                {{module.fileName}}
-                            </td>
-                        </tr>
-                    </table>
+                <td colspan="{{$columns.length}}" style="padding: 2px">
+                    <div ng-repeat="module in data.modules" style="padding: 2px; width: 50%; border: 1px solid #2e6da4">
+                        <div style="padding: 2px; width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
+                            <div>{{module.fileName}}</div>
+                            <div>
+                                <button class="btn btn-default" ng-click="vm.delete(module)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </table>

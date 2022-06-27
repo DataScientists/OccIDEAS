@@ -9,13 +9,14 @@
 
         <md-dialog-content>
             <div class="md-dialog-content">
-                <div class="row" ng-if="loading" style="text-align:center;">
+                <div class="row" ng-show="loading" style="text-align:center;">
                     <md-progress-circular class="col-md-offset-5" md-mode="indeterminate">
                     </md-progress-circular>
                 </div>
-                <div class="row" ng-if="!loading">
+                <div class="row" ng-show="!loading">
                     <md-input-container class="md-block" flex-gt-sm>
-                        <md-select required ng-model="bookModule" placeholder="Select Book">
+                        <md-select required ng-model="selectedBook" placeholder="Select Book"
+                                   ng-model-options="{trackBy: '$value.id'}">
                             <md-option ng-repeat="book in books"
                                        ng-value="book">
                                 {{book.name}}
@@ -33,7 +34,7 @@
                 </md-progress-circular>
             </div>
             <div ng-if="!inProgress">
-                <md-button ng-click="saveToBook(bookModule)">
+                <md-button ng-click="saveToBook(selectedBook)">
                     Add
                 </md-button>
                 <md-button ng-click="cancel()">

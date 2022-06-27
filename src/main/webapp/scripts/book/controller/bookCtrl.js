@@ -110,7 +110,10 @@
         cancel() {
           $mdDialog.cancel();
         },
-        notExistInBook(module, bookNum) {
+        notExistInBook(module, bookNum = 0) {
+          if (!this.compareComplete || !this.secondBook) {
+            return;
+          }
           switch (bookNum) {
             case 1 : {
               return this.results.secondBookMissingIdNodes.includes(module.jobModule.idNode)
@@ -118,6 +121,46 @@
             default: {
               return this.results.firstBookMissingIdNodes.includes(module.jobModule.idNode)
             }
+          }
+        },
+        hasDifference(node) {
+          if (!node) {
+            return false;
+          }
+
+          if (!this.compareComplete || !this.results.difference.length) {
+            return false;
+          }
+
+          return this.results.difference.includes(node.idNode)
+        },
+        isToggled(node) {
+          if (!node) {
+            return false;
+          }
+
+          if (!this.compareComplete) {
+            return false;
+          }
+
+          return this.results.toggleDiffs.includes(`${node.idNode}-toggle-1`);
+        },
+        toggle(node) {
+          if (!node) {
+            return false;
+          }
+
+          if (!this.compareComplete) {
+            return false;
+          }
+
+          const toggledFalseIndex = this.results.toggleDiffs.indexOf(`${node.idNode}-toggle-0`);
+          const toggledTrueIndex = this.results.toggleDiffs.indexOf(`${node.idNode}-toggle-1`);
+
+          if (toggledFalseIndex !== -1) {
+            this.results.toggleDiffs[toggledFalseIndex] = `${node.idNode}-toggle-1`;
+          } else {
+            this.results.toggleDiffs[toggledTrueIndex] = `${node.idNode}-toggle-0`;
           }
         },
         startComparison() {

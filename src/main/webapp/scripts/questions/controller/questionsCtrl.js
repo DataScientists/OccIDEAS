@@ -1987,9 +1987,9 @@
         }]);
 
       $scope.moduleMenuOptions.push(['Save to Book', function ($itemScope) {
-        const saveToBook = bookModule => {
-          $itemScope.inProgress = true;
-          const bookId = $itemScope.books[$itemScope.bookModule.$$mdSelectId].id;
+        const saveToBook = (selectedBook) => {
+          $scope.inProgress = true;
+          const bookId = selectedBook.id;
           BookService.saveToBook($itemScope.$modelValue?.idNode, bookId)
             .then(function (response) {
               if (response.status == 200) {
@@ -2003,20 +2003,25 @@
                   content: "response was " + response.status + " - Unable to save to Book"
                 });
               }
-              $itemScope.inProgress = false;
+              $scope.inProgress = false;
               $mdDialog.cancel();
             })
             .catch(e => {
-              $itemScope.inProgress = false;
+              $scope.inProgress = false;
             });
         }
-        $itemScope.saveToBook = saveToBook;
-        $itemScope.bookModule = {};
+        $scope.saveToBook = saveToBook;
         BookService.get().then(function (data) {
           const books = data?.body?.books;
-          $itemScope.books = books;
+          if (books.length === 0) {
+            alert('No books found.');
+            return;
+          }
+
+          $scope.books = books;
+          $scope.selectedBook = books[0];
           $mdDialog.show({
-            scope: $itemScope,
+            scope: $scope,
             preserveScope: true,
             templateUrl: 'scripts/questions/partials/saveToBookDialog.html',
             clickOutsideToClose: false

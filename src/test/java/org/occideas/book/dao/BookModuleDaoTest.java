@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
@@ -33,31 +31,15 @@ class BookModuleDaoTest {
     }
 
     @Test
-    void givenObject_whenConvertToJson_shouldSave() throws IOException {
-        JobModule jobModule = new JobModule();
-        jobModule.setName("test name");
-        jobModule.setIdNode(1l);
-        jobModule.setDescription("test description");
-        final byte[] json = getJson(jobModule);
-        final BookModule bookModule = bookModuleDao.save(new BookModule(1l, jobModule.getClass().getName(),
-                json, jobModule.hashCode(),
-                jobModule.getClass().getName(),
-                "u12345", 1l));
-
-        final Optional<BookModule> fileById = bookModuleDao.findById(bookModule.getId());
-
-        assertTrue(fileById.isPresent());
-        assertEquals(jobModule.hashCode(), fileById.get().getHashCode());
-    }
-
-    @Test
     void givenObject_whenFindByFileName_shouldReturnBookModule() throws JsonProcessingException {
         JobModule sampleObject = new JobModule();
-        bookModuleDao.save(new BookModule(1l, sampleObject.getClass().getName(),
+        bookModuleDao.save(new BookModule(1l,
+                1l,
+                sampleObject.getClass().getName(),
                 getJson(sampleObject),
                 sampleObject.hashCode(),
                 sampleObject.getClass().getName(),
-                "u12345", 1l));
+                "u12345"));
 
         final Optional<BookModule> byFileNameAndBookId = bookModuleDao.findByFileNameAndBookId(sampleObject.getClass().getName(), 1l);
 

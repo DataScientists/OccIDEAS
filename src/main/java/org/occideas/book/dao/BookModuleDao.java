@@ -20,7 +20,7 @@ import java.util.Optional;
 public class BookModuleDao extends GenericBaseDao<BookModule, Long> {
 
     public BookModuleDao() {
-        super(BookModule.class, BookModule_.ID);
+        super(BookModule.class, BookModule_.BOOK_ID);
     }
 
     public Optional<BookModule> findByFileNameAndBookId(String filename, long bookId) {

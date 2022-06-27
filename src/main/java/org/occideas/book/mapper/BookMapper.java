@@ -28,7 +28,7 @@ public class BookMapper {
     public BookModuleVO toBookModuleVO(BookModule bookModule) {
         BookModuleVO vo = new BookModuleVO();
         vo.setBookId(bookModule.getBookId());
-        vo.setId(bookModule.getId());
+        vo.setIdNode(bookModule.getIdNode());
         vo.setAuthor(bookModule.getAuthor());
         try {
             ModuleVO jobModule = new ObjectMapper().readValue(bookModule.getObject(), ModuleVO.class);

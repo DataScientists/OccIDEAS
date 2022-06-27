@@ -8,8 +8,8 @@ import java.io.IOException;
 
 public class BookModuleVO {
 
-    private long id;
     private long bookId;
+    private long idNode;
     private String fileName;
     private ModuleVO jobModule;
     private Integer hashCode;
@@ -20,7 +20,7 @@ public class BookModuleVO {
     }
 
     public BookModuleVO(BookModule bookModule) {
-        this.id = bookModule.getId();
+        this.idNode = bookModule.getIdNode();
         this.bookId = bookModule.getBookId();
         this.fileName = bookModule.getFileName();
         try {
@@ -33,12 +33,12 @@ public class BookModuleVO {
         this.author = bookModule.getAuthor();
     }
 
-    public long getId() {
-        return id;
+    public long getIdNode() {
+        return idNode;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setIdNode(long idNode) {
+        this.idNode = idNode;
     }
 
     public long getBookId() {

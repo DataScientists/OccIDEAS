@@ -21,6 +21,7 @@ import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -80,6 +81,7 @@ public class BookService {
         return results;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addModuleToBook(BookRequest bookRequest) throws JsonProcessingException {
         final Optional<Book> bookOptional = bookDao.findById(bookRequest.getBookId());
         final JobModule module = moduleDao.get(bookRequest.getIdNode());
@@ -87,20 +89,15 @@ public class BookService {
         final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(modVO);
         TokenManager tokenManager = new TokenManager();
         String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
-        final BookModule bookModule = new BookModule(bookRequest.getBookId(),
+        final BookModule bookModule = new BookModule(
+                bookRequest.getBookId(),
+                bookRequest.getIdNode(),
                 modVO.getName(),
                 valueAsBytes, modVO.hashCode(),
                 modVO.getClass().getName(),
-                tokenManager.parseUsernameFromToken(token),
-                bookRequest.getIdNode());
-        final Optional<BookModule> byIdNodeAndBookId = bookModuleDao.findByIdNodeAndBookId(bookRequest.getIdNode(), bookRequest.getBookId());
-        if (byIdNodeAndBookId.isPresent()) {
-            bookModule.setId(byIdNodeAndBookId.get().getId());
-        }
+                tokenManager.parseUsernameFromToken(token));
 
-        final BookModule savedBookModule = bookModuleDao.save(
-                bookModule);
-        bookModuleDao.save(savedBookModule);
+        bookModuleDao.save(bookModule);
     }
 
 

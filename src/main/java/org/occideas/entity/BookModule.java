@@ -5,13 +5,15 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "BOOK_MODULE")
+@IdClass(BookModuleId.class)
 public class BookModule implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
     @Column(name = "bookId")
     private long bookId;
+    @Id
+    @Column(name = "idNode")
+    private long idNode;
     @Column(name = "fileName")
     private String fileName;
     @Column(name = "json", columnDefinition = "BLOB")
@@ -21,30 +23,19 @@ public class BookModule implements Serializable {
     private Integer hashCode;
     private String type;
     private String author;
-    private long idNode;
+
 
     public BookModule() {
     }
 
-    public BookModule(long id, long bookId, String fileName, byte[] json, Integer hashCode, String type, String author, long idNode) {
-        this.id = id;
+    public BookModule(long bookId, long idNode, String fileName, byte[] json, Integer hashCode, String type, String author) {
         this.bookId = bookId;
+        this.idNode = idNode;
         this.fileName = fileName;
         this.json = json;
         this.hashCode = hashCode;
         this.type = type;
         this.author = author;
-        this.idNode = idNode;
-    }
-
-    public BookModule(long bookId, String fileName, byte[] json, Integer hashCode, String type, String author, long idNode) {
-        this.bookId = bookId;
-        this.fileName = fileName;
-        this.json = json;
-        this.hashCode = hashCode;
-        this.type = type;
-        this.author = author;
-        this.idNode = idNode;
     }
 
     public String getFileName() {
@@ -55,13 +46,6 @@ public class BookModule implements Serializable {
         this.fileName = fileName;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public long getBookId() {
         return bookId;
