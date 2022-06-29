@@ -6,9 +6,12 @@ import org.occideas.book.response.BookResponse;
 import org.occideas.book.response.BookVO;
 import org.occideas.book.service.BookService;
 import org.occideas.entity.Book;
+import org.occideas.security.handler.TokenManager;
+import org.occideas.security.model.TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.ws.rs.*;
 
@@ -53,7 +56,10 @@ public class BookController {
     @Path("addToBook")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createBook(BookRequest bookRequest) throws JsonProcessingException {
-        bookService.addModuleToBook(bookRequest);
+        TokenManager tokenManager = new TokenManager();
+        String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+        String updatedBy = tokenManager.parseUsernameFromToken(token);
+        bookService.addModuleToBook(bookRequest, updatedBy);
         return ResponseEntity.ok().build();
     }
 

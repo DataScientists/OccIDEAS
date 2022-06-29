@@ -11,21 +11,27 @@ import org.occideas.book.request.BookRequest;
 import org.occideas.book.response.BookVO;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
+import org.occideas.entity.Fragment;
 import org.occideas.entity.JobModule;
 import org.occideas.exceptions.BookNotExistException;
+import org.occideas.fragment.dao.FragmentDao;
+import org.occideas.mapper.FragmentMapper;
 import org.occideas.mapper.ModuleMapper;
 import org.occideas.module.dao.ModuleDao;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
+import org.occideas.vo.FragmentVO;
 import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
@@ -41,7 +47,11 @@ public class BookService {
     @Autowired
     private ModuleDao moduleDao;
     @Autowired
+    private FragmentDao fragmentDao;
+    @Autowired
     private ModuleMapper moduleMapper;
+    @Autowired
+    private FragmentMapper fragmentMapper;
     @Autowired
     private BookMapper bookMapper;
 
@@ -69,32 +79,48 @@ public class BookService {
         return newBook.getId();
     }
 
-    public List<Object> getExistingBookModuleInBook(long bookId, List<Object> objects) {
-        List<Object> results = new ArrayList<>();
-        objects.forEach(obj -> {
-            final Optional<BookModule> byFileNameAndBookId = bookModuleDao.findByFileNameAndBookId(obj.getClass().getName(), bookId);
-            if (byFileNameAndBookId.isPresent()) {
-                results.add(obj);
-            }
-        });
-        return results;
+    @Async
+    public void addModuleToBook(BookRequest bookRequest, String updatedBy) throws JsonProcessingException {
+        saveModuleToBook(bookRequest, updatedBy);
     }
 
-    public void addModuleToBook(BookRequest bookRequest) throws JsonProcessingException {
-        final JobModule module = moduleDao.get(bookRequest.getIdNode());
-        ModuleVO modVO = moduleMapper.convertToModuleVO(module, true);
-        final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(modVO);
-        TokenManager tokenManager = new TokenManager();
-        String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+    private void saveModuleToBook(BookRequest bookRequest, String updatedBy) throws JsonProcessingException {
+        NodeVO nodeVO = getNodeVO(bookRequest);
+
+
+        final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(nodeVO);
+
         final BookModule bookModule = new BookModule(
                 bookRequest.getBookId(),
                 bookRequest.getIdNode(),
-                modVO.getName(),
-                valueAsBytes, modVO.hashCode(),
-                modVO.getClass().getName(),
-                tokenManager.parseUsernameFromToken(token));
+                nodeVO.getName(),
+                valueAsBytes, nodeVO.hashCode(),
+                nodeVO.getClass().getName(),
+                updatedBy);
 
         bookModuleDao.save(bookModule);
+
+        nodeVO.getChildNodes().stream()
+                .filter(node -> node.getLink() != 0l)
+                .forEach(node -> {
+                    try {
+                        saveModuleToBook(new BookRequest(node.getLink(), bookRequest.getBookId()), updatedBy);
+                    } catch (JsonProcessingException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                });
+    }
+
+    private NodeVO getNodeVO(BookRequest bookRequest) {
+        final JobModule module = moduleDao.get(bookRequest.getIdNode());
+        if (Objects.nonNull(module)) {
+            ModuleVO modVO = moduleMapper.convertToModuleVO(module, true);
+            return modVO;
+        } else {
+            final Fragment fragment = fragmentDao.get(bookRequest.getIdNode());
+            FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO(fragment, true);
+            return fragmentVO;
+        }
     }
 
     public void deleteBookModuleInBook(long bookId, long idNode) {

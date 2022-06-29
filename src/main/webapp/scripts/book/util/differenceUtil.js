@@ -9,8 +9,6 @@
     const identifyMissingModules = (firstBook, secondBook) => {
       const firstBookIdNodes = firstBook.map(module => module.jobModule.idNode);
       const secondBookIdNodes = secondBook.map(module => module.jobModule.idNode);
-      console.log("firstBookIdNodes", firstBookIdNodes);
-      console.log("secondBookIdNodes", secondBookIdNodes);
 
       const buildMissingModulesAsCommaStr = (missingModIdNodes1, missingModIdNodes2, book) => {
         return missingModIdNodes1.filter(idNode => !missingModIdNodes2.includes(idNode))
@@ -83,7 +81,6 @@
           }
         }
       });
-      console.log('difference', difference);
 
       const toggleDiffs = difference.map(diff => `${diff}-toggle-0`);
 

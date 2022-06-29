@@ -5,6 +5,14 @@ public class BookRequest {
     private long idNode;
     private long bookId;
 
+    public BookRequest() {
+    }
+
+    public BookRequest(long idNode, long bookId) {
+        this.idNode = idNode;
+        this.bookId = bookId;
+    }
+
     public long getIdNode() {
         return idNode;
     }

@@ -1995,7 +1995,7 @@
               if (response.status == 200) {
                 ngToast.create({
                   className: 'success',
-                  content: "Saved to book."
+                  content: "Saved to book, note that it may take time to reflect the modules in the book."
                 });
               } else {
                 ngToast.create({
