@@ -21,7 +21,6 @@ import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -81,9 +80,7 @@ public class BookService {
         return results;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addModuleToBook(BookRequest bookRequest) throws JsonProcessingException {
-        final Optional<Book> bookOptional = bookDao.findById(bookRequest.getBookId());
         final JobModule module = moduleDao.get(bookRequest.getIdNode());
         ModuleVO modVO = moduleMapper.convertToModuleVO(module, true);
         final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(modVO);
@@ -98,6 +95,10 @@ public class BookService {
                 tokenManager.parseUsernameFromToken(token));
 
         bookModuleDao.save(bookModule);
+    }
+
+    public void deleteBookModuleInBook(long bookId, long idNode) {
+        bookModuleDao.deleteByBookIdAndIdNode(bookId, idNode);
     }
 
 

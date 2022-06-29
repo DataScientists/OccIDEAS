@@ -47,6 +47,25 @@ class BookModuleDaoTest {
 
     }
 
+    @Test
+    void givenExistModule_whenDelete_shouldDeleteBookModule() throws JsonProcessingException {
+        JobModule sampleObject = new JobModule();
+        bookModuleDao.save(new BookModule(1l,
+                1l,
+                sampleObject.getClass().getName(),
+                getJson(sampleObject),
+                sampleObject.hashCode(),
+                sampleObject.getClass().getName(),
+                "u12345"));
+        final Optional<BookModule> saved = bookModuleDao.findByFileNameAndBookId(sampleObject.getClass().getName(), 1l);
+        assertTrue(saved.isPresent());
+
+        bookModuleDao.deleteByBookIdAndIdNode(1l, 1l);
+
+        final Optional<BookModule> deleted = bookModuleDao.findByFileNameAndBookId(sampleObject.getClass().getName(), 1l);
+        assertTrue(deleted.isEmpty());
+    }
+
     private byte[] getJson(JobModule jobModule) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsBytes(jobModule);
     }

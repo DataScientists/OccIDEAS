@@ -26,8 +26,15 @@
                         </div>
                         <div>
                             <button class="btn btn-primary btn-sm"
-                                    ng-click="vm.compareBooks(group)">
+                                    ng-click="vm.compareBooks(group)"
+                                    title="Compare Books">
                                 <span class="glyphicon glyphicon-book"></span>
+                            </button>
+                            <button class="btn btn-sm"
+                                    style="background-color: red"
+                                    ng-click="vm.deleteBook(group)"
+                                    title="Delete Book {{group.value}}">
+                                <span class="glyphicon glyphicon-trash"></span>
                             </button>
                         </div>
                     </div>
@@ -41,7 +48,10 @@
                         <div style="padding: 2px; width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
                             <div>{{module.fileName}}</div>
                             <div>
-                                <button class="btn btn-default" ng-click="vm.delete(module)">
+                                <button class="btn btn-default"
+                                        title="Delete Module {{module.fileName}}"
+                                        style="background-color: red"
+                                        ng-click="vm.deleteModuleInBook(data.name, module)">
                                     <span class="glyphicon glyphicon-trash"></span>
                                 </button>
                             </div>

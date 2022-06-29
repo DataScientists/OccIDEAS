@@ -67,21 +67,45 @@
     }
 
     self.deleteBook = book => {
-      BookService.deleteBook(book).then(response => {
-        if (response.status === 200) {
-          self.tableParams.shouldGetData = true;
-          self.tableParams.reload().then(function (data) {
-            if (data.length === 0 && self.tableParams.total() > 0) {
-              self.tableParams.page(self.tableParams.page() - 1);
-              self.tableParams.reload();
-            }
-          });
-        } else {
-          alert('error occurred', response);
-        }
-      }).catch(e => {
-        alert('error occurred', e);
-      });
+      const {name, ...other} = book.data[0];
+      if (confirm(`Are you sure you would like to delete the book ${name}?`)) {
+        BookService.deleteBook(other).then(response => {
+          if (response.status === 200) {
+            self.tableParams.shouldGetData = true;
+            self.tableParams.reload().then(function (data) {
+              if (data.length === 0 && self.tableParams.total() > 0) {
+                self.tableParams.page(self.tableParams.page() - 1);
+                self.tableParams.reload();
+              }
+            });
+          } else {
+            alert('error occurred', response);
+          }
+        }).catch(e => {
+          alert('error occurred', e);
+        });
+      }
+    }
+
+    self.deleteModuleInBook = (bookName, module) => {
+      const {bookId, idNode, fileName} = module;
+      if (confirm(`Are you sure you would like to delete module ${fileName} in ${bookName}?`)) {
+        BookService.deleteModuleInBook(bookId, idNode).then(response => {
+          if (response.status === 200) {
+            self.tableParams.shouldGetData = true;
+            self.tableParams.reload().then(function (data) {
+              if (data.length === 0 && self.tableParams.total() > 0) {
+                self.tableParams.page(self.tableParams.page() - 1);
+                self.tableParams.reload();
+              }
+            });
+          } else {
+            alert('error occurred', response);
+          }
+        }).catch(e => {
+          alert('error occurred', e);
+        });
+      }
     }
 
     self.compareBooks = group => {

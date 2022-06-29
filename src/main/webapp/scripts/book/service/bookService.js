@@ -32,6 +32,14 @@
             return request;
         };
 
+        const deleteModuleInBook = function (bookId, idNode) {
+            const request = $http({
+                method: 'DELETE',
+                url: `${bookEndPoint}/${bookId}/${idNode}`,
+            });
+            return request;
+        };
+
         const saveToBook = (idNode, bookId) => {
             const request = $http({
                 method: 'POST',
@@ -48,7 +56,8 @@
             get: getBook,
             save,
             deleteBook,
-            saveToBook
+            saveToBook,
+            deleteModuleInBook
         };
     }
 

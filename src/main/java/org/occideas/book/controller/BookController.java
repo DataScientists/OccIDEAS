@@ -40,6 +40,15 @@ public class BookController {
         return ResponseEntity.ok().build();
     }
 
+    @DELETE
+    @Path("/{bookId}/{idNode}")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteBookModuleInBook(@PathParam("bookId") Long bookId, @PathParam("idNode") Long idNode) {
+        bookService.deleteBookModuleInBook(bookId, idNode);
+        return ResponseEntity.ok().build();
+    }
+
+
     @POST
     @Path("addToBook")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
