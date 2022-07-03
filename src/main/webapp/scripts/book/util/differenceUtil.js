@@ -30,7 +30,6 @@
     const getDiff = (firstBookJobModule, secondBookJobModule, diff = []) => {
       if (firstBookJobModule.deleted !== secondBookJobModule.deleted
         || firstBookJobModule.name !== secondBookJobModule.name
-        || firstBookJobModule.number !== secondBookJobModule.number
         || firstBookJobModule.topNodeId !== secondBookJobModule.topNodeId
         || firstBookJobModule.parentId !== secondBookJobModule.parentId
         || firstBookJobModule.link !== secondBookJobModule.link) {

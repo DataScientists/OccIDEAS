@@ -174,7 +174,7 @@
     }
     if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ADMIN'])) {
       tabs.push({
-        title: 'Book',
+        title: 'Books',
         viewName: 'book@tabs'
       });
     }
