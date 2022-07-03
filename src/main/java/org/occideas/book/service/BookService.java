@@ -11,17 +11,11 @@ import org.occideas.book.request.BookRequest;
 import org.occideas.book.response.BookVO;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
-import org.occideas.entity.Fragment;
-import org.occideas.entity.JobModule;
 import org.occideas.exceptions.BookNotExistException;
-import org.occideas.fragment.dao.FragmentDao;
-import org.occideas.mapper.FragmentMapper;
-import org.occideas.mapper.ModuleMapper;
-import org.occideas.module.dao.ModuleDao;
+import org.occideas.node.dao.NodeDao;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
-import org.occideas.vo.FragmentVO;
-import org.occideas.vo.ModuleVO;
+import org.occideas.utilities.NodeUtil;
 import org.occideas.vo.NodeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -31,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Transactional
@@ -45,15 +38,12 @@ public class BookService {
     @Autowired
     private BookDao bookDao;
     @Autowired
-    private ModuleDao moduleDao;
-    @Autowired
-    private FragmentDao fragmentDao;
-    @Autowired
-    private ModuleMapper moduleMapper;
-    @Autowired
-    private FragmentMapper fragmentMapper;
+    private NodeDao nodeDao;
     @Autowired
     private BookMapper bookMapper;
+    @Autowired
+    private NodeUtil nodeUtil;
+
 
     public List<BookVO> getBooks() {
         final List<Book> books = bookDao.list();
@@ -81,12 +71,11 @@ public class BookService {
 
     @Async
     public void addModuleToBook(BookRequest bookRequest, String updatedBy) throws JsonProcessingException {
-        saveModuleToBook(bookRequest, updatedBy);
+        saveModuleToBook(bookRequest, updatedBy, true);
     }
 
-    private void saveModuleToBook(BookRequest bookRequest, String updatedBy) throws JsonProcessingException {
-        NodeVO nodeVO = getNodeVO(bookRequest);
-
+    private void saveModuleToBook(BookRequest bookRequest, String updatedBy, boolean shouldSave) throws JsonProcessingException {
+        NodeVO nodeVO = nodeUtil.convertToNodeVO(nodeDao.getNode(bookRequest.getIdNode()));
 
         final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(nodeVO);
 
@@ -98,29 +87,23 @@ public class BookService {
                 nodeVO.getClass().getName(),
                 updatedBy);
 
-        bookModuleDao.save(bookModule);
+        if (shouldSave) {
+            log.info("Adding Module {}", nodeVO.getName());
+            bookModuleDao.save(bookModule);
+        }
 
         nodeVO.getChildNodes().stream()
-                .filter(node -> node.getLink() != 0l)
                 .forEach(node -> {
                     try {
-                        saveModuleToBook(new BookRequest(node.getLink(), bookRequest.getBookId()), updatedBy);
+                        if (node.getLink() != 0l) {
+                            saveModuleToBook(new BookRequest(node.getLink(), bookRequest.getBookId()), updatedBy, true);
+                        } else {
+                            saveModuleToBook(new BookRequest(node.getIdNode(), bookRequest.getBookId()), updatedBy, false);
+                        }
                     } catch (JsonProcessingException e) {
                         log.error(e.getMessage(), e);
                     }
                 });
-    }
-
-    private NodeVO getNodeVO(BookRequest bookRequest) {
-        final JobModule module = moduleDao.get(bookRequest.getIdNode());
-        if (Objects.nonNull(module)) {
-            ModuleVO modVO = moduleMapper.convertToModuleVO(module, true);
-            return modVO;
-        } else {
-            final Fragment fragment = fragmentDao.get(bookRequest.getIdNode());
-            FragmentVO fragmentVO = fragmentMapper.convertToFragmentVO(fragment, true);
-            return fragmentVO;
-        }
     }
 
     public void deleteBookModuleInBook(long bookId, long idNode) {

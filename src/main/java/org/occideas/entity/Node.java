@@ -69,7 +69,7 @@ public class Node<T extends Node> implements Cloneable {
     this.lastUpdated = node.getLastUpdated();
     this.originalId = node.getOriginalId();
     this.deleted = node.getDeleted();
-
+    this.childNodes = node.getChildNodes();
   }
 
   public Node(String idNode) {

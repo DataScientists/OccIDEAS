@@ -39,11 +39,11 @@ public class NodeUtil {
   public NodeVO convertToNodeVO(Node node) {
     if (NodeDiscriminatorEnum.M.name().equals(node.getNodeDiscriminator())) {
       JobModule module = new JobModule(node);
-      return moduleMapper.convertToModuleVOOnly(module);
+      return moduleMapper.convertToModuleVO(module, true);
     }
     if (NodeDiscriminatorEnum.F.name().equals(node.getNodeDiscriminator())) {
       Fragment fragment = new Fragment(node);
-      return fragmentMapper.convertToFragmentVO(fragment, false);
+      return fragmentMapper.convertToFragmentVO(fragment, true);
     }
     if (NodeDiscriminatorEnum.Q.name().equals(node.getNodeDiscriminator())) {
       Question question = new Question(node);
@@ -51,7 +51,7 @@ public class NodeUtil {
     }
     if (NodeDiscriminatorEnum.P.name().equals(node.getNodeDiscriminator())) {
       PossibleAnswer answer = new PossibleAnswer(node);
-      return answerMapper.convertToPossibleAnswerVO(answer, false);
+      return answerMapper.convertToPossibleAnswerVO(answer, true);
     }
     if (NodeDiscriminatorEnum.O.name().equals(node.getNodeDiscriminator())) {
       Question question = new Question(node);
