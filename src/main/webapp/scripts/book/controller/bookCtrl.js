@@ -7,6 +7,19 @@
   function BookCtrl(BookService, DifferenceUtil, NgTableParams, $state, $scope, $filter, $mdDialog) {
     const self = this;
 
+    self.downloadJson = (book, json, name = 'all') => {
+      const url = window.URL.createObjectURL(new Blob([JSON.stringify(json)]));
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      // the filename you want
+      a.download = `${book}-${name}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      alert('Download successful');
+    }
+
     const getDataFromResponse = response => {
       return response?.body?.books;
     }
