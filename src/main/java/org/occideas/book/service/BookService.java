@@ -72,6 +72,13 @@ public class BookService {
     @Async
     public void addModuleToBook(BookRequest bookRequest, String updatedBy) throws JsonProcessingException {
         saveModuleToBook(bookRequest, updatedBy, true);
+        final Optional<Book> bookById = bookDao.findById(bookRequest.getBookId());
+        if (bookById.isEmpty()) {
+            throw new BookNotExistException("Book does not exist");
+        }
+        final Book book = bookById.get();
+        book.setLastUpdated(LocalDateTime.now());
+        bookDao.save(book);
     }
 
     private void saveModuleToBook(BookRequest bookRequest, String updatedBy, boolean shouldSave) throws JsonProcessingException {

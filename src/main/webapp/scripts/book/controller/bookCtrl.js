@@ -25,6 +25,9 @@
     }
     self.copyOfData = [];
     self.tableParams = new NgTableParams({group: "name", count: 100}, {
+      groupOptions: {
+        isExpanded: false
+      },
       getData: function ($defer, params) {
         if (params.filter().name || params.filter().description) {
           return $filter('filter')(self.tableParams.settings().dataset, params.filter());
@@ -122,7 +125,6 @@
     }
 
     self.compareBooks = group => {
-      console.log("comparing book ", group);
       const book = self.copyOfData.find(b => b.name === group.value);
       const filteredBooks = self.copyOfData.filter(b => b.id !== book.id);
       if (filteredBooks.length === 0) {
@@ -144,69 +146,63 @@
         selectedBook: null,
         compareToBook: null,
         results: {},
+        diffInd: null,
+        numberOfDiff: 0,
+        top() {
+          document.getElementById('topSummary').scrollIntoView(true);
+          this.diffInd = null;
+        },
+        next() {
+          const differences = document.querySelectorAll(".jsondiffpatch-modified");
+          if (differences.length === 0) {
+            alert('No difference.');
+            return;
+          }
+          if (this.diffInd === null) {
+            this.diffInd = 0;
+          } else {
+            this.diffInd = this.diffInd + 1;
+          }
+          if (this.diffInd === differences.length) {
+            this.diffInd = differences.length - 1;
+            alert('You are already at the last difference.');
+            return;
+          }
+          if (this.diffInd <= differences.length - 1) {
+            differences[this.diffInd].scrollIntoView(true);
+          }
+        },
+        previous() {
+          const differences = document.querySelectorAll(".jsondiffpatch-modified");
+          if (differences.length === 0) {
+            alert('No difference.');
+            return;
+          }
+          if (this.diffInd === null) {
+            this.diffInd = 0;
+          } else {
+            this.diffInd = this.diffInd - 1;
+          }
+          if (this.diffInd < 0) {
+            this.diffInd = 0;
+            alert('You are already at the first difference.');
+            return;
+          }
+
+          if (this.diffInd >= 0) {
+            differences[this.diffInd].scrollIntoView(true);
+          }
+        },
         cancel() {
           $mdDialog.cancel();
         },
-        notExistInBook(module, bookNum = 0) {
-          if (!this.compareComplete || !this.secondBook) {
-            return;
-          }
-          switch (bookNum) {
-            case 1 : {
-              return this.results.secondBookMissingIdNodes.includes(module.jobModule.idNode)
-            }
-            default: {
-              return this.results.firstBookMissingIdNodes.includes(module.jobModule.idNode)
-            }
-          }
-        },
-        hasDifference(node) {
-          if (!node) {
-            return false;
-          }
-
-          if (!this.compareComplete || !this.results.difference.length) {
-            return false;
-          }
-
-          return this.results.difference.includes(node.idNode)
-        },
-        isToggled(node) {
-          if (!node) {
-            return false;
-          }
-
-          if (!this.compareComplete) {
-            return false;
-          }
-
-          return this.results.toggleDiffs.includes(`${node.idNode}-toggle-1`);
-        },
-        toggle(node) {
-          if (!node) {
-            return false;
-          }
-
-          if (!this.compareComplete) {
-            return false;
-          }
-
-          const toggledFalseIndex = this.results.toggleDiffs.indexOf(`${node.idNode}-toggle-0`);
-          const toggledTrueIndex = this.results.toggleDiffs.indexOf(`${node.idNode}-toggle-1`);
-
-          if (toggledFalseIndex !== -1) {
-            this.results.toggleDiffs[toggledFalseIndex] = `${node.idNode}-toggle-1`;
-          } else {
-            this.results.toggleDiffs[toggledTrueIndex] = `${node.idNode}-toggle-0`;
-          }
-        },
         startComparison() {
-          console.log('your book ', this.book);
           this.compareToBook = this.books.find(b => b.id === this.selectedBook);
-          console.log('compareToBook ', this.compareToBook);
           this.secondBook = this.compareToBook.modules;
-          this.results = DifferenceUtil.diff(this.firstBook, this.secondBook);
+          DifferenceUtil.getDiffBook(this.firstBook, this.secondBook);
           this.compareComplete = true;
+          const differences = document.querySelectorAll(".jsondiffpatch-modified");
+          this.numberOfDiff = differences.length;
         }
       }
       $scope.compareScope = {...compareScope};

@@ -1,9 +1,18 @@
 <div ng-cloak>
     <div>
-        <button id="addBook" class="btn btn-default"
-                ng-click="vm.add()"
-                type="button">Add Book <span class="glyphicon glyphicon-plus">
+        <div style="padding: 5px;">
+            <span><strong>Note:</strong></span><br/>
+            <em style="font-size: 12px;">(if you recently added to a book, please check that the last updated date is
+                already the latest)</em>
+            <br/><em style="font-size: 12px;">(if it is not the latest, please refresh the page. It takes time to
+            reflect the changes ,and it depends on the size of the module)</em>
+        </div>
+        <div style="padding: 5px;">
+            <button id="addBook" class="btn btn-default"
+                    ng-click="vm.add()"
+                    type="button">Add Book <span class="glyphicon glyphicon-plus">
       </span></button>
+        </div>
         <table class="table table-bordered table-hover table-condensed editable-table"
                ng-table="vm.tableParams"
                demo-tracked-table="vm.tableTracker"
@@ -22,6 +31,8 @@
                     ng-class="{ 'glyphicon-chevron-right': group.$hideRows,
             'glyphicon-chevron-down': !group.$hideRows }"></span>
                                 <strong> {{ group.value }}</strong>
+                                <strong> - last updated date was
+                                    {{ group.data[0].lastUpdated | date: 'dd/MM/yyyy HH:mm:ss' }}</strong>
                             </a>
                         </div>
                         <div>
