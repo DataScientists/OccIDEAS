@@ -8,7 +8,7 @@
     const self = this;
 
     self.downloadJson = (book, json, name = 'all') => {
-      const url = window.URL.createObjectURL(new Blob([JSON.stringify(json)]));
+      const url = window.URL.createObjectURL(new Blob([json]));
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
@@ -103,10 +103,9 @@
       }
     }
 
-    self.deleteModuleInBook = (bookName, module) => {
-      const {bookId, idNode, fileName} = module;
-      if (confirm(`Are you sure you would like to delete module ${fileName} in ${bookName}?`)) {
-        BookService.deleteModuleInBook(bookId, idNode).then(response => {
+    self.deleteModuleInBook = (bookId, bookName, name) => {
+      if (confirm(`Are you sure you would like to delete module ${name} in ${bookName}?`)) {
+        BookService.deleteModuleInBook(bookId, name).then(response => {
           if (response.status === 200) {
             self.tableParams.shouldGetData = true;
             self.tableParams.reload().then(function (data) {

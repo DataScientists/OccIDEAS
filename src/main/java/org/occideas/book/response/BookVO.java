@@ -10,7 +10,7 @@ public class BookVO {
     private String description;
     private LocalDateTime lastUpdated;
     private String createdBy;
-    private List<BookModuleVO> modules;
+    private List<BookModuleJson> modules;
 
     public BookVO() {
     }
@@ -55,11 +55,11 @@ public class BookVO {
         this.createdBy = createdBy;
     }
 
-    public List<BookModuleVO> getModules() {
+    public List<BookModuleJson> getModules() {
         return modules;
     }
 
-    public void setModules(List<BookModuleVO> modules) {
+    public void setModules(List<BookModuleJson> modules) {
         this.modules = modules;
     }
 }

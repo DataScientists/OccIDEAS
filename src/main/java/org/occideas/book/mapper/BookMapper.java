@@ -1,10 +1,12 @@
 package org.occideas.book.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.occideas.book.response.BookModuleJson;
 import org.occideas.book.response.BookModuleVO;
 import org.occideas.book.response.BookVO;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
+import org.occideas.utilities.FileUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -55,7 +57,12 @@ public class BookMapper {
         vo.setId(entity.getId());
         vo.setName(entity.getName());
         vo.setLastUpdated(entity.getLastUpdated());
-        vo.setModules(toBookModuleVOList(entity.getModules()));
+        List<BookModule> modules = entity.getModules();
+        List<BookModuleJson> jsonModules = new ArrayList<>();
+        modules.forEach(module -> {
+            jsonModules.add(new BookModuleJson(module.getName(), FileUtil.readJsonFile(module.getJson()), module.getLastUpdated()));
+        });
+        vo.setModules(jsonModules);
         return vo;
     }
 

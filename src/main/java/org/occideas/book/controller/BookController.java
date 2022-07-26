@@ -1,6 +1,7 @@
 package org.occideas.book.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.occideas.book.request.AddNodeRequest;
 import org.occideas.book.request.BookRequest;
 import org.occideas.book.response.BookResponse;
 import org.occideas.book.response.BookVO;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.ws.rs.*;
+import java.io.IOException;
 
 @Path("/book")
 public class BookController {
@@ -46,7 +48,7 @@ public class BookController {
     @DELETE
     @Path("/{bookId}/{name}")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteBookModuleInBook(@PathParam("bookId") Long bookId, @PathParam("name") String name) {
+    public ResponseEntity deleteBookModuleInBook(@PathParam("bookId") Long bookId, @PathParam("name") String name) throws IOException {
         bookService.deleteBookModuleInBook(bookId, name);
         return ResponseEntity.ok().build();
     }
@@ -55,11 +57,23 @@ public class BookController {
     @POST
     @Path("addToBook")
     @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity createBook(BookRequest bookRequest) throws JsonProcessingException {
+    public ResponseEntity addModuleToBook(AddNodeRequest addNodeRequest) throws JsonProcessingException {
         TokenManager tokenManager = new TokenManager();
         String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
         String updatedBy = tokenManager.parseUsernameFromToken(token);
-        bookService.addModuleToBook(bookRequest, updatedBy);
+        bookService.addModuleToBookByNode(addNodeRequest.getIdNode(), addNodeRequest.getBookId(), updatedBy);
+        return ResponseEntity.ok().build();
+    }
+
+    @POST
+    @Path("uploadJsonToBook")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity uploadJsonToBook(BookRequest bookRequest) throws JsonProcessingException {
+        TokenManager tokenManager = new TokenManager();
+        String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
+        String updatedBy = tokenManager.parseUsernameFromToken(token);
+        bookRequest.setUpdatedBy(updatedBy);
+        bookService.addModuleToBook(bookRequest);
         return ResponseEntity.ok().build();
     }
 

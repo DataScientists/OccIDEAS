@@ -48,5 +48,18 @@ public class BookModuleDao extends GenericBaseDao<BookModule, Long> {
         return sessionFactory.getCurrentSession().createQuery(criteria).executeUpdate();
     }
 
+    public int deleteByBookNameAndName(String bookName, String name) {
+        final Session session = sessionFactory.getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaDelete<BookModule> criteria = builder.createCriteriaDelete(BookModule.class);
+        Root<BookModule> root = criteria.from(BookModule.class);
+        criteria.where(builder.and(
+                        builder.equal(root.get(BookModule_.NAME), name),
+                        builder.equal(root.get(BookModule_.BOOK_ID), bookName)
+                )
+        );
+        return sessionFactory.getCurrentSession().createQuery(criteria).executeUpdate();
+    }
+
 
 }

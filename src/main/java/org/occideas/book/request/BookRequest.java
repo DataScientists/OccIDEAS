@@ -6,8 +6,17 @@ public class BookRequest {
     private String name;
     private String type;
     private String json;
+    private String updatedBy;
 
     public BookRequest() {
+    }
+
+    public BookRequest(long bookId, String name, String type, String json, String updatedBy) {
+        this.bookId = bookId;
+        this.name = name;
+        this.type = type;
+        this.json = json;
+        this.updatedBy = updatedBy;
     }
 
     public long getBookId() {
@@ -40,5 +49,13 @@ public class BookRequest {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
     }
 }
