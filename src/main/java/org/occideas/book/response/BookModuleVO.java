@@ -1,44 +1,18 @@
 package org.occideas.book.response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.occideas.entity.BookModule;
-import org.occideas.vo.ModuleVO;
-
-import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 public class BookModuleVO {
 
     private long bookId;
-    private long idNode;
-    private String fileName;
-    private ModuleVO jobModule;
-    private Integer hashCode;
+    private String name;
+    private Map<?, ?> json;
     private String type;
     private String author;
+    private LocalDateTime lastUpdateDate;
 
     public BookModuleVO() {
-    }
-
-    public BookModuleVO(BookModule bookModule) {
-        this.idNode = bookModule.getIdNode();
-        this.bookId = bookModule.getBookId();
-        this.fileName = bookModule.getFileName();
-        try {
-            this.jobModule = new ObjectMapper().readValue(bookModule.getObject(), ModuleVO.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.hashCode = bookModule.getHashCode();
-        this.type = bookModule.getType();
-        this.author = bookModule.getAuthor();
-    }
-
-    public long getIdNode() {
-        return idNode;
-    }
-
-    public void setIdNode(long idNode) {
-        this.idNode = idNode;
     }
 
     public long getBookId() {
@@ -47,22 +21,6 @@ public class BookModuleVO {
 
     public void setBookId(long bookId) {
         this.bookId = bookId;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public Integer getHashCode() {
-        return hashCode;
-    }
-
-    public void setHashCode(Integer hashCode) {
-        this.hashCode = hashCode;
     }
 
     public String getType() {
@@ -81,11 +39,27 @@ public class BookModuleVO {
         this.author = author;
     }
 
-    public ModuleVO getJobModule() {
-        return jobModule;
+    public String getName() {
+        return name;
     }
 
-    public void setJobModule(ModuleVO jobModule) {
-        this.jobModule = jobModule;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Map<?, ?> getJson() {
+        return json;
+    }
+
+    public void setJson(Map<?, ?> json) {
+        this.json = json;
+    }
+
+    public LocalDateTime getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 }

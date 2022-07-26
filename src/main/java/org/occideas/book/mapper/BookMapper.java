@@ -5,12 +5,13 @@ import org.occideas.book.response.BookModuleVO;
 import org.occideas.book.response.BookVO;
 import org.occideas.entity.Book;
 import org.occideas.entity.BookModule;
-import org.occideas.vo.ModuleVO;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class BookMapper {
@@ -28,16 +29,16 @@ public class BookMapper {
     public BookModuleVO toBookModuleVO(BookModule bookModule) {
         BookModuleVO vo = new BookModuleVO();
         vo.setBookId(bookModule.getBookId());
-        vo.setIdNode(bookModule.getIdNode());
+        vo.setName(bookModule.getName());
         vo.setAuthor(bookModule.getAuthor());
         try {
-            ModuleVO jobModule = new ObjectMapper().readValue(bookModule.getObject(), ModuleVO.class);
-            vo.setJobModule(jobModule);
+            Map<?, ?> map = new ObjectMapper().readValue(Paths.get(bookModule.getJson()).toFile(), Map.class);
+            vo.setJson(map);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        vo.setFileName(bookModule.getFileName());
-        vo.setHashCode(bookModule.getHashCode());
+        vo.setLastUpdateDate(bookModule.getLastUpdated());
+        vo.setType(bookModule.getType());
         return vo;
     }
 

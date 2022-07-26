@@ -6,14 +6,14 @@ import java.util.Objects;
 public class BookModuleId implements Serializable {
 
     protected long bookId;
-    protected long idNode;
+    protected String name;
 
     public BookModuleId() {
     }
 
-    public BookModuleId(long bookId, long idNode) {
+    public BookModuleId(long bookId, String name) {
         this.bookId = bookId;
-        this.idNode = idNode;
+        this.name = name;
     }
 
     @Override
@@ -21,11 +21,11 @@ public class BookModuleId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BookModuleId that = (BookModuleId) o;
-        return bookId == that.bookId && idNode == that.idNode;
+        return bookId == that.bookId && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookId, idNode);
+        return Objects.hash(bookId, name);
     }
 }

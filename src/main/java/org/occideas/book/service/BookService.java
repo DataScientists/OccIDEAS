@@ -1,7 +1,6 @@
 package org.occideas.book.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.book.dao.BookDao;
@@ -16,7 +15,6 @@ import org.occideas.node.dao.NodeDao;
 import org.occideas.security.handler.TokenManager;
 import org.occideas.security.model.TokenResponse;
 import org.occideas.utilities.NodeUtil;
-import org.occideas.vo.NodeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,11 +36,11 @@ public class BookService {
     @Autowired
     private BookDao bookDao;
     @Autowired
-    private NodeDao nodeDao;
-    @Autowired
     private BookMapper bookMapper;
     @Autowired
     private NodeUtil nodeUtil;
+    @Autowired
+    private NodeDao nodeDao;
 
 
     public List<BookVO> getBooks() {
@@ -71,7 +69,8 @@ public class BookService {
 
     @Async
     public void addModuleToBook(BookRequest bookRequest, String updatedBy) throws JsonProcessingException {
-        saveModuleToBook(bookRequest, updatedBy, true);
+
+        saveModuleToBook(bookRequest, updatedBy);
         final Optional<Book> bookById = bookDao.findById(bookRequest.getBookId());
         if (bookById.isEmpty()) {
             throw new BookNotExistException("Book does not exist");
@@ -81,40 +80,51 @@ public class BookService {
         bookDao.save(book);
     }
 
-    private void saveModuleToBook(BookRequest bookRequest, String updatedBy, boolean shouldSave) throws JsonProcessingException {
-        NodeVO nodeVO = nodeUtil.convertToNodeVO(nodeDao.getNode(bookRequest.getIdNode()));
+//    @Async
+//    public void addModuleToBookByNode(long idNode, String updatedBy) throws JsonProcessingException {
+//        NodeVO nodeVO = nodeUtil.convertToNodeVO(nodeDao.getNode(idNode));
+//        String json = new ObjectMapper().writeValueAsString(nodeVO);
+//
+//        final BookModule bookModule = new BookModule(
+//                bookRequest.getBookId(),
+//                nodeVO.getName(),
+//                valueAsBytes, nodeVO.hashCode(),
+//                nodeVO.getClass().getName(),
+//                updatedBy);
+//
+//        if (shouldSave) {
+//            log.info("Adding Module {}", nodeVO.getName());
+//            bookModuleDao.save(bookModule);
+//        }
+//
+//        nodeVO.getChildNodes().stream()
+//                .forEach(node -> {
+//                    try {
+//                        if (node.getLink() != 0l) {
+//                            saveModuleToBook(new BookRequest(node.getLink(), bookRequest.getBookId()), updatedBy, true);
+//                        } else {
+//                            saveModuleToBook(new BookRequest(node.getIdNode(), bookRequest.getBookId()), updatedBy, false);
+//                        }
+//                    } catch (JsonProcessingException e) {
+//                        log.error(e.getMessage(), e);
+//                    }
+//                });
+//    }
 
-        final byte[] valueAsBytes = new ObjectMapper().writeValueAsBytes(nodeVO);
-
+    private void saveModuleToBook(BookRequest bookRequest, String updatedBy) throws JsonProcessingException {
         final BookModule bookModule = new BookModule(
                 bookRequest.getBookId(),
-                bookRequest.getIdNode(),
-                nodeVO.getName(),
-                valueAsBytes, nodeVO.hashCode(),
-                nodeVO.getClass().getName(),
-                updatedBy);
+                bookRequest.getName(),
+                bookRequest.getJson(),
+                bookRequest.getType(),
+                updatedBy,
+                LocalDateTime.now());
 
-        if (shouldSave) {
-            log.info("Adding Module {}", nodeVO.getName());
-            bookModuleDao.save(bookModule);
-        }
-
-        nodeVO.getChildNodes().stream()
-                .forEach(node -> {
-                    try {
-                        if (node.getLink() != 0l) {
-                            saveModuleToBook(new BookRequest(node.getLink(), bookRequest.getBookId()), updatedBy, true);
-                        } else {
-                            saveModuleToBook(new BookRequest(node.getIdNode(), bookRequest.getBookId()), updatedBy, false);
-                        }
-                    } catch (JsonProcessingException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                });
+        bookModuleDao.save(bookModule);
     }
 
-    public void deleteBookModuleInBook(long bookId, long idNode) {
-        bookModuleDao.deleteByBookIdAndIdNode(bookId, idNode);
+    public void deleteBookModuleInBook(long bookId, String name) {
+        bookModuleDao.deleteByBookIdAndName(bookId, name);
     }
 
 

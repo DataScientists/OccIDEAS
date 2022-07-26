@@ -547,14 +547,13 @@ DROP TABLE IF EXISTS BOOK_MODULE;
 
 CREATE TABLE BOOK_MODULE
 (
-    bookId   varchar(255) NOT NULL,
-    idNode   bigint(20) NOT NULL,
-    fileName varchar(255) NOT NULL,
-    json     blob         NOT NULL,
-    hashCode bigint(20) NOT NULL,
-    type     varchar(255) NOT NULL,
-    author   varchar(255) NOT NULL,
-    PRIMARY KEY (bookId, idNode)
+    bookId      varchar(255) NOT NULL,
+    name        varchar(255) NOT NULL,
+    json        varchar(255) NOT NULL,
+    type        varchar(255) NOT NULL,
+    author      varchar(255) NOT NULL,
+    lastUpdated timestamp    NOT NULL,
+    PRIMARY KEY (bookId, name)
 );
 
 

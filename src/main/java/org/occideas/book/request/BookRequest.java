@@ -2,23 +2,12 @@ package org.occideas.book.request;
 
 public class BookRequest {
 
-    private long idNode;
     private long bookId;
+    private String name;
+    private String type;
+    private String json;
 
     public BookRequest() {
-    }
-
-    public BookRequest(long idNode, long bookId) {
-        this.idNode = idNode;
-        this.bookId = bookId;
-    }
-
-    public long getIdNode() {
-        return idNode;
-    }
-
-    public void setIdNode(long idNode) {
-        this.idNode = idNode;
     }
 
     public long getBookId() {
@@ -27,5 +16,29 @@ public class BookRequest {
 
     public void setBookId(long bookId) {
         this.bookId = bookId;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

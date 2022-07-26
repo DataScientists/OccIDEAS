@@ -21,27 +21,27 @@ public class BookModuleDao extends GenericBaseDao<BookModule, Long> {
         super(BookModule.class, BookModule_.BOOK_ID);
     }
 
-    public Optional<BookModule> findByFileNameAndBookId(String filename, long bookId) {
+    public Optional<BookModule> findByNameAndBookId(String filename, long bookId) {
         final Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<BookModule> criteria = builder.createQuery(BookModule.class);
         Root<BookModule> root = criteria.from(BookModule.class);
         criteria.select(root);
         criteria.where(builder.and(
-                        builder.equal(root.get(BookModule_.FILE_NAME), filename),
+                        builder.equal(root.get(BookModule_.NAME), filename),
                         builder.equal(root.get(BookModule_.BOOK_ID), bookId)
                 )
         );
         return sessionFactory.getCurrentSession().createQuery(criteria).uniqueResultOptional();
     }
 
-    public int deleteByBookIdAndIdNode(long bookId, long idNode) {
+    public int deleteByBookIdAndName(long bookId, String name) {
         final Session session = sessionFactory.getCurrentSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaDelete<BookModule> criteria = builder.createCriteriaDelete(BookModule.class);
         Root<BookModule> root = criteria.from(BookModule.class);
         criteria.where(builder.and(
-                        builder.equal(root.get(BookModule_.ID_NODE), idNode),
+                        builder.equal(root.get(BookModule_.NAME), name),
                         builder.equal(root.get(BookModule_.BOOK_ID), bookId)
                 )
         );
