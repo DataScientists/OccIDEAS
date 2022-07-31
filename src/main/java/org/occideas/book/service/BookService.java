@@ -88,7 +88,8 @@ public class BookService {
         String directory = bookConfig.getPath() + FileSystems.getDefault().getSeparator() + book.getName();
         boolean success = FileUtil.saveJsonToFile(bookRequest.getJson(), directory, bookRequest.getName());
         if (success) {
-            saveModuleToBook(bookRequest, directory + FileSystems.getDefault().getSeparator() + bookRequest.getName() + ".json");
+            String fullPath = directory + FileSystems.getDefault().getSeparator() + bookRequest.getName() + ".json";
+            saveModuleToBook(bookRequest, fullPath);
             book.setLastUpdated(LocalDateTime.now());
             bookDao.save(book);
         } else {
@@ -97,10 +98,30 @@ public class BookService {
     }
 
     @Async
-    public void addModuleToBookByNode(long idNode, long bookId, String updatedBy) throws JsonProcessingException {
+    public void addModuleToBookByNode(long idNode, long bookId, String updatedBy, List<String> uniqueNames, boolean shouldSave) throws JsonProcessingException {
         NodeVO nodeVO = nodeUtil.convertToNodeVO(nodeDao.getNode(idNode));
-        String json = new ObjectMapper().writeValueAsString(nodeVO);
-        addModuleToBook(new BookRequest(bookId, nodeVO.getName(), nodeVO.getType(), json, updatedBy));
+        if (shouldSave && !uniqueNames.contains(sanitizeFileName(nodeVO.getName()))) {
+            String json = new ObjectMapper().writeValueAsString(nodeVO);
+            addModuleToBook(new BookRequest(bookId, sanitizeFileName(nodeVO.getName()), nodeVO.getType(), json, updatedBy));
+            uniqueNames.add(sanitizeFileName(nodeVO.getName()));
+        }
+
+        for (NodeVO node : nodeVO.getChildNodes()) {
+            try {
+                if (node.getLink() != 0l) {
+                    addModuleToBookByNode(node.getLink(), bookId, updatedBy, uniqueNames, true);
+                } else {
+                    addModuleToBookByNode(node.getIdNode(), bookId, updatedBy, uniqueNames, false);
+                }
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private String sanitizeFileName(String fileName) {
+        String newFileName = fileName.trim().replace(" ", "").replace("/", "");
+        return newFileName;
     }
 
     private void saveModuleToBook(BookRequest bookRequest, String jsonPath) throws JsonProcessingException {

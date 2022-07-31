@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.ws.rs.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Path("/book")
 public class BookController {
@@ -61,7 +62,7 @@ public class BookController {
         TokenManager tokenManager = new TokenManager();
         String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
         String updatedBy = tokenManager.parseUsernameFromToken(token);
-        bookService.addModuleToBookByNode(addNodeRequest.getIdNode(), addNodeRequest.getBookId(), updatedBy);
+        bookService.addModuleToBookByNode(addNodeRequest.getIdNode(), addNodeRequest.getBookId(), updatedBy, new ArrayList<>(), true);
         return ResponseEntity.ok().build();
     }
 

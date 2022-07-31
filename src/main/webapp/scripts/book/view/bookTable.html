@@ -31,7 +31,7 @@
                     ng-class="{ 'glyphicon-chevron-right': group.$hideRows,
             'glyphicon-chevron-down': !group.$hideRows }"></span>
                                 <strong> {{ group.value }}</strong>
-                                <strong> - last updated date was
+                                <strong> - last updated date
                                     {{ group.data[0].lastUpdated | date: 'dd/MM/yyyy HH:mm:ss' }}</strong>
                             </a>
                         </div>
@@ -62,7 +62,9 @@
                 <td colspan="{{$columns.length}}" style="padding: 2px">
                     <div ng-repeat="module in data.modules" style="padding: 2px; width: 50%; border: 1px solid #2e6da4">
                         <div style="padding: 2px; width: 100%; display: flex; flex-direction: row; justify-content: space-between;">
-                            <div>{{module.name}}</div>
+                            <div>{{module.name}}
+                                <div>last updated {{module.lastUpdatedDate | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
+                            </div>
                             <div>
                                 <button class="btn btn-primary btn-sm"
                                         ng-click="vm.downloadJson(data.name,module.json,module.name)"

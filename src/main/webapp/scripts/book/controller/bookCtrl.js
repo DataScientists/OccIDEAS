@@ -144,9 +144,16 @@
         secondBook: null,
         selectedBook: null,
         compareToBook: null,
+        selectedModule: null,
+        selectedCompareModule: null,
         results: {},
         diffInd: null,
         numberOfDiff: 0,
+        reset() {
+          this.compareComplete = false;
+          this.numberOfDiff = 0;
+          document.getElementById('visual').innerHTML = "";
+        },
         top() {
           document.getElementById('topSummary').scrollIntoView(true);
           this.diffInd = null;
@@ -196,9 +203,7 @@
           $mdDialog.cancel();
         },
         startComparison() {
-          this.compareToBook = this.books.find(b => b.id === this.selectedBook);
-          this.secondBook = this.compareToBook.modules;
-          DifferenceUtil.getDiffBook(this.firstBook, this.secondBook);
+          DifferenceUtil.getDiffBook(JSON.parse(this.selectedModule.json), JSON.parse(this.selectedCompareModule.json));
           this.compareComplete = true;
           const differences = document.querySelectorAll(".jsondiffpatch-modified");
           this.numberOfDiff = differences.length;

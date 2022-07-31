@@ -2,7 +2,7 @@
     <form ng-cloak>
         <md-toolbar>
             <div class="md-toolbar-tools">
-                <h2>Comparison Books</h2>
+                <h2>Compare Other Books with {{compareScope.book.name}}</h2>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-click="compareScope.cancel()"><span
                         aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
@@ -10,32 +10,71 @@
         </md-toolbar>
 
         <md-dialog-content>
-            <div class="row" style="width: 50%;">
-                <md-input-container class="md-block">
-                    <md-select required ng-model="compareScope.selectedBook" placeholder="Select a book to compare"
-                               ng-change="compareScope.startComparison()"
-                               style="width: 100%;">
-                        <md-option ng-repeat="book in compareScope.books"
-                                   ng-value="book.id"
+            <div style="display: flex; justify-content: flex-start;gap: 50px;">
+                <div class="row" style="width: 80%;padding: 10px;margin-bottom: 10px;">
+                    <strong>Choose module in {{compareScope.book.name}} book</strong>
+                    <md-input-container class="md-block">
+                        <md-select required ng-model="compareScope.selectedModule" placeholder="Select a module"
+                                   ng-change="compareScope.reset()"
                                    style="width: 100%;">
-                            <span style="width: 100%;">{{book.name}}</span>
-                        </md-option>
-                    </md-select>
-                </md-input-container>
+                            <md-option ng-repeat="module in compareScope.book.modules"
+                                       ng-value="module"
+                                       style="width: 100%;">
+                                <span style="width: 100%;">{{module.name}}</span>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div class="row" style="width: 100%;padding: 10px;border: #2e6da4 thin solid">
+                    <strong>Comparing with {{compareScope.compareToBook.name}}</strong>
+                    <md-input-container class="md-block">
+                        <md-select required ng-model="compareScope.compareToBook" placeholder="Select a book to compare"
+                                   ng-change="compareScope.reset()"
+                                   style="width: 100%;">
+                            <md-option ng-repeat="book in compareScope.books"
+                                       ng-value="book"
+                                       style="width: 100%;">
+                                <span style="width: 100%;">{{book.name}}</span>
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <div class="row" style="width: 100%;padding: 10px;"
+                         ng-if="compareScope.compareToBook.name">
+                        <md-input-container class="md-block">
+                            <md-select required ng-model="compareScope.selectedCompareModule"
+                                       placeholder="Select a module"
+                                       ng-change="compareScope.reset()"
+                                       style="width: 100%;">
+                                <md-option ng-repeat="module in compareScope.compareToBook.modules"
+                                           ng-value="module"
+                                           style="width: 100%;">
+                                    <span style="width: 100%;">{{module.name}}</span>
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                </div>
             </div>
-
-            <div class="md-dialog-content">
+            <div class="row" style="width: 100%;padding: 10px;display: flex; justify-content: center;"
+                 ng-if="compareScope.selectedCompareModule.name">
+                <md-button style="background-color: #67b168;color: #FFFFFF;"
+                           ng-click="compareScope.startComparison()">Start Comparison
+                </md-button>
+            </div>
+            <div ng-if="compareScope.selectedCompareModule">
                 <div style="width: 100%;">
                     <div style="width: 100%;" ng-if="compareScope.compareComplete">
                         <div id="topSummary">
-                            <h4><strong>Summary</strong> {{compareScope.book.name}} book (<em>left</em>)
-                                <strong>vs</strong> {{compareScope.compareToBook.name}} book (<em>right</em>)
+                            <h4><strong>Summary</strong> {{compareScope.book.name}} book -
+                                {{compareScope.selectedModule.name}} (<em>left</em>)
+                                <strong>vs</strong> {{compareScope.compareToBook.name}} book -
+                                {{compareScope.selectedCompareModule.name}} (<em>right</em>)
                             </h4></underline>
                         </div>
                         <div style="color: red" ng-if="compareScope.numberOfDiff > 0"># of differences
                             <strong>{{compareScope.numberOfDiff}}</strong></div>
                         <div style="color: green" ng-if="compareScope.numberOfDiff === 0"><strong>There is no difference
-                            between books</strong></div>
+                            between modules</strong></div>
                         <span ng-if="compareScope.numberOfDiff > 0"
                               style="display: flex; flex-direction: row; position: fixed; color: blue;right: 17px;background-color: #7c9eb2;height: 40px;border-radius: 30px;">
                             <md-button class="md-icon-button" ng-click="compareScope.previous()"
