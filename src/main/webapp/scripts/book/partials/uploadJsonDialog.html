@@ -1,0 +1,34 @@
+<md-dialog aria-label="Upload Json">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Upload Json</h2>
+                <span flex></span>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-input-container>
+                    <label>Json File</label>
+                    <input type="file" ngf-select="uploadFiles($file)">
+
+                </md-input-container>
+                <div layout-gt-sm="row">
+                    <md-dialog-actions layout="row">
+                        <md-button ng-click="vm.cancel()" style="background-color: #985f0d; color: #FFFFFF;">
+                            Cancel
+                        </md-button>
+                        <md-button ng-click="vm.uploadJsonActions.uploadJsonSave()"
+                                   style="background-color: #3e8f3e; color: #FFFFFF;">
+                            Upload
+                        </md-button>
+                    </md-dialog-actions>
+                </div>
+            </div>
+        </md-dialog-content>
+
+
+    </form>
+</md-dialog>
+

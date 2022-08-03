@@ -1,6 +1,7 @@
 package org.occideas.book.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.occideas.book.request.AddNodeRequest;
 import org.occideas.book.request.BookRequest;
 import org.occideas.book.response.BookResponse;
@@ -13,11 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.*;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+@RestController
 @Path("/book")
 public class BookController {
 
@@ -68,13 +73,21 @@ public class BookController {
 
     @POST
     @Path("uploadJsonToBook")
-    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity uploadJsonToBook(BookRequest bookRequest) throws JsonProcessingException {
+    public ResponseEntity uploadJsonToBook(FormDataMultiPart multiPart) {
+        InputStream uploadedInputStream = multiPart.getField("file").getValueAs(InputStream.class);
+        long bookId = multiPart.getField("bookId").getValueAs(Long.class);
+        String fileName = multiPart.getField("fileName").getValueAs(String.class);
         TokenManager tokenManager = new TokenManager();
         String token = ((TokenResponse) SecurityContextHolder.getContext().getAuthentication().getDetails()).getToken();
         String updatedBy = tokenManager.parseUsernameFromToken(token);
-        bookRequest.setUpdatedBy(updatedBy);
-        bookService.addModuleToBook(bookRequest);
+        String content;
+        try {
+            content = new String(uploadedInputStream.readAllBytes(), StandardCharsets.UTF_8);
+            bookService.addModuleToBook(new BookRequest(bookId, fileName, "Task Modules", content, updatedBy));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return ResponseEntity.ok().build();
     }
 

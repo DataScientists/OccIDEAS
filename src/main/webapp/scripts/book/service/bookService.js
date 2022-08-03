@@ -52,12 +52,24 @@
             return request;
         }
 
+        const uploadToBook = (formData) => {
+            const request = $http({
+                method: 'POST',
+                url: `${bookEndPoint}/uploadJsonToBook`,
+                data: formData,
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            });
+            return request;
+        }
+
         return {
             get: getBook,
             save,
             deleteBook,
             saveToBook,
-            deleteModuleInBook
+            deleteModuleInBook,
+            uploadToBook
         };
     }
 

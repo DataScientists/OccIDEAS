@@ -19,7 +19,7 @@
                            type="text"/>
                 </md-input-container>
                 <md-input-container>
-                    <label>Descripton</label>
+                    <label>Description</label>
                     <input class="form-control"
                            ng-model="newBook.description"
                            name="description"
@@ -27,17 +27,20 @@
                            required
                            type="text"/>
                 </md-input-container>
+                <div layout-gt-sm="row">
+                    <md-dialog-actions layout="row">
+                        <md-button ng-click="vm.cancel()" style="background-color: #985f0d; color: #FFFFFF;">
+                            Cancel
+                        </md-button>
+                        <md-button ng-click="vm.save(newBook)" style="background-color: #3e8f3e; color: #FFFFFF;">
+                            Add
+                        </md-button>
+                    </md-dialog-actions>
+                </div>
             </div>
         </md-dialog-content>
 
-        <md-dialog-actions layout="row"><span flex></span>
-            <md-button ng-click="vm.save(newBook)">
-                Add
-            </md-button>
-            <md-button ng-click="vm.cancel()">
-                Cancel
-            </md-button>
-        </md-dialog-actions>
+
     </form>
 </md-dialog>
 

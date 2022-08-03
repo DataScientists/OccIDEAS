@@ -15,8 +15,6 @@
 
         if (delta) {
             document.getElementById('visual').innerHTML = jsondiffpatch.formatters.html.format(delta, firstBook);
-        } else {
-            document.getElementById('visual').innerHTML = JSON.stringify(firstBook);
         }
     }
 

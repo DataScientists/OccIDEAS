@@ -1,5 +1,6 @@
 package org.occideas.config;
 
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.occideas.agent.rest.AgentRestController;
 import org.occideas.assessment.rest.AssessmentRestController;
@@ -33,6 +34,7 @@ import org.occideas.security.rest.UserLoginRestController;
 import org.occideas.securityproperty.rest.SystemPropertyController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -53,6 +55,12 @@ public class JerseyConfig extends ResourceConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
+    }
+
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        return multipartResolver;
     }
 
 
@@ -87,5 +95,6 @@ public class JerseyConfig extends ResourceConfig {
         register(QualtricsSurveyResponseListener.class);
         register(BookController.class);
         register(CustomExceptionHandler.class);
+        register(MultiPartFeature.class);
     }
 }
