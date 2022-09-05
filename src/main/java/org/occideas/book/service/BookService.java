@@ -8,6 +8,7 @@ import org.occideas.book.dao.BookDao;
 import org.occideas.book.dao.BookModuleDao;
 import org.occideas.book.mapper.BookMapper;
 import org.occideas.book.request.BookRequest;
+import org.occideas.book.response.BookModuleJson;
 import org.occideas.book.response.BookVO;
 import org.occideas.config.BookConfig;
 import org.occideas.entity.Book;
@@ -149,5 +150,16 @@ public class BookService {
 
     public void delete(BookVO bookVO) {
         bookDao.delete(bookMapper.toBook(bookVO));
+    }
+
+    public BookModuleJson getModuleInBook(long bookId, String name) {
+        Optional<BookModule> byNameAndBookId = bookModuleDao.findByNameAndBookId(name, bookId);
+        if (byNameAndBookId.isEmpty()) {
+            throw new GenericException("book module is no longer exist." + name);
+        }
+        return new BookModuleJson(byNameAndBookId.get().getName(),
+                FileUtil.readJsonFile(byNameAndBookId.get().getJson()),
+                byNameAndBookId.get().getType(),
+                byNameAndBookId.get().getLastUpdated());
     }
 }

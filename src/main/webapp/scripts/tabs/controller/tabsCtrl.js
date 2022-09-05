@@ -769,6 +769,30 @@
       safeDigest($rootScope.tabsLoading);
     };
 
+    $scope.addBookQuestionsTab = function(name, id,  scrollTo) {
+      var state = "tabs.bookQuestions";
+      if(!checkIfTabIsOpen(tabs, name)) {
+        tabs.push({
+          title: 'Book ' + name,
+          viewName: 'bookQuestions@tabs',
+          canClose: true,
+          disabled: false
+        });
+        $scope.tabOptions.push({
+          state: state,
+          data: {
+            name: name,
+            bookId: id,
+            lang: null
+          }
+        });
+      }
+      $rootScope.tabsLoading = true;
+      safeDigest($rootScope.tabsLoading);
+      $stickyState.reset(state);
+      $log.info("addBookQuestionsTab bookQuestions loading end");
+    };
+
     $scope.removeTab = function(tab) {
       if(tab.title == 'Error!') {
         var index = tabs.indexOf(tab);

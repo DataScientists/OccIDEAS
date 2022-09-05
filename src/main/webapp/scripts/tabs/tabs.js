@@ -150,8 +150,48 @@
                         controller: 'BookCtrl as vm'
                     }
                 }
-            })
-            .state({
+        }).state({
+            name: 'tabs.bookQuestions',
+            url: '/bookQuestions/:bookId/:name',
+            sticky: true,
+            deepStateRedirect: true,
+            authenticate: true,
+            views: {
+                'bookQuestions@tabs': {
+                    templateUrl: "scripts/book/view/bookQuestions.html",
+                    controller: 'BookQuestionsCtrl as vm',
+                    resolve: {
+                        data: function ($stateParams, BookService) {
+                            $log.info("inside bookQuestions@tabs resolve ");
+                            $log.info("Data getting from questions AJAX ...");
+                            return BookService.getModuleInBook($stateParams.bookId, $stateParams.name)
+                                .then(function (response) {
+                                    $log.info("Data received from questions AJAX ...");
+                                    if (angular.isUndefined($window.sliderVal)) {
+                                        $window.sliderVal = [];
+                                    }
+                                    const data = JSON.parse(response?.body?.json);
+                                    var idNode = 'Node' + data.idNode;
+                                    $window.sliderVal.idNode = {
+                                        showFragmentSlider: false,
+                                        showModuleSlider: false,
+                                        showAgentSlider: false
+                                    };
+                                    const book = [];
+                                    book.push(data);
+                                    return book;
+                                });
+                        },
+                        lang: function ($stateParams) {
+                            return '';
+                        },
+                        scrollTo: function ($stateParams) {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        }).state({
                 name: 'tabs.participants',
                 url: '/participants/',
                 sticky: false,

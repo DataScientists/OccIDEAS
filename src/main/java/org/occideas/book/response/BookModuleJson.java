@@ -6,11 +6,13 @@ public class BookModuleJson {
 
     private String name;
     private String json;
+    private String type;
     private LocalDateTime lastUpdatedDate;
 
-    public BookModuleJson(String name, String json, LocalDateTime lastUpdatedDate) {
+    public BookModuleJson(String name, String json, String type, LocalDateTime lastUpdatedDate) {
         this.name = name;
         this.json = json;
+        this.type = type;
         this.lastUpdatedDate = lastUpdatedDate;
     }
 
@@ -28,6 +30,14 @@ public class BookModuleJson {
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public LocalDateTime getLastUpdatedDate() {

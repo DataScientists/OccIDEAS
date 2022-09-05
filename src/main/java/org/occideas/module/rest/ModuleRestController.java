@@ -419,17 +419,17 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
                     mapper.configure(Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
                     NodeRuleHolder idNodeHolder = null;
                     String line = reader.readLine();
-                    ModuleVO[] modules = mapper.readValue(line, ModuleVO[].class);
+                    ModuleVO module = mapper.readValue(line, ModuleVO.class);
                     // only expecting one module
-                    ModuleVO vo = modules[0];
+                    //ModuleVO vo = modules;
                     ModuleCopyVO copyVo = new ModuleCopyVO();
-                    copyVo.setVo(vo);
-                    copyVo.setFragments(vo.getFragments());
+                    copyVo.setVo(module);
+                    copyVo.setFragments(module.getFragments());
                     copyVo.setIncludeRules(true);
-                    copyVo.setName(vo.getName());
-                    copyVo.setModules(vo.getModules());
+                    copyVo.setName(module.getName());
+                    copyVo.setModules(module.getModules());
                     // this is for intro module
-                    if ("M_IntroModule".equals(vo.getType())) {
+                    if ("M_IntroModule".equals(module.getType())) {
                         idNodeHolder = service.copyModuleAutoGenerateModule(copyVo, report);
                         service.updateMissingLinks(copyVo.getVo());
                         for (ModuleVO moduleVO : copyVo.getModules()) {
@@ -447,7 +447,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
                     service.copyRulesValidateAgent(idNodeHolder, report);
                     service.addNodeRulesValidateAgent(idNodeHolder, report);
                     // adding module vo to the report
-                    report.setVo(vo);
+                    report.setVo(module);
 
                 }
             }

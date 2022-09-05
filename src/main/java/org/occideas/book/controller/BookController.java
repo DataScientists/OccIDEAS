@@ -1,6 +1,7 @@
 package org.occideas.book.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.occideas.book.request.AddNodeRequest;
 import org.occideas.book.request.BookRequest;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Map;
 
 @RestController
 @Path("/book")
@@ -83,12 +85,20 @@ public class BookController {
         String content;
         try {
             content = new String(uploadedInputStream.readAllBytes(), StandardCharsets.UTF_8);
-            bookService.addModuleToBook(new BookRequest(bookId, fileName, "Task Modules", content, updatedBy));
+            Map<String, Object> jsonMap = new ObjectMapper().readValue(content, Map.class);
+            bookService.addModuleToBook(new BookRequest(bookId, fileName, (String)jsonMap.get("type"), content, updatedBy));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @GET
+    @Path("/{bookId}/{name}")
+    @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getModuleInBook(@PathParam("bookId") Long bookId, @PathParam("name") String name) throws IOException {
+        return ResponseEntity.ok(bookService.getModuleInBook(bookId, name));
     }
 
 }

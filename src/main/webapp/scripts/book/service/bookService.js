@@ -63,13 +63,21 @@
             return request;
         }
 
+        const getModuleInBook = function (bookId, name) {
+            return $http.get(`${bookEndPoint}/${bookId}/${name}`, {cache: false}).then(function (response) {
+                const data = response.data;
+                return data;
+            });
+        };
+
         return {
             get: getBook,
             save,
             deleteBook,
             saveToBook,
             deleteModuleInBook,
-            uploadToBook
+            uploadToBook,
+            getModuleInBook
         };
     }
 

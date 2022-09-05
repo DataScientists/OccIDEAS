@@ -60,7 +60,7 @@ public class BookMapper {
         List<BookModule> modules = entity.getModules();
         List<BookModuleJson> jsonModules = new ArrayList<>();
         modules.forEach(module -> {
-            jsonModules.add(new BookModuleJson(module.getName(), FileUtil.readJsonFile(module.getJson()), module.getLastUpdated()));
+            jsonModules.add(new BookModuleJson(module.getName(), FileUtil.readJsonFile(module.getJson()), module.getType(), module.getLastUpdated()));
         });
         vo.setModules(jsonModules);
         return vo;

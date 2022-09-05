@@ -1,0 +1,52 @@
+<div class="row ">
+    <div class="tree-node"></div>
+    <div class="col-sm-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div id="tree-root" ui-tree="moduleTreeOptions">
+                    <ol ng-model="vm.node" ui-tree-nodes>
+                        <li id="moduleTreeBody" ng-include="'nodes_renderer.html'"
+                            ng-repeat="node in vm.node" ui-tree-node></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="btn btn-primary btn-lg back-to-top" href="#" id="back-to-top"
+       ng-click="scrollToTop();" role="button"
+       style="z-index: 100001"><span
+            class="glyphicon glyphicon-chevron-up"></span></a>
+</div>
+<script id="nodes_renderer.html" type="text/ng-template">
+    <div id="module-tree" class="angular-ui-tree" data-clone-enabled="{{isClonable}}"
+         ng-attr-data-nodrag="{{isReadOnly}}">
+        <div class="tree-node" id="{{node.anchorId}}">
+            <!-- start content -->
+            <div style="height:auto !important"
+                 class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M'||node.nodeclass === 'F'?'nodeModHeight':'nodeHeight'}}"
+                 ng-attr-fsm-sticky-header="{{node.nodeclass === 'M'||node.nodeclass === 'F'}}"
+                 scroll-body="'#moduleTreeBody'" scroll-stop='0' id="node-{{node.idNode}}">
+                <a class="btn btn-success btn-xs {{node.type}}" data-nodrag="" ng-click="toggle()">
+                    <span ng-if="((node.nodeclass != 'M')||(node.nodeclass != 'F')) || node.nodes.length!=0"
+                          class="glyphicon glyphicon-chevron-down" ng-class="{
+                      'glyphicon-chevron-right': collapsed,
+                      'glyphicon-chevron-down': !collapsed
+                      }">
+                    </span>
+                </a>
+                <span ng-if="node.type.indexOf('multi') > -1" class="badge-multi">Multi</span>
+                <span ng-if="node.description.indexOf('display') > -1" class="badge-multi">Display</span>
+
+                <span id="preEditSpan_{{node.idNode}}" class="treeNodeText" ng-if="!node.editEnabled" ng-click="enable(node)"
+                      event-focusq="click" event-focusq-id="editId_{{node.idNode}}" data-nodrag>
+				{{node.name}}
+		        </span>
+            </div>
+            <!-- end content -->
+        </div>
+    </div>
+    <div ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+        <div ng-repeat="node in node.nodes | orderBy:'sequence' " ui-tree-node ng-include="'nodes_renderer.html'"
+             class="angular-ui-tree-node" collapsed="false"></div>
+    </div>
+</script>
