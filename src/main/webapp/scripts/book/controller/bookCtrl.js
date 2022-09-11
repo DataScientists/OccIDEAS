@@ -176,6 +176,112 @@
             }
         }
 
+        self.isCompareEnabled = false;
+        self.modulesForCompare = [];
+        self.onCheckBook = (group, module) => {
+            if (module.check && self.modulesForCompare.length === 2) {
+                alert("You've already selected 2 modules to compare. Only 2 modules can be added for comparison.");
+                module.check = false;
+                return;
+            }
+
+            if (module.check) {
+                const book = self.copyOfData.find(b => b.name === group.value);
+                self.modulesForCompare.push({book: book, module: module})
+            } else {
+                // remove from selected list
+                const book = self.copyOfData.find(b => b.name === group.value);
+                const remaining = self.modulesForCompare.filter(b => (b.book.id !== book.id || (b.book.id === book.id && b.module.name !== module.name)));
+                self.modulesForCompare = remaining;
+            }
+
+            self.isCompareEnabled = self.modulesForCompare.length === 2;
+        }
+
+        self.compareModules = () => {
+            if (self.modulesForCompare.length !== 2) {
+                alert("You need to select 2 modules for comparison/");
+                return;
+            }
+
+            const compareModuleScope = {
+                compareComplete: false,
+                book: self.modulesForCompare[0].book,
+                compareToBook: self.modulesForCompare[1].book,
+                selectedModule: self.modulesForCompare[0].module,
+                selectedCompareModule: self.modulesForCompare[1].module,
+                results: {},
+                diffInd: null,
+                numberOfDiff: 0,
+                reset() {
+                    this.compareComplete = false;
+                    this.numberOfDiff = 0;
+                    document.getElementById('visual').innerHTML = "";
+                },
+                top() {
+                    document.getElementById('topSummary').scrollIntoView(true);
+                    this.diffInd = null;
+                },
+                next() {
+                    const differences = document.querySelectorAll(".jsondiffpatch-modified");
+                    if (differences.length === 0) {
+                        alert('No difference.');
+                        return;
+                    }
+                    if (this.diffInd === null) {
+                        this.diffInd = 0;
+                    } else {
+                        this.diffInd = this.diffInd + 1;
+                    }
+                    if (this.diffInd === differences.length) {
+                        this.diffInd = differences.length - 1;
+                        alert('You are already at the last difference.');
+                        return;
+                    }
+                    if (this.diffInd <= differences.length - 1) {
+                        differences[this.diffInd].scrollIntoView(true);
+                    }
+                },
+                previous() {
+                    const differences = document.querySelectorAll(".jsondiffpatch-modified");
+                    if (differences.length === 0) {
+                        alert('No difference.');
+                        return;
+                    }
+                    if (this.diffInd === null) {
+                        this.diffInd = 0;
+                    } else {
+                        this.diffInd = this.diffInd - 1;
+                    }
+                    if (this.diffInd < 0) {
+                        this.diffInd = 0;
+                        alert('You are already at the first difference.');
+                        return;
+                    }
+
+                    if (this.diffInd >= 0) {
+                        differences[this.diffInd].scrollIntoView(true);
+                    }
+                },
+                cancel() {
+                    $mdDialog.cancel();
+                },
+                startComparison() {
+                    DifferenceUtil.getDiffBook(JSON.parse(this.selectedModule.json), JSON.parse(this.selectedCompareModule.json));
+                    this.compareComplete = true;
+                    const differences = document.querySelectorAll(".jsondiffpatch-modified");
+                    this.numberOfDiff = differences.length;
+                }
+            }
+            $scope.compareModuleScope = {...compareModuleScope};
+            $mdDialog.show({
+                scope: $scope,
+                preserveScope: true,
+                templateUrl: 'scripts/book/partials/compareModuleDialog.html',
+                clickOutsideToClose: false
+            });
+        }
+
         self.compareBooks = group => {
             const book = self.copyOfData.find(b => b.name === group.value);
             const filteredBooks = self.copyOfData.filter(b => b.id !== book.id);
