@@ -1,5 +1,9 @@
 package org.occideas.fragment.rest;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.Fragment;
 import org.occideas.entity.ModuleRule;
@@ -15,8 +19,13 @@ import org.springframework.http.MediaType;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Path("/fragment")
@@ -344,5 +353,40 @@ public class FragmentRestController implements BaseRestController<FragmentVO> {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
     }
+  }
+
+  @Path(value = "/importJson")
+  @POST
+  public Response importJson(FormDataMultiPart multiPart) {
+    FragmentReportVO report = new FragmentReportVO();
+    try {
+      Map<String, List<FormDataBodyPart>> fieldsByName = multiPart.getFields();
+      for (List<FormDataBodyPart> fields : fieldsByName.values()) {
+        for (FormDataBodyPart field : fields) {
+          InputStream in = field.getEntityAs(InputStream.class);
+          BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+          ObjectMapper mapper = new ObjectMapper();
+          mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+          NodeRuleHolder idNodeHolder = null;
+          String line = reader.readLine();
+          FragmentVO fragment = mapper.readValue(line, FragmentVO.class);
+          FragmentCopyVO copyVO = new FragmentCopyVO();
+          copyVO.setVo(fragment);
+          copyVO.setName(fragment.getName());
+          copyVO.setIncludeRules(true);
+          idNodeHolder = service.copyFragment(copyVO, report);
+          if (copyVO.isIncludeRules()) {
+            moduleService.copyRules(idNodeHolder);
+            moduleService.addNodeRules(idNodeHolder);
+          }
+          report.setVo(fragment);
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+    }
+
+    return Response.ok(report).build();
   }
 }

@@ -66,6 +66,18 @@
                 }
             }
         }).state({
+            name: 'tabs.importFragmentJsonValidationReport',
+            url: '/importFragmentJsonValidationReport/',
+            sticky: true,
+            deepStateRedirect: true,
+            authenticate: true,
+            views: {
+                'importFragmentJsonValidationReport@tabs': {
+                    templateUrl: "scripts/fragments/partials/importJsonValidation.html",
+                    controller: 'FragmentCtrl as vm'
+                }
+            }
+        }).state({
             name: 'tabs.allModuleValidation',
             url: '/allModuleValidation/',
             sticky: true,

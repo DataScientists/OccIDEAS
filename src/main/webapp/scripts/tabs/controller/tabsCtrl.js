@@ -412,6 +412,23 @@
       $rootScope.tabsLoading = true;
       safeDigest($rootScope.tabsLoading);
     };
+    $scope.addImportFragmentJsonValidationTab = function(report) {
+      tabs.push({
+        title: "Report (Import Task Module JSON)",
+        viewName: 'importFragmentJsonValidationReport@tabs',
+        canClose: true,
+        disabled: false
+      });
+      $scope.tabOptions.push({
+        state: "tabs.importFragmentJsonValidationReport",
+        data: {
+          row: report.idNode
+        }
+      });
+      $scope.importFragmentJsonValidationReport = report;
+      $rootScope.tabsLoading = true;
+      safeDigest($rootScope.tabsLoading);
+    };
     $scope.addFragmentTab = function(row) {
       tabs.push({
         title: row.name,

@@ -3,10 +3,10 @@
     .controller('FragmentCtrl', FragmentCtrl);
 
   FragmentCtrl.$inject = ['FragmentsService', 'NgTableParams', '$state', '$scope', '$filter', '$mdDialog', '$q',
-    'InterviewsService', '$timeout', 'QuestionsService', 'ModuleRuleService', 'NodeLanguageService', '$sessionStorage'];
+    'InterviewsService', '$timeout', 'QuestionsService', 'ModuleRuleService', 'NodeLanguageService', '$sessionStorage', 'Upload'];
 
   function FragmentCtrl(FragmentsService, NgTableParams, $state, $scope, $filter, $mdDialog, $q,
-                        InterviewsService, $timeout, QuestionsService, ModuleRuleService, NodeLanguageService, $sessionStorage) {
+                        InterviewsService, $timeout, QuestionsService, ModuleRuleService, NodeLanguageService, $sessionStorage, Upload) {
     var self = this;
     self.isDeleting = false;
     var dirtyCellsByRow = [];
@@ -85,6 +85,50 @@
           obj.$digest();
         } catch(e) {
         }
+      }
+    };
+
+    $scope.importJson = function() {
+      $mdDialog.show({
+        scope: $scope.$new(),
+        templateUrl: 'scripts/fragments/partials/importJson.html',
+        parent: angular.element(document.body),
+        clickOutsideToClose: true
+      })
+        .then(function(answer) {
+          $scope.status = 'You said the information was "' + answer + '".';
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
+        });
+    };
+
+    $scope.uploadFiles = function(file, errFiles) {
+      $scope.f = file;
+      $scope.errFile = errFiles && errFiles[0];
+    };
+
+    $scope.importJsonBtn = function() {
+      var file = $scope.f;
+      if(file) {
+        file.upload = Upload.upload({
+          url: 'web/rest/fragment/importJson',
+          file: file
+        });
+
+        file.upload.then(function(response) {
+          $timeout(function() {
+            file.result = response.data;
+            self.tableParams.reload();
+            $mdDialog.cancel();
+            $scope.addImportFragmentJsonValidationTab(response.data);
+          });
+        }, function(response) {
+          if(response.status > 0)
+            $scope.errorMsg = response.status + ': ' + response.data;
+        }, function(evt) {
+          file.progress = Math.min(100, parseInt(100.0 *
+            evt.loaded / evt.total));
+        });
       }
     };
 

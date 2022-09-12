@@ -1,0 +1,30 @@
+<div ng-cloak>
+  <table class="table table-sm">
+    <tbody>
+      <tr>
+        <td colspan="2"><h3>Successful Upload - Report</h3></td>
+      </tr>
+      <tr>
+        <td>Task Module Id</td>
+        <td><a href ng-click="addFragmentTab(importFragmentJsonValidationReport.vo)"
+               style="cursor: pointer;">{{importFragmentJsonValidationReport.vo.idNode}}</a></td>
+      </tr>
+      <tr>
+        <td>Task Module Name</td>
+        <td>{{importFragmentJsonValidationReport.vo.name}}</td>
+      </tr>
+      <tr>
+        <td>Number of Questions Imported</td>
+        <td>{{importFragmentJsonValidationReport.totalQuestions}}</td>
+      </tr>
+      <tr>
+        <td>Number of Answers Imported</td>
+        <td>{{importFragmentJsonValidationReport.totalAnswers}}</td>
+      </tr>
+      <tr>
+        <td>Number of Rules Imported</td>
+        <td>{{importFragmentJsonValidationReport.totalRules}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

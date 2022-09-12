@@ -1,7 +1,9 @@
 <div ng-cloak>
   <div>
-
     <div aria-label="buttonGrp" role="group" style="padding:2px 2px 2px 2px;">
+      <button type="button" permission="['ROLE_ADMIN']" class="btn btn-default"  ng-click="importJson()">
+        Import JSON
+      </button>
       <button class="btn btn-default" ng-click='validateAllBtn(true)' permission="['ROLE_ADMIN']" type="button">
         Validate Task Modules
       </button>
