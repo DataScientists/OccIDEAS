@@ -1771,7 +1771,7 @@ public class AssessmentRestController {
                 } else {
                     answers.add(note.getText());
                 }
-                if (answers.size() == 5) {
+                if (answers.size() == 4) {
                     answers.add(note.getLastUpdated().toString());
                 }
             }
