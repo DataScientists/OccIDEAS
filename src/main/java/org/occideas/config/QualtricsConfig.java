@@ -11,6 +11,7 @@ public class QualtricsConfig {
     private String url;
     private String apiToken;
     private QualtricsTopic topic;
+    private boolean isConfigured;
     private boolean hideNodeKeys;
     private boolean includeTranslations;
     private boolean expandModules;
@@ -116,4 +117,12 @@ public class QualtricsConfig {
     public void setEnableListener(boolean enableListener) {
         this.enableListener = enableListener;
     }
+
+	public boolean isConfigured() {
+		return isConfigured;
+	}
+
+	public void setConfigured(boolean isConfigured) {
+		this.isConfigured = isConfigured;
+	}
 }
