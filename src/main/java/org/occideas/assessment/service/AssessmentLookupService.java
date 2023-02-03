@@ -54,9 +54,9 @@ public class AssessmentLookupService {
             allAnswers.addAll(answers);
             allQuestions.addAll(questions);
             iCount++;
-            if (iCount % (iSize * 0.1) == 0) {
-                log.info("Assessment report processing {} of {}", iCount, iSize);
-            }
+            //if (iCount % (iSize * 0.1) == 0) {
+            //    log.info("Assessment report processing {} of {}", iCount, iSize);
+            //}
         }
 
         Map<Long, Node> nodeList = new HashMap<>();

@@ -160,10 +160,15 @@
       });
     self.tableParams.shouldGetData = true;
 
+
+  
+  
+
     $scope.newExportCSVButton = function() {
       $scope.checkboxes = {'checked': false, items: {}};
       $scope.exportType = "INTERVIEW";
       $scope.fileName = "interviewsExport";
+      
       $mdDialog.show({
         scope: $scope.$new(),
         preserveScope: true,
@@ -175,6 +180,7 @@
       $scope.checkboxes = {'checked': false, items: {}};
       $scope.fileName = "assessmentExport";
       $scope.exportType = "ASSESSMENT";
+      
       $mdDialog.show({
         scope: $scope.$new(),
         preserveScope: true,
@@ -266,6 +272,7 @@
       $event.returnValue = false;
     };
 
+    $scope.data.sortColumns = true;
 
     $scope.exportCSVInterviews = async function (fileName) {
       var checkedItems = false;
@@ -294,6 +301,9 @@
                   filterModule.push(key);
                 }
               });
+			  
+	          var sortColumns = $scope.data.sortColumns;
+	
               if($scope.exportType == "ASSESSMENT") {
                 await InterviewsService.exportAssessmentsCSV(filterModule, fileName);
               } else if ($scope.exportType == "ASSESSMENTNOISE") {
@@ -303,7 +313,8 @@
               } else if ($scope.exportType == "NOTES") {
                 await InterviewsService.exportNotesCSV(filterModule, fileName);
               } else {
-                await InterviewsService.exportInterviewsCSV(filterModule, fileName);
+	            
+                await InterviewsService.exportInterviewsCSV(filterModule, fileName,sortColumns);
               }
 
         $scope.reloadWithDelay(500);

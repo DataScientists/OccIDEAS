@@ -70,19 +70,21 @@ public class InterviewDao implements IInterviewDao {
     " CASE WHEN type = ':type' THEN a.text END as ':type'";
 
   private final String SELECT_NOTES_QUERY =
-    " SELECT a.interviewId,"
+    " SELECT DISTINCT a.interviewId,"
       + " referenceNumber,"
       + " lastUpdated";
 
   private final String SELECT_NOTES_FROM =
     " FROM Note a, Interview b"
       + " where a.interviewId = b.idinterview"
+      + " and type <> 'System'"
       + " order by interviewId, lastUpdated";
 
   private final String SELECT_NOTES_WITH_MODULE_FROM =
     " FROM Note a, Interview b, InterviewIntroModule_Module c"
       + " where a.interviewId = b.idinterview and a.interviewId = c.interviewId"
       + " and (c.idModule in (:modules))"
+      + " and type <> 'System'"
       + " order by interviewId, lastUpdated";
 
   @Autowired
@@ -515,7 +517,7 @@ public class InterviewDao implements IInterviewDao {
 
     final Session session = sessionFactory.getCurrentSession();
 
-    final Query types = session.createSQLQuery("select distinct type from Note");
+    final Query types = session.createSQLQuery("select distinct type from Note where type <> 'System'");
 
     return types.list();
   }

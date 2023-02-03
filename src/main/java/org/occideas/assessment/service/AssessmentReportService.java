@@ -101,12 +101,26 @@ public class AssessmentReportService {
         validateDirectory(reportConfig.getExportDir());
         log.info("Started export interview with export directory {}", reportConfig.getExportDir());
         String exportFileCSV = createFileName(filterModuleVO.getFileName());
-        ReportHistory reportHistory = insertToReportHistory(exportFileCSV, "", null, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);
+        String sortedExportFileCSV = exportFileCSV.substring(0, exportFileCSV.indexOf("."))+"-sorted.csv";
+        ReportHistory reportHistory = new ReportHistory();
+        if(filterModuleVO.getSortColumns()) {      	
+        	reportHistory = insertToReportHistory(sortedExportFileCSV, "", null, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);       
+        }else {
+        	reportHistory = insertToReportHistory(exportFileCSV, "", null, ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);           
+        }
         String fullPath = reportConfig.getExportDir() + "/" + reportHistory.getId() + "_" + exportFileCSV;
-        log.info("Export interview full path {}", fullPath);
-        reportHistory = insertToReportHistory(exportFileCSV, fullPath, reportHistory.getId(),
-                ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);
-
+        String fullPathOrdered = fullPath.substring(0,fullPath.indexOf("."))+"-sorted.csv";
+        
+       
+        if(filterModuleVO.getSortColumns()) {
+        	reportHistory = insertToReportHistory(sortedExportFileCSV, fullPathOrdered, reportHistory.getId(),
+                    ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);
+        	log.info("Export interview full path {}", fullPathOrdered);
+        }else {
+        	reportHistory = insertToReportHistory(exportFileCSV, fullPath, reportHistory.getId(),
+                    ReportsEnum.REPORT_INTERVIEW_EXPORT.getValue(), requestorId);
+        	log.info("Export interview full path {}", fullPath);
+        }
         Long count = interviewQuestionDao.getUniqueInterviewQuestionCount(filterModuleVO.getFilterModule());
         reportHistory.setRecordCount(count);
 
@@ -155,10 +169,10 @@ public class AssessmentReportService {
                 allAnswers.addAll(answers);
                 allQuestions.addAll(questions);
                 List<String> headerList = new ArrayList<String>();
-                headerList.add("InterviewID");
-                headerList.add("ParticipantID");
-                headerList.add("Participant Status");
-                headerList.add("Assessment Status");
+                headerList.add("!InterviewID");
+                headerList.add("!ParticipantID");
+                headerList.add("!Participant Status");
+                headerList.add("!Assessment Status");
                 List<String> answerList = new ArrayList<String>();
                 answerList.add(String.valueOf(interview.getIdinterview()));
                 answerList.add(String.valueOf(interview.getReferenceNumber()));
@@ -188,7 +202,7 @@ public class AssessmentReportService {
                 writer.writeNext(answerList.toArray(new String[answerList.size()]));
                 writer.close();
                 iCount++;
-                log.info("Write count for export interview {} of {}", iCount, uniqueInterviews.size());
+                //log.info("Write count for export interview {} of {} pid {}", iCount, uniqueInterviews.size(),interview.getIdinterview());
             }
             File folder = new File(tempFolder);
 
@@ -252,7 +266,7 @@ public class AssessmentReportService {
                     }
                     List<String> fullAnswerList = new ArrayList();
                     for (String header : fullHeaderList) {
-                        String answer = "-NA-";
+                        String answer = "";
                         if (answerMap.get(header) != null) {
                             answer = answerMap.get(header);
                         }
@@ -262,11 +276,70 @@ public class AssessmentReportService {
                 }
             }
             writer.close();
+            
+            if(filterModuleVO.getSortColumns()) {
+            	
+            	final String unSortedFile  = fullPath;
+                
+                CSVReader reader = new CSVReader(new FileReader(unSortedFile));
+                String [] nextLine,sortedNextLine;
+                List<String> columns = new ArrayList<String>();
+                List<String> sortedColumns = new ArrayList<String>();
+                Map<Integer,Integer> map = new HashMap<Integer,Integer>();
+                 
+                if ((nextLine = reader.readNext()) != null) {
+                    int i = nextLine.length;
+                 
+                    for(int j=0;j<i;j++){
+                    columns.add(nextLine[j]);
+                    sortedColumns.add(nextLine[j]);
+                    }
+                     
+                    Collections.sort(sortedColumns);
+                }               
+                for(int i=0;i<columns.size();i++){
+                    String str = columns.get(i);
+                    map.put(i, sortedColumns.indexOf(str));
+                }          
+                //for(int i=0;i<map.size();i++){
+                //    System.out.println(" key is :" + i + ", value is :" + map.get(i));
+                //}                            
+                
+                CSVWriter writerSorted = new CSVWriter(
+                        new OutputStreamWriter(new FileOutputStream(fullPathOrdered), StandardCharsets.UTF_8),
+                        ',',
+                        CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                        CSVWriter.DEFAULT_LINE_END
+                );
+                
+                sortedNextLine = new String[sortedColumns.size()];
+                //System.out.println(sortedNextLine.length);
+                 
+                for(int k = 0; k != sortedColumns.size(); k++){
+                    sortedNextLine[k] = sortedColumns.get(k);
+                    System.out.println(sortedNextLine[k]);
+                }
+         
+                writerSorted.writeNext(sortedNextLine);
+                 
+                while ((nextLine = reader.readNext()) != null) {
+                    for(int count1=0;count1 < nextLine.length ; count1++){
+                        String str = nextLine[count1];
+                        sortedNextLine[map.get(count1)] = str;
+                    }
+                    writerSorted.writeNext(sortedNextLine);
+                }                
+                writerSorted.close();
+                fullPath = fullPathOrdered;
+            }                             
             FileUtils.deleteDirectory(temp);
+            
             assessmentLookupService.writeLookup(fullPath, uniqueInterviews, filterModuleVO.getFilterModule(), requestorId);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+        
         updateProgress(reportHistory, ReportsStatusEnum.COMPLETED.getValue(), 100);
         log.info("Completed export interview with export directory {}", reportConfig.getExportDir());
     }
@@ -282,10 +355,12 @@ public class AssessmentReportService {
         }
         if (interviewQuestionVO == null) {
         	log.error("Error finding question");
+        }else {
+        	if ("Q_multiple".equals(interviewQuestionVO.getType())) {
+            	retValue = true;
+            }
         }
-        if ("Q_multiple".equals(interviewQuestionVO.getType())) {
-        	retValue = true;
-        }
+        
         
 		return retValue;
 	}
@@ -453,7 +528,7 @@ public class AssessmentReportService {
             agent.setName(prop.getName());
             agents.add(agent);
 
-            headers.add(agent.getName() + "_MANUAL");
+           // headers.add(agent.getName() + "_MANUAL");
             headers.add(agent.getName() + "_AUTO");
         }
 
@@ -464,6 +539,9 @@ public class AssessmentReportService {
         for (Interview interview : uniqueInterviews) {
 
             currentCount++;
+            //if(currentCount==10) {
+            //	break;
+            //}
 
             updateProgress(uniqueInterviews.size(), reportHistory, currentCount, elapsedTime, msPerInterview);
 
@@ -482,16 +560,16 @@ public class AssessmentReportService {
 
             for (Agent agent : agents) {
                 boolean aAgentFound = false;
-                for (Rule rule : interview.getManualAssessedRules()) {
-                    if (agent.getIdAgent() == rule.getAgentId()) {
-                        answers.add(RuleMapperImpl.getDescriptionByValue(rule.getLevel()));
-                        aAgentFound = true;
-                        break;
-                    }
-                }
-                if (!aAgentFound) {
-                    answers.add("-NA-");
-                }
+             //   for (Rule rule : interview.getManualAssessedRules()) {
+             //       if (agent.getIdAgent() == rule.getAgentId()) {
+             //           answers.add(RuleMapperImpl.getDescriptionByValue(rule.getLevel()));
+             //           aAgentFound = true;
+             //           break;
+             //       }
+             //   }
+             //   if (!aAgentFound) {
+             //       answers.add("");
+             //   }
                 aAgentFound = false;
                 for (Rule rule : interview.getAutoAssessedRules()) {
                     if (agent.getIdAgent() == rule.getAgentId()) {
@@ -501,7 +579,7 @@ public class AssessmentReportService {
                     }
                 }
                 if (!aAgentFound) {
-                    answers.add("-NA-");
+                    answers.add("");
                 }
             }
             exportCSVVO.getAnswers().put(interview, answers);
@@ -618,11 +696,11 @@ public class AssessmentReportService {
 
     private void validateDirectory(String exportDir) {
         if (StringUtils.isEmpty(exportDir)) {
-            throw new GenericException("Report directory does not exist.");
+            throw new GenericException(exportDir+" Report directory not defined.");
         }
         Path path = Paths.get(exportDir);
         if (!Files.exists(path)) {
-            throw new GenericException("Report directory does not exist.");
+            throw new GenericException(exportDir+" Report directory does not exist.");
         }
     }
 

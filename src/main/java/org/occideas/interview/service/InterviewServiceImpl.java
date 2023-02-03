@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.IAgentDao;
 import org.occideas.base.dao.BaseDao;
+import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.*;
 import org.occideas.interview.dao.IInterviewDao;
 import org.occideas.interview.service.result.assessor.NoiseAssessmentService;
@@ -100,6 +101,8 @@ public class InterviewServiceImpl implements InterviewService {
     private AutoAssessmentService autoAssessmentService;
     @Autowired
     private NoiseAssessmentService noiseAssessmentService;
+    @Autowired
+	private QualtricsConfig qualtricsConfig;
     @Autowired
     private QualtricsSurveyResponseDao qualtricsSurveyResponseDao;
     @Autowired
@@ -714,7 +717,10 @@ public class InterviewServiceImpl implements InterviewService {
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList());
         bulkUpdate(interviewsToBeProcessed);
-        interviewsToBeProcessed.forEach(interview -> updateQualtricsResults(interview.getIdinterview()));
+        if (qualtricsConfig.isConfigured()) {
+        	interviewsToBeProcessed.forEach(interview -> updateQualtricsResults(interview.getIdinterview()));
+        }
+        
         log.info("Completed assessing the rules count {}.", interviews.size());
     }
 

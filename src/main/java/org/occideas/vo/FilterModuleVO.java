@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class FilterModuleVO {
 
   private String fileName;
+  private Boolean sortColumns;
   private String[] filterModule;
 
   public String getFileName() {
@@ -22,6 +23,17 @@ public class FilterModuleVO {
 
   public void setFilterModule(String[] filterModule) {
     this.filterModule = filterModule;
+  }
+
+  public Boolean getSortColumns() {
+	if(sortColumns==null) {
+	  sortColumns = false;
+	}
+	return sortColumns;
+  }
+
+  public void setSortColumns(Boolean sortColumns) {
+	this.sortColumns = sortColumns;
   }
 
 }

@@ -254,7 +254,7 @@
       return request.then(handleSuccess, handleError);
     }
 
-    function exportInterviewsCSV(filterModule, fileName) {
+    function exportInterviewsCSV(filterModule, fileName, sortColumns) {
       var url = 'web/rest/assessment/exportInterviewsCSV';
       var request = $http({
         method: 'POST',
@@ -262,6 +262,7 @@
         ignoreLoadingBar: true,
         data: {
           fileName: fileName,
+          sortColumns: sortColumns,
           filterModule: filterModule
         }
       });

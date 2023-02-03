@@ -154,8 +154,13 @@ public class AutoAssessmentService {
                             rule.setAgentId(id);
                             return rule;
                         }
+                    }else {
+                        Rule rule = new Rule();
+                        rule.setLevel(5);
+                        rule.setAgentId(id);
+                        return rule;
                     }
-                    return null;
+                   // return null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

@@ -16,7 +16,10 @@
           <md-content>
             <p>
               <label>Filename:</label>
-              <input maxlength="20" ng-model="fileName" type="text"/>
+              <input maxlength="20" ng-model="fileName" type="text"/>            
+              <md-checkbox ng-if="(exportType=='INTERVIEW')" ng-model="data.sortColumns" aria-label="Sort Columns">
+                Sort Columns: {{ data.sortColumns }}
+              </md-checkbox>
             </p>
             <table class="table table-condensed table-bordered table-striped"
                    ng-table="vm.filterModTableParams">

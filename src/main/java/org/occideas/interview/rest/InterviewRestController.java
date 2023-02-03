@@ -3,6 +3,7 @@ package org.occideas.interview.rest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.base.rest.BaseRestController;
+import org.occideas.config.QualtricsConfig;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
@@ -44,6 +45,9 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
 
   @Autowired
   private AutoAssessmentService autoAssessmentService;
+  
+  @Autowired
+  private QualtricsConfig qualtricsConfig;
 
   @GET
   @Path(value = "/getlist")
@@ -278,7 +282,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     try {
       InterviewVO interviewVO = service.updateFiredRule(id);
       list.add(interviewVO);
-      service.updateQualtricsResults(interviewVO.getInterviewId());
+      if (qualtricsConfig.isConfigured()) {
+    	  service.updateQualtricsResults(interviewVO.getInterviewId());
+      }
+      
     } catch (Throwable e) {
       log.error(e.getMessage(), e);
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
