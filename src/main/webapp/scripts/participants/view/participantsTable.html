@@ -32,6 +32,14 @@
           <span>Start</span>
         </button>
       </div>
+      <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
+        <button ng-click="vm.showImportFromExcel()" class="btn btn-default"
+			aria-label="Left Align">
+			<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+			AMR Import
+		</button>
+        
+      </div>
     </div>
     <div ng-if="vm.isSelfInterviewer === false">Total Records:{{totalSize}}</div>
     <div ng-if="vm.isSelfInterviewer === false" >
@@ -40,8 +48,10 @@
            show-filter="true" template-pagination="templatePagination.html">
 
       <tr ng-repeat="participant in $data">
-        <td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
+        <!-- 
+        <td filter="{idParticipant: 'text'}" title="'Record Id'">{{participant.idParticipant}}</td>
         <td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
+         -->
         <td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
         <td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
           {{participant.statusDescription}}
@@ -66,6 +76,11 @@
                   ng-click="addInterviewTabInterviewersEdit(participant)"
                   ng-if="participant.statusDescription=='Completed'">
             <span class="glyphicon glyphicon-stop"></span>
+          </button>
+          <button class="btn btn-default btn-sm"
+                  ng-click="showAMRInterview(participant)"
+                  >
+            <span class="glyphicon glyphicon-new-window"></span>
           </button>
         </td>
         <td ng-if="vm.showDelColumn" title="'Del'">

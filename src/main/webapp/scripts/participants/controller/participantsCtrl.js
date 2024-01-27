@@ -397,7 +397,16 @@
     $scope.cancelNotes = function() {
       $mdDialog.cancel();
     };
-
+    $scope.showAMRInterview = function(idInterview){
+		$mdDialog.show({
+              scope: $scope,
+			  width: '1000px',
+			  height: '1000px',
+              templateUrl: 'scripts/notes/view/amrInterviewDialog.html',
+              parent: angular.element(document.body),
+              clickOutsideToClose: true
+            });
+	}
     $scope.showNotes = function(idInterview) {
       NotesService.getNotesByInterviewId(idInterview).then(function(response) {
         if(response.status == '200') {
@@ -435,5 +444,120 @@
         self.tableParams.reload();
       }
     };
+
+	$scope.importFromExcel = function (workbook) {
+        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        /*Skip the first row as it is header*/
+        var range = XLSX.utils.decode_range(worksheet['!ref']);
+        range.s.r = 1;
+        worksheet['!ref'] = XLSX.utils.encode_range(range);
+        var data = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+		var count = 0;
+		var jobCount = 0;
+		var amrData = {
+			        referenceNumber: '',	
+					refNumberJob: '',
+					notes: '',
+			        interviews: []
+			      	};
+		for(const row of data){
+			if(row.length != 0){
+				
+				if((count == 2)||(count == 17)||(count == 32)){
+					
+					amrData.referenceNumber = row[0];
+					amrData.refNumberJob = row[0]+'-0';
+					createAMRParticipant(amrData);
+				}
+				if((count >= 5) && (count <=13)){
+					amrData.refNumberJob = amrData.referenceNumber+'-'+row[0];
+					amrData.notes = 'The next set of questions refer to when you where working as a '
+					+row[5]+ ' with '
+					+row[3]+ ' that    job started in '				
+					+row[1];
+					createAMRParticipant(amrData);
+				}
+				
+			}
+			
+			count++;
+			jobCount++;
+		}
+        
+
+        $mdDialog.cancel();
+		self.tableParams.reload();
+    };
+    self.showImportFromExcel = function () {
+        $mdDialog.show({
+            scope: $scope,
+            preserveScope: true,
+            templateUrl: 'scripts/participants/view/importFromExcel.html',
+            clickOutsideToClose: true
+        });
+    };
+	$scope.closeDialog = function (){
+		$mdDialog.cancel();
+	}
+	self.closeDialog = function (){
+		$mdDialog.cancel();
+	}
+	
+	function createAMRParticipant(data){
+		var participant = {
+        reference: data.refNumberJob,
+        interviews: []
+      };
+		ParticipantsService.createParticipant(participant).then(function(response) {
+	    if(response.status === 200) {
+	      var participantData = response.data;
+	      
+	      var interview = {};
+	      interview.participant = participantData;
+	      interview.module = $scope.data[0];
+	      interview.referenceNumber = participantData.reference+'-0';
+
+          interview.notes = [];
+            
+          interview.notes.push({
+              
+              text: "Here will be all the details about this interview",
+              type: 'Interviewer'
+            });
+	      InterviewsService.startInterview(interview).then(function(response) {
+	        if(response.status === 200) {
+			  var idinterview = response.data.interviewId;
+	          interview.interviewId = idinterview;
+	          
+              interview.notes = [];
+            
+              interview.notes.push({
+                interviewId: idinterview,
+                text: "All the details will be here",
+                type: 'Interviewer'
+              });
+              saveInterview(interview);
+	          
+	        }
+	      });
+	    }
+	  });
+	}
+	
+	function saveInterview(interview) {
+      
+      InterviewsService.save(interview).then(function(response) {
+        if(response.status === 200) {
+          
+          
+        }
+      });
+    }
+	
+	
+	
+	
+	
   }
 })();

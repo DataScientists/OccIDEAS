@@ -193,7 +193,8 @@
       }
 
       if($scope.checkboxes.items[row.idAgent]) {
-        if(confirm('Are you sure you want to add ' + row.name + ' as study agent?')) {
+        //if(confirm('Are you sure you want to add ' + row.name + ' as study agent?')) {
+		if(1==1) {
           AgentsService.updateStudyAgents(row).then(function(response) {
             if(response.status === 200) {
               console.log('Added to Study Agent was Successful!');

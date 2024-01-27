@@ -9,6 +9,7 @@
           "ngTable",
           "ngSanitize",
           "ngCsv",
+		  "angular-js-xlsx",
           "angular-confirm",
           "sticky",
           "ngToast",
