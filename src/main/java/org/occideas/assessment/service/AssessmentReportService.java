@@ -528,7 +528,7 @@ public class AssessmentReportService {
             agent.setName(prop.getName());
             agents.add(agent);
 
-           // headers.add(agent.getName() + "_MANUAL");
+            headers.add(agent.getName() + "_MANUAL");
             headers.add(agent.getName() + "_AUTO");
         }
 
@@ -560,16 +560,16 @@ public class AssessmentReportService {
 
             for (Agent agent : agents) {
                 boolean aAgentFound = false;
-             //   for (Rule rule : interview.getManualAssessedRules()) {
-             //       if (agent.getIdAgent() == rule.getAgentId()) {
-             //           answers.add(RuleMapperImpl.getDescriptionByValue(rule.getLevel()));
-             //           aAgentFound = true;
-             //           break;
-             //       }
-             //   }
-             //   if (!aAgentFound) {
-             //       answers.add("");
-             //   }
+                for (Rule rule : interview.getManualAssessedRules()) {
+                    if (agent.getIdAgent() == rule.getAgentId()) {
+                        answers.add(RuleMapperImpl.getDescriptionByValue(rule.getLevel()));
+                        aAgentFound = true;
+                        break;
+                    }
+                }
+                if (!aAgentFound) {
+                    answers.add("");
+                }
                 aAgentFound = false;
                 for (Rule rule : interview.getAutoAssessedRules()) {
                     if (agent.getIdAgent() == rule.getAgentId()) {
