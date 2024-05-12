@@ -137,8 +137,7 @@
           controller: 'AgentCtrl as vm'
         }
       }
-    })
-      .state({
+    }).state({
         name: 'tabs.participants',
         url: '/participants/',
         sticky: false,
@@ -164,8 +163,7 @@
             }
           }
         }
-      })
-      .state({
+      }).state({
         name: 'tabs.participant',
         url: '/participant/:row',
         sticky: false,
@@ -190,19 +188,7 @@
             }
           }
         }
-      })
-      /*.state('tabs.interviewresults', {
-        url: '/interviewresults/',
-        sticky: false,
-          deepStateRedirect: false,
-        views:{
-          'interviewresults@tabs':{
-            templateUrl : "scripts/interviewresults/view/interviewresultsTable.html",
-            controller: 'InterviewResultsCtrl as vm'
-          }
-        }
-      })*/
-      .state({
+      }).state({
         name: 'tabs.assessments',
         url: '/assessments/',
         sticky: true,
@@ -233,11 +219,6 @@
           resolve: {
             data: function($stateParams, AssessmentsService) {
               $log.info("inside questions@tabs resolve");
-//			        		if(TabsCache.get($stateParams.row)){
-//			        			$log.info("Data getting from questions Cache ...");
-//			        			return TabsCache.get($stateParams.row);
-//			        		}
-
               return AssessmentsService.getInterview($stateParams.row)
                 .then(function(response) {
                   $log.info("Interview from questions AJAX ...");
@@ -260,10 +241,6 @@
           resolve: {
             data: function($stateParams, QuestionsService) {
               $log.info("inside questions@tabs resolve");
-//			        		if(TabsCache.get($stateParams.row)){
-//			        			$log.info("Data getting from questions Cache ...");
-//			        			return TabsCache.get($stateParams.row);
-//			        		}
               $log.info("Data getting from questions AJAX ...");
               return QuestionsService.findQuestions($stateParams.row, 'M')
                 .then(function(response) {
@@ -558,16 +535,6 @@
         'admin@tabs': {
           templateUrl: "scripts/admin/view/admin.html",
           controller: 'AdminCtrl as vm'
-//                        resolve:{
-//                            data: function($stateParams,AdminService) {
-//                                $log.info("inside admin@tabs resolve",$stateParams);
-//                                $log.info("Data getting from admin AJAX ...");
-//                                return AdminService.getUserRoles().then(function(response){
-//                                        $log.info("Data received from admin AJAX ...", response);
-//                                        return response.data;
-//                                    });
-//                            }
-//                        }
         }
       }
     }).state({
