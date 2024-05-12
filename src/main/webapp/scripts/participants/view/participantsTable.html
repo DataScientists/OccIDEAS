@@ -1,6 +1,8 @@
 <div ng-cloak  >
   <div>
     <div class="row">
+    <!-- AMR Updates -->
+    <!--  
       <md-input-container class="col-md-2" style="margin-left: 20px;"><label id="awesidlabel">Study ID</label>
         <input class="form-control" id="awesid" ng-keyup="filterAndValidate($event,this)"
                ng-model="vm.tableParams.filter().reference" placeholder="{{awesIdPrefix}}______"
@@ -10,27 +12,15 @@
           <div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
         </div>
       </md-input-container>
-      <div class="col-md-4" ng-if="$storage.langEnabled" style="display: inline-block;margin-top: 20px;">
-        <label>Language</label>
-        <!-- 	<select ng-change="vm.changeLanguage()" ng-model="selectLanguage" -->
-        <!-- 		ng-options="option.language for option in languages track by option.id"> -->
-        <!--    </select> -->
-        <ui-select ng-change="vm.changeNodeLanguage(selectLanguage)" ng-disabled="disabled"
-                   ng-model="selectLanguage.selected"
-                   style="min-width: 150px;" theme="select2">
-          <ui-select-match><i class="glyphicon {{$select.selected.flag}}"></i> {{$select.selected.description}}
-          </ui-select-match>
-          <ui-select-choices repeat="lang in languages | propsFilter: {language: $select.search}">
-            <!--       <img ng-src="{{ lang.url }}" /> -->
-            <i class="glyphicon {{lang.flag}}"></i>
-            <div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
-          </ui-select-choices>
-        </ui-select>
-      </div>
+      
       <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
         <button class="btn btn-default" ng-click="vm.add(selectLanguage)">
           <span>Start</span>
         </button>
+      </div>
+    -->  
+      <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
+        
       </div>
       <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
         <button ng-click="vm.showImportFromExcel()" class="btn btn-default"
@@ -53,15 +43,19 @@
         <td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
          -->
         <td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
+        <td title="'Details'">{{participant.allNotes}}</td>
         <td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
           {{participant.statusDescription}}
         </td>
+        <!-- 
         <td style="max-width: 200px;" title="'Notes'">
           <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
             <span class="glyphicon glyphicon-comment"></span>
           </button>
         </td>
+         -->
         <td title="'Resume'">
+        <!-- 
           <button class="btn btn-default btn-sm"
                   ng-click="addInterviewTabInterviewersEdit(participant)"
                   ng-if="participant.statusDescription=='Running'">
@@ -77,8 +71,9 @@
                   ng-if="participant.statusDescription=='Completed'">
             <span class="glyphicon glyphicon-stop"></span>
           </button>
+         -->
           <button class="btn btn-default btn-sm"
-                  ng-click="showAMRInterview(participant)"
+                  ng-click="vm.showAMRInterview(participant)"
                   >
             <span class="glyphicon glyphicon-new-window"></span>
           </button>

@@ -1,0 +1,21 @@
+<md-dialog aria-label="" ng-cloak style="height:90%; width:100%;">
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{notes[0].text}}</h2>
+        <span flex></span> 
+        <md-button class="md-icon-button" ng-click="cancelNotes()"> <span
+          aria-hidden="true" class="glyphicon glyphicon-remove"></span></md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="height:900px; width:100%;">
+      
+       
+          
+          <iframe ng-src={{trustedIframeUrl}} height="800px" width="100%" ></iframe>
+
+        
+     
+    </md-dialog-content>
+  </form>
+</md-dialog>

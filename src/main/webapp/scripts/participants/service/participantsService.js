@@ -109,6 +109,14 @@
       });
       return request.then(handleSuccess1, handleError);
     };
+    var createAMRBatchParticipant = function(p) {
+      var request = $http({
+        method: 'POST',
+        url: modulesUrl + '/createAMRBatch',
+        data: p
+      });
+      return request.then(handleSuccess1, handleError);
+    };
 
     //Unused
     function getNextQuestion(data) {
@@ -143,6 +151,7 @@
       getPaginatedParticipantList: getPaginatedParticipantList,
       getPaginatedAssessmentWithModList: getPaginatedAssessmentWithModList,
       getByReferenceNumber: getByReferenceNumber,
+	  createAMRBatchParticipant: createAMRBatchParticipant,
       checkIfStudyAgentPreLoaded: checkIfStudyAgentPreLoaded
     };
 

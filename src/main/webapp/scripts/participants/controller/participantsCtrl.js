@@ -5,11 +5,11 @@
   ParticipantsCtrl.$inject = ['ParticipantsService', 'NgTableParams',
     '$state', '$scope', '$filter', 'data', 'InterviewsService',
     '$resource', 'NotesService', '$mdDialog', '$sessionStorage'
-    , '$translate', 'NodeLanguageService', 'AuthenticationService', 'ngToast'];
+    , '$translate', 'NodeLanguageService', 'AuthenticationService', 'ngToast','$sce'];
 
   function ParticipantsCtrl(ParticipantsService, NgTableParams, $state,
                             $scope, $filter, data, InterviewsService, $resource, NotesService,
-                            $mdDialog, $sessionStorage, $translate, NodeLanguageService, auth, ngToast) {
+                            $mdDialog, $sessionStorage, $translate, NodeLanguageService, auth, ngToast,$sce) {
     var self = this;
     $scope.data = data;
     $scope.$root.tabsLoading = false;
@@ -397,13 +397,52 @@
     $scope.cancelNotes = function() {
       $mdDialog.cancel();
     };
-    $scope.showAMRInterview = function(idInterview){
+    
+	self.showAMRInterview = function(participant){
+		$scope.activeParticipant = participant;
+		NotesService.getNotesByInterviewId(participant.idinterview).then(function(response) {
+        if(response.status == '200') {
+          var newScope = $scope.$new();
+          newScope.notes = response.data;
+          newScope.activeParticipant = $scope.activeParticipant;
+		  var surveyId = '';
+		  if(newScope.notes[1].text == '75442'){  //TRAD
+			surveyId = 'SV_3lsCyfioMEqPlgq';
+		  } else if(newScope.notes[1].text == '75439'){ //LAND
+			surveyId = 'SV_41PCl5vY1gaiGyy';
+		  } else if(newScope.notes[1].text == '75443'){ //WATE
+			surveyId = 'SV_cI9hrld1AtS94hM';
+		  } else if(newScope.notes[1].text == '75456'){ //NONO
+			surveyId = 'SV_a4MpkYabheITp7U';
+		  }
+		  newScope.qualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/'+surveyId+'?AMRID='+$scope.activeParticipant.reference;
+          newScope.trustedIframeUrl = $sce.trustAsResourceUrl(newScope.qualtricsLink);
+		  if(newScope.notes.length > 0) {
+            $mdDialog.show({
+              scope: newScope,
+              templateUrl: 'scripts/notes/view/amrInterviewDialog.html',
+              parent: angular.element(document.body),
+              clickOutsideToClose: true
+            })
+          } else {
+            ngToast.create({
+              className: 'danger',
+              content: 'No notes for this interview',
+              animation: 'slide'
+            });
+          }
+        }
+      });
+	}
+	self.showAMRInterviewOld = function(idInterview){
+		var newScope = $scope.$new();
+        //newScope.notes = response.data;
 		$mdDialog.show({
-              scope: $scope,
+              scope: newScope,
 			  width: '1000px',
 			  height: '1000px',
               templateUrl: 'scripts/notes/view/amrInterviewDialog.html',
-              parent: angular.element(document.body),
+              
               clickOutsideToClose: true
             });
 	}
@@ -444,7 +483,15 @@
         self.tableParams.reload();
       }
     };
+    function createAMRBatchParticipant(data){
+		
 
+		ParticipantsService.createAMRBatchParticipant(data).then(function(response) {
+	    if(response.status === 200) {
+	      self.tableParams.reload();
+	    }
+	  });
+	}
 	$scope.importFromExcel = function (workbook) {
         var worksheet = workbook.Sheets[workbook.SheetNames[0]];
         /*Skip the first row as it is header*/
@@ -455,12 +502,118 @@
 
 		var count = 0;
 		var jobCount = 0;
-		var amrData = {
-			        referenceNumber: '',	
-					refNumberJob: '',
-					notes: '',
-			        interviews: []
+		
+		const allAmrJobs = [];
+		var amrReferenceNumber = '';
+		for(const row of data){
+			if(row.length != 0){
+				if(count>46){
+					break;
+				}
+				if((count-2)%15 == 0){
+					let amrData = {
+				        referenceNumber: '',	
+						refNumberJob: '',
+						notes: '',
+						priority: '',
+						jobModuleID: '',
+				        interviews: []
 			      	};
+					amrReferenceNumber = row[0];
+					amrData.referenceNumber = amrReferenceNumber;
+					amrData.refNumberJob = amrReferenceNumber+'-0';
+					amrData.notes = 'These questions are about NONO';
+					
+					let participant = {
+        				reference: amrData.refNumberJob,
+						notes: [],
+        				interviews: []
+        			};
+					participant.notes.push({
+              			text: amrData.notes,
+              			type: 'AMR'
+            		});
+					participant.notes.push({
+              			text: '75456',
+              			type: 'AMRSurveyLink'
+            		});
+					
+					allAmrJobs.push(participant);
+				}
+				var priority = row[8];
+				if(angular.isUndefined(priority)){
+					count++;
+					continue;
+				}
+				if(priority == 99){
+					count++;
+					continue;
+				}
+				if(priority == 'Priority'){
+					count++;
+					continue;
+				}
+				
+				if(priority.length != 0){
+					let amrData = {
+				        referenceNumber: '',	
+						refNumberJob: '',
+						notes: '',
+						priority: '',
+						jobModuleID: '',
+				        interviews: []
+				    };
+					amrData.referenceNumber = amrReferenceNumber;
+					amrData.refNumberJob = amrData.referenceNumber+'-'+row[0];
+					var moduleId = row[10];
+					var moduleName = '';
+					if(moduleId == '75442'){  //TRAD
+				 	  surveyId = 'SV_3lsCyfioMEqPlgq';
+					  moduleName = 'TRAD';
+					} else if(moduleId == '75439'){ //LAND
+					  surveyId = 'SV_41PCl5vY1gaiGyy';
+					  moduleName = 'LAND';
+					} else if(moduleId == '75443'){ //WATE
+					  surveyId = 'SV_cI9hrld1AtS94hM';
+					  moduleName = 'WATE';
+					} 
+					
+					amrData.notes = moduleName+':Priority:'+priority+':The next set of questions refer to when you where working as a '
+					+row[5]+ ' with '
+					+row[3]+ ' that job started in '				
+					+row[1];
+					//amrData.priority = row[8];
+					amrData.jobModuleID = row[10];
+					//createAMRParticipant(amrData);
+					let participant = {
+	        				reference: amrData.refNumberJob,
+							notes: [],
+	        				interviews: []
+	        			};
+					participant.notes.push({
+	              		text: amrData.notes,
+	              		type: 'AMR'
+	            	});
+					
+					participant.notes.push({
+	              		text: row[10],
+	              		type: 'AMRSurveyLink'
+	            	});
+					allAmrJobs.push(participant);
+				}
+			
+			
+			
+			}
+			
+			
+			count++;
+			jobCount++;
+			
+			
+		}
+		createAMRBatchParticipant(allAmrJobs);
+/*
 		for(const row of data){
 			if(row.length != 0){
 				
@@ -484,7 +637,7 @@
 			count++;
 			jobCount++;
 		}
-        
+ */       
 
         $mdDialog.cancel();
 		self.tableParams.reload();
@@ -506,9 +659,10 @@
 	
 	function createAMRParticipant(data){
 		var participant = {
-        reference: data.refNumberJob,
-        interviews: []
-      };
+        	reference: data.refNumberJob,
+        	interviews: []
+        };
+
 		ParticipantsService.createParticipant(participant).then(function(response) {
 	    if(response.status === 200) {
 	      var participantData = response.data;
@@ -544,6 +698,8 @@
 	    }
 	  });
 	}
+	
+	
 	
 	function saveInterview(interview) {
       

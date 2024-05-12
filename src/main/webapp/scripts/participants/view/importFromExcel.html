@@ -1,0 +1,31 @@
+<md-dialog aria-label="Import Excel File" style="margin:0 0 0 0;padding:0 0 0 0;" ng-cloak>
+    <form name="importFromExcelForm" class="navbar-form navbar-left" id="importFromExcelForm">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Import AMR Participants from Excel Sheet</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()"> <span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span></md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="width:510px;">
+            <div class="md-dialog-content">
+                <div layout="column" ng-cloak class="md-inline-form">
+                    <md-content>
+                        <div class="form-group col-md-12">
+                            <div layout-gt-sm="row">
+                                <js-xls onerror="error" onread="importFromExcel"></js-xls>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <md-dialog-actions layout="row" class="pull-right">
+                                <md-button ng-click="closeDialog()" class="md-raised">Cancel</md-button>
+                            </md-dialog-actions>
+                        </div>
+                    </md-content>
+                </div>
+            </div>
+        </md-dialog-content>
+    </form>
+</md-dialog>

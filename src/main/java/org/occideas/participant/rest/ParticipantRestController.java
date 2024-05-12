@@ -2,6 +2,7 @@ package org.occideas.participant.rest;
 
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.entity.AssessmentIntMod;
+import org.occideas.entity.Node;
 import org.occideas.entity.ParticipantIntMod;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.module.service.ModuleService;
@@ -131,6 +132,48 @@ public class ParticipantRestController implements BaseRestController<Participant
     return Response.ok(list).build();
   }
 
+  @Path(value = "/createAMRBatch")
+  @POST
+  @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+  public Response createAMRBatch(List<ParticipantVO> json) {
+    
+    try {
+    	for (ParticipantVO participantVO : json) {
+    		ParticipantVO participantVOCreated = service.create(participantVO);
+    		InterviewVO	childInterviewVO = new InterviewVO();
+    		childInterviewVO.setParticipant(participantVOCreated);
+    		childInterviewVO.setReferenceNumber(participantVO.getReference());
+    		childInterviewVO = interviewService.create(childInterviewVO);
+    		
+    		List<NoteVO> notes = new ArrayList<>();
+            NoteVO noteVO = new NoteVO();
+            noteVO.setDeleted(0);
+            noteVO.setInterviewId(childInterviewVO.getInterviewId());
+            noteVO.setText(participantVO.getNotes().get(0).getText());
+            noteVO.setType("AMR");
+            notes.add(noteVO);
+            if(participantVO.getNotes().size()>=2) {
+            	NoteVO noteVO2 = new NoteVO();
+                noteVO2.setDeleted(0);
+                noteVO2.setInterviewId(childInterviewVO.getInterviewId());
+                noteVO2.setText(participantVO.getNotes().get(1).getText());
+                noteVO2.setType("AMRSurveyLink");
+                notes.add(noteVO2);
+            }
+            
+			childInterviewVO.setNotes(notes);
+			interviewService.update(childInterviewVO);
+			
+			
+    	}
+    } catch (Throwable e) {
+      e.printStackTrace();
+      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+    }
+    return Response.ok().build();
+  }
+  
   @Path(value = "/create")
   @POST
   @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
