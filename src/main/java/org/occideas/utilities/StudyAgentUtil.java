@@ -160,6 +160,7 @@ public class StudyAgentUtil {
             createPageBreaks(getBlockElementResult);
 //            getBlockElementResult.setBlockElement(buildBlockElements(questionPayloads.size(),moduleVO.getName()));
             iqsfClient.updateBlock(surveyId, blockId, getBlockElementResult);
+            /*
             final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
             SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
             options.getResult().setBackButton(true);
@@ -170,7 +171,7 @@ public class StudyAgentUtil {
             }
 
             iqsfClient.updateSurveyOptions(surveyId, options.getResult());
-
+*/
             return surveyId;
         } else {
             List<String> listOfIdNodes = null;
@@ -229,12 +230,12 @@ public class StudyAgentUtil {
         Flow mainFlow = new Flow(null, "Root", flowResult.getFlowId(), null,
                 flows, null, null, null);
         iqsfClient.updateFlow(surveyId, mainFlow);
-
+/*
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton(true);
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
-
+*/
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);
         return surveyId;
@@ -600,7 +601,7 @@ public class StudyAgentUtil {
             System.out.println(i + " of " + size);
             i++;
         }
-
+/*
         final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton(true);
@@ -611,7 +612,7 @@ public class StudyAgentUtil {
         }
 
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
-
+*/
         GetBlockElementResult getBlockElementResult = getBlock(surveyId, blockId);
         createPageBreaks(getBlockElementResult);
         iqsfClient.updateBlock(surveyId, blockId, getBlockElementResult);

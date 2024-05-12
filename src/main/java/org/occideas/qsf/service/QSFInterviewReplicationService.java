@@ -55,11 +55,17 @@ public class QSFInterviewReplicationService {
     public long replicateQualtricsInterviewIntoOccideas(String respondentId,
                                                         String moduleName,
                                                         Map<String, ResponseSummary> responseSummary) {
-        List<JobModule> modules = moduleDao.findByName(moduleName);
-        Participant participant = createParticipant(respondentId);
-        log.info("Participant created - {}", participant.getIdParticipant());
-        Interview newInterview = createNewInterview(respondentId, participant);
-        log.info("Interview created - {}", newInterview.getIdinterview());
+        //moduleName = "INTRO";
+    	List<JobModule> modules = moduleDao.findByName(moduleName);
+    	ResponseSummary rs = responseSummary.get("AMRID");
+        //Participant participant = createParticipant(respondentId);
+        Participant participant = participantDao.getByReferenceNumber(rs.getAnswer());
+        log.info("Participant found - {}", participant.getIdParticipant());
+        
+        //Interview newInterview = createNewInterview(respondentId, participant);
+        
+        Interview newInterview = interviewDao.findByReferenceNumber(rs.getAnswer()).get(0);
+        log.info("Interview found - {}", newInterview.getIdinterview());
         JobModule module = modules.get(0);
         createRootInterviewQuestion(newInterview, module);
         processResponseAnswers(responseSummary, newInterview);
@@ -170,7 +176,7 @@ public class QSFInterviewReplicationService {
     private String findAnswer(Map<String, ResponseSummary> responses, PossibleAnswer possibleAnswer) {
         String answer = possibleAnswer.getName();
         Optional<Map.Entry<String, ResponseSummary>> foundAnswer = responses.entrySet().stream()
-                .filter(response -> response.getValue().getAnswerIdNode().equalsIgnoreCase(String.valueOf(possibleAnswer.getIdNode())))
+                .filter(response -> QualtricsUtil.parseAnswers(response.getValue().getAnswerIdNode()).get(0).equals(possibleAnswer.getIdNode()))
                 .findFirst();
         if (foundAnswer.isPresent()) {
             answer = foundAnswer.get().getValue().getAnswer();
@@ -214,6 +220,23 @@ public class QSFInterviewReplicationService {
         rootQuestion.setType("M_IntroModule");
 
         interviewQuestionDao.saveOrUpdate(rootQuestion);
+        /*
+        InterviewQuestion rootQuestion2 = new InterviewQuestion();
+        rootQuestion2.setDeleted(0);
+        rootQuestion2.setDescription("Which Module was given?");
+        rootQuestion2.setIdInterview(newInterview.getIdinterview());
+        rootQuestion2.setIntQuestionSequence(2);
+        rootQuestion2.setLink(module.getIdNode());
+        rootQuestion2.setName(module.getName());
+        rootQuestion2.setNodeClass(module.getNodeclass());
+        rootQuestion2.setNumber("1");
+        rootQuestion2.setParentModuleId(0);
+        rootQuestion2.setProcessed(true);
+        rootQuestion2.setTopNodeId(module.getIdNode());
+        rootQuestion2.setType("M_IntroModule");
+
+        interviewQuestionDao.saveOrUpdate(rootQuestion);
+        */
     }
 
     private InterviewQuestion createInterviewQuestion(Node node, long interviewId, int sequence) {

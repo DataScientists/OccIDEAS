@@ -9,7 +9,10 @@ import java.util.List;
 public class QualtricsUtil {
 
     public static List<Long> parseAnswers(String occideasAnswerIdNode) {
-        String stringToParse = occideasAnswerIdNode.trim().replace(" ", "");
+        String stringToParse = "";
+        if(occideasAnswerIdNode != null) {
+        	stringToParse = occideasAnswerIdNode.trim().replace(" ", "");
+        }
         List<Long> results = new ArrayList<>();
         if (stringToParse.contains("[") && stringToParse.contains("]")) {
             String newAnswerString = stringToParse.replace("[", "").replace("]", "");

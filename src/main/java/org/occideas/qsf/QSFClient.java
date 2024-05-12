@@ -421,6 +421,8 @@ public class QSFClient implements IQSFClient {
         headers.add("Content-type", APPLICATION_JSON);
 
         try {
+        	Thread.currentThread();
+			Thread.sleep(5000);
             SurveyExportResponse response = ClientBuilder.newBuilder()
                     .withConfig(clientConfig)
                     .build()

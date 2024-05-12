@@ -64,7 +64,7 @@ public class QSFConversionService {
         GetBlockElementResult getBlockElementResult = getBlock(surveyId, blockId);
         createPageBreaks(getBlockElementResult);
         iqsfClient.updateBlock(surveyId, blockId, getBlockElementResult);
-        final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
+        /*final Response surveyOptions = iqsfClient.getSurveyOptions(surveyId);
         log.info("Current survey options {}", surveyOptions);
         SurveyOptionResponse options = (SurveyOptionResponse) surveyOptions.getEntity();
         options.getResult().setBackButton(true);
@@ -73,6 +73,7 @@ public class QSFConversionService {
         options.getResult().setSurveyTermination("Redirect");
         log.info("New survey options {}", options.getResult());
         iqsfClient.updateSurveyOptions(surveyId, options.getResult());
+        */
         iqsfClient.publishSurvey(surveyId);
         iqsfClient.activateSurvey(surveyId);
         return surveyId;

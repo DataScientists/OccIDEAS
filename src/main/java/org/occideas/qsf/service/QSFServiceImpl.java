@@ -421,11 +421,17 @@ public class QSFServiceImpl implements IQSFService {
             log.info("processing question {} and answer {} for response {}", questionAnswerResponse.getQsfQuestionId(),
                     questionAnswerResponse.getOccideasAnswerIdNode(),
                     responseId);
+            
+            ResponseSummary responseSummary = new ResponseSummary();
+            if(questionAnswerResponse.getQsfQuestionId().equalsIgnoreCase("AMRID")) {
+            	responseSummary.setAnswer(questionAnswerResponse.getOccideasAnswerIdNode());
+            	summary.put(questionAnswerResponse.getQsfQuestionId(), responseSummary);
+            }
             QSFQuestionMapper qsfQuestionMapper = questionBySurveyId.get(questionAnswerResponse.getQsfQuestionId());
             if(qsfQuestionMapper==null) {
             	continue;
             }
-            ResponseSummary responseSummary = new ResponseSummary();
+            
             responseSummary.setQuestion(qsfQuestionMapper.getQuestionText());
             responseSummary.setQuestionIdNode(String.valueOf(qsfQuestionMapper.getIdNode()));
             responseSummary.setQuestionType(qsfQuestionMapper.getType());
@@ -442,6 +448,7 @@ public class QSFServiceImpl implements IQSFService {
             }
             List<Long> answers = QualtricsUtil.parseAnswers(questionAnswerResponse.getOccideasAnswerIdNode());
             for (Long answerId : answers) {
+            	/*
                 List<Rule> listOfFiredRules = autoAssessmentService.deriveFiredRulesByAnswerProvided(answerId);
                 List<Rule> autoAssessedRules = new ArrayList<>();
                 autoAssessedRules.addAll(autoAssessmentService.getRuleLevelNoExposure(
@@ -449,6 +456,7 @@ public class QSFServiceImpl implements IQSFService {
                         , listOfFiredRules));
                 responseSummary.setFiredRules(ruleMapper.convertToRuleVOList(listOfFiredRules));
                 responseSummary.setAutoAssessedRules(ruleMapper.convertToRuleVOList(autoAssessedRules));
+                */
                 summary.put(questionAnswerResponse.getQsfQuestionId(), responseSummary);
             }
         }
@@ -474,6 +482,8 @@ public class QSFServiceImpl implements IQSFService {
                 if (Objects.nonNull(frequencyIdNode)) {
                     queue.add(new QuestionAnswerResponse(key[0], String.valueOf(frequencyIdNode), frequency));
                 }
+            } else if (isOccIDEASReferenceNumber(entry)) {
+            	queue.add(new QuestionAnswerResponse(entry.getKey(), CommonUtil.getValue(entry.getValue())));
             }
         });
         return queue;
@@ -501,6 +511,10 @@ public class QSFServiceImpl implements IQSFService {
 
     private boolean isTextQuestion(Map.Entry<String, Object> entry) {
         return entry.getKey().contains("QID") && entry.getKey().contains("_") && entry.getKey().contains("TEXT") && !entry.getKey().contains("_DO");
+    }
+    
+    private boolean isOccIDEASReferenceNumber(Map.Entry<String, Object> entry) {
+        return entry.getKey().contains("AMRID");
     }
 
     private void validateModuleExist(String moduleName) {
