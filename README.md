@@ -78,4 +78,4 @@ ProxyPreserveHost On
 - systemctl restart apache2
 
 Test at the URL
- - Ensure file permission granted on /opt/data/modules and /opt/data/reports and any other folder in the application.properties config file
+ - Ensure file permission granted on /opt/data/modules and /opt/data/reports and any other folder in the application.properties config file e.g. chown -R ubuntu /opt/data
