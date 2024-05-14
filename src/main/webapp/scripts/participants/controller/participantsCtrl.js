@@ -224,6 +224,8 @@
     self.deleteRow = deleteRow;
     self.save = save;
     self.add = add;
+    self.addCaseControlParticipant = addCaseControlParticipant;
+    self.showParticipantDetailsTab = showParticipantDetailsTab;
     self.cancelDelete = cancelDelete;
 
     self.toggleIsDeleting = toggleIsDeleting;
@@ -246,13 +248,44 @@
         }
         InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
           if(data.status == 200) {
-            if(confirm("This AWES ID has already been used. Would you like to add a duplicate?")) {
+            if(confirm("This Participant ID has already been used. Would you like to add a duplicate?")) {
               $scope.addInterviewTabInterviewers(
                 -1, $scope.searchAWESID);
             }
           } else if(data.status == 204) {
             $scope.addInterviewTabInterviewers(-1,
               $scope.searchAWESID);
+          } else {
+            var msg = "Error occured during checkReferenceNumberExists.";
+            ngToast.create({
+              className: 'danger',
+              content: msg,
+              animation: 'slide'
+            });
+          }
+        })
+      } else {
+        ngToast.create({
+          className: 'danger',
+          content: 'You need to add a valid AWES ID before you can start',
+          animation: 'slide'
+        });
+      }
+    }
+	function showParticipantDetailsTab(participant){
+		$scope.addParticipantDetailsTab(-1,participant.reference,true,participant.idinterview);
+	}
+	function addCaseControlParticipant() {
+      if(awesIdIsValid($scope.searchAWESID)) {
+        $scope.searchAWESID = $scope.searchAWESID + "-0";
+        InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
+          if(data.status == 200) {
+            if(confirm("This Participant ID has already been used. ")) {
+              //$scope.addInterviewTabInterviewers(
+              //  -1, $scope.searchAWESID);
+            }
+          } else if(data.status == 204) {
+            $scope.addParticipantDetailsTab(-1,$scope.searchAWESID,false);
           } else {
             var msg = "Error occured during checkReferenceNumberExists.";
             ngToast.create({

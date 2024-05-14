@@ -1,8 +1,8 @@
 <div ng-cloak  >
   <div>
     <div class="row">
-    <!-- AMR Updates -->
-    <!--  
+    
+      
       <md-input-container class="col-md-2" style="margin-left: 20px;"><label id="awesidlabel">Study ID</label>
         <input class="form-control" id="awesid" ng-keyup="filterAndValidate($event,this)"
                ng-model="vm.tableParams.filter().reference" placeholder="{{awesIdPrefix}}______"
@@ -12,13 +12,18 @@
           <div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
         </div>
       </md-input-container>
-      
+       <!--  
       <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
         <button class="btn btn-default" ng-click="vm.add(selectLanguage)">
           <span>Start</span>
         </button>
       </div>
-    -->  
+       -->
+       <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
+        <button class="btn btn-default" ng-click="vm.addCaseControlParticipant()">
+          <span>New Participant</span>
+        </button>
+      </div>
       <div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
         
       </div>
@@ -43,19 +48,25 @@
         <td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
          -->
         <td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
-        <td title="'Details'">{{participant.allNotes}}</td>
+        <td title="'Details'">{{participant.allNotes}}
+        <button class="btn btn-default btn-sm"
+                  ng-click="vm.showParticipantDetailsTab(participant)"
+                  >
+            <span class="glyphicon glyphicon-edit"></span>
+          </button>
+        </td>
         <td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
           {{participant.statusDescription}}
         </td>
-        <!-- 
+       
         <td style="max-width: 200px;" title="'Notes'">
           <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
             <span class="glyphicon glyphicon-comment"></span>
           </button>
         </td>
-         -->
+       
         <td title="'Resume'">
-        <!-- 
+       
           <button class="btn btn-default btn-sm"
                   ng-click="addInterviewTabInterviewersEdit(participant)"
                   ng-if="participant.statusDescription=='Running'">
@@ -71,7 +82,8 @@
                   ng-if="participant.statusDescription=='Completed'">
             <span class="glyphicon glyphicon-stop"></span>
           </button>
-         -->
+         
+          
           <button class="btn btn-default btn-sm"
                   ng-click="vm.showAMRInterview(participant)"
                   >

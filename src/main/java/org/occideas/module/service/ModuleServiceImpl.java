@@ -97,10 +97,12 @@ public class ModuleServiceImpl implements ModuleService {
 
 	@Override
 	public List<ModuleVO> findById(Long id) {
-		JobModule module = dao.get(id);
-		ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
 		List<ModuleVO> list = new ArrayList<ModuleVO>();
-		list.add(moduleVO);
+		if(id != null) {
+			JobModule module = dao.get(id);
+			ModuleVO moduleVO = mapper.convertToModuleVO(module, true);
+			list.add(moduleVO);
+		}
 		return list;
 	}
 

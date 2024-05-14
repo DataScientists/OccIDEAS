@@ -577,6 +577,47 @@
       $rootScope.tabsLoading = true;
       safeDigest($rootScope.tabsLoading);
     };
+	$scope.addParticipantDetailsTab = function(idNode, awesId, isEditMode, interviewId) {
+      //close other interview tabs
+      for(var i = tabs.length - 1; i >= 0; i--) {
+        var tab = tabs[i];
+        if(tab.viewName == 'participantDetails@tabs') {
+          tabs.splice(i, 1);
+          $scope.tabOptions.splice(i, 1);
+        }
+      }
+      var tabTitle = "Details for " + awesId;
+      var state = "tabs.participantDetails";
+      $stickyState.reset(state);
+      if(!checkIfTabIsOpen(tabs, tabTitle)) {
+        tabs.push({
+          title: tabTitle,
+          viewName: 'participantDetails@tabs',
+          canClose: false,
+          disabled: false
+        });
+		if(isEditMode == false){
+		  $scope.tabOptions.push({
+          state: state,
+          data: {
+            row: idNode,
+            startWithReferenceNumber: awesId
+          }
+        });
+		}else{
+		  $scope.tabOptions.push({
+          state: state,
+          data: {
+            row: interviewId,
+            updateData: awesId
+          }
+        });
+		}
+        
+      }
+      $rootScope.tabsLoading = true;
+      safeDigest($rootScope.tabsLoading);
+    };
     $scope.addInterviewTabInterviewersEdit = function(participant) {
       var isSameIntroModule = true;
       //participant.idModule is the intro module id

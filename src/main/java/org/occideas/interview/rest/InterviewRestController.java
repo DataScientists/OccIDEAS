@@ -119,20 +119,22 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
     return Response.ok(list).build();
   }
 
-  @GET
-  @Path(value = "/get")
-  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-  public Response get(@QueryParam("id") Long id) {
-    List<InterviewVO> list = new ArrayList<InterviewVO>();
-    try {
-      list = service.findById(id);
-      list.get(0).setActualQuestion(sort(list.get(0).getQuestionHistory(), id));
-    } catch (Throwable e) {
-      e.printStackTrace();
-      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
-    }
-    return Response.ok(list).build();
-  }
+	@GET
+	@Path(value = "/get")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response get(@QueryParam("id") Long id) {
+		List<InterviewVO> list = new ArrayList<InterviewVO>();
+		try {
+			if (id > 0) {
+				list = service.findById(id);
+				list.get(0).setActualQuestion(sort(list.get(0).getQuestionHistory(), id));
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
 
   @GET
   @Path(value = "/getInterviewWithRules")

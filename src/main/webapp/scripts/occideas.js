@@ -34,6 +34,7 @@
           "occIDEASApp.Fragments",
           "occIDEASApp.Assessments",
           "occIDEASApp.Participants",
+          "occIDEASApp.ParticipantDetails",
           "occIDEASApp.InterviewResults",
           "occIDEASApp.ModuleRule",
           "occIDEASApp.Login",
