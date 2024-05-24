@@ -1,20 +1,25 @@
 package org.occideas.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.occideas.entity.Interview;
 import org.occideas.entity.Participant;
+import org.occideas.entity.ParticipantDetails;
 import org.occideas.utilities.CommonUtil;
+import org.occideas.vo.ParticipantDetailsVO;
 import org.occideas.vo.ParticipantVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class ParticipantMapperImpl implements ParticipantMapper {
 
   @Autowired
   private InterviewMapper interviewMapper;
+	  
+  @Autowired
+  private ParticipantDetailsMapper participantDetailsMapper;
 
   @Override
   public ParticipantVO convertToParticipantVO(Participant participant, boolean includeInterviews) {
@@ -30,6 +35,8 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     if (includeInterviews && !CommonUtil.isListEmpty(interviews)) {
       participantVO.setInterviews(interviewMapper.convertToInterviewVOList(interviews));
     }
+    List<ParticipantDetails> details = participant.getParticipantDetails();
+    participantVO.setParticipantDetails(participantDetailsMapper.convertToParticipantDetailsVOList(details));
 
     return participantVO;
   }
@@ -78,6 +85,10 @@ public class ParticipantMapperImpl implements ParticipantMapper {
     if (includeInterviews) {
       participant.setInterviews(interviewMapper.convertToInterviewList(participantVO.getInterviews()));
     }
+    
+    List<ParticipantDetailsVO> details = participantVO.getParticipantDetails();
+    participant.setParticipantDetails(participantDetailsMapper.convertToParticipantDetailsList(details));
+
     return participant;
   }
 

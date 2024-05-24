@@ -12,6 +12,7 @@ public class ParticipantVO {
   private long idParticipant;
 
   private List<InterviewVO> interviews;
+  private List<ParticipantDetailsVO> participantDetails;
   private List<NoteVO> notes;
   private int status;
   private String reference;
@@ -108,6 +109,14 @@ public class ParticipantVO {
         return "ParticipantVO [idParticipant=" + idParticipant + ", status=" + status + ", reference=" + reference
                 + ", statusDescription=" + statusDescription + "]";
     }
+
+	public List<ParticipantDetailsVO> getParticipantDetails() {
+		return participantDetails;
+	}
+
+	public void setParticipantDetails(List<ParticipantDetailsVO> details) {
+		this.participantDetails = details;
+	}
 
 
 }

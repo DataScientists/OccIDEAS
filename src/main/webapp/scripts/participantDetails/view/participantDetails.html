@@ -14,8 +14,8 @@
 <div ng-if="vm.isFirstJob === true">
 
 	<div>
-		<label for="name">4 Character Code:</label> <input type="text"
-			id="name" name="name">
+		<label for="4CharCode">4 Character Code:</label> <input type="text"
+			id="4CharCode" name="4CharCode" ng-model="vm.charCode">
 	</div>
 	<div>
 		<label for="age">Year of Birth:</label> <input type="text" id="age"
@@ -32,15 +32,20 @@
 		<label for="name">4 Number Code:</label> <input type="text" id="name"
 			name="name">
 	</div>
+	<div>
+		<label for="comments">Comments:</label>
+		<textarea id="comments" name="comments" rows="4"
+			ng-model="vm.comments"></textarea>
+	</div>
 </div>
 <div ng-if="vm.isFirstJob === false">
 	<div>
 		<label for="from_date">From Date:</label> <input type="text"
-			id="from_date" name="from_date">
+			id="from_date" name="from_date" ng-model="vm.fromDate">
 	</div>
 	<div>
 		<label for="until_date">Until Date:</label> <input type="text"
-			id="until_date" name="until_date">
+			id="until_date" name="until_date" ng-model="vm.untilDate">
 	</div>
 	<div>
 		<label for="employer">Employer:</label> <input type="text"
@@ -52,11 +57,11 @@
 	</div>
 	<div>
 		<label for="title">Title:</label> <input type="text" id="title"
-			name="title">
+			name="title" ng-model="vm.jobTitle">
 	</div>
 	<div>
 		<label for="main_product">Main Product:</label> <input type="text"
-			id="main_product" name="main_product">
+			id="main_product" name="main_product" ng-model="vm.product">
 	</div>
 	<div>
 		<label for="average_hours">Average Hours:</label> <input type="text"
@@ -67,27 +72,37 @@
 			id="priority" name="priority">
 	</div>
 	<div>
-		<label for="gender">Job Module:</label> <select id="gender"
-			name="gender">
-			<option value="female">AsMM</option>
-			<option value="other">AREM</option>
-			<option value="other">ANEC</option>
-			<option value="other">AUTO</option>
-			<option value="other">CEMT</option>
-			<option value="other">FURN</option>
-			<option value="other">INSU</option>
-			<option value="other">LAND</option>
-			<option value="other">TEXT</option>
-			<option value="other">TIPW</option>
+		<label for="gender">Job Module:</label> 
+		<!--  
+		<select id="jModule"
+			name="jModule">
+			<option value="-1"></option>
+			<option value="75432">AsMM</option>
+			<option value="75433">AREM</option>
+			<option value="75434">ANEC</option>
+			<option value="75435">AUTO</option>
+			<option value="75436">CEMT</option>
+			<option value="75437">FURN</option>
+			<option value="75438">INSU</option>
+			<option value="75439">LAND</option>
+			<option value="75440">TEXT</option>
+			<option value="75441">TIPW</option>
+			<option value="75442">TRAD</option>
+			<option value="75443">WATE</option>
+			<option value="75811">JEWL</option>
+			<option value="75816">LAUN</option>
+			<option value="1">UnExposed</option>
 		</select>
+		-->
+		<select id="jobModule" ng-model="vm.selectedJobModule" ng-options="jobModule for jobModule in jobModules">
+        </select>
+        
+        <p>Selected Job Module: {{ vm.selectedJobModule }}</p>
 	</div>
 
 </div>
 <div>
-	<div>
-		<label for="comments">Comments:</label>
-		<textarea id="comments" name="comments" rows="4"></textarea>
-	</div>
+
 	<div>
 		<button ng-click="vm.saveParticipantDetails()">
 			<span>Save Details</span>

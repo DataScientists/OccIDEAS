@@ -26,6 +26,11 @@ public class Participant implements Serializable {
     @Where(clause = "parentId = 0")
     @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.PERSIST})
     private List<Interview> interviews;
+    
+    @OneToMany(mappedBy = "participantId", targetEntity = ParticipantDetails.class)
+    @Cascade(value = {CascadeType.SAVE_UPDATE, CascadeType.PERSIST})
+    private List<ParticipantDetails> participantDetails;
+    
     private int status;
     private String reference;
     @Temporal(TemporalType.TIMESTAMP)
@@ -87,4 +92,12 @@ public class Participant implements Serializable {
     public void setReference(String reference) {
         this.reference = reference;
     }
+
+	public List<ParticipantDetails> getParticipantDetails() {
+		return participantDetails;
+	}
+
+	public void setParticipantDetails(List<ParticipantDetails> participantDetails) {
+		this.participantDetails = participantDetails;
+	}
 }

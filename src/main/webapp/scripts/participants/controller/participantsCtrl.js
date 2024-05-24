@@ -431,42 +431,72 @@
       $mdDialog.cancel();
     };
     
-	self.showAMRInterview = function(participant){
-		$scope.activeParticipant = participant;
-		NotesService.getNotesByInterviewId(participant.idinterview).then(function(response) {
-        if(response.status == '200') {
-          var newScope = $scope.$new();
-          newScope.notes = response.data;
-          newScope.activeParticipant = $scope.activeParticipant;
-		  var surveyId = '';
-		  if(newScope.notes[1].text == '75442'){  //TRAD
-			surveyId = 'SV_3lsCyfioMEqPlgq';
-		  } else if(newScope.notes[1].text == '75439'){ //LAND
-			surveyId = 'SV_41PCl5vY1gaiGyy';
-		  } else if(newScope.notes[1].text == '75443'){ //WATE
-			surveyId = 'SV_cI9hrld1AtS94hM';
-		  } else if(newScope.notes[1].text == '75456'){ //NONO
-			surveyId = 'SV_a4MpkYabheITp7U';
-		  }
-		  newScope.qualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/'+surveyId+'?AMRID='+$scope.activeParticipant.reference;
-          newScope.trustedIframeUrl = $sce.trustAsResourceUrl(newScope.qualtricsLink);
-		  if(newScope.notes.length > 0) {
-            $mdDialog.show({
-              scope: newScope,
-              templateUrl: 'scripts/notes/view/amrInterviewDialog.html',
-              parent: angular.element(document.body),
-              clickOutsideToClose: true
-            })
-          } else {
-            ngToast.create({
-              className: 'danger',
-              content: 'No notes for this interview',
-              animation: 'slide'
-            });
-          }
-        }
-      });
-	}
+	  self.showAMRInterview = function(participant) {
+		  ParticipantsService.findParticipant(participant.idParticipant).then(function(response) {
+			  if (response.status === 200) {
+				  var participant = response.data[0];
+				  $scope.activeParticipant = participant;
+				  var qualtricsSurveyLinkNote = $scope.activeParticipant.notes.find(qualtricsSurveyLinkNote => qualtricsSurveyLinkNote.type === 'AMRSurveyLink');
+				  var newScope = $scope.$new();
+				  newScope.activeParticipant = $scope.activeParticipant;
+
+				  newScope.notes = $scope.activeParticipant.notes;
+
+
+				  newScope.qualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + qualtricsSurveyLinkNote.text + '?AMRID=' + $scope.activeParticipant.reference;
+				  newScope.trustedIframeUrl = $sce.trustAsResourceUrl(newScope.qualtricsLink);
+				  if (newScope.notes.length > 0) {
+					  $mdDialog.show({
+						  scope: newScope,
+						  templateUrl: 'scripts/notes/view/amrInterviewDialog.html',
+						  parent: angular.element(document.body),
+						  clickOutsideToClose: true
+					  })
+				  }
+
+
+			  }
+		  });
+
+		  /*	
+			  NotesService.getNotesByInterviewId(participant.idinterview).then(function(response) {
+			  if(response.status == '200') {
+				var newScope = $scope.$new();
+				newScope.notes = response.data;
+				newScope.activeParticipant = $scope.activeParticipant;
+				var surveyId = 'SV_a4MpkYabheITp7U';
+	  
+				if(newScope.notes[1].text == '75442'){  //TRAD
+				  surveyId = 'SV_3lsCyfioMEqPlgq';
+				} else if(newScope.notes[1].text == '75439'){ //LAND
+				  surveyId = 'SV_41PCl5vY1gaiGyy';
+				} else if(newScope.notes[1].text == '75443'){ //WATE
+				  surveyId = 'SV_cI9hrld1AtS94hM';
+				} else if(newScope.notes[1].text == '75456'){ //NONO
+				  surveyId = 'SV_a4MpkYabheITp7U';
+				}
+	  
+				newScope.qualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/'+surveyId+'?AMRID='+$scope.activeParticipant.reference;
+				newScope.trustedIframeUrl = $sce.trustAsResourceUrl(newScope.qualtricsLink);
+				if(newScope.notes.length > 0) {
+				  $mdDialog.show({
+					scope: newScope,
+					templateUrl: 'scripts/notes/view/amrInterviewDialog.html',
+					parent: angular.element(document.body),
+					clickOutsideToClose: true
+				  })
+				} else {
+				  ngToast.create({
+					className: 'danger',
+					content: 'No notes for this interview',
+					animation: 'slide'
+				  });
+				}
+			  }
+	  
+			});
+	  */
+	  }
 	self.showAMRInterviewOld = function(idInterview){
 		var newScope = $scope.$new();
         //newScope.notes = response.data;
