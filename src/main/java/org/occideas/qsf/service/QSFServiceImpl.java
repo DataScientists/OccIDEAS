@@ -1,7 +1,25 @@
 package org.occideas.qsf.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -9,7 +27,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.agent.dao.AgentDao;
 import org.occideas.config.QualtricsConfig;
-import org.occideas.entity.*;
+import org.occideas.entity.Constant;
+import org.occideas.entity.Interview;
+import org.occideas.entity.InterviewAnswer;
+import org.occideas.entity.InterviewQuestion;
+import org.occideas.entity.InterviewResults;
+import org.occideas.entity.NodeQSF;
+import org.occideas.entity.QSFQuestionMapper;
+import org.occideas.entity.QualtricsSurvey;
+import org.occideas.entity.QualtricsSurveyResponse;
+import org.occideas.entity.SystemProperty;
 import org.occideas.exceptions.GenericException;
 import org.occideas.exceptions.NodeNotFoundException;
 import org.occideas.exceptions.StudyIntroModuleNotFoundException;
@@ -20,6 +47,7 @@ import org.occideas.interview.service.AutoAssessmentService;
 import org.occideas.interview.service.InterviewService;
 import org.occideas.interview.service.result.assessor.NoiseAssessmentService;
 import org.occideas.interviewanswer.service.InterviewAnswerService;
+import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.mapper.RuleMapperImpl;
 import org.occideas.module.service.ModuleService;
@@ -32,7 +60,11 @@ import org.occideas.qsf.dao.QSFQuestionMapperDao;
 import org.occideas.qsf.dao.QualtricsSurveyResponseDao;
 import org.occideas.qsf.payload.CopySurveyPayload;
 import org.occideas.qsf.request.SurveyExportRequest;
-import org.occideas.qsf.response.*;
+import org.occideas.qsf.response.Response;
+import org.occideas.qsf.response.SurveyExportResponse;
+import org.occideas.qsf.response.SurveyListResponse;
+import org.occideas.qsf.response.SurveyMetadata;
+import org.occideas.qsf.response.SurveyResponses;
 import org.occideas.qsf.subscriber.constant.QualtricsProcessStatus;
 import org.occideas.qsf.subscriber.service.QualtricsSurveyService;
 import org.occideas.question.service.QuestionService;
@@ -42,7 +74,17 @@ import org.occideas.utilities.CommonUtil;
 import org.occideas.utilities.QualtricsUtil;
 import org.occideas.utilities.StudyAgentUtil;
 import org.occideas.utilities.ZipUtil;
-import org.occideas.vo.*;
+import org.occideas.vo.FragmentVO;
+import org.occideas.vo.InterviewAnswerVO;
+import org.occideas.vo.InterviewQuestionVO;
+import org.occideas.vo.InterviewVO;
+import org.occideas.vo.ModuleVO;
+import org.occideas.vo.NodeVO;
+import org.occideas.vo.ParticipantVO;
+import org.occideas.vo.PossibleAnswerVO;
+import org.occideas.vo.QuestionVO;
+import org.occideas.vo.ResponseSummary;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
@@ -50,15 +92,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Transactional
@@ -116,6 +151,8 @@ public class QSFServiceImpl implements IQSFService {
     private QSFInterviewReplicationService qsfInterviewReplicationService;
     @Autowired
     private InterviewDao interviewDao;
+    @Autowired
+    private InterviewQuestionDao interviewQuestionDao;
     @Autowired
     private QualtricsConfig qualtricsConfig;
     @Autowired
@@ -325,7 +362,12 @@ public class QSFServiceImpl implements IQSFService {
         Interview interview = interviewDao.get(interviewId);
         autoAssessmentService.syncAutoAssessedRule(listAgentIds, interview);
         saveQualtricsResponse(surveyId, responseId, values, summary);
+        
+        
         interviewDao.saveNewTransaction(interview);
+        InterviewQuestion oldRootQuestion = interview.getQuestionHistory().get(2); //delete the old root question
+        oldRootQuestion.setDeleted(1);
+        interviewQuestionDao.save(oldRootQuestion);
         return interview.getIdinterview();
     }
 

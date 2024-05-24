@@ -59,17 +59,23 @@ public class QSFInterviewReplicationService {
     	List<JobModule> modules = moduleDao.findByName(moduleName);
     	ResponseSummary rs = responseSummary.get("AMRID");
         //Participant participant = createParticipant(respondentId);
-        Participant participant = participantDao.getByReferenceNumber(rs.getAnswer());
-        log.info("Participant found - {}", participant.getIdParticipant());
+    	if(rs.getAnswer().equalsIgnoreCase("A111111-0")) {
+    		Participant participant = participantDao.getByReferenceNumber(rs.getAnswer());
+            log.info("Participant found - {}", participant.getIdParticipant());
+            
+            //Interview newInterview = createNewInterview(respondentId, participant);
+            
+            Interview newInterview = interviewDao.findByReferenceNumber(rs.getAnswer()).get(0);
+            log.info("Interview found - {}", newInterview.getIdinterview());
+            JobModule module = modules.get(0);
+            //createRootInterviewQuestion(newInterview, module);
+            processResponseAnswers(responseSummary, newInterview);
+            
+            return newInterview.getIdinterview();
+    	}else {
+    		return 1;
+    	}
         
-        //Interview newInterview = createNewInterview(respondentId, participant);
-        
-        Interview newInterview = interviewDao.findByReferenceNumber(rs.getAnswer()).get(0);
-        log.info("Interview found - {}", newInterview.getIdinterview());
-        JobModule module = modules.get(0);
-        createRootInterviewQuestion(newInterview, module);
-        processResponseAnswers(responseSummary, newInterview);
-        return newInterview.getIdinterview();
     }
 
     private void processResponseAnswers(Map<String, ResponseSummary> responseSummary,
@@ -91,7 +97,8 @@ public class QSFInterviewReplicationService {
             Node node = nodeDao.getNode(possibleAnswer.getTopNodeId());
             if (Objects.nonNull(node)) {
                 if (!uniqueModules.contains(node.getIdNode()) && node.getNodeclass().equals("M")) {
-                    interviewQuestionDao.saveOrUpdate(createInterviewModuleQuestion(possibleAnswer, node, newInterview.getIdinterview(), questionCounter.incrementAndGet()));
+                    interviewQuestionDao.saveOrUpdate(createInterviewModuleQuestion(possibleAnswer, node, newInterview, questionCounter.incrementAndGet()));
+                    
                     uniqueModules.add(node.getIdNode());
                 } else if (!uniqueModules.contains(node.getIdNode()) && node.getNodeclass().equals("F")) {
                     final Fragment linkedModule = fragmentDao.get(node.getIdNode());
@@ -210,13 +217,15 @@ public class QSFInterviewReplicationService {
         rootQuestion.setDescription(module.getDescription());
         rootQuestion.setIdInterview(newInterview.getIdinterview());
         rootQuestion.setIntQuestionSequence(1);
-        rootQuestion.setLink(module.getIdNode());
+        rootQuestion.setLink(77709);
         rootQuestion.setName(module.getName());
         rootQuestion.setNodeClass(module.getNodeclass());
         rootQuestion.setNumber("1");
         rootQuestion.setParentModuleId(0);
+        rootQuestion.setParentAnswerId(77706);
         rootQuestion.setProcessed(true);
-        rootQuestion.setTopNodeId(module.getIdNode());
+        rootQuestion.setTopNodeId(77704);
+        rootQuestion.setQuestionId(module.getIdNode());
         rootQuestion.setType("M_IntroModule");
 
         interviewQuestionDao.saveOrUpdate(rootQuestion);
@@ -261,11 +270,11 @@ public class QSFInterviewReplicationService {
         return interviewQuestion;
     }
 
-    private InterviewQuestion createInterviewModuleQuestion(Node node, Node linkedModule, long interviewId, int sequence) {
-        InterviewQuestion interviewQuestion = new InterviewQuestion();
+    private InterviewQuestion createInterviewModuleQuestion(Node node, Node linkedModule, Interview newInterview, int sequence) {
+        InterviewQuestion interviewQuestion = new InterviewQuestion(); 
         interviewQuestion.setDeleted(0);
         interviewQuestion.setDescription(linkedModule.getDescription());
-        interviewQuestion.setIdInterview(interviewId);
+        interviewQuestion.setIdInterview(newInterview.getIdinterview());
         interviewQuestion.setIntQuestionSequence(sequence);
         interviewQuestion.setLink(linkedModule.getIdNode());
         interviewQuestion.setName(linkedModule.getName());
