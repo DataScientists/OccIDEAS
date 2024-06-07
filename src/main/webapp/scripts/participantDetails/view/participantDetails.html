@@ -1,79 +1,115 @@
 <div id="participant-details-wrapper">
+	<!-- 
 	<div>Participant Reference: {{participant.reference }}</div>
 	<div>Participant ReferenceNumber:{{participant.referenceNumber }}</div>
 	<div>Interview ReferenceNumber:{{interview.referenceNumber }}</div>
 	<div>vm.isFirstJob:{{vm.isFirstJob}}</div>
-
+ -->
+	<!-- 
 	<div>
-		<button ng-click="vm.addJobHistoryParticipant()">
-			<span>Add Job</span>
-		</button>
+		<fieldset>
+			<legend>Update the details:</legend>
+			<div>
+				<button ng-click="vm.saveParticipantDetails()">
+					<span>Save Details</span>
+				</button>
+			</div>
+		</fieldset>
+	</div>
+ -->
+	<hr></hr>
+	<div>
+		<fieldset>
+			<legend>Other Job Details:</legend>
+			
+			<div class="button-list">
+				<button ng-repeat="participant in vm.otherParticipantJobs" ng-click="handleButtonClick(participant.referenceNumber)">
+					{{participant.reference}}</button>
+			</div>
+			<button ng-click="vm.addJobHistoryParticipant()">
+				<span>Add Job</span>
+			</button>
+		</fieldset>
 	</div>
 </div>
-
+<hr></hr>
 <div ng-if="vm.isFirstJob === true">
-
-	<div>
-		<label for="4CharCode">4 Character Code:</label> <input type="text"
-			id="4CharCode" name="4CharCode" ng-model="vm.charCode">
-	</div>
-	<div>
-		<label for="age">Year of Birth:</label> <input type="text" id="age"
-			name="age">
-	</div>
-	<div>
-		<label for="gender">Gender:</label> <select id="gender" name="gender">
-			<option value="male">Male</option>
-			<option value="female">Female</option>
-			<option value="other">Other</option>
-		</select>
-	</div>
-	<div>
-		<label for="name">4 Number Code:</label> <input type="text" id="name"
-			name="name">
-	</div>
-	<div>
-		<label for="comments">Comments:</label>
-		<textarea id="comments" name="comments" rows="4"
-			ng-model="vm.comments"></textarea>
-	</div>
+	<fieldset>
+		<legend>Participant Details:</legend>
+		<div>
+			<label for="4CharCode">4 Character Code:</label> <input type="text"
+				id="4CharCode" name="4CharCode" ng-model="vm.charCode">
+		</div>
+		<div>
+			<label for="age">Year of Birth:</label> <input type="text" id="age"
+				name="age">
+		</div>
+		<div>
+			<label for="gender">Gender:</label> <select id="gender" name="gender">
+				<option value="male">Male</option>
+				<option value="female">Female</option>
+				<option value="other">Other</option>
+			</select>
+		</div>
+		<div>
+			<label for="name">4 Number Code:</label> <input type="text" id="name"
+				name="name">
+		</div>
+		<div>
+			<label for="comments">Comments:</label>
+			<textarea id="comments" name="comments" rows="4"
+				ng-model="vm.comments"></textarea>
+		</div>
+		<div>
+			<button ng-click="vm.saveParticipantDetails()">
+				<span>Save Details</span>
+			</button>
+		</div>
+	</fieldset>
 </div>
 <div ng-if="vm.isFirstJob === false">
-	<div>
-		<label for="from_date">From Date:</label> <input type="text"
-			id="from_date" name="from_date" ng-model="vm.fromDate">
-	</div>
-	<div>
-		<label for="until_date">Until Date:</label> <input type="text"
-			id="until_date" name="until_date" ng-model="vm.untilDate">
-	</div>
-	<div>
-		<label for="employer">Employer:</label> <input type="text"
-			id="employer" name="employer">
-	</div>
-	<div>
-		<label for="address">Address:</label> <input type="text" id="address"
-			name="address">
-	</div>
-	<div>
-		<label for="title">Title:</label> <input type="text" id="title"
-			name="title" ng-model="vm.jobTitle">
-	</div>
-	<div>
-		<label for="main_product">Main Product:</label> <input type="text"
-			id="main_product" name="main_product" ng-model="vm.product">
-	</div>
-	<div>
-		<label for="average_hours">Average Hours:</label> <input type="text"
-			id="average_hours" name="average_hours">
-	</div>
-	<div>
-		<label for="priority">Priority:</label> <input type="text"
-			id="priority" name="priority">
-	</div>
-	<div>
-		<label for="gender">Job Module:</label> 
-		<!--  
+	<fieldset>
+		<legend>Job Details for {{vm.jobNumber}}:</legend>
+		<div>
+			<label for="from_date">From Date:</label> <input type="text"
+				id="from_date" name="from_date" ng-model="vm.fromDate">
+		</div>
+		<div>
+			<label for="until_date">Until Date:</label> <input type="text"
+				id="until_date" name="until_date" ng-model="vm.untilDate">
+		</div>
+		<div>
+			<label for="employer">Employer:</label> <input type="text"
+				id="employer" name="employer">
+		</div>
+		<div>
+			<label for="address">Address:</label> <input type="text" id="address"
+				name="address">
+		</div>
+		<div>
+			<label for="title">Title:</label> <input type="text" id="title"
+				name="title" ng-model="vm.jobTitle">
+		</div>
+		<div>
+			<label for="main_product">Main Product:</label> <input type="text"
+				id="main_product" name="main_product" ng-model="vm.product">
+		</div>
+		<div>
+			<label for="average_hours">Average Hours:</label> <input type="text"
+				id="average_hours" name="average_hours">
+		</div>
+		<div>
+			<button ng-click="vm.saveParticipantDetails()">
+				<span>Save Details</span>
+			</button>
+		</div>
+	</fieldset>
+	<hr></hr>
+	<fieldset>
+		<legend>Job Mapping Details:</legend>
+		<div>
+			<label for="gender">Job Module:</label>
+			<!--  
 		<select id="jModule"
 			name="jModule">
 			<option value="-1"></option>
@@ -94,18 +130,31 @@
 			<option value="1">UnExposed</option>
 		</select>
 		-->
-		<select id="jobModule" ng-model="vm.selectedJobModule" ng-options="jobModule for jobModule in jobModules">
-        </select>
-        
-        <p>Selected Job Module: {{ vm.selectedJobModule }}</p>
-	</div>
+			<select id="jobModule" ng-model="vm.selectedJobModule"
+				ng-options="jobModule for jobModule in jobModules">
+			</select>
 
-</div>
-<div>
+			<p>Selected Job Module: {{ vm.selectedJobModule }}</p>
+			<div>
+				<label for="priority">Priority:</label> <input type="text"
+					id="priority" name="priority">
+			</div>
+			<div>
+				<button ng-click="vm.saveParticipantDetails()">
+					<span>Update Job Mapping</span>
+				</button>
+			</div>
+		</div>
+	</fieldset>
+	<hr></hr>
+	<fieldset ng-if="vm.selectedJobModule">
+		<legend>Launch Interview:</legend>
+		<div>
+			<a href="{{vm.fullQualtricsLink}}" target=”_blank”
+				style="color: #1a0dab; font-size: larger;">Click to access the
+				interview questions for the {{vm.selectedJobModule}} questionnaire</a>
 
-	<div>
-		<button ng-click="vm.saveParticipantDetails()">
-			<span>Save Details</span>
-		</button>
-	</div>
+
+		</div>
+	</fieldset>
 </div>

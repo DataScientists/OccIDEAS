@@ -136,6 +136,13 @@ public class ParticipantServiceImpl implements ParticipantService {
     return null;
   }
 
+	@Override
+	public List<ParticipantVO> getByReferenceNumberPrefix(String referenceNumberPrefix) {
+		List<Participant> participants = participantDao.getByReferenceNumberPrefix(referenceNumberPrefix);
+
+		return mapper.convertToParticipantVOListOnly(participants);
+	}
+
   @Override
   public Boolean checkIfStudyAgentPreLoaded() {
     return interviewQuestionDao.checkIfStudyAgentPreLoaded();

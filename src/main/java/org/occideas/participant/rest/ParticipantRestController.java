@@ -45,6 +45,20 @@ public class ParticipantRestController implements BaseRestController<Participant
     return Response.ok(participant).build();
   }
 
+	@GET
+	@Path(value = "/getByReferenceNumberPrefix")
+	@Produces(value = MediaType.APPLICATION_JSON_VALUE)
+	public Response getByReferenceNumberPrefix(@QueryParam("referenceNumberPrefix") String referenceNumber) {
+		List<ParticipantVO> list = new ArrayList<ParticipantVO>();
+		try {
+			list = service.getByReferenceNumberPrefix(referenceNumber);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+		}
+		return Response.ok(list).build();
+	}
+  
   @GET
   @Path(value = "/getlist")
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)

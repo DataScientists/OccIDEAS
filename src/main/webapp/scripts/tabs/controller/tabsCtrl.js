@@ -579,6 +579,7 @@
     };
 	$scope.addParticipantDetailsTab = function(idNode, awesId, isEditMode, interviewId) {
       //close other interview tabs
+/*
       for(var i = tabs.length - 1; i >= 0; i--) {
         var tab = tabs[i];
         if(tab.viewName == 'participantDetails@tabs') {
@@ -586,14 +587,15 @@
           $scope.tabOptions.splice(i, 1);
         }
       }
-      var tabTitle = "Details for " + awesId;
+*/
+      var tabTitle = "" + awesId;
       var state = "tabs.participantDetails";
       $stickyState.reset(state);
       if(!checkIfTabIsOpen(tabs, tabTitle)) {
         tabs.push({
           title: tabTitle,
           viewName: 'participantDetails@tabs',
-          canClose: false,
+          canClose: true,
           disabled: false
         });
 		if(isEditMode == false){
@@ -610,6 +612,49 @@
           data: {
             row: interviewId,
             updateData: awesId
+          }
+        });
+		}
+        
+      }
+      $rootScope.tabsLoading = true;
+      safeDigest($rootScope.tabsLoading);
+    };
+    $scope.addParticipantMappingTab = function(idNode, awesId, isEditMode, interviewId) {
+      //close other mapping tabs
+
+      for(var i = tabs.length - 1; i >= 0; i--) {
+        var tab = tabs[i];
+        if(tab.viewName == 'participantMapping@tabs') {
+          tabs.splice(i, 1);
+          $scope.tabOptions.splice(i, 1);
+        }
+      }
+
+      var tabTitle = "" + awesId;
+      var state = "tabs.participantMapping";
+      $stickyState.reset(state);
+      if(!checkIfTabIsOpen(tabs, tabTitle)) {
+        tabs.push({
+          title: tabTitle,
+          viewName: 'participantMapping@tabs',
+          canClose: true,
+          disabled: false
+        });
+		if(isEditMode == false){
+		  $scope.tabOptions.push({
+          state: state,
+          data: {
+            row: idNode,
+            startWithReferenceNumber: awesId
+          }
+        });
+		}else{
+		  $scope.tabOptions.push({
+          state: state,
+          data: {
+            row: interviewId,
+            mapping: awesId
           }
         });
 		}

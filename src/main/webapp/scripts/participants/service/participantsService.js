@@ -138,6 +138,15 @@
       return request.then(handleSuccess1, handleError);
     }
 
+	  function getByReferenceNumberPrefix(referenceNumberPrefix) {
+		  var restUrl = "web/rest/participant/getByReferenceNumberPrefix?referenceNumberPrefix=" + referenceNumberPrefix;
+		  var request = $http({
+			  method: 'GET',
+			  url: restUrl
+		  });
+		  return request.then(handleSuccess1, handleError);
+	  }
+
     return {
       getNextQuestion: getNextQuestion,
       checkExists: checkExists,
@@ -152,6 +161,7 @@
       getPaginatedAssessmentWithModList: getPaginatedAssessmentWithModList,
       getByReferenceNumber: getByReferenceNumber,
 	  createAMRBatchParticipant: createAMRBatchParticipant,
+	  getByReferenceNumberPrefix: getByReferenceNumberPrefix,
       checkIfStudyAgentPreLoaded: checkIfStudyAgentPreLoaded
     };
 

@@ -805,6 +805,47 @@
           }
         }
       }
+    }).state({
+      name: 'tabs.participantMapping',
+      url: '/interview/:row/:startWithReferenceNumber',
+      sticky: true,
+      deepStateRedirect: true,
+      authenticate: true,
+      views: {
+        'participantMapping@tabs': {
+          templateUrl: 'scripts/participantDetails/view/participantDetails.html',
+          controller: 'ParticipantDetailsCtrl as vm',
+          params: {row: null, module: null, interviewId: null, startWithReferenceNumber: null},
+          resolve: {
+            data: function($stateParams, InterviewsService, TabsCache) {
+              return InterviewsService.findModule($stateParams.row)
+                .then(function(response) {
+                  $log.info("Data getting from findModule AJAX ...");
+                  return response.data;
+                });
+            },
+			mapping: function($stateParams, InterviewsService) {
+
+              return InterviewsService.get($stateParams.row).then(function(response) {
+                if(response.status === 200) {
+                  var interview = response.data[0];
+                  return interview;
+                } else if(response.status === 401) {
+                  $log.error("Inside data of tabs.interviewresume tabs.js could not findParticipant with " + $stateParams.row);
+
+                }
+              });
+            },
+			updateData: function($stateParams, InterviewsService) {
+
+              return '';
+            },
+            startWithReferenceNumber: function($stateParams, InterviewsService) {
+              return $stateParams.startWithReferenceNumber;
+            }
+          }
+        }
+      }
     });
   }
 })();

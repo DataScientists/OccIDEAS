@@ -40,6 +40,8 @@ public interface IParticipantDao {
   BigInteger getAsssessmentWithModTotalCount(GenericFilterVO filter);
 
   Participant getByReferenceNumber(String referenceNumber);
+  
+  List<Participant> getByReferenceNumberPrefix(String referenceNumberPrefix);
 
   void deleteAll();
 

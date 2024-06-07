@@ -3,11 +3,11 @@
 		.controller('ParticipantDetailsCtrl', ParticipantDetailsCtrl);
 
 	ParticipantDetailsCtrl.$inject = ['ParticipantDetailsService', 'ParticipantsService', 'InterviewsService', 'QuestionsService',
-		'data', 'updateData', 'startWithReferenceNumber',
+		'data', 'updateData', 'startWithReferenceNumber', 'mapping',
 		'$state', '$scope', '$filter', '$rootScope', '$mdDialog', 'ngToast', '$sessionStorage'];
 
 	function ParticipantDetailsCtrl(ParticipantDetailsService, ParticipantsService, InterviewsService, QuestionsService,
-		data, updateData, startWithReferenceNumber,
+		data, updateData, startWithReferenceNumber,mapping,
 		$state, $scope, $filter, $rootScope, $mdDialog, $ngToast, $sessionStorage) {
 		var self = this;
 
@@ -31,33 +31,46 @@
 			'JEWL',
 			'LAUN',
 			'UnExposed'];
-		$scope.qualtricsSurveyLinks = [
-			{ name: 'NONO', surveyLink: 'SV_a4MpkYabheITp7U' },
-			{ name: 'TRAD', surveyLink: 'SV_3lsCyfioMEqPlgq' }
-		];
 
+		if (startWithReferenceNumber) {
+			checkIsFirstJob(startWithReferenceNumber);
+			getOtherParticipantJob(self.referenceNumberPrefix);
+			$scope.referenceNumber = startWithReferenceNumber;
+			$rootScope.referenceNumber = startWithReferenceNumber;
+			InterviewsService.checkReferenceNumberExists($scope.referenceNumber).then(function(data) {
+				if (data.status == 200) {
+					$scope.interview = data.data[0];
+					var participantId = $scope.interview.interviewId;
+					populateParticipantDetails(participantId);
+
+
+				} else if (data.status == 204) {
+					$scope.startInterview($rootScope.referenceNumber);
+				} else {
+					var msg = "Error occured during checkReferenceNumberExists.";
+					ngToast.create({
+						className: 'danger',
+						content: msg,
+						animation: 'slide'
+					});
+				}
+			})
+
+		} else if (updateData) {
+
+			//updateData.participant = $scope.data;
+			$scope.interview = updateData;
+			//$rootScope.participant = updateData.participant;
+			$scope.participant = updateData;
+			//resumeInterview();
+			checkIsFirstJob(participant.reference);
+		} else if (mapping) {
+			console.log("mapping");
+		}
 
 		if (updateData) {
 			checkIsFirstJob(updateData.referenceNumber);
-			ParticipantsService.findParticipant(updateData.interviewId).then(function(response) {
-				if (response.status === 200) {
-					var participant = response.data[0];
-					var theDetails = participant.participantDetails;
-					if (self.isFirstJob) {
-						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
-						self.charCode = detail.detailValue;
-						detail = theDetails.find(detail => detail.detailName === 'Comments');
-						self.comments = detail.detailValue;
-					} else {
-						var detail = theDetails.find(detail => detail.detailName === 'Title');
-						self.jobTitle = detail.detailValue;
-						detail = theDetails.find(detail => detail.detailName === 'Product');
-						self.product = detail.detailValue;
-					}
-
-
-				}
-			});
+			populateParticipantDetails(participantId);
 		} else {
 			$scope.introModule = data[0];
 		}
@@ -66,15 +79,19 @@
 		$scope.referenceNumber = null;
 		$scope.storage = $sessionStorage;
 
-		$scope.startInterview = function(data) {
-			createParticipant(data);
+		$scope.startInterview = function(referenceNumber) {
+			createParticipant(referenceNumber);
 		};
-		function createParticipant(data) {
+		function createParticipant(referenceNumber) {
 			var participant = {
-				reference: $scope.referenceNumber,
+				reference: referenceNumber,
 				interviews: []
 			};
-			checkIsFirstJob(participant.reference);
+
+
+
+
+
 
 
 
@@ -85,7 +102,7 @@
 					var interview = {};
 					interview.participant = participant;
 					interview.module = $scope.introModule;
-					interview.referenceNumber = $scope.referenceNumber;
+					interview.referenceNumber = $rootScope.referenceNumber;
 					if (self.isFirstJob) {
 						interview.notes = [];
 						interview.notes.push({
@@ -122,6 +139,7 @@
 													if (response.status === 200) {
 														var ques = response.data[0];
 
+														checkIsFirstJob(participant.reference);
 
 														if (self.isFirstJob) {
 															var actualAnswer = ques.nodes.find(possibleAnswer => possibleAnswer.name === 'NONO');
@@ -145,6 +163,8 @@
 																	InterviewsService.saveQuestions(questions).then(function(response) {
 																		if (response.status == 200) {
 																			console.log("Updated question to be processed");
+
+																			self.selectedJobModule = "NONO";
 																		}
 																	});
 
@@ -156,32 +176,38 @@
 														if (self.isFirstJob) {
 
 															$rootScope.participant.participantDetails = [];
-															var detail = {
+															var charCode = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'CharCode',
 																detailValue: '----'
 															}
-															var detail1 = {
+															var numberCode = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'NumberCode',
 																detailValue: '----'
 															}
-															$rootScope.participant.participantDetails.push(detail);
-															$rootScope.participant.participantDetails.push(detail1);
+															var detailComment = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'Comments',
+																detailValue: '----'
+															}
+															$rootScope.participant.participantDetails.push(charCode);
+															$rootScope.participant.participantDetails.push(numberCode);
+															$rootScope.participant.participantDetails.push(detailComment);
 														} else {
 															$rootScope.participant.participantDetails = [];
-															var detail = {
+															var title = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'Title',
 																detailValue: '----'
 															}
-															var detail1 = {
+															var product = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'Product',
 																detailValue: '----'
 															}
-															$rootScope.participant.participantDetails.push(detail);
-															$rootScope.participant.participantDetails.push(detail1);
+															$rootScope.participant.participantDetails.push(title);
+															$rootScope.participant.participantDetails.push(product);
 
 
 														}
@@ -223,17 +249,7 @@
 
 
 
-		if (startWithReferenceNumber) {
-			$scope.referenceNumber = startWithReferenceNumber;
-			$scope.startInterview(data);
-		} else if (updateData) {
 
-			//updateData.participant = $scope.data;
-			$scope.interview = updateData;
-			//$rootScope.participant = updateData.participant;
-			$scope.participant = updateData;
-			//resumeInterview();
-		}
 		function populateInteviewQuestionJsonByModule(interview, module) {
 			return {
 				idInterview: interview.interviewId,
@@ -283,6 +299,8 @@
 				// Convert the last element of the array to an integer and increment by 1
 				let lastElement = parseInt(array[array.length - 1]);
 
+				self.jobNumber = "J" + lastElement;
+				self.referenceNumberPrefix = array[0];
 				if (lastElement > 0) {
 					self.isFirstJob = false;
 				}
@@ -299,7 +317,9 @@
 			}
 			var nextJobHistoryReferenceNumber = splitAndIncrementLast(theReferenceNumber);
 			$scope.referenceNumber = nextJobHistoryReferenceNumber;
-			$scope.startInterview(data);
+
+			$scope.addParticipantDetailsTab(-1, $scope.referenceNumber, false, $scope.interview.interviewId);
+			//$scope.startInterview(data);
 
 		}
 
@@ -309,8 +329,25 @@
 				if (response.status === 200) {
 					var participant = response.data[0];
 
+					var theDetails = participant.participantDetails;
+					if (self.isFirstJob) {
+						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
+						detail.detailValue = self.charCode;
+						detail = theDetails.find(detail => detail.detailName === 'Comments');
+						detail.detailValue = self.comments;
+					} else {
+						if (theDetails.length > 0) {
+							var detail = theDetails.find(detail => detail.detailName === 'Title');
+							detail.detailValue = self.jobTitle;
+							detail = theDetails.find(detail => detail.detailName === 'Product');
+							detail.detailValue = self.product;
+						} else {
+							//todo
+							console.log("no details yet");
+						}
 
-
+					}
+					participant.participantDetails = theDetails;
 					ParticipantsService.save(participant).then(function(response) {
 						if (response.status === 200) {
 							console.log('it works');
@@ -318,7 +355,7 @@
 					});
 
 				} else {
-					$log.error("Inside data of tabs.interviewresume tabs.js could not findParticipant with " + $stateParams.row);
+					console.error("Inside data of tabs.interviewresume tabs.js could not findParticipant with " + $stateParams.row);
 
 				}
 
@@ -460,8 +497,60 @@
 		*/
 		function findQualtricsSurveyLink(moduleName) {
 			var qualtricsSurveyLink = "";
-			qualtricsSurveyLink = $scope.qualtricsSurveyLinks.find(qualtricsSurveyLink => qualtricsSurveyLink.name === moduleName);
+			qualtricsSurveyLink = $rootScope.qualtricsSurveyLinks.find(qualtricsSurveyLink => qualtricsSurveyLink.name === moduleName);
 			return qualtricsSurveyLink.surveyLink;
+		}
+		function getFullSurveyLink(participant) {
+			var fullQualtricsLink = "";
+			if (participant.notes != undefined) {
+				surveyLink = participant.notes.find(qualtricsSurveyLinkNote => qualtricsSurveyLinkNote.type === 'AMRSurveyLink');
+				if (surveyLink != undefined) {
+					fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + surveyLink.text + '?AMRID=' + $rootScope.participant.reference;
+					var jobModuleName = $rootScope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
+					self.selectedJobModule = jobModuleName.name;
+				}
+
+			}
+			self.fullQualtricsLink = fullQualtricsLink;
+			return fullQualtricsLink;
+		}
+		function populateParticipantDetails(participantId) {
+			ParticipantsService.findParticipant(participantId).then(function(response) {
+				if (response.status === 200) {
+					var participant = response.data[0];
+					$rootScope.participant = participant;
+					var theDetails = participant.participantDetails;
+					if (self.isFirstJob) {
+						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
+						self.charCode = detail.detailValue;
+						detail = theDetails.find(detail => detail.detailName === 'Comments');
+						self.comments = detail.detailValue;
+					} else {
+						if (theDetails.length > 0) {
+							var detail = theDetails.find(detail => detail.detailName === 'Title');
+							self.jobTitle = detail.detailValue;
+							detail = theDetails.find(detail => detail.detailName === 'Product');
+							self.product = detail.detailValue;
+						} else {
+							//todo
+							console.log("no details yet");
+						}
+
+					}
+					getFullSurveyLink(participant);
+
+				}
+			});
+		}
+		function getOtherParticipantJob(referenceNumberPrefix){
+			ParticipantsService.getByReferenceNumberPrefix(referenceNumberPrefix).then(function(response) {
+				if (response.status === 200) {
+					var otherParticipantJobs = response.data;
+					self.otherParticipantJobs = otherParticipantJobs;
+					
+
+				}
+			});
 		}
 	}
 })();

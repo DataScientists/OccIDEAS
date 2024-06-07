@@ -99,6 +99,23 @@ public class ParticipantDao implements IParticipantDao {
     }   
     return null;   
   }
+  
+  @Override
+  public List<Participant> getByReferenceNumberPrefix(String referenceNumberPrefix) {
+
+    CriteriaBuilder builder = sessionFactory.getCurrentSession().getCriteriaBuilder();
+    CriteriaQuery<Participant> criteria = builder.createQuery(Participant.class);
+    Root<Participant> root = criteria.from(Participant.class);
+    final CriteriaQuery<Participant> select = criteria.select(root);
+    select.where(builder.like(root.get("reference"), referenceNumberPrefix + "%"),
+            builder.equal(root.get("deleted"), 0));
+    Query<Participant> query = sessionFactory.getCurrentSession().createQuery(criteria);
+    
+    if (!query.getResultList().isEmpty()) {
+    	return  query.getResultList();
+    }   
+    return null;   
+  }
 
   @Override
   public Participant merge(Interview participant) {
