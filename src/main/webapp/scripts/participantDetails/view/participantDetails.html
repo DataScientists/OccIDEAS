@@ -1,10 +1,10 @@
 <div id="participant-details-wrapper">
-	<!-- 
+
 	<div>Participant Reference: {{participant.reference }}</div>
-	<div>Participant ReferenceNumber:{{participant.referenceNumber }}</div>
+
 	<div>Interview ReferenceNumber:{{interview.referenceNumber }}</div>
-	<div>vm.isFirstJob:{{vm.isFirstJob}}</div>
- -->
+	<div>vm.isZeroRecord:{{vm.isZeroRecord}}</div>
+
 	<!-- 
 	<div>
 		<fieldset>
@@ -18,13 +18,20 @@
 	</div>
  -->
 	<hr></hr>
-	<div>
+	<div ng-if="vm.isMapping === false">
 		<fieldset>
 			<legend>Other Job Details:</legend>
-			
+
 			<div class="button-list">
-				<button ng-repeat="participant in vm.otherParticipantJobs" ng-click="handleButtonClick(participant.referenceNumber)">
-					{{participant.reference}}</button>
+				<div ng-repeat="participant in vm.otherParticipantJobs">
+
+					<div ng-if="(participant.reference != vm.currentReferenceNumber)">
+
+						<button ng-click="vm.openOtherDetailsTab(participant)">
+							{{participant.reference}}</button>
+					</div>
+				</div>
+
 			</div>
 			<button ng-click="vm.addJobHistoryParticipant()">
 				<span>Add Job</span>
@@ -33,7 +40,7 @@
 	</div>
 </div>
 <hr></hr>
-<div ng-if="vm.isFirstJob === true">
+<div ng-if="vm.isZeroRecord === true">
 	<fieldset>
 		<legend>Participant Details:</legend>
 		<div>
@@ -67,7 +74,7 @@
 		</div>
 	</fieldset>
 </div>
-<div ng-if="vm.isFirstJob === false">
+<div ng-if="vm.isZeroRecord === false && vm.isMapping === false">
 	<fieldset>
 		<legend>Job Details for {{vm.jobNumber}}:</legend>
 		<div>
@@ -104,57 +111,41 @@
 			</button>
 		</div>
 	</fieldset>
+</div>
+<div ng-if="vm.isMapping === true">
+	
 	<hr></hr>
 	<fieldset>
-		<legend>Job Mapping Details:</legend>
-		<div>
-			<label for="gender">Job Module:</label>
-			<!--  
-		<select id="jModule"
-			name="jModule">
-			<option value="-1"></option>
-			<option value="75432">AsMM</option>
-			<option value="75433">AREM</option>
-			<option value="75434">ANEC</option>
-			<option value="75435">AUTO</option>
-			<option value="75436">CEMT</option>
-			<option value="75437">FURN</option>
-			<option value="75438">INSU</option>
-			<option value="75439">LAND</option>
-			<option value="75440">TEXT</option>
-			<option value="75441">TIPW</option>
-			<option value="75442">TRAD</option>
-			<option value="75443">WATE</option>
-			<option value="75811">JEWL</option>
-			<option value="75816">LAUN</option>
-			<option value="1">UnExposed</option>
-		</select>
-		-->
-			<select id="jobModule" ng-model="vm.selectedJobModule"
-				ng-options="jobModule for jobModule in jobModules">
-			</select>
+		<legend>Job History Details:</legend>
 
-			<p>Selected Job Module: {{ vm.selectedJobModule }}</p>
-			<div>
-				<label for="priority">Priority:</label> <input type="text"
-					id="priority" name="priority">
-			</div>
-			<div>
-				<button ng-click="vm.saveParticipantDetails()">
-					<span>Update Job Mapping</span>
-				</button>
-			</div>
-		</div>
-	</fieldset>
-	<hr></hr>
-	<fieldset ng-if="vm.selectedJobModule">
-		<legend>Launch Interview:</legend>
 		<div>
-			<a href="{{vm.fullQualtricsLink}}" target=”_blank”
-				style="color: #1a0dab; font-size: larger;">Click to access the
-				interview questions for the {{vm.selectedJobModule}} questionnaire</a>
+			<div ng-repeat="participant in vm.otherParticipantJobs">
+				<hr />
+				{{participant.reference}}
+				
+				<div ng-repeat="detail in participant.participantDetails">
+					<div ng-if="detail.detailName === 'Priority'">
+						<div ng-if="participant.mappedTo != 'NONO'">
+							<label for="mappingJob">Job Module:</label> <select
+								id="jobModule" ng-model="participant.mappedTo"
+								ng-options="jobModule for jobModule in jobModules">
+							</select>
 
+							<p>Selected Job Module: {{ participant.mappedTo }}</p>
+							<label for="priority">Priority:</label> <input type="text"
+								id="priority" name="priority" ng-model="detail.detailValue">
+						</div>
+					</div>
+					{{detail.detailName}}:{{detail.detailValue}}
+				</div>
+			</div>
 
 		</div>
+		<div>
+			<button ng-click="vm.saveParticipantMappings(vm.otherParticipantJobs)">
+				<span>Update Job Mapping</span>
+			</button>
+		</div>
 	</fieldset>
+
 </div>

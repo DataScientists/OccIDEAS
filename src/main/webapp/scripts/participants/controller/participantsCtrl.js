@@ -284,7 +284,7 @@
 			$scope.addParticipantDetailsTab(-1, participant.reference, true, participant.idinterview);
 		}
 		function showParticipantMappingTab(participant) {
-			$scope.addParticipantMappingTab(-1, participant.reference, true, participant.idinterview);
+			$scope.addParticipantMappingTab(participant.reference, participant.idinterview);
 		}
 		function addCaseControlParticipant() {
 			if (awesIdIsValid($scope.searchAWESID)) {
@@ -777,9 +777,28 @@
 		function getSurveyLink(participant) {
 			var surveyLink = "";
 			if (participant.notes != undefined) {
-				surveyLink = participant.notes.find(qualtricsSurveyLinkNote => qualtricsSurveyLinkNote.type === 'AMRSurveyLink');
+				surveyLink = participant.notes.find(qualtricsSurveyLinkNote => (qualtricsSurveyLinkNote.type === 'AMRSurveyLink' && !qualtricsSurveyLinkNote.deleted));
 			}
 			return surveyLink;
+		}
+		function getInterviewDetails(participant) {
+			var workingAs = "";
+			var workingWith = "";
+			var jobStartedIn = "";
+			if (participant.participantDetails != undefined) {
+				workingAs = participant.participantDetails.find(detail => (detail.detailName === 'Title'));
+				workingWith = participant.participantDetails.find(detail => (detail.detailName === 'Title'));
+				jobStartedIn = participant.participantDetails.find(detail => (detail.detailName === 'Product'));
+			}
+			var interviewDetails ="";
+			if(workingAs != undefined){
+				interviewDetails = "The next questions refer to when you were working as "
+			+ workingAs.detailValue + " with "+ workingWith.detailValue + ". That job started in "+ jobStartedIn.detailValue;
+			
+			}else{
+				interviewDetails = "The next questions refer to NONO [need to update this based on Ewan's comments']";
+			}
+			return interviewDetails;
 		}
 		self.getSurveyLink = getSurveyLink;
 		function getJobModule(participant) {
@@ -791,7 +810,13 @@
 			return jobModuleName.name;
 		}
 		self.getJobModule = getJobModule;
-
+		function getJobModulePriority(participant) {
+			var jobModulePriority = { detailValue: "" };
+			if (participant.participantDetails != undefined) {
+				jobModulePriority = participant.participantDetails.find(jobModulePriority => jobModulePriority.detailName === 'Priority');
+			}
+			return jobModulePriority.detailValue;
+		}
 		function saveInterview(interview) {
 
 			InterviewsService.save(interview).then(function(response) {
@@ -809,6 +834,7 @@
 
 					var participantFull = response.data[0];
 					participant.mappedTo = getJobModule(participantFull);
+					participant.mappedPriority = getJobModulePriority(participantFull);
 
 
 				}
@@ -828,7 +854,7 @@
 
 							var participantFull = response.data[0];
 							data.mappedTo = getJobModule(participantFull);
-
+							data.mappedPriority = getJobModulePriority(participantFull);
 
 						}
 					});
@@ -841,7 +867,38 @@
 			});
 		}
 		$scope.showAllMapping = showAllMapping;
+		function showAllInterviewLinks() {
+			$scope.currentParticipants.reduce(function(p, data) {
+				return p.then(function() {
+					$scope.interviewIdInProgress = data.idinterview;
+					$scope.counter++;
+					$scope.interviewCount = $scope.counter;
+					ParticipantsService.findParticipant(data.idParticipant).then(function(response) {
+						if (response.status === 200) {
 
+
+							var participantFull = response.data[0];
+							data.qualtricsLink = getSurveyLink(participantFull);
+							if(data.qualtricsLink){
+								data.fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + data.qualtricsLink.text + '?AMRID=' + participantFull.reference;
+								data.interviewDetails = getInterviewDetails(participantFull);
+							}else{
+								data.interviewDetails = "Not mapped";
+							}
+							
+							console.log(data.interviewDetails);
+
+						}
+					});
+				});
+			}, $q.when(true)).then(function(finalResult) {
+				console.log('finish loading rules');
+
+			}, function(err) {
+				console.log('error');
+			});
+		}
+		$scope.showAllInterviewLinks = showAllInterviewLinks;
 
 	}
 })();

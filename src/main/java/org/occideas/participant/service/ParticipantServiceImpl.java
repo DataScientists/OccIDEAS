@@ -140,7 +140,7 @@ public class ParticipantServiceImpl implements ParticipantService {
 	public List<ParticipantVO> getByReferenceNumberPrefix(String referenceNumberPrefix) {
 		List<Participant> participants = participantDao.getByReferenceNumberPrefix(referenceNumberPrefix);
 
-		return mapper.convertToParticipantVOListOnly(participants);
+		return mapper.convertToParticipantVOList(participants,false);
 	}
 
   @Override

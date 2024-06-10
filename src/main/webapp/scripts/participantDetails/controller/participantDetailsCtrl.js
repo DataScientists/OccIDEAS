@@ -4,16 +4,17 @@
 
 	ParticipantDetailsCtrl.$inject = ['ParticipantDetailsService', 'ParticipantsService', 'InterviewsService', 'QuestionsService',
 		'data', 'updateData', 'startWithReferenceNumber', 'mapping',
-		'$state', '$scope', '$filter', '$rootScope', '$mdDialog', 'ngToast', '$sessionStorage'];
+		'$state', '$scope', '$filter', '$rootScope', '$mdDialog', 'ngToast', '$sessionStorage', '$q'];
 
 	function ParticipantDetailsCtrl(ParticipantDetailsService, ParticipantsService, InterviewsService, QuestionsService,
-		data, updateData, startWithReferenceNumber,mapping,
-		$state, $scope, $filter, $rootScope, $mdDialog, $ngToast, $sessionStorage) {
+		data, updateData, startWithReferenceNumber, mapping,
+		$state, $scope, $filter, $rootScope, $mdDialog, $ngToast, $sessionStorage, $q) {
 		var self = this;
 
 		self.addJobHistoryParticipant = addJobHistoryParticipant;
 		self.saveParticipantDetails = saveParticipantDetails;
-		self.isFirstJob = true;
+		self.isZeroRecord = false;
+		self.isMapping = false;
 		self.charCode = "----";
 
 		$scope.jobModules = ['AsMM',
@@ -37,6 +38,8 @@
 			getOtherParticipantJob(self.referenceNumberPrefix);
 			$scope.referenceNumber = startWithReferenceNumber;
 			$rootScope.referenceNumber = startWithReferenceNumber;
+			self.currentReferenceNumber = startWithReferenceNumber;
+			$scope.introModule = data[0];
 			InterviewsService.checkReferenceNumberExists($scope.referenceNumber).then(function(data) {
 				if (data.status == 200) {
 					$scope.interview = data.data[0];
@@ -61,18 +64,21 @@
 			//updateData.participant = $scope.data;
 			$scope.interview = updateData;
 			//$rootScope.participant = updateData.participant;
-			$scope.participant = updateData;
+			//$scope.participant = updateData;
 			//resumeInterview();
-			checkIsFirstJob(participant.reference);
+			checkIsFirstJob($scope.interview.referenceNumber);
+			getOtherParticipantJob(self.referenceNumberPrefix);
+			self.currentReferenceNumber = $scope.interview.referenceNumber;
+			populateParticipantDetails($scope.interview.interviewId);
 		} else if (mapping) {
+			self.isMapping = true;
 			console.log("mapping");
-		}
+			$scope.interview = mapping;
+			$rootScope.referenceNumber = $scope.interview.referenceNumber;
+			checkIsFirstJob($rootScope.referenceNumber);
+			getOtherParticipantJob(self.referenceNumberPrefix);
+			getFullSurveyLink($scope.interview);
 
-		if (updateData) {
-			checkIsFirstJob(updateData.referenceNumber);
-			populateParticipantDetails(participantId);
-		} else {
-			$scope.introModule = data[0];
 		}
 
 		$scope.$root.tabsLoading = false;
@@ -103,7 +109,7 @@
 					interview.participant = participant;
 					interview.module = $scope.introModule;
 					interview.referenceNumber = $rootScope.referenceNumber;
-					if (self.isFirstJob) {
+					if (self.isZeroRecord) {
 						interview.notes = [];
 						interview.notes.push({
 							interviewId: $rootScope.participant.idParticipant,
@@ -141,7 +147,7 @@
 
 														checkIsFirstJob(participant.reference);
 
-														if (self.isFirstJob) {
+														if (self.isZeroRecord) {
 															var actualAnswer = ques.nodes.find(possibleAnswer => possibleAnswer.name === 'NONO');
 															var interviewQuestion = $scope.interview.questionHistory[1];
 															actualAnswer.interviewQuestionId = interviewQuestion.id;
@@ -173,7 +179,7 @@
 																}
 															});
 														}
-														if (self.isFirstJob) {
+														if (self.isZeroRecord) {
 
 															$rootScope.participant.participantDetails = [];
 															var charCode = {
@@ -191,6 +197,12 @@
 																detailName: 'Comments',
 																detailValue: '----'
 															}
+															var priority = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'Priority',
+																detailValue: '1'
+															}
+															$rootScope.participant.participantDetails.push(priority);
 															$rootScope.participant.participantDetails.push(charCode);
 															$rootScope.participant.participantDetails.push(numberCode);
 															$rootScope.participant.participantDetails.push(detailComment);
@@ -206,6 +218,12 @@
 																detailName: 'Product',
 																detailValue: '----'
 															}
+															var priority = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'Priority',
+																detailValue: '-'
+															}
+															$rootScope.participant.participantDetails.push(priority);
 															$rootScope.participant.participantDetails.push(title);
 															$rootScope.participant.participantDetails.push(product);
 
@@ -302,7 +320,9 @@
 				self.jobNumber = "J" + lastElement;
 				self.referenceNumberPrefix = array[0];
 				if (lastElement > 0) {
-					self.isFirstJob = false;
+					self.isZeroRecord = false;
+				} else {
+					self.isZeroRecord = true;
 				}
 			}
 		}
@@ -330,7 +350,7 @@
 					var participant = response.data[0];
 
 					var theDetails = participant.participantDetails;
-					if (self.isFirstJob) {
+					if (self.isZeroRecord) {
 						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
 						detail.detailValue = self.charCode;
 						detail = theDetails.find(detail => detail.detailName === 'Comments');
@@ -360,18 +380,7 @@
 				}
 
 			});
-			var mappedJobModule = self.selectedJobModule;
-			$scope.interview.notes.push({
-				interviewId: $scope.interview.interviewId,
-				text: findQualtricsSurveyLink(mappedJobModule),
-				type: 'AMRSurveyLink'
-			});
 
-			InterviewsService.save($scope.interview).then(function(response) {
-				if (response.status === 200) {
-					console.log('it works');
-				}
-			});
 
 		}
 		function getCurrentDateTime() {
@@ -387,117 +396,13 @@
 
 			return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 		}
-		/*
-		function buildAndEditQuestionNew(interview, question, jobModuleAnswer) {
-			var newQuestionAsked = _.find(interview.questionHistory, function(queuedQuestion) {
-				return queuedQuestion.questionId == question.idNode;
-			});
-			if (!newQuestionAsked) {
-				var msg = "OOPS! lost the newQuestion in buildAndEditQuestionNew";
-				console.error(msg);
-				ngToast.create({
-					className: 'danger',
-					content: msg,
-					animation: 'slide'
-				});
-			}
-			if (newQuestionAsked.questionId == $scope.iq.questionId) {
-				newQuestionAsked.answers = $scope.iq.answers;
-			}
-			var bIsFreeText = false;
-			var bDeleteAnswersRequired = false;
-			var selectedAnswer = question.selectedAnswer;
-			_.each(newQuestionAsked.answers, function(ans) {
-				if (ans.deleted == 0) {
-					if (selectedAnswer.idNode != ans.answerId) {
-						findChildQuestionsToDelete(ans);
-						bDeleteAnswersRequired = true;
-					}
-				}
-			});
-			if (bDeleteAnswersRequired) {
-				$scope.displayQuestions = [];
-				for (var i = 0; i < interview.questionHistory.length; i++) {
-					var queuedQuestion = interview.questionHistory[i];
-					if (queuedQuestion.deleted == 0) {
-						if (queuedQuestion.description == 'display') {
-							$scope.displayQuestions.push(queuedQuestion);
-						}
-					}
-				}
-				var actualAnswer = jobModuleAnswer;
-				actualAnswer.interviewQuestionId = newQuestionAsked.id;
-				actualAnswer.isProcessed = true;
-				newQuestionAsked.answers[0] = actualAnswer;
-				var defer = $q.defer();
-				saveAnswerNew(newQuestionAsked, defer);
-				defer.promise.then(function() {
-					newQuestionAsked.processed = true;
-					InterviewsService.saveQuestion(newQuestionAsked).then(function(response) {
-						if (response.status === 200) {
-							console.log("Saved Interview q:" + newQuestionAsked.questionId);
-							var defer1 = $q.defer();
-							deleteAnswers(answersToDelete, defer1);
-							defer1.promise.then(function() {
-								console.log("All done deleting child questions answers");
-								var defer = $q.defer();
-								deleteQuestions(questionsToDelete, defer);
-								defer.promise.then(function() {
-									console.log("All done deleting child questions");
-									$scope.resetInterview();
-								});
-							});
-						}
-					});
-				});
 
-			} else {
-				if (!bIsFreeText) {
-					ngToast.create({
-						className: 'warning',
-						content: "Nothing was changed",
-						animation: 'slide'
-					});
-				}
-			}
-		}
-		
-		function saveAnswerNew(newQuestionAsked, defer) {
-			if (newQuestionAsked.answers.length > 0) {
-				InterviewsService.saveAnswersAndQueueQuestions(newQuestionAsked.answers).then(function(response) {
-					if (response.status === 200) {
-						/ *_.each(response.data, function(data) {
-							var index = _.indexOf(listOfAnswersGiven,
-								_.find(listOfAnswersGiven, { id: data.id }));
-							if (index != -1) {
-								listOfAnswersGiven.splice(index, 1, data);
-							} else {
-								listOfAnswersGiven.push(data);
-							}
-						});* /
-						if (defer) {
-							defer.resolve();
-						}
-					} else {
-						if (defer) {
-							defer.reject();
-						}
-					}
-				});
-			} else {
-				console.error("Trying to save empty interview answers");
-				if (defer) {
-					defer.resolve();
-				}
-			}
-			if (defer) {
-				return defer.promise;
-			}
-		}
-		*/
 		function findQualtricsSurveyLink(moduleName) {
-			var qualtricsSurveyLink = "";
-			qualtricsSurveyLink = $rootScope.qualtricsSurveyLinks.find(qualtricsSurveyLink => qualtricsSurveyLink.name === moduleName);
+			var qualtricsSurveyLink = {surveyLink:""};
+			if (moduleName != undefined) {
+				qualtricsSurveyLink = $rootScope.qualtricsSurveyLinks.find(qualtricsSurveyLink => qualtricsSurveyLink.name === moduleName);
+
+			}
 			return qualtricsSurveyLink.surveyLink;
 		}
 		function getFullSurveyLink(participant) {
@@ -505,7 +410,7 @@
 			if (participant.notes != undefined) {
 				surveyLink = participant.notes.find(qualtricsSurveyLinkNote => qualtricsSurveyLinkNote.type === 'AMRSurveyLink');
 				if (surveyLink != undefined) {
-					fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + surveyLink.text + '?AMRID=' + $rootScope.participant.reference;
+					fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + surveyLink.text + '?AMRID=' + $scope.referenceNumber;
 					var jobModuleName = $rootScope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
 					self.selectedJobModule = jobModuleName.name;
 				}
@@ -520,7 +425,7 @@
 					var participant = response.data[0];
 					$rootScope.participant = participant;
 					var theDetails = participant.participantDetails;
-					if (self.isFirstJob) {
+					if (self.isZeroRecord) {
 						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
 						self.charCode = detail.detailValue;
 						detail = theDetails.find(detail => detail.detailName === 'Comments');
@@ -542,15 +447,155 @@
 				}
 			});
 		}
-		function getOtherParticipantJob(referenceNumberPrefix){
+		function getOtherParticipantJob(referenceNumberPrefix) {
 			ParticipantsService.getByReferenceNumberPrefix(referenceNumberPrefix).then(function(response) {
 				if (response.status === 200) {
 					var otherParticipantJobs = response.data;
 					self.otherParticipantJobs = otherParticipantJobs;
-					
+
+					populateMappingDetails(self.otherParticipantJobs);
+
+
 
 				}
 			});
+		}
+		function saveParticipantMapping() {
+			var mappedJobModule = self.selectedJobModule;
+			if (!($scope.interview.notes)) {
+				$scope.interview.notes = [];
+			} else {
+				deleteOldSurveyLink($scope.interview);
+			}
+			$scope.interview.notes.push({
+				interviewId: $scope.interview.interviewId,
+				text: findQualtricsSurveyLink(mappedJobModule),
+				type: 'AMRSurveyLink'
+			});
+
+			InterviewsService.save($scope.interview).then(function(response) {
+				if (response.status === 200) {
+					console.log('it works');
+				}
+			});
+		}
+		self.saveParticipantMapping = saveParticipantMapping;
+		function saveParticipantMappings(participants) {
+			participants.reduce(function(p, data) {
+				return p.then(function() {
+
+
+					InterviewsService.get(data.idParticipant).then(function(response) {
+						if (response.status === 200) {
+							var interview = response.data[0];
+							if (!(interview.notes)) {
+								interview.notes = [];
+							} else {
+								deleteOldSurveyLink(interview);
+							}
+							interview.notes.push({
+								interviewId: interview.interviewId,
+								text: findQualtricsSurveyLink(data.mappedTo),
+								type: 'AMRSurveyLink'
+							});
+
+							InterviewsService.save(interview).then(function(response) {
+								if (response.status === 200) {
+									console.log('it works');
+								}
+							});
+
+
+							//data.mappedTo = getJobModule(data);
+
+
+						}
+					});
+
+				});
+			}, $q.when(true)).then(function(finalResult) {
+				console.log('finish loading rules');
+
+			}, function(err) {
+				console.log('error');
+			});
+
+
+
+
+			var mappedJobModule = self.selectedJobModule;
+			if (!($scope.interview.notes)) {
+				$scope.interview.notes = [];
+			} else {
+				deleteOldSurveyLink($scope.interview);
+			}
+			$scope.interview.notes.push({
+				interviewId: $scope.interview.interviewId,
+				text: findQualtricsSurveyLink(mappedJobModule),
+				type: 'AMRSurveyLink'
+			});
+
+			InterviewsService.save($scope.interview).then(function(response) {
+				if (response.status === 200) {
+					console.log('it works');
+				}
+			});
+		}
+		self.saveParticipantMappings = saveParticipantMappings;
+		function deleteOldSurveyLink(interview) {
+			if (Array.isArray(interview.notes)) {
+				for (let note of interview.notes) {
+					if (note.type === 'AMRSurveyLink') {
+						// Mark the note as deleted
+						note.deleted = 1;
+						//break;
+					}
+				}
+			}
+		}
+
+		function openOtherDetailsTab(participant) {
+			$scope.addParticipantDetailsTab(-1, participant.reference, true, participant.idParticipant);
+		}
+		self.openOtherDetailsTab = openOtherDetailsTab;
+		function getJobModule(participant) {
+			var jobModuleName = { name: "" };
+			var surveyLink = getSurveyLink(participant);
+			if (surveyLink != undefined) {
+				jobModuleName = $rootScope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
+			}
+			return jobModuleName.name;
+		}
+		function populateMappingDetails(participants) {
+			participants.reduce(function(p, data) {
+				return p.then(function() {
+					//data.mappedTo = getJobModule(data);
+
+					ParticipantsService.findParticipant(data.idParticipant).then(function(response) {
+						if (response.status === 200) {
+
+
+							var participantFull = response.data[0];
+							data.mappedTo = getJobModule(participantFull);
+
+
+						}
+					});
+
+				});
+			}, $q.when(true)).then(function(finalResult) {
+				console.log('finish loading rules');
+
+			}, function(err) {
+				console.log('error');
+			});
+		}
+		function getSurveyLink(participant) {
+			var surveyLink = "";
+			if (participant.notes != undefined) {
+				surveyLink = participant.notes.find(qualtricsSurveyLinkNote => (qualtricsSurveyLinkNote.type === 'AMRSurveyLink' && !qualtricsSurveyLinkNote.deleted));
+			}
+			return surveyLink;
 		}
 	}
 })();

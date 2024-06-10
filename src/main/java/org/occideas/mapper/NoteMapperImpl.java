@@ -61,9 +61,9 @@ public class NoteMapperImpl implements NoteMapper {
     }
     List<Note> list = new ArrayList<Note>();
     for (NoteVO note : noteVOs) {
-      if (note.getDeleted() == 0) {
+   //   if (note.getDeleted() == 0) {
         list.add(convertToNote(note));
-      }
+  //    }
     }
     return list;
   }

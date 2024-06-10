@@ -780,7 +780,7 @@
           controller: 'ParticipantDetailsCtrl as vm',
           params: {row: null, module: null, interviewId: null, startWithReferenceNumber: null},
           resolve: {
-            data: function($stateParams, InterviewsService, TabsCache) {
+            data: function($stateParams, InterviewsService) {
               return InterviewsService.findModule($stateParams.row)
                 .then(function(response) {
                   $log.info("Data getting from findModule AJAX ...");
@@ -799,7 +799,11 @@
                 }
               });
             },
-            startWithReferenceNumber: function($stateParams, InterviewsService) {
+	        mapping: function() {
+
+              return '';
+            },
+            startWithReferenceNumber: function($stateParams) {
               return $stateParams.startWithReferenceNumber;
             }
           }
@@ -817,12 +821,8 @@
           controller: 'ParticipantDetailsCtrl as vm',
           params: {row: null, module: null, interviewId: null, startWithReferenceNumber: null},
           resolve: {
-            data: function($stateParams, InterviewsService, TabsCache) {
-              return InterviewsService.findModule($stateParams.row)
-                .then(function(response) {
-                  $log.info("Data getting from findModule AJAX ...");
-                  return response.data;
-                });
+            data: function($stateParams) {
+              return $stateParams.startWithReferenceNumber;
             },
 			mapping: function($stateParams, InterviewsService) {
 
@@ -836,11 +836,11 @@
                 }
               });
             },
-			updateData: function($stateParams, InterviewsService) {
+			updateData: function($stateParams) {
 
               return '';
             },
-            startWithReferenceNumber: function($stateParams, InterviewsService) {
+            startWithReferenceNumber: function($stateParams) {
               return $stateParams.startWithReferenceNumber;
             }
           }
