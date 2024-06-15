@@ -140,7 +140,7 @@
     }).state({
         name: 'tabs.participants',
         url: '/participants/',
-        sticky: false,
+        sticky: true,
         deepStateRedirect: false,
         authenticate: true,
         views: {

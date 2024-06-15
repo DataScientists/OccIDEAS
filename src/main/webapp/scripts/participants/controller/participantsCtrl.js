@@ -19,7 +19,8 @@
 		$rootScope.qualtricsSurveyLinks = [
 			{ name: 'NONO', surveyLink: 'SV_a4MpkYabheITp7U' },
 			{ name: 'LAND', surveyLink: 'SV_41PCl5vY1gaiGyy' },
-			{ name: 'TRAD', surveyLink: 'SV_3lsCyfioMEqPlgq' }
+			{ name: 'TRAD', surveyLink: 'SV_3lsCyfioMEqPlgq' },
+			{ name: 'UnExposed', surveyLink: '' }
 		];
 
 		$scope.interviewStatusList = [{
@@ -790,19 +791,20 @@
 				workingWith = participant.participantDetails.find(detail => (detail.detailName === 'Title'));
 				jobStartedIn = participant.participantDetails.find(detail => (detail.detailName === 'Product'));
 			}
-			var interviewDetails ="";
-			if(workingAs != undefined){
+			var interviewDetails = "";
+			if (workingAs != undefined) {
+				
 				interviewDetails = "The next questions refer to when you were working as "
-			+ workingAs.detailValue + " with "+ workingWith.detailValue + ". That job started in "+ jobStartedIn.detailValue;
-			
-			}else{
-				interviewDetails = "The next questions refer to NONO [need to update this based on Ewan's comments']";
+					+ workingAs.detailValue + " with " + workingWith.detailValue + ". That job started in " + jobStartedIn.detailValue;
+
+			} else {
+				interviewDetails = "The next questions are the non-occupational questions";
 			}
 			return interviewDetails;
 		}
 		self.getSurveyLink = getSurveyLink;
 		function getJobModule(participant) {
-			var jobModuleName = {name:""};
+			var jobModuleName = { name: "" };
 			var surveyLink = getSurveyLink(participant);
 			if (surveyLink != undefined) {
 				jobModuleName = $rootScope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
@@ -879,13 +881,15 @@
 
 							var participantFull = response.data[0];
 							data.qualtricsLink = getSurveyLink(participantFull);
-							if(data.qualtricsLink){
+							data.statusDescription = participantFull.statusDescription;
+							if (data.qualtricsLink.text) {
 								data.fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + data.qualtricsLink.text + '?AMRID=' + participantFull.reference;
 								data.interviewDetails = getInterviewDetails(participantFull);
-							}else{
-								data.interviewDetails = "Not mapped";
+								data.mappedPriority = getJobModulePriority(participantFull);
+							} else {
+								data.fullQualtricsLink = "";
 							}
-							
+
 							console.log(data.interviewDetails);
 
 						}
@@ -899,6 +903,15 @@
 			});
 		}
 		$scope.showAllInterviewLinks = showAllInterviewLinks;
+		function updateParticipantStatus(event, participant) {
+			participant.status = 2;
+			ParticipantsService.save(participant).then(function(response) {
+				if (response.status === 200) {
+					console.log('it works');
+				}
+			});
+		}
+		self.updateParticipantStatus = updateParticipantStatus;
 
 	}
 })();

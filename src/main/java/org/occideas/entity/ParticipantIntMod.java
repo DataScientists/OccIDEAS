@@ -79,15 +79,17 @@ public class ParticipantIntMod implements Serializable {
 
   public String getStatusDescription() {
 
-    if (status == 0) {
-      statusDescription = "Running";
-    } else if (status == 1) {
-      statusDescription = "Partial";
-    } else if (status == 2) {
-      statusDescription = "Completed";
-    } else if (status == 3) {
-      return "To be excluded";
-    }
+	  if (status == 0) {
+			statusDescription = "Not Mapped";
+		} else if (status == 1) {
+			statusDescription = "Ready";
+		} else if (status == 2) {
+			statusDescription = "Running";
+		} else if (status == 3) {
+			statusDescription = "Completed";
+		} else if (status == 4) {
+			statusDescription = "Excluded";
+		}
     return statusDescription;
   }
 

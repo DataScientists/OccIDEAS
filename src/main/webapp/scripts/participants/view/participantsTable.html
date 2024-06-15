@@ -73,16 +73,21 @@
         </td>
         <td filter="{Interviews: 'ng-table/filters/interviewLinks.html' }"
             title="'Interviews'" >
-            <div ng-if="participant.qualtricsLink">
+            <div ng-if="participant.mappedPriority">Priority:{{participant.mappedPriority}}</div>
+            <div ng-if="((participant.fullQualtricsLink) && (participant.status != 3))">
             
-            <a href="{{participant.fullQualtricsLink}}" target=”_blank”
+            <a href="{{participant.fullQualtricsLink}}" ng-click="vm.updateParticipantStatus($event,participant)" target=”_blank”
 				style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
             </div>
-            <div ng-if="participant.qualtricsLink === undefined">
+            <div ng-if="participant.fullQualtricsLink === undefined">
             
             </div>
-            <div ng-if="participant.qualtricsLink === ''">
-            Not Mapped
+            <div ng-if="participant.fullQualtricsLink === ''">
+            Excluded
+            
+            </div>
+            <div ng-if="participant.status === 3">
+            Survey completed and imported from qualtrics.
             
             </div>
             
@@ -94,10 +99,15 @@
             <span class="glyphicon glyphicon-edit"></span>
           </button>
         </td>
-        <td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
+        
+        <td title="'Interview Status'">
           {{participant.statusDescription}}
         </td>
        
+       <!-- 
+        <td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
+          {{participant.statusDescription}}
+        </td>
         <td style="max-width: 200px;" title="'Notes'">
           <button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
             <span class="glyphicon glyphicon-comment"></span>
@@ -121,6 +131,8 @@
                   ng-if="participant.statusDescription=='Completed'">
             <span class="glyphicon glyphicon-stop"></span>
           </button>
+           -->
+          
          <!-- 
           
           <button class="btn btn-default btn-sm"
@@ -164,11 +176,11 @@
     </div>
   </script>
   <script id="ng-table/filters/mapping.html" type="text/ng-template">
-    <input type="button" name="{{interviewid}}" value="Show Mapping" ng-click="showAllMapping()"
+    <input type="button" name="{{interviewid}}" value="Show/Refresh Mapping" ng-click="showAllMapping()"
            ng-model="params.filter()[participant.idinterview]" class="input-filter form-control"/>
   </script>
   <script id="ng-table/filters/interviewLinks.html" type="text/ng-template">
-    <input type="button" name="{{interviewid}}" value="Show Interview Links" ng-click="showAllInterviewLinks()"
+    <input type="button" name="{{interviewid}}" value="Show/Refresh Interview Links" ng-click="showAllInterviewLinks()"
            ng-model="params.filter()[participant.idinterview]" class="input-filter form-control"/>
   </script>
 </div>

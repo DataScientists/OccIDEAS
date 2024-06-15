@@ -51,32 +51,25 @@ public class QSFInterviewReplicationService {
         this.nodeDao = nodeDao;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public long replicateQualtricsInterviewIntoOccideas(String respondentId,
-                                                        String moduleName,
-                                                        Map<String, ResponseSummary> responseSummary) {
-        //moduleName = "INTRO";
-    	List<JobModule> modules = moduleDao.findByName(moduleName);
-    	ResponseSummary rs = responseSummary.get("AMRID");
-        //Participant participant = createParticipant(respondentId);
-    	if(rs.getAnswer().equalsIgnoreCase("A111111-0")) {
-    		Participant participant = participantDao.getByReferenceNumber(rs.getAnswer());
-            log.info("Participant found - {}", participant.getIdParticipant());
-            
-            //Interview newInterview = createNewInterview(respondentId, participant);
-            
-            Interview newInterview = interviewDao.findByReferenceNumber(rs.getAnswer()).get(0);
-            log.info("Interview found - {}", newInterview.getIdinterview());
-            JobModule module = modules.get(0);
-            //createRootInterviewQuestion(newInterview, module);
-            processResponseAnswers(responseSummary, newInterview);
-            
-            return newInterview.getIdinterview();
-    	}else {
-    		return 1;
-    	}
-        
-    }
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public long replicateQualtricsInterviewIntoOccideas(String respondentId, String moduleName,
+			Map<String, ResponseSummary> responseSummary) {
+		
+		List<JobModule> modules = moduleDao.findByName(moduleName);
+		ResponseSummary rs = responseSummary.get("AMRID");
+		
+		Participant participant = participantDao.getByReferenceNumber(rs.getAnswer());
+		log.info("Participant found - {}", participant.getIdParticipant());
+		
+		Interview newInterview = interviewDao.findByReferenceNumber(rs.getAnswer()).get(0);
+		log.info("Interview found - {}", newInterview.getIdinterview());
+		JobModule module = modules.get(0);
+		
+		processResponseAnswers(responseSummary, newInterview);
+
+		return newInterview.getIdinterview();
+		
+	}
 
     private void processResponseAnswers(Map<String, ResponseSummary> responseSummary,
                                         Interview newInterview) {

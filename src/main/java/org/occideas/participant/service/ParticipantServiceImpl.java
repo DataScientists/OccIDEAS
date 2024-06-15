@@ -82,6 +82,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     Participant entity = new Participant();
     entity.setIdParticipant(participantDao.save(mapper.convertToParticipant(o, true)));
     entity.setReference(o.getReference());
+    entity.setStatus(o.getStatus());
     return mapper.convertToParticipantVO(entity, true);
   }
 

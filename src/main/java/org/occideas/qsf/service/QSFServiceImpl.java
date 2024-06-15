@@ -33,6 +33,7 @@ import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
 import org.occideas.entity.InterviewResults;
 import org.occideas.entity.NodeQSF;
+import org.occideas.entity.Participant;
 import org.occideas.entity.QSFQuestionMapper;
 import org.occideas.entity.QualtricsSurvey;
 import org.occideas.entity.QualtricsSurveyResponse;
@@ -51,6 +52,7 @@ import org.occideas.interviewquestion.dao.InterviewQuestionDao;
 import org.occideas.interviewquestion.service.InterviewQuestionService;
 import org.occideas.mapper.RuleMapperImpl;
 import org.occideas.module.service.ModuleService;
+import org.occideas.participant.dao.ParticipantDao;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.possibleanswer.service.PossibleAnswerService;
 import org.occideas.qsf.IQSFClient;
@@ -151,6 +153,8 @@ public class QSFServiceImpl implements IQSFService {
     private QSFInterviewReplicationService qsfInterviewReplicationService;
     @Autowired
     private InterviewDao interviewDao;
+    @Autowired
+    private ParticipantDao participantDao;
     @Autowired
     private InterviewQuestionDao interviewQuestionDao;
     @Autowired
@@ -368,6 +372,13 @@ public class QSFServiceImpl implements IQSFService {
         InterviewQuestion oldRootQuestion = interview.getQuestionHistory().get(2); //delete the old root question
         oldRootQuestion.setDeleted(1);
         interviewQuestionDao.save(oldRootQuestion);
+        
+        String referenceNumber = interview.getReferenceNumber();
+        
+        Participant participant = participantDao.getByReferenceNumber(referenceNumber);
+        participant.setStatus(3);
+        participantDao.saveOrUpdate(participant);
+        
         return interview.getIdinterview();
     }
 

@@ -36,6 +36,7 @@
 				state: "tabs.participants",
 				data: ""
 			});
+			$stickyState.reset('tabs.participants');
 		}
 		if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_ADMIN', 'ROLE_STUDYMANAGER'])) {
 			$scope.tabOptions.push({

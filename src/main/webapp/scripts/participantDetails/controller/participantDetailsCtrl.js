@@ -35,7 +35,7 @@
 
 		if (startWithReferenceNumber) {
 			checkIsFirstJob(startWithReferenceNumber);
-			getOtherParticipantJob(self.referenceNumberPrefix);
+			//getOtherParticipantJob(self.referenceNumberPrefix);
 			$scope.referenceNumber = startWithReferenceNumber;
 			$rootScope.referenceNumber = startWithReferenceNumber;
 			self.currentReferenceNumber = startWithReferenceNumber;
@@ -89,17 +89,15 @@
 			createParticipant(referenceNumber);
 		};
 		function createParticipant(referenceNumber) {
+			var status = 0;
+			if (self.isZeroRecord) {
+				status = 1;
+			}
 			var participant = {
 				reference: referenceNumber,
+				status: status,
 				interviews: []
 			};
-
-
-
-
-
-
-
 
 			ParticipantsService.createParticipant(participant).then(function(response) {
 				if (response.status === 200) {
@@ -265,9 +263,6 @@
 			});
 		}
 
-
-
-
 		function populateInteviewQuestionJsonByModule(interview, module) {
 			return {
 				idInterview: interview.interviewId,
@@ -398,7 +393,7 @@
 		}
 
 		function findQualtricsSurveyLink(moduleName) {
-			var qualtricsSurveyLink = {surveyLink:""};
+			var qualtricsSurveyLink = { surveyLink: "" };
 			if (moduleName != undefined) {
 				qualtricsSurveyLink = $rootScope.qualtricsSurveyLinks.find(qualtricsSurveyLink => qualtricsSurveyLink.name === moduleName);
 
@@ -460,6 +455,7 @@
 				}
 			});
 		}
+
 		function saveParticipantMapping() {
 			var mappedJobModule = self.selectedJobModule;
 			if (!($scope.interview.notes)) {
@@ -480,66 +476,100 @@
 			});
 		}
 		self.saveParticipantMapping = saveParticipantMapping;
-		function saveParticipantMappings(participants) {
-			participants.reduce(function(p, data) {
-				return p.then(function() {
+		function allMapped(participants) {
 
-
-					InterviewsService.get(data.idParticipant).then(function(response) {
-						if (response.status === 200) {
-							var interview = response.data[0];
-							if (!(interview.notes)) {
-								interview.notes = [];
-							} else {
-								deleteOldSurveyLink(interview);
-							}
-							interview.notes.push({
-								interviewId: interview.interviewId,
-								text: findQualtricsSurveyLink(data.mappedTo),
-								type: 'AMRSurveyLink'
-							});
-
-							InterviewsService.save(interview).then(function(response) {
-								if (response.status === 200) {
-									console.log('it works');
-								}
-							});
-
-
-							//data.mappedTo = getJobModule(data);
-
-
-						}
-					});
-
-				});
-			}, $q.when(true)).then(function(finalResult) {
-				console.log('finish loading rules');
-
-			}, function(err) {
-				console.log('error');
-			});
-
-
-
-
-			var mappedJobModule = self.selectedJobModule;
-			if (!($scope.interview.notes)) {
-				$scope.interview.notes = [];
-			} else {
-				deleteOldSurveyLink($scope.interview);
-			}
-			$scope.interview.notes.push({
-				interviewId: $scope.interview.interviewId,
-				text: findQualtricsSurveyLink(mappedJobModule),
-				type: 'AMRSurveyLink'
-			});
-
-			InterviewsService.save($scope.interview).then(function(response) {
-				if (response.status === 200) {
-					console.log('it works');
+			for (let participant of participants) {
+				// Check if the note type is 'surveyLink' and it is not marked as deleted
+				if (!participant.mappedTo) {
+					// Return the found note
+					return false;
 				}
-			});
+			}
+			return true;
+		}
+		function saveParticipantMappings(participants) {
+			if (allMapped(participants)) {
+				participants.reduce(function(p, data) {
+					return p.then(function() {
+
+
+						InterviewsService.get(data.idParticipant).then(function(response) {
+							if (response.status === 200) {
+								var interview = response.data[0];
+								if (!(interview.notes)) {
+									interview.notes = [];
+								} else {
+									deleteOldSurveyLink(interview);
+								}
+								interview.notes.push({
+									interviewId: interview.interviewId,
+									text: findQualtricsSurveyLink(data.mappedTo),
+									type: 'AMRSurveyLink'
+								});
+
+								InterviewsService.save(interview).then(function(response) {
+									if (response.status === 200) {
+										console.log('it works');
+									}
+								});
+
+
+								//data.mappedTo = getJobModule(data);
+
+
+							}
+						});
+						var status = 0;
+						if (data.mappedTo === 'UnExposed') {
+							status = 4;
+						} else if (data.mappedTo != '') {
+							status = 1;
+						}
+						data.status = status;
+						ParticipantsService.save(data).then(function(response) {
+							if (response.status === 200) {
+								console.log('it works');
+							}
+						});
+
+					});
+				}, $q.when(true)).then(function(finalResult) {
+					console.log('finish loading rules');
+
+				}, function(err) {
+					console.log('error');
+				});
+
+
+
+
+				var mappedJobModule = self.selectedJobModule;
+				if (!($scope.interview.notes)) {
+					$scope.interview.notes = [];
+				} else {
+					deleteOldSurveyLink($scope.interview);
+				}
+				$scope.interview.notes.push({
+					interviewId: $scope.interview.interviewId,
+					text: findQualtricsSurveyLink(mappedJobModule),
+					type: 'AMRSurveyLink'
+				});
+
+				InterviewsService.save($scope.interview).then(function(response) {
+					if (response.status === 200) {
+						console.log('it works');
+					}
+				});
+			} else {
+				$ngToast.create({
+					className: 'danger',
+					content: 'One or more Jobs are not mapped.',
+					dismissButton: true,
+					dismissOnClick: false,
+					animation: 'slide'
+				});
+			}
+
 		}
 		self.saveParticipantMappings = saveParticipantMappings;
 		function deleteOldSurveyLink(interview) {
