@@ -656,6 +656,41 @@
 			$rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
 		};
+		$scope.addParticipantAddressTab = function(awesId, interviewId) {
+			//close other address tabs
+
+			for (var i = tabs.length - 1; i >= 0; i--) {
+				var tab = tabs[i];
+				if (tab.viewName == 'participantAddress@tabs') {
+					tabs.splice(i, 1);
+					$scope.tabOptions.splice(i, 1);
+				}
+			}
+
+			var tabTitle = "Address " + awesId;
+			var state = "tabs.participantAddress";
+			$stickyState.reset(state);
+			if (!checkIfTabIsOpen(tabs, tabTitle)) {
+				tabs.push({
+					title: tabTitle,
+					viewName: 'participantAddress@tabs',
+					canClose: true,
+					disabled: false
+				});
+
+				$scope.tabOptions.push({
+					state: state,
+					data: {
+						interviewId: interviewId,
+						addingAddress: awesId
+					}
+				});
+
+
+			}
+			$rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
+		};
 		$scope.addInterviewTabInterviewersEdit = function(participant) {
 			var isSameIntroModule = true;
 			//participant.idModule is the intro module id

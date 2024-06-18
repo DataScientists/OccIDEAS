@@ -5,116 +5,178 @@
 	<div>Interview ReferenceNumber:{{interview.referenceNumber }}</div>
 	<div>vm.isZeroRecord:{{vm.isZeroRecord}}</div>
 
-	<!-- 
-	<div>
-		<fieldset>
-			<legend>Update the details:</legend>
-			<div>
-				<button ng-click="vm.saveParticipantDetails()">
-					<span>Save Details</span>
-				</button>
-			</div>
-		</fieldset>
-	</div>
- -->
 	<hr></hr>
-	<div ng-if="vm.isMapping === false">
-		<fieldset>
-			<legend>Add or View Next Job:</legend>
-<!-- 
-			<div class="button-list">
-				<div ng-repeat="participant in vm.otherParticipantJobs">
 
-					<div ng-if="(participant.reference != vm.currentReferenceNumber)">
-
-						<button ng-click="vm.openOtherDetailsTab(participant)">
-							{{participant.reference}}</button>
-					</div>
-				</div>
-
-			</div>
-			 -->
-			<button ng-click="vm.addJobHistoryParticipant()">
-				<span>Next Job</span>
-			</button>
-		</fieldset>
-	</div>
 </div>
 <hr></hr>
-<div ng-if="vm.isZeroRecord === true">
+<div ng-if="vm.isZeroRecord === true && vm.isAddresses === false">
 	<fieldset>
-		<legend>Participant Details:</legend>
-		<div>
-			<label for="4CharCode">4 Character Code:</label> <input type="text"
-				id="4CharCode" name="4CharCode" ng-model="vm.charCode">
-		</div>
-		<div>
-			<label for="age">Year of Birth:</label> <input type="text" id="age"
-				name="age">
-		</div>
-		<div>
-			<label for="gender">Gender:</label> <select id="gender" name="gender">
-				<option value="male">Male</option>
-				<option value="female">Female</option>
-				<option value="other">Other</option>
-			</select>
-		</div>
-		<div>
-			<label for="name">4 Number Code:</label> <input type="text" id="name"
-				name="name">
-		</div>
-		<div>
-			<label for="comments">Comments:</label>
-			<textarea id="comments" name="comments" rows="4"
-				ng-model="vm.comments"></textarea>
-		</div>
+		<legend>Personal Details:</legend>
+		<table style="width: 100%">
+			<tbody>
+				<tr>
+					<td><label for="Reference Number">Reference Number:</label></td>
+					<td>{{participant.reference }}</td>
+				</tr>
+				<tr>
+					<td><label for="4CharCode">4 Character Code:</label></td>
+					<td><input type="text" id="4CharCode" name="4CharCode"
+						ng-model="vm.charCode"></td>
+				</tr>
+				<tr>
+					<td><label for="age">Year of Birth:</label></td>
+					<td><select id="yearOfBirth" ng-model="vm.yearOfBirth"
+						ng-options="yearOfBirth for yearOfBirth in yearsOfBirth">
+					</select></td>
+				</tr>
+				<tr>
+					<td><label for="gender">Gender:</label></td>
+					<td><select id="gender" name="gender" ng-model="vm.gender"> 
+							<option value="male">Male</option>
+							<option value="female">Female</option>
+							<option value=""></option>
+					</select></td>
+				</tr>
+				<tr>
+					<td><label for="name">Last 4 Digits of Phone Number:</label></td>
+					<td><input type="text" id="numberCode" name="numberCode"
+						ng-model="vm.numberCode"></td>
+				</tr>
+				<tr>
+					<td><label for="comments">Comments about Participant:</label></td>
+					<td><textarea id="comments" name="comments" rows="4"
+							ng-model="vm.comments"></textarea></td>
+				</tr>
+				<tr>
+					<td><label for="comments">Participant Status:</label></td>
+					<td><select id="participantStatus"
+						ng-model="vm.participantStatus"
+						ng-options="participantStatus for participantStatus in participantStatusList">
+					</select></td>
+				</tr>
+				<tr>
+					<td><label for="comments">Transcript Sent:</label></td>
+					<td><input ng-checked="vm.transcriptSent" ng-model="vm.transcriptSent" style="position: static;"
+						type="checkbox" /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+				</tr>
+
+
+			</tbody>
+		</table>
+	</fieldset>
+	<fieldset>
+		<legend>Residential History:</legend>
+
+		<table style="width: 100%">
+			<tbody ng-repeat="(group, details) in vm.groupedAddresses">
+				<tr ng-repeat="detail in details">
+					<td>{{ $first ? group : '' }}</td>
+					<td>{{ detail.detailName }}</td>
+					<td>{{ detail.detailValue }}</td>
+
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<fieldset>
+		<legend>Occupational History:</legend>
+		<table style="width: 100%">
+			<tbody>
+				<!-- 
+				<tr>
+					<th></th>
+
+					<th>From (month/year)</th>
+					<th>Until (month/year)</th>
+					<th>Employer</th>
+					<th>Address</th>
+					<th>Title/Description</th>
+					<th>Main Product</th>
+					<th>Average Hours per week</th>
+
+				</tr>
+				 -->
+				<tr ng-repeat="participant in vm.otherParticipantJobs"
+					ng-if="!$first">
+					<td>{{participant.reference}}</td>
+
+					<td ng-repeat="detail in participant.participantDetails">{{detail.detailName}}:{{detail.detailValue}}</td>
+
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<fieldset>
+		<legend>Action Buttons:</legend>
 		<div>
 			<button ng-click="vm.saveParticipantDetails()">
 				<span>Save Details</span>
+			</button>
+			|
+			<button ng-click="vm.addJobHistoryParticipant()">
+				<span>Add Job</span>
+			</button>
+			|
+			<button ng-click="vm.addParticipantAddress()">
+				<span>Add Address</span>
 			</button>
 		</div>
 	</fieldset>
 </div>
+
+
+
 <div ng-if="vm.isZeroRecord === false && vm.isMapping === false">
 	<fieldset>
 		<legend>Job Details for {{vm.jobNumber}}:</legend>
-		<div>
-			<label for="from_date">From Date:</label> <input type="text"
-				id="from_date" name="from_date" ng-model="vm.fromDate">
-		</div>
-		<div>
-			<label for="until_date">Until Date:</label> <input type="text"
-				id="until_date" name="until_date" ng-model="vm.untilDate">
-		</div>
-		<div>
-			<label for="employer">Employer:</label> <input type="text"
-				id="employer" name="employer">
-		</div>
-		<div>
-			<label for="address">Address:</label> <input type="text" id="address"
-				name="address">
-		</div>
-		<div>
-			<label for="title">Title:</label> <input type="text" id="title"
-				name="title" ng-model="vm.jobTitle">
-		</div>
-		<div>
-			<label for="main_product">Main Product:</label> <input type="text"
-				id="main_product" name="main_product" ng-model="vm.product">
-		</div>
-		<div>
-			<label for="average_hours">Average Hours:</label> <input type="text"
-				id="average_hours" name="average_hours">
-		</div>
+		<table style="width: 100%">
+			<tbody >
+				<tr >
+					<td><label for="from_date">From Date:</label> </td>
+					<td><input type="text"
+				id="from_date" name="from_date" ng-model="vm.fromDate"></td>
+					
+
+				</tr>
+				<tr><td><label for="until_date">Until Date:</label> </td><td><input type="text"
+				id="until_date" name="until_date" ng-model="vm.untilDate"></td></tr>
+				<tr><td><label for="employer">Employer:</label></td><td><input type="text"
+				id="employer" name="employer"></td></tr>
+				<tr><td><label for="address">Address:</label></td><td><input type="text" id="address"
+				name="address"></td></tr>
+				<tr><td><label for="title">Title:</label></td><td><input type="text" id="title"
+				name="title" ng-model="vm.jobTitle"></td></tr>
+				<tr><td><label for="main_product">Main Product:</label></td><td><input type="text"
+				id="main_product" name="main_product" ng-model="vm.product"></td></tr>
+				<tr><td><label for="average_hours">Average Hours:</label></td><td><input type="text"
+				id="average_hours" name="average_hours"></td></tr>
+				<tr><td></td><td></td></tr>
+				<tr><td></td><td></td></tr>
+			</tbody>
+		</table>
+		
+	
 		<div>
 			<button ng-click="vm.saveParticipantDetails()">
 				<span>Save Details</span>
+			</button>
+			<button ng-click="vm.addJobHistoryParticipant()">
+				<span>Add Job</span>
 			</button>
 		</div>
 	</fieldset>
 </div>
 <div ng-if="vm.isMapping === true">
-	
+
 	<hr></hr>
 	<fieldset>
 		<legend>Job History Details:</legend>
@@ -123,7 +185,7 @@
 			<div ng-repeat="participant in vm.otherParticipantJobs">
 				<hr />
 				{{participant.reference}}
-				
+
 				<div ng-repeat="detail in participant.participantDetails">
 					<div ng-if="detail.detailName === 'Priority'">
 						<div ng-if="participant.mappedTo != 'NONO'">
@@ -143,10 +205,34 @@
 
 		</div>
 		<div>
-			<button ng-click="vm.saveParticipantMappings(vm.otherParticipantJobs)">
+			<button
+				ng-click="vm.saveParticipantMappings(vm.otherParticipantJobs)">
 				<span>Update Job Mapping</span>
 			</button>
 		</div>
 	</fieldset>
 
+</div>
+<div ng-if="vm.isAddresses === true">
+
+	<hr></hr>
+	<fieldset>
+		<legend>Residential History:</legend>
+
+		<table style="width: 100%">
+			<tbody ng-repeat="(group, details) in vm.groupedAddresses">
+				<tr ng-repeat="detail in details">
+					<td>{{ $first ? group : '' }}</td>
+					<td>{{ detail.detailName }}</td>
+					<td>{{ detail.detailValue }}</td>
+
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<div>
+		<button ng-click="vm.addAddress()">
+			<span>Add Address</span>
+		</button>
+	</div>
 </div>

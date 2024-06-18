@@ -803,6 +803,10 @@
 
               return '';
             },
+			addingAddress: function() {
+
+              return '';
+            },
             startWithReferenceNumber: function($stateParams) {
               return $stateParams.startWithReferenceNumber;
             }
@@ -840,8 +844,53 @@
 
               return '';
             },
+			addingAddress: function($stateParams) {
+
+              return '';
+            },
             startWithReferenceNumber: function($stateParams) {
               return $stateParams.startWithReferenceNumber;
+            }
+          }
+        }
+      }
+    }).state({
+      name: 'tabs.participantAddress',
+      url: '/participantAdresses/:interviewId',
+      sticky: true,
+      deepStateRedirect: true,
+      authenticate: true,
+      views: {
+        'participantAddress@tabs': {
+          templateUrl: 'scripts/participantDetails/view/participantDetails.html',
+          controller: 'ParticipantDetailsCtrl as vm',
+          params: {interviewId: null},
+          resolve: {
+            data: function() {
+              return '';
+            },
+			mapping: function() {
+
+              return '';
+            },
+			addingAddress: function($stateParams,InterviewsService) {
+
+              return InterviewsService.get($stateParams.interviewId).then(function(response) {
+                if(response.status === 200) {
+                  var interview = response.data[0];
+                  return interview;
+                } else if(response.status === 401) {
+                  $log.error("Error with adding Adress");
+
+                }
+              });
+            },
+			updateData: function() {
+
+              return '';
+            },
+            startWithReferenceNumber: function() {
+              return '';
             }
           }
         }

@@ -454,7 +454,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   private List<InterviewQuestionVO> sort(
           List<InterviewQuestionVO> inputQuestionHistory,
           Long interviewId) {
-    System.out.println("Sort start " + new Date());
+    //System.out.println("Sort start " + new Date());
     List<InterviewQuestionVO> sortedQuestionHistory = new ArrayList<InterviewQuestionVO>();
 
     // Get sorted intro module
@@ -486,7 +486,7 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
       }
     }
 
-    System.out.println("Sort end " + new Date());
+    //System.out.println("Sort end " + new Date());
     return sortedQuestionHistory;
   }
 

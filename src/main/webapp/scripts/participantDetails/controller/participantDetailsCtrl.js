@@ -3,19 +3,23 @@
 		.controller('ParticipantDetailsCtrl', ParticipantDetailsCtrl);
 
 	ParticipantDetailsCtrl.$inject = ['ParticipantDetailsService', 'ParticipantsService', 'InterviewsService', 'QuestionsService',
-		'data', 'updateData', 'startWithReferenceNumber', 'mapping',
+		'data', 'updateData', 'startWithReferenceNumber', 'mapping', 'addingAddress',
 		'$state', '$scope', '$filter', '$rootScope', '$mdDialog', 'ngToast', '$sessionStorage', '$q'];
 
 	function ParticipantDetailsCtrl(ParticipantDetailsService, ParticipantsService, InterviewsService, QuestionsService,
-		data, updateData, startWithReferenceNumber, mapping,
+		data, updateData, startWithReferenceNumber, mapping, addingAddress,
 		$state, $scope, $filter, $rootScope, $mdDialog, $ngToast, $sessionStorage, $q) {
 		var self = this;
 
 		self.addJobHistoryParticipant = addJobHistoryParticipant;
+		self.addParticipantAddress = addParticipantAddress;
 		self.saveParticipantDetails = saveParticipantDetails;
 		self.isZeroRecord = false;
 		self.isMapping = false;
+		self.isAddresses = false;
 		self.charCode = "----";
+		self.yearOfBirth = "";
+		self.transcriptSent = false;
 
 		$scope.jobModules = ['AsMM',
 			'AREM',
@@ -32,6 +36,8 @@
 			'JEWL',
 			'LAUN',
 			'UnExposed'];
+
+
 
 		if (startWithReferenceNumber) {
 			checkIsFirstJob(startWithReferenceNumber);
@@ -70,6 +76,7 @@
 			getOtherParticipantJob(self.referenceNumberPrefix);
 			self.currentReferenceNumber = $scope.interview.referenceNumber;
 			populateParticipantDetails($scope.interview.interviewId);
+			populateParticipantAddresses($scope.interview.interviewId);
 		} else if (mapping) {
 			self.isMapping = true;
 			console.log("mapping");
@@ -79,6 +86,11 @@
 			getOtherParticipantJob(self.referenceNumberPrefix);
 			getFullSurveyLink($scope.interview);
 
+		} else if (addingAddress) {
+			self.isAddresses = true;
+			$scope.interview = addingAddress;
+			checkIsFirstJob($scope.interview.referenceNumber);
+			populateParticipantAddresses($scope.interview.interviewId);
 		}
 
 		$scope.$root.tabsLoading = false;
@@ -185,6 +197,16 @@
 																detailName: 'CharCode',
 																detailValue: '----'
 															}
+															var yearOfBirth = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'YearOfBirth',
+																detailValue: ''
+															}
+															var gender = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'Gender',
+																detailValue: ''
+															}
 															var numberCode = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'NumberCode',
@@ -195,17 +217,73 @@
 																detailName: 'Comments',
 																detailValue: '----'
 															}
+															var transcriptSent = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'TranscriptSent',
+																detailValue: 'false'
+															}
 															var priority = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'Priority',
 																detailValue: '1'
 															}
+
+															var addressCountry = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'R1-Country',
+																detailValue: '----'
+															}
+															var addressAddress = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'R1-Address',
+																detailValue: '----'
+															}
+															var addressFrom = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'R1-From',
+																detailValue: '----'
+															}
+															var addressUntil = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'R1-Until',
+																detailValue: '----'
+															}
+
+
 															$rootScope.participant.participantDetails.push(priority);
 															$rootScope.participant.participantDetails.push(charCode);
+															$rootScope.participant.participantDetails.push(yearOfBirth);
+															$rootScope.participant.participantDetails.push(gender);
 															$rootScope.participant.participantDetails.push(numberCode);
 															$rootScope.participant.participantDetails.push(detailComment);
+															$rootScope.participant.participantDetails.push(transcriptSent);
+
+															$rootScope.participant.participantDetails.push(addressCountry);
+															$rootScope.participant.participantDetails.push(addressAddress);
+															$rootScope.participant.participantDetails.push(addressFrom);
+															$rootScope.participant.participantDetails.push(addressUntil);
 														} else {
 															$rootScope.participant.participantDetails = [];
+															var from = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'FromDate',
+																detailValue: '----'
+															}
+															var until = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'UntilDate',
+																detailValue: '----'
+															}
+															var employer = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'Employer',
+																detailValue: '----'
+															}
+															var address = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'Address',
+																detailValue: '----'
+															}
 															var title = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'Title',
@@ -221,14 +299,26 @@
 																detailName: 'Priority',
 																detailValue: '-'
 															}
+															var averageHours = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'AverageHours',
+																detailValue: '----'
+															}
+															
 															$rootScope.participant.participantDetails.push(priority);
+															$rootScope.participant.participantDetails.push(from);
+															$rootScope.participant.participantDetails.push(until);
+															$rootScope.participant.participantDetails.push(employer);
+															$rootScope.participant.participantDetails.push(address);
 															$rootScope.participant.participantDetails.push(title);
 															$rootScope.participant.participantDetails.push(product);
+															$rootScope.participant.participantDetails.push(averageHours);
 
 
 														}
 														ParticipantsService.save(participant).then(function(response) {
 															if (response.status === 200) {
+																populateParticipantDetails($rootScope.participant.idParticipant);
 																console.log('it works');
 															}
 														});
@@ -337,6 +427,16 @@
 			//$scope.startInterview(data);
 
 		}
+		function addParticipantAddress() {
+			var theReferenceNumber = "";
+			if ($scope.referenceNumber) {
+				theReferenceNumber = $scope.referenceNumber
+			} else if ($scope.interview.referenceNumber) {
+				theReferenceNumber = $scope.interview.referenceNumber;
+			}
+
+			$scope.addParticipantAddressTab(theReferenceNumber, $scope.interview.interviewId)
+		}
 
 		function saveParticipantDetails() {
 			var participant = $rootScope.participant;
@@ -348,8 +448,18 @@
 					if (self.isZeroRecord) {
 						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
 						detail.detailValue = self.charCode;
+
+						detail = theDetails.find(detail => detail.detailName === 'YearOfBirth');
+						detail.detailValue = self.yearOfBirth;
+						detail = theDetails.find(detail => detail.detailName === 'Gender');
+						detail.detailValue = self.gender;
+						detail = theDetails.find(detail => detail.detailName === 'NumberCode');
+						detail.detailValue = self.numberCode;
 						detail = theDetails.find(detail => detail.detailName === 'Comments');
 						detail.detailValue = self.comments;
+						detail = theDetails.find(detail => detail.detailName === 'TranscriptSent');
+						detail.detailValue = self.transcriptSent;
+
 					} else {
 						if (theDetails.length > 0) {
 							var detail = theDetails.find(detail => detail.detailName === 'Title');
@@ -425,6 +535,20 @@
 						self.charCode = detail.detailValue;
 						detail = theDetails.find(detail => detail.detailName === 'Comments');
 						self.comments = detail.detailValue;
+						detail = theDetails.find(detail => detail.detailName === 'YearOfBirth');
+						self.yearOfBirth = detail.detailValue;
+						detail = theDetails.find(detail => detail.detailName === 'Gender');
+						self.gender = detail.detailValue;
+						detail = theDetails.find(detail => detail.detailName === 'NumberCode');
+						self.numberCode = detail.detailValue;
+						detail = theDetails.find(detail => detail.detailName === 'TranscriptSent');
+						if (detail.detailValue === 'true') {
+							self.transcriptSent = true;
+						}else{
+							self.transcriptSent = false;
+						}
+
+						//todo participant status
 					} else {
 						if (theDetails.length > 0) {
 							var detail = theDetails.find(detail => detail.detailName === 'Title');
@@ -438,6 +562,34 @@
 
 					}
 					getFullSurveyLink(participant);
+
+				}
+			});
+		}
+		function populateParticipantAddresses(participantId) {
+			ParticipantsService.findParticipant(participantId).then(function(response) {
+				if (response.status === 200) {
+					var participant = response.data[0];
+					$rootScope.participant = participant;
+					var theDetails = participant.participantDetails;
+					var addresses = theDetails.filter(detail => detail.detailName.startsWith('R'));
+
+					self.groupedAddresses = {};
+
+					// Iterate through the notes array
+					for (let detail of addresses) {
+						if (detail.detailName) {
+							// Extract the prefix if it starts with 'R' followed by a digit
+							const match = detail.detailName.match(/^R(\d+)/);
+							if (match) {
+								const prefix = match[0]; // e.g., 'R1', 'R2', etc.
+								if (!self.groupedAddresses[prefix]) {
+									self.groupedAddresses[prefix] = [];
+								}
+								self.groupedAddresses[prefix].push(detail);
+							}
+						}
+					}
 
 				}
 			});
@@ -627,5 +779,223 @@
 			}
 			return surveyLink;
 		}
+		function findHighestRDigit(details) {
+			// Check if notes is a valid array
+			if (!Array.isArray(details)) {
+				throw new Error("Invalid input: notes array is not valid.");
+			}
+
+			// Variable to keep track of the highest digit found
+			let highestDigit = null;
+
+			// Iterate through the notes array
+			for (let detail of details) {
+				if (detail.detailName) {
+					// Extract the prefix if it starts with 'R' followed by a digit
+					const match = detail.detailName.match(/^R(\d+)/);
+					if (match) {
+						const digit = parseInt(match[1], 10);
+						// Update the highest digit if the current digit is higher
+						if (highestDigit === null || digit > highestDigit) {
+							highestDigit = digit;
+						}
+					}
+				}
+			}
+
+			return highestDigit + 1;
+		}
+		function addAddress() {
+
+
+			var nextAddressNumber = findHighestRDigit($rootScope.participant.participantDetails);
+			var addressCountry = {
+				participantId: $rootScope.participant.idParticipant,
+				detailName: 'R' + nextAddressNumber + '-Country',
+				detailValue: '----'
+			}
+			var addressAddress = {
+				participantId: $rootScope.participant.idParticipant,
+				detailName: 'R' + nextAddressNumber + '-Address',
+				detailValue: '----'
+			}
+			var addressFrom = {
+				participantId: $rootScope.participant.idParticipant,
+				detailName: 'R' + nextAddressNumber + '-From',
+				detailValue: '----'
+			}
+			var addressUntil = {
+				participantId: $rootScope.participant.idParticipant,
+				detailName: 'R' + nextAddressNumber + '-Until',
+				detailValue: '----'
+			}
+			$rootScope.participant.participantDetails.push(addressCountry);
+			$rootScope.participant.participantDetails.push(addressAddress);
+			$rootScope.participant.participantDetails.push(addressFrom);
+			$rootScope.participant.participantDetails.push(addressUntil);
+			ParticipantsService.save($rootScope.participant).then(function(response) {
+				if (response.status === 200) {
+					console.log('it works');
+					populateParticipantAddresses($rootScope.participant.idParticipant);
+				}
+			});
+
+
+		}
+		self.addAddress = addAddress;
+
+		$scope.yearsOfBirth = ['Unknown', '', '1900',
+			'1901',
+			'1902',
+			'1903',
+			'1904',
+			'1905',
+			'1906',
+			'1907',
+			'1908',
+			'1909',
+			'1910',
+			'1911',
+			'1912',
+			'1913',
+			'1914',
+			'1915',
+			'1916',
+			'1917',
+			'1918',
+			'1919',
+			'1920',
+			'1921',
+			'1922',
+			'1923',
+			'1924',
+			'1925',
+			'1926',
+			'1927',
+			'1928',
+			'1929',
+			'1930',
+			'1931',
+			'1932',
+			'1933',
+			'1934',
+			'1935',
+			'1936',
+			'1937',
+			'1938',
+			'1939',
+			'1940',
+			'1941',
+			'1942',
+			'1943',
+			'1944',
+			'1945',
+			'1946',
+			'1947',
+			'1948',
+			'1949',
+			'1950',
+			'1951',
+			'1952',
+			'1953',
+			'1954',
+			'1955',
+			'1956',
+			'1957',
+			'1958',
+			'1959',
+			'1960',
+			'1961',
+			'1962',
+			'1963',
+			'1964',
+			'1965',
+			'1966',
+			'1967',
+			'1968',
+			'1969',
+			'1970',
+			'1971',
+			'1972',
+			'1973',
+			'1974',
+			'1975',
+			'1976',
+			'1977',
+			'1978',
+			'1979',
+			'1980',
+			'1981',
+			'1982',
+			'1983',
+			'1984',
+			'1985',
+			'1986',
+			'1987',
+			'1988',
+			'1989',
+			'1990',
+			'1991',
+			'1992',
+			'1993',
+			'1994',
+			'1995',
+			'1996',
+			'1997',
+			'1998',
+			'1999',
+			'2000',
+			'2001',
+			'2002',
+			'2003',
+			'2004',
+			'2005',
+			'2006',
+			'2007',
+			'2008',
+			'2009',
+			'2010',
+			'2011',
+			'2012',
+			'2013',
+			'2014',
+			'2015',
+			'2016',
+			'2017',
+			'2018',
+			'2019',
+			'2020',
+			'2021',
+			'2022',
+			'2023',
+			'2024',
+			'2025',
+			'2026',
+			'2027',
+			'2028',
+			'2029',
+			'2030',
+			'2031',
+			'2032',
+			'2033',
+			'2034',
+			'2035',
+			'2036',
+			'2037',
+			'2038',
+			'2039',
+			'2040',
+			'2041',
+			'2042',
+			'2043',
+			'2044',
+			'2045',
+			'2046',
+			'2047',
+			'2048',
+			'2049',
+			'2050'
+		];
+		$scope.participantStatusList = ['To be updated', 'To be reviewed', 'Ready for Interview', 'JSM Interviews complete', 'No Further Contact Please']
 	}
 })();
