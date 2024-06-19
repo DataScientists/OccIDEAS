@@ -31,7 +31,7 @@
 				</tr>
 				<tr>
 					<td><label for="gender">Gender:</label></td>
-					<td><select id="gender" name="gender" ng-model="vm.gender"> 
+					<td><select id="gender" name="gender" ng-model="vm.gender">
 							<option value="male">Male</option>
 							<option value="female">Female</option>
 							<option value=""></option>
@@ -56,7 +56,8 @@
 				</tr>
 				<tr>
 					<td><label for="comments">Transcript Sent:</label></td>
-					<td><input ng-checked="vm.transcriptSent" ng-model="vm.transcriptSent" style="position: static;"
+					<td><input ng-checked="vm.transcriptSent"
+						ng-model="vm.transcriptSent" style="position: static;"
 						type="checkbox" /></td>
 				</tr>
 				<tr>
@@ -72,11 +73,12 @@
 		<legend>Residential History:</legend>
 
 		<table style="width: 100%">
-			<tbody ng-repeat="(group, details) in vm.groupedAddresses">
-				<tr ng-repeat="detail in details">
-					<td>{{ $first ? group : '' }}</td>
-					<td>{{ detail.detailName }}</td>
-					<td>{{ detail.detailValue }}</td>
+			<tbody>
+
+				<tr ng-repeat="(group, details) in vm.groupedAddresses">
+					<td>{{group}}</td>
+
+					<td ng-repeat="detail in details">{{detail.detailName}}:{{detail.detailValue}}</td>
 
 				</tr>
 			</tbody>
@@ -139,32 +141,56 @@
 	<fieldset>
 		<legend>Job Details for {{vm.jobNumber}}:</legend>
 		<table style="width: 100%">
-			<tbody >
-				<tr >
-					<td><label for="from_date">From Date:</label> </td>
-					<td><input type="text"
-				id="from_date" name="from_date" ng-model="vm.fromDate"></td>
-					
+			<tbody>
+				<tr>
+					<td><label for="from_date">From Date:</label></td>
+					<td><input type="text" id="from_date" name="from_date"
+						ng-model="vm.fromDate"></td>
+
 
 				</tr>
-				<tr><td><label for="until_date">Until Date:</label> </td><td><input type="text"
-				id="until_date" name="until_date" ng-model="vm.untilDate"></td></tr>
-				<tr><td><label for="employer">Employer:</label></td><td><input type="text"
-				id="employer" name="employer"></td></tr>
-				<tr><td><label for="address">Address:</label></td><td><input type="text" id="address"
-				name="address"></td></tr>
-				<tr><td><label for="title">Title:</label></td><td><input type="text" id="title"
-				name="title" ng-model="vm.jobTitle"></td></tr>
-				<tr><td><label for="main_product">Main Product:</label></td><td><input type="text"
-				id="main_product" name="main_product" ng-model="vm.product"></td></tr>
-				<tr><td><label for="average_hours">Average Hours:</label></td><td><input type="text"
-				id="average_hours" name="average_hours"></td></tr>
-				<tr><td></td><td></td></tr>
-				<tr><td></td><td></td></tr>
+				<tr>
+					<td><label for="until_date">Until Date:</label></td>
+					<td><input type="text" id="until_date" name="until_date"
+						ng-model="vm.untilDate"></td>
+				</tr>
+				<tr>
+					<td><label for="employer">Employer:</label></td>
+					<td><input type="text" id="employer" name="employer"
+						ng-model="vm.employer"></td>
+				</tr>
+				<tr>
+					<td><label for="address">Address:</label></td>
+					<td><input type="text" id="address" name="address"
+						ng-model="vm.address"></td>
+				</tr>
+				<tr>
+					<td><label for="title">Title:</label></td>
+					<td><input type="text" id="title" name="title"
+						ng-model="vm.jobTitle"></td>
+				</tr>
+				<tr>
+					<td><label for="main_product">Main Product:</label></td>
+					<td><input type="text" id="main_product" name="main_product"
+						ng-model="vm.product"></td>
+				</tr>
+				<tr>
+					<td><label for="average_hours">Average Hours:</label></td>
+					<td><input type="text" id="average_hours" name="average_hours"
+						ng-model="vm.averageHours"></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+				</tr>
 			</tbody>
 		</table>
-		
-	
+
+
 		<div>
 			<button ng-click="vm.saveParticipantDetails()">
 				<span>Save Details</span>
@@ -224,13 +250,16 @@
 				<tr ng-repeat="detail in details">
 					<td>{{ $first ? group : '' }}</td>
 					<td>{{ detail.detailName }}</td>
-					<td>{{ detail.detailValue }}</td>
+					<td><input type="text" ng-model="detail.detailValue"></td>
 
 				</tr>
 			</tbody>
 		</table>
 	</fieldset>
 	<div>
+		<button ng-click="vm.saveParticipantAddresses()">
+			<span>Save Addresses</span>
+		</button>
 		<button ng-click="vm.addAddress()">
 			<span>Add Address</span>
 		</button>

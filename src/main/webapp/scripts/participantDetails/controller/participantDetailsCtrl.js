@@ -304,7 +304,7 @@
 																detailName: 'AverageHours',
 																detailValue: '----'
 															}
-															
+
 															$rootScope.participant.participantDetails.push(priority);
 															$rootScope.participant.participantDetails.push(from);
 															$rootScope.participant.participantDetails.push(until);
@@ -462,9 +462,19 @@
 
 					} else {
 						if (theDetails.length > 0) {
-							var detail = theDetails.find(detail => detail.detailName === 'Title');
+							var detail = theDetails.find(detail => detail.detailName === 'FromDate');
 							detail.detailValue = self.jobTitle;
+							detail = theDetails.find(detail => detail.detailName === 'UntilDate');
+							detail.detailValue = self.product;
+							detail = theDetails.find(detail => detail.detailName === 'Employer');
+							detail.detailValue = self.product;
+							detail = theDetails.find(detail => detail.detailName === 'Address');
+							detail.detailValue = self.product;
+							detail = theDetails.find(detail => detail.detailName === 'Title');
+							detail.detailValue = self.product;
 							detail = theDetails.find(detail => detail.detailName === 'Product');
+							detail.detailValue = self.product;
+							detail = theDetails.find(detail => detail.detailName === 'AverageHours');
 							detail.detailValue = self.product;
 						} else {
 							//todo
@@ -544,17 +554,27 @@
 						detail = theDetails.find(detail => detail.detailName === 'TranscriptSent');
 						if (detail.detailValue === 'true') {
 							self.transcriptSent = true;
-						}else{
+						} else {
 							self.transcriptSent = false;
 						}
 
 						//todo participant status
 					} else {
 						if (theDetails.length > 0) {
-							var detail = theDetails.find(detail => detail.detailName === 'Title');
+							var detail = theDetails.find(detail => detail.detailName === 'FromDate');
+							self.fromDate = detail.detailValue;
+							detail = theDetails.find(detail => detail.detailName === 'UntilDate');
+							self.untilDate = detail.detailValue;
+							detail = theDetails.find(detail => detail.detailName === 'Employer');
+							self.employer = detail.detailValue;
+							detail = theDetails.find(detail => detail.detailName === 'Address');
+							self.address = detail.detailValue;
+							detail = theDetails.find(detail => detail.detailName === 'Title');
 							self.jobTitle = detail.detailValue;
 							detail = theDetails.find(detail => detail.detailName === 'Product');
 							self.product = detail.detailValue;
+							detail = theDetails.find(detail => detail.detailName === 'AverageHours');
+							self.averageHours = detail.detailValue;
 						} else {
 							//todo
 							console.log("no details yet");
@@ -806,8 +826,6 @@
 			return highestDigit + 1;
 		}
 		function addAddress() {
-
-
 			var nextAddressNumber = findHighestRDigit($rootScope.participant.participantDetails);
 			var addressCountry = {
 				participantId: $rootScope.participant.idParticipant,
@@ -843,7 +861,15 @@
 
 		}
 		self.addAddress = addAddress;
-
+		function saveParticipantAddresses() {
+			ParticipantsService.save($rootScope.participant).then(function(response) {
+				if (response.status === 200) {
+					console.log('it works');
+				}
+			});
+		}
+		
+		self.saveParticipantAddresses = saveParticipantAddresses;
 		$scope.yearsOfBirth = ['Unknown', '', '1900',
 			'1901',
 			'1902',
