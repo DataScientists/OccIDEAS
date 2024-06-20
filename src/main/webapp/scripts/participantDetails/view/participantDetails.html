@@ -131,6 +131,11 @@
 			<button ng-click="vm.addParticipantAddress()">
 				<span>Add Address</span>
 			</button>
+			|
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.showParticipantMappingTab()">
+				<span>Job Mapping</span>
+			</button>
 		</div>
 	</fieldset>
 </div>
@@ -206,30 +211,34 @@
 	<hr></hr>
 	<fieldset>
 		<legend>Job History Details:</legend>
+		<table style="width: 100%">
+			<tbody>
+				
+				<tr ng-repeat="participant in vm.otherParticipantJobs"
+					ng-if="!$first">
+					<td>{{participant.reference}}</td>
+					<td></td>
 
-		<div>
-			<div ng-repeat="participant in vm.otherParticipantJobs">
-				<hr />
-				{{participant.reference}}
-
-				<div ng-repeat="detail in participant.participantDetails">
-					<div ng-if="detail.detailName === 'Priority'">
-						<div ng-if="participant.mappedTo != 'NONO'">
-							<label for="mappingJob">Job Module:</label> <select
+					<td ng-repeat="detail in participant.participantDetails">
+					
+					{{detail.detailName}}:{{detail.detailValue}}
+					<span ng-if="detail.detailName === 'Priority'">
+						<input type="text" style="width: 30px;" id="priority" name="priority" ng-model="detail.detailValue">
+							<select
 								id="jobModule" ng-model="participant.mappedTo"
 								ng-options="jobModule for jobModule in jobModules">
 							</select>
 
-							<p>Selected Job Module: {{ participant.mappedTo }}</p>
-							<label for="priority">Priority:</label> <input type="text"
-								id="priority" name="priority" ng-model="detail.detailValue">
-						</div>
-					</div>
-					{{detail.detailName}}:{{detail.detailValue}}
-				</div>
-			</div>
+							
+							
+						
+					</span>
+					</td>
 
-		</div>
+				</tr>
+			</tbody>
+		</table>
+		
 		<div>
 			<button
 				ng-click="vm.saveParticipantMappings(vm.otherParticipantJobs)">
