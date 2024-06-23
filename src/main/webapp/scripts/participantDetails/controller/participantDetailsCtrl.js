@@ -50,7 +50,7 @@
 				if (data.status == 200) {
 					$scope.interview = data.data[0];
 					var participantId = $scope.interview.interviewId;
-					populateParticipantDetails(participantId,true);
+					populateParticipantDetails(participantId,self.isZeroRecord);
 
 
 				} else if (data.status == 204) {

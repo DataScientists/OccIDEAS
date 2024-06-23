@@ -22,14 +22,14 @@
 					<td><label for="4CharCode">4 Character Code:</label></td>
 					<td><input style="width: 50px;" type="text" id="4CharCode"
 						name="4CharCode" permission="['ROLE_DATAENTRY']"
-						ng-model="vm.charCode"><span>{{vm.charCode}}</span></td>
+						ng-model="vm.charCode"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.charCode}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="age">Year of Birth:</label></td>
 					<td><select id="yearOfBirth" ng-model="vm.yearOfBirth"
 						ng-options="yearOfBirth for yearOfBirth in yearsOfBirth"
 						permission="['ROLE_DATAENTRY']">
-					</select><span>{{vm.yearOfBirth}}</span></td>
+					</select><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.yearOfBirth}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="gender">Gender:</label></td>
@@ -38,13 +38,13 @@
 							<option value="male">Male</option>
 							<option value="female">Female</option>
 							<option value=""></option>
-					</select><span>{{vm.gender}}</span></td>
+					</select><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.gender}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="name">Last 4 Digits of Phone Number:</label></td>
 					<td><input style="width: 50px;" type="text" id="numberCode"
 						name="numberCode" ng-model="vm.numberCode"
-						permission="['ROLE_DATAENTRY']"><span>{{vm.numberCode}}</span></td>
+						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.numberCode}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="comments">Comments about Participant:</label></td>
@@ -163,40 +163,42 @@
 					<td><label for="from_date">From Date (M/YYYY):</label></td>
 					<td><input style="width: 60px" type="text" id="from_date"
 						name="from_date" ng-model="vm.fromDate"
-						permission="['ROLE_DATAENTRY']"><span>{{vm.fromDate}}</span></td>
+						permission="['ROLE_DATAENTRY']">
+						<span permission="['ROLE_INTERVIEWERA']">{{vm.fromDate}}</span>
+						</td>
 				</tr>
 				<tr>
 					<td><label for="until_date">Until Date (M/YYYY):</label></td>
 					<td><input style="width: 60px" type="text" id="until_date"
 						name="until_date" ng-model="vm.untilDate"
-						permission="['ROLE_DATAENTRY']"><span>{{vm.untilDate}}</span></td>
+						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.untilDate}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="employer">Employer:</label></td>
 					<td><input type="text" id="employer" name="employer"
-						ng-model="vm.employer" permission="['ROLE_DATAENTRY']"><span>{{vm.employer}}</span></td>
+						ng-model="vm.employer" permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.employer}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="address">Address:</label></td>
 					<td><input style="width: 460px" type="text" id="address"
 						name="address" ng-model="vm.address"
-						permission="['ROLE_DATAENTRY']"><span>{{vm.address}}</span></td>
+						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.address}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="title">Title:</label></td>
 					<td><input type="text" id="title" name="title"
-						ng-model="vm.jobTitle" permission="['ROLE_DATAENTRY']"><span>{{vm.jobTitle}}</span></td>
+						ng-model="vm.jobTitle" permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.jobTitle}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="main_product">Main Product:</label></td>
 					<td><input type="text" id="main_product" name="main_product"
-						ng-model="vm.product" permission="['ROLE_DATAENTRY']"><span>{{vm.product}}</span></td>
+						ng-model="vm.product" permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.product}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="average_hours">Average Hours:</label></td>
 					<td><input style="width: 30px" type="text" id="average_hours"
 						name="average_hours" ng-model="vm.averageHours"
-						permission="['ROLE_DATAENTRY']"><span>{{vm.averageHours}}</span></td>
+						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.averageHours}}</span></td>
 				</tr>
 				<tr>
 					<td></td>
