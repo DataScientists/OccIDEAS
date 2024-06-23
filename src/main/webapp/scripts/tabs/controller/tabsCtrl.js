@@ -31,7 +31,7 @@
 				data: ""
 			});
 		}
-		if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_ADMIN', 'ROLE_SELFINTERVIEWER', 'ROLE_STUDYMANAGER'])) {
+		if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_INTERVIEWERA', 'ROLE_ALLOCATOR', 'ROLE_DATAENTRY', 'ROLE_ADMIN', 'ROLE_SELFINTERVIEWER', 'ROLE_STUDYMANAGER'])) {
 			$scope.tabOptions.push({
 				state: "tabs.participants",
 				data: ""
@@ -79,9 +79,9 @@
 				} else {
 					if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_STUDYMANAGER'])) {
 						state = "tabs.modules";
-					} else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_SELFINTERVIEWER'], 'ROLE_STUDYMANAGER')) {
+					} else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_INTERVIEWERA', 'ROLE_SELFINTERVIEWER', 'ROLE_STUDYMANAGER', 'ROLE_DATAENTRY', 'ROLE_ALLOCATOR'])) {
 						state = "tabs.participants";
-					} else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR'], 'ROLE_STUDYMANAGER')) {
+					} else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_STUDYMANAGER'])) {
 						state = "tabs.assessments";
 						$stickyState.reset('tabs.assessments');
 					}
@@ -96,7 +96,7 @@
 			} else {
 				if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_CONTDEV', 'ROLE_STUDYMANAGER'])) {
 					state = "tabs.modules";
-				} else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_SELFINTERVIEWER', 'ROLE_STUDYMANAGER'])) {
+				} else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_INTERVIEWERA', 'ROLE_SELFINTERVIEWER', 'ROLE_STUDYMANAGER', 'ROLE_DATAENTRY', 'ROLE_ALLOCATOR'])) {
 					state = "tabs.participants";
 				} else if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_ASSESSOR', 'ROLE_STUDYMANAGER'])) {
 					state = "tabs.assessments";
@@ -141,7 +141,7 @@
 				viewName: 'agents@tabs'
 			});
 		}
-		if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_ADMIN', 'ROLE_SELFINTERVIEWER', 'ROLE_STUDYMANAGER'])) {
+		if (auth.isLoggedIn() && auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_INTERVIEWERA', 'ROLE_ADMIN', 'ROLE_SELFINTERVIEWER', 'ROLE_STUDYMANAGER', 'ROLE_DATAENTRY', 'ROLE_ALLOCATOR'])) {
 			tabs.push({
 				title: 'Participants',
 				viewName: 'participants@tabs'

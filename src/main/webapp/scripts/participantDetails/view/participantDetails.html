@@ -1,12 +1,12 @@
 <div id="participant-details-wrapper">
-
+	<!-- 
 	<div>Participant Reference: {{participant.reference }}</div>
 
 	<div>Interview ReferenceNumber:{{interview.referenceNumber }}</div>
 	<div>vm.isZeroRecord:{{vm.isZeroRecord}}</div>
 
 	<hr></hr>
-
+ -->
 </div>
 <hr></hr>
 <div ng-if="vm.isZeroRecord === true && vm.isAddresses === false">
@@ -20,27 +20,31 @@
 				</tr>
 				<tr>
 					<td><label for="4CharCode">4 Character Code:</label></td>
-					<td><input type="text" id="4CharCode" name="4CharCode"
-						ng-model="vm.charCode"></td>
+					<td><input style="width: 50px;" type="text" id="4CharCode"
+						name="4CharCode" permission="['ROLE_DATAENTRY']"
+						ng-model="vm.charCode"><span>{{vm.charCode}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="age">Year of Birth:</label></td>
 					<td><select id="yearOfBirth" ng-model="vm.yearOfBirth"
-						ng-options="yearOfBirth for yearOfBirth in yearsOfBirth">
-					</select></td>
+						ng-options="yearOfBirth for yearOfBirth in yearsOfBirth"
+						permission="['ROLE_DATAENTRY']">
+					</select><span>{{vm.yearOfBirth}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="gender">Gender:</label></td>
-					<td><select id="gender" name="gender" ng-model="vm.gender">
+					<td><select id="gender" name="gender" ng-model="vm.gender"
+						permission="['ROLE_DATAENTRY']">
 							<option value="male">Male</option>
 							<option value="female">Female</option>
 							<option value=""></option>
-					</select></td>
+					</select><span>{{vm.gender}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="name">Last 4 Digits of Phone Number:</label></td>
-					<td><input type="text" id="numberCode" name="numberCode"
-						ng-model="vm.numberCode"></td>
+					<td><input style="width: 50px;" type="text" id="numberCode"
+						name="numberCode" ng-model="vm.numberCode"
+						permission="['ROLE_DATAENTRY']"><span>{{vm.numberCode}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="comments">Comments about Participant:</label></td>
@@ -102,6 +106,7 @@
 
 				</tr>
 				 -->
+
 				<tr ng-repeat="participant in vm.otherParticipantJobs"
 					ng-if="!$first">
 					<td>{{participant.reference}}</td>
@@ -120,21 +125,28 @@
 	<fieldset>
 		<legend>Action Buttons:</legend>
 		<div>
-			<button ng-click="vm.saveParticipantDetails()">
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.saveParticipantDetails()">
 				<span>Save Details</span>
 			</button>
 			|
-			<button ng-click="vm.addJobHistoryParticipant()">
-				<span>Add Job</span>
-			</button>
-			|
-			<button ng-click="vm.addParticipantAddress()">
-				<span>Add Address</span>
+
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.addParticipantAddress()"
+				permission="['ROLE_DATAENTRY']">
+				<span>Addresses</span>
 			</button>
 			|
 			<button class="btn btn-default btn-sm"
-				ng-click="vm.showParticipantMappingTab()">
-				<span>Job Mapping</span>
+				ng-click="vm.addJobHistoryParticipant()"
+				permission="['ROLE_DATAENTRY']">
+				<span>Jobs</span>
+			</button>
+			|
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.showParticipantMappingTab()"
+				permission="['ROLE_ALLOCATOR']">
+				<span>Job Allocations</span>
 			</button>
 		</div>
 	</fieldset>
@@ -148,41 +160,43 @@
 		<table style="width: 100%">
 			<tbody>
 				<tr>
-					<td><label for="from_date">From Date:</label></td>
-					<td><input type="text" id="from_date" name="from_date"
-						ng-model="vm.fromDate"></td>
-
-
+					<td><label for="from_date">From Date (M/YYYY):</label></td>
+					<td><input style="width: 60px" type="text" id="from_date"
+						name="from_date" ng-model="vm.fromDate"
+						permission="['ROLE_DATAENTRY']"><span>{{vm.fromDate}}</span></td>
 				</tr>
 				<tr>
-					<td><label for="until_date">Until Date:</label></td>
-					<td><input type="text" id="until_date" name="until_date"
-						ng-model="vm.untilDate"></td>
+					<td><label for="until_date">Until Date (M/YYYY):</label></td>
+					<td><input style="width: 60px" type="text" id="until_date"
+						name="until_date" ng-model="vm.untilDate"
+						permission="['ROLE_DATAENTRY']"><span>{{vm.untilDate}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="employer">Employer:</label></td>
 					<td><input type="text" id="employer" name="employer"
-						ng-model="vm.employer"></td>
+						ng-model="vm.employer" permission="['ROLE_DATAENTRY']"><span>{{vm.employer}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="address">Address:</label></td>
-					<td><input type="text" id="address" name="address"
-						ng-model="vm.address"></td>
+					<td><input style="width: 460px" type="text" id="address"
+						name="address" ng-model="vm.address"
+						permission="['ROLE_DATAENTRY']"><span>{{vm.address}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="title">Title:</label></td>
 					<td><input type="text" id="title" name="title"
-						ng-model="vm.jobTitle"></td>
+						ng-model="vm.jobTitle" permission="['ROLE_DATAENTRY']"><span>{{vm.jobTitle}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="main_product">Main Product:</label></td>
 					<td><input type="text" id="main_product" name="main_product"
-						ng-model="vm.product"></td>
+						ng-model="vm.product" permission="['ROLE_DATAENTRY']"><span>{{vm.product}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="average_hours">Average Hours:</label></td>
-					<td><input type="text" id="average_hours" name="average_hours"
-						ng-model="vm.averageHours"></td>
+					<td><input style="width: 30px" type="text" id="average_hours"
+						name="average_hours" ng-model="vm.averageHours"
+						permission="['ROLE_DATAENTRY']"><span>{{vm.averageHours}}</span></td>
 				</tr>
 				<tr>
 					<td></td>
@@ -197,10 +211,14 @@
 
 
 		<div>
-			<button ng-click="vm.saveParticipantDetails()">
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.saveParticipantDetails()"
+				permission="['ROLE_DATAENTRY']">
 				<span>Save Details</span>
 			</button>
-			<button ng-click="vm.addJobHistoryParticipant()">
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.addJobHistoryParticipant()"
+				permission="['ROLE_DATAENTRY']">
 				<span>Add Job</span>
 			</button>
 		</div>
@@ -208,39 +226,95 @@
 </div>
 <div ng-if="vm.isMapping === true">
 
+	<fieldset>
+		<legend>Personal Details:</legend>
+		<table style="width: 100%">
+			<tbody>
+
+				<tr ng-repeat="participant in vm.otherParticipantJobs"
+					ng-if="$first">
+					<td>{{participant.reference}}</td>
+					<td>
+						<table>
+							<tbody>
+
+								<tr>
+									<td><label for="4CharCode">4 Character Code:</label></td>
+									<td><span>{{vm.charCode}}</span></td>
+								</tr>
+								<tr>
+									<td><label for="age">Year of Birth:</label></td>
+									<td><span>{{vm.yearOfBirth}}</span></td>
+								</tr>
+								<tr>
+									<td><label for="gender">Gender:</label></td>
+									<td><span>{{vm.gender}}</span></td>
+								</tr>
+								<tr>
+									<td><label for="name">Last 4 Digits of Phone
+											Number:</label></td>
+									<td><span>{{vm.numberCode}}</span></td>
+								</tr>
+								<tr>
+									<td><label for="comments">Comments about
+											Participant:</label></td>
+									<td><span>{{vm.comments}}</span></td>
+								</tr>
+
+
+								<tr>
+									<td></td>
+									<td></td>
+								</tr>
+
+
+							</tbody>
+						</table>
+
+
+					</td>
+
+
+
+				</tr>
+			</tbody>
+		</table>
+
+
+	</fieldset>
 	<hr></hr>
 	<fieldset>
 		<legend>Job History Details:</legend>
 		<table style="width: 100%">
 			<tbody>
-				
+
 				<tr ng-repeat="participant in vm.otherParticipantJobs"
 					ng-if="!$first">
 					<td>{{participant.reference}}</td>
 					<td></td>
 
 					<td ng-repeat="detail in participant.participantDetails">
-					
-					{{detail.detailName}}:{{detail.detailValue}}
-					<span ng-if="detail.detailName === 'Priority'">
-						<input type="text" style="width: 30px;" id="priority" name="priority" ng-model="detail.detailValue">
-							<select
-								id="jobModule" ng-model="participant.mappedTo"
-								ng-options="jobModule for jobModule in jobModules">
-							</select>
 
-							
-							
-						
+						{{detail.detailName}}:{{detail.detailValue}} <span
+						ng-if="detail.detailName === 'Priority'"> <input
+							type="text" style="width: 30px;" id="priority" name="priority"
+							ng-model="detail.detailValue"> <select id="jobModule"
+							ng-model="participant.mappedTo"
+							ng-options="jobModule for jobModule in jobModules">
+						</select>
+
+
+
+
 					</span>
 					</td>
 
 				</tr>
 			</tbody>
 		</table>
-		
+
 		<div>
-			<button
+			<button class="btn btn-default btn-sm"
 				ng-click="vm.saveParticipantMappings(vm.otherParticipantJobs)">
 				<span>Update Job Mapping</span>
 			</button>
@@ -259,7 +333,8 @@
 				<tr ng-repeat="detail in details">
 					<td>{{ $first ? group : '' }}</td>
 					<td>{{ detail.detailName }}</td>
-					<td><input type="text" ng-model="detail.detailValue"></td>
+					<td><input style="width: 460px" type="text"
+						ng-model="detail.detailValue"></td>
 
 				</tr>
 			</tbody>

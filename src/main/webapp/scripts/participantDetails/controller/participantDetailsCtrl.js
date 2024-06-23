@@ -50,7 +50,7 @@
 				if (data.status == 200) {
 					$scope.interview = data.data[0];
 					var participantId = $scope.interview.interviewId;
-					populateParticipantDetails(participantId);
+					populateParticipantDetails(participantId,true);
 
 
 				} else if (data.status == 204) {
@@ -75,7 +75,8 @@
 			checkIsFirstJob($scope.interview.referenceNumber);
 			getOtherParticipantJob(self.referenceNumberPrefix);
 			self.currentReferenceNumber = $scope.interview.referenceNumber;
-			populateParticipantDetails($scope.interview.interviewId);
+			
+			populateParticipantDetails($scope.interview.interviewId,self.isZeroRecord);
 			populateParticipantAddresses($scope.interview.interviewId);
 		} else if (mapping) {
 			self.isMapping = true;
@@ -225,7 +226,7 @@
 															var priority = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'Priority',
-																detailValue: '1'
+																detailValue: '0'
 															}
 
 															var addressCountry = {
@@ -318,7 +319,7 @@
 														}
 														ParticipantsService.save(participant).then(function(response) {
 															if (response.status === 200) {
-																populateParticipantDetails($rootScope.participant.idParticipant);
+																populateParticipantDetails($rootScope.participant.idParticipant,self.isZeroRecord);
 																console.log('it works');
 															}
 														});
@@ -413,7 +414,7 @@
 		}
 
 		function addJobHistoryParticipant() {
-
+			saveParticipantDetails();
 			var theReferenceNumber = "";
 			if ($scope.referenceNumber) {
 				theReferenceNumber = $scope.referenceNumber
@@ -534,13 +535,13 @@
 			self.fullQualtricsLink = fullQualtricsLink;
 			return fullQualtricsLink;
 		}
-		function populateParticipantDetails(participantId) {
+		function populateParticipantDetails(participantId,withPersonalDetails) {
 			ParticipantsService.findParticipant(participantId).then(function(response) {
 				if (response.status === 200) {
 					var participant = response.data[0];
 					$rootScope.participant = participant;
 					var theDetails = participant.participantDetails;
-					if (self.isZeroRecord) {
+					if (withPersonalDetails) {
 						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
 						self.charCode = detail.detailValue;
 						detail = theDetails.find(detail => detail.detailName === 'Comments');
@@ -557,8 +558,6 @@
 						} else {
 							self.transcriptSent = false;
 						}
-
-						//todo participant status
 					} else {
 						if (theDetails.length > 0) {
 							var detail = theDetails.find(detail => detail.detailName === 'FromDate');
@@ -660,6 +659,10 @@
 			return true;
 		}
 		function saveParticipantMappings(participants) {
+			//var firstParticipant = participants[0];
+			//$rootScope.participant = firstParticipant;
+			//checkIsFirstJob($rootScope.participant.reference);
+			//saveParticipantDetails();
 			if (allMapped(participants)) {
 				participants.reduce(function(p, data) {
 					return p.then(function() {
@@ -769,6 +772,8 @@
 			return jobModuleName.name;
 		}
 		function populateMappingDetails(participants) {
+			var firstParticipant = participants[0];
+			populateParticipantDetails(firstParticipant.idParticipant,true);
 			participants.reduce(function(p, data) {
 				return p.then(function() {
 					//data.mappedTo = getJobModule(data);

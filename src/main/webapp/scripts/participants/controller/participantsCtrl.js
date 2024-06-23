@@ -172,7 +172,7 @@
 		self.tableParams = new NgTableParams(
 			{
 				page: 1,
-				count: 10
+				count: 20
 			},
 			{
 				getData: function(params) {
@@ -788,8 +788,8 @@
 			var jobStartedIn = "";
 			if (participant.participantDetails != undefined) {
 				workingAs = participant.participantDetails.find(detail => (detail.detailName === 'Title'));
-				workingWith = participant.participantDetails.find(detail => (detail.detailName === 'Title'));
-				jobStartedIn = participant.participantDetails.find(detail => (detail.detailName === 'Product'));
+				workingWith = participant.participantDetails.find(detail => (detail.detailName === 'Employer'));
+				jobStartedIn = participant.participantDetails.find(detail => (detail.detailName === 'FromDate'));
 			}
 			var interviewDetails = "";
 			if (workingAs != undefined) {
@@ -886,6 +886,7 @@
 								data.fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + data.qualtricsLink.text + '?AMRID=' + participantFull.reference;
 								data.interviewDetails = getInterviewDetails(participantFull);
 								data.mappedPriority = getJobModulePriority(participantFull);
+								data.mappedTo = getJobModule(participantFull);
 							} else {
 								data.fullQualtricsLink = "";
 							}

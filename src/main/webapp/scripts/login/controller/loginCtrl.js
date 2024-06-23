@@ -129,12 +129,12 @@
               }
             });
             $sessionStorage.isAuthenticated = true;
-            if(auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_SELFINTERVIEWER'])) {
+            if(auth.userHasPermission(['ROLE_INTERVIEWER', 'ROLE_INTERVIEWERA', 'ROLE_SELFINTERVIEWER', 'ROLE_DATAENTRY', 'ROLE_ALLOCATOR'])) {
               $state.go('tabs.participants');
             } else if(auth.userHasPermission(['ROLE_CONTDEV'])) {
-              $state.go('tabs.assessments');
-            } else if(auth.userHasPermission(['ROLE_ASSESSOR'])) {
               $state.go('tabs.modules');
+            } else if(auth.userHasPermission(['ROLE_ASSESSOR'])) {
+              $state.go('tabs.assessments');
             } else if(auth.userHasPermission(['ROLE_STUDYMANAGER'])) {
               $state.go('tabs.admin');
             } else if(auth.userHasPermission(['ROLE_ADMIN'])) {
