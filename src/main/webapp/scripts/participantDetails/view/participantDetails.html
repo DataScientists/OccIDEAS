@@ -80,9 +80,9 @@
 			<tbody>
 
 				<tr ng-repeat="(group, details) in vm.groupedAddresses">
-					<td>{{group}}</td>
+					<td><label>{{group}}</label></td>
 
-					<td ng-repeat="detail in details">{{detail.detailName}}:{{detail.detailValue}}</td>
+					<td ng-repeat="detail in details"><label>{{detail.detailName}}:</label>{{detail.detailValue}}</td>
 
 				</tr>
 			</tbody>
@@ -109,9 +109,9 @@
 
 				<tr ng-repeat="participant in vm.otherParticipantJobs"
 					ng-if="!$first">
-					<td>{{participant.reference}}</td>
+					<td><label>{{participant.reference}}</label></td>
 
-					<td ng-repeat="detail in participant.participantDetails">{{detail.detailName}}:{{detail.detailValue}}</td>
+					<td ng-repeat="detail in participant.participantDetails"><label>{{detail.detailName}}:</label>{{detail.detailValue}}</td>
 
 				</tr>
 			</tbody>
