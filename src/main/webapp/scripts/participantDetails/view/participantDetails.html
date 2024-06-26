@@ -82,7 +82,7 @@
 				<tr ng-repeat="(group, details) in vm.groupedAddresses">
 					<td><label>{{group}}</label></td>
 
-					<td ng-repeat="detail in details"><label>{{detail.detailName}}:</label>{{detail.detailValue}}</td>
+					<td ng-repeat="detail in details">{{detail.detailName}}:<label>{{detail.detailValue}}</label></td>
 
 				</tr>
 			</tbody>
