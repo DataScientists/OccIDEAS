@@ -895,8 +895,6 @@
 						$scope.tabOptions.splice(index, 1);
 					}
 				}
-
-
 			} else if (auth.userHasPermission(['ROLE_CONTDEV'])) {
 				var index = tabs.indexOf(tab);
 				tabs.splice(index, 1);
@@ -904,7 +902,19 @@
 				if ($scope.selectedIndex == 5) {
 					$scope.selectedIndex = 0;
 				}
-			} else {
+			}  else if (auth.userHasPermission(['ROLE_DATAENTRY'])) {
+                if ($rootScope.participant) {
+
+                    var participant = $rootScope.participant;
+
+                    $rootScope.saveParticipant(participant);
+
+                    var index = tabs.indexOf(tab);
+                    tabs.splice(index, 1);
+                    $scope.tabOptions.splice(index, 1);
+
+                }
+            } else {
 				var index = tabs.indexOf(tab);
 				tabs.splice(index, 1);
 				$scope.tabOptions.splice(index, 1);

@@ -8,18 +8,20 @@
 
 	function ParticipantDetailsCtrl(ParticipantDetailsService, ParticipantsService, InterviewsService, QuestionsService,
 		data, updateData, startWithReferenceNumber, mapping, addingAddress,
-		$state, $scope, $filter, $rootScope, $mdDialog, $ngToast, $sessionStorage, $q) {
+		$state, $scope, $filter, $rootScope, $mdDialog, ngToast, $sessionStorage, $q) {
 		var self = this;
 
 		self.addJobHistoryParticipant = addJobHistoryParticipant;
 		self.addParticipantAddress = addParticipantAddress;
 		self.saveParticipantDetails = saveParticipantDetails;
+		$rootScope.saveParticipant = saveParticipant;
 		self.isZeroRecord = false;
 		self.isMapping = false;
 		self.isAddresses = false;
 		self.charCode = "----";
 		self.yearOfBirth = "";
 		self.transcriptSent = false;
+
 
 		$scope.jobModules = ['AsMM',
 			'AREM',
@@ -116,6 +118,7 @@
 				if (response.status === 200) {
 					participant = response.data;
 					$rootScope.participant = participant;
+					self.participantStatus = participant.status;
 					var interview = {};
 					interview.participant = participant;
 					interview.module = $scope.introModule;
@@ -181,7 +184,7 @@
 																		if (response.status == 200) {
 																			console.log("Updated question to be processed");
 
-																			self.selectedJobModule = "NONO";
+																			//self.selectedJobModule = "NONO";
 																		}
 																	});
 
@@ -386,13 +389,13 @@
 			let array = string.split("-");
 
 			// Convert the last element of the array to an integer and increment by 1
-			let lastElement = parseInt(array[array.length - 1]) + 1;
+			let lastElement = parseInt(array[array.length - 1].replace(/[PJ]/g, '')) + 1;
 
 			// Update the last element in the array
 			array[array.length - 1] = String(lastElement);
 
 			// Join the array elements back into a string with "-"
-			let result = array.join("-");
+			let result = array.join("-J");
 
 			return result;
 		}
@@ -401,7 +404,7 @@
 				let array = string.split("-");
 
 				// Convert the last element of the array to an integer and increment by 1
-				let lastElement = parseInt(array[array.length - 1]);
+				let lastElement = parseInt(array[array.length - 1].replace(/[PJ]/g, ''));
 
 				self.jobNumber = "J" + lastElement;
 				self.referenceNumberPrefix = array[0];
@@ -441,9 +444,9 @@
 
 		function saveParticipantDetails() {
 			var participant = $rootScope.participant;
-			ParticipantsService.findParticipant(participant.idParticipant).then(function(response) {
-				if (response.status === 200) {
-					var participant = response.data[0];
+//			ParticipantsService.findParticipant(participant.idParticipant).then(function(response) {
+//				if (response.status === 200) {
+//					var participant = response.data[0];
 
 					var theDetails = participant.participantDetails;
 					if (self.isZeroRecord) {
@@ -484,20 +487,28 @@
 
 					}
 					participant.participantDetails = theDetails;
+					participant.status = self.participantStatus;
 					ParticipantsService.save(participant).then(function(response) {
 						if (response.status === 200) {
 							console.log('it works');
 						}
 					});
 
-				} else {
-					console.error("Inside data of tabs.interviewresume tabs.js could not findParticipant with " + $stateParams.row);
+		//		} else {
+		//			console.error("Inside data of tabs.interviewresume tabs.js could not findParticipant with " + $stateParams.row);
 
-				}
+		//		}
 
-			});
+		//	});
 
 
+		}
+		function saveParticipant(participant){
+		    ParticipantsService.save(participant).then(function(response) {
+        		if (response.status === 200) {
+        			console.log('it works');
+        		}
+        	});
 		}
 		function getCurrentDateTime() {
 			let now = new Date();
@@ -528,7 +539,7 @@
 				if (surveyLink != undefined) {
 					fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + surveyLink.text + '?AMRID=' + $scope.referenceNumber;
 					var jobModuleName = $rootScope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
-					self.selectedJobModule = jobModuleName.name;
+					//self.selectedJobModule = jobModuleName.name;
 				}
 
 			}
@@ -540,6 +551,7 @@
 				if (response.status === 200) {
 					var participant = response.data[0];
 					$rootScope.participant = participant;
+					self.participantStatus = participant.status;
 					var theDetails = participant.participantDetails;
 					if (withPersonalDetails) {
 						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
@@ -590,6 +602,7 @@
 				if (response.status === 200) {
 					var participant = response.data[0];
 					$rootScope.participant = participant;
+					self.participantStatus = participant.status;
 					var theDetails = participant.participantDetails;
 					var addresses = theDetails.filter(detail => detail.detailName.startsWith('R'));
 
@@ -626,7 +639,7 @@
 				}
 			});
 		}
-
+/*
 		function saveParticipantMapping() {
 			var mappedJobModule = self.selectedJobModule;
 			if (!($scope.interview.notes)) {
@@ -647,6 +660,7 @@
 			});
 		}
 		self.saveParticipantMapping = saveParticipantMapping;
+		*/
 		function allMapped(participants) {
 
 			for (let participant of participants) {
@@ -694,13 +708,13 @@
 
 							}
 						});
-						var status = 0;
-						if (data.mappedTo === 'UnExposed') {
-							status = 4;
-						} else if (data.mappedTo != '') {
-							status = 1;
-						}
-						data.status = status;
+						//var status = 0;
+						//if (data.mappedTo === 'UnExposed') {
+						//	status = 4;
+						//} else if (data.mappedTo != '') {
+						//	status = 1;
+						//}
+						data.status = self.participantStatus;
 						ParticipantsService.save(data).then(function(response) {
 							if (response.status === 200) {
 								console.log('it works');
@@ -717,7 +731,7 @@
 
 
 
-
+/*
 				var mappedJobModule = self.selectedJobModule;
 				if (!($scope.interview.notes)) {
 					$scope.interview.notes = [];
@@ -735,8 +749,9 @@
 						console.log('it works');
 					}
 				});
+				*/
 			} else {
-				$ngToast.create({
+				ngToast.create({
 					className: 'danger',
 					content: 'One or more Jobs are not mapped.',
 					dismissButton: true,
@@ -910,6 +925,14 @@
 		for (var year = startYear; year <= endYear; year++) {
 			$scope.yearsOfBirth.push(year.toString());
 		}
-		$scope.participantStatusList = ['To be updated', 'To be reviewed', 'Ready for Interview', 'JSM Interviews complete', 'No Further Contact Please']
+		$scope.participantStatusList =
+            [
+                {text: 'To be updated', value: 1},
+                {text: 'To be reviewed', value: 2},
+                {text: 'Ready for interview', value: 3},
+                {text: 'Interviews complete', value: 4},
+                {text: 'No further contact please', value: 5}
+            ];
+
 	}
 })();

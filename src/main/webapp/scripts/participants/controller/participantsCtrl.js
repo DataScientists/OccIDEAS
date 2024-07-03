@@ -289,7 +289,7 @@
 		}
 		function addCaseControlParticipant() {
 			if (awesIdIsValid($scope.searchAWESID)) {
-				$scope.searchAWESID = $scope.searchAWESID + "-0";
+				$scope.searchAWESID = $scope.searchAWESID + "-P0";
 				InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
 					if (data.status == 200) {
 						if (confirm("This Participant ID has already been used. ")) {

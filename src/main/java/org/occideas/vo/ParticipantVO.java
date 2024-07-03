@@ -71,16 +71,18 @@ public class ParticipantVO {
 	public String getStatusDescription() {
 
 		if (status == 0) {
-			statusDescription = "Not Mapped";
+			statusDescription = "";
 		} else if (status == 1) {
-			statusDescription = "Ready";
+			statusDescription = "To be updated";
 		} else if (status == 2) {
-			statusDescription = "Running";
+			statusDescription = "To be reviewed";
 		} else if (status == 3) {
-			statusDescription = "Completed";
+			statusDescription = "Ready for interview";
 		} else if (status == 4) {
-			statusDescription = "Excluded";
-		}
+            statusDescription = "Interviews complete";
+        } else if (status == 4) {
+            statusDescription = "No further contact please";
+        }
 		return statusDescription;
 	}
 

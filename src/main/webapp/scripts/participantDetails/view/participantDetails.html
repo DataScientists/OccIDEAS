@@ -41,7 +41,7 @@
 					</select><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.gender}}</span></td>
 				</tr>
 				<tr>
-					<td><label for="name">Last 4 Digits of Phone Number:</label></td>
+					<td><label for="numberCode">Last 4 Digits of Phone Number:</label></td>
 					<td><input style="width: 50px;" type="text" id="numberCode"
 						name="numberCode" ng-model="vm.numberCode"
 						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.numberCode}}</span></td>
@@ -52,15 +52,15 @@
 							ng-model="vm.comments"></textarea></td>
 				</tr>
 				<tr>
-					<td><label for="comments">Participant Status:</label></td>
-					<td><select id="participantStatus"
-						ng-model="vm.participantStatus"
-						ng-options="participantStatus for participantStatus in participantStatusList">
-					</select></td>
+					<td><label for="participantStatus">Participant Status:</label></td>
+					<td>
+						<select id="participantStatus" ng-model="vm.participantStatus" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
+						</select>
+					</td>
 				</tr>
 				<tr>
-					<td><label for="comments">Transcript Sent:</label></td>
-					<td><input ng-checked="vm.transcriptSent"
+					<td><label for="transcript">Transcript Sent:</label></td>
+					<td><input id="transcript" ng-checked="vm.transcriptSent"
 						ng-model="vm.transcriptSent" style="position: static;"
 						type="checkbox" /></td>
 				</tr>
@@ -245,7 +245,7 @@
 									<td><span>{{vm.charCode}}</span></td>
 								</tr>
 								<tr>
-									<td><label for="age">Year of Birth:</label></td>
+									<td><label for="yearOfBirth">Year of Birth:</label></td>
 									<td><span>{{vm.yearOfBirth}}</span></td>
 								</tr>
 								<tr>
@@ -253,14 +253,21 @@
 									<td><span>{{vm.gender}}</span></td>
 								</tr>
 								<tr>
-									<td><label for="name">Last 4 Digits of Phone
+									<td><label for="numberCode">Last 4 Digits of Phone
 											Number:</label></td>
 									<td><span>{{vm.numberCode}}</span></td>
 								</tr>
 								<tr>
-									<td><label for="comments">Comments about
-											Participant:</label></td>
-									<td><span>{{vm.comments}}</span></td>
+									<td><label for="commentsMap">Comments about Participant:</label></td>
+									<td><textarea id="commentsMap" name="comments" rows="4"
+												  ng-model="vm.comments"></textarea></td>
+								</tr>
+								<tr>
+									<td><label for="participantStatusMap">Participant Status:</label></td>
+									<td>
+										<select id="participantStatusMap" ng-model="vm.participantStatus" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
+										</select>
+									</td>
 								</tr>
 
 

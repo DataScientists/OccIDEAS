@@ -79,17 +79,19 @@ public class ParticipantIntMod implements Serializable {
 
   public String getStatusDescription() {
 
-	  if (status == 0) {
-			statusDescription = "Not Mapped";
-		} else if (status == 1) {
-			statusDescription = "Ready";
-		} else if (status == 2) {
-			statusDescription = "Running";
-		} else if (status == 3) {
-			statusDescription = "Completed";
-		} else if (status == 4) {
-			statusDescription = "Excluded";
-		}
+    if (status == 0) {
+      statusDescription = "";
+    } else if (status == 1) {
+      statusDescription = "To be updated";
+    } else if (status == 2) {
+      statusDescription = "To be reviewed";
+    } else if (status == 3) {
+      statusDescription = "Ready for interview";
+    } else if (status == 4) {
+      statusDescription = "Interviews complete";
+    } else if (status == 4) {
+      statusDescription = "No further contact please";
+    }
     return statusDescription;
   }
 
