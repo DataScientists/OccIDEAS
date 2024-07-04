@@ -1,14 +1,3 @@
-<div id="participant-details-wrapper">
-	<!-- 
-	<div>Participant Reference: {{participant.reference }}</div>
-
-	<div>Interview ReferenceNumber:{{interview.referenceNumber }}</div>
-	<div>vm.isZeroRecord:{{vm.isZeroRecord}}</div>
-
-	<hr></hr>
- -->
-</div>
-<hr></hr>
 <div ng-if="vm.isZeroRecord === true && vm.isAddresses === false">
 	<fieldset>
 		<legend>Personal Details:</legend>
@@ -64,21 +53,13 @@
 						ng-model="vm.transcriptSent" style="position: static;"
 						type="checkbox" /></td>
 				</tr>
-				<tr>
-					<td></td>
-					<td></td>
-				</tr>
-
-
 			</tbody>
 		</table>
 	</fieldset>
 	<fieldset>
 		<legend>Residential History:</legend>
-
 		<table style="width: 100%">
 			<tbody>
-
 				<tr ng-repeat="(group, details) in vm.groupedAddresses">
 					<td><label>{{group}}</label></td>
 
@@ -92,27 +73,10 @@
 		<legend>Occupational History:</legend>
 		<table style="width: 100%">
 			<tbody>
-				<!-- 
-				<tr>
-					<th></th>
-
-					<th>From (month/year)</th>
-					<th>Until (month/year)</th>
-					<th>Employer</th>
-					<th>Address</th>
-					<th>Title/Description</th>
-					<th>Main Product</th>
-					<th>Average Hours per week</th>
-
-				</tr>
-				 -->
-
 				<tr ng-repeat="participant in vm.otherParticipantJobs"
 					ng-if="!$first">
 					<td><label>{{participant.reference}}</label></td>
-
-					<td ng-repeat="detail in participant.participantDetails"><label>{{detail.detailName}}:</label>{{detail.detailValue}}</td>
-
+					<td ng-repeat="detail in participant.participantDetails">{{detail.detailName}}:<label>{{detail.detailValue}}</label></td>
 				</tr>
 			</tbody>
 		</table>
@@ -291,7 +255,7 @@
 
 
 	</fieldset>
-	<hr></hr>
+	<hr/>
 	<fieldset>
 		<legend>Job History Details:</legend>
 		<table style="width: 100%">
@@ -304,21 +268,31 @@
 
 					<td ng-repeat="detail in participant.participantDetails">
 
-						{{detail.detailName}}:{{detail.detailValue}}
+						{{detail.detailName}}:
+						<span ng-if="(detail.detailName != 'Priority') && (detail.detailName != 'ANZSCO')">
+							<label>{{detail.detailValue}}</label>
+						</span>
+
 						<span ng-if="detail.detailName === 'Priority'">
-						<input ng-focus="selectText($event)"
-							type="text" style="width: 30px;" id="priority" name="priority"
-							ng-model="detail.detailValue">
+							<input ng-focus="selectText($event)"
+								type="text" style="width: 30px;" id="priority" name="priority"
+								ng-model="detail.detailValue">
 
-						<select id="jobModule"
-							ng-model="participant.mappedTo"
-							ng-options="jobModule for jobModule in jobModules">
-						</select>
-
-
-
-
-					</span>
+							<select id="jobModule"
+								ng-model="participant.mappedTo"
+								ng-options="jobModule for jobModule in jobModules">
+							</select>
+							<select id="sameAs" ng-if="startsWithSameAs(participant.mappedTo)"
+								ng-model="participant.mappedTo"
+								ng-options="sameAs for sameAs in sameAsList">
+								<option>*</option>
+							</select>
+						</span>
+						<span ng-if="detail.detailName === 'ANZSCO'">
+							<input ng-focus="selectText($event)"
+								   type="text" style="width: 70px;" id="anzsco" name="anzsco"
+								   ng-model="detail.detailValue">
+						</span>
 					</td>
 
 				</tr>

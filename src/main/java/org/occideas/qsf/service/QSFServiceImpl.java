@@ -376,7 +376,7 @@ public class QSFServiceImpl implements IQSFService {
         String referenceNumber = interview.getReferenceNumber();
         
         Participant participant = participantDao.getByReferenceNumber(referenceNumber);
-        participant.setStatus(3);
+        participant.setStatus(4); //Set status to interview complete
         participantDao.saveOrUpdate(participant);
         
         return interview.getIdinterview();

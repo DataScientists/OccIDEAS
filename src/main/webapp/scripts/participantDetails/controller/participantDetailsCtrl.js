@@ -22,7 +22,7 @@
 		self.yearOfBirth = "";
 		self.transcriptSent = false;
 
-
+        $scope.sameAsList = [];
 		$scope.jobModules = ['AsMM',
 			'AREM',
 			'ANEC',
@@ -37,6 +37,7 @@
 			'WATE',
 			'JEWL',
 			'LAUN',
+			'SameAs',
 			'UnExposed'];
 
 
@@ -303,6 +304,11 @@
 																detailName: 'Priority',
 																detailValue: '-'
 															}
+															var anzsco = {
+                                                                participantId: $rootScope.participant.idParticipant,
+                                                                detailName: 'ANZSCO',
+                                                                detailValue: '000000'
+                                                            }
 															var averageHours = {
 																participantId: $rootScope.participant.idParticipant,
 																detailName: 'AverageHours',
@@ -310,6 +316,7 @@
 															}
 
 															$rootScope.participant.participantDetails.push(priority);
+															$rootScope.participant.participantDetails.push(anzsco);
 															$rootScope.participant.participantDetails.push(from);
 															$rootScope.participant.participantDetails.push(until);
 															$rootScope.participant.participantDetails.push(employer);
@@ -631,57 +638,22 @@
 				if (response.status === 200) {
 					var otherParticipantJobs = response.data;
 					self.otherParticipantJobs = otherParticipantJobs;
-
 					populateMappingDetails(self.otherParticipantJobs);
-
-
-
 				}
 			});
 		}
-/*
-		function saveParticipantMapping() {
-			var mappedJobModule = self.selectedJobModule;
-			if (!($scope.interview.notes)) {
-				$scope.interview.notes = [];
-			} else {
-				deleteOldSurveyLink($scope.interview);
-			}
-			$scope.interview.notes.push({
-				interviewId: $scope.interview.interviewId,
-				text: findQualtricsSurveyLink(mappedJobModule),
-				type: 'AMRSurveyLink'
-			});
-
-			InterviewsService.save($scope.interview).then(function(response) {
-				if (response.status === 200) {
-					console.log('it works');
-				}
-			});
-		}
-		self.saveParticipantMapping = saveParticipantMapping;
-		*/
 		function allMapped(participants) {
-
 			for (let participant of participants) {
-				// Check if the note type is 'surveyLink' and it is not marked as deleted
 				if (!participant.mappedTo) {
-					// Return the found note
 					return false;
 				}
 			}
 			return true;
 		}
 		function saveParticipantMappings(participants) {
-			//var firstParticipant = participants[0];
-			//$rootScope.participant = firstParticipant;
-			//checkIsFirstJob($rootScope.participant.reference);
-			//saveParticipantDetails();
 			if (allMapped(participants)) {
 				participants.reduce(function(p, data) {
 					return p.then(function() {
-
-
 						InterviewsService.get(data.idParticipant).then(function(response) {
 							if (response.status === 200) {
 								var interview = response.data[0];
@@ -690,66 +662,39 @@
 								} else {
 									deleteOldSurveyLink(interview);
 								}
+								var noteText = "";
+								var noteType = "";
+								if(data.mappedTo.startsWith('SameAs')){
+								    noteText = data.mappedTo;
+								    noteType = 'AMRSameAs';
+								}else{
+								    noteText = findQualtricsSurveyLink(data.mappedTo);
+								    noteType = 'AMRSurveyLink';
+								}
 								interview.notes.push({
 									interviewId: interview.interviewId,
-									text: findQualtricsSurveyLink(data.mappedTo),
-									type: 'AMRSurveyLink'
+									text: noteText,
+									type: noteType
 								});
-
 								InterviewsService.save(interview).then(function(response) {
 									if (response.status === 200) {
 										console.log('it works');
 									}
 								});
-
-
-								//data.mappedTo = getJobModule(data);
-
-
 							}
 						});
-						//var status = 0;
-						//if (data.mappedTo === 'UnExposed') {
-						//	status = 4;
-						//} else if (data.mappedTo != '') {
-						//	status = 1;
-						//}
 						data.status = self.participantStatus;
 						ParticipantsService.save(data).then(function(response) {
 							if (response.status === 200) {
 								console.log('it works');
 							}
 						});
-
 					});
 				}, $q.when(true)).then(function(finalResult) {
 					console.log('finish loading rules');
-
 				}, function(err) {
 					console.log('error');
 				});
-
-
-
-/*
-				var mappedJobModule = self.selectedJobModule;
-				if (!($scope.interview.notes)) {
-					$scope.interview.notes = [];
-				} else {
-					deleteOldSurveyLink($scope.interview);
-				}
-				$scope.interview.notes.push({
-					interviewId: $scope.interview.interviewId,
-					text: findQualtricsSurveyLink(mappedJobModule),
-					type: 'AMRSurveyLink'
-				});
-
-				InterviewsService.save($scope.interview).then(function(response) {
-					if (response.status === 200) {
-						console.log('it works');
-					}
-				});
-				*/
 			} else {
 				ngToast.create({
 					className: 'danger',
@@ -759,21 +704,17 @@
 					animation: 'slide'
 				});
 			}
-
 		}
 		self.saveParticipantMappings = saveParticipantMappings;
 		function deleteOldSurveyLink(interview) {
 			if (Array.isArray(interview.notes)) {
 				for (let note of interview.notes) {
 					if (note.type === 'AMRSurveyLink') {
-						// Mark the note as deleted
 						note.deleted = 1;
-						//break;
 					}
 				}
 			}
 		}
-
 		function openOtherDetailsTab(participant) {
 			$scope.addParticipantDetailsTab(-1, participant.reference, true, participant.idParticipant);
 		}
@@ -787,27 +728,29 @@
 			return jobModuleName.name;
 		}
 		function populateMappingDetails(participants) {
+		    $scope.sameAsList = [];
 			var firstParticipant = participants[0];
 			populateParticipantDetails(firstParticipant.idParticipant,true);
 			participants.reduce(function(p, data) {
 				return p.then(function() {
-					//data.mappedTo = getJobModule(data);
+				    let array = data.reference.split('-');
+				    var jobNumber = "";
+				    if(array.length>0){
+				        jobNumber = array[1];
+				        if(jobNumber.startsWith('J')){
+				            $scope.sameAsList.push('SameAs-'+jobNumber);
+				        }
+				    }
 
 					ParticipantsService.findParticipant(data.idParticipant).then(function(response) {
 						if (response.status === 200) {
-
-
 							var participantFull = response.data[0];
 							data.mappedTo = getJobModule(participantFull);
-
-
 						}
 					});
-
 				});
 			}, $q.when(true)).then(function(finalResult) {
 				console.log('finish loading rules');
-
 			}, function(err) {
 				console.log('error');
 			});
@@ -914,6 +857,14 @@
 
 		}
 		self.showParticipantMappingTab = showParticipantMappingTab;
+
+        $scope.startsWithSameAs = function(mappedTo) {
+            var retValue = false;
+            if(mappedTo){
+                retValue = mappedTo.startsWith('SameAs');
+            }
+            return retValue;
+        };
 
         $scope.selectText = function(event) {
                 event.target.select();

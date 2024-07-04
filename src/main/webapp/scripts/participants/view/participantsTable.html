@@ -81,7 +81,7 @@
 						<div ng-if="participant.mappedPriority">{{participant.mappedTo}}
 							Priority:{{participant.mappedPriority}}</div>
 						<div
-							ng-if="((participant.fullQualtricsLink) && (participant.status != 3))"
+							ng-if="((participant.fullQualtricsLink) && (participant.status != 4))"
 							permission="['ROLE_INTERVIEWERA']">
 							Interviewer to click this link to start interview - <a
 								href="{{participant.fullQualtricsLink}}"
@@ -90,8 +90,7 @@
 						</div>
 						<div ng-if="participant.fullQualtricsLink === undefined"></div>
 						<div ng-if="participant.fullQualtricsLink === ''">Excluded</div>
-						<div ng-if="participant.status === 3">Survey completed and
-							imported from qualtrics.</div>
+						<div ng-if="participant.status === 4">Completed</div>
 
 					</td>
 					<td title="'Details'">
