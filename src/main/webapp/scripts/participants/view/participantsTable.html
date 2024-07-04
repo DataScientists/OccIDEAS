@@ -62,13 +62,7 @@
 						title="'mapped To'">
 						<div ng-if="participant.mappedTo">
 							{{participant.mappedTo}} Priority:{{participant.mappedPriority}}
-							<button ng-if="participant.mappedTo != 'NONO'"
-								class="btn btn-default btn-sm"
-								ng-click="vm.showParticipantMappingTab(participant)"
-								permission="['ROLE_ALLOCATOR']">
-								<span class="glyphicon glyphicon-edit"
-									permission="['ROLE_ALLOCATOR']"></span>
-							</button>
+
 						</div>
 						<div ng-if="participant.mappedTo === undefined"></div>
 						<div ng-if="participant.mappedTo === ''">

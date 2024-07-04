@@ -631,8 +631,8 @@
 					$scope.tabOptions.splice(i, 1);
 				}
 			}
-
-			var tabTitle = "Mapping " + awesId;
+            let array = awesId.split("-");
+			var tabTitle = "Allocating " + array[0];
 			var state = "tabs.participantMapping";
 			$stickyState.reset(state);
 			if (!checkIfTabIsOpen(tabs, tabTitle)) {

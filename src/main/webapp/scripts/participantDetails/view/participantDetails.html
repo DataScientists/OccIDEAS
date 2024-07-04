@@ -15,17 +15,17 @@
 		<table style="width: 100%">
 			<tbody>
 				<tr>
-					<td><label for="Reference Number">Reference Number:</label></td>
+					<td><label>Reference Number:</label></td>
 					<td>{{participant.reference }}</td>
 				</tr>
 				<tr>
 					<td><label for="4CharCode">4 Character Code:</label></td>
-					<td><input style="width: 50px;" type="text" id="4CharCode"
+					<td><input ng-focus="selectText($event)" style="width: 50px;" type="text" id="4CharCode"
 						name="4CharCode" permission="['ROLE_DATAENTRY']"
 						ng-model="vm.charCode"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.charCode}}</span></td>
 				</tr>
 				<tr>
-					<td><label for="age">Year of Birth:</label></td>
+					<td><label for="yearOfBirth">Year of Birth:</label></td>
 					<td><select id="yearOfBirth" ng-model="vm.yearOfBirth"
 						ng-options="yearOfBirth for yearOfBirth in yearsOfBirth"
 						permission="['ROLE_DATAENTRY']">
@@ -42,7 +42,7 @@
 				</tr>
 				<tr>
 					<td><label for="numberCode">Last 4 Digits of Phone Number:</label></td>
-					<td><input style="width: 50px;" type="text" id="numberCode"
+					<td><input ng-focus="selectText($event)" style="width: 50px;" type="text" id="numberCode"
 						name="numberCode" ng-model="vm.numberCode"
 						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.numberCode}}</span></td>
 				</tr>
@@ -161,7 +161,7 @@
 			<tbody>
 				<tr>
 					<td><label for="from_date">From Date (M/YYYY):</label></td>
-					<td><input style="width: 60px" type="text" id="from_date"
+					<td><input ng-focus="selectText($event)" style="width: 60px" type="text" id="from_date"
 						name="from_date" ng-model="vm.fromDate"
 						permission="['ROLE_DATAENTRY']">
 						<span permission="['ROLE_INTERVIEWERA']">{{vm.fromDate}}</span>
@@ -169,34 +169,34 @@
 				</tr>
 				<tr>
 					<td><label for="until_date">Until Date (M/YYYY):</label></td>
-					<td><input style="width: 60px" type="text" id="until_date"
+					<td><input ng-focus="selectText($event)" style="width: 60px" type="text" id="until_date"
 						name="until_date" ng-model="vm.untilDate"
 						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.untilDate}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="employer">Employer:</label></td>
-					<td><input type="text" id="employer" name="employer"
+					<td><input ng-focus="selectText($event)" type="text" id="employer" name="employer"
 						ng-model="vm.employer" permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.employer}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="address">Address:</label></td>
-					<td><input style="width: 460px" type="text" id="address"
+					<td><input ng-focus="selectText($event)" style="width: 460px" type="text" id="address"
 						name="address" ng-model="vm.address"
 						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.address}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="title">Title:</label></td>
-					<td><input type="text" id="title" name="title"
+					<td><input ng-focus="selectText($event)" type="text" id="title" name="title"
 						ng-model="vm.jobTitle" permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.jobTitle}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="main_product">Main Product:</label></td>
-					<td><input type="text" id="main_product" name="main_product"
+					<td><input ng-focus="selectText($event)" type="text" id="main_product" name="main_product"
 						ng-model="vm.product" permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.product}}</span></td>
 				</tr>
 				<tr>
 					<td><label for="average_hours">Average Hours:</label></td>
-					<td><input style="width: 30px" type="text" id="average_hours"
+					<td><input ng-focus="selectText($event)" style="width: 30px" type="text" id="average_hours"
 						name="average_hours" ng-model="vm.averageHours"
 						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.averageHours}}</span></td>
 				</tr>
@@ -304,10 +304,13 @@
 
 					<td ng-repeat="detail in participant.participantDetails">
 
-						{{detail.detailName}}:{{detail.detailValue}} <span
-						ng-if="detail.detailName === 'Priority'"> <input
+						{{detail.detailName}}:{{detail.detailValue}}
+						<span ng-if="detail.detailName === 'Priority'">
+						<input ng-focus="selectText($event)"
 							type="text" style="width: 30px;" id="priority" name="priority"
-							ng-model="detail.detailValue"> <select id="jobModule"
+							ng-model="detail.detailValue">
+
+						<select id="jobModule"
 							ng-model="participant.mappedTo"
 							ng-options="jobModule for jobModule in jobModules">
 						</select>
@@ -325,7 +328,7 @@
 		<div>
 			<button class="btn btn-default btn-sm"
 				ng-click="vm.saveParticipantMappings(vm.otherParticipantJobs)">
-				<span>Update Job Mapping</span>
+				<span>Update Job Allocations</span>
 			</button>
 		</div>
 	</fieldset>
@@ -342,7 +345,7 @@
 				<tr ng-repeat="detail in details">
 					<td>{{ $first ? group : '' }}</td>
 					<td>{{ detail.detailName }}</td>
-					<td><input style="width: 460px" type="text"
+					<td><input ng-focus="selectText($event)" style="width: 460px" type="text"
 						ng-model="detail.detailValue"></td>
 
 				</tr>

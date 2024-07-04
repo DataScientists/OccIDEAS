@@ -915,6 +915,9 @@
 		}
 		self.showParticipantMappingTab = showParticipantMappingTab;
 
+        $scope.selectText = function(event) {
+                event.target.select();
+            };
 		$scope.yearsOfBirth = ['Unknown', ''];
 
 		// Start year and end year
