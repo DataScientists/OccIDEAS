@@ -139,14 +139,14 @@
     document.addEventListener("click", function(e) {
       $rootScope.$broadcast("documentClicked", e.target);
     });
-
+/*
     var windowElement = angular.element($window);
     windowElement.on('beforeunload', function(event) {
       // do whatever you want in here before the page unloads.
       // the following line of code will prevent reload or navigating away.
       event.preventDefault();
     });
-
+*/
     $rootScope.$on("$stateChangeStart", function(event, toState) {
       if(toState.authenticate) {
         var resp = AuthenticationService.checkUserCredentials($sessionStorage.userId);
