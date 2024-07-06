@@ -633,6 +633,7 @@
 				}
 			});
 		}
+		self.populateParticipantAddresses = populateParticipantAddresses;
 		function getOtherParticipantJob(referenceNumberPrefix) {
 			ParticipantsService.getByReferenceNumberPrefix(referenceNumberPrefix).then(function(response) {
 				if (response.status === 200) {
@@ -642,6 +643,7 @@
 				}
 			});
 		}
+		self.getOtherParticipantJob = getOtherParticipantJob;
 		function allMapped(participants) {
 			for (let participant of participants) {
 				if (!participant.mappedTo) {
