@@ -59,20 +59,15 @@
          -->
 					<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
 					<td filter="{mappedTo: 'ng-table/filters/mapping.html' }"
-						title="'mapped To'">
+						title="'Allocations'">
 						<div ng-if="participant.mappedTo">
 							{{participant.mappedTo}} Priority:{{participant.mappedPriority}}
 
 						</div>
 						<div ng-if="participant.mappedTo === undefined"></div>
 						<div ng-if="participant.mappedTo === ''">
-							Not Mapped
-							<button class="btn btn-default btn-sm"
-								ng-click="vm.showParticipantMappingTab(participant)"
-								permission="['ROLE_ALLOCATOR']">
-								<span class="glyphicon glyphicon-edit"
-									permission="['ROLE_ALLOCATOR']"></span>
-							</button>
+							Not Allocated
+
 						</div>
 
 					</td>
@@ -81,7 +76,7 @@
 						<div ng-if="participant.mappedPriority">{{participant.mappedTo}}
 							Priority:{{participant.mappedPriority}}</div>
 						<div
-							ng-if="((participant.fullQualtricsLink) && (participant.status != 4))"
+							ng-if="((participant.fullQualtricsLink) && (participant.statusDescription != 'No further contact please'))"
 							permission="['ROLE_INTERVIEWERA']">
 							Interviewer to click this link to start interview - <a
 								href="{{participant.fullQualtricsLink}}"
@@ -91,6 +86,7 @@
 						<div ng-if="participant.fullQualtricsLink === undefined"></div>
 						<div ng-if="participant.fullQualtricsLink === ''">Excluded</div>
 						<div ng-if="participant.status === 4">Completed</div>
+						<div ng-if="participant.statusDescription === 'No further contact please'">No further contact please</div>
 
 					</td>
 					<td title="'Details'">
@@ -100,7 +96,7 @@
 						</button>
 					</td>
 
-					<td title="'Interview Status'">
+					<td title="'Status'">
 						{{participant.statusDescription}}</td>
 
 					<!-- 
@@ -177,7 +173,7 @@
   </script>
 	<script id="ng-table/filters/mapping.html" type="text/ng-template"
 		permission="['ROLE_ALLOCATOR']">
-    <input type="button" name="{{interviewid}}" value="Show/Refresh Mapping" ng-click="showAllMapping()"
+    <input type="button" name="{{interviewid}}" value="Show/Refresh Allocations" ng-click="showAllMapping()"
            ng-model="params.filter()[participant.idinterview]" class="input-filter form-control"/>
   </script>
 	<script id="ng-table/filters/interviewLinks.html"

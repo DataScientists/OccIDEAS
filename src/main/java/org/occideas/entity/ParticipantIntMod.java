@@ -89,7 +89,7 @@ public class ParticipantIntMod implements Serializable {
       statusDescription = "Ready for interview";
     } else if (status == 4) {
       statusDescription = "Interviews complete";
-    } else if (status == 4) {
+    } else if (status == 5) {
       statusDescription = "No further contact please";
     }
     return statusDescription;

@@ -451,63 +451,53 @@
 
 		function saveParticipantDetails() {
 			var participant = $rootScope.participant;
-//			ParticipantsService.findParticipant(participant.idParticipant).then(function(response) {
-//				if (response.status === 200) {
-//					var participant = response.data[0];
+            var theDetails = participant.participantDetails;
+            if (self.isZeroRecord) {
+                var detail = theDetails.find(detail => detail.detailName === 'CharCode');
+                detail.detailValue = self.charCode;
 
-					var theDetails = participant.participantDetails;
-					if (self.isZeroRecord) {
-						var detail = theDetails.find(detail => detail.detailName === 'CharCode');
-						detail.detailValue = self.charCode;
+                detail = theDetails.find(detail => detail.detailName === 'YearOfBirth');
+                detail.detailValue = self.yearOfBirth;
+                detail = theDetails.find(detail => detail.detailName === 'Gender');
+                detail.detailValue = self.gender;
+                detail = theDetails.find(detail => detail.detailName === 'NumberCode');
+                detail.detailValue = self.numberCode;
+                detail = theDetails.find(detail => detail.detailName === 'Comments');
+                detail.detailValue = self.comments;
+                detail = theDetails.find(detail => detail.detailName === 'TranscriptSent');
+                detail.detailValue = self.transcriptSent;
 
-						detail = theDetails.find(detail => detail.detailName === 'YearOfBirth');
-						detail.detailValue = self.yearOfBirth;
-						detail = theDetails.find(detail => detail.detailName === 'Gender');
-						detail.detailValue = self.gender;
-						detail = theDetails.find(detail => detail.detailName === 'NumberCode');
-						detail.detailValue = self.numberCode;
-						detail = theDetails.find(detail => detail.detailName === 'Comments');
-						detail.detailValue = self.comments;
-						detail = theDetails.find(detail => detail.detailName === 'TranscriptSent');
-						detail.detailValue = self.transcriptSent;
+            } else {
+                if (theDetails.length > 0) {
+                    var detail = theDetails.find(detail => detail.detailName === 'FromDate');
+                    detail.detailValue = self.fromDate;
+                    detail = theDetails.find(detail => detail.detailName === 'UntilDate');
+                    detail.detailValue = self.untilDate;
+                    detail = theDetails.find(detail => detail.detailName === 'Employer');
+                    detail.detailValue = self.employer;
+                    detail = theDetails.find(detail => detail.detailName === 'Address');
+                    detail.detailValue = self.address;
+                    detail = theDetails.find(detail => detail.detailName === 'Title');
+                    detail.detailValue = self.jobTitle;
+                    detail = theDetails.find(detail => detail.detailName === 'Product');
+                    detail.detailValue = self.product;
+                    detail = theDetails.find(detail => detail.detailName === 'AverageHours');
+                    detail.detailValue = self.averageHours;
+                } else {
+                    //todo
+                    console.log("no details yet");
+                }
 
-					} else {
-						if (theDetails.length > 0) {
-							var detail = theDetails.find(detail => detail.detailName === 'FromDate');
-							detail.detailValue = self.fromDate;
-							detail = theDetails.find(detail => detail.detailName === 'UntilDate');
-							detail.detailValue = self.untilDate;
-							detail = theDetails.find(detail => detail.detailName === 'Employer');
-							detail.detailValue = self.employer;
-							detail = theDetails.find(detail => detail.detailName === 'Address');
-							detail.detailValue = self.address;
-							detail = theDetails.find(detail => detail.detailName === 'Title');
-							detail.detailValue = self.jobTitle;
-							detail = theDetails.find(detail => detail.detailName === 'Product');
-							detail.detailValue = self.product;
-							detail = theDetails.find(detail => detail.detailName === 'AverageHours');
-							detail.detailValue = self.averageHours;
-						} else {
-							//todo
-							console.log("no details yet");
-						}
+            }
+            participant.participantDetails = theDetails;
+            participant.status = self.participantStatus;
+            ParticipantsService.save(participant).then(function(response) {
+                if (response.status === 200) {
+                    console.log('it works');
+                }
+            });
 
-					}
-					participant.participantDetails = theDetails;
-					participant.status = self.participantStatus;
-					ParticipantsService.save(participant).then(function(response) {
-						if (response.status === 200) {
-							console.log('it works');
-						}
-					});
-
-		//		} else {
-		//			console.error("Inside data of tabs.interviewresume tabs.js could not findParticipant with " + $stateParams.row);
-
-		//		}
-
-		//	});
-
+            saveAllParticipantStatus();
 
 		}
 		function saveParticipant(participant){
@@ -708,6 +698,26 @@
 			}
 		}
 		self.saveParticipantMappings = saveParticipantMappings;
+		function saveAllParticipantStatus(){
+		    var participants = self.otherParticipantJobs;
+		    if(participants){
+                participants.reduce(function(p, data) {
+                    return p.then(function() {
+                        data.status = self.participantStatus;
+                        ParticipantsService.save(data).then(function(response) {
+                            if (response.status === 200) {
+                                console.log('it works');
+                            }
+                        });
+                    });
+                }, $q.when(true)).then(function(finalResult) {
+                    console.log('finish saving participant statuses');
+                }, function(err) {
+                    console.log('error');
+                });
+		    }
+
+		}
 		function deleteOldSurveyLink(interview) {
 			if (Array.isArray(interview.notes)) {
 				for (let note of interview.notes) {
