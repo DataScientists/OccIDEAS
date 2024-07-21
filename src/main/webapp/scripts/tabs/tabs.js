@@ -825,8 +825,12 @@
           controller: 'ParticipantDetailsCtrl as vm',
           params: {row: null, module: null, interviewId: null, startWithReferenceNumber: null},
           resolve: {
-            data: function($stateParams) {
-              return $stateParams.startWithReferenceNumber;
+            data: function($stateParams, QuestionsService) {
+                return QuestionsService.findQuestions(77716, 'M')
+                  .then(function(response) {
+                    $log.info("Data getting from findModule AJAX ...");
+                    return response.data;
+                  });
             },
 			mapping: function($stateParams, InterviewsService) {
 

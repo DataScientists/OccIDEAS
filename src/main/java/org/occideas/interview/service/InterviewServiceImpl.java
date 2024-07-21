@@ -741,13 +741,16 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Override
     public void updateQualtricsResults(long interviewId) {
-        Interview interview = interviewDao.get(interviewId);
-        List<Long> listAgentIds = agentDao.getStudyAgentIds();
-        String strWorkShiftHours = iqsfService.getWorkshift(interview);
-        if(!strWorkShiftHours.equalsIgnoreCase("N/A")) {
-        	BigDecimal workshift = new BigDecimal(strWorkShiftHours);
-            iqsfService.saveAssessmentResults(interview.getReferenceNumber(), listAgentIds, interview, workshift);
-        }      
+        if(interviewId != -1){
+            Interview interview = interviewDao.get(interviewId);
+            List<Long> listAgentIds = agentDao.getStudyAgentIds();
+            String strWorkShiftHours = iqsfService.getWorkshift(interview);
+            if(!strWorkShiftHours.equalsIgnoreCase("N/A")) {
+                BigDecimal workshift = new BigDecimal(strWorkShiftHours);
+                iqsfService.saveAssessmentResults(interview.getReferenceNumber(), listAgentIds, interview, workshift);
+            }
+        }
+
     }
 
 

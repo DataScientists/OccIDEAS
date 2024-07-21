@@ -363,23 +363,26 @@ public class QSFServiceImpl implements IQSFService {
         Map<String, ResponseSummary> summary = createResponseSummary(responseId, questionBySurveyId, queue, listAgentIds, labels);
 
         long interviewId = qsfInterviewReplicationService.replicateQualtricsInterviewIntoOccideas(responseId, moduleName, summary);
-        Interview interview = interviewDao.get(interviewId);
-        autoAssessmentService.syncAutoAssessedRule(listAgentIds, interview);
-        saveQualtricsResponse(surveyId, responseId, values, summary);
+        if(interviewId != -1){
+            Interview interview = interviewDao.get(interviewId);
+            autoAssessmentService.syncAutoAssessedRule(listAgentIds, interview);
+            saveQualtricsResponse(surveyId, responseId, values, summary);
+
+
+            interviewDao.saveNewTransaction(interview);
+            InterviewQuestion oldRootQuestion = interview.getQuestionHistory().get(2); //delete the old root question
+            oldRootQuestion.setDeleted(1);
+            interviewQuestionDao.save(oldRootQuestion);
+
+            String referenceNumber = interview.getReferenceNumber();
+
+            Participant participant = participantDao.getByReferenceNumber(referenceNumber);
+            participant.setStatus(4); //Set status to interview complete
+            participantDao.saveOrUpdate(participant);
+        }
+
         
-        
-        interviewDao.saveNewTransaction(interview);
-        InterviewQuestion oldRootQuestion = interview.getQuestionHistory().get(2); //delete the old root question
-        oldRootQuestion.setDeleted(1);
-        interviewQuestionDao.save(oldRootQuestion);
-        
-        String referenceNumber = interview.getReferenceNumber();
-        
-        Participant participant = participantDao.getByReferenceNumber(referenceNumber);
-        participant.setStatus(4); //Set status to interview complete
-        participantDao.saveOrUpdate(participant);
-        
-        return interview.getIdinterview();
+        return interviewId;
     }
 
     @Override

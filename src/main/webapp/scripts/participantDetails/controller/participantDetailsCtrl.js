@@ -83,6 +83,7 @@
 			populateParticipantAddresses($scope.interview.interviewId);
 		} else if (mapping) {
 			self.isMapping = true;
+			$scope.introModule = data[0];
 			console.log("mapping");
 			$scope.interview = mapping;
 			$rootScope.referenceNumber = $scope.interview.referenceNumber;
@@ -643,6 +644,7 @@
 			return true;
 		}
 		function saveParticipantMappings(participants) {
+		    var participants = participants.filter(obj => obj.mappedTo !== "NONO");
 			if (allMapped(participants)) {
 				participants.reduce(function(p, data) {
 					return p.then(function() {
@@ -668,11 +670,43 @@
 									text: noteText,
 									type: noteType
 								});
+
 								InterviewsService.save(interview).then(function(response) {
 									if (response.status === 200) {
 										console.log('it works');
 									}
 								});
+
+								var ques = $scope.introModule.nodes[0];
+								var actualAnswer = ques.nodes.find(possibleAnswer => possibleAnswer.name === data.mappedTo);
+                                var interviewQuestion = $scope.interview.questionHistory[1];
+                                actualAnswer.interviewQuestionId = interviewQuestion.id;
+                                actualAnswer.lastUpdated = getCurrentDateTime();
+                                actualAnswer.interviewQuestionId = interviewQuestion.id;
+                                actualAnswer.parentQuestionId = ques.idNode;
+                                actualAnswer.answerId = actualAnswer.idNode;
+                                actualAnswer.isProcessed = true;
+                                actualAnswer.idInterview = $scope.interview.interviewId;
+                                actualAnswer.nodeClass = "P";
+                                actualAnswer.answerFreetext = data.mappedTo;
+                                interviewQuestion.answers.push(actualAnswer);
+                                InterviewsService.saveAnswersAndQueueQuestions(interviewQuestion.answers).then(function(response) {
+                                    if (response.status === 200) {
+                                        console.log("Job module saved as first answer");
+                                        var questions = [];
+                                        interviewQuestion.processed = true;
+                                        questions.push(interviewQuestion);
+                                        InterviewsService.saveQuestions(questions).then(function(response) {
+                                            if (response.status == 200) {
+                                                console.log("Updated question to be processed");
+
+                                            }
+                                        });
+
+                                    } else {
+                                        console.log("Could not save first question as module");
+                                    }
+                                });
 							}
 						});
 						data.status = self.participantStatus;

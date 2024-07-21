@@ -59,15 +59,20 @@ public class QSFInterviewReplicationService {
 		ResponseSummary rs = responseSummary.get("AMRID");
 		
 		Participant participant = participantDao.getByReferenceNumber(rs.getAnswer());
-		log.info("Participant found - {}", participant.getIdParticipant());
-		
-		Interview newInterview = interviewDao.findByReferenceNumber(rs.getAnswer()).get(0);
-		log.info("Interview found - {}", newInterview.getIdinterview());
-		JobModule module = modules.get(0);
-		
-		processResponseAnswers(responseSummary, newInterview);
+        long idInterview = -1;
+        if(participant!=null){
+            log.info("Participant found - {}", participant.getIdParticipant());
 
-		return newInterview.getIdinterview();
+            Interview newInterview = interviewDao.findByReferenceNumber(rs.getAnswer()).get(0);
+            log.info("Interview found - {}", newInterview.getIdinterview());
+            JobModule module = modules.get(0);
+
+            processResponseAnswers(responseSummary, newInterview);
+            idInterview = newInterview.getIdinterview();
+        }
+
+
+		return idInterview;
 		
 	}
 
