@@ -13,7 +13,7 @@
         <td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
         <td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
         <td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
-          {{participant.statusDescription}}
+          Assessment in progress
         </td>
         <td filter="{assessedStatus: 'select'}" filter-data="getStatusList()" title="'Assessment Status'">
           <md-select ng-change="onChangeSaveStatus(participant.idinterview,participant.assessedStatus)"

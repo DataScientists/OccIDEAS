@@ -679,32 +679,60 @@
 
 								var ques = $scope.introModule.nodes[0];
 								var actualAnswer = ques.nodes.find(possibleAnswer => possibleAnswer.name === data.mappedTo);
-                                var interviewQuestion = $scope.interview.questionHistory[1];
+                                //var actualLinkQuestion = actualAnswer.nodes.find(linkQuestion => LinkQuestion.name === data.mappedTo);
+                                var interviewQuestion = interview.questionHistory[1];
+                                var interviewQuestionsSize = interview.questionHistory.length;
+
+                                interviewQuestion.answers = interview.answerHistory;
+                                interviewQuestion.answers.forEach(answer => {
+                                        answer.deleted = 1;
+                                    });
+
                                 actualAnswer.interviewQuestionId = interviewQuestion.id;
                                 actualAnswer.lastUpdated = getCurrentDateTime();
                                 actualAnswer.interviewQuestionId = interviewQuestion.id;
                                 actualAnswer.parentQuestionId = ques.idNode;
                                 actualAnswer.answerId = actualAnswer.idNode;
                                 actualAnswer.isProcessed = true;
-                                actualAnswer.idInterview = $scope.interview.interviewId;
+                                actualAnswer.idInterview = interview.interviewId;
                                 actualAnswer.nodeClass = "P";
                                 actualAnswer.answerFreetext = data.mappedTo;
+
+
                                 interviewQuestion.answers.push(actualAnswer);
-                                InterviewsService.saveAnswersAndQueueQuestions(interviewQuestion.answers).then(function(response) {
-                                    if (response.status === 200) {
-                                        console.log("Job module saved as first answer");
-                                        var questions = [];
-                                        interviewQuestion.processed = true;
-                                        questions.push(interviewQuestion);
-                                        InterviewsService.saveQuestions(questions).then(function(response) {
-                                            if (response.status == 200) {
-                                                console.log("Updated question to be processed");
 
-                                            }
-                                        });
+                                var questions = [];
 
-                                    } else {
-                                        console.log("Could not save first question as module");
+                                if(interviewQuestionsSize>2){
+                                //todo
+                                    //var interviewLinkQuestion = interview.questionHistory[2];
+                                    //interviewLinkQuestion.deleted = 1;
+                                    //questions.push(interviewLinkQuestion);
+                                    //InterviewsService.saveAnswers(interviewQuestion.answers).then(function(response) {
+                                    //    if (response.status === 200) {
+                                   //         console.log("Job module saved as first answer");
+                                    //    } else {
+                                    //        console.log("Could not save first question as module");
+                                    //    }
+                                   // });
+                                }else{
+                                    InterviewsService.saveAnswersAndQueueQuestions(interviewQuestion.answers).then(function(response) {
+                                        if (response.status === 200) {
+                                            console.log("Job module saved as first answer");
+                                        } else {
+                                            console.log("Could not save first question as module");
+                                        }
+                                    });
+                                }
+
+
+                                interviewQuestion.processed = true;
+                                questions.push(interviewQuestion);
+                                questions.push(interviewQuestion);
+                                InterviewsService.saveQuestions(questions).then(function(response) {
+                                    if (response.status == 200) {
+                                        console.log("Updated question to be processed");
+
                                     }
                                 });
 							}

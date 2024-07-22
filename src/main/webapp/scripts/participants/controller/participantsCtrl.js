@@ -844,7 +844,7 @@
 							var participantFull = response.data[0];
 							data.qualtricsLink = getSurveyLink(participantFull);
 							data.statusDescription = participantFull.statusDescription;
-							if (data.qualtricsLink.text) {
+							if (data.qualtricsLink) {
 								data.fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + data.qualtricsLink.text + '?AMRID=' + participantFull.reference;
 								data.interviewDetails = getInterviewDetails(participantFull);
 								data.mappedPriority = getJobModulePriority(participantFull);

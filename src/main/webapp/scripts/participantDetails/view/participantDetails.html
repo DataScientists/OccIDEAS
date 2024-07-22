@@ -82,7 +82,10 @@
 				<tr ng-repeat="participant in vm.otherParticipantJobs"
 					ng-if="!$first">
 					<td><label>{{participant.reference}}</label></td>
-					<td ng-repeat="detail in participant.participantDetails">{{detail.detailName}}:<label>{{detail.detailValue}}</label></td>
+					<td ng-repeat="detail in participant.participantDetails">
+
+						{{detail.detailName}}:<label>{{detail.detailValue}} <span ng-if="detail.detailName === 'Priority'">:{{participant.mappedTo}}</span></label>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -228,15 +231,13 @@
 									<td><span>{{vm.numberCode}}</span></td>
 								</tr>
 								<tr>
-									<td><label for="commentsMap">Comments about Participant:</label></td>
-									<td><textarea id="commentsMap" name="comments" rows="4"
-												  ng-model="vm.comments"></textarea></td>
+									<td><label>Comments about Participant:</label></td>
+									<td>{{vm.comments}}</td>
 								</tr>
 								<tr>
-									<td><label for="participantStatusMap">Participant Status:</label></td>
-									<td>
-										<select id="participantStatusMap" ng-model="vm.participantStatus" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
-										</select>
+									<td><label >Participant Status:</label></td>
+									<td>{{participant.statusDescription}}
+
 									</td>
 								</tr>
 
