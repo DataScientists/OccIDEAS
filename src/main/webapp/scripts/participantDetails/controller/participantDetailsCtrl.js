@@ -898,6 +898,23 @@
 
 		}
 		self.addAddress = addAddress;
+		function removeAddress() {
+            var nextAddressNumber = findHighestRDigit($rootScope.participant.participantDetails);
+            var highestAddressNumber = 'R'+(nextAddressNumber - 1);
+            $rootScope.participant.participantDetails = removeObjectsWithNameStarting($rootScope.participant.participantDetails,highestAddressNumber)
+
+            ParticipantDetailsService.deleteParticipantDetails($rootScope.participant.idParticipant,highestAddressNumber).then(function(response) {
+                if (response.status === 200) {
+                    console.log('it works');
+                    populateParticipantAddresses($rootScope.participant.idParticipant);
+                }
+            });
+        }
+        self.removeAddress = removeAddress;
+        function removeObjectsWithNameStarting(arr, prefix) {
+          return arr.filter(obj => obj.detailName.startsWith(prefix));
+        }
+
 		function saveParticipantAddresses() {
 			ParticipantsService.save($rootScope.participant).then(function(response) {
 				if (response.status === 200) {

@@ -9,16 +9,26 @@
 		var participantDetailsUrl = apiUrl + 'participantDetails';
 
 		function getParticipantDetailsByParticipantId(idParticipant) {
-			var restUrl = notesUrl + "/getparticipantdetailsbyparticipantid?participantId=" + idParticipant;
+			var restUrl = participantDetailsUrl + "/getparticipantdetailsbyparticipantid?participantId=" + idParticipant;
 			var request = $http({
 				method: 'GET',
 				url: restUrl
 			});
 			return request.then(handleSuccess1, handleError);
 		}
+		function deleteParticipantDetails(idParticipant,startsWith) {
+            //var restUrl = participantDetailsUrl + "/deleteList?participantId="+idParticipant+"&startsWith=" + startsWith;
+            var restUrl = "web/rest/participant/deleteList?participantId="+idParticipant+"&startsWith=" + startsWith;
+            var request = $http({
+                method: 'POST',
+                url: restUrl
+            });
+            return request.then(handleSuccess1, handleError);
+        }
 		
 		return {
-			getParticipantDetailsByParticipantId: getParticipantDetailsByParticipantId
+			getParticipantDetailsByParticipantId: getParticipantDetailsByParticipantId,
+			deleteParticipantDetails: deleteParticipantDetails
 		};
 
 		function handleError(response) {

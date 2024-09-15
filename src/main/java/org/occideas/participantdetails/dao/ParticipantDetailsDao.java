@@ -27,6 +27,12 @@ public class ParticipantDetailsDao {
     sessionFactory.getCurrentSession().delete(details);
   }
 
+  public void deleteList(List<ParticipantDetails> detailsList){
+    for (ParticipantDetails details : detailsList) {
+      delete(details);
+     }
+  }
+
   public ParticipantDetails get(Long id) {
     return (ParticipantDetails) sessionFactory.getCurrentSession().get(ParticipantDetails.class, id);
   }
@@ -37,31 +43,6 @@ public class ParticipantDetailsDao {
 
   public void saveOrUpdate(ParticipantDetails details) {
     sessionFactory.getCurrentSession().saveOrUpdate(details);
-  }
-
-  @SuppressWarnings("unchecked")
-  public List<ParticipantDetails> getAll() {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(ParticipantDetails.class)
-      .setProjection(Projections.projectionList()
-        .add(Projections.property("idNote"), "idNote")
-        .add(Projections.property("text"), "text")
-        .add(Projections.property("type"), "type"))
-      .setResultTransformer(Transformers.aliasToBean(ParticipantDetails.class));
-    return crit.list();
-  }
-
-  @SuppressWarnings("unchecked")
-  public List<ParticipantDetails> getAllActive() {
-    final Session session = sessionFactory.getCurrentSession();
-    final Criteria crit = session.createCriteria(ParticipantDetails.class)
-      .add(Restrictions.eq("deleted", 0))
-      .setProjection(Projections.projectionList()
-        .add(Projections.property("idNote"), "idNote")
-        .add(Projections.property("text"), "text")
-        .add(Projections.property("type"), "type"))
-      .setResultTransformer(Transformers.aliasToBean(ParticipantDetails.class));
-    return crit.list();
   }
 
   @SuppressWarnings("unchecked")
