@@ -34,11 +34,11 @@ public class ParticipantDao implements IParticipantDao {
   private final String paginatedParticipantSQL = "select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview, i.assessedStatus"
     + "  from Participant p " + "  join Interview i " + " where p.idParticipant = i.idParticipant"
     + " and p.idParticipant like :idParticipant" + " and p.reference like :reference"
-    + " and p.status like :status" + " and i.idinterview like :idinterview" + " and p.deleted = 0 ORDER BY p.idParticipant";
+    + " and p.status like :status" + " and i.idinterview like :idinterview" + " and p.deleted = 0 and p.reference NOT LIKE '%-J%' ORDER BY p.idParticipant";
   private final String participantCountSQL = "select count(1) from (select distinct p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview"
     + " from Participant p " + " join Interview i " + " where p.idParticipant = i.idParticipant"
     + " and p.idParticipant like :idParticipant" + " and p.reference like :reference"
-    + " and p.status like :status" + " and i.idinterview like :idinterview" + " and p.deleted = 0) a";
+    + " and p.status like :status" + " and i.idinterview like :idinterview" + " and p.deleted = 0 and p.reference NOT LIKE '%-J%') a";
   private final String paginatedParticipantWithModSQL = "select p.idParticipant,p.reference,p.status,p.lastUpdated,p.deleted,i.idinterview,i.assessedStatus,im.idModule"
     + ",im.interviewModuleName from Participant p " + " join Interview i join InterviewIntroModule_Module im "
     + " where p.idParticipant = i.idParticipant " + " and i.idinterview = im.interviewId "
