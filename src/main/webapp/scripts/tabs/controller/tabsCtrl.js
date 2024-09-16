@@ -870,6 +870,11 @@
 			$rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
 		};
+		$scope.removeCurrentTab = function(){
+		    var index = $scope.selectedIndex;
+        	tabs.splice(index, 1);
+        	$scope.tabOptions.splice(index, 1);
+		}
 
 		$scope.removeTab = function(tab) {
 			if (tab.title == 'Error!') {

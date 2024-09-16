@@ -12,7 +12,8 @@
 		var self = this;
 
 		self.addJobHistoryParticipant = addJobHistoryParticipant;
-		self.addParticipantAddress = addParticipantAddress;
+        self.removeJobHistoryParticipant = removeJobHistoryParticipant;
+        self.addParticipantAddress = addParticipantAddress;
 		self.saveParticipantDetails = saveParticipantDetails;
 		$rootScope.saveParticipant = saveParticipant;
 		self.isZeroRecord = false;
@@ -439,6 +440,16 @@
 			//$scope.startInterview(data);
 
 		}
+		function removeJobHistoryParticipant() {
+		    var participant = $rootScope.participant;
+            ParticipantsService.deleteParticipant(participant).then(function(response) {
+                if (response.status === 200) {
+                    console.log('it works');
+                    $scope.removeCurrentTab();
+                }
+            });
+
+        }
 		function addParticipantAddress() {
 			var theReferenceNumber = "";
 			if ($scope.referenceNumber) {
