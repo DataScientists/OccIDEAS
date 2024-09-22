@@ -332,7 +332,7 @@
 					<td>{{ $first ? group : '' }}</td>
 					<td>{{ detail.detailName }}</td>
 					<td><input ng-focus="selectText($event)" style="width: 460px" type="text"
-						ng-model="detail.detailValue"></td>
+						ng-model="detail.detailValue" ng-blur="vm.prepopulateDetails()"></td>
 
 				</tr>
 			</tbody>
@@ -345,7 +345,7 @@
 		<button ng-click="vm.addAddress()">
 			<span>Add Address</span>
 		</button>
-		<button ng-click="vm.removeAddress()">
+		<button ng-if="vm.highestAddress != 'R1'" ng-click="vm.removeAddress()">
 			<span>Remove Address</span>
 		</button>
 	</div>

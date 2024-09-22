@@ -22,6 +22,7 @@
 		self.charCode = "----";
 		self.yearOfBirth = "";
 		self.transcriptSent = false;
+		self.highestAddress = "R1";
 
         $scope.sameAsList = [];
 		$scope.jobModules = ['AsMM',
@@ -623,7 +624,8 @@
 							// Extract the prefix if it starts with 'R' followed by a digit
 							const match = detail.detailName.match(/^R(\d+)/);
 							if (match) {
-								const prefix = match[0]; // e.g., 'R1', 'R2', etc.
+								const prefix = match[0];
+								self.highestAddress = prefix;// e.g., 'R1', 'R2', etc.
 								if (!self.groupedAddresses[prefix]) {
 									self.groupedAddresses[prefix] = [];
 								}
@@ -631,11 +633,38 @@
 							}
 						}
 					}
+					prepopulateDetails();
 
 				}
 			});
 		}
 		self.populateParticipantAddresses = populateParticipantAddresses;
+
+        function prepopulateDetails() {
+            let array = $rootScope.participant.participantDetails;
+            // Iterate through the array
+            for (let i = 0; i < array.length - 1; i++) {
+                // Check if the current detailName follows the pattern 'R[x]-Until'
+                const untilMatch = array[i].detailName.match(/^R(\d+)-Until$/);
+
+                if (untilMatch) {
+                    // Extract the 'x' value from the detailName
+                    const currentIndex = parseInt(untilMatch[1], 10);
+                    const nextFromIndex = array.findIndex(obj => obj.detailName === `R${currentIndex + 1}-From`);
+
+                    // Check if the corresponding 'R[x+1]-From' object exists
+                    if (nextFromIndex !== -1) {
+                        // Assign the detailValue from 'R[x]-Until' to 'R[x+1]-From'
+                        if(array[nextFromIndex].detailValue === '----'){
+                            array[nextFromIndex].detailValue = array[i].detailValue;
+                        }
+
+                    }
+                }
+            }
+        }
+        self.prepopulateDetails = prepopulateDetails;
+
 		function getOtherParticipantJob(referenceNumberPrefix) {
 			ParticipantsService.getByReferenceNumberPrefix(referenceNumberPrefix).then(function(response) {
 				if (response.status === 200) {
@@ -646,6 +675,7 @@
 			});
 		}
 		self.getOtherParticipantJob = getOtherParticipantJob;
+
 		function allMapped(participants) {
 			for (let participant of participants) {
 				if (!participant.mappedTo) {
@@ -899,6 +929,7 @@
 			$rootScope.participant.participantDetails.push(addressAddress);
 			$rootScope.participant.participantDetails.push(addressFrom);
 			$rootScope.participant.participantDetails.push(addressUntil);
+			self.highestAddress = 'R' + nextAddressNumber;
 			ParticipantsService.save($rootScope.participant).then(function(response) {
 				if (response.status === 200) {
 					console.log('it works');
@@ -912,7 +943,8 @@
 		function removeAddress() {
             var nextAddressNumber = findHighestRDigit($rootScope.participant.participantDetails);
             var highestAddressNumber = 'R'+(nextAddressNumber - 1);
-            $rootScope.participant.participantDetails = removeObjectsWithNameStarting($rootScope.participant.participantDetails,highestAddressNumber)
+            $rootScope.participant.participantDetails = removeObjectsWithNameStarting($rootScope.participant.participantDetails,highestAddressNumber);
+            self.highestAddress = 'R'+(nextAddressNumber - 2);
 
             ParticipantDetailsService.deleteParticipantDetails($rootScope.participant.idParticipant,highestAddressNumber).then(function(response) {
                 if (response.status === 200) {
