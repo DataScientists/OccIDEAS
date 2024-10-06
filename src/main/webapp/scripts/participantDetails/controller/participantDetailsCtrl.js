@@ -769,7 +769,7 @@
 
                                 interviewQuestion.processed = true;
                                 questions.push(interviewQuestion);
-                                questions.push(interviewQuestion);
+
                                 InterviewsService.saveQuestions(questions).then(function(response) {
                                     if (response.status == 200) {
                                         console.log("Updated question to be processed");
@@ -799,6 +799,15 @@
 					animation: 'slide'
 				});
 			}
+			var participantRecord = self.otherParticipantJobs.find(obj => obj.mappedTo === "NONO");
+            var detail = participantRecord.participantDetails.find(detail => detail.detailName === 'Comments');
+            detail.detailValue = self.comments;
+			participantRecord.status = self.participantStatus;
+            ParticipantsService.save(participantRecord).then(function(response) {
+                if (response.status === 200) {
+                    console.log('it works');
+                }
+            });
 		}
 		self.saveParticipantMappings = saveParticipantMappings;
 		function saveAllParticipantStatus(){
@@ -861,6 +870,17 @@
 						if (response.status === 200) {
 							var participantFull = response.data[0];
 							data.mappedTo = getJobModule(participantFull);
+							//WIP need to pull functions from participantCtrl
+							data.qualtricsLink = getSurveyLink(participantFull);
+							data.statusDescription = participantFull.statusDescription;
+                            if (data.qualtricsLink) {
+                                data.fullQualtricsLink = 'https://curtin.au1.qualtrics.com/jfe/form/' + data.qualtricsLink.text + '?AMRID=' + participantFull.reference;
+                                data.interviewDetails = getInterviewDetails(participantFull);
+                                data.mappedPriority = getJobModulePriority(participantFull);
+                                data.mappedTo = getJobModule(participantFull);
+                            } else {
+                                data.fullQualtricsLink = "";
+                            }
 						}
 					});
 				});
@@ -870,6 +890,26 @@
 				console.log('error');
 			});
 		}
+		function getInterviewDetails(participant) {
+            var workingAs = "";
+            var workingWith = "";
+            var jobStartedIn = "";
+            if (participant.participantDetails != undefined) {
+                workingAs = participant.participantDetails.find(detail => (detail.detailName === 'Title'));
+                workingWith = participant.participantDetails.find(detail => (detail.detailName === 'Employer'));
+                jobStartedIn = participant.participantDetails.find(detail => (detail.detailName === 'FromDate'));
+            }
+            var interviewDetails = "";
+            if (workingAs != undefined) {
+
+                interviewDetails = "The next questions refer to when you were working as "
+                    + workingAs.detailValue + " with " + workingWith.detailValue + ". That job started in " + jobStartedIn.detailValue;
+
+            } else {
+                interviewDetails = "The next questions are the non-occupational questions";
+            }
+            return interviewDetails;
+        }
 		function getSurveyLink(participant) {
 			var surveyLink = "";
 			if (participant.notes != undefined) {

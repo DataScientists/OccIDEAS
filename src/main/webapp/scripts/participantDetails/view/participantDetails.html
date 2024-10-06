@@ -73,18 +73,49 @@
 		</table>
 	</fieldset>
 	<fieldset>
-		<legend>Occupational History:<button class="btn btn-default btn-xs"
+		<legend>Occupational History<span permission="['ROLE_INTERVIEWERA']"> with Interview Links</span>:<button class="btn btn-default btn-xs"
 								ng-click="vm.getOtherParticipantJob(vm.referenceNumberPrefix)"								>
 								<span class="glyphicon glyphicon-refresh"></span>
 							</button></legend>
 		<table style="width: 100%">
 			<tbody>
 				<tr ng-repeat="participant in vm.otherParticipantJobs"
+					ng-if="$first" permission="['ROLE_INTERVIEWERA']">
+					<td><label>{{participant.reference}}</label></td>
+					<td ng-repeat="detail in participant.participantDetails" >
+						<span ng-if="detail.detailName === 'Priority'">
+							{{detail.detailName}}:
+							<label>{{detail.detailValue}}</label>
+							:{{participant.mappedTo}}
+							<span permission="['ROLE_INTERVIEWERA']">
+							<a href="{{participant.fullQualtricsLink}}"
+							   ng-click="vm.updateParticipantStatus($event,participant)"
+							   target=”_blank”
+							   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
+							</span>
+						</span>
+					</td>
+				</tr>
+				<tr ng-repeat="participant in vm.otherParticipantJobs"
 					ng-if="!$first">
 					<td><label>{{participant.reference}}</label></td>
 					<td ng-repeat="detail in participant.participantDetails">
 
-						{{detail.detailName}}:<label>{{detail.detailValue}} <span ng-if="detail.detailName === 'Priority'">:{{participant.mappedTo}}</span></label>
+						{{detail.detailName}}:
+						<label>{{detail.detailValue}}</label>
+						<span ng-if="detail.detailName === 'Priority'">
+							:{{participant.mappedTo}}
+							<span permission="['ROLE_INTERVIEWERA']">
+							<a href="{{participant.fullQualtricsLink}}"
+							   ng-click="vm.updateParticipantStatus($event,participant)"
+							   target=”_blank”
+							   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
+							</span>
+						</span>
+
+
+
+
 					</td>
 				</tr>
 			</tbody>
@@ -236,13 +267,15 @@
 									<td><span>{{vm.numberCode}}</span></td>
 								</tr>
 								<tr>
-									<td><label>Comments about Participant:</label></td>
-									<td>{{vm.comments}}</td>
+									<td><label for="comments">Comments about Participant:</label></td>
+									<td><textarea id="mappingComments" name="comments" rows="4"
+												  ng-model="vm.comments"></textarea></td>
 								</tr>
 								<tr>
-									<td><label >Participant Status:</label></td>
-									<td>{{participant.statusDescription}}
-
+									<td><label for="participantStatus">Participant Status:</label></td>
+									<td>
+										<select id="mappingParticipantStatus" ng-model="vm.participantStatus" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
+										</select>
 									</td>
 								</tr>
 
