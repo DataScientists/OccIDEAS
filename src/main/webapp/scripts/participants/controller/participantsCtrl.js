@@ -41,9 +41,33 @@
 			'title': 'To be excluded'
 		}
 		];
-		$scope.getInterviewStatusList = function(column) {
-			return $scope.interviewStatusList;
-		};
+		$scope.participantStatusList = [{
+            'id': 0,
+            'title': 'To be updated'
+        },
+        {
+            'id': 1,
+            'title': 'To be reviewed'
+        },
+        {
+            'id': 2,
+            'title': 'Ready for interview'
+        },
+        {
+            'id': 3,
+            'title': 'Interviews completed'
+        },
+        {
+            'id': 4,
+            'title': 'No further contact'
+        }
+        ];
+        $scope.getInterviewStatusList = function(column) {
+            return $scope.interviewStatusList;
+        };
+        $scope.getParticipantStatusList = function(column) {
+            return $scope.participantStatusList;
+        };
 
 		$scope.$watch('$storage.langEnabled', function(value) {
 			if ($scope.$storage.langEnabled && !$scope.isLangEnabledOnLoad) {
@@ -147,10 +171,10 @@
 			var retValue = false;
 			$scope.awesIdSize = awesId.length;
 			if ($scope.awesIdSize == $scope.awesIdMaxSize) {
-				if (_.startsWith(awesId, $scope.awesIdPrefix)) {
+				//if (_.startsWith(awesId, $scope.awesIdPrefix)) {
 					retValue = true;
 					$scope.searchAWESID = awesId;
-				}
+				//}
 			}
 			return retValue;
 		}
