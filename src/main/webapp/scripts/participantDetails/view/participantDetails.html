@@ -52,6 +52,11 @@
 					<td><input id="transcript" ng-checked="vm.transcriptSent"
 						ng-model="vm.transcriptSent" style="position: static;"
 						type="checkbox" /></td>
+					<td>
+						<button class="btn btn-default btn-sm" ng-click="vm.saveParticipantDetails()">
+						<span>Save Details</span>
+						</button>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -90,7 +95,7 @@
 							<span permission="['ROLE_INTERVIEWERA']">
 							<a href="{{participant.fullQualtricsLink}}"
 							   ng-click="vm.updateParticipantStatus($event,participant)"
-							   target=”_blank”
+							   target=”{{participant.idParticipant}}”
 							   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
 							</span>
 						</span>
@@ -108,7 +113,7 @@
 							<span permission="['ROLE_INTERVIEWERA']">
 							<a href="{{participant.fullQualtricsLink}}"
 							   ng-click="vm.updateParticipantStatus($event,participant)"
-							   target=”_blank”
+							   target=”{{participant.idParticipant}}”
 							   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
 							</span>
 						</span>
@@ -150,7 +155,7 @@
 			<button class="btn btn-default btn-sm"
 				ng-click="vm.showParticipantMappingTab()"
 				permission="['ROLE_ALLOCATOR']">
-				<span>Job Allocations</span>
+				<span>Module Allocations</span>
 			</button>
 		</div>
 	</fieldset>
@@ -364,8 +369,8 @@
 				<tr ng-repeat="detail in details">
 					<td>{{ $first ? group : '' }}</td>
 					<td>{{ detail.detailName }}</td>
-					<td><input ng-focus="selectText($event)" style="width: 460px" type="text"
-						ng-model="detail.detailValue" ng-blur="vm.prepopulateDetails()"></td>
+					<td><input ng-focus="selectText($event)" ng-keyup="validateDate(detail)" type="text"
+						ng-model="detail.detailValue" ng-blur="vm.prepopulateDetails()" ng-style="{'color': detail.textColor, 'background-color': detail.bgColor}" ></td>
 
 				</tr>
 			</tbody>
