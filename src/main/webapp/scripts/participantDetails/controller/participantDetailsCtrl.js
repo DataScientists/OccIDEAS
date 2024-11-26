@@ -241,20 +241,35 @@
 																detailName: 'R1-Country',
 																detailValue: '----'
 															}
-															var addressAddress = {
+															var addressNumberStreet = {
 																participantId: $rootScope.participant.idParticipant,
-																detailName: 'R1-Address',
+																detailName: 'R1-Number and Street',
+																detailValue: '----'
+															}
+															var addressSuburbTown = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'R1-Suburb/Town',
+																detailValue: '----'
+															}
+															var addressStateProvince = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'R1-State/Province',
+																detailValue: '----'
+															}
+															var addressPostcode = {
+																participantId: $rootScope.participant.idParticipant,
+																detailName: 'R1-Postcode',
 																detailValue: '----'
 															}
 															var addressFrom = {
 																participantId: $rootScope.participant.idParticipant,
-																detailName: 'R1-From',
-																detailValue: '----'
+																detailName: 'R1-From (M/YYYY)',
+																detailValue: '--/----'
 															}
 															var addressUntil = {
 																participantId: $rootScope.participant.idParticipant,
-																detailName: 'R1-Until',
-																detailValue: '----'
+																detailName: 'R1-Until (M/YYYY)',
+																detailValue: '--/----'
 															}
 
 
@@ -267,20 +282,23 @@
 															$rootScope.participant.participantDetails.push(transcriptSent);
 
 															$rootScope.participant.participantDetails.push(addressCountry);
-															$rootScope.participant.participantDetails.push(addressAddress);
+															$rootScope.participant.participantDetails.push(addressNumberStreet);
+															$rootScope.participant.participantDetails.push(addressSuburbTown);
+															$rootScope.participant.participantDetails.push(addressStateProvince);
+															$rootScope.participant.participantDetails.push(addressPostcode);
 															$rootScope.participant.participantDetails.push(addressFrom);
 															$rootScope.participant.participantDetails.push(addressUntil);
 														} else {
 															$rootScope.participant.participantDetails = [];
 															var from = {
 																participantId: $rootScope.participant.idParticipant,
-																detailName: 'FromDate',
-																detailValue: '----'
+																detailName: 'FromDate (M/YYYY)',
+																detailValue: '--/----'
 															}
 															var until = {
 																participantId: $rootScope.participant.idParticipant,
-																detailName: 'UntilDate',
-																detailValue: '----'
+																detailName: 'UntilDate (M/YYYY)',
+																detailValue: '--/----'
 															}
 															var employer = {
 																participantId: $rootScope.participant.idParticipant,
@@ -366,7 +384,21 @@
 				}
 			});
 		}
-
+        $scope.validateDate = function(detail) {
+          if (detail.detailName.includes('(M/YYYY)')) {
+              const regex = /^(1[0-2]|[1-9])\/\d{4}$/;
+              if (regex.test(detail.detailValue)) {
+                  detail.textColor = 'black'; // Valid input
+                  detail.bgColor = 'white'; // Light green for valid input
+              } else {
+                  detail.textColor = 'red'; // Invalid input
+                  detail.bgColor = '#f8d7da'; // Light red for invalid input
+              }
+          } else {
+              detail.textColor = 'black'; // Default for non-M/YYYY fields
+              detail.bgColor = 'white'; // Default background
+          }
+        };
 		function populateInteviewQuestionJsonByModule(interview, module) {
 			return {
 				idInterview: interview.interviewId,
@@ -482,9 +514,9 @@
 
             } else {
                 if (theDetails.length > 0) {
-                    var detail = theDetails.find(detail => detail.detailName === 'FromDate');
+                    var detail = theDetails.find(detail => detail.detailName === 'FromDate (M/YYYY)');
                     detail.detailValue = self.fromDate;
-                    detail = theDetails.find(detail => detail.detailName === 'UntilDate');
+                    detail = theDetails.find(detail => detail.detailName === 'UntilDate (M/YYYY)');
                     detail.detailValue = self.untilDate;
                     detail = theDetails.find(detail => detail.detailName === 'Employer');
                     detail.detailValue = self.employer;
@@ -506,7 +538,7 @@
             participant.status = self.participantStatus;
             ParticipantsService.save(participant).then(function(response) {
                 if (response.status === 200) {
-                    console.log('it works');
+                    console.log('Saved the Participant');
                 }
             });
 
@@ -582,9 +614,9 @@
 						}
 					} else {
 						if (theDetails.length > 0) {
-							var detail = theDetails.find(detail => detail.detailName === 'FromDate');
+							var detail = theDetails.find(detail => detail.detailName === 'FromDate (M/YYYY)');
 							self.fromDate = detail.detailValue;
-							detail = theDetails.find(detail => detail.detailName === 'UntilDate');
+							detail = theDetails.find(detail => detail.detailName === 'UntilDate (M/YYYY)');
 							self.untilDate = detail.detailValue;
 							detail = theDetails.find(detail => detail.detailName === 'Employer');
 							self.employer = detail.detailValue;
@@ -633,7 +665,7 @@
 							}
 						}
 					}
-					prepopulateDetails();
+					//prepopulateDetails();
 
 				}
 			});
@@ -645,17 +677,17 @@
             // Iterate through the array
             for (let i = 0; i < array.length - 1; i++) {
                 // Check if the current detailName follows the pattern 'R[x]-Until'
-                const untilMatch = array[i].detailName.match(/^R(\d+)-Until$/);
+                const untilMatch = array[i].detailName.match(/Until/);
 
                 if (untilMatch) {
                     // Extract the 'x' value from the detailName
-                    const currentIndex = parseInt(untilMatch[1], 10);
-                    const nextFromIndex = array.findIndex(obj => obj.detailName === `R${currentIndex + 1}-From`);
+                    const currentIndex = parseInt(untilMatch.index);
+                    const nextFromIndex = array.findIndex(obj => obj.detailName === `R${currentIndex + 1}-From (M/YYYY)`);
 
                     // Check if the corresponding 'R[x+1]-From' object exists
                     if (nextFromIndex !== -1) {
                         // Assign the detailValue from 'R[x]-Until' to 'R[x+1]-From'
-                        if(array[nextFromIndex].detailValue === '----'){
+                        if(array[nextFromIndex].detailValue === '--/----'){
                             array[nextFromIndex].detailValue = array[i].detailValue;
                         }
 
@@ -663,7 +695,7 @@
                 }
             }
         }
-        self.prepopulateDetails = prepopulateDetails;
+        //self.prepopulateDetails = prepopulateDetails;
 
 		function getOtherParticipantJob(referenceNumberPrefix) {
 			ParticipantsService.getByReferenceNumberPrefix(referenceNumberPrefix).then(function(response) {
@@ -890,6 +922,13 @@
 				console.log('error');
 			});
 		}
+		function getJobModulePriority(participant) {
+            var jobModulePriority = { detailValue: "" };
+            if (participant.participantDetails != undefined) {
+                jobModulePriority = participant.participantDetails.find(jobModulePriority => jobModulePriority.detailName === 'Priority');
+            }
+            return jobModulePriority.detailValue;
+        }
 		function getInterviewDetails(participant) {
             var workingAs = "";
             var workingWith = "";
@@ -950,23 +989,41 @@
 				detailName: 'R' + nextAddressNumber + '-Country',
 				detailValue: '----'
 			}
-			var addressAddress = {
+			var addressNumberStreet = {
 				participantId: $rootScope.participant.idParticipant,
-				detailName: 'R' + nextAddressNumber + '-Address',
+				detailName: 'R' + nextAddressNumber + '-Number and Street',
 				detailValue: '----'
 			}
+			var addressSuburbTown = {
+                participantId: $rootScope.participant.idParticipant,
+                detailName: 'R' + nextAddressNumber + '-Suburb/Town',
+                detailValue: '----'
+            }
+			var addressStateProvince = {
+                participantId: $rootScope.participant.idParticipant,
+                detailName: 'R' + nextAddressNumber + '-State/Province',
+                detailValue: '----'
+            }
+			var addressPostcode = {
+                participantId: $rootScope.participant.idParticipant,
+                detailName: 'R' + nextAddressNumber + '-Postcode',
+                detailValue: '----'
+            }
 			var addressFrom = {
 				participantId: $rootScope.participant.idParticipant,
-				detailName: 'R' + nextAddressNumber + '-From',
-				detailValue: '----'
+				detailName: 'R' + nextAddressNumber + '-From (M/YYYY)',
+				detailValue: '--/----'
 			}
 			var addressUntil = {
 				participantId: $rootScope.participant.idParticipant,
-				detailName: 'R' + nextAddressNumber + '-Until',
-				detailValue: '----'
+				detailName: 'R' + nextAddressNumber + '-Until (M/YYYY)',
+				detailValue: '--/----'
 			}
 			$rootScope.participant.participantDetails.push(addressCountry);
-			$rootScope.participant.participantDetails.push(addressAddress);
+			$rootScope.participant.participantDetails.push(addressNumberStreet);
+			$rootScope.participant.participantDetails.push(addressSuburbTown);
+			$rootScope.participant.participantDetails.push(addressStateProvince);
+			$rootScope.participant.participantDetails.push(addressPostcode);
 			$rootScope.participant.participantDetails.push(addressFrom);
 			$rootScope.participant.participantDetails.push(addressUntil);
 			self.highestAddress = 'R' + nextAddressNumber;
