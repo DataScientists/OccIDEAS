@@ -124,7 +124,7 @@
                   $sessionStorage.awesIdLength = response.data.value;
                 } else {
                   //Set default
-                  $sessionStorage.awesIdLength = 7;
+                  $sessionStorage.awesIdLength = 5;
                 }
               }
             });
