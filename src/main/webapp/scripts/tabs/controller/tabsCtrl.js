@@ -621,6 +621,28 @@
 			$rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
 		};
+        $scope.addParticipantDataEntryTab = function(studyId) {
+			var tabTitle = "" + studyId;
+			var state = "tabs.participantDataEntry";
+			$stickyState.reset(state);
+			if (!checkIfTabIsOpen(tabs, tabTitle)) {
+				tabs.push({
+					title: tabTitle,
+					viewName: 'participantDataEntry@tabs',
+					canClose: true,
+					disabled: false
+				});
+				$scope.tabOptions.push({
+                    state: state,
+                    data: {
+                        startWithReferenceNumber: studyId
+                    }
+                });
+                console.log("Added tabOptions");
+			}
+			$rootScope.tabsLoading = true;
+			safeDigest($rootScope.tabsLoading);
+		};
 		$scope.addParticipantMappingTab = function(awesId, interviewId) {
 			//close other mapping tabs
 
@@ -912,7 +934,7 @@
 
                     var participant = $rootScope.participant;
 
-                    $rootScope.saveParticipant(participant);
+                    $rootScope.saveParticipant();
 
                     var index = tabs.indexOf(tab);
                     tabs.splice(index, 1);

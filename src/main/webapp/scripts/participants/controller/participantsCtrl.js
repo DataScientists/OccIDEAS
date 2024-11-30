@@ -258,6 +258,7 @@
 		self.save = save;
 		self.add = add;
 		self.addCaseControlParticipant = addCaseControlParticipant;
+		self.addDataEntryParticipant = addDataEntryParticipant;
 		self.showParticipantDetailsTab = showParticipantDetailsTab;
 		self.showParticipantMappingTab = showParticipantMappingTab;
 		self.cancelDelete = cancelDelete;
@@ -307,7 +308,8 @@
 			}
 		}
 		function showParticipantDetailsTab(participant) {
-			$scope.addParticipantDetailsTab(-1, participant.reference, true, participant.idinterview);
+		    $scope.addParticipantDataEntryTab(participant.reference);
+			//$scope.addParticipantDetailsTab(-1, participant.reference, true, participant.idinterview);
 		}
 		function showParticipantMappingTab(participant) {
 			$scope.addParticipantMappingTab(participant.reference, participant.idinterview);
@@ -340,7 +342,27 @@
 				});
 			}
 		}
-
+        function addDataEntryParticipant() {
+            if (awesIdIsValid($scope.searchAWESID)) {
+                $scope.searchAWESID = $scope.searchAWESID + "-P0";
+                InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(data) {
+                    if (data.status == 200) {
+                        if (confirm("This Participant ID has already been used. ")) {
+                            //$scope.addInterviewTabInterviewers(
+                            //  -1, $scope.searchAWESID);
+                        }
+                    } else if (data.status == 204) {
+                        $scope.addParticipantDataEntryTab($scope.searchAWESID);
+                    }
+                })
+            } else {
+                ngToast.create({
+                    className: 'danger',
+                    content: 'You need to add a valid AWES ID before you can start',
+                    animation: 'slide'
+                });
+            }
+        }
 		function cancel(row, rowForm) {
 			var originalRow = resetRow(row, rowForm);
 			if (row.idNode) {

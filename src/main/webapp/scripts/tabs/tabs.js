@@ -859,6 +859,32 @@
         }
       }
     }).state({
+        name: 'tabs.participantDataEntry',
+        url: '/dataEntry/:startWithReferenceNumber',
+        sticky: true,
+        deepStateRedirect: true,
+        authenticate: true,
+        views: {
+          'participantDataEntry@tabs': {
+            templateUrl: 'scripts/participantDataEntry/view/participantDataEntry.html',
+            controller: 'ParticipantDataEntryCtrl as vm',
+            params: {startWithReferenceNumber: null},
+            resolve: {
+              data: function($stateParams, QuestionsService) {
+                  return QuestionsService.findQuestions(77716, 'M')
+                    .then(function(response) {
+                      $log.info("Data getting from findModule AJAX ...");
+                      return response.data;
+                    });
+              },
+              startWithReferenceNumber: function($stateParams) {
+                return $stateParams.startWithReferenceNumber;
+              }
+
+            }
+          }
+        }
+    }).state({
       name: 'tabs.participantAddress',
       url: '/participantAdresses/:interviewId',
       sticky: true,

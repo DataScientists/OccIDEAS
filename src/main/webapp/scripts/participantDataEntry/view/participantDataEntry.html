@@ -1,0 +1,101 @@
+<div >
+	<fieldset>
+		<legend>Personal Details:</legend>
+		<table >
+			<tbody>
+				<tr>
+					<td><label>Reference Number:</label></td>
+					<td>{{participant.reference }}</td>
+				</tr>
+				<tr>
+					<td><label for="4CharCode">4 Character Code:</label></td>
+					<td><input ng-focus="selectText($event)" style="width: 50px;" type="text" id="4CharCode"
+						name="4CharCode" permission="['ROLE_DATAENTRY']"
+						ng-model="vm.charCode.detailValue"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.charCode.detailValue}}</span></td>
+				</tr>
+				<tr>
+					<td><label for="yearOfBirth">Year of Birth:</label></td>
+					<td><select id="yearOfBirth" ng-model="vm.yearOfBirth.detailValue"
+						ng-options="yearOfBirth for yearOfBirth in yearsOfBirth"
+						permission="['ROLE_DATAENTRY']">
+					</select><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.yearOfBirth.detailValue}}</span></td>
+				</tr>
+				<tr>
+					<td><label for="gender">Gender:</label></td>
+					<td><select id="gender" name="gender" ng-model="vm.gender.detailValue"
+						permission="['ROLE_DATAENTRY']">
+							<option value="male">Male</option>
+							<option value="female">Female</option>
+							<option value=""></option>
+					</select><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.gender.detailValue}}</span></td>
+				</tr>
+				<tr>
+					<td><label for="numberCode">Last 4 Digits of Phone Number:</label></td>
+					<td><input ng-focus="selectText($event)" style="width: 50px;" type="text" id="numberCode"
+						name="numberCode" ng-model="vm.numberCode.detailValue"
+						permission="['ROLE_DATAENTRY']"><span permission="['ROLE_INTERVIEWERA','ROLE_ALLOCATOR']">{{vm.numberCode.detailValue}}</span></td>
+				</tr>
+				<tr>
+					<td><label for="comments">Comments about Participant:</label></td>
+					<td><textarea id="comments" name="comments" rows="4"
+							ng-model="vm.detailComments.detailValue"></textarea></td>
+				</tr>
+				<tr>
+					<td><label for="participantStatus">Participant Status:</label></td>
+					<td>
+						<select id="participantStatus" ng-model="vm.participantStatus" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><label for="transcript">Transcript Sent:</label></td>
+					<td><input id="transcript" ng-checked="vm.transcriptSent.detailValue"
+						ng-model="vm.transcriptSent.detailValue" style="position: static;"
+						type="checkbox" /></td>
+					<td>
+						<button class="btn btn-default btn-sm" ng-click="vm.saveParticipant()">
+						<span>Save Details</span>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<div></div>
+	<fieldset>
+		<legend>Action Buttons:</legend>
+		<div>
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.saveParticipant()">
+				<span>Save Details</span>
+			</button>
+			|
+
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.addParticipantAddress()"
+				permission="['ROLE_DATAENTRY']">
+				<span>Addresses</span>
+			</button>
+			|
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.addJobHistoryParticipant()"
+				permission="['ROLE_DATAENTRY']">
+				<span>Jobs</span>
+			</button>
+			|
+			<button class="btn btn-default btn-sm"
+				ng-click="vm.showParticipantMappingTab()"
+				permission="['ROLE_ALLOCATOR']">
+				<span>Module Allocations</span>
+			</button>
+		</div>
+	</fieldset>
+</div>
+
+
+
+

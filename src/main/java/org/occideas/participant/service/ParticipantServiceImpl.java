@@ -132,7 +132,7 @@ public class ParticipantServiceImpl implements ParticipantService {
   public ParticipantVO getByReferenceNumber(String referenceNumber) {
     Participant participant = participantDao.getByReferenceNumber(referenceNumber);
     if (participant != null) {
-      return mapper.convertToParticipantVOonly(participant);
+      return mapper.convertToParticipantVO(participant,false);
     }
     return null;
   }
