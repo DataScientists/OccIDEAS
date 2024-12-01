@@ -712,6 +712,40 @@
 			$rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
 		};
+		$scope.addParticipantJobTab = function(studyId) {
+            //close other address tabs
+
+            for (var i = tabs.length - 1; i >= 0; i--) {
+                var tab = tabs[i];
+                if (tab.viewName == 'participantJob@tabs') {
+                    tabs.splice(i, 1);
+                    $scope.tabOptions.splice(i, 1);
+                }
+            }
+
+            var tabTitle = "Job " + studyId;
+            var state = "tabs.participantJob";
+            $stickyState.reset(state);
+            if (!checkIfTabIsOpen(tabs, tabTitle)) {
+                tabs.push({
+                    title: tabTitle,
+                    viewName: 'participantJob@tabs',
+                    canClose: true,
+                    disabled: false
+                });
+
+                $scope.tabOptions.push({
+                    state: state,
+                    data: {
+                        startWithReferenceNumber: studyId
+                    }
+                });
+
+
+            }
+            $rootScope.tabsLoading = true;
+            safeDigest($rootScope.tabsLoading);
+        };
 		$scope.addInterviewTabInterviewersEdit = function(participant) {
 			var isSameIntroModule = true;
 			//participant.idModule is the intro module id

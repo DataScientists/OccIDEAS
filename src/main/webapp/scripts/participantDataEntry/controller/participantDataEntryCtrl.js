@@ -372,6 +372,20 @@
         }
         self.removeAddress = removeAddress;
 
+        function addJobHistoryParticipant() {
+            saveParticipant();
+            var theReferenceNumber = $rootScope.participant.reference;
+
+            var nextJobHistoryReferenceNumber = splitAndIncrementLast(theReferenceNumber);
+
+            $scope.addParticipantJobTab(nextJobHistoryReferenceNumber);
+
+        }
+        self.addJobHistoryParticipant = addJobHistoryParticipant;
+
+
+
+        /* utilities */
         self.showResidentialHistory = true; // Initial state: show history
 
         self.hideShowResidentialHistory = function() {
@@ -380,6 +394,15 @@
         function removeObjectsWithNameStarting(arr, prefix) {
           return arr.filter(obj => !obj.detailName.startsWith(prefix));
         }
+        function splitAndIncrementLast(string) {
+            let array = string.split("-");
+            let lastElement = parseInt(array[array.length - 1].replace(/[PJ]/g, '')) + 1;
+            array[array.length - 1] = String(lastElement);
+            let result = array.join("-J");
+
+            return result;
+        }
+
 		$scope.selectText = function(event) {
             event.target.select();
         };

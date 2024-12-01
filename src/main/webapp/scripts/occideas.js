@@ -36,6 +36,7 @@
           "occIDEASApp.Participants",
           "occIDEASApp.ParticipantDetails",
           "occIDEASApp.ParticipantDataEntry",
+          "occIDEASApp.ParticipantDataEntryJob",
           "occIDEASApp.InterviewResults",
           "occIDEASApp.ModuleRule",
           "occIDEASApp.Login",

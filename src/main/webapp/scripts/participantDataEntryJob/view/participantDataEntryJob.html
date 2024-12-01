@@ -1,0 +1,79 @@
+<div >
+	<fieldset>
+		<legend>Job Details for {{vm.jobNumber}}:</legend>
+		<table style="width: 100%">
+			<tbody>
+			<tr>
+				<td><label for="from_date">From Date (M/YYYY):</label></td>
+				<td><input ng-focus="selectText($event)" type="text" id="from_date"
+						   name="from_date" ng-model="vm.from.detailValue"
+						   ng-keyup="vm.validateDate(vm.from)"
+						   ng-style="{'color': vm.from.textColor, 'background-color': vm.from.bgColor}">
+				</td>
+
+			</tr>
+			<tr>
+				<td><label for="until_date">Until Date (M/YYYY):</label></td>
+				<td><input ng-focus="selectText($event)" type="text" id="until_date"
+						   name="until_date" ng-model="vm.until.detailValue"
+						   ng-keyup="vm.validateDate(vm.until)"
+						   ng-style="{'color': vm.until.textColor, 'background-color': vm.until.bgColor}">
+				</td>
+			</tr>
+			<tr>
+				<td><label for="employer">Employer:</label></td>
+				<td><input ng-focus="selectText($event)" type="text" id="employer" name="employer"
+						   ng-model="vm.employer.detailValue" >
+				</td>
+			</tr>
+			<tr>
+				<td><label for="address">Address:</label></td>
+				<td><input ng-focus="selectText($event)" style="width: 460px" type="text" id="address"
+						   name="address" ng-model="vm.address.detailValue">
+				</td>
+			</tr>
+			<tr>
+				<td><label for="title">Title:</label></td>
+				<td><input ng-focus="selectText($event)" type="text" id="title" name="title"
+						   ng-model="vm.title.detailValue" >
+				</td>
+			</tr>
+			<tr>
+				<td><label for="main_product">Main Product:</label></td>
+				<td><input ng-focus="selectText($event)" type="text" id="main_product" name="main_product"
+						   ng-model="vm.product.detailValue" >
+				</td>
+			</tr>
+			<tr>
+				<td><label for="average_hours">Average Hours:</label></td>
+				<td><input ng-focus="selectText($event)" style="width: 30px" type="text" id="average_hours"
+						   name="average_hours" ng-model="vm.averageHours.detailValue">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>
+			</tbody>
+		</table>
+
+		<div>
+			<button class="btn btn-default btn-sm"
+					ng-click="vm.saveParticipantDetails()">
+				<span>Save Details</span>
+			</button>
+			<button class="btn btn-default btn-sm"
+					ng-click="vm.addJobHistoryParticipant()">
+				<span>Add Job</span>
+			</button>
+			<button class="btn btn-default btn-sm"
+					ng-click="vm.removeJobHistoryParticipant()">
+				<span>Remove Job</span>
+			</button>
+		</div>
+	</fieldset>
+</div>

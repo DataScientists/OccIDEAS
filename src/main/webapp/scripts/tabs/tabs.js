@@ -908,6 +908,30 @@
           }
         }
       }
-    });
+    }).state({
+        name: 'tabs.participantJob',
+        url: '/participantJob/:startWithReferenceNumber',
+        sticky: true,
+        deepStateRedirect: true,
+        authenticate: true,
+        views: {
+          'participantJob@tabs': {
+            templateUrl: 'scripts/participantDataEntryJob/view/participantDataEntryJob.html',
+            controller: 'ParticipantDataEntryJobCtrl as vm',
+            params: {startWithReferenceNumber: null},
+            resolve: {
+              data: function($stateParams, QuestionsService) {
+                  return QuestionsService.findQuestions(77716, 'M').then(function(response) {
+                    $log.info("Data getting from findQuestions AJAX ...");
+                    return response.data;
+                  });
+              },
+              startWithReferenceNumber: function($stateParams) {
+                  return $stateParams.startWithReferenceNumber;
+              }
+            }
+          }
+        }
+        });
   }
 })();
