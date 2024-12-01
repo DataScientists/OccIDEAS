@@ -38,18 +38,18 @@
 				<tr>
 					<td><label for="comments">Comments about Participant:</label></td>
 					<td><textarea id="comments" name="comments" rows="4"
-							ng-model="vm.detailComments.detailValue"></textarea></td>
+							ng-model="vm.comments.detailValue"></textarea></td>
 				</tr>
 				<tr>
 					<td><label for="participantStatus">Participant Status:</label></td>
 					<td>
-						<select id="participantStatus" ng-model="vm.participantStatus" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
+						<select id="participantStatus" ng-model="participant.status" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
 						</select>
 					</td>
 				</tr>
 				<tr>
 					<td><label for="transcript">Transcript Sent:</label></td>
-					<td><input id="transcript" ng-checked="vm.transcriptSent.detailValue"
+					<td><input id="transcript" ng-checked="vm.transcriptSent.detailValue === 'true'"
 						ng-model="vm.transcriptSent.detailValue" style="position: static;"
 						type="checkbox" /></td>
 					<td>
@@ -58,6 +58,23 @@
 						</button>
 					</td>
 				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<fieldset>
+		<legend>Residential History:
+			<button class="btn btn-default btn-xs" ng-click="vm.hideShowResidentialHistory()"								>
+				<span class="glyphicon" ng-class="{'glyphicon-eye-open': vm.showResidentialHistory, 'glyphicon-eye-close': !vm.showResidentialHistory}"></span>
+			</button>
+		</legend>
+		<table style="width: 100%" ng-if="vm.showResidentialHistory">
+			<tbody>
+			<tr ng-repeat="(group, details) in vm.groupedAddresses">
+				<td><label>{{group}}</label></td>
+
+				<td ng-repeat="detail in details">{{detail.detailName}}:<label>{{detail.detailValue}}</label></td>
+
+			</tr>
 			</tbody>
 		</table>
 	</fieldset>
@@ -76,7 +93,7 @@
 			|
 
 			<button class="btn btn-default btn-sm"
-				ng-click="vm.addParticipantAddress()"
+				ng-click="vm.viewParticipantAddress()"
 				permission="['ROLE_DATAENTRY']">
 				<span>Addresses</span>
 			</button>

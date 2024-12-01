@@ -32,6 +32,7 @@ public class ParticipantDetailsRestController implements BaseRestController<Part
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
   public Response deleteList() {
 
+    //need to come back to this, for now using ParticipantService
     String participantId = "1";
     String startsWith = "R3";
     try {

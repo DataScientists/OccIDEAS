@@ -678,7 +678,7 @@
 			$rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
 		};
-		$scope.addParticipantAddressTab = function(awesId, interviewId) {
+		$scope.addParticipantAddressTab = function(studyId) {
 			//close other address tabs
 
 			for (var i = tabs.length - 1; i >= 0; i--) {
@@ -689,7 +689,7 @@
 				}
 			}
 
-			var tabTitle = "Address " + awesId;
+			var tabTitle = "Addresses " + studyId;
 			var state = "tabs.participantAddress";
 			$stickyState.reset(state);
 			if (!checkIfTabIsOpen(tabs, tabTitle)) {
@@ -703,9 +703,8 @@
 				$scope.tabOptions.push({
 					state: state,
 					data: {
-						interviewId: interviewId,
-						addingAddress: awesId
-					}
+                        startWithReferenceNumber: studyId
+                    }
 				});
 
 

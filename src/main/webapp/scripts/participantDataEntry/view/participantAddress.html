@@ -1,0 +1,33 @@
+<div >
+
+	<fieldset>
+		<legend>Residential History:</legend>
+
+		<table style="width: 100%">
+			<tbody ng-repeat="(group, details) in vm.groupedAddresses">
+
+				<tr ng-repeat="detail in details">
+					<td>{{ $first ? group : '' }}</td>
+					<td>{{ detail.detailName }}</td>
+					<td><input ng-focus="selectText($event)" ng-keyup="vm.validateDate(detail)" type="text"
+						ng-model="detail.detailValue" ng-style="{'color': detail.textColor, 'background-color': detail.bgColor}" ></td>
+
+				</tr>
+				<tr>
+					<td colspan="3"><hr></td>
+				</tr>
+			</tbody>
+		</table>
+	</fieldset>
+	<div>
+		<button ng-click="vm.saveParticipant()">
+			<span>Save Addresses</span>
+		</button>
+		<button ng-click="vm.addAddress()">
+			<span>Add Address</span>
+		</button>
+		<button ng-if="vm.highestAddress != 'R1'" ng-click="vm.removeAddress()">
+			<span>Remove Address</span>
+		</button>
+	</div>
+</div>
