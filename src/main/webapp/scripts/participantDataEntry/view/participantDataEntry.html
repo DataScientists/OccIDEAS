@@ -1,6 +1,6 @@
 <div >
 	<fieldset>
-		<legend>Personal Details:</legend>
+		<legend>Participant Details:</legend>
 		<table >
 			<tbody>
 				<tr>
@@ -79,6 +79,130 @@
 		</table>
 	</fieldset>
 	<div></div>
+	<hr/>
+	<fieldset>
+		<legend>Occupational History<span permission="['ROLE_INTERVIEWERA']"> with Interview Links</span>:
+			<button class="btn btn-default btn-xs" ng-click="vm.hideShowOccupationalHistory()"								>
+				<span class="glyphicon" ng-class="{'glyphicon-eye-open': vm.showOccupationalHistory, 'glyphicon-eye-close': !vm.showOccupationalHistory}"></span>
+			</button>
+		</legend>
+		<!-- Data Entry View -->
+		<table style="width: 100%" permission="['ROLE_DATAENTRY']" ng-if="vm.showOccupationalHistory">
+			<tbody>
+
+			<tr ng-repeat="participant in vm.otherParticipantJobs"
+				ng-if="!$first">
+				<td>{{participant.reference}}</td>
+				<td></td>
+
+				<td ng-repeat="detail in participant.participantDetails">
+
+
+					<span ng-if="(detail.detailName != 'Priority') && (detail.detailName != 'ANZSCO')">
+						{{detail.detailName}}:
+						<label>{{detail.detailValue}}</label>
+					</span>
+
+				</td>
+
+			</tr>
+			</tbody>
+		</table>
+
+		<hr/>
+		<!-- Allocator View -->
+		<table style="width: 100%" permission="['ROLE_ALLOCATOR']" ng-if="vm.showOccupationalHistory">
+			<tbody>
+
+			<tr ng-repeat="participant in vm.otherParticipantJobs"
+				ng-if="!$first">
+				<td>{{participant.reference}}</td>
+				<td></td>
+
+				<td ng-repeat="detail in participant.participantDetails">
+
+					{{detail.detailName}}:
+					<span ng-if="(detail.detailName != 'Priority') && (detail.detailName != 'ANZSCO')">
+							<label>{{detail.detailValue}}</label>
+						</span>
+
+					<span ng-if="detail.detailName === 'Priority'">
+							<input ng-focus="selectText($event)"
+								   type="text" style="width: 30px;" id="priority" name="priority"
+								   ng-model="detail.detailValue">
+
+							<select id="jobModule"
+									ng-model="participant.mappedTo"
+									ng-options="jobModule for jobModule in jobModules">
+							</select>
+							<select id="sameAs" ng-if="startsWithSameAs(participant.mappedTo)"
+									ng-model="participant.mappedTo"
+									ng-options="sameAs for sameAs in sameAsList">
+								<option>*</option>
+							</select>
+						</span>
+					<span ng-if="detail.detailName === 'ANZSCO'">
+							<input ng-focus="selectText($event)"
+								   type="text" style="width: 70px;" id="anzsco" name="anzsco"
+								   ng-model="detail.detailValue">
+						</span>
+				</td>
+
+			</tr>
+			</tbody>
+		</table>
+
+		<div permission="['ROLE_ALLOCATOR']" ng-if="vm.showOccupationalHistory">
+			<button class="btn btn-default btn-sm"
+					ng-click="vm.saveParticipantMappings()">
+				<span>Update Job Allocations</span>
+			</button>
+		</div>
+
+		<hr/>
+		<!-- Interviewer View -->
+
+		<table style="width: 100%" permission="['ROLE_INTERVIEWERA']" ng-if="vm.showOccupationalHistory">
+			<tbody>
+			<tr ng-repeat="participant in vm.otherParticipantJobs"
+				ng-if="$first" >
+				<td><label>{{participant.reference}}</label></td>
+				<td ng-repeat="detail in participant.participantDetails" colspan="4">
+					<span ng-if="detail.detailName === 'Priority'">
+						{{detail.detailName}}:
+						<label>{{detail.detailValue}}</label>
+						:{{participant.mappedTo}}
+						<span >
+						<a href="{{participant.fullQualtricsLink}}"
+						   ng-click="vm.updateParticipantStatus($event,participant)"
+						   target=”{{participant.idParticipant}}”
+						   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
+						</span>
+					</span>
+				</td>
+			</tr>
+			<tr ng-repeat="participant in vm.otherParticipantJobs"
+				ng-if="!$first">
+				<td><label>{{participant.reference}}</label></td>
+				<td ng-repeat="detail in participant.participantDetails">
+					{{detail.detailName}}:
+					<label>{{detail.detailValue}}</label>
+					<span ng-if="detail.detailName === 'Priority'">
+						:{{participant.mappedTo}}
+						<span >
+						<a href="{{participant.fullQualtricsLink}}"
+						   ng-click="vm.updateParticipantStatus($event,participant)"
+						   target=”{{participant.idParticipant}}”
+						   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
+						</span>
+					</span>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+
+	</fieldset>
+	<hr/>
 	<div></div>
 	<div></div>
 	<div></div>
@@ -103,12 +227,7 @@
 				permission="['ROLE_DATAENTRY']">
 				<span>Jobs</span>
 			</button>
-			|
-			<button class="btn btn-default btn-sm"
-				ng-click="vm.showParticipantMappingTab()"
-				permission="['ROLE_ALLOCATOR']">
-				<span>Module Allocations</span>
-			</button>
+
 		</div>
 	</fieldset>
 </div>

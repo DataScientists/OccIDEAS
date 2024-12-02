@@ -25,7 +25,8 @@
                             $rootScope.participant = participant;
                             populateParticipantDetails();
                             //groupTheAddresses();
-                            $scope.$root.tabsLoading = false;
+                            //$scope.$root.tabsLoading = false;
+                            $rootScope.tabsLoading = false;
                         }
                     });
 				} else if (data.status == 204) {
@@ -109,6 +110,8 @@
 
                     populateParticipantDetails();
 
+                    saveParticipant();
+
                     var interview = {};
                     interview.participant = participant;
                     interview.module = self.introModule;
@@ -116,6 +119,50 @@
                     InterviewsService.startInterview(interview).then(function(response) {
                         if (response.status === 200) {
                             interview.interviewId = response.data.interviewId;
+                            var copyParticipant = angular.copy($scope.participant);
+                            interview.participant = copyParticipant;
+
+                            $scope.interview = interview;
+
+                            var firstLinkInterviewQuestion = populateInterviewQuestionJsonByModule(interview, self.introModule);
+                            firstLinkInterviewQuestion.number = "0";
+                            firstLinkInterviewQuestion.isProcessed = true;
+                            //inserting the first link intro module
+                            InterviewsService.saveLinkQuestionAndQueueQuestions(firstLinkInterviewQuestion).then(function(response) {
+                                if (response.status === 200) {
+                                    console.log('IntroModule Prepared');
+                                /*
+                                    InterviewsService.get($scope.interview.interviewId).then(function(response) {
+                                        if (response.status == 200) {
+
+                                            $scope.interview = response.data[0];
+
+                                            var question = findNextQuestionQueued($scope.interview);
+                                            if (question) {
+                                                QuestionsService.findQuestionSingleChildLevel(question.questionId).then(function(response) {
+                                                    if (response.status === 200) {
+                                                        var ques = response.data[0];
+
+
+
+                                                    } else {
+                                                        var errorMsg = "Error getting question " + question.questionId;
+                                                        console.error(errorMsg);
+                                                        ngToast.create({
+                                                            className: 'danger',
+                                                            content: errorMsg,
+                                                            animation: 'slide'
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                    */
+                                }
+                            });
+
+
                             $scope.$root.tabsLoading = false;
                        }
                     });
@@ -241,6 +288,24 @@
 
 
         /* utilities */
+        function populateInterviewQuestionJsonByModule(interview, module) {
+            return {
+                idInterview: interview.interviewId,
+                topNodeId: module.idNode,
+                questionId: undefined,
+                parentModuleId: module.idNode,
+                parentAnswerId: undefined,
+                name: module.name,
+                description: module.description,                nodeClass: module.nodeclass,
+                number: module.number,
+                type: module.type,
+                link: module.idNode,
+                modCount: 1,
+                intQuestionSequence: 1,
+                deleted: 0,
+                answers: []
+            };
+        }
         function checkIsFirstJob(string) {
             if (string !== undefined) {
                 let array = string.split("-");
@@ -252,11 +317,7 @@
                 self.referenceNumberPrefix = array[0];
             }
         }
-        self.showResidentialHistory = true; // Initial state: show history
 
-        self.hideShowResidentialHistory = function() {
-          self.showResidentialHistory = !self.showResidentialHistory;
-        };
         function removeObjectsWithNameStarting(arr, prefix) {
           return arr.filter(obj => !obj.detailName.startsWith(prefix));
         }

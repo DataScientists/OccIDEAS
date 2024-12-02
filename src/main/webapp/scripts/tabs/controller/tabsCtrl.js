@@ -578,17 +578,9 @@
 			$rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
 		};
-		$scope.addParticipantDetailsTab = function(idNode, awesId, isEditMode, interviewId) {
-			//close other interview tabs
-			/*
-				  for(var i = tabs.length - 1; i >= 0; i--) {
-					var tab = tabs[i];
-					if(tab.viewName == 'participantDetails@tabs') {
-					  tabs.splice(i, 1);
-					  $scope.tabOptions.splice(i, 1);
-					}
-				  }
-			*/
+
+		$scope.addParticipantDetailsTab = function(idNode, awesId, isEditMode) {
+
 			var tabTitle = "" + awesId;
 			var state = "tabs.participantDetails";
 			$stickyState.reset(state);
@@ -621,6 +613,7 @@
 			$rootScope.tabsLoading = true;
 			safeDigest($rootScope.tabsLoading);
 		};
+
         $scope.addParticipantDataEntryTab = function(studyId) {
 			var tabTitle = "" + studyId;
 			var state = "tabs.participantDataEntry";
@@ -714,15 +707,6 @@
 		};
 		$scope.addParticipantJobTab = function(studyId) {
             //close other address tabs
-
-            for (var i = tabs.length - 1; i >= 0; i--) {
-                var tab = tabs[i];
-                if (tab.viewName == 'participantJob@tabs') {
-                    tabs.splice(i, 1);
-                    $scope.tabOptions.splice(i, 1);
-                }
-            }
-
             var tabTitle = "Job " + studyId;
             var state = "tabs.participantJob";
             $stickyState.reset(state);

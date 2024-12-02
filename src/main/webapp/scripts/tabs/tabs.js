@@ -911,7 +911,7 @@
     }).state({
         name: 'tabs.participantJob',
         url: '/participantJob/:startWithReferenceNumber',
-        sticky: true,
+        sticky: false,
         deepStateRedirect: true,
         authenticate: true,
         views: {
