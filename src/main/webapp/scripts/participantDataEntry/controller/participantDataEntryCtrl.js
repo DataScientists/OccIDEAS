@@ -610,7 +610,7 @@
 				return p.then(function() {
 				    let array = data.reference.split('-');
 				    var jobNumber = "";
-				    if(array.length>0){
+				    if(array.length>1){
 				        jobNumber = array[1];
 				        if(jobNumber.startsWith('J')){
 				            $scope.sameAsList.push('SameAs-'+jobNumber);
@@ -759,6 +759,13 @@
                 self.referenceNumberPrefix = array[0];
             }
         }
+
+        self.showParticipantDetails = true; // Initial state: show history
+
+        self.hideShowParticipantDetails = function() {
+          self.showParticipantDetails = !self.showParticipantDetails;
+        };
+
         self.showResidentialHistory = true; // Initial state: show history
 
         self.hideShowResidentialHistory = function() {
@@ -818,7 +825,7 @@
 			'WATE',
 			'JEWL',
 			'LAUN',
-			'SameAs',
+
 			'UnExposed'];
         $scope.qualtricsSurveyLinks = [
 			{ name: 'NONO', surveyLink: 'SV_eXo3qHX2ImA3ew6' },

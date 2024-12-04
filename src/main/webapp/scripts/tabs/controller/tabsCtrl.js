@@ -953,11 +953,12 @@
 
                     $rootScope.saveParticipant();
 
-                    var index = tabs.indexOf(tab);
-                    tabs.splice(index, 1);
-                    $scope.tabOptions.splice(index, 1);
+
 
                 }
+                var index = tabs.indexOf(tab);
+                tabs.splice(index, 1);
+                $scope.tabOptions.splice(index, 1);
             } else {
 				var index = tabs.indexOf(tab);
 				tabs.splice(index, 1);

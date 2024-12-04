@@ -39,12 +39,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -422,6 +427,7 @@ public class InterviewServiceImpl implements InterviewService {
         List<RandomInterviewReport> results = new ArrayList<>();
         if (count != 0) {
             // loop the count and generate random interviews based on the count
+
             for (int i = 0; i < count; i++) {
                 RandomInterviewReport randomInterviewReport = new RandomInterviewReport();
                 randomInterviewReport.setReferenceNumber(referenceNumber);
@@ -448,9 +454,134 @@ public class InterviewServiceImpl implements InterviewService {
                 populateInterviewWithQuestions(modVO, results, randomInterviewReport, newInterviewVO, participantVO,
                         isRandomAnswers, filterModuleVO);
             }
+/*
+            List<ParticipantVO> participants = participantService.listAllParticipantWithInt();
+
+            String filePath = "/opt/data/amrResidentialHistory.csv";
+            List<ParticipantVO> participantAddresses = readCSV(filePath);
+
+            int iIndex = 0;
+            Long currentParticipantId = Long.valueOf(0);
+            Long runningParticipantId = Long.valueOf(1);
+            int iSize = participants.size();
+            int iParticipantIndex = -1;
+            for(int i=0;i<iSize;i++){
+                ParticipantVO pWithAddress = participantAddresses.get(i);
+                currentParticipantId = pWithAddress.getIdParticipant();
+                if(currentParticipantId.equals(runningParticipantId)){
+                    System.out.println("Same Participant");
+                }else{
+                    iParticipantIndex++;
+                }
+                ParticipantVO p = participants.get(iParticipantIndex);
+                for(ParticipantDetailsVO pd:pWithAddress.getParticipantDetails()){
+                    pd.setParticipantId(p.getIdParticipant());
+                }
+                p.getParticipantDetails().addAll(pWithAddress.getParticipantDetails());
+                //participantService.updateNewTransaction(p);
+                runningParticipantId = pWithAddress.getIdParticipant();
+                System.out.println("processing "+i+" of "+ iSize);
+
+            }
+            for(ParticipantVO p : participants){
+                participantService.updateNewTransaction(p);
+            }
+
+ */
+        }
+        return results;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createTestingAddresses() {
+
+        List<ParticipantVO> participants = participantService.listAllParticipantWithInt();
+
+        String filePath = "/opt/data/amrResidentialHistory.csv";
+        List<ParticipantVO> participantAddresses = readCSV(filePath);
+
+        int iIndex = 0;
+        Long currentParticipantId = Long.valueOf(0);
+        Long runningParticipantId = Long.valueOf(1);
+        int iSize = participants.size();
+        int iParticipantIndex = -1;
+        for(int i=0;i<iSize;i++){
+            ParticipantVO pWithAddress = participantAddresses.get(i);
+            currentParticipantId = pWithAddress.getIdParticipant();
+            if(currentParticipantId.equals(runningParticipantId)){
+                System.out.println("Same Participant");
+            }else{
+                iParticipantIndex++;
+            }
+            ParticipantVO p = participants.get(iParticipantIndex);
+            for(ParticipantDetailsVO pd:pWithAddress.getParticipantDetails()){
+                if(pd.getDetailName().endsWith("person_id")){
+                    pd.setParticipantId(99999);
+                }else if(pd.getDetailName().endsWith("from_month")){
+                    pd.setParticipantId(99999);
+                }else if(pd.getDetailName().endsWith("from_year")){
+                    pd.setParticipantId(99999);
+                }else if(pd.getDetailName().endsWith("to_month")){
+                    pd.setParticipantId(99999);
+                }else if(pd.getDetailName().endsWith("to_year")){
+                    pd.setParticipantId(99999);
+                }else{
+                    pd.setParticipantId(p.getIdParticipant());
+                }
+
+            }
+            p.getParticipantDetails().addAll(pWithAddress.getParticipantDetails());
+            //participantService.updateNewTransaction(p);
+            runningParticipantId = pWithAddress.getIdParticipant();
+            System.out.println("processing "+i+" of "+ iSize);
+
+        }
+        for(ParticipantVO p : participants){
+            participantService.updateNewTransaction(p);
+        }
+    }
+
+    private List<ParticipantVO> readCSV(String filePath) {
+        List<ParticipantVO> participantsList = new ArrayList<>();
+        Map<String, Integer> personIdCountMap = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String headerLine = br.readLine();
+            if (headerLine == null) {
+                return participantsList; // Return empty if file is empty
+            }
+
+            String[] headers = headerLine.split(",");
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",", -1); // Handle empty values
+                String personId = values[0]; // Assume person_id is the first column
+
+                // Increment the count for this person_id or initialize it
+                int recordCount = personIdCountMap.getOrDefault(personId, 0) + 1;
+                personIdCountMap.put(personId, recordCount);
+
+                ParticipantDetailsVO[] participantDetails = new ParticipantDetailsVO[headers.length];
+
+                for (int i = 0; i < headers.length; i++) {
+                    participantDetails[i] = new ParticipantDetailsVO();
+                    String prefixedDetailName = "R" + recordCount + "-" + headers[i];
+                    participantDetails[i].setDetailName(prefixedDetailName);
+                    participantDetails[i].setDetailValue(values[i]);
+                }
+                ParticipantVO p = new ParticipantVO();
+                p.setIdParticipant(Long.valueOf(personId));
+                p.setParticipantDetails(Arrays.asList(participantDetails));
+                participantsList.add(p);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        return results;
+        return participantsList;
     }
 
     private void populateInterviewWithQuestions(NodeVO nodeVO, List<RandomInterviewReport> results,
@@ -661,8 +792,8 @@ public class InterviewServiceImpl implements InterviewService {
         String finalIntStr = String.valueOf(finalInt);
         Integer length = finalIntStr.length();
         StringBuilder sb = new StringBuilder(finalIntStr);
-        if (length < 3) {
-            for (int i = length; i < 3; i++) {
+        if (length < 5) {
+            for (int i = length; i < 5; i++) {
                 sb.insert(0, "0");
             }
         }

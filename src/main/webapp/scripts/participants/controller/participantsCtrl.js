@@ -42,23 +42,23 @@
 		}
 		];
 		$scope.participantStatusList = [{
-            'id': 0,
+            'id': 1,
             'title': 'To be updated'
         },
         {
-            'id': 1,
+            'id': 2,
             'title': 'To be reviewed'
         },
         {
-            'id': 2,
+            'id': 3,
             'title': 'Ready for interview'
         },
         {
-            'id': 3,
+            'id': 4,
             'title': 'Interviews completed'
         },
         {
-            'id': 4,
+            'id': 5,
             'title': 'No further contact'
         }
         ];

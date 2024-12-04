@@ -62,7 +62,8 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Override
   public void update(ParticipantVO o) {
-    participantDao.saveOrUpdate(mapper.convertToParticipant(o, true));
+    Participant p = mapper.convertToParticipant(o, true);
+    participantDao.saveOrUpdate(p);
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)

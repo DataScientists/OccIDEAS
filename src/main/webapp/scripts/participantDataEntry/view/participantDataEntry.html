@@ -1,7 +1,14 @@
+<div>
+	<p></p>
+</div>
 <div >
 	<fieldset>
-		<legend>Participant Details:</legend>
-		<table >
+		<legend>Participant Details:
+			<button class="btn btn-default btn-xs" ng-click="vm.hideShowParticipantDetails()"								>
+				<span class="glyphicon" ng-class="{'glyphicon-eye-open': vm.showParticipantDetails, 'glyphicon-eye-close': !vm.showParticipantDetails}"></span>
+			</button>
+		</legend>
+		<table ng-if="vm.showParticipantDetails">
 			<tbody>
 				<tr>
 					<td><label>Reference Number:</label></td>
@@ -163,40 +170,59 @@
 		<!-- Interviewer View -->
 
 		<table style="width: 100%" permission="['ROLE_INTERVIEWERA']" ng-if="vm.showOccupationalHistory">
-			<tbody>
-			<tr ng-repeat="participant in vm.otherParticipantJobs"
-				ng-if="$first" >
+			<tbody ng-if="$first" ng-repeat="participant in vm.otherParticipantJobs">
+			<tr>
+				<td colspan="10" align="center">
+					<span >
+						<a href="{{participant.fullQualtricsLink}}"
+						   ng-click="vm.updateParticipantStatus($event,participant)"
+						   target=”{{participant.idParticipant}}”
+						   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
+						</span>
+				</td>
+			</tr>
+			<tr>
 				<td><label>{{participant.reference}}</label></td>
 				<td ng-repeat="detail in participant.participantDetails" colspan="4">
 					<span ng-if="detail.detailName === 'Priority'">
 						{{detail.detailName}}:
 						<label>{{detail.detailValue}}</label>
 						:{{participant.mappedTo}}
-						<span >
+
+					</span>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="10"><hr></td>
+			</tr>
+			</tbody>
+			<tbody ng-if="!$first" ng-repeat="participant in vm.otherParticipantJobs">
+			<tr>
+				<td colspan="10" align="center">
+					<span ng-if="participant.mappedTo != 'UnExposed'">
 						<a href="{{participant.fullQualtricsLink}}"
 						   ng-click="vm.updateParticipantStatus($event,participant)"
 						   target=”{{participant.idParticipant}}”
 						   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
-						</span>
+					</span>
+					<span ng-if="participant.mappedTo === 'UnExposed'">
+						<span style="color: #1a0dab; font-size: larger;">No Interview Required</span>
 					</span>
 				</td>
 			</tr>
-			<tr ng-repeat="participant in vm.otherParticipantJobs"
-				ng-if="!$first">
+			<tr>
 				<td><label>{{participant.reference}}</label></td>
 				<td ng-repeat="detail in participant.participantDetails">
 					{{detail.detailName}}:
 					<label>{{detail.detailValue}}</label>
 					<span ng-if="detail.detailName === 'Priority'">
 						:{{participant.mappedTo}}
-						<span >
-						<a href="{{participant.fullQualtricsLink}}"
-						   ng-click="vm.updateParticipantStatus($event,participant)"
-						   target=”{{participant.idParticipant}}”
-						   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
-						</span>
+
 					</span>
 				</td>
+			</tr>
+			<tr>
+				<td colspan="10"><hr></td>
 			</tr>
 			</tbody>
 		</table>
