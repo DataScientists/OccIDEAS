@@ -1,0 +1,15 @@
+person_id,country,address,suburb,state,postcode,from_month,from_year,to_month,to_year
+54116,Australia,"76 Wentworth Rd ",Homebush,NSW,1040,12,1942,9,1948
+54116,Australia,"20 Hillcrest St ",Homebush,NSW,1040,10,1948,2,1949
+54116,Australia,"24 Sanders Pde",Concord,NSW,2137,2,1949,3,2011
+54117,"Australia ","1 Lovoni Street ","Cabramatta ",NSW,2176,1,1954,9,1993
+54117,"Australia ","28 Court Rd","Fairfield ",NSW,2165,10,1993,10,2002
+54117,"Australia ","11a Alan St",Fairfield,NSW,2165,11,2002,11,2004
+54117,"Australia ","11/184 Sandal Cr",Cabramatta,NSW,2163,12,2004,3,2011
+54118,Australia,"Lowes Creek Rd ","Hillview, Quipolly",NSW,2343,5,1931,Unknown,1943
+54118,Australia,"93/94 Single St","Werris Creek",NSW,2341,Unknown,Unknown,Unknown,1943
+54118,Australia,"Pacific Hwy",Kanwal,NSW,2259,Unknown,1943,Unknown,1948
+54118,Australia,"Hammond Rd ",Toukley,"NSW ",2263,Unknown,1948,Unknown,1954
+54118,Australia,"183 Alice St ",Newtown,NSW,2042,2,1954,1,1958
+54118,Australia,"120 Evans St",Rozelle,NSW,2039,1,1958,6,1959
+54118,Australia,"146 Allambie Rd","Allambie Heights ",NSW,2100,6,1959,,2011
