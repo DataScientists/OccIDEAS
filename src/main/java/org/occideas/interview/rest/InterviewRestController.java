@@ -1002,9 +1002,10 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
       results = service.createRandomInterviews(randomInterview.getCount(), randomInterview.isRandomAnswers(),
               randomInterview.getFilterModule());
       service.createTestingAddresses();
+      service.createTestingOccupationalHistories();
 
     } catch (Throwable e) {
-
+      e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
     }
     return Response.ok(results).build();

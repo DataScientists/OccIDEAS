@@ -114,7 +114,7 @@ public class ParticipantVO {
                 + ", statusDescription=" + statusDescription + "]";
     }
 
-	public List<ParticipantDetailsVO> getParticipantDetails() {
+	public List<ParticipantDetailsVO>   getParticipantDetails() {
         if(participantDetails == null){
             participantDetails = new ArrayList<ParticipantDetailsVO>();
         }

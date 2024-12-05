@@ -19,7 +19,7 @@
     self.toggleIsDeleting = toggleIsDeleting;
     self.addNewConfigBtn = addNewConfigBtn;
 
-    $scope.randomIntCount = 0;
+    $scope.randomIntCount = 10;
     $scope.randomAnswerChecked = true;
     $scope.dbConnect = {
       host: 'jdbc:mysql://localhost:3306/occideassimlib?useLegacyDatetimeCode=false&serverTimezone=UTC',

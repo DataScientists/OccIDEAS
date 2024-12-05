@@ -437,7 +437,15 @@ public class InterviewServiceImpl implements InterviewService {
                 ParticipantVO partVO = new ParticipantVO();
                 // partVO.setIdParticipant(idParticipant);
                 partVO.setReference(referenceNumber);
+
+
                 ParticipantVO participantVO = participantService.create(partVO);
+                ParticipantDetailsVO pd = new ParticipantDetailsVO();
+                pd.setDetailName("Priority");
+                pd.setDetailValue("0");
+                pd.setParticipantId(participantVO.getIdParticipant());
+                participantVO.getParticipantDetails().add(pd);
+                //participantService.update(participantVO);
                 // create interview
                 InterviewVO interviewVO = new InterviewVO();
                 interviewVO.setParticipant(participantVO);
@@ -446,48 +454,17 @@ public class InterviewServiceImpl implements InterviewService {
                 // set default assessed status
                 interviewVO.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
                 Interview interviewEntity = mapper.convertToInterview(interviewVO);
+
                 interviewDao.saveNewTransaction(interviewEntity);
                 InterviewVO newInterviewVO = mapper.convertToInterviewVO(interviewEntity);
+
                 randomInterviewReport.setInterviewId(newInterviewVO.getInterviewId());
                 referenceNumber = generateReferenceAuto(referenceNumber);
                 // populate interview question by module
                 populateInterviewWithQuestions(modVO, results, randomInterviewReport, newInterviewVO, participantVO,
                         isRandomAnswers, filterModuleVO);
             }
-/*
-            List<ParticipantVO> participants = participantService.listAllParticipantWithInt();
 
-            String filePath = "/opt/data/amrResidentialHistory.csv";
-            List<ParticipantVO> participantAddresses = readCSV(filePath);
-
-            int iIndex = 0;
-            Long currentParticipantId = Long.valueOf(0);
-            Long runningParticipantId = Long.valueOf(1);
-            int iSize = participants.size();
-            int iParticipantIndex = -1;
-            for(int i=0;i<iSize;i++){
-                ParticipantVO pWithAddress = participantAddresses.get(i);
-                currentParticipantId = pWithAddress.getIdParticipant();
-                if(currentParticipantId.equals(runningParticipantId)){
-                    System.out.println("Same Participant");
-                }else{
-                    iParticipantIndex++;
-                }
-                ParticipantVO p = participants.get(iParticipantIndex);
-                for(ParticipantDetailsVO pd:pWithAddress.getParticipantDetails()){
-                    pd.setParticipantId(p.getIdParticipant());
-                }
-                p.getParticipantDetails().addAll(pWithAddress.getParticipantDetails());
-                //participantService.updateNewTransaction(p);
-                runningParticipantId = pWithAddress.getIdParticipant();
-                System.out.println("processing "+i+" of "+ iSize);
-
-            }
-            for(ParticipantVO p : participants){
-                participantService.updateNewTransaction(p);
-            }
-
- */
         }
         return results;
     }
@@ -516,29 +493,116 @@ public class InterviewServiceImpl implements InterviewService {
             }
             ParticipantVO p = participants.get(iParticipantIndex);
             for(ParticipantDetailsVO pd:pWithAddress.getParticipantDetails()){
-                if(pd.getDetailName().endsWith("person_id")){
-                    pd.setParticipantId(99999);
-                }else if(pd.getDetailName().endsWith("from_month")){
-                    pd.setParticipantId(99999);
-                }else if(pd.getDetailName().endsWith("from_year")){
-                    pd.setParticipantId(99999);
-                }else if(pd.getDetailName().endsWith("to_month")){
-                    pd.setParticipantId(99999);
-                }else if(pd.getDetailName().endsWith("to_year")){
-                    pd.setParticipantId(99999);
-                }else{
-                    pd.setParticipantId(p.getIdParticipant());
+                if(pd!=null){
+                    if(pd.getDetailName().endsWith("person_id")){
+                        pd.setParticipantId(99999);
+                    }else if(pd.getDetailName().endsWith("from_month")){
+                        pd.setParticipantId(99999);
+                    }else if(pd.getDetailName().endsWith("from_year")){
+                        pd.setParticipantId(99999);
+                    }else if(pd.getDetailName().endsWith("to_month")){
+                        pd.setParticipantId(99999);
+                    }else if(pd.getDetailName().endsWith("to_year")){
+                        pd.setParticipantId(99999);
+                    }else{
+                        pd.setParticipantId(p.getIdParticipant());
+                    }
                 }
-
             }
             p.getParticipantDetails().addAll(pWithAddress.getParticipantDetails());
-            //participantService.updateNewTransaction(p);
+
             runningParticipantId = pWithAddress.getIdParticipant();
             System.out.println("processing "+i+" of "+ iSize);
 
         }
         for(ParticipantVO p : participants){
             participantService.updateNewTransaction(p);
+        }
+    }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void createTestingOccupationalHistories() {
+
+        List<ParticipantVO> participants = participantService.listAllParticipantWithInt();
+
+        String filePath = "/opt/data/amrOccupationalHistory.csv";
+        List<ParticipantVO> participantOccupations = readOccupationalCSV(filePath);
+
+        List<ParticipantVO> participantsJobs = new ArrayList<ParticipantVO>();
+        SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
+        if (activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())) {
+            log.error("Active intro is either null or is not numeric");
+
+        }
+        // get the module
+        JobModule mod = moduleDao.get(Long.valueOf(activeIntro.getValue()));
+        ModuleVO modVO = moduleMapper.convertToModuleVO(mod, false);
+
+        int iIndex = 0;
+        Long currentParticipantId = Long.valueOf(0);
+        Long runningParticipantId = Long.valueOf(1);
+        int iSize = participants.size();
+        int iParticipantIndex = -1;
+        ParticipantVO p = participants.get(0);
+        int jobCount = 1;
+        for(int i=0;i<iSize;i++){
+            ParticipantVO pWithOccupation = participantOccupations.get(i);
+            currentParticipantId = pWithOccupation.getIdParticipant();
+
+            if(currentParticipantId.equals(runningParticipantId)){
+                System.out.println("Same Participant");
+                jobCount++;
+
+            }else{
+                jobCount = 1;
+                iParticipantIndex++;
+                p = participants.get(iParticipantIndex);
+            }
+            String reference = p.getReference();
+            pWithOccupation.setReference(reference.substring(0,5)+"-J"+jobCount);
+            ParticipantVO participantVO = participantService.create(pWithOccupation);
+            System.out.println("Created "+participantVO.getReference());
+
+            InterviewVO interviewVO = new InterviewVO();
+            interviewVO.setParticipant(participantVO);
+            interviewVO.setModule(modVO);
+            interviewVO.setReferenceNumber(participantVO.getReference());
+            // set default assessed status
+            interviewVO.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
+            Interview interviewEntity = mapper.convertToInterview(interviewVO);
+
+            interviewDao.saveNewTransaction(interviewEntity);
+            InterviewVO newInterviewVO = mapper.convertToInterviewVO(interviewEntity);
+            startInterview(modVO,newInterviewVO);
+
+            for(ParticipantDetailsVO pd:pWithOccupation.getParticipantDetails()){
+                if(pd!=null){
+                    if(pd.getDetailName().endsWith("participantid")){
+                        pd.setParticipantId(99999);
+                    }else if(pd.getDetailName().endsWith("start_month")){
+                        pd.setParticipantId(99999);
+                    }else if(pd.getDetailName().endsWith("start_year")){
+                        pd.setParticipantId(participantVO.getIdParticipant());
+                    }else if(pd.getDetailName().endsWith("end_month")){
+                        pd.setParticipantId(99999);
+                    }else if(pd.getDetailName().endsWith("end_year")){
+                        pd.setParticipantId(participantVO.getIdParticipant());
+                    }else{
+                        pd.setParticipantId(participantVO.getIdParticipant());
+                    }
+                }
+            }
+
+            participantVO.getParticipantDetails().addAll(pWithOccupation.getParticipantDetails());
+            participantsJobs.add(participantVO);
+
+            //participantService.updateNewTransaction(p);
+            runningParticipantId = pWithOccupation.getIdParticipant();
+            System.out.println("processing "+i+" of "+ iSize);
+
+        }
+        for(ParticipantVO p1 : participantsJobs){
+            participantService.updateNewTransaction(p1);
         }
     }
 
@@ -565,6 +629,10 @@ public class InterviewServiceImpl implements InterviewService {
 
                 ParticipantDetailsVO[] participantDetails = new ParticipantDetailsVO[headers.length];
 
+                //add first record which is priority
+                //participantDetails[0] = new ParticipantDetailsVO();
+                //participantDetails[0].setDetailName("Priority");
+                //participantDetails[0].setDetailValue("0");
                 for (int i = 0; i < headers.length; i++) {
                     participantDetails[i] = new ParticipantDetailsVO();
                     String prefixedDetailName = "R" + recordCount + "-" + headers[i];
@@ -581,6 +649,48 @@ public class InterviewServiceImpl implements InterviewService {
             e.printStackTrace();
         }
 
+        return participantsList;
+    }
+    private List<ParticipantVO> readOccupationalCSV(String filePath) {
+        List<ParticipantVO> participantsList = new ArrayList<>();
+        Map<String, Integer> personIdCountMap = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String headerLine = br.readLine();
+            if (headerLine == null) {
+                return participantsList; // Return empty if file is empty
+            }
+
+            String[] headers = headerLine.split(",");
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",", -1); // Handle empty values
+                String personId = values[0]; // Assume person_id is the first column
+
+                // Increment the count for this person_id or initialize it
+                int recordCount = personIdCountMap.getOrDefault(personId, 0) + 1;
+                personIdCountMap.put(personId, recordCount);
+
+                ParticipantDetailsVO[] participantDetails = new ParticipantDetailsVO[headers.length+1];
+
+                //add first record which is priority
+                participantDetails[0] = new ParticipantDetailsVO();
+                participantDetails[0].setDetailName("Priority");
+                participantDetails[0].setDetailValue("-");
+                for (int i = 1; i < headers.length; i++) {
+                    participantDetails[i] = new ParticipantDetailsVO();
+                    participantDetails[i].setDetailName(headers[i]);
+                    participantDetails[i].setDetailValue(values[i]);
+                }
+                ParticipantVO p = new ParticipantVO();
+                p.setIdParticipant(Long.valueOf(personId));
+                p.setParticipantDetails(Arrays.asList(participantDetails));
+                participantsList.add(p);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return participantsList;
     }
 
@@ -617,6 +727,12 @@ public class InterviewServiceImpl implements InterviewService {
         noteVO.setText("AUTO GENERATED INTERVIEW");
         noteVO.setType("System");
         notes.add(noteVO);
+        NoteVO qualtricsLinkNote = new NoteVO();
+        qualtricsLinkNote.setInterviewId(newInterviewVO.getInterviewId());
+        qualtricsLinkNote.setText("SV_eXo3qHX2ImA3ew6");
+        qualtricsLinkNote.setType("AMRSurveyLink");
+        notes.add(qualtricsLinkNote);
+        randomInterview.getNotes().addAll(notes);
         interviewDao.saveNewTransaction(mapper.convertToInterview(randomInterview));
         participantVO.setStatus(2);
         participantService.updateNewTransaction(participantVO);
@@ -697,6 +813,37 @@ public class InterviewServiceImpl implements InterviewService {
         return intQuestionVO;
     }
 
+    private void startInterview(ModuleVO nodeVO, InterviewVO newInterviewVO){
+
+        InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
+        interviewQuestionVO.setIdInterview(newInterviewVO.getInterviewId());
+        interviewQuestionVO.setTopNodeId(nodeVO.getIdNode());
+        interviewQuestionVO.setParentModuleId(nodeVO.getIdNode());
+        interviewQuestionVO.setName(nodeVO.getName());
+        interviewQuestionVO.setDescription(nodeVO.getDescription());
+        interviewQuestionVO.setNodeClass(nodeVO.getNodeclass());
+        interviewQuestionVO.setNumber(nodeVO.getNumber());
+        interviewQuestionVO.setType(nodeVO.getType());
+        interviewQuestionVO.setLink(nodeVO.getIdNode());
+        interviewQuestionVO.setModCount(1);
+        interviewQuestionVO.setDeleted(0);
+        interviewQuestionVO.setIntQuestionSequence(0);
+
+
+        InterviewQuestionVO linkAndQueueQuestions = interviewQuestionService
+                .updateInterviewLinkAndQueueQuestions(interviewQuestionVO);
+        // get interview
+        List<InterviewVO> interviewList = mapper
+                .convertToInterviewWithQuestionAnswerList(interviewDao.getInterview(newInterviewVO.getInterviewId()));
+
+        InterviewVO randomInterview = interviewList.get(0);
+
+        List<InterviewQuestionVO> questionList = randomInterview.getQuestionHistory();
+        InterviewQuestionVO questionAsked = findNextQuestionQueued(questionList);
+
+        questionAsked.setProcessed(true);
+        interviewQuestionService.updateIntQ(questionAsked);
+    }
     private void saveQuestion(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
                               RandomInterviewReport randomInterviewReport, List<RandomInterviewReport> results, Boolean isRandomAnswers,
                               String[] filterModuleVO) {

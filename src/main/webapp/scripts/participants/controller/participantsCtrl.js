@@ -16,13 +16,7 @@
 		$scope.$storage = $sessionStorage;
 		$scope.isLangEnabledOnLoad = angular.copy($scope.$storage.langEnabled);
 
-		$rootScope.qualtricsSurveyLinks = [
-			{ name: 'NONO', surveyLink: 'SV_eXo3qHX2ImA3ew6' },
-			{ name: 'LAND', surveyLink: 'SV_8u1ypPnvbsP34iy' },
-			{ name: 'TRAD', surveyLink: 'SV_bPZBJn5TRD36RvM' },
-			{ name: 'AsMM', surveyLink: 'SV_0VP4BSv9Dm5CBdc' },
-			{ name: 'UnExposed', surveyLink: '' }
-		];
+
 
 		$scope.interviewStatusList = [{
 			'id': 0,
@@ -811,15 +805,7 @@
 			return interviewDetails;
 		}
 		self.getSurveyLink = getSurveyLink;
-		function getJobModule(participant) {
-			var jobModuleName = { name: "" };
-			var surveyLink = getSurveyLink(participant);
-			if (surveyLink != undefined) {
-				jobModuleName = $rootScope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
-			}
-			return jobModuleName.name;
-		}
-		self.getJobModule = getJobModule;
+
 		function getJobModulePriority(participant) {
 			var jobModulePriority = { detailValue: "" };
 			if (participant.participantDetails != undefined) {

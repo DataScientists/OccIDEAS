@@ -717,7 +717,7 @@
             var jobModuleName = { name: "" };
             var surveyLink = getSurveyLink(participant);
             if (surveyLink != undefined) {
-                jobModuleName = $rootScope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
+                jobModuleName = $scope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
             }
             return jobModuleName.name;
         }
@@ -829,9 +829,20 @@
 			'UnExposed'];
         $scope.qualtricsSurveyLinks = [
 			{ name: 'NONO', surveyLink: 'SV_eXo3qHX2ImA3ew6' },
+			{ name: 'ASMM', surveyLink: 'SV_0VP4BSv9Dm5CBdc' },
+			{ name: 'AREM', surveyLink: 'SV_0VP4BSv9Dm5CBdd' },
+			{ name: 'ANEC', surveyLink: 'SV_0VP4BSv9Dm5CBde' },
+			{ name: 'AUTO', surveyLink: 'SV_0VP4BSv9Dm5CBdf' },
+			{ name: 'CEMT', surveyLink: 'SV_0VP4BSv9Dm5CBdg' },
+			{ name: 'FURN', surveyLink: 'SV_0VP4BSv9Dm5CBdh' },
+			{ name: 'INSU', surveyLink: 'SV_0VP4BSv9Dm5CBdi' },
 			{ name: 'LAND', surveyLink: 'SV_8u1ypPnvbsP34iy' },
+			{ name: 'TEXT', surveyLink: 'SV_0VP4BSv9Dm5CBdj' },
+			{ name: 'TIPW', surveyLink: 'SV_0VP4BSv9Dm5CBdk' },
 			{ name: 'TRAD', surveyLink: 'SV_bPZBJn5TRD36RvM' },
-			{ name: 'AsMM', surveyLink: 'SV_0VP4BSv9Dm5CBdc' },
+			{ name: 'WATE', surveyLink: 'SV_0VP4BSv9Dm5CBdl' },
+			{ name: 'JEWL', surveyLink: 'SV_0VP4BSv9Dm5CBdm' },
+			{ name: 'LAUN', surveyLink: 'SV_0VP4BSv9Dm5CBdn' },
 			{ name: 'UnExposed', surveyLink: '' }
 		];
 	}

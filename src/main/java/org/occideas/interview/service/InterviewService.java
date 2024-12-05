@@ -65,6 +65,8 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   void createTestingAddresses();
 
+  void createTestingOccupationalHistories();
+
   List<Interview> listAssessmentsForNotes(String[] filterModule);
 
   List<String> getNoteTypes();
