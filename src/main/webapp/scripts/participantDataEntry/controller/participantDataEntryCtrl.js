@@ -760,22 +760,19 @@
             }
         }
 
-        self.showParticipantDetails = true; // Initial state: show history
 
         self.hideShowParticipantDetails = function() {
-          self.showParticipantDetails = !self.showParticipantDetails;
+          $scope.showParticipantDetails = !$scope.showParticipantDetails;
         };
 
-        self.showResidentialHistory = true; // Initial state: show history
 
         self.hideShowResidentialHistory = function() {
-          self.showResidentialHistory = !self.showResidentialHistory;
+          $scope.showResidentialHistory = !$scope.showResidentialHistory;
         };
 
-        self.showOccupationalHistory = true; // Initial state: show history
 
         self.hideShowOccupationalHistory = function() {
-          self.showOccupationalHistory = !self.showOccupationalHistory;
+          $scope.showOccupationalHistory = !$scope.showOccupationalHistory;
         };
         function removeObjectsWithNameStarting(arr, prefix) {
           return arr.filter(obj => !obj.detailName.startsWith(prefix));
