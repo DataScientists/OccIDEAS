@@ -908,9 +908,7 @@
 		}
 		self.updateParticipantStatus = updateParticipantStatus;
 
-        $scope.showResidentialHistory = true; // Initial state: show history
-        $scope.showParticipantDetails = true; // Initial state: show history
-        $scope.showOccupationalHistory = true; // Initial state: show history
+        
 
 	}
 })();

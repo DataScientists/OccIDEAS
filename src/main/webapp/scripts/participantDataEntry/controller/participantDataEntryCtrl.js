@@ -762,18 +762,28 @@
 
 
         self.hideShowParticipantDetails = function() {
-          $scope.showParticipantDetails = !$scope.showParticipantDetails;
+          $rootScope.showParticipantDetails = !$rootScope.showParticipantDetails;
         };
 
 
         self.hideShowResidentialHistory = function() {
-          $scope.showResidentialHistory = !$scope.showResidentialHistory;
+          $rootScope.showResidentialHistory = !$rootScope.showResidentialHistory;
         };
 
 
         self.hideShowOccupationalHistory = function() {
-          $scope.showOccupationalHistory = !$scope.showOccupationalHistory;
+          $rootScope.showOccupationalHistory = !$rootScope.showOccupationalHistory;
         };
+		if($rootScope.showResidentialHistory == undefined){
+			$rootScope.showResidentialHistory = true; 
+		}
+		if($rootScope.showParticipantDetails == undefined){
+			$rootScope.showParticipantDetails = true; 
+		}
+		if($rootScope.showOccupationalHistory == undefined){
+			$rootScope.showOccupationalHistory = true; 
+		}
+		
         function removeObjectsWithNameStarting(arr, prefix) {
           return arr.filter(obj => !obj.detailName.startsWith(prefix));
         }

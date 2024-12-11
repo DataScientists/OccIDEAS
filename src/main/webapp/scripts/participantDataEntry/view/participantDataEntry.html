@@ -94,7 +94,7 @@
 			</button>
 		</legend>
 		<!-- Data Entry View -->
-		<table style="width: 100%" permission="['ROLE_DATAENTRY']" ng-if="vm.showOccupationalHistory">
+		<table style="width: 100%" permission="['ROLE_DATAENTRY']" ng-if="showOccupationalHistory">
 			<tbody>
 
 			<tr ng-repeat="participant in vm.otherParticipantJobs"
@@ -118,7 +118,7 @@
 
 		<hr/>
 		<!-- Allocator View -->
-		<table style="width: 100%" permission="['ROLE_ALLOCATOR']" ng-if="vm.showOccupationalHistory">
+		<table style="width: 100%" permission="['ROLE_ALLOCATOR']" ng-if="showOccupationalHistory">
 			<tbody>
 
 			<tr ng-repeat="participant in vm.otherParticipantJobs"
@@ -159,7 +159,7 @@
 			</tbody>
 		</table>
 
-		<div permission="['ROLE_ALLOCATOR']" ng-if="vm.showOccupationalHistory">
+		<div permission="['ROLE_ALLOCATOR']" ng-if="showOccupationalHistory">
 			<button class="btn btn-default btn-sm"
 					ng-click="vm.saveParticipantMappings()">
 				<span>Update Job Allocations</span>
@@ -168,8 +168,8 @@
 
 		<hr/>
 		<!-- Interviewer View -->
-
-		<table style="width: 100%" permission="['ROLE_INTERVIEWERA']" ng-if="vm.showOccupationalHistory">
+		
+		<table style="width: 100%" permission="['ROLE_INTERVIEWERA']" ng-if="showOccupationalHistory">
 			<tbody ng-if="$first" ng-repeat="participant in vm.otherParticipantJobs">
 			<tr>
 				<td colspan="10" align="center">
