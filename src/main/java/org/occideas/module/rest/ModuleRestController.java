@@ -102,6 +102,26 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
                                                   @QueryParam("filter") boolean filterStudy) throws IOException {
         try {
             service.manualBuildQSF(id, filterStudy);
+            //hack for entering all modules
+        //    ArrayList<Long> allJobModuleIds = new ArrayList<Long>();
+        //    allJobModuleIds.add(id);
+          /*  allJobModuleIds.add(Long.valueOf(75434));
+            allJobModuleIds.add(Long.valueOf(75433));
+            allJobModuleIds.add(Long.valueOf(75432));
+            allJobModuleIds.add(Long.valueOf(75443));
+            allJobModuleIds.add(Long.valueOf(75441));
+            allJobModuleIds.add(Long.valueOf(75440));
+            allJobModuleIds.add(Long.valueOf(75816));
+            allJobModuleIds.add(Long.valueOf(75811));
+            allJobModuleIds.add(Long.valueOf(75438));
+            allJobModuleIds.add(Long.valueOf(75437));
+            allJobModuleIds.add(Long.valueOf(75436));
+            allJobModuleIds.add(Long.valueOf(75435));*/
+       //     allJobModuleIds.add(Long.valueOf(75439));
+        //    allJobModuleIds.add(Long.valueOf(75442));
+      //      for( Long moduleId: allJobModuleIds){
+      //          service.manualBuildQSF(moduleId, filterStudy);
+      //      }
             return Response.ok().build();
         } catch (Throwable e) {
             e.printStackTrace();

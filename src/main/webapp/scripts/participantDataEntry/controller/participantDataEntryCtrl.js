@@ -826,20 +826,20 @@
 			'UnExposed'];
         $scope.qualtricsSurveyLinks = [
 			{ name: 'NONO', surveyLink: 'SV_eXo3qHX2ImA3ew6' },
-			{ name: 'ASMM', surveyLink: 'SV_0VP4BSv9Dm5CBdc' },
-			{ name: 'AREM', surveyLink: 'SV_0VP4BSv9Dm5CBdd' },
-			{ name: 'ANEC', surveyLink: 'SV_0VP4BSv9Dm5CBde' },
-			{ name: 'AUTO', surveyLink: 'SV_0VP4BSv9Dm5CBdf' },
-			{ name: 'CEMT', surveyLink: 'SV_0VP4BSv9Dm5CBdg' },
-			{ name: 'FURN', surveyLink: 'SV_0VP4BSv9Dm5CBdh' },
-			{ name: 'INSU', surveyLink: 'SV_0VP4BSv9Dm5CBdi' },
+			{ name: 'ASMM', surveyLink: 'SV_ag70P403slO7TAq' },
+			{ name: 'AREM', surveyLink: 'SV_3Od2wz0m3yae1Aa' },
+			{ name: 'ANEC', surveyLink: 'SV_37YKkJ74ay8zank' },
+			{ name: 'AUTO', surveyLink: 'SV_bPFthxTUZNDLQ2i' },
+			{ name: 'CEMT', surveyLink: 'SV_d07maUaDKeorwcC' },
+			{ name: 'FURN', surveyLink: 'SV_6oicogSLDw0k7Qy' },
+			{ name: 'INSU', surveyLink: 'SV_3Kj9ChYCAb4dfbo' },
 			{ name: 'LAND', surveyLink: 'SV_8u1ypPnvbsP34iy' },
-			{ name: 'TEXT', surveyLink: 'SV_0VP4BSv9Dm5CBdj' },
-			{ name: 'TIPW', surveyLink: 'SV_0VP4BSv9Dm5CBdk' },
+			{ name: 'TEXT', surveyLink: 'SV_dil1gEkXYAGZWV8' },
+			{ name: 'TIPW', surveyLink: 'SV_9Xec2Rm2z6ItV78' },
 			{ name: 'TRAD', surveyLink: 'SV_bPZBJn5TRD36RvM' },
-			{ name: 'WATE', surveyLink: 'SV_0VP4BSv9Dm5CBdl' },
-			{ name: 'JEWL', surveyLink: 'SV_0VP4BSv9Dm5CBdm' },
-			{ name: 'LAUN', surveyLink: 'SV_0VP4BSv9Dm5CBdn' },
+			{ name: 'WATE', surveyLink: 'SV_7VhkvA4exkT47X0' },
+			{ name: 'JEWL', surveyLink: 'SV_eSgsw77WYSqsSDI' },
+			{ name: 'LAUN', surveyLink: 'SV_5aJl9yY5K90kLz0' },
 			{ name: 'UnExposed', surveyLink: '' }
 		];
 	}
