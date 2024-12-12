@@ -52,13 +52,18 @@ public class QSFInterviewReplicationService {
     }
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public long replicateQualtricsInterviewIntoOccideas(String respondentId, String moduleName,
-			Map<String, ResponseSummary> responseSummary) {
+	public long replicateQualtricsInterviewIntoOccideas(String respondentId, String reference,
+                                                        String moduleName, Map<String, ResponseSummary> responseSummary) {
 		
 		List<JobModule> modules = moduleDao.findByName(moduleName);
 		ResponseSummary rs = responseSummary.get("AMRID");
-		
-		Participant participant = participantDao.getByReferenceNumber(rs.getAnswer());
+        Participant participant = new Participant();
+		if(rs != null){
+            participant = participantDao.getByReferenceNumber(rs.getAnswer());
+        }else{
+            participant = participantDao.getByReferenceNumber(reference);
+        }
+
         long idInterview = -1;
         if(participant!=null){
             log.info("Participant found - {}", participant.getIdParticipant());

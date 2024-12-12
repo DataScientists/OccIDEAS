@@ -37,7 +37,7 @@ public class QSFResponseProcessor {
                 SurveyResponse surveyResponse = null;
                 try {
                     surveyResponse = translateQSFResponse(unprocessedSurvey.getResponse());
-                    interviewService.updateQualtricsResults(iqsfService.processResponse(unprocessedSurvey.getSurveyId(), surveyResponse.getResult()));
+                    interviewService.updateQualtricsResults(iqsfService.processResponse(unprocessedSurvey.getSurveyId(),unprocessedSurvey.getTopic(), surveyResponse.getResult()));
                     unprocessedSurvey.setProcessed(true);
                 } catch (Throwable e) {
                     log.error(e.getMessage(), e);

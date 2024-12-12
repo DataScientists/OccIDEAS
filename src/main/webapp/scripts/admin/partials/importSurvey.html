@@ -20,6 +20,8 @@
                                     <label for="surveyId">Survey Id</label>
                                     <input maxlength="100" name="surveyId" id="surveyId"
                                            ng-model="vm.surveyResponse.surveyId">
+                                    <input maxlength="100" name="reference" id="reference"
+                                           ng-model="vm.reference">
                                 </md-input-container>
                             </div>
                             <div layout-gt-sm="row">
@@ -28,7 +30,7 @@
                                                ng-disabled="vm.importSurveyDisabled">Cancel
                                     </md-button>
                                     <md-button class="md-raised"
-                                               ng-click="vm.importSurveyResponses(vm.surveyResponse.surveyId)"
+                                               ng-click="vm.importSurveyResponses(vm.surveyResponse.surveyId,vm.reference)"
                                                type="submit" ng-disabled="vm.importSurveyDisabled">Submit
                                     </md-button>
                                 </md-dialog-actions>

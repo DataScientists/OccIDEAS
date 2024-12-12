@@ -28,7 +28,7 @@ public interface IQSFService {
     @Async("threadPoolTaskExecutor")
     void exportResponseQSF(Long id) throws InterruptedException;
 
-    void importResponseQSF(String surveyId) throws InterruptedException, IOException;
+    void importResponseQSF(String surveyId, String reference) throws InterruptedException, IOException;
 
     SurveyResponses exportQSFResponses(long idNode) throws InterruptedException;
 
@@ -46,7 +46,7 @@ public interface IQSFService {
 
     void processResponse(NodeVO nodeVO, Response response);
 
-    long processResponse(String surveyId, Response response);
+    long processResponse(String surveyId, String reference,Response response);
 
     String getWorkshift(Interview interview);
 

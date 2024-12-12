@@ -49,9 +49,9 @@ public class AdminRestController {
 
     @GET
     @Path(value = "/qsf/sync/{surveyId}")
-    public Response syncQSFSurveyResponse(@PathParam("surveyId") String surveyId) {
+    public Response syncQSFSurveyResponse(@PathParam("surveyId") String surveyId,@PathParam("reference") String reference) {
         try {
-            iqsfService.importResponseQSF(surveyId);
+            iqsfService.importResponseQSF(surveyId,reference);
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

@@ -37,8 +37,8 @@
       return request.then(handleSuccess, handleError);
     };
 
-    var importSurveyResponse = (surveyId) => {
-      var restSaveUrl = adminEndpoint + '/qsf/sync/' + surveyId;
+    var importSurveyResponse = (surveyId,reference) => {
+      var restSaveUrl = adminEndpoint + '/qsf/sync/' + surveyId+'&'+reference;
       var request = $http({
         method: 'GET',
         url: restSaveUrl

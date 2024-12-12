@@ -31,6 +31,7 @@
       self.importSurveyDisabled = false;
       self.importSurveyProgress = false;
       self.surveyResponse = {};
+      self.reference = '040404';
       $mdDialog.show({
         scope: $scope,
         preserveScope: true,
@@ -39,7 +40,7 @@
       });
     };
 
-    self.importSurveyResponses = (surveyId) => {
+    self.importSurveyResponses = (surveyId,reference) => {
       if (!surveyId) {
         $ngToast.create({
           className: 'danger',
@@ -53,7 +54,7 @@
 
       self.importSurveyDisabled = true;
       self.importSurveyProgress = true;
-      AdminService.importSurveyResponse(surveyId).then(function (response) {
+      AdminService.importSurveyResponse(surveyId,reference).then(function (response) {
         if (response.status == '200') {
           $ngToast.create({
             className: 'success',

@@ -201,7 +201,7 @@ public class QSFServiceImpl implements IQSFService {
     }
 
     @Override
-    public void importResponseQSF(String surveyId) throws InterruptedException, IOException {
+    public void importResponseQSF(String surveyId, String reference) throws InterruptedException, IOException {
         SurveyExportRequest surveyExportRequest = new SurveyExportRequest();
         surveyExportRequest.setFormat("json");
         javax.ws.rs.core.Response surveyExportResponse = iqsfClient.createExportResponse(surveyId, surveyExportRequest);
@@ -216,7 +216,7 @@ public class QSFServiceImpl implements IQSFService {
                 qualtricsSurvey.setResponseId(response.getResponseId());
                 qualtricsSurvey.setSurveyId(surveyId);
                 qualtricsSurvey.setQualtricsStatus(QualtricsProcessStatus.COMPLETE.name());
-                qualtricsSurvey.setTopic("Manually triggered");
+                qualtricsSurvey.setTopic(reference);
                 qualtricsSurvey.setBrandId("Manually triggered");
                 qualtricsSurvey.setCompletedDate(LocalDateTime.now());
                 try {
@@ -331,7 +331,7 @@ public class QSFServiceImpl implements IQSFService {
     }
 
     @Override
-    public long processResponse(String surveyId, Response response) {
+    public long processResponse(String surveyId, String reference, Response response) {
         javax.ws.rs.core.Response responseSurveyMetadata = iqsfClient.getSurveyMetadata(surveyId);
         SurveyMetadata surveyMetadata = (SurveyMetadata) responseSurveyMetadata.getEntity();
 
@@ -362,7 +362,7 @@ public class QSFServiceImpl implements IQSFService {
         Map<String, Object> labels = response.getLabels();
         Map<String, ResponseSummary> summary = createResponseSummary(responseId, questionBySurveyId, queue, listAgentIds, labels);
 
-        long interviewId = qsfInterviewReplicationService.replicateQualtricsInterviewIntoOccideas(responseId, moduleName, summary);
+        long interviewId = qsfInterviewReplicationService.replicateQualtricsInterviewIntoOccideas(responseId, reference,moduleName, summary);
         if(interviewId != -1){
             Interview interview = interviewDao.get(interviewId);
             autoAssessmentService.syncAutoAssessedRule(listAgentIds, interview);
