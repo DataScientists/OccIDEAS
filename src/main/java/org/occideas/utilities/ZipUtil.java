@@ -1,11 +1,8 @@
 package org.occideas.utilities;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.io.*;
+import java.nio.file.*;
+import java.util.zip.*;
 
 public class ZipUtil {
 
@@ -32,6 +29,29 @@ public class ZipUtil {
         File destFile = new File(destinationDir, zipEntry.getName());
 
         return destFile;
+    }
+    public static void zipFolder(String folderPath,String zipFilePath) throws IOException {
+        Path sourceFolderPath = Paths.get(folderPath);
+        //String zipFilePath = folderPath+".zip";
+
+        try (FileOutputStream fos = new FileOutputStream(zipFilePath);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+            Files.walk(sourceFolderPath)
+                    .filter(path -> !Files.isDirectory(path)) // Only include files, not directories
+                    .forEach(path -> {
+                        String zipEntryName = sourceFolderPath.relativize(path).toString();
+                        try {
+                            zos.putNextEntry(new ZipEntry(zipEntryName));
+                            Files.copy(path, zos);
+                            zos.closeEntry();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
 }
