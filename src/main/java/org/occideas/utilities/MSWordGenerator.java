@@ -196,7 +196,7 @@ public class MSWordGenerator {
   private void createREDCapInstrumentFile(NodeVO vo,String[] listOfIds,String runningPrefix, String moduleLinkRule, Boolean parentIsMulti,File instrumentFile) throws IOException {
     if (listOfIds != null && containsInArray(listOfIds, String.valueOf(vo.getIdNode()))) {
       String redCapRow = new String();
-      //String moduleLinkRule = "";
+
       if (vo.getNodeclass().equalsIgnoreCase("Q")) {
         String nodeCode = vo.getNumber();
         //if(vo.getType().equalsIgnoreCase("Q_linkedmodule") || vo.getType().equalsIgnoreCase("Q_linkedajsm")){
@@ -233,7 +233,8 @@ public class MSWordGenerator {
             runningPrefix += nodeVO.getName().substring(0, 4).toLowerCase();
 
           }
-          createREDCapInstrumentFile(nodeVO, listOfIds, runningPrefix, moduleLinkRule, false,instrumentFile);
+
+          createREDCapInstrumentFile(nodeVO, listOfIds, runningPrefix, moduleLinkRule, parentIsMulti,instrumentFile);
         } else if (vo.getType().equalsIgnoreCase("Q_linkedmodule")) {
           // do nothing for now
         } else {
@@ -259,7 +260,8 @@ public class MSWordGenerator {
           }
           redCapRow += fieldType;
           redCapRow += ",";
-          redCapRow += "\"(" + vo.getNumber() + ") " + vo.getName()+"\"";
+          //redCapRow += "\"(" +runningPrefix + vo.getNumber() + ") " + vo.getName()+"\"";
+          redCapRow += "\"" + vo.getName() + "\"";
           redCapRow += ",\"";
           if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
             for (NodeVO nodes : vo.getChildNodes()) {
@@ -272,12 +274,12 @@ public class MSWordGenerator {
           String[] nodeNumberSplit = vo.getNumber().split("_");
           String last = nodeNumberSplit[nodeNumberSplit.length - 1];
           redCapRow += ",,,,,,";
-          if (!isNumeric(last)) {
-            /// Double debug = Double.parseDouble(last);
-            //      if(debug>9){
-            //      int iDebug = 0;
-            //    iDebug++;
-            //}
+
+          if(last.equalsIgnoreCase("1") && parentIsMulti){
+            String branchRule = transformModuleLinkRule(moduleLinkRule);
+            redCapRow += branchRule;
+            moduleLinkRule = "";
+          } else if (!isNumeric(last)) {
             if (moduleLinkRule.length() > 0) {
               redCapRow += moduleLinkRule;
               moduleLinkRule = "";
@@ -295,11 +297,8 @@ public class MSWordGenerator {
                 branchRule += runningPrefix + "_" + childNumber;
                 branchRule += "'";
               }
-
-
               redCapRow += branchRule;
             }
-
           } else {
             redCapRow += moduleLinkRule;
             moduleLinkRule = "";
@@ -313,12 +312,17 @@ public class MSWordGenerator {
         }
       }
 
+      if(vo.getType().equalsIgnoreCase("F_ajsm")){
+
+      }
       if (vo.getChildNodes() != null && !vo.getChildNodes().isEmpty()) {
         if (vo.getType().equalsIgnoreCase("Q_multiple")) {
           parentIsMulti = true;
         } else {
           if (!vo.getType().equalsIgnoreCase("P_simple")) {
-            parentIsMulti = false;
+            if(!vo.getType().equalsIgnoreCase("F_ajsm")){
+              parentIsMulti = false;
+            }
           }
 
         }
@@ -327,6 +331,20 @@ public class MSWordGenerator {
         }
       }
     }
+  }
+  private String transformModuleLinkRule(String input) {
+    // Check if the input matches the pattern
+    String regex = "\\[(\\w+)]='(\\w+)'";
+    if (input.matches(regex)) {
+      // Extract the first and second strings using regex groups
+      String firstString = input.replaceAll(regex, "$1");
+      String secondString = input.replaceAll(regex, "$2");
+
+      // Build the transformed string
+      return String.format("[%s(%s)]='1'", firstString, secondString);
+    }
+    // Return the input unmodified if it doesn't match the pattern
+    return input;
   }
   private void generateRowForNodes(NodeVO vo, XWPFTable table, int row, String runningPrefix, String moduleLinkRule, Boolean parentIsMulti) {
     XWPFTableRow tablerow = table.createRow();
