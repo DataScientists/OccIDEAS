@@ -69,7 +69,7 @@ public class AdminDao implements IAdminDao {
   @Override
   public void deleteAllParticipants() {
     final Session session = sessionFactory.getCurrentSession();
-    session.createSQLQuery("truncate table Participant_Details").executeUpdate();
+    //session.createSQLQuery("truncate table Participant_Details").executeUpdate();
     session.createSQLQuery("truncate table Participant").executeUpdate();
   }
 }

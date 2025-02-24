@@ -60,4 +60,8 @@ public class AdminService implements IAdminService {
     studyAgentUtil.purgeStudyAgentFiles();
   }
 
+  @Override
+  public void importJSONs() {
+    log.info("importJSONs triggered.");
+  }
 }

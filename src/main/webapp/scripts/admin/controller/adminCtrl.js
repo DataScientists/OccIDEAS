@@ -334,6 +334,25 @@
             clickOutsideToClose: false
         });
     }
+    self.importJSONs = function() {
+           AdminService.importJSONModules().then(function(response) {
+                   if(response.status == '200') {
+                     $ngToast.create({
+                       className: 'success',
+                       content: 'Import JSONs successfully.',
+                       animation: 'slide'
+                     });
+                   } else {
+                     $ngToast.create({
+                       className: 'danger',
+                       content: 'Import JSONs failed, check the logs.',
+                       dismissButton: true,
+                       dismissOnClick: false,
+                       animation: 'slide'
+                     });
+                   }
+                 });
+        }
 
     $scope.purgeParticipants = function() {
       AdminService.purgeParticipants().then(function(response) {

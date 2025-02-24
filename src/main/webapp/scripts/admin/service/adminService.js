@@ -141,6 +141,13 @@
         return response;
       });
     };
+    var importJSONModules = function() {
+          return $http.get(adminEndpoint + '/importJsons', {
+            cache: false
+          }).then(function(response) {
+            return response;
+          });
+        };
 
     var deleteQSFSurveys = function(){
       return $http.get(adminEndpoint + '/deleteQSFSurveys', {
@@ -239,6 +246,7 @@
       createQSFTranslationModule: createQSFTranslationModule,
       importIPSOSResponse: importIPSOSResponse,
       importSurveyResponse: importSurveyResponse,
+      importJSONModules: importJSONModules,
       generateIPSOSJobModuleDataFile: generateIPSOSJobModuleDataFile
     };
   }

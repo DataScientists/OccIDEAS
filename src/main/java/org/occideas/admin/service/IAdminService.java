@@ -10,4 +10,6 @@ public interface IAdminService {
 
   void purgeModule();
 
+  void importJSONs();
+
 }

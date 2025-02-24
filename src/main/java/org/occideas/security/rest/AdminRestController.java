@@ -1,9 +1,12 @@
 package org.occideas.security.rest;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.occideas.admin.service.IAdminService;
 import org.occideas.admin.service.IDbConnectService;
 import org.occideas.entity.NodePlain;
 import org.occideas.ipsos.service.IIPSOSService;
+import org.occideas.module.service.ModuleService;
 import org.occideas.participant.service.ParticipantService;
 import org.occideas.qsf.IQSFClient;
 import org.occideas.qsf.QSFClient;
@@ -19,7 +22,7 @@ import org.springframework.http.MediaType;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 @Path("/admin")
@@ -39,6 +42,9 @@ public class AdminRestController {
 
     @Autowired
     private ParticipantService participantService;
+
+    @Autowired
+    private ModuleService moduleService;
 
     @Autowired
     private IVoxcoService iVoxcoService;
@@ -64,6 +70,7 @@ public class AdminRestController {
     public Response purgeParticipants() {
         try {
             adminService.purgeParticipants();
+            importJsons();
         } catch (Throwable e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
@@ -376,4 +383,57 @@ public class AdminRestController {
     }
 
 
+    private Response importJsons() {
+        ModuleReportVO report = new ModuleReportVO();
+        try {
+            //Map<String, List<FormDataBodyPart>> fieldsByName = multiPart.getFields();
+
+            //for (List<FormDataBodyPart> fields : fieldsByName.values()) {
+            //    for (FormDataBodyPart field : fields) {
+            File file = new File("/opt/data/importJSONs/aNAB.json");
+            InputStream in = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            NodeRuleHolder idNodeHolder = null;
+            String line = reader.readLine();
+            ModuleVO[] modules = mapper.readValue(line, ModuleVO[].class);
+            // only expecting one module
+            ModuleVO vo = modules[0];
+            ModuleCopyVO copyVo = new ModuleCopyVO();
+            copyVo.setVo(vo);
+            copyVo.setFragments(vo.getFragments());
+            copyVo.setIncludeRules(true);
+            copyVo.setName(vo.getName());
+            copyVo.setModules(vo.getModules());
+            // this is for intro module
+            if ("M_IntroModule".equals(vo.getType())) {
+                idNodeHolder = moduleService.copyModuleAutoGenerateModule(copyVo, report);
+                moduleService.updateMissingLinks(copyVo.getVo());
+                for (ModuleVO moduleVO : copyVo.getModules()) {
+                    moduleService.updateMissingLinks(moduleVO);
+                }
+            } else {
+                // this is for fragment
+                idNodeHolder = moduleService.copyModuleAutoGenerateFragments(copyVo, report);
+                moduleService.updateMissingLinks(copyVo.getVo());
+                for (FragmentVO fragmentVO : copyVo.getFragments()) {
+                    moduleService.updateMissingLinks(fragmentVO);
+                }
+            }
+            // missing rules report
+            moduleService.copyRulesValidateAgent(idNodeHolder, report);
+            moduleService.addNodeRulesValidateAgent(idNodeHolder, report);
+            // adding module vo to the report
+            report.setVo(vo);
+
+            //    }
+            //}
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+        }
+
+        return Response.ok(report).build();
+    }
 }
