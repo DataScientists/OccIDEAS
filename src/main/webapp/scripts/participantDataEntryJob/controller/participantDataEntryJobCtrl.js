@@ -44,7 +44,7 @@
         newParticipantAsJob = function(){
             var participant = {
                 reference: $scope.referenceNumber,
-                status: 1,
+                status: 0,
                 interviews: []
             };
             ParticipantsService.createParticipant(participant).then(function(response) {

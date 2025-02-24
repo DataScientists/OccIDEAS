@@ -75,6 +75,9 @@ public abstract class NodeVO {
   }
 
   public String getNumber() {
+    if(number!=null){
+      number = number.toLowerCase();
+    }
     return number;
   }
 

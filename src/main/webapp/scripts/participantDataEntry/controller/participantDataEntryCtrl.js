@@ -331,7 +331,30 @@
                 }
             }
         }
+        self.cleanDetailName = function(detailName) {
+            return detailName.replace(/^R\d+-/, '');
+        };
+        self.extractAfterHyphen = function(inputString) {
+            // Ensure the input follows the pattern: 5 digits followed by a hyphen
+            if (/^\d{5}-/.test(inputString)) {
+                return inputString.split('-')[1] || inputString;
+            }
+            return inputString; // Return the original string if the format doesn't match
+        };
+        function updateParticipantStatus(event, participant) {
+            if(participant.reference.includes("-P0")){
+                participant.status = 6;
+            }else{
+                participant.status = 1;
+            }
 
+            ParticipantsService.save(participant).then(function(response) {
+                if (response.status === 200) {
+                    console.log('it works');
+                }
+            });
+        }
+        self.updateParticipantStatus = updateParticipantStatus;
         self.validateDate = function(detail) {
             if (detail.detailName.includes('(M/YYYY)')) {
                 const regex = /^(1[0-2]|[1-9])\/\d{4}$/;
@@ -488,13 +511,13 @@
                                 }
                                 var noteText = "";
                                 var noteType = "";
-                                if(data.mappedTo.startsWith('SameAs')){
+
+                                noteText = findQualtricsSurveyLink(data.mappedTo);
+                                if(noteText === 'SameAs'){
                                     noteText = data.mappedTo;
-                                    noteType = 'AMRSameAs';
-                                }else{
-                                    noteText = findQualtricsSurveyLink(data.mappedTo);
-                                    noteType = 'AMRSurveyLink';
                                 }
+                                noteType = 'AMRSurveyLink';
+
                                 interview.notes.push({
                                     interviewId: interview.interviewId,
                                     text: noteText,
@@ -508,7 +531,14 @@
                                 });
 
                                 var ques = self.introModule.nodes[0];
-                                var actualAnswer = ques.nodes.find(possibleAnswer => possibleAnswer.name === data.mappedTo);
+                                var mappedToAnswer = data.mappedTo;
+                                if(data.mappedTo.startsWith("SameAs-")){
+                                    mappedToAnswer = 'SameAs';
+                                }else{
+                                    mappedToAnswer = data.mappedTo;
+                                }
+
+                                var actualAnswer = ques.nodes.find(possibleAnswer => possibleAnswer.name === mappedToAnswer);
                                 //var actualLinkQuestion = actualAnswer.nodes.find(linkQuestion => LinkQuestion.name === data.mappedTo);
                                 var interviewQuestion = interview.questionHistory[1];
                                 var interviewQuestionsSize = interview.questionHistory.length;
@@ -567,7 +597,14 @@
                                 });
                             }
                         });
-                        data.status = self.participantStatus;
+                        if(data.mappedTo === 'UnExposed'){
+                            data.status = 3;
+                        }else if(data.mappedTo.startsWith('SameAs')){
+                            data.status = 3;
+                        }else{
+                            data.status = 0;
+                        }
+
                         ParticipantsService.save(data).then(function(response) {
                             if (response.status === 200) {
                                 console.log('it works');
@@ -716,7 +753,9 @@
         function getJobModule(participant) {
             var jobModuleName = { name: "" };
             var surveyLink = getSurveyLink(participant);
-            if (surveyLink != undefined) {
+            if(surveyLink.text.startsWith('SameAs')){
+                jobModuleName.name = surveyLink.text;
+            }else if (surveyLink != undefined) {
                 jobModuleName = $scope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
             }
             return jobModuleName.name;
@@ -747,6 +786,9 @@
         }
         function findQualtricsSurveyLink(moduleName) {
             var qualtricsSurveyLink = { surveyLink: "" };
+            if(moduleName.startsWith("SameAs-")){
+                moduleName = "SameAs";
+            }
             if (moduleName != undefined) {
                 qualtricsSurveyLink = $scope.qualtricsSurveyLinks.find(qualtricsSurveyLink => qualtricsSurveyLink.name === moduleName);
 
@@ -795,7 +837,13 @@
 
             return result;
         }
-
+        $scope.startsWithSameAs = function(mappedTo) {
+            var retValue = false;
+            if(mappedTo){
+                retValue = mappedTo.startsWith('SameAs');
+            }
+            return retValue;
+        };
 		$scope.selectText = function(event) {
             event.target.select();
         };
@@ -814,6 +862,7 @@
                 {text: 'To be updated', value: 1},
                 {text: 'To be reviewed', value: 2},
                 {text: 'Ready for interview', value: 3},
+                {text: 'Interviews in progress', value: 6},
                 {text: 'Interviews complete', value: 4},
                 {text: 'No further contact please', value: 5}
             ];
@@ -832,7 +881,7 @@
 			'WATE',
 			'JEWL',
 			'LAUN',
-
+            'SameAs',
 			'UnExposed'];
         $scope.qualtricsSurveyLinks = [
 			{ name: 'NONO', surveyLink: 'SV_eXo3qHX2ImA3ew6' },
@@ -850,7 +899,8 @@
 			{ name: 'WATE', surveyLink: 'SV_7VhkvA4exkT47X0' },
 			{ name: 'JEWL', surveyLink: 'SV_eSgsw77WYSqsSDI' },
 			{ name: 'LAUN', surveyLink: 'SV_5aJl9yY5K90kLz0' },
-			{ name: 'UnExposed', surveyLink: '' }
+			{ name: 'SameAs', surveyLink: 'SameAs' },
+			{ name: 'UnExposed', surveyLink: 'UnExposed' }
 		];
 	}
 })();

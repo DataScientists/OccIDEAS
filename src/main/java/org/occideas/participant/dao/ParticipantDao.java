@@ -1,7 +1,9 @@
 package org.occideas.participant.dao;
 
 import java.math.BigInteger;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,10 +18,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
-import org.occideas.entity.AssessmentIntMod;
-import org.occideas.entity.Interview;
-import org.occideas.entity.Participant;
-import org.occideas.entity.ParticipantIntMod;
+import org.occideas.entity.*;
 import org.occideas.utilities.PageUtil;
 import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.ParticipantVO;
@@ -112,9 +111,29 @@ public class ParticipantDao implements IParticipantDao {
     Query<Participant> query = sessionFactory.getCurrentSession().createQuery(criteria);
     
     if (!query.getResultList().isEmpty()) {
-    	return  query.getResultList();
+
+      List<Participant> retValue = sortParticipantsByPriority(query.getResultList());
+      return retValue;
     }   
     return null;   
+  }
+
+  private List<Participant> sortParticipantsByPriority(List<Participant> participants) {
+    return participants.stream()
+            .sorted(Comparator.comparingInt(participant -> {
+              String priorityValue = participant.getParticipantDetails().stream()
+                      .filter(detail -> "Priority".equals(detail.getDetailName()))
+                      .map(ParticipantDetails::getDetailValue)
+                      .findFirst()
+                      .orElse(null);
+
+              try {
+                return priorityValue != null ? Integer.parseInt(priorityValue) : Integer.MAX_VALUE;
+              } catch (NumberFormatException e) {
+                return Integer.MAX_VALUE; // Non-integer values go to the end
+              }
+            }))
+            .collect(Collectors.toList());
   }
 
   @Override

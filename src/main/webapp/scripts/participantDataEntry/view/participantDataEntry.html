@@ -49,7 +49,7 @@
 				</tr>
 				<tr>
 					<td><label for="participantStatus">Participant Status:</label></td>
-					<td>
+					<td>{{participant.status}}
 						<select id="participantStatus" ng-model="participant.status" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
 						</select>
 					</td>
@@ -79,7 +79,7 @@
 			<tr ng-repeat="(group, details) in vm.groupedAddresses">
 				<td><label>{{group}}</label></td>
 
-				<td ng-repeat="detail in details">{{detail.detailName}}:<label>{{detail.detailValue}}</label></td>
+				<td ng-repeat="detail in details">{{ vm.cleanDetailName(detail.detailName) }}:<label>{{detail.detailValue}}</label></td>
 
 			</tr>
 			</tbody>
@@ -88,25 +88,25 @@
 	<div></div>
 	<hr/>
 	<fieldset>
-		<legend>Occupational History<span permission="['ROLE_INTERVIEWERA']"> with Interview Links</span>:
+		<legend>Occupational History</span>:
 			<button class="btn btn-default btn-xs" ng-click="vm.hideShowOccupationalHistory()"								>
 				<span class="glyphicon" ng-class="{'glyphicon-eye-open': showOccupationalHistory, 'glyphicon-eye-close': !showOccupationalHistory}"></span>
 			</button>
 		</legend>
 		<!-- Data Entry View -->
-		<table style="width: 100%" permission="['ROLE_DATAENTRY']" ng-if="showOccupationalHistory">
+		<table style="width: 100%" permission="['ROLE_INTERVIEWERA','ROLE_DATAENTRY']" ng-if="showOccupationalHistory">
 			<tbody>
 
 			<tr ng-repeat="participant in vm.otherParticipantJobs"
 				ng-if="!$first">
-				<td>{{participant.reference}}</td>
+				<td>{{ vm.extractAfterHyphen(participant.reference) }}</td>
 				<td></td>
 
 				<td ng-repeat="detail in participant.participantDetails">
 
 
-					<span ng-if="(detail.detailName != 'Priority') && (detail.detailName != 'ANZSCO')">
-						{{detail.detailName}}:
+					<span ng-if="(detail.detailName != 'ANZSCO')">
+						{{ vm.extractAfterHyphen(detail.detailName) }}:
 						<label>{{detail.detailValue}}</label>
 					</span>
 
@@ -123,7 +123,7 @@
 
 			<tr ng-repeat="participant in vm.otherParticipantJobs"
 				ng-if="!$first">
-				<td>{{participant.reference}}</td>
+				<td>{{ vm.extractAfterHyphen(participant.reference) }}</td>
 				<td></td>
 
 				<td ng-repeat="detail in participant.participantDetails">
@@ -165,31 +165,26 @@
 				<span>Update Job Allocations</span>
 			</button>
 		</div>
-
 		<hr/>
+	</fieldset>
+	<fieldset permission="['ROLE_INTERVIEWERA']">
+		<legend>Interview Links:</legend>
 		<!-- Interviewer View -->
-		
-		<table style="width: 100%" permission="['ROLE_INTERVIEWERA']" ng-if="showOccupationalHistory">
+		<div ng-if="participant.status < 3" >Check Participant Status - This participant is *not* ready for interviews.</div>
+		<table ng-if="participant.status >= 3" style="width: 100%" permission="['ROLE_INTERVIEWERA']" >
 			<tbody ng-if="$first" ng-repeat="participant in vm.otherParticipantJobs">
+			<!-- <tr><td colspan="10" >{{participant.status}}</td></tr> -->
 			<tr>
-				<td colspan="10" align="center">
+				<td ng-if="participant.status === 3" ><img src="/img/circle_gray.png" alt="Incomplete (no data saved)"></td>
+				<td ng-if="participant.status === 6" ><img src="/img/circle_yellow.png" alt="Partial Complete"></td>
+				<td ng-if="participant.status === 4" ><img src="/img/circle_green.png" alt="Complete and synchronized"></td>
+				<td colspan="10" >
 					<span >
 						<a href="{{participant.fullQualtricsLink}}"
 						   ng-click="vm.updateParticipantStatus($event,participant)"
 						   target=”{{participant.idParticipant}}”
-						   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
+						   style="color: #1a0dab; font-size: larger;">{{participant.mappedTo}} - {{participant.interviewDetails}}</a>
 						</span>
-				</td>
-			</tr>
-			<tr>
-				<td><label>{{participant.reference}}</label></td>
-				<td ng-repeat="detail in participant.participantDetails" colspan="4">
-					<span ng-if="detail.detailName === 'Priority'">
-						{{detail.detailName}}:
-						<label>{{detail.detailValue}}</label>
-						:{{participant.mappedTo}}
-
-					</span>
 				</td>
 			</tr>
 			<tr>
@@ -197,35 +192,65 @@
 			</tr>
 			</tbody>
 			<tbody ng-if="!$first" ng-repeat="participant in vm.otherParticipantJobs">
+<!--			<tr><td colspan="10" >mapped:{{participant.mappedTo}}:{{participant.idParticipant}}</td></tr>-->
 			<tr>
-				<td colspan="10" align="center">
+				<td ng-if="participant.status === 0"><img src="/img/circle_gray.png" alt="Incomplete (no data saved)"></td>
+				<td ng-if="participant.status === 1"><img src="/img/circle_yellow.png" alt="Partial Complete"></td>
+				<td ng-if="participant.status === 2"><img src="/img/circle_red.png"  alt="Complete but not synchronized"></td>
+				<td ng-if="participant.status === 3"><img src="/img/circle_green.png" alt="Complete and synchronized"></td>
+				<td colspan="10" >
 					<span ng-if="participant.mappedTo != 'UnExposed'">
+						<span ng-if="participant.mappedTo != ''">
+							<span ng-if="!participant.mappedTo.startsWith('SameAs')">
 						<a href="{{participant.fullQualtricsLink}}"
 						   ng-click="vm.updateParticipantStatus($event,participant)"
 						   target=”{{participant.idParticipant}}”
-						   style="color: #1a0dab; font-size: larger;">{{participant.interviewDetails}}</a>
-					</span>
+						   style="color: #1a0dab; font-size: larger;">{{ vm.extractAfterHyphen(participant.reference) }} - {{participant.mappedTo}} - {{participant.interviewDetails}}</a>
+					</span></span></span>
 					<span ng-if="participant.mappedTo === 'UnExposed'">
-						<span style="color: #1a0dab; font-size: larger;">No Interview Required</span>
+						<span style="color: #1a0dab; font-size: larger;">{{ vm.extractAfterHyphen(participant.reference) }} - {{participant.mappedTo}} - No Interview Required</span>
 					</span>
-				</td>
-			</tr>
-			<tr>
-				<td><label>{{participant.reference}}</label></td>
-				<td ng-repeat="detail in participant.participantDetails">
-					{{detail.detailName}}:
-					<label>{{detail.detailValue}}</label>
-					<span ng-if="detail.detailName === 'Priority'">
-						:{{participant.mappedTo}}
-
+					<span ng-if="participant.mappedTo.startsWith('SameAs')">
+						<span style="color: #1a0dab; font-size: larger;">{{ vm.extractAfterHyphen(participant.reference) }} - {{participant.mappedTo}} - No Interview Required</span>
 					</span>
 				</td>
 			</tr>
 			<tr>
 				<td colspan="10"><hr></td>
 			</tr>
+
 			</tbody>
+
 		</table>
+
+			<div style="background-color:#eee;border:1px solid #ccc;">
+				<table id="status-icon-legend">
+					<tbody>
+					<tr>
+						<td colspan="4" style="font-weight:bold;">Legend for status icons:</td>
+					</tr>
+					<tr>
+						<td style="">
+							<img src="/img/circle_gray.png" alt="Incomplete (no data saved)">
+							Incomplete (no data saved)<a href="javascript:;" class="help" title="Tell me more" onclick="simpleDialog('The gray circle icon denotes a Form Status of \'Incomplete\' (0), in which no data has been entered on that  instrument. This is different from the red status icon, which denotes an \'Incomplete\' status but has had data entered on it.  SPECIAL NOTE: The gray icon status excludes calculated field values, which can be automatically calculated  when a user is on another instrument and saved in the background by REDCap. So if the instrument does contain some calculated fields  that get values automatically calculated and saved for them, the status icon will not change to red until you navigate into that  instrument and click the Save button or until you perform a data import of values into that instrument.','Incomplete (no data saved)');">?</a>
+						</td>
+						<td class="nowrap" style="padding-right:5px;">
+							<img src="/img/circle_yellow.png" alt="Partial Complete">
+							Partial Complete
+						</td>
+						<td style="padding-right:5px;">
+							<img src="/img/circle_red.png" alt="Complete but not synchronized">
+							Complete but not synchronized
+						</td>
+						<td class="nowrap" style="padding-right:5px;">
+							<img src="/img/circle_green.png" alt="Complete">
+							Complete and synchronized
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+
 
 	</fieldset>
 	<hr/>

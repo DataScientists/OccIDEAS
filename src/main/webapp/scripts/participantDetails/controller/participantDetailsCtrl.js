@@ -731,13 +731,10 @@
 								}
 								var noteText = "";
 								var noteType = "";
-								if(data.mappedTo.startsWith('SameAs')){
-								    noteText = data.mappedTo;
-								    noteType = 'AMRSameAs';
-								}else{
-								    noteText = findQualtricsSurveyLink(data.mappedTo);
-								    noteType = 'AMRSurveyLink';
-								}
+
+								noteText = findQualtricsSurveyLink(data.mappedTo);
+								noteType = 'AMRSurveyLink';
+
 								interview.notes.push({
 									interviewId: interview.interviewId,
 									text: noteText,

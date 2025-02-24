@@ -719,4 +719,8 @@ public class ModuleServiceImpl implements ModuleService {
 		return vo;
 	}
 
+	@Override
+	public void importJSONs() {
+		//service
+	}
 }

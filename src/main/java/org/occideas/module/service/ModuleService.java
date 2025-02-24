@@ -40,6 +40,8 @@ public interface ModuleService {
 
 	void setActiveIntroModule(ModuleVO vo);
 
+	void importJSONs();
+
 	NodeVO getModuleFilterStudyAgent(Long id);
 
 	NodeVO getModuleFilterAgent(Long id, Long idAgent);
