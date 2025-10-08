@@ -18,6 +18,7 @@ import org.occideas.vo.*;
 import org.occideas.voxco.service.IVoxcoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -426,7 +427,7 @@ public class ModuleRestController implements BaseRestController<ModuleVO> {
 
     @Path(value = "/importJson")
     @POST
-    public Response importJson(FormDataMultiPart multiPart) {
+    public Response importJson(@RequestParam("file") FormDataMultiPart multiPart) {
         ModuleReportVO report = new ModuleReportVO();
         try {
             Map<String, List<FormDataBodyPart>> fieldsByName = multiPart.getFields();

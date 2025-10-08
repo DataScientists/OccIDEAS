@@ -362,6 +362,7 @@
             content: 'Purge participants successfull.',
             animation: 'slide'
           });
+          $scope.addImportJsonValidationTab(response.data);
         } else {
           $ngToast.create({
             className: 'danger',

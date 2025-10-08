@@ -1151,6 +1151,7 @@
       saveModuleWithoutReload(locationId);
     };
 
+
     $scope.collapseAll = function() {
       $scope.$broadcast('collapseAll');
     };
@@ -1802,6 +1803,10 @@
         $scope.newSubItem($itemScope);
       }
       ],
+      ['Copy Question', function($itemScope) {
+        $scope.newSubItem($itemScope);
+      }
+      ],
         ['Add Free Text Possible Answer', function($itemScope) {
           $itemScope.isFreeText = true;
           $scope.newSubItem($itemScope);
@@ -1819,7 +1824,7 @@
         }
         ],
 
-        ['Save as Task Module', function($itemScope) {
+        ['Save as Task Module2', function($itemScope) {
 
           $mdDialog.show({
             //scope: $scope,

@@ -298,7 +298,10 @@
                         if (response.status === 200) {
                             var participant = response.data;
                             $rootScope.participant = participant;
-                            populateParticipantDetails();
+                            //populateParticipantDetails();
+                            if($rootScope.participant.status === 4){
+                                saveAllParticipantStatusesToComplete();
+                            }
                         }
                     });
                 }
@@ -678,6 +681,26 @@
 				console.log('error');
 			});
 		}
+        function saveAllParticipantStatusesToComplete() {
+            var participants = self.otherParticipantJobs.filter(obj => obj.mappedTo !== "UnExposed");
+            participants = participants.filter(obj => !obj.mappedTo.startsWith("SameAs"));
+                participants.reduce(function(p, data) {
+                    return p.then(function() {
+                        data.status = $rootScope.participant.status;
+                        ParticipantsService.save(data).then(function(response) {
+                            if (response.status === 200) {
+                                console.log('Updated status to root scope status');
+                            }
+                        });
+                    });
+                }, $q.when(true)).then(function(finalResult) {
+                    console.log('finished updating statuses');
+                }, function(err) {
+                    console.log('error');
+                });
+
+
+        }
 
 
         /* utilities */
@@ -753,10 +776,12 @@
         function getJobModule(participant) {
             var jobModuleName = { name: "" };
             var surveyLink = getSurveyLink(participant);
-            if(surveyLink.text.startsWith('SameAs')){
-                jobModuleName.name = surveyLink.text;
-            }else if (surveyLink != undefined) {
-                jobModuleName = $scope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
+            if (surveyLink != undefined) {
+                if(surveyLink.text.startsWith('SameAs')){
+                    jobModuleName.name = surveyLink.text;
+                }else {
+                    jobModuleName = $scope.qualtricsSurveyLinks.find(jobModuleName => jobModuleName.surveyLink === surveyLink.text);
+                }
             }
             return jobModuleName.name;
         }

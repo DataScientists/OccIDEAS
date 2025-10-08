@@ -137,15 +137,16 @@ public class DbConnectServiceImpl implements IDbConnectService {
 
   @Override
   public List<NodePlain> importLibrary(DBConnectVO dbConnect) throws SQLException {
-    createDumpFile(dbConnect);
+  //  createDumpFile(dbConnect);
     deleteNodeRules();
-    deleteAgents();
+   // deleteAgents();
     deleteNodeLanguage();
     deleteLanguage();
     deleteInterview();
     deleteNodes();
     deleteRules();
     System.out.println("Cleaned up db");
+    /*
     Connection connectToDb = connectToDb(dbConnect);
 //		List<RuleAdditionalFieldVO> ruleAddFieldList = copyRuleAddFieldFromDB(connectToDb);
     List<NodePlain> nodesFromDB = getNodesFromDB(connectToDb);
@@ -162,7 +163,11 @@ public class DbConnectServiceImpl implements IDbConnectService {
     //System.out.println("Importing Node languages");
     //saveBatchNodeLanguage(copyNodeLanguageFromDB(connectToDb));
     System.out.println("Import from Library Done!");
+
+
     return nodesFromDB;
+    */
+    return null;
   }
 
   private void saveBatchAgentsPlain(List<AgentPlain> copyAgentInfoPlainFromDB) {

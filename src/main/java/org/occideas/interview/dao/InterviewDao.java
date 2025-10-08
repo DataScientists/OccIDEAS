@@ -517,7 +517,7 @@ public class InterviewDao implements IInterviewDao {
 
     final Session session = sessionFactory.getCurrentSession();
 
-    final Query types = session.createSQLQuery("select distinct type from Note where type <> 'System'");
+    final Query types = session.createSQLQuery("select distinct type from Note where type <> 'System' and type <> 'AMRSurveyLink'");
 
     return types.list();
   }

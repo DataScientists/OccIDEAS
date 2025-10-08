@@ -216,35 +216,58 @@
       $scope.f = file;
       $scope.errFile = errFiles && errFiles[0];
     };
+    $scope.debug = function(){
+        alert("Clicked");
+    }
 
-    $scope.importJsonBtn = function() {
-      var file = $scope.f;
-      if(file) {
-        file.upload = Upload.upload({
-          url: 'web/rest/module/importJson',
-          file: file
-        });
-
-        file.upload.then(function(response) {
-          $timeout(function() {
-            file.result = response.data;
-            self.tableParams.reload();
+    $scope.uploadFile = async function() {
+        let formData = new FormData();
+        formData.append("file", fileupload.files[0]);
+        let response = await fetch('/web/rest/module/importJson', { method: "POST", body: formData });
+        if (response.status == 200) {
+            alert("File successfully uploaded.");
             $mdDialog.cancel();
             $scope.addImportJsonValidationTab(response.data);
-          });
-        }, function(response) {
-          if(response.status > 0)
-            $scope.errorMsg = response.status + ': ' + response.data;
-        }, function(evt) {
-          file.progress = Math.min(100, parseInt(100.0 *
-            evt.loaded / evt.total));
-        });
-      }
+         }
+    }
+    //$scope.uploadFile = uploadFile;
+    $scope.importJsonBtn = function() {
+        var file = $scope.f;
+        if (file) {
+            var formData = new FormData();
+            formData.append("file", file);  // Ensure key name matches backend
+
+
+/*
+            file.upload = Upload.upload({
+                url: 'web/rest/module/importJson',
+                data: formData,
+                headers: { 'Content-Type': undefined }, // Let the browser set it
+            });
+
+            file.upload.then(function(response) {
+                $timeout(function() {
+                    file.result = response.data;
+                    self.tableParams.reload();
+                    $mdDialog.cancel();
+                    $scope.addImportJsonValidationTab(response.data);
+                });
+            }, function(response) {
+                if (response.status > 0)
+                    $scope.errorMsg = response.status + ': ' + response.data;
+            }, function(evt) {
+                file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+            });
+            */
+        }
     };
 
     $scope.cancel = function() {
       $mdDialog.cancel();
     };
+    $scope.debug = function(){
+        alert("Clicked");
+    }
 
     $scope.importJson = function() {
       $mdDialog.show({

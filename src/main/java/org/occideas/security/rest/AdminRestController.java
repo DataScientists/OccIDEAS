@@ -54,7 +54,7 @@ public class AdminRestController {
 
 
     @GET
-    @Path(value = "/qsf/sync/{surveyId}")
+    @Path(value = "/qsf/sync/{surveyId}/{reference}")
     public Response syncQSFSurveyResponse(@PathParam("surveyId") String surveyId,@PathParam("reference") String reference) {
         try {
             iqsfService.importResponseQSF(surveyId,reference);
@@ -68,14 +68,60 @@ public class AdminRestController {
     @GET
     @Path(value = "/purgeParticipants")
     public Response purgeParticipants() {
+        ModuleReportVO report = new ModuleReportVO();
         try {
             adminService.purgeParticipants();
-            importJsons();
-        } catch (Throwable e) {
+/*
+            File file = new File("/opt/data/importJSONs/PEST_Noise.json");
+            InputStream in = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+            NodeRuleHolder idNodeHolder = null;
+            String line = reader.readLine();
+            ModuleVO[] modules = mapper.readValue(line, ModuleVO[].class);
+            // only expecting one module
+            ModuleVO vo = modules[0];
+            ModuleCopyVO copyVo = new ModuleCopyVO();
+            copyVo.setVo(vo);
+            copyVo.setFragments(vo.getFragments());
+            copyVo.setIncludeRules(true);
+            copyVo.setName(vo.getName());
+            copyVo.setModules(vo.getModules());
+            // this is for intro module
+            if ("M_IntroModule".equals(vo.getType())) {
+                idNodeHolder = moduleService.copyModuleAutoGenerateModule(copyVo, report);
+                moduleService.updateMissingLinks(copyVo.getVo());
+                for (ModuleVO moduleVO : copyVo.getModules()) {
+                    moduleService.updateMissingLinks(moduleVO);
+                }
+            } else {
+                // this is for fragment
+                idNodeHolder = moduleService.copyModuleAutoGenerateFragments(copyVo, report);
+                moduleService.updateMissingLinks(copyVo.getVo());
+                for (FragmentVO fragmentVO : copyVo.getFragments()) {
+                    moduleService.updateMissingLinks(fragmentVO);
+                }
+            }
+            // missing rules report
+            moduleService.copyRulesValidateAgent(idNodeHolder, report);
+            moduleService.addNodeRulesValidateAgent(idNodeHolder, report);
+            // adding module vo to the report
+            report.setVo(vo);
+
+            //    }
+            //}
+*/
+
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
         }
-        return Response.ok().build();
+
+        return Response.ok(report).build();
+
+
+       //     return Response.ok().build();
     }
 
     @GET
@@ -119,7 +165,7 @@ public class AdminRestController {
     @Path(value = "/importQSFResponses")
     public Response importQSFResponses() {
         try {
-            participantService.softDeleteAll();
+            //participantService.softDeleteAll();
             iqsfService.cleanSurveyResponses();
             iqsfService.importQSFResponses();
         } catch (Throwable e) {
@@ -390,7 +436,7 @@ public class AdminRestController {
 
             //for (List<FormDataBodyPart> fields : fieldsByName.values()) {
             //    for (FormDataBodyPart field : fields) {
-            File file = new File("/opt/data/importJSONs/aNAB.json");
+            File file = new File("/opt/data/importJSONs/AIRT_Noise.json");
             InputStream in = new FileInputStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             ObjectMapper mapper = new ObjectMapper();

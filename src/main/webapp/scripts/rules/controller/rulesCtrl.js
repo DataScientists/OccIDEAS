@@ -19,7 +19,9 @@
           additionalFields = moduleRule.rule.ruleAdditionalfields[0].value;
         }
         if(moduleRule.rule.ruleAdditionalfields) {
-          additionalFields += ':' + moduleRule.rule.ruleAdditionalfields[1].value;
+          if(moduleRule.rule.ruleAdditionalfields[1]){
+            additionalFields += ':' + moduleRule.rule.ruleAdditionalfields[1].value;
+          }
         }
 
         var moduleRuleFlat = {

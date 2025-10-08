@@ -38,7 +38,7 @@
     };
 
     var importSurveyResponse = (surveyId,reference) => {
-      var restSaveUrl = adminEndpoint + '/qsf/sync/' + surveyId+'&'+reference;
+      var restSaveUrl = adminEndpoint + '/qsf/sync/' + surveyId+'/'+reference;
       var request = $http({
         method: 'GET',
         url: restSaveUrl

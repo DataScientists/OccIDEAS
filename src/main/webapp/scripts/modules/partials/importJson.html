@@ -20,6 +20,11 @@
                       ngf-max-size="10MB" ngf-select="uploadFiles($file, $invalidFiles)" type="file">
                 Select File
               </button>
+
+              <input id="fileupload" type="file" name="fileupload" />
+              <md-button id="upload-button" ng-click="uploadFile()">
+                New Upload
+              </md-button>
             </div>
             <div class="row" style="text-align: center;">
               File:
@@ -31,7 +36,7 @@
           </md-content>
           <md-dialog-actions>
             <md-button
-              class="md-raised" ng-click="cancel()">Cancel
+              class="md-raised" ng-click="debug()">Cancel
             </md-button>
             <md-button
               class="md-raised" ng-click="importJsonBtn()" type="submit">Submit

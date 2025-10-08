@@ -999,10 +999,20 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   public Response createRandomInterviews(RandomInterviewVO randomInterview) {
     List<RandomInterviewReport> results = null;
     try {
+      /*
       results = service.createRandomInterviews(randomInterview.getCount(), randomInterview.isRandomAnswers(),
               randomInterview.getFilterModule());
-      service.createTestingAddresses();
-      service.createTestingOccupationalHistories();
+      */
+
+      /*
+      results = service.createRandomInterviews1(randomInterview.getCount(), randomInterview.isRandomAnswers(),
+              randomInterview.getFilterModule());
+      */
+      results = service.createRandomInterviews2(randomInterview.getCount(), randomInterview.isRandomAnswers(),
+              randomInterview.getFilterModule());
+
+     // service.createTestingAddresses();
+     // service.createTestingOccupationalHistories();
 
     } catch (Throwable e) {
       e.printStackTrace();

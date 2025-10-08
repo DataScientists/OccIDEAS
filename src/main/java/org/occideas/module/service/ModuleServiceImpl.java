@@ -242,9 +242,11 @@ public class ModuleServiceImpl implements ModuleService {
 				}
 			}
 			if (!isRuleMissing) {
+				System.out.println("Saving this rule "+vo.toString());
 				nodeRuleDao.save(nodeRuleMapper.convertToNodeRule(vo));
 			}
 		}
+		System.out.println("Done addNodeRulesValidateAgent");
 	}
 
 	@Override

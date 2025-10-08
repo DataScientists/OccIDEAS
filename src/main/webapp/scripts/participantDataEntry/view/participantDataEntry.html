@@ -49,7 +49,7 @@
 				</tr>
 				<tr>
 					<td><label for="participantStatus">Participant Status:</label></td>
-					<td>{{participant.status}}
+					<td>
 						<select id="participantStatus" ng-model="participant.status" ng-options="participantStatus.value as participantStatus.text for participantStatus in participantStatusList">
 						</select>
 					</td>
@@ -173,11 +173,15 @@
 		<div ng-if="participant.status < 3" >Check Participant Status - This participant is *not* ready for interviews.</div>
 		<table ng-if="participant.status >= 3" style="width: 100%" permission="['ROLE_INTERVIEWERA']" >
 			<tbody ng-if="$first" ng-repeat="participant in vm.otherParticipantJobs">
-			<!-- <tr><td colspan="10" >{{participant.status}}</td></tr> -->
+<!--			 <tr><td colspan="10" >{{participant.status}}</td></tr>-->
 			<tr>
+				<td ng-if="participant.status === 0" ><img src="/img/circle_gray.png" alt="Incomplete (no data saved)"></td>
+				<td ng-if="participant.status === 1" ><img src="/img/circle_gray.png" alt="Incomplete (no data saved)"></td>
+				<td ng-if="participant.status === 2" ><img src="/img/circle_gray.png" alt="Incomplete (no data saved)"></td>
 				<td ng-if="participant.status === 3" ><img src="/img/circle_gray.png" alt="Incomplete (no data saved)"></td>
 				<td ng-if="participant.status === 6" ><img src="/img/circle_yellow.png" alt="Partial Complete"></td>
-				<td ng-if="participant.status === 4" ><img src="/img/circle_green.png" alt="Complete and synchronized"></td>
+				<td ng-if="participant.status === 4" ><img src="/img/circle_red.png" alt="Complete but not synchronized"></td>
+				<td ng-if="participant.status === 7"><img src="/img/circle_green.png" alt="Complete and synchronized"></td>
 				<td colspan="10" >
 					<span >
 						<a href="{{participant.fullQualtricsLink}}"
@@ -192,12 +196,13 @@
 			</tr>
 			</tbody>
 			<tbody ng-if="!$first" ng-repeat="participant in vm.otherParticipantJobs">
-<!--			<tr><td colspan="10" >mapped:{{participant.mappedTo}}:{{participant.idParticipant}}</td></tr>-->
+<!--			<tr><td colspan="10" >mapped:{{participant.mappedTo}}:{{participant.status}}</td></tr>-->
 			<tr>
 				<td ng-if="participant.status === 0"><img src="/img/circle_gray.png" alt="Incomplete (no data saved)"></td>
+				<td ng-if="participant.status === 3"><img src="/img/circle_green.png" alt="Incomplete (no data saved)"></td>
 				<td ng-if="participant.status === 1"><img src="/img/circle_yellow.png" alt="Partial Complete"></td>
-				<td ng-if="participant.status === 2"><img src="/img/circle_red.png"  alt="Complete but not synchronized"></td>
-				<td ng-if="participant.status === 3"><img src="/img/circle_green.png" alt="Complete and synchronized"></td>
+				<td ng-if="participant.status === 4"><img src="/img/circle_red.png"  alt="Complete but not synchronized"></td>
+				<td ng-if="participant.status === 7"><img src="/img/circle_green.png" alt="Complete and synchronized"></td>
 				<td colspan="10" >
 					<span ng-if="participant.mappedTo != 'UnExposed'">
 						<span ng-if="participant.mappedTo != ''">

@@ -1084,6 +1084,16 @@
         nodeId = scope.idNode;
       }
     };
+    $scope.pasteCutQuestion = function(scope) {
+      $scope.undoEnable = false;
+      var nodeData = scope.$modelValue;
+      var locationId = nodeData.idNode * 10 + nodeData.nodes.length;
+      var questionToMove = $rootScope.questionToCut;
+      questionToMove.parentId = nodeData.idNode;
+      questionToMove.topNodeId = nodeData.idNode;
+      nodeData.nodes.push(questionToMove);
+      saveModuleWithoutReload(locationId);
+    };
     $scope.newSubItem = function(scope) {
       $scope.undoEnable = false;
       var nodeData = scope.$modelValue;
@@ -1680,6 +1690,11 @@
           $scope.newSubItem($itemScope);
         }
         ],
+        ['Paste Question', function($itemScope) {
+          $scope.addingQuestion = true;
+          $scope.pasteCutQuestion($itemScope);
+        }
+        ],
         ['Show/Hide Children', function($itemScope) {
 
           var collapseOrExpand = function(scope) {
@@ -2029,7 +2044,10 @@
           saveModuleWithoutReload();
         }
         ],
-
+        ['Cut Question', function($itemScope) {
+          $rootScope.questionToCut = $itemScope.$modelValue;
+        }
+        ],
         ['Save as Task Module', function($itemScope) {
 
           $mdDialog.show({
