@@ -8,9 +8,12 @@
             style="margin-left:3px;"
             type="button">Create Random Interviews
     </button>
-    <button class="btn btn-default" ng-click="vm.showRandomInterviews()"
+    <button class="btn btn-default" ng-click="vm.preloadActiveIntro()"
             style="margin-left:3px;"
-            type="button">Create Random Interviews
+            data-toggle="tooltip"
+            confirm="Are you sure to preload study agents? this will also purge the existing modules"
+            title="Filter modules by agents to create study specific modules"
+            type="button">Create Study Specific Modules
     </button>
     <button class="btn btn-default" ng-click="vm.importJSONs()"
             style="margin-left:3px;"
