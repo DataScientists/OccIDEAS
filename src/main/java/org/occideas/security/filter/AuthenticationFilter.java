@@ -43,6 +43,23 @@ public class AuthenticationFilter extends GenericFilterBean {
   private AuthenticationManager authenticationManager;
   private UrlPathHelper urlPathHelper = new UrlPathHelper();
 
+  private static final String[] PUBLIC_INTERVIEW_PATHS = {
+    "/web/rest/interview",              // covers /web/rest/interview/* and /web/rest/interviewanswer/*, etc.
+    "/web/rest/participant/",           // participant create/get/update for interview flow
+    "/web/rest/note/",                  // interview notes
+    "/web/rest/module/getinterviewmodule", // read-only: fetch the active intro module
+    "/web/rest/question/getquestion"    // read-only: fetch individual questions during interview
+  };
+
+  private boolean isPublicInterviewPath(String resourcePath) {
+    for (String publicPath : PUBLIC_INTERVIEW_PATHS) {
+      if (resourcePath.startsWith(publicPath)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public AuthenticationFilter(AuthenticationManager authenticationManager) {
     this.authenticationManager = authenticationManager;
   }
@@ -73,6 +90,11 @@ public class AuthenticationFilter extends GenericFilterBean {
       }
 
       if(!token.isPresent()){
+        if (isPublicInterviewPath(resourcePath)) {
+          log.debug("Allowing unauthenticated access to public interview path: {}", resourcePath);
+          chain.doFilter(request, response);
+          return;
+        }
         String unauthorized_access = "Unauthorized Access";
         httpResponse.addHeader(ERROR_MSG, unauthorized_access);
         httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, unauthorized_access);

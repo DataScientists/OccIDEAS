@@ -52,6 +52,10 @@ public class ReadOnlyFilter extends GenericFilterBean {
     HttpServletResponse httpResponse = asHttp(response);
     String uriPath = httpRequest.getRequestURI();
     if (StringUtils.containsAny(uriPath, ReadOnlyPaths.paths())) {
+      if (SecurityContextHolder.getContext().getAuthentication() == null) {
+        chain.doFilter(request, response);
+        return;
+      }
       String auth = extractAuthFromToken();
       if (auth.contains("ROLE_" + UserProfileType.READONLY.name())) {
         String message = "User " + extractUserFromToken() + " has read only access.";

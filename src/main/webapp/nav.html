@@ -40,7 +40,10 @@
 	</span>
     </h3>
   </div>
-  <div ng-cloak ng-if="!vm.isAuthenticated">
+  <div ng-cloak ng-if="$root.$state.current.name.indexOf('startInterview') == 0">
+    <div> Online Interview Mode</div>
+  </div>
+  <div ng-cloak ng-if="!vm.isAuthenticated && $root.$state.current.name.indexOf('startInterview') !== 0">
     <div ng-include="'scripts/login/view/login.html'"></div>
   </div>
 

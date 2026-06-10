@@ -1,3 +1,25 @@
 .popover {
     z-index: 50000;
 }
+
+/* Sticky footer — body owns the full viewport height, container fills it */
+/* Zero out the padding:10px that loginstyle.css adds globally to html/body */
+html, body {
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body > .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+body > .container > [ui-view] {
+    flex: 1;
+}

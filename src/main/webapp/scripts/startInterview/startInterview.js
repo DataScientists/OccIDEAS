@@ -10,13 +10,13 @@
         url: '/startInterview',
         templateUrl: 'scripts/startInterview/view/startInterviewForm.html',
         controller: 'StartInterviewCtrl',
-        authenticate: true
+        authenticate: false
       })
       .state('startInterviewRun', {
         url: '/startInterview/interview/:startWithReferenceNumber',
         templateUrl: 'scripts/interviews/view/interview.html',
         controller: 'InterviewsCtrl',
-        authenticate: true,
+        authenticate: false,
         resolve: {
           data: function(InterviewsService) {
             return InterviewsService.findModule('-1').then(function(response) {

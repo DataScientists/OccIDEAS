@@ -65,12 +65,11 @@
     font-size: 12px;
     color: #2e3436;
     background-color: #f0f0f0;
-    padding: 20px;
     text-align: center;
-    bottom: 0;
-    left: 0;
     width: 100%;
+    flex-shrink: 0;
 }
+
 .typesetting{
 	padding-left: 30px;
 	background-color: #676262;
