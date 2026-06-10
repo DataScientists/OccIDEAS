@@ -65,6 +65,7 @@ public interface InterviewService extends BaseService<InterviewVO> {
 
   List<RandomInterviewReport> createRandomInterviews1(int count, Boolean isRandomAnswers, String[] filterModule);
   List<RandomInterviewReport> createRandomInterviews2(int count, Boolean isRandomAnswers, String[] filterModule);
+  List<RandomInterviewReport> createRandomInterviews3(int count, Boolean isRandomAnswers, String[] filterModule);
 
   void createTestingAddresses();
 

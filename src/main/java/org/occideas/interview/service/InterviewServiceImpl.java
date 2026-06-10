@@ -42,6 +42,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -641,8 +645,18 @@ public class InterviewServiceImpl implements InterviewService {
         String referenceNumber = generateReferenceAuto(maxReferenceNumber);
         List<RandomInterviewReport> results = new ArrayList<>();
 
-        String csvFilePath = "/opt/data/awes25/import/data4.csv";
+        //String csvFilePath = "/opt/data/awes25/import/CINT01.csv";
+        //String csvFilePath = "/opt/data/awes25/import/CINT02.csv";
+        //String csvFilePath = "/opt/data/awes25/import/LINA01.csv";
+        //String csvFilePath = "/opt/data/awes25/import/OCTO01.csv";
+        //String csvFilePath = "/opt/data/awes25/import/OPEN01.csv";
+        //String csvFilePath = "/opt/data/awes25/import/AWESOVERALL.csv";
+        String csvFilePath = "";
 
+
+        //String csvFilePath = "/opt/data/awes25/import/3340AWESLinAV1.csv";
+        //String csvFilePath = "/opt/data/awes25/import/3340AWESCINTV1.csv";
+        //String csvFilePath = "/opt/data/awes25/import/3340AWESCATIV1.csv";
         try (CSVReaderHeaderAware reader = new CSVReaderHeaderAware(new FileReader(csvFilePath))) {
             Map<String, String> row;
 
@@ -661,9 +675,10 @@ public class InterviewServiceImpl implements InterviewService {
                     //      continue;
                     //  }
 
-                    referenceNumber = row.get("Id");
+                referenceNumber = row.get("id");
+                //referenceNumber += "-"+(rowNum-1);
 
-                    //referenceNumber = padReferenceNumber(referenceNumber);
+                //referenceNumber = padReferenceNumber(referenceNumber);
                     RandomInterviewReport randomInterviewReport = new RandomInterviewReport();
 
                     randomInterviewReport.setReferenceNumber(referenceNumber);
@@ -702,6 +717,124 @@ public class InterviewServiceImpl implements InterviewService {
         }
         return results;
     }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public List<RandomInterviewReport> createRandomInterviews3(int count, Boolean isRandomAnswers,
+                                                               String[] filterModuleVO) {
+        // get active intro
+        SystemProperty activeIntro = systemPropertyDao.getByName("activeIntro");
+        if (activeIntro == null || !StringUtils.isNumeric(activeIntro.getValue())) {
+            log.error("Active intro is either null or is not numeric");
+            return null;
+        }
+        // get the module
+        JobModule mod = moduleDao.get(Long.valueOf(activeIntro.getValue()));
+        ModuleVO modVO = moduleMapper.convertToModuleVO(mod, false);
+        // get latest participant count
+        String maxReferenceNumber = participantService.getMaxReferenceNumber();
+        if (maxReferenceNumber == null) {
+            maxReferenceNumber = PARTICIPANT_PREFIX + "000";
+        }
+        String referenceNumber = generateReferenceAuto(maxReferenceNumber);
+        List<RandomInterviewReport> results = new ArrayList<>();
+
+        //String csvFilePath = "/opt/data/amr/import/LAND3.csv";
+        //csvFilePath = "/opt/data/amr/import/NONO5.csv";
+        //csvFilePath = "/opt/data/amr/import/MINE1.csv";
+        //csvFilePath = "/opt/data/amr/import/AREM.csv";
+        //csvFilePath = "/opt/data/amr/import/ANEC.csv";
+        //csvFilePath = "/opt/data/amr/import/CEMT.csv";
+        //csvFilePath = "/opt/data/amr/import/FURN1.csv";
+        //csvFilePath = "/opt/data/amr/import/INSU2.csv";
+        //csvFilePath = "/opt/data/amr/import/LAUN.csv";
+        //csvFilePath = "/opt/data/amr/import/TEXT.csv";
+        //csvFilePath = "/opt/data/amr/import/TIPW.csv";
+        //csvFilePath = "/opt/data/amr/import/TRAD.csv";
+        //csvFilePath = "/opt/data/amr/import/WATE.csv";
+        String directory = "/opt/data/amr/import/";
+        Path dirPath = Paths.get(directory);
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, "*.csv")) {
+            System.out.println("Searching for CSV files in: " + dirPath.toAbsolutePath());
+
+            for (Path entry : stream) {
+                // Get the full absolute path
+                System.out.println("Found: " + entry.toAbsolutePath());
+                String csvFilePath = entry.toAbsolutePath().toString();
+
+                try (CSVReaderHeaderAware reader = new CSVReaderHeaderAware(new FileReader(csvFilePath))) {
+                    Map<String, String> row;
+
+                    int rowNum = 1;
+                    while ((row = reader.readMap()) != null) {
+
+                        //List<Map<String,String>> jobInterviews =  splitRowV2(row);
+
+                        //Map<String,String> baseRow = jobInterviews.get(0);
+
+                        rowNum++;
+                        //        for (Map<String,String> jobInterview : jobInterviews) {
+                        // process or write split…
+                        System.out.println(row);
+                        //  if(jobInterview.size() <= 86){
+                        //      continue;
+                        //  }
+
+                        referenceNumber = row.get("Participant");
+                        referenceNumber += "-"+row.get("Job History");
+                        //referenceNumber += "-"+(rowNum-1);
+
+                        //referenceNumber = padReferenceNumber(referenceNumber);
+                        RandomInterviewReport randomInterviewReport = new RandomInterviewReport();
+
+                        randomInterviewReport.setReferenceNumber(referenceNumber);
+                        System.out.println(referenceNumber);
+
+                        ParticipantVO partVO = new ParticipantVO();
+
+                        partVO.setReference(referenceNumber);
+
+                        ParticipantVO participantVO = participantService.create(partVO);
+                        ParticipantDetailsVO pd = new ParticipantDetailsVO();
+                        pd.setDetailName("Priority");
+                        pd.setDetailValue("0");
+                        pd.setParticipantId(participantVO.getIdParticipant());
+                        participantVO.getParticipantDetails().add(pd);
+
+                        InterviewVO interviewVO = new InterviewVO();
+                        interviewVO.setParticipant(participantVO);
+                        interviewVO.setModule(modVO);
+                        interviewVO.setReferenceNumber(referenceNumber);
+                        // set default assessed status
+                        interviewVO.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
+                        Interview interviewEntity = mapper.convertToInterview(interviewVO);
+
+                        interviewDao.saveNewTransaction(interviewEntity);
+                        InterviewVO newInterviewVO = mapper.convertToInterviewVO(interviewEntity);
+
+                        randomInterviewReport.setInterviewId(newInterviewVO.getInterviewId());
+
+                        populateInterviewWithQuestions3(modVO, results, randomInterviewReport, newInterviewVO, participantVO,
+                                isRandomAnswers, filterModuleVO,row);
+                        //}
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                results = new ArrayList<>();
+
+
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error reading the directory: " + e.getMessage());
+        }
+
+
+        return results;
+    }
+
     private String padReferenceNumber(String input) {
         if (input == null) {
             throw new IllegalArgumentException("Input cannot be null");
@@ -1257,34 +1390,83 @@ public class InterviewServiceImpl implements InterviewService {
         forstaLinkNote.setInterviewId(newInterviewVO.getInterviewId());
         String forstaLink = jobInterview.get("job_module_surveyid");
         forstaLinkNote.setText(forstaLink);
-        forstaLinkNote.setType("ForstaLink");
+        forstaLinkNote.setType("System");
         notes.add(forstaLinkNote);
         NoteVO assessorNote = new NoteVO();
         assessorNote.setInterviewId(newInterviewVO.getInterviewId());
         String jobInformation = "main_OCC:";
-        jobInformation += jobInterview.get("main_OCC");
+        jobInformation += jobInterview.get("main_OCC").replace(':', '-');
         jobInformation += " :main_DUTIES:";
-        jobInformation += jobInterview.get("main_DUTIES");
-        jobInformation += " :main_occ_autocoded:";
-        jobInformation += jobInterview.get("main_occ_autocoded");
+        jobInformation += jobInterview.get("main_DUTIES").replace(':', '-');
+        //jobInformation += " :main_occ_autocoded:";
+        //jobInformation += jobInterview.get("main_occ_autocoded");
         jobInformation += " :main_ANZSCO_code:";
-        jobInformation += jobInterview.get("main_ANZSCO_code");
+        jobInformation += jobInterview.get("main_ANZSCO_code").replace(':', '-');
         jobInformation += " :main_ANZSCO_label:";
-        jobInformation += jobInterview.get("main_ANZSCO_label");
+        jobInformation += jobInterview.get("main_ANZSCO_label").replace(':', '-');
         jobInformation += " :main_ANZSCO_confidence:";
-        jobInformation += jobInterview.get("main_ANZSCO_label");
+        jobInformation += jobInterview.get("main_ANZSCO_confidence").replace(':', '-');
         jobInformation += " :main_LOC:";
-        jobInformation += jobInterview.get("main_LOC");
-        jobInformation += " :main_multi_module_flag:";
-        jobInformation += jobInterview.get("main_multi_module_flag");
+        jobInformation += jobInterview.get("main_LOC_label").replace(':', '-');
+       // jobInformation += " :main_multi_module_flag:";
+       // jobInformation += jobInterview.get("main_multi_module_flag").replace(':', '-');
         jobInformation += " :main_MODULE_DES:";
-        jobInformation += jobInterview.get("main_MODULE_DES");
+        jobInformation += jobInterview.get("main_MODULE_DES").replace(':', '-');
         jobInformation += " :main_JOB10:";
-        jobInformation += jobInterview.get("main_JOB10");
+        jobInformation += jobInterview.get("main_JOB10_label").replace(':', '-');
         jobInformation += " :main_JOB11:";
-        jobInformation += jobInterview.get("main_JOB11");
+        jobInformation += jobInterview.get("main_JOB11_label").replace(':', '-');
         jobInformation += " :main_INDUSTRY:";
-        jobInformation += jobInterview.get("main_INDUSTRY");
+        jobInformation += jobInterview.get("main_INDUSTRY").replace(':', '-');
+        assessorNote.setText(jobInformation);
+        assessorNote.setType("Assessor");
+        notes.add(assessorNote);
+        randomInterview.getNotes().addAll(notes);
+        interviewDao.saveNewTransaction(mapper.convertToInterview(randomInterview));
+        participantVO.setStatus(2);
+        participantService.updateNewTransaction(participantVO);
+        results.add(randomInterviewReport);
+    }
+    private void populateInterviewWithQuestions3(NodeVO nodeVO, List<RandomInterviewReport> results,
+                                                 RandomInterviewReport randomInterviewReport, InterviewVO newInterviewVO, ParticipantVO participantVO,
+                                                 Boolean isRandomAnswers, String[] filterModuleVO, Map<String, String> jobInterview) {
+        InterviewQuestionVO interviewQuestionVO = new InterviewQuestionVO();
+        interviewQuestionVO.setIdInterview(newInterviewVO.getInterviewId());
+        interviewQuestionVO.setTopNodeId(nodeVO.getIdNode());
+        interviewQuestionVO.setParentModuleId(nodeVO.getIdNode());
+        interviewQuestionVO.setName(nodeVO.getName());
+        interviewQuestionVO.setDescription(nodeVO.getDescription());
+        interviewQuestionVO.setNodeClass(nodeVO.getNodeclass());
+        interviewQuestionVO.setNumber(nodeVO.getNumber());
+        interviewQuestionVO.setType(nodeVO.getType());
+        interviewQuestionVO.setLink(nodeVO.getIdNode());
+        interviewQuestionVO.setModCount(1);
+        interviewQuestionVO.setDeleted(0);
+        interviewQuestionVO.setIntQuestionSequence(0);
+        // save link question and queue
+        InterviewQuestionVO linkAndQueueQuestions = interviewQuestionService
+                .updateInterviewLinkAndQueueQuestions(interviewQuestionVO);
+        // get interview
+        List<InterviewVO> interviewList = mapper
+                .convertToInterviewWithQuestionAnswerList(interviewDao.getInterview(newInterviewVO.getInterviewId()));
+
+        InterviewVO randomInterview = interviewList.get(0);
+        processRandomQuestionsAndAnswers3(randomInterview, randomInterviewReport, results, isRandomAnswers,
+                filterModuleVO,jobInterview);
+        List<NoteVO> notes = new ArrayList<>();
+        NoteVO noteVO = new NoteVO();
+        noteVO.setDeleted(0);
+        noteVO.setInterviewId(randomInterview.getInterviewId());
+        noteVO.setText("AMR IMPORT");
+        noteVO.setType("System"); //change this to interviewer notes
+        notes.add(noteVO);
+
+        NoteVO assessorNote = new NoteVO();
+        assessorNote.setInterviewId(newInterviewVO.getInterviewId());
+        String jobInformation = "AMRID:";
+        jobInformation += jobInterview.get("AMRID");
+        jobInformation += " :JH:";
+        jobInformation += jobInterview.get("Job History");
         assessorNote.setText(jobInformation);
         assessorNote.setType("Assessor");
         notes.add(assessorNote);
@@ -1493,6 +1675,769 @@ public class InterviewServiceImpl implements InterviewService {
             }
         }
     }
+    private void processRandomQuestionsAndAnswers3(InterviewVO randomInterview,
+                                                   RandomInterviewReport randomInterviewReport, List<RandomInterviewReport> results, Boolean isRandomAnswers,
+                                                   String[] filterModuleVO, Map<String, String> jobInterview) {
+        List<InterviewQuestionVO> questionList = randomInterview.getQuestionHistory();
+        InterviewQuestionVO questionAsked = findNextQuestionQueued(questionList);
+
+
+        if (questionAsked == null) {
+            log.info("[Randominterview]-No question to ask for interview id " + randomInterview.getInterviewId()
+                    + " end interview as completed");
+            return;
+        } else {
+            List<QuestionVO> questionsWithSingleChildLevel = questionService
+                    .getQuestionsWithSingleChildLevel(questionAsked.getQuestionId());
+            QuestionVO actualQuestion = questionsWithSingleChildLevel.get(0);
+            List<PossibleAnswerVO> answers = actualQuestion.getChildNodes();
+            if (actualQuestion.getLink() != 0L) {
+                // its a linking question
+                System.out.println("This is a linking questions");
+                InterviewQuestionVO qVO = populateInteviewQuestionJsonByLinkedQuestion(randomInterview, questionAsked);
+                qVO.setProcessed(true);
+                questionAsked.setProcessed(true);
+                interviewQuestionService.updateInterviewLinkAndQueueQuestions(qVO);
+                randomInterviewReport.getListQuestion().add(questionAsked);
+                InterviewAnswerVO interviewAnswerVO = new InterviewAnswerVO();
+                interviewAnswerVO.setName("This is a linking question");
+                randomInterviewReport.getListAnswer().add(interviewAnswerVO);
+                List<InterviewVO> unprocessedQuestions = getUnprocessedQuestions(randomInterview.getInterviewId());
+                if (unprocessedQuestions != null) {
+                    unprocessedQuestions.removeAll(Collections.singleton(null));
+                    if (!unprocessedQuestions.isEmpty()) {
+                        for (InterviewQuestionVO iVO : unprocessedQuestions.get(0).getQuestionQueueUnprocessed()) {
+                            if (!randomInterview.getQuestionHistory().contains(iVO)) {
+                                randomInterview.getQuestionHistory().add(iVO);
+                            }
+                        }
+                        processRandomQuestionsAndAnswers3(randomInterview, randomInterviewReport, results,
+                                isRandomAnswers, filterModuleVO, jobInterview);
+                    }
+                }
+            } else if (answers.isEmpty()) {
+                saveQuestion3(randomInterview, questionAsked, randomInterviewReport, results, isRandomAnswers,
+                        filterModuleVO,jobInterview);
+                InterviewAnswerVO interviewAnswerVO = new InterviewAnswerVO();
+                interviewAnswerVO.setName("ERROR: No answer to select for this Question.");
+                randomInterviewReport.getListAnswer().add(interviewAnswerVO);
+            } else if (questionAsked.getType().equalsIgnoreCase("Q_multiple")) {
+
+                List<PossibleAnswerVO> answersToSave = new ArrayList<PossibleAnswerVO>();
+                String qNodeNumber = questionAsked.getNumber();
+                String columnName = getOldAMRId(qNodeNumber);
+                if(columnName != null){
+                    List<String> actualAnswers = findValuesContaining(jobInterview,columnName);
+
+                    if(selectedJobModule.equalsIgnoreCase("MINE")){
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("underground")){
+                                    if(ans.getName().contains("underground")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("open cut")){
+                                    if(ans.getName().contains("open cut")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("Crushing")){
+                                    if(ans.getName().contains("Crushing")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("mill")){
+                                    if(ans.getName().contains("mill")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("agging")){
+                                    if(ans.getName().contains("agging")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("driving")){
+                                    if(ans.getName().contains("driving")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("office")){
+                                    if(ans.getName().contains("office")){
+                                        answersToSave.add(ans);
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        boolean alreadyAdded = false;
+                                        for(PossibleAnswerVO ans1:answersToSave){
+                                            if(ans1.getName().equalsIgnoreCase(answer)){
+                                                alreadyAdded = true;
+                                            }
+                                        }
+                                        if(!alreadyAdded){
+                                            ans.setName(answer);
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("NONO")){
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        ans.setName(answer);
+                                    }
+                                }
+                                answersToSave.add(ans);
+                            } else {
+                                for (String answer : actualAnswers) {
+                                    System.out.println(answer);
+                                    if(answer.contains("etween 1942")){
+                                        if(ans.getName().contains("rom 1942")){
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if(qNodeNumber.toLowerCase().contains("9a1")) {
+                                        try {
+                                            int year = Integer.parseInt(answer);
+                                            if (year < 1967) {
+                                                if(ans.getName().contains("efore the mine closed")){
+                                                    answersToSave.add(ans);
+                                                }
+                                            } else if (year > 1966 ) {
+                                                if(ans.getName().contains("fter the mine was closed")){
+                                                    answersToSave.add(ans);
+                                                }
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Issue with :"+randomInterview.getReferenceNumber()+"-"+actualQuestion.getName());
+                                            System.out.println("Defaulting to Last possible answer for:"+answer);
+                                        }
+                                    } else if(qNodeNumber.toLowerCase().contains("9a4")) {
+
+                                        if(answer.contains("business reasons")){
+                                            if(ans.getName().contains("business reasons")){
+                                                answersToSave.add(ans);
+                                            }
+                                        } else if(answer.contains("including holiday")){
+                                            if(ans.getName().contains("including holiday")){
+                                                answersToSave.add(ans);
+                                            }
+                                        } else if(answer.contains("ther reason")){
+                                            if(ans.getName().contains("ther reason")){
+                                                answersToSave.add(ans);
+                                            }
+                                        }
+
+                                    }
+                                    else{
+                                        try {
+                                            int year = Integer.parseInt(answer);
+
+                                            if (year <= 1941) {
+                                                if(ans.getName().contains("efore 1942")){
+                                                    answersToSave.add(ans);
+                                                }
+                                            } else if (year >= 1942 && year <= 1987) {
+                                                if(ans.getName().contains("etween 1942")){
+                                                    answersToSave.add(ans);
+                                                }
+                                            } else if (year > 1988) {
+                                                if(ans.getName().contains("fter 1987")){
+                                                    answersToSave.add(ans);
+                                                }
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            System.out.println("Issue with :"+randomInterview.getReferenceNumber()+"-"+actualQuestion.getName());
+                                            System.out.println("Defaulting to Last possible answer for:"+answer);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("LAND")){
+                        if(questionAsked.getNumber().equalsIgnoreCase("2A1")){
+                            for(PossibleAnswerVO ans: answers) {
+                                for (String answer : actualAnswers) {
+                                    if((answer.contains("Yes")) || (answer.contains("No"))){
+                                        if(ans.getName().equalsIgnoreCase("Asbestos insulation or lagging")){
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("Yes")){
+                                    if(ans.getName().contains("flocking")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("Raw asbestos")){
+                                    if(ans.getName().contains("Raw asbestos")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("Manufactured asbestos")){
+                                    if(ans.getName().contains("Manufactured asbestos")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("Used asbestos")){
+                                    if(ans.getName().contains("Used asbestos")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("No")){
+                                    if(ans.getName().contains("No")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("Don't know")){
+                                    if(ans.getName().contains("Don't know")){
+                                        answersToSave.add(ans);
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                for(String answer: actualAnswers){
+                                    if((!answer.trim().equalsIgnoreCase("")) && (!answer.trim().equalsIgnoreCase("No"))){
+                                        boolean alreadyAdded = false;
+                                        for(PossibleAnswerVO ans1:answersToSave){
+                                            if(ans1.getName().equalsIgnoreCase(answer)){
+                                                alreadyAdded = true;
+                                            }
+                                        }
+                                        if(!alreadyAdded){
+                                            if(!answer.equalsIgnoreCase("Yes")){
+                                                ans.setName(answer);
+                                                answersToSave.add(ans);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("AREM")){
+                        ArrayList<String> answersManaged = new ArrayList<String>();
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("Fibro")){
+                                    if(ans.getName().contains("Fibro")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Fire rated")){
+                                    if(ans.getName().contains("Fire rated")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Vinyl")){
+                                    if(ans.getName().contains("Vinyl")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Asbesos cavity")){
+                                    if(ans.getName().contains("Asbestos insulation")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Any asbestos")){
+                                    if(ans.getName().contains("Asbestos insulation")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Lagging")){
+                                    if(ans.getName().contains("Asbestos insulation")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Asbestos ceiling")){
+                                    if(ans.getName().contains("Asbestos insulation")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                actualAnswers.removeAll(answersManaged);
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        ans.setName(answer);
+                                        answersToSave.add(ans);
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("ANEC")){
+                        ArrayList<String> answersManaged = new ArrayList<String>();
+
+
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("CEMT")){
+                        ArrayList<String> answersManaged = new ArrayList<String>();
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("Gypsum")){
+                                    if(ans.getName().contains("Gypsum")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Basic")){
+                                    if(ans.getName().contains("Basic")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Fibrous")){
+                                    if(ans.getName().contains("Fibrous")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Office")){
+                                    if(ans.getName().contains("office")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                actualAnswers.removeAll(answersManaged);
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        ans.setName(answer);
+                                        answersToSave.add(ans);
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("FURN")){
+                        ArrayList<String> answersManaged = new ArrayList<String>();
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("Fibro")){
+                                    if(ans.getName().contains("Fibro")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Fire")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Fire")){
+                                        answersToSave.add(ans);
+                                    }
+                                } else if(answer.contains("Instulation")){
+                                    if(ans.getName().contains("insulation")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("batts")){
+                                    if(ans.getName().contains("batts")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Sprayed")){
+                                    if(ans.getName().contains("Sprayed")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("textile lagging")){
+                                    if(ans.getName().contains("textile lagging")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("Loose")){
+                                    if(ans.getName().contains("Loose")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                } else if(answer.contains("never")){
+                                    if(ans.getName().contains("never")){
+                                        answersToSave.add(ans);
+                                        answersManaged.add(answer);
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                actualAnswers.removeAll(answersManaged);
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        ans.setName(answer);
+                                        answersToSave.add(ans);
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("INSU")){
+                        ArrayList<String> answersManaged = new ArrayList<String>();
+                        if(questionAsked.getNumber().equalsIgnoreCase("2A1")){
+                            for(PossibleAnswerVO ans: answers) {
+                                if(ans.getName().equalsIgnoreCase("Asbestos insulation or lagging")) {
+                                    answersToSave.add(ans);
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("Fire")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Fire")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("batts")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("batts")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Sprayed")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Sprayed")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("blankets")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("blankets")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Loose-fill")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Loose fill")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Buildings")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Buildings")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Ships")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Ships")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Trains")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Trains")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Furnaces")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Furnaces")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                actualAnswers.removeAll(answersManaged);
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        ans.setName(answer);
+                                        answersToSave.add(ans);
+                                        if(!questionAsked.getNumber().equalsIgnoreCase("3")){
+                                            break;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("TEXT")){
+                        ArrayList<String> answersManaged = new ArrayList<String>();
+
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("Fire")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Fire")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Vinyl floor")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Vinyl floor")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Neither")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("Neither")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                } else if(answer.contains("Office")){
+                                    answersManaged.add(answer);
+                                    if(ans.getName().contains("ffice")){
+                                        answersToSave.add(ans);
+
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                actualAnswers.removeAll(answersManaged);
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        ans.setName(answer);
+                                        answersToSave.add(ans);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("TRAD")){
+                        if(questionAsked.getNumber().equalsIgnoreCase("2A1")){
+                            for(PossibleAnswerVO ans: answers) {
+                                for (String answer : actualAnswers) {
+                                    if(answer.contains("Yes")){
+                                        if(ans.getName().equalsIgnoreCase("Asbestos insulation or lagging")){
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        if(questionAsked.getNumber().equalsIgnoreCase("5A1")){
+                            for(PossibleAnswerVO ans: answers) {
+                                for (String answer : actualAnswers) {
+                                    if(answer.contains("Yes")){
+                                        if(ans.getName().equalsIgnoreCase("Arc or Stick")){
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        if(questionAsked.getNumber().equalsIgnoreCase("3")){
+                            for(PossibleAnswerVO ans: answers) {
+                                for (String answer : actualAnswers) {
+                                    if(answer.contains("Yes")){
+                                        if(ans.getName().equalsIgnoreCase("Yes")){
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            for (String answer : actualAnswers) {
+                                if(answer.contains("Yes")){
+                                    if(ans.getName().contains("flocking")){
+                                        answersToSave.add(ans);
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                for(String answer: actualAnswers){
+                                    if(!answer.trim().equalsIgnoreCase("")){
+                                        boolean alreadyAdded = false;
+                                        for(PossibleAnswerVO ans1:answersToSave){
+                                            if(ans1.getName().equalsIgnoreCase(answer)){
+                                                alreadyAdded = true;
+                                            }
+                                        }
+                                        if(!alreadyAdded){
+                                            if(!answer.equalsIgnoreCase("Yes")){
+                                                ans.setName(answer);
+                                                answersToSave.add(ans);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    else if(selectedJobModule.equalsIgnoreCase("WATE")){
+                        boolean alreadyAdded = false;
+                        if(questionAsked.getNumber().equalsIgnoreCase("3A1A1D1")){
+                            for(PossibleAnswerVO ans: answers) {
+                                for (String answer : actualAnswers) {
+                                    if(answer.contains("Yes")){
+                                        if(ans.getName().equalsIgnoreCase("Sprayed on lagging (flocking)")){
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if(answer.contains("No")){
+                                        if(ans.getName().equalsIgnoreCase("Don't know")){
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+
+                            }
+                        } else if(questionAsked.getNumber().equalsIgnoreCase("3A1A1")){
+                            for(PossibleAnswerVO ans: answers) {
+                                for (String answer : actualAnswers) {
+                                    if(answer.contains("nsulation")){
+                                        if(ans.getName().contains("nsulation")){
+                                            answersToSave.add(ans);
+                                            alreadyAdded = true;
+                                        }
+                                    } else if(answer.contains("illboard")){
+                                        if(ans.getName().contains("illboard")){
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+
+                            }
+                        } else if(questionAsked.getNumber().equalsIgnoreCase("3A2")){
+                            for(PossibleAnswerVO ans: answers) {
+                                for (String answer : actualAnswers) {
+                                    if(answer.contains("Yes")){
+                                        if(ans.getName().equalsIgnoreCase("Yes")){
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if(answer.contains("No")){
+                                        if(ans.getName().equalsIgnoreCase("No")){
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+
+                            }
+                        } else {
+                            for (PossibleAnswerVO ans : answers) {
+                                for (String answer : actualAnswers) {
+                                    if (answer.contains("Submarines")) {
+                                        if (ans.getName().contains("Submarines")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("Other military")) {
+                                        if (ans.getName().contains("Other military")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("Merchant navy")) {
+                                        if (ans.getName().contains("Merchant navy")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("Ocean-going")) {
+                                        if (ans.getName().contains("Ocean-going")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("emergency vessels")) {
+                                        if (ans.getName().contains("emergency vessels")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("ishing boats")) {
+                                        if (ans.getName().contains("ishing boats")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("argo")) {
+                                        if (ans.getName().contains("Merchant navy")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("arrier")) {
+                                        if (ans.getName().contains("Merchant navy")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("Merchant vessels")) {
+                                        if (ans.getName().contains("Merchant navy")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("anker")) {
+                                        if (ans.getName().contains("Merchant navy")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("steamships")) {
+                                        if (ans.getName().contains("Merchant navy")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("iver barge")) {
+                                        if (ans.getName().contains("river boats")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("self propelled")) {
+                                        if (ans.getName().contains("river boats")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("Fishing vessels")) {
+                                        if (ans.getName().contains("ishing boats")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    } else if (answer.contains("powerboats")) {
+                                        if (ans.getName().contains("Small power boats")) {
+                                            answersToSave.add(ans);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        for(PossibleAnswerVO ans: answers) {
+                            if(ans.getType().equalsIgnoreCase("P_freetext")){
+                                for(String answer: actualAnswers){
+                                    if((!answer.trim().equalsIgnoreCase("")) && (!answer.trim().equalsIgnoreCase("No"))){
+                                        for(PossibleAnswerVO ans1:answersToSave){
+                                            if(ans1.getName().equalsIgnoreCase(answer)){
+                                                alreadyAdded = true;
+                                            }
+                                        }
+                                        if(!alreadyAdded){
+                                            if(!answer.equalsIgnoreCase("Yes")){
+                                                ans.setName(answer);
+                                                answersToSave.add(ans);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }else{
+                    int iAnswer = answers.size()-1;
+                    PossibleAnswerVO selectedAnswer = answers.get(iAnswer);
+                    //selectedAnswer.setDeleted(1);
+                    answersToSave.add(selectedAnswer);
+                }
+                if(answersToSave.size()==0){
+                    int iAnswer = answers.size()-1;
+                    PossibleAnswerVO selectedAnswer = answers.get(iAnswer);
+                    //selectedAnswer.setDeleted(1);
+                    answersToSave.add(selectedAnswer);
+                }
+                saveMultiAnswer3(randomInterview,questionAsked, answersToSave,randomInterviewReport, isRandomAnswers,filterModuleVO);
+
+                saveQuestion3(randomInterview, questionAsked, randomInterviewReport, results, isRandomAnswers,
+                        filterModuleVO,jobInterview);
+            } else {
+                saveAnswer3(randomInterview, questionAsked, answers, randomInterviewReport, isRandomAnswers,
+                        filterModuleVO,jobInterview);
+                saveQuestion3(randomInterview, questionAsked, randomInterviewReport, results, isRandomAnswers,
+                        filterModuleVO,jobInterview);
+            }
+        }
+    }
+
     private InterviewQuestionVO populateInteviewQuestionJsonByLinkedQuestion(InterviewVO randomInterview,
                                                                              InterviewQuestionVO actualQuestion) {
         InterviewQuestionVO intQuestionVO = new InterviewQuestionVO();
@@ -1570,6 +2515,15 @@ public class InterviewServiceImpl implements InterviewService {
         interviewQuestionService.updateIntQ(questionAsked);
         randomInterviewReport.getListQuestion().add(questionAsked);
         processRandomQuestionsAndAnswers2(randomInterview, randomInterviewReport, results, isRandomAnswers,
+                filterModuleVO,jobInterview);
+    }
+    private void saveQuestion3(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
+                               RandomInterviewReport randomInterviewReport, List<RandomInterviewReport> results, Boolean isRandomAnswers,
+                               String[] filterModuleVO, Map<String, String> jobInterview) {
+        questionAsked.setProcessed(true);
+        interviewQuestionService.updateIntQ(questionAsked);
+        randomInterviewReport.getListQuestion().add(questionAsked);
+        processRandomQuestionsAndAnswers3(randomInterview, randomInterviewReport, results, isRandomAnswers,
                 filterModuleVO,jobInterview);
     }
     private void saveAnswer(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
@@ -1658,6 +2612,250 @@ public class InterviewServiceImpl implements InterviewService {
         randomInterviewReport.getListAnswer().add(interviewAnswer);
         refreshUnprocessedQuestions(questions, randomInterview);
     }
+    private void saveAnswer3(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
+                             List<PossibleAnswerVO> answers, RandomInterviewReport randomInterviewReport, Boolean isRandomAnswers,
+                             String[] filterModuleVO, Map<String, String> jobInterview) {
+
+        PossibleAnswerVO selectedAnswer = null;
+        if (!isRandomAnswers) {
+            selectedAnswer = answers.get(0);
+        } else {
+            String prefix = "";
+            NodeVO parentModule = questionService.getTopModuleByTopNodeId(questionAsked.getTopNodeId());
+            prefix = parentModule.getName().substring(0,4).toLowerCase();
+            String questionColumnName = prefix+questionAsked.getQuestionId();
+            if(questionColumnName.equalsIgnoreCase("INTR77795")){
+                questionColumnName = "job_module_name";
+                selectedJobModule = jobInterview.get(questionColumnName);
+                for(PossibleAnswerVO ans: answers){
+                    if(ans.getName().equalsIgnoreCase(selectedJobModule)){
+                        selectedAnswer = ans;
+                        break;
+                    }
+                }
+
+            }else{
+                if((!selectedJobModule.equalsIgnoreCase("NONO")) && questionAsked.getNumber().equalsIgnoreCase("1")){
+                    String yearStarted = jobInterview.get("JHStarted");
+                    String nodeNumber;
+
+                    try {
+                        int year = Integer.parseInt(yearStarted);
+
+                        if (year < 1981) {
+                            nodeNumber = "1A";
+                        } else if (year >= 1981 && year <= 1990) {
+                            nodeNumber = "1B";
+                        } else if (year > 1990) {
+                            nodeNumber = "1C";
+                        } else {
+                            nodeNumber = "1D";
+                        }
+                    } catch (NumberFormatException e) {
+                        nodeNumber = "1D";
+                    }
+                    for(PossibleAnswerVO ans: answers){
+                        if(ans.getNumber().equalsIgnoreCase(nodeNumber)){
+                            selectedAnswer = ans;
+                            break;
+                        }
+                    }
+                }else{
+                    //find the key based on the nodeNumber
+                    String qNodeNumber = questionAsked.getNumber();
+                    String columnName = getOldAMRId(qNodeNumber);
+                    questionColumnName = columnName;
+                    String answer = jobInterview.get(columnName);
+                    if(answer == null){
+                        answer = "No";
+                    } else if (answer.equalsIgnoreCase("")){
+                        answer = "No";
+                    }
+                    for(PossibleAnswerVO ans: answers){
+                        if(ans.getName().equalsIgnoreCase(answer)){
+                            selectedAnswer = ans;
+                            break;
+                        }else if(ans.getType().equalsIgnoreCase("P_freetext")){
+                            ans.setName(answer);
+                            selectedAnswer = ans;
+                            if(questionAsked.getNumber().equalsIgnoreCase("9a4b1")){
+                                ans.setName(answer);
+                                selectedAnswer = ans;
+                            }
+                        }
+                    }
+                    if((selectedJobModule.equalsIgnoreCase("TRAD")) && questionAsked.getNumber().equalsIgnoreCase("9A1")){
+                        String weeksPeryear = answer;
+                        String nodeNumber;
+                        try {
+                            int weeks = Integer.parseInt(weeksPeryear);
+                            if (weeks < 12) {
+                                nodeNumber = "9A1D";
+                            } else if (weeks >= 12 && weeks <= 46) {
+                                nodeNumber = "9A1C";
+                            } else if (weeks > 46) {
+                                nodeNumber = "9A1B";
+                            } else {
+                                nodeNumber = "9A1E";
+                            }
+                        } catch (NumberFormatException e) {
+                            nodeNumber = "9A1E";
+                        }
+                        for(PossibleAnswerVO ans1: answers){
+                            if(ans1.getNumber().equalsIgnoreCase(nodeNumber)){
+                                selectedAnswer = ans1;
+                                break;
+                            }
+                        }
+                    } else if((selectedJobModule.equalsIgnoreCase("WATE")) && questionAsked.getNumber().equalsIgnoreCase("2A2")){
+                        List<String> actualAnswers = findValuesContaining(jobInterview,columnName);
+                        for(PossibleAnswerVO ans1: answers){
+                            for (String answer1 : actualAnswers) {
+                                if(answer1.contains("Bridge")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                } else if(answer1.contains("Engine")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                } else if(answer1.contains("Auxillary machinery")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                } else if(answer1.contains("boiler room")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                } else if(answer1.contains("Gear rooms")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                } else if(answer1.contains("auxialliary boiler")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                } else if(answer1.contains("marine technician")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                } else if(answer1.contains("mostly boiler repairs")){
+                                    if(ans1.getName().equalsIgnoreCase("Yes")){
+                                        selectedAnswer = ans1;
+                                    }
+                                }
+                            }
+                        }
+
+
+                    } else if(selectedJobModule.equalsIgnoreCase("NONO")) {
+
+                        if(qNodeNumber.toLowerCase().contains("9a2")){
+
+                            for(PossibleAnswerVO ans1: answers){
+                                try {
+                                    int year = Integer.parseInt(answer);
+                                    if (year < 3) {
+                                        if(ans1.getName().contains("ne or two times")){
+                                            selectedAnswer = ans1;
+                                        }
+                                    } else if (year > 2 ) {
+                                        if(ans1.getName().contains("ore than 2 times")){
+                                            selectedAnswer = ans1;
+                                        }
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Issue with :"+randomInterview.getReferenceNumber());
+                                    System.out.println("Defaulting to Last possible answer for:"+answer);
+                                }
+                            }
+                        }else if(qNodeNumber.toLowerCase().contains("9a3")){
+
+                            for(PossibleAnswerVO ans1: answers){
+                                try {
+                                    int year = Integer.parseInt(answer);
+                                    if (year < 5) {
+                                        if(ans1.getName().contains("ot more than 5")){
+                                            selectedAnswer = ans1;
+                                        }
+                                    } else if (year > 4 && year < 21 ) {
+                                        if(ans1.getName().contains("5 to 20")){
+                                            selectedAnswer = ans1;
+                                        }
+                                    } else if (year > 20 ) {
+                                        if(ans1.getName().contains("ore than 20")){
+                                            selectedAnswer = ans1;
+                                        }
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Issue with :"+randomInterview.getReferenceNumber());
+                                    System.out.println("Defaulting to Last possible answer for:"+answer);
+                                }
+                            }
+                        }
+
+
+                    }
+                }
+            }
+
+
+            //selectedAnswer = chooseRandomAnswer3(answers, filterModuleVO,jobInterview,questionColumnName);
+            if(selectedAnswer==null){
+                System.out.println("AMR_ISSUE:"+randomInterview.getReferenceNumber());
+                System.out.println("AMR_ISSUE:"+questionColumnName+" lookup id");
+                System.out.println("AMR_ISSUE:"+questionAsked.getNumber()+" No answer found!");
+                int iAnswer = answers.size()-1;
+                selectedAnswer = answers.get(iAnswer);
+                //selectedAnswer.setDeleted(1);
+            }
+        }
+        InterviewAnswerVO interviewAnswer = populateInterviewAnswer(randomInterview, selectedAnswer);
+        interviewAnswer.setInterviewQuestionId(questionAsked.getId());
+        interviewAnswer.setIsProcessed(true);
+        List<InterviewAnswerVO> listOfAnswers = new ArrayList<>();
+        listOfAnswers.add(interviewAnswer);
+        List<InterviewQuestionVO> questions = interviewAnswerService
+                .saveIntervewAnswersAndGetChildQuestion(listOfAnswers);
+        randomInterviewReport.getListAnswer().add(interviewAnswer);
+        refreshUnprocessedQuestions(questions, randomInterview);
+    }
+    private List<String> findValuesContaining(Map<String, String> jobInterview, String searchString) {
+        List<String> matchingValues = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : jobInterview.entrySet()) {
+            if (entry.getKey() != null && entry.getKey().contains(searchString)) {
+                matchingValues.add(entry.getValue());
+            }
+        }
+
+        return matchingValues;
+    }
+    private String getOldAMRId(String nodeNumber) {
+        String csvFile = "/opt/data/amr/"+selectedJobModule+"_idLookUp.csv";
+        String line;
+        String csvSplitBy = ",";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            // Skip header line
+            br.readLine();
+
+            // Read each line
+            while ((line = br.readLine()) != null) {
+                String[] columns = line.split(csvSplitBy);
+
+                // Check if NodeNumber matches
+                if (columns.length >= 2 && columns[0].trim().equalsIgnoreCase(nodeNumber)) {
+                    return columns[1].trim();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Return null if not found
+        return null;
+    }
     private void saveMultiAnswer1(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
                              List<PossibleAnswerVO> answersToSave, RandomInterviewReport randomInterviewReport, Boolean isRandomAnswers,
                              String[] filterModuleVO) {
@@ -1676,6 +2874,23 @@ public class InterviewServiceImpl implements InterviewService {
         }
     }
     private void saveMultiAnswer2(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
+                                  List<PossibleAnswerVO> answersToSave, RandomInterviewReport randomInterviewReport, Boolean isRandomAnswers,
+                                  String[] filterModuleVO) {
+
+
+        for(PossibleAnswerVO answer: answersToSave) {
+            InterviewAnswerVO interviewAnswer = populateInterviewAnswer(randomInterview, answer);
+            interviewAnswer.setInterviewQuestionId(questionAsked.getId());
+            interviewAnswer.setIsProcessed(true);
+            List<InterviewAnswerVO> listOfAnswers = new ArrayList<>();
+            listOfAnswers.add(interviewAnswer);
+            List<InterviewQuestionVO> questions = interviewAnswerService
+                    .saveIntervewAnswersAndGetChildQuestion(listOfAnswers);
+            randomInterviewReport.getListAnswer().add(interviewAnswer);
+            refreshUnprocessedQuestions(questions, randomInterview);
+        }
+    }
+    private void saveMultiAnswer3(InterviewVO randomInterview, InterviewQuestionVO questionAsked,
                                   List<PossibleAnswerVO> answersToSave, RandomInterviewReport randomInterviewReport, Boolean isRandomAnswers,
                                   String[] filterModuleVO) {
 
@@ -1794,6 +3009,45 @@ public class InterviewServiceImpl implements InterviewService {
 
         return retValue;
     }
+    private PossibleAnswerVO chooseRandomAnswer3(List<PossibleAnswerVO> answers, String[] filterModuleVO, Map<String, String> jobInterview, String questionColumnName) {
+
+        int rnd = new Random().nextInt(answers.size());
+        if (rnd == answers.size()) {
+            rnd = rnd - 1;
+        }
+        String actualAnswerNumber = "";
+        if(questionColumnName.equalsIgnoreCase("job_module_name")){
+            actualAnswerNumber = getByKeySuffix(jobInterview,questionColumnName);
+            selectedJobModule = actualAnswerNumber.substring(0,4);
+        }else{
+            actualAnswerNumber = getByKeyPrefixAndSuffix(jobInterview,selectedJobModule,questionColumnName);
+        }
+        PossibleAnswerVO retValue = null;
+
+        if(questionColumnName.equalsIgnoreCase("job_module_name")){
+            for(PossibleAnswerVO ans: answers){
+                if(ans.getName().equalsIgnoreCase(selectedJobModule)){
+                    retValue = ans;
+                    break;
+                }
+            }
+        }else{
+            for(PossibleAnswerVO ans: answers){
+                if(ans.getNumber().equalsIgnoreCase(actualAnswerNumber)){
+                    retValue = ans;
+                    break;
+                }
+            }
+        }
+        if(retValue == null){
+            //retValue = answers.get(rnd);
+            //System.out.println(questionColumnName+" No answer found!");
+        }
+
+
+        return retValue;
+    }
+
     private String getByKeySuffix(Map<String,String> map, String suffix) {
         return map.entrySet().stream()
                 .filter(e -> e.getKey().endsWith(suffix))
@@ -1802,6 +3056,14 @@ public class InterviewServiceImpl implements InterviewService {
                 .orElse(null);
     }
     private String getByKeyPrefixAndSuffix(Map<String,String> map, String prefix, String suffix) {
+        return map.entrySet().stream()
+                .filter(e -> e.getKey().toLowerCase().startsWith(prefix.toLowerCase())
+                        && e.getKey().toLowerCase().endsWith(suffix.toLowerCase()))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+    private String getByOldAMRID(Map<String,String> map, String prefix, String suffix) {
         return map.entrySet().stream()
                 .filter(e -> e.getKey().toLowerCase().startsWith(prefix.toLowerCase())
                         && e.getKey().toLowerCase().endsWith(suffix.toLowerCase()))
