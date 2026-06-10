@@ -195,7 +195,8 @@ public class AssessmentReportService {
                         headerList.add(headerKey);
                     }
                     if (!ignore) {
-                        answerList.add(ia.getAnswerFreetext());
+                        //answerList.add(ia.getAnswerFreetext());
+                        answerList.add(ia.getNumber());
                     }
                 }
                 writer.writeNext(headerList.toArray(new String[headerList.size()]));
