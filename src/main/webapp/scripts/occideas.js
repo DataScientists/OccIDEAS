@@ -51,7 +51,8 @@
           "occIDEASApp.angular.translate.service",
           "occIDEASApp.Notes",
           "occIDEASApp.NodeLanguage",
-          "occIDEASApp.JMeter"
+          "occIDEASApp.JMeter",
+          "occIDEASApp.StartInterview"
       ], function ($rootScopeProvider) {
           $rootScopeProvider.digestTtl(100);
       })
