@@ -1107,6 +1107,10 @@
 
     };
 
+    $scope.startNewInterview = function() {
+      $state.go('startInterview');
+    };
+
     $scope.goBackQuestion = function() {
       var questionHistory = $scope.interview.questionHistory;
       var lastProcessed = null;
@@ -1119,6 +1123,8 @@
       }
 
       if (!lastProcessed) return;
+
+      var previousAnswers = angular.copy(lastProcessed.answers);
 
       questionsToDelete = [];
       answersToDelete = [];
@@ -1142,7 +1148,37 @@
             if (response.status === 200) {
               QuestionsService.findQuestionSingleChildLevel(lastProcessed.questionId).then(function(response) {
                 if (response.status === 200) {
-                  $scope.interview.showedQuestion = response.data[0];
+                  var ques = response.data[0];
+
+                  _.each(previousAnswers, function(prevAnswer) {
+                    _.find(ques.nodes, function(node) {
+                      if (prevAnswer.answerId == node.idNode) {
+                        node.isSelected = true;
+                        ques.selectedAnswer = node;
+                        if (node.type === 'P_freetext') {
+                          node.name = prevAnswer.answerFreetext || prevAnswer.name;
+                        } else if (node.type === 'P_frequencyshifthours' || node.type === 'P_frequencyhoursminute') {
+                          var val = parseFloat(prevAnswer.answerFreetext);
+                          if (!isNaN(val)) {
+                            ques.hours = Math.floor(val);
+                            ques.minutes = Math.round((val - Math.floor(val)) * 60);
+                          }
+                        } else if (node.type.indexOf('P_frequency') === 0) {
+                          node.name = prevAnswer.answerFreetext;
+                        }
+                      }
+                    });
+                  });
+
+                  if (ques.type === 'Q_frequency') {
+                    $scope.hoursPerWeekArray = $scope.getHoursPerWeekArray();
+                    $scope.hoursArray = $scope.getShiftHoursArray();
+                    $scope.minutesArray = $scope.getShiftMinutesArray();
+                    $scope.weeks = $scope.getWeeksArray();
+                    $scope.seconds = $scope.getSecondsArray();
+                  }
+
+                  $scope.interview.showedQuestion = ques;
                   $scope.interviewStarted = true;
                   $scope.inProgress = false;
                 }

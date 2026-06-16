@@ -1,35 +1,43 @@
-<div ng-cloak>
-  <div class="row">
-    <md-input-container class="col-md-2" style="margin-left: 20px;">
-      <label id="awesidlabel">Study ID</label>
-      <input class="form-control" id="awesid"
-             ng-keyup="filterAndValidate($event)"
-             ng-model="searchAWESID"
-             placeholder="{{awesIdPrefix}}______"
-             required
-             type="text"/>
-      <div class="md-errors-spacer" id="awesidcounter">
-        <div class="md-char-counter">{{awesIdSize}}/{{awesIdMaxSize}}</div>
-      </div>
-    </md-input-container>
-    <div class="col-md-4" ng-if="$storage.langEnabled" style="display: inline-block; margin-top: 20px;">
-      <label>Language</label>
-      <ui-select ng-change="changeNodeLanguage(selectLanguage)"
-                 ng-model="selectLanguage.selected"
-                 style="min-width: 150px;" theme="select2">
-        <ui-select-match>
-          <i class="glyphicon {{$select.selected.flag}}"></i> {{$select.selected.description}}
-        </ui-select-match>
-        <ui-select-choices repeat="lang in languages | propsFilter: {language: $select.search}">
-          <i class="glyphicon {{lang.flag}}"></i>
-          <div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
-        </ui-select-choices>
-      </ui-select>
+<div ng-cloak class="si-page">
+  <div class="si-card">
+
+    <div class="si-header-band">
+      <img alt="OccIDEAS"
+           class="si-logo"
+           src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png"/>
     </div>
-    <div class="col-md-4" style="display: inline-block; margin-top: 18px; margin-right: -150px;">
-      <button class="btn btn-default" ng-click="add(selectLanguage)">
-        <span>Start</span>
-      </button>
+
+    <div class="si-body">
+
+      <div class="si-field-group">
+        <label class="si-label" for="awesid">Study ID</label>
+        <input class="si-input"
+               id="awesid"
+               ng-keyup="filterAndValidate($event)"
+               ng-model="searchAWESID"
+               placeholder="{{awesIdPrefix}}______"
+               required
+               type="text"/>
+        <span class="si-counter">{{awesIdSize}}/{{awesIdMaxSize}}</span>
+      </div>
+
+      <div class="si-field-group" ng-if="$storage.langEnabled">
+        <label class="si-label">Language</label>
+        <ui-select ng-change="changeNodeLanguage(selectLanguage)"
+                   ng-model="selectLanguage.selected"
+                   style="min-width: 150px;" theme="select2">
+          <ui-select-match>
+            <i class="glyphicon {{$select.selected.flag}}"></i> {{$select.selected.description}}
+          </ui-select-match>
+          <ui-select-choices repeat="lang in languages | propsFilter: {language: $select.search}">
+            <i class="glyphicon {{lang.flag}}"></i>
+            <div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
+          </ui-select-choices>
+        </ui-select>
+      </div>
+
+      <button class="si-btn-start" ng-click="add(selectLanguage)">Start Interview</button>
+
     </div>
   </div>
 </div>

@@ -7,6 +7,11 @@
     <span style="font-size: 30px;">{{storage.chosenLang.description}}</span>
   </div>
   <div ng-class="$root.$state.current.name.indexOf('startInterview') === 0 ? 'col-md-12' : 'col-md-4'">
+    <div class="si-interview-bar" ng-if="$root.$state.current.name.indexOf('startInterview') === 0">
+      <img alt="OccIDEAS" class="si-interview-logo"
+           src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png"/>
+      <button class="si-btn-new" ng-click="startNewInterview()">Start New</button>
+    </div>
     <div>
       <div>
         <md-progress-linear md-mode="indeterminate" ng-if="inProgress"></md-progress-linear>
@@ -32,7 +37,7 @@
     <div ng-if="!inProgress">
       <ul id="interviewing-{{interview.showedQuestion.idNode}}"
           ng-if="interviewStarted">
-        <md-toolbar>
+        <md-toolbar ng-class="{'si-toolbar': $root.$state.current.name.indexOf('startInterview') === 0}">
           <span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
           <span ng-if="!storage.langEnabled">{{interview.showedQuestion.name}}</span>
           <md-button event-focus id="numId">
@@ -168,14 +173,16 @@
 
           <div layout="row" layout-align="start center">
             <md-button class="md-fab md-raised"
+                       ng-class="{'si-fab-next': $root.$state.current.name.indexOf('startInterview') === 0}"
                        ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
                        ng-if="!editModeOn"><span>NEXT</span></md-button>
 
-            <md-button class="md-fab md-raised" style="margin-left: 8px;"
+            <md-button class="md-fab md-raised si-fab-back" style="margin-left: 8px;"
                        ng-click="goBackQuestion()"
                        ng-if="$root.$state.current.name.indexOf('startInterview') === 0"><span>BACK</span></md-button>
 
             <md-button class="md-fab md-raised" style="margin-left: 8px;"
+                       ng-class="{'si-fab-stop': $root.$state.current.name.indexOf('startInterview') === 0}"
                        ng-click="stopInterview(interview.showedQuestion)"><span>STOP</span></md-button>
           </div>
 
