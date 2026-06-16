@@ -1107,6 +1107,52 @@
 
     };
 
+    $scope.goBackQuestion = function() {
+      var questionHistory = $scope.interview.questionHistory;
+      var lastProcessed = null;
+      for (var i = questionHistory.length - 1; i >= 0; i--) {
+        var q = questionHistory[i];
+        if (q.processed && !q.deleted && !q.link) {
+          lastProcessed = q;
+          break;
+        }
+      }
+
+      if (!lastProcessed) return;
+
+      questionsToDelete = [];
+      answersToDelete = [];
+
+      populateQuestionsAndAnswersToDelete(lastProcessed);
+      _.remove(questionsToDelete, function(q) { return q === lastProcessed; });
+
+      lastProcessed.deleted = 0;
+      lastProcessed.processed = false;
+      lastProcessed.answers = [];
+
+      $scope.inProgress = true;
+
+      var defer1 = $q.defer();
+      deleteAnswers(answersToDelete, defer1);
+      defer1.promise.then(function() {
+        var defer2 = $q.defer();
+        deleteQuestions(questionsToDelete, defer2);
+        defer2.promise.then(function() {
+          InterviewsService.saveQuestion(lastProcessed).then(function(response) {
+            if (response.status === 200) {
+              QuestionsService.findQuestionSingleChildLevel(lastProcessed.questionId).then(function(response) {
+                if (response.status === 200) {
+                  $scope.interview.showedQuestion = response.data[0];
+                  $scope.interviewStarted = true;
+                  $scope.inProgress = false;
+                }
+              });
+            }
+          });
+        });
+      });
+    };
+
     $scope.stopInterview = function(node) {
       ParticipantsService.findInterviewParticipant($rootScope.participant.idParticipant).then(
         function(response) {

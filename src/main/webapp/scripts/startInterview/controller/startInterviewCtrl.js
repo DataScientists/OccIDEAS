@@ -11,8 +11,8 @@
     InterviewsService, NodeLanguageService, ngToast) {
 
     $scope.$storage = $sessionStorage;
-    $scope.awesIdMaxSize = $sessionStorage.awesIdLength;
-    $scope.awesIdPrefix = $sessionStorage.awesIdPrefix;
+    $scope.awesIdMaxSize = 5;
+    $scope.awesIdPrefix = "T";
     $scope.awesIdSize = 0;
     $scope.searchAWESID = '';
     $scope.selectLanguage = {};

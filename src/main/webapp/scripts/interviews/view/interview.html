@@ -6,7 +6,7 @@
     margin-top: 3px;"></span>
     <span style="font-size: 30px;">{{storage.chosenLang.description}}</span>
   </div>
-  <div class="col-md-4">
+  <div ng-class="$root.$state.current.name.indexOf('startInterview') === 0 ? 'col-md-12' : 'col-md-4'">
     <div>
       <div>
         <md-progress-linear md-mode="indeterminate" ng-if="inProgress"></md-progress-linear>
@@ -166,27 +166,37 @@
             </md-radio-group>
           </div>
 
-          <md-button class="md-fab md-raised"
-                     ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
-                     ng-if="!editModeOn"><span>NEXT</span></md-button>
+          <div layout="row" layout-align="start center">
+            <md-button class="md-fab md-raised"
+                       ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
+                       ng-if="!editModeOn"><span>NEXT</span></md-button>
 
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <md-button class="md-primary md-raised interviewNotesButton"
-                     ng-click="showNotePrompt($event)"> Add Note
-          </md-button>
-          <ol>
-            <li ng-if="note.type=='Interviewer'"
-                ng-repeat='note in interview.notes'>{{note.text}}
-            </li>
-          </ol>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <md-button class="md-fab md-raised"
-                     ng-click="stopInterview(interview.showedQuestion)"><span>STOP</span></md-button>
+            <md-button class="md-fab md-raised" style="margin-left: 8px;"
+                       ng-click="goBackQuestion()"
+                       ng-if="$root.$state.current.name.indexOf('startInterview') === 0"><span>BACK</span></md-button>
+
+            <md-button class="md-fab md-raised" style="margin-left: 8px;"
+                       ng-click="stopInterview(interview.showedQuestion)"><span>STOP</span></md-button>
+          </div>
+
+          <div ng-if="$root.$state.current.name.indexOf('startInterview') !== 0">
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <md-button class="md-primary md-raised interviewNotesButton"
+                       ng-click="showNotePrompt($event)"> Add Note
+            </md-button>
+            <ol>
+              <li ng-if="note.type=='Interviewer'"
+                  ng-repeat='note in interview.notes'>{{note.text}}
+              </li>
+            </ol>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+
+          </div>
         </div>
       </ul>
     </div>
@@ -233,7 +243,8 @@
   </div>
 </div>
 
-<div class="col-md-8 moduleInterview" id="interview-question-tree" ng-if="treeViewEnabled">
+<!--
+<div ng-class="$root.$state.current.name.indexOf('startInterview') === 0 ? 'col-md-12 moduleInterview' : 'col-md-8 moduleInterview'" id="interview-question-tree" ng-if="treeViewEnabled">
   <button class="btn btn-default"
           ng-click="toggleView()">Switch to List View
   </button>
@@ -246,8 +257,11 @@
     <p>&nbsp;</p>
   </div>
 </div>
+-->
 <!-- Interview History list starts here -->
-<div class="col-md-8 moduleInterview" id="interview-question-list" ng-if="!treeViewEnabled">
+
+<!--
+<div class="col-md-8 moduleInterview" id="interview-question-list" ng-if="false">
 
   <button class="btn btn-default"
           ng-click="toggleView()">Switch to Tree View
@@ -262,9 +276,7 @@
           id="questionlist-{{element.questionId}}">
           <div class="form-group pull-left"
                style="margin-top: 5px; margin-left: -15px;">
-            <!-- 							<span ng-if="!element.processed" class="badge-unprocessed " title="scheduled"> -->
-            <!-- 								&nbsp; -->
-            <!-- 							</span> -->
+
             <i class="glyphicon {{element.name  |
 							translate | displayFlag:element:storage}}" ng-if="storage.langEnabled"></i>
             <span class="badge-deleted" ng-if="element.deleted"
@@ -285,7 +297,7 @@
                 ng-if="!storage.langEnabled" title="{{ element.name }}">{{
 						element.name}}</span>
         </div>
-        <!-- 			show answers -->
+
         <div class="tree-node-content P_interviewresult"
              ng-repeat="as in element.answers | orderBy:orderByNumber">
 					<span class="badge-deleted" ng-if="as.deleted" title="deleted">
@@ -334,4 +346,5 @@
   </div>
 
 </div>
+-->
 <!-- Interview History list ends here -->
