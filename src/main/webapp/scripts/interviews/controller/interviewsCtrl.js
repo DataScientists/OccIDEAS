@@ -1981,6 +1981,33 @@
       }
     }
 
+    if (!$scope.openAnswerSummary) {
+      $scope.openAnswerSummary = function() {};
+    }
+
+    $scope.moduleTreeOptions = { dragEnabled: false };
+
+    $scope.siHighlightRule = function(mrule) {
+      if (!mrule.conditions || mrule.conditions.length === 0) return;
+      var idNode = mrule.conditions[0].idNode;
+      var elementId = 'node-' + idNode;
+      $('.tree-node div').removeClass('highlight-rulenode');
+      var el = $('#' + elementId);
+      if (el.length) {
+        el.addClass('highlight-rulenode');
+        $('html, body').animate({ scrollTop: el.offset().top - 150 }, 800);
+      }
+    };
+
+    function loadSiQuestionTree(interviewId) {
+      InterviewsService.getExpandedModule(interviewId).then(function(response) {
+        if (response.status === '200' && response.data && response.data[0]) {
+          $scope.linkedModule = response.data[0];
+          addHeader($scope.linkedModule.nodes);
+        }
+      });
+    }
+
     function runStartInterviewAssessment() {
       var interviewId = $scope.interview.interviewId;
       $scope.siAssessmentLoading = true;
@@ -1991,15 +2018,6 @@
         if (response.status === 200 && response.data && response.data[0]) {
           var firedRules = response.data[0].firedRules || [];
           $scope.siData.firedRules = firedRules;
-          var agentCounts = {};
-          firedRules.forEach(function(rule) {
-            agentCounts[rule.agentId] = (agentCounts[rule.agentId] || 0) + 1;
-          });
-          var counts = Object.keys(agentCounts).map(function(k) { return agentCounts[k]; });
-          var maxCount = counts.length ? Math.max.apply(null, counts) : 0;
-          if (maxCount > 12) {
-            $scope.siData.height = (maxCount / 3) * 5.5 + 14;
-          }
         }
         return AutoAssessmentService.getByInterviewId(interviewId);
       }).then(function(response) {
@@ -2010,6 +2028,7 @@
       }).then(function(agents) {
         $scope.siAgents = agents || [];
         $scope.siAssessmentLoading = false;
+        loadSiQuestionTree(interviewId);
       });
     }
 

@@ -133,6 +133,42 @@
 
 .si-btn-new:hover { background: rgba(255, 255, 255, .18); }
 
+/* ---- Hazards Identified (startInterview results) ---- */
+
+.si-hazards-title {
+  color: #3d9cbf;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+}
+
+.si-hazard-row {
+  overflow: hidden;
+  padding: 8px 0;
+  border-bottom: 1px solid #edf2f5;
+}
+
+.si-hazard-agent {
+  float: left;
+  width: 180px;
+  font-size: 0.9em;
+  font-weight: 500;
+  color: #444;
+  line-height: 8px;
+}
+
+.si-hazard-rules {
+  overflow: hidden;
+  display: block;
+}
+
+.si-hazard-rules > span > div {
+  margin: 1px 2px;
+}
+
+.si-rule-dot {
+  cursor: pointer;
+}
+
 /* ---- Question toolbar ---- */
 
 md-toolbar.si-toolbar {

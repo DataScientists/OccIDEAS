@@ -255,42 +255,24 @@
       <div ng-if="!siAssessmentLoading">
         <p>Thank you &mdash; your interview is complete.</p>
         <div class="assessmentWrapper" id="assessmentWrapper">
-          <div class="firedRulesScroller">
-            <div class="pull-right" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
-              <div class="verticalagents"><div class="agentcontainer"><span class="rotatedagenttext"></span></div></div>
-              <div style="height:{{siData.height+10}}px">
-                <div class="verticalrules"><div class="rulescontainer"><div class="assessmentDescription">Fired Rules</div></div></div>
-              </div>
-              <div class="verticalrules"><div class="rulescontainer"><div class="assessmentDescription">Auto</div></div></div>
-              <div class="verticalrules"><div class="rulescontainer"><div class="assessmentDescription">Manual</div></div></div>
-            </div>
-            <div class="pull-right" ng-repeat="agent in siAgents" style="height:40px;width: 27px;border-right: solid aliceblue 1px;">
-              <div class="verticalagents"><div class="agentcontainer"><span class="rotatedagenttext">{{agent.name}}</span></div></div>
-              <div style="height:{{siData.height+10}}px">
-                <div class="verticalrules"><div class="rulescontainer">
-                  <div class="agentACell" id="{{agent.idAgent}}" style="height:{{siData.height}}px">
-                    <span class="cell-lable" ng-repeat="mrule in siData.firedRules">
-                      <div class="{{mrule.level}} {{mrule.type}}" ng-if="mrule.agentId == agent.idAgent"></div>
-                    </span>
-                  </div>
-                </div></div>
-              </div>
-              <div class="verticalrules"><div class="rulescontainer">
-                <div class="agentACell">
-                  <span class="cell-lable" ng-repeat="mrule in siData.autoAssessedRules">
-                    <div class="assessment" ng-class="mrule.level" ng-if="!mrule.deleted && mrule.agentId == agent.idAgent"></div>
-                  </span>
-                </div>
-              </div></div>
-              <div class="verticalrules"><div class="rulescontainer">
-                <div class="agentACell">
-                  <span class="cell-lable" ng-repeat="mrule in siData.manualAssessedRules">
-                    <div class="assessment" ng-class="mrule.level" ng-if="!mrule.deleted && mrule.agentId == agent.idAgent"></div>
-                  </span>
-                </div>
-              </div></div>
-            </div>
+          <h4 class="si-hazards-title">Hazards Identified</h4>
+          <div class="si-hazard-row"
+               ng-repeat="agent in siAgents"
+               ng-if="(siData.firedRules | filter: {agentId: agent.idAgent}).length > 0">
+            <span class="si-hazard-agent">{{agent.name}}</span>
+            <span class="si-hazard-rules">
+              <span ng-repeat="mrule in siData.firedRules">
+                <div class="{{mrule.level}} {{mrule.type}} si-rule-dot"
+                     ng-if="mrule.agentId == agent.idAgent"
+                     ng-click="siHighlightRule(mrule)"
+                     title="Click to see answer"></div>
+              </span>
+            </span>
           </div>
+        </div>
+        <p>&nbsp;</p>
+        <div id="interview-question-list">
+          <ng-include src="'scripts/startInterview/view/siModuleTree.html'"></ng-include>
         </div>
         <p>&nbsp;</p>
         <md-button class="si-btn-new" ng-click="startNewInterview()">Start New Interview</md-button>
