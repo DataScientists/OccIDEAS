@@ -7,7 +7,7 @@
   function Config($stateProvider) {
     $stateProvider
       .state('startInterview', {
-        url: '/startInterview',
+        url: '/startInterview?id',
         templateUrl: 'scripts/startInterview/view/startInterviewForm.html',
         controller: 'StartInterviewCtrl',
         authenticate: false

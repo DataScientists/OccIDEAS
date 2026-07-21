@@ -3,18 +3,19 @@
     .controller('StartInterviewCtrl', StartInterviewCtrl);
 
   StartInterviewCtrl.$inject = [
-    '$scope', '$rootScope', '$state', '$sessionStorage', '$translate',
-    'InterviewsService', 'NodeLanguageService', 'ngToast'
+    '$scope', '$rootScope', '$state', '$stateParams', '$sessionStorage', '$translate',
+    'NodeLanguageService', 'ngToast'
   ];
 
-  function StartInterviewCtrl($scope, $rootScope, $state, $sessionStorage, $translate,
-    InterviewsService, NodeLanguageService, ngToast) {
+  function StartInterviewCtrl($scope, $rootScope, $state, $stateParams, $sessionStorage, $translate,
+    NodeLanguageService, ngToast) {
 
     $scope.$storage = $sessionStorage;
     $scope.awesIdMaxSize = 5;
     $scope.awesIdPrefix = "T";
     $scope.awesIdSize = 0;
-    $scope.searchAWESID = '';
+    $scope.searchAWESID = $stateParams.id || '';
+    $scope.externalMode = !!$stateParams.id;
     $scope.selectLanguage = {};
 
     // Stub on $rootScope so InterviewsCtrl can find it via scope chain
@@ -77,25 +78,15 @@
         $translate.use('GB');
       }
 
-      InterviewsService.checkReferenceNumberExists($scope.searchAWESID).then(function(response) {
-        if (response.status == 200) {
-          if (confirm("This Participant ID has already been used. Would you like to add a duplicate?")) {
-            $state.go('startInterviewRun', { startWithReferenceNumber: $scope.searchAWESID });
-          }
-        } else if (response.status == 204) {
-          $state.go('startInterviewRun', { startWithReferenceNumber: $scope.searchAWESID });
-        } else {
-          ngToast.create({
-            className: 'danger',
-            content: 'Error occurred during ID check.',
-            animation: 'slide'
-          });
-        }
-      });
+      $state.go('startInterviewRun', { startWithReferenceNumber: $scope.searchAWESID });
     };
 
     function isValidAwesId(awesId) {
-      return awesId && awesId.length === $scope.awesIdMaxSize;
+      return !!(awesId && awesId.trim().length > 0);
+    }
+
+    if ($scope.externalMode) {
+      $scope.add($scope.selectLanguage);
     }
   }
 })();

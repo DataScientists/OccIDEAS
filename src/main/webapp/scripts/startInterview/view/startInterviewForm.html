@@ -18,7 +18,7 @@
                placeholder="{{awesIdPrefix}}______"
                required
                type="text"/>
-        <span class="si-counter">{{awesIdSize}}/{{awesIdMaxSize}}</span>
+        <span class="si-counter" ng-if="!externalMode">{{awesIdSize}}/{{awesIdMaxSize}}</span>
       </div>
 
       <div class="si-field-group" ng-if="$storage.langEnabled">

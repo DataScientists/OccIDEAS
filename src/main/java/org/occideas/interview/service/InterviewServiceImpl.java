@@ -502,7 +502,8 @@ public class InterviewServiceImpl implements InterviewService {
         String referenceNumber = generateReferenceAuto(maxReferenceNumber);
         List<RandomInterviewReport> results = new ArrayList<>();
 
-        String csvFilePath = "/opt/data/redcapResponses/2025-09-01_0621.csv";
+        //String csvFilePath = "/opt/data/redcapResponses/2025-09-01_0621.csv";
+        String csvFilePath = "/opt/data/redcapResponses/2026-06-26_0733.csv";
         //String csvFilePath = "/opt/data/redcapResponses/test003.csv";
 
         try (CSVReaderHeaderAware reader = new CSVReaderHeaderAware(new FileReader(csvFilePath))) {

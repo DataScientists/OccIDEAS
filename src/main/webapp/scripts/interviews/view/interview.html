@@ -172,18 +172,18 @@
           </div>
 
           <div layout="row" layout-align="start center">
-            <md-button class="md-fab md-raised"
-                       ng-class="{'si-fab-next': $root.$state.current.name.indexOf('startInterview') === 0}"
-                       ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
-                       ng-if="!editModeOn"><span>NEXT</span></md-button>
+
 
             <md-button class="md-fab md-raised si-fab-back" style="margin-left: 8px;"
                        ng-click="goBackQuestion()"
-                       ng-if="$root.$state.current.name.indexOf('startInterview') === 0"><span>BACK</span></md-button>
-
+                       ng-if="$root.$state.current.name.indexOf('startInterview') === 0"><span><| </span></md-button>
             <md-button class="md-fab md-raised" style="margin-left: 8px;"
                        ng-class="{'si-fab-stop': $root.$state.current.name.indexOf('startInterview') === 0}"
-                       ng-click="stopInterview(interview.showedQuestion)"><span>STOP</span></md-button>
+                       ng-click="stopInterview(interview.showedQuestion)"><span> [#]</span></md-button>
+            <md-button class="md-fab md-raised"
+                       ng-class="{'si-fab-next': $root.$state.current.name.indexOf('startInterview') === 0}"
+                       ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
+                       ng-if="!editModeOn"><span> |></span></md-button>
           </div>
 
           <div ng-if="$root.$state.current.name.indexOf('startInterview') !== 0">
