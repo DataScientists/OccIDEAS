@@ -1987,9 +1987,7 @@
 
     $scope.moduleTreeOptions = { dragEnabled: false };
 
-    $scope.siHighlightRule = function(mrule) {
-      if (!mrule.conditions || mrule.conditions.length === 0) return;
-      var idNode = mrule.conditions[0].idNode;
+    $scope.siHighlightCondition = function(idNode) {
       var elementId = 'node-' + idNode;
       $('.tree-node div').removeClass('highlight-rulenode');
       var el = $('#' + elementId);

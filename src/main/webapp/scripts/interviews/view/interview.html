@@ -253,24 +253,28 @@
         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
       </div>
       <div ng-if="!siAssessmentLoading">
-        <p>Thank you &mdash; your interview is complete.</p>
-        <div class="assessmentWrapper" id="assessmentWrapper">
-          <h4 class="si-hazards-title">Hazards Identified</h4>
-          <div class="si-hazard-row"
-               ng-repeat="agent in siAgents"
-               ng-if="(siData.firedRules | filter: {agentId: agent.idAgent}).length > 0">
-            <span class="si-hazard-agent">{{agent.name}}</span>
-            <span class="si-hazard-rules">
-              <span ng-repeat="mrule in siData.firedRules">
-                <div class="{{mrule.level}} {{mrule.type}} si-rule-dot"
-                     ng-if="mrule.agentId == agent.idAgent"
-                     ng-click="siHighlightRule(mrule)"
-                     title="Click to see answer"></div>
+        <div class="assessmentWrapper si-hazards-box" id="assessmentWrapper">
+          <h4 class="si-hazards-title">Health Hazards Found</h4>
+          <div class="si-hazards-columns">
+            <div class="si-hazard-row"
+                 ng-repeat="agent in siAgents"
+                 ng-if="(siData.firedRules | filter: {agentId: agent.idAgent}).length > 0">
+              <span class="si-hazard-agent">{{agent.name}}</span>
+              <span class="si-hazard-rules">
+                <span class="si-rule-group"
+                      ng-class="{'si-rule-group-multi': mrule.conditions.length > 1}"
+                      ng-repeat="mrule in siData.firedRules"
+                      ng-if="mrule.agentId == agent.idAgent">
+                  <span ng-repeat="cond in mrule.conditions">
+                    <div class="{{mrule.level}} {{mrule.type}} si-rule-dot"
+                         ng-click="siHighlightCondition(cond.idNode)"
+                         title="Click to see answer"></div>
+                  </span>
+                </span>
               </span>
-            </span>
+            </div>
           </div>
         </div>
-        <p>&nbsp;</p>
         <div id="interview-question-list">
           <ng-include src="'scripts/startInterview/view/siModuleTree.html'"></ng-include>
         </div>
