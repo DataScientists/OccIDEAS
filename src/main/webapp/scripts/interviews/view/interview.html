@@ -36,6 +36,7 @@
     </div>
     <div ng-if="!inProgress">
       <ul id="interviewing-{{interview.showedQuestion.idNode}}"
+          ng-class="{'si-question-box': $root.$state.current.name.indexOf('startInterview') === 0}"
           ng-if="interviewStarted">
         <md-toolbar ng-class="{'si-toolbar': $root.$state.current.name.indexOf('startInterview') === 0}">
           <span ng-if="storage.langEnabled">{{interview.showedQuestion.name  | translate}}</span>
@@ -55,6 +56,7 @@
         </div>
         <div ng-if="interview.showedQuestion.nodes.length != 0">
           <div ng-if="interview.showedQuestion.type == 'Q_multiple'">
+            <div ng-class="{'si-answer-columns': $root.$state.current.name.indexOf('startInterview') === 0 && interview.showedQuestion.nodes.length > 8}">
             <div ng-repeat="node in interview.showedQuestion.nodes">
               <md-checkbox aria-label="{{node.name}}"
                            class="green"
@@ -71,6 +73,7 @@
                   <input ng-keyup="allowSpaceOnFreeText($event,node)" ng-model="node.name"
                          style="width: 270px;"></md-input-container>
               </md-checkbox>
+            </div>
             </div>
           </div>
           <div ng-if="interview.showedQuestion.type == 'Q_frequency'">
@@ -148,6 +151,7 @@
           <div
             ng-if="interview.showedQuestion.type == 'Q_single' || interview.showedQuestion.type == 'Q_simple'">
             <md-radio-group ng-model="interview.showedQuestion.selectedAnswer">
+              <div ng-class="{'si-answer-columns': $root.$state.current.name.indexOf('startInterview') === 0 && interview.showedQuestion.nodes.length > 8}">
               <div ng-repeat='node in interview.showedQuestion.nodes'>
                 <div flex layout-align="start center">
                   <md-radio-button class="md-primary interview-radio-button" flex
@@ -167,6 +171,7 @@
                   </md-radio-button>
 
                 </div>
+              </div>
               </div>
             </md-radio-group>
           </div>

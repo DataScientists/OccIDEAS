@@ -10,15 +10,12 @@
     <div class="si-body">
 
       <div class="si-field-group">
-        <label class="si-label" for="awesid">Study ID</label>
+        <label class="si-label" for="awesid">Study ID/Email</label>
         <input class="si-input"
                id="awesid"
-               ng-keyup="filterAndValidate($event)"
                ng-model="searchAWESID"
-               placeholder="{{awesIdPrefix}}______"
                required
                type="text"/>
-        <span class="si-counter" ng-if="!externalMode">{{awesIdSize}}/{{awesIdMaxSize}}</span>
       </div>
 
       <div class="si-field-group" ng-if="$storage.langEnabled">
