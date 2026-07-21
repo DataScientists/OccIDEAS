@@ -18,14 +18,14 @@
     '$anchorScroll', '$location', '$mdMedia', '$window', '$state',
     '$rootScope', '$compile', '$timeout', '$log', 'updateData',
     'startWithReferenceNumber', '$filter', '$translate', 'NodeLanguageService',
-    '$sessionStorage', 'treeView', 'ngToast'];
+    '$sessionStorage', 'treeView', 'ngToast', 'AutoAssessmentService', 'AgentsService'];
 
   function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
                           QuestionsService, ModulesService, InterviewsService,
                           ParticipantsService, AssessmentsService, $anchorScroll, $location,
                           $mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
                           updateData, startWithReferenceNumber, $filter, $translate, NodeLanguageService,
-                          $sessionStorage, treeView, ngToast) {
+                          $sessionStorage, treeView, ngToast, AutoAssessmentService, AgentsService) {
     var self = this;
 
     if(updateData) {
@@ -1976,6 +1976,41 @@
       $scope.interviewEnded = true;
       $scope.updateEnable = false;
 
+      if ($state.current.name.indexOf('startInterview') === 0) {
+        runStartInterviewAssessment();
+      }
+    }
+
+    function runStartInterviewAssessment() {
+      var interviewId = $scope.interview.interviewId;
+      $scope.siAssessmentLoading = true;
+      $scope.siData = { firedRules: [], autoAssessedRules: [], manualAssessedRules: [], height: 30 };
+      $scope.siAgents = [];
+
+      AssessmentsService.updateFiredRules(interviewId).then(function(response) {
+        if (response.status === 200 && response.data && response.data[0]) {
+          var firedRules = response.data[0].firedRules || [];
+          $scope.siData.firedRules = firedRules;
+          var agentCounts = {};
+          firedRules.forEach(function(rule) {
+            agentCounts[rule.agentId] = (agentCounts[rule.agentId] || 0) + 1;
+          });
+          var counts = Object.keys(agentCounts).map(function(k) { return agentCounts[k]; });
+          var maxCount = counts.length ? Math.max.apply(null, counts) : 0;
+          if (maxCount > 12) {
+            $scope.siData.height = (maxCount / 3) * 5.5 + 14;
+          }
+        }
+        return AutoAssessmentService.getByInterviewId(interviewId);
+      }).then(function(response) {
+        if (response.status === 200) {
+          $scope.siData.autoAssessedRules = (response.data || []).map(function(r) { return r.rule; });
+        }
+        return AgentsService.getStudyAgentsWithRules(interviewId);
+      }).then(function(agents) {
+        $scope.siAgents = agents || [];
+        $scope.siAssessmentLoading = false;
+      });
     }
 
     $scope.finishInterview = function() {

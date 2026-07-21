@@ -48,7 +48,9 @@ public class AuthenticationFilter extends GenericFilterBean {
     "/web/rest/participant/",           // participant create/get/update for interview flow
     "/web/rest/note/",                  // interview notes
     "/web/rest/module/getinterviewmodule", // read-only: fetch the active intro module
-    "/web/rest/question/getquestion"    // read-only: fetch individual questions during interview
+    "/web/rest/question/getquestion",   // read-only: fetch individual questions during interview
+    "/web/rest/interviewAutoAssessment/getByInterviewId", // read auto assessment results after completion
+    "/web/rest/agent/getstudyagentswithrules" // read agents with rules for assessment display
   };
 
   private boolean isPublicInterviewPath(String resourcePath) {
