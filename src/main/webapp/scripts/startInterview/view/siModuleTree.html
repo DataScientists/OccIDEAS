@@ -1,0 +1,15 @@
+<div class="row" ng-if="linkedModule.nodes && linkedModule.nodes.length != 0" prog_tree>
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="tree-root" ui-tree="moduleTreeOptions">
+          <ol class="si-tree-columns" ng-model="linkedModule.nodes" ui-tree-nodes>
+            <li class="si-tree-column-item" collapsed="false" id="moduleTreeBody"
+                ng-include="'scripts/startInterview/view/siNodesRenderer.html'"
+                ng-repeat="node in linkedModule.nodes" ui-tree-node></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

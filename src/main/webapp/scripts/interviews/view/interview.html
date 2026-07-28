@@ -258,41 +258,45 @@
         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
       </div>
       <div ng-if="!siAssessmentLoading">
-        <div class="assessmentWrapper si-hazards-box" id="assessmentWrapper"
-             ng-class="{'si-email-view': siEmailView}">
-          <div class="si-hazards-header">
-            <h4 class="si-hazards-title">Health Hazards Found</h4>
-            <button type="button" class="si-view-toggle" ng-click="siEmailView = !siEmailView">
-              {{siEmailView ? 'Dot View' : 'Email View'}}
-            </button>
-          </div>
-          <div class="si-hazards-columns">
-            <div class="si-hazard-row"
-                 ng-repeat="agent in siAgents"
-                 ng-if="(siData.firedRules | filter: {agentId: agent.idAgent}).length > 0">
-              <span class="si-hazard-agent">{{agent.name}}</span>
-              <span class="si-hazard-rules">
-                <span class="si-rule-group"
-                      ng-class="{'si-rule-group-multi': mrule.conditions.length > 1}"
-                      ng-repeat="mrule in siData.firedRules"
-                      ng-if="mrule.agentId == agent.idAgent">
-                  <span ng-repeat="cond in mrule.conditions">
-                    <div class="{{mrule.level}} {{mrule.type}} si-rule-dot"
-                         ng-click="siHighlightCondition(cond.idNode)"
-                         title="Click to scroll to answer">
-                      <span class="si-rule-dot-label">{{cond.header}} {{cond.number}}</span>
-                    </div>
+        <div id="si-report-content">
+          <div class="assessmentWrapper si-hazards-box" id="assessmentWrapper"
+               ng-class="{'si-email-view': siEmailView}">
+            <div class="si-hazards-header">
+              <h4 class="si-hazards-title">Health Hazards Found</h4>
+              <button type="button" class="si-view-toggle" ng-click="siEmailView = !siEmailView">
+                {{siEmailView ? 'Dot View' : 'Email View'}}
+              </button>
+            </div>
+            <div class="si-hazards-columns">
+              <div class="si-hazard-row"
+                   ng-repeat="agent in siAgents"
+                   ng-if="(siData.firedRules | filter: {agentId: agent.idAgent}).length > 0">
+                <span class="si-hazard-agent">{{agent.name}}</span>
+                <span class="si-hazard-rules">
+                  <span class="si-rule-group"
+                        ng-class="{'si-rule-group-multi': mrule.conditions.length > 1}"
+                        ng-repeat="mrule in siData.firedRules"
+                        ng-if="mrule.agentId == agent.idAgent">
+                    <span ng-repeat="cond in mrule.conditions">
+                      <div class="{{mrule.level}} {{mrule.type}} si-rule-dot"
+                           ng-click="siHighlightCondition(cond.idNode)"
+                           title="Click to scroll to answer">
+                        <span class="si-rule-dot-label">{{cond.header}} {{cond.number}}</span>
+                      </div>
+                    </span>
                   </span>
                 </span>
-              </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div id="interview-question-list">
-          <ng-include src="'scripts/startInterview/view/siModuleTree.html'"></ng-include>
+          <div id="interview-question-list">
+            <ng-include src="'scripts/startInterview/view/siModuleTree.html'"></ng-include>
+          </div>
         </div>
         <p>&nbsp;</p>
-        <md-button class="si-btn-new" ng-click="startNewInterview()">Start New Interview</md-button>
+        <md-button class="si-btn-new" ng-click="emailMe()" ng-disabled="siEmailSending">
+          {{siEmailSending ? 'Sending…' : 'Email Me'}}
+        </md-button>
       </div>
     </div>
   </div>

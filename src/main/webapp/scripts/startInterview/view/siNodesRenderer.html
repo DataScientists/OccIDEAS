@@ -1,0 +1,24 @@
+<div class="angular-ui-tree" id="module-tree">
+  <div class="tree-node" id="{{node.anchorId}}">
+    <div class="tree-node-content {{node.nodeclass}} {{node.warning}} {{node.nodeclass === 'M' || node.nodeclass === 'F' ? 'nodeModHeight' : 'nodeHeight'}}"
+         id="node-{{node.idNode}}" style="height: auto !important">
+
+      <a class="btn btn-success btn-xs {{node.type}}"
+         ng-click="toggleNode(node, this)"
+         ng-if="node.nodes != null && node.nodes.length > 0 || node.link != 0">
+        <span class="glyphicon"
+              ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
+      </a>
+
+      <span class="badge pull-right">{{node.header}} {{node.number}}</span>
+      <span class="badge-multi" ng-if="node.type.indexOf('multi') > -1">Multi</span>
+      <span class="treeNodeText">{{node.name}}</span>
+    </div>
+  </div>
+</div>
+
+<div ng-class="{hidden: collapsed}" ng-model="node.nodes" ui-tree-nodes="">
+  <div class="angular-ui-tree-node" collapsed="false"
+       ng-include="'scripts/startInterview/view/siNodesRenderer.html'"
+       ng-repeat="node in node.nodes | orderBy:'sequence'" ui-tree-node></div>
+</div>

@@ -3,6 +3,7 @@ package org.occideas.config;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.occideas.agent.rest.AgentRestController;
 import org.occideas.assessment.rest.AssessmentRestController;
+import org.occideas.email.rest.EmailReportRestController;
 import org.occideas.fragment.rest.FragmentRestController;
 import org.occideas.interview.rest.InterviewRestController;
 import org.occideas.interviewanswer.rest.InterviewAnswerRestController;
@@ -57,6 +58,7 @@ public class JerseyConfig extends ResourceConfig {
     public JerseyConfig() {
         register(AgentRestController.class);
         register(AssessmentRestController.class);
+        register(EmailReportRestController.class);
         register(FragmentRestController.class);
         register(InterviewRestController.class);
         register(InterviewAnswerRestController.class);

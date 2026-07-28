@@ -1111,6 +1111,55 @@
       $state.go('startInterview');
     };
 
+    $scope.emailMe = function() {
+      var recipient = $rootScope.participant && $rootScope.participant.reference;
+      if (!recipient) {
+        ngToast.create({
+          className: 'danger',
+          content: 'No email address found for this participant.',
+          animation: 'slide'
+        });
+        return;
+      }
+
+      $scope.siEmailView = true;
+      $scope.siEmailSending = true;
+
+      $timeout(function() {
+        var wrapper = $('#assessmentWrapper');
+        wrapper.addClass('si-pdf-capture');
+
+        var doc = new jsPDF('p', 'pt', 'a4');
+        var loc = $('#si-report-content').get(0);
+        doc.addHTML(loc, 0, 0, { background: '#fff', pagesplit: true }, function() {
+          wrapper.removeClass('si-pdf-capture');
+          var dataUri = doc.output('datauristring');
+          var base64 = dataUri.substring(dataUri.indexOf(',') + 1);
+
+          InterviewsService.emailReport({
+            interviewId: $scope.interview.interviewId,
+            email: recipient,
+            fileName: 'assessment-report.pdf',
+            pdfBase64: base64
+          }).then(function() {
+            $scope.siEmailSending = false;
+            ngToast.create({
+              className: 'success',
+              content: 'Report emailed to ' + recipient,
+              animation: 'slide'
+            });
+          }, function(error) {
+            $scope.siEmailSending = false;
+            ngToast.create({
+              className: 'danger',
+              content: 'Failed to email report: ' + error,
+              animation: 'slide'
+            });
+          });
+        });
+      }, 300);
+    };
+
     $scope.goBackQuestion = function() {
       var questionHistory = $scope.interview.questionHistory;
       var lastProcessed = null;

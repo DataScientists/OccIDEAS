@@ -6,6 +6,17 @@
 
   function InterviewsService($http, $q) {
 
+    function emailReport(data) {
+      var restUrl = 'web/rest/emailreport/send';
+
+      var request = $http({
+        method: 'POST',
+        url: restUrl,
+        data: data
+      });
+      return request.then(handleSuccess, handleError);
+    }
+
     function exportInterviewRules(fileName) {
       var restUrl = 'web/rest/assessment/exportInterviewRulesCSV';
 
@@ -705,7 +716,8 @@
       preloadAllModules: preloadAllModules,
       getInterviewQuestionsByNodeIdAndIntId: getInterviewQuestionsByNodeIdAndIntId,
       exportInterviewRules: exportInterviewRules,
-      preloadFilterStudyAgent: preloadFilterStudyAgent
+      preloadFilterStudyAgent: preloadFilterStudyAgent,
+      emailReport: emailReport
     };
   }
 })();
