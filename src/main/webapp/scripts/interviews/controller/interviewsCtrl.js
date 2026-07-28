@@ -1986,6 +1986,7 @@
     }
 
     $scope.moduleTreeOptions = { dragEnabled: false };
+    $scope.siEmailView = false;
 
     $scope.siHighlightCondition = function(idNode) {
       var elementId = 'node-' + idNode;
@@ -2015,6 +2016,15 @@
       AssessmentsService.updateFiredRules(interviewId).then(function(response) {
         if (response.status === 200 && response.data && response.data[0]) {
           var firedRules = response.data[0].firedRules || [];
+          var questionHistory = ($scope.interview && $scope.interview.questionHistory) || [];
+          _.each(firedRules, function(rule) {
+            _.each(rule.conditions, function(cond) {
+              var linkNode = _.find(questionHistory, function(qnode) {
+                return qnode.link && qnode.link == cond.topNodeId;
+              });
+              cond.header = linkNode ? linkNode.name.substr(0, 4) : '';
+            });
+          });
           $scope.siData.firedRules = firedRules;
         }
         return AutoAssessmentService.getByInterviewId(interviewId);

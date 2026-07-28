@@ -10,7 +10,7 @@
     <div class="si-interview-bar" ng-if="$root.$state.current.name.indexOf('startInterview') === 0">
       <img alt="OccIDEAS" class="si-interview-logo"
            src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png"/>
-      <button class="si-btn-new" ng-click="startNewInterview()">Start New</button>
+
     </div>
     <div>
       <div>
@@ -258,8 +258,14 @@
         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
       </div>
       <div ng-if="!siAssessmentLoading">
-        <div class="assessmentWrapper si-hazards-box" id="assessmentWrapper">
-          <h4 class="si-hazards-title">Health Hazards Found</h4>
+        <div class="assessmentWrapper si-hazards-box" id="assessmentWrapper"
+             ng-class="{'si-email-view': siEmailView}">
+          <div class="si-hazards-header">
+            <h4 class="si-hazards-title">Health Hazards Found</h4>
+            <button type="button" class="si-view-toggle" ng-click="siEmailView = !siEmailView">
+              {{siEmailView ? 'Dot View' : 'Email View'}}
+            </button>
+          </div>
           <div class="si-hazards-columns">
             <div class="si-hazard-row"
                  ng-repeat="agent in siAgents"
@@ -273,7 +279,9 @@
                   <span ng-repeat="cond in mrule.conditions">
                     <div class="{{mrule.level}} {{mrule.type}} si-rule-dot"
                          ng-click="siHighlightCondition(cond.idNode)"
-                         title="Click to see answer"></div>
+                         title="Click to scroll to answer">
+                      <span class="si-rule-dot-label">{{cond.header}} {{cond.number}}</span>
+                    </div>
                   </span>
                 </span>
               </span>

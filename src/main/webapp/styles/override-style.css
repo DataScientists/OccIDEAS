@@ -137,7 +137,7 @@
 
 .si-hazards-box {
   height: auto !important;
-  max-height: 30vh;
+  max-height: 40vh;
   overflow-x: hidden !important;
   overflow-y: auto !important;
   position: sticky;
@@ -156,9 +156,33 @@
   margin: 4px 0 4px 8px;
 }
 
+.si-hazards-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 8px;
+}
+
+.si-view-toggle {
+  background: #fff;
+  border: 1px solid #3d9cbf;
+  color: #3d9cbf;
+  font-size: 0.75em;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+
+.si-view-toggle:hover {
+  background: #3d9cbf;
+  color: #fff;
+}
+
 .si-hazards-columns {
-  column-count: 3;
-  column-gap: 0;
+  column-count: 2;
+  column-gap: 12px;
 }
 
 #interview-question-list {
@@ -237,6 +261,30 @@
   float: none;
   flex-shrink: 0;
   cursor: pointer;
+}
+
+.si-rule-dot-label {
+  display: none;
+}
+
+.si-hazards-box.si-email-view .si-rule-group .si-rule-dot {
+  width: auto;
+  height: auto;
+  min-width: 30px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.si-hazards-box.si-email-view .si-rule-dot-label {
+  display: inline;
+  font-size: 10px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 /* ---- Question toolbar ---- */
