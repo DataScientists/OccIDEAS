@@ -1111,6 +1111,42 @@
       $state.go('startInterview');
     };
 
+    function buildReportAgents() {
+      var agents = [];
+      _.each($scope.siAgents, function(agent) {
+        var rulesForAgent = _.filter($scope.siData.firedRules, function(rule) {
+          return rule.agentId == agent.idAgent;
+        });
+        if (!rulesForAgent.length) {
+          return;
+        }
+        agents.push({
+          name: agent.name,
+          rules: _.map(rulesForAgent, function(rule) {
+            return {
+              level: rule.level,
+              conditions: _.map(rule.conditions, function(cond) {
+                return { header: cond.header, number: cond.number };
+              })
+            };
+          })
+        });
+      });
+      return agents;
+    }
+
+    function buildReportTree(nodes) {
+      return _.map(nodes, function(node) {
+        return {
+          header: node.header,
+          number: node.number,
+          name: node.name,
+          nodeclass: node.nodeclass,
+          nodes: node.nodes && node.nodes.length ? buildReportTree(node.nodes) : []
+        };
+      });
+    }
+
     $scope.emailMe = function() {
       var recipient = $rootScope.participant && $rootScope.participant.reference;
       if (!recipient) {
@@ -1122,42 +1158,37 @@
         return;
       }
 
-      $scope.siEmailView = true;
+      if (!$scope.linkedModule) {
+        ngToast.create({
+          className: 'danger',
+          content: 'Report is still loading, please try again in a moment.',
+          animation: 'slide'
+        });
+        return;
+      }
+
       $scope.siEmailSending = true;
 
-      $timeout(function() {
-        var wrapper = $('#assessmentWrapper');
-        wrapper.addClass('si-pdf-capture');
-
-        var doc = new jsPDF('p', 'pt', 'a4');
-        var loc = $('#si-report-content').get(0);
-        doc.addHTML(loc, 0, 0, { background: '#fff', pagesplit: true }, function() {
-          wrapper.removeClass('si-pdf-capture');
-          var dataUri = doc.output('datauristring');
-          var base64 = dataUri.substring(dataUri.indexOf(',') + 1);
-
-          InterviewsService.emailReport({
-            interviewId: $scope.interview.interviewId,
-            email: recipient,
-            fileName: 'assessment-report.pdf',
-            pdfBase64: base64
-          }).then(function() {
-            $scope.siEmailSending = false;
-            ngToast.create({
-              className: 'success',
-              content: 'Report emailed to ' + recipient,
-              animation: 'slide'
-            });
-          }, function(error) {
-            $scope.siEmailSending = false;
-            ngToast.create({
-              className: 'danger',
-              content: 'Failed to email report: ' + error,
-              animation: 'slide'
-            });
-          });
+      InterviewsService.emailReport({
+        interviewId: $scope.interview.interviewId,
+        email: recipient,
+        agents: buildReportAgents(),
+        tree: buildReportTree($scope.linkedModule.nodes)
+      }).then(function() {
+        $scope.siEmailSending = false;
+        ngToast.create({
+          className: 'success',
+          content: 'Report emailed to ' + recipient,
+          animation: 'slide'
         });
-      }, 300);
+      }, function(error) {
+        $scope.siEmailSending = false;
+        ngToast.create({
+          className: 'danger',
+          content: 'Failed to email report: ' + error,
+          animation: 'slide'
+        });
+      });
     };
 
     $scope.goBackQuestion = function() {

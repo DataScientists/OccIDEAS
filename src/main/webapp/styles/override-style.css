@@ -150,16 +150,6 @@
   margin: 0 !important;
 }
 
-/* html2canvas/jsPDF cannot snapshot sticky/fixed positioning or box-shadow reliably
-   (renders as solid black) - neutralize them during PDF capture only */
-.si-hazards-box.si-pdf-capture {
-  max-height: none !important;
-  overflow: visible !important;
-  position: static !important;
-  z-index: auto !important;
-  box-shadow: none !important;
-}
-
 .si-hazards-title {
   color: #3d9cbf;
   font-weight: 600;

@@ -1,11 +1,13 @@
 package org.occideas.vo;
 
+import java.util.List;
+
 public class EmailReportVO {
 
   private Long interviewId;
   private String email;
-  private String fileName;
-  private String pdfBase64;
+  private List<ReportAgentVO> agents;
+  private List<ReportTreeNodeVO> tree;
 
   public Long getInterviewId() {
     return interviewId;
@@ -23,19 +25,19 @@ public class EmailReportVO {
     this.email = email;
   }
 
-  public String getFileName() {
-    return fileName;
+  public List<ReportAgentVO> getAgents() {
+    return agents;
   }
 
-  public void setFileName(String fileName) {
-    this.fileName = fileName;
+  public void setAgents(List<ReportAgentVO> agents) {
+    this.agents = agents;
   }
 
-  public String getPdfBase64() {
-    return pdfBase64;
+  public List<ReportTreeNodeVO> getTree() {
+    return tree;
   }
 
-  public void setPdfBase64(String pdfBase64) {
-    this.pdfBase64 = pdfBase64;
+  public void setTree(List<ReportTreeNodeVO> tree) {
+    this.tree = tree;
   }
 }
