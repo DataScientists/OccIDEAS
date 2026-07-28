@@ -185,6 +185,12 @@
   column-gap: 12px;
 }
 
+.si-no-hazards {
+  color: #2e7d32;
+  font-weight: 600;
+  margin: 4px 8px 8px;
+}
+
 #interview-question-list {
   background-color: #edf2f5;
 }

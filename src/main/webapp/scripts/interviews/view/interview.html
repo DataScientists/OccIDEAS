@@ -267,7 +267,7 @@
                 {{siEmailView ? 'Dot View' : 'Email View'}}
               </button>
             </div>
-            <div class="si-hazards-columns">
+            <div class="si-hazards-columns" ng-if="siData.firedRules.length > 0">
               <div class="si-hazard-row"
                    ng-repeat="agent in siAgents"
                    ng-if="(siData.firedRules | filter: {agentId: agent.idAgent}).length > 0">
@@ -288,6 +288,9 @@
                 </span>
               </div>
             </div>
+            <p class="si-no-hazards" ng-if="siData.firedRules.length === 0">
+              No health hazards were found for this interview.
+            </p>
           </div>
           <div id="interview-question-list">
             <ng-include src="'scripts/startInterview/view/siModuleTree.html'"></ng-include>

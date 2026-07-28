@@ -83,7 +83,9 @@ public class ReportPdfServiceImpl implements ReportPdfService {
 
     sb.append("<h1>Health Hazards Found</h1>");
     List<ReportAgentVO> agents = reportData.getAgents();
-    if (agents != null) {
+    if (agents == null || agents.isEmpty()) {
+      sb.append("<p class=\"no-hazards\">No health hazards were found for this interview.</p>");
+    } else {
       for (ReportAgentVO agent : agents) {
         sb.append("<div class=\"agent-row\">");
         sb.append("<span class=\"agent-name\">").append(escape(agent.getName())).append("</span>");
@@ -119,13 +121,21 @@ public class ReportPdfServiceImpl implements ReportPdfService {
     }
     for (ReportRuleVO rule : rules) {
       String color = LEVEL_COLORS.getOrDefault(rule.getLevel(), "#cccccc");
-      if (rule.getConditions() == null) {
+      List<ReportConditionVO> conditions = rule.getConditions();
+      if (conditions == null || conditions.isEmpty()) {
         continue;
       }
-      for (ReportConditionVO cond : rule.getConditions()) {
+      boolean multi = conditions.size() > 1;
+      if (multi) {
+        sb.append("<span class=\"rule-group-multi\">");
+      }
+      for (ReportConditionVO cond : conditions) {
         sb.append("<span class=\"chip\" style=\"background-color:").append(color).append(";\">")
           .append(escape(cond.getHeader())).append(" ").append(escape(cond.getNumber()))
           .append("</span>");
+      }
+      if (multi) {
+        sb.append("</span>");
       }
     }
   }
@@ -154,10 +164,12 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".report-logo { height: 40px; vertical-align: middle; }"
       + ".report-date { float: right; font-size: 9pt; color: #666666; line-height: 40px; }"
       + "h1 { font-size: 14pt; color: #3d9cbf; border-bottom: 1px solid #3d9cbf; padding-bottom: 4px; margin-top: 20px; }"
+      + ".no-hazards { color: #2e7d32; font-weight: bold; }"
       + ".agent-row { padding: 4px 0; border-bottom: 1px solid #edf2f5; }"
       + ".agent-name { display: inline-block; width: 120px; font-weight: bold; vertical-align: top; }"
       + ".agent-rules { display: inline-block; }"
       + ".chip { display: inline-block; padding: 2px 5px; margin: 2px; border-radius: 3px; font-size: 8pt; font-weight: bold; }"
+      + ".rule-group-multi { display: inline-block; border: 1px solid #bbbbbb; border-radius: 3px; padding: 1px 2px; margin: 2px; }"
       + ".tree-node { padding: 2px 0; }"
       + ".badge { background-color: #edf2f5; border-radius: 3px; padding: 1px 4px; font-size: 8pt; }"
       + ".node-text { font-size: 9pt; }";

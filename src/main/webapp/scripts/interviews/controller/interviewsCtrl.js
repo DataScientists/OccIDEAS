@@ -2074,7 +2074,15 @@
       var el = $('#' + elementId);
       if (el.length) {
         el.addClass('highlight-rulenode');
-        $('html, body').animate({ scrollTop: el.offset().top - 150 }, 800);
+
+        var hazardsBox = $('#assessmentWrapper');
+        var hazardsHeight = hazardsBox.length ? hazardsBox.outerHeight() : 0;
+        var viewportHeight = $(window).height();
+        var availableHeight = Math.max(viewportHeight - hazardsHeight, 0);
+        var targetScreenY = hazardsHeight + Math.max((availableHeight - el.outerHeight()) / 2, 0);
+        var scrollY = Math.max(el.offset().top - targetScreenY, 0);
+
+        $('html, body').animate({ scrollTop: scrollY }, 800);
       }
     };
 
