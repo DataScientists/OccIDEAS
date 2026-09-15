@@ -1,5 +1,6 @@
 package org.occideas.participant.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
@@ -80,9 +81,25 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Override
   public ParticipantVO create(ParticipantVO o) {
+    Participant toSave = mapper.convertToParticipant(o, true);
+    boolean autoAssignReference = StringUtils.isBlank(toSave.getReference());
+    if (autoAssignReference) {
+      // NOT NULL column - use a placeholder until the generated id is known, below.
+      toSave.setReference("");
+    }
+    Long idParticipant = participantDao.save(toSave);
+
+    String reference = o.getReference();
+    if (autoAssignReference) {
+      reference = String.valueOf(idParticipant);
+      Participant saved = participantDao.get(idParticipant);
+      saved.setReference(reference);
+      participantDao.saveOrUpdate(saved);
+    }
+
     Participant entity = new Participant();
-    entity.setIdParticipant(participantDao.save(mapper.convertToParticipant(o, true)));
-    entity.setReference(o.getReference());
+    entity.setIdParticipant(idParticipant);
+    entity.setReference(reference);
     entity.setStatus(o.getStatus());
     return mapper.convertToParticipantVO(entity, true);
   }

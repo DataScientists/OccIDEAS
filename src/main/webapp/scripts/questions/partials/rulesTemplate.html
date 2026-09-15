@@ -49,6 +49,14 @@
           <option value="possUnknown">POSSIBLE_UNKNOWN</option>
           <option value="noExposure">NO_EXPOSURE</option>
         </select></li>
+      <li class="list-group-item">
+        <div>Participant-facing rationale</div>
+        <textarea ng-model="rule.rationale"
+                  ng-blur="updateRule(rule,model)"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Shown to the participant for this finding. For PROBABLE_HIGH, give the evidence backing the finding. For lower levels, calibrate the language to the actual evidence &#8212; do not overstate risk."></textarea>
+      </li>
     </ul>
     <div style="margin-left:2px;margin-top: 2px;">
       <div class="pull-left">

@@ -54,6 +54,7 @@ public class RuleMapperImpl implements RuleMapper {
     ruleVO.setLevel(getDescriptionByValue(ruleEntity.getLevel()));
     ruleVO.setLevelValue(ruleEntity.getLevel());
     ruleVO.setType(ruleEntity.getType());
+    ruleVO.setRationale(ruleEntity.getRationale());
     List<PossibleAnswer> conditions = ruleEntity.getConditions();
     if (!CommonUtil.isListEmpty(conditions)) {
       ruleVO.setConditions(paMapper.convertToPossibleAnswerVOList(conditions, false));
@@ -96,6 +97,7 @@ public class RuleMapperImpl implements RuleMapper {
     }
     rule.setLevel(level);
     rule.setType(ruleVO.getType());
+    rule.setRationale(ruleVO.getRationale());
     List<PossibleAnswerVO> conditions = ruleVO.getConditions();
     if (!CommonUtil.isListEmpty(conditions)) {
       rule.setConditions(paMapper.convertToPossibleAnswerList(conditions));
@@ -124,6 +126,7 @@ public class RuleMapperImpl implements RuleMapper {
     }
     rule.setLevel(level);
     rule.setType(ruleVO.getType());
+    rule.setRationale(ruleVO.getRationale());
     List<PossibleAnswerVO> conditions = ruleVO.getConditions();
     if (!CommonUtil.isListEmpty(conditions)) {
       rule.setConditions(paMapper.convertToPossibleAnswerExModRuleList(conditions));
@@ -167,6 +170,7 @@ public class RuleMapperImpl implements RuleMapper {
     ruleVO.setLevel(getDescriptionByValue(rule.getLevel()));
     ruleVO.setLevelValue(rule.getLevel());
     ruleVO.setType(rule.getType());
+    ruleVO.setRationale(rule.getRationale());
     List<PossibleAnswer> conditions = rule.getConditions();
     if (!CommonUtil.isListEmpty(conditions)) {
       ruleVO.setConditions(paMapper.convertToPossibleAnswerVOExModRuleList(conditions));

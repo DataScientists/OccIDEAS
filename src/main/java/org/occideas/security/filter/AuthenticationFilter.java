@@ -51,7 +51,7 @@ public class AuthenticationFilter extends GenericFilterBean {
     "/web/rest/question/getquestion",   // read-only: fetch individual questions during interview
     "/web/rest/interviewAutoAssessment/getByInterviewId", // read auto assessment results after completion
     "/web/rest/agent/getstudyagentswithrules", // read agents with rules for assessment display
-    "/web/rest/emailreport/send", // send end-of-interview PDF report by email
+    "/web/rest/emailreport/", // send/download end-of-interview PDF report
     "/web/rest/anzscocoder/lookup" // public ANZSCO code lookup before interview starts
   };
 

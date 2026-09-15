@@ -9,16 +9,6 @@
 
     <div class="si-body">
 
-      <div class="si-field-group">
-        <label class="si-label" for="email">Email</label>
-        <input class="si-input"
-               id="email"
-               ng-model="email"
-               ng-readonly="externalMode"
-               required
-               type="email"/>
-      </div>
-
       <div class="si-field-group" ng-if="$storage.langEnabled">
         <label class="si-label">Language</label>
         <ui-select ng-change="changeNodeLanguage(selectLanguage)"

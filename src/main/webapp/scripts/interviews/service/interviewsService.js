@@ -17,6 +17,18 @@
       return request.then(handleSuccess, handleError);
     }
 
+    function downloadReport(data) {
+      var restUrl = 'web/rest/emailreport/download';
+
+      var request = $http({
+        method: 'POST',
+        url: restUrl,
+        data: data,
+        responseType: 'arraybuffer'
+      });
+      return request.then(handleSuccess, handleError);
+    }
+
     function exportInterviewRules(fileName) {
       var restUrl = 'web/rest/assessment/exportInterviewRulesCSV';
 
@@ -717,7 +729,8 @@
       getInterviewQuestionsByNodeIdAndIntId: getInterviewQuestionsByNodeIdAndIntId,
       exportInterviewRules: exportInterviewRules,
       preloadFilterStudyAgent: preloadFilterStudyAgent,
-      emailReport: emailReport
+      emailReport: emailReport,
+      downloadReport: downloadReport
     };
   }
 })();

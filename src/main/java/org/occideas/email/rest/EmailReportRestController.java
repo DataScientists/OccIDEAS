@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 @Path("/emailreport")
@@ -41,6 +42,27 @@ public class EmailReportRestController {
       log.error("Failed to email report for interviewId={}", request.getInterviewId(), e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type("text/plain")
         .entity("Failed to send email").build();
+    }
+  }
+
+  @POST
+  @Path(value = "/download")
+  @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+  @Produces(value = "application/pdf")
+  public Response download(EmailReportVO request) {
+    if (request == null) {
+      return Response.status(Response.Status.BAD_REQUEST).type("text/plain")
+        .entity("report data is required").build();
+    }
+    try {
+      byte[] pdfBytes = reportPdfService.generatePdf(request);
+      return Response.ok(pdfBytes)
+        .header("Content-Disposition", "attachment; filename=\"exposure-summary.pdf\"")
+        .build();
+    } catch (Throwable e) {
+      log.error("Failed to generate report download for interviewId={}", request.getInterviewId(), e);
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type("text/plain")
+        .entity("Failed to generate report").build();
     }
   }
 }

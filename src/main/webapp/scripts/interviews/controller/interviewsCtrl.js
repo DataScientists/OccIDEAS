@@ -131,8 +131,10 @@
         }
       });
     };
-    if(startWithReferenceNumber) {
-      $scope.referenceNumber = startWithReferenceNumber;
+    if(startWithReferenceNumber || $state.current.name.indexOf('startInterview') === 0) {
+      // The startInterview flow collects no participant identifier up front - the
+      // backend auto-assigns one (an incrementing participant id) when this is blank.
+      $scope.referenceNumber = startWithReferenceNumber || '';
       $scope.startInterview(data);
     } else if(updateData) {
       $log.info("updateData is not null... interview continuation initializing...");
@@ -1113,30 +1115,6 @@
       $state.go('startInterview');
     };
 
-    function buildReportAgents() {
-      var agents = [];
-      _.each($scope.siAgents, function(agent) {
-        var rulesForAgent = _.filter($scope.siData.firedRules, function(rule) {
-          return rule.agentId == agent.idAgent;
-        });
-        if (!rulesForAgent.length) {
-          return;
-        }
-        agents.push({
-          name: agent.name,
-          rules: _.map(rulesForAgent, function(rule) {
-            return {
-              level: rule.level,
-              conditions: _.map(rule.conditions, function(cond) {
-                return { header: cond.header, number: cond.number };
-              })
-            };
-          })
-        });
-      });
-      return agents;
-    }
-
     function buildReportTree(nodes) {
       return _.map(nodes, function(node) {
         return {
@@ -1149,17 +1127,7 @@
       });
     }
 
-    $scope.emailMe = function() {
-      var recipient = $rootScope.participant && $rootScope.participant.reference;
-      if (!recipient) {
-        ngToast.create({
-          className: 'danger',
-          content: 'No email address found for this participant.',
-          animation: 'slide'
-        });
-        return;
-      }
-
+    $scope.downloadReport = function() {
       if (!$scope.linkedModule) {
         ngToast.create({
           className: 'danger',
@@ -1169,25 +1137,34 @@
         return;
       }
 
-      $scope.siEmailSending = true;
+      $scope.siReportDownloading = true;
 
-      InterviewsService.emailReport({
+      InterviewsService.downloadReport({
         interviewId: $scope.interview.interviewId,
-        email: recipient,
-        agents: buildReportAgents(),
+        verdictState: $scope.siVerdictState,
+        highFindings: _.map($scope.siHighFindings, function(finding) {
+          return { agentName: finding.agentName, text: finding.rationale };
+        }),
+        otherFindings: _.map($scope.siOtherFindings, function(finding) {
+          return { agentName: finding.agentName, text: finding.text };
+        }),
         tree: buildReportTree($scope.linkedModule.nodes)
-      }).then(function() {
-        $scope.siEmailSending = false;
-        ngToast.create({
-          className: 'success',
-          content: 'Report emailed to ' + recipient,
-          animation: 'slide'
-        });
+      }).then(function(response) {
+        $scope.siReportDownloading = false;
+        var blob = new Blob([response.data], { type: 'application/pdf' });
+        var url = window.URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'exposure-summary.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
       }, function(error) {
-        $scope.siEmailSending = false;
+        $scope.siReportDownloading = false;
         ngToast.create({
           className: 'danger',
-          content: 'Failed to email report: ' + error,
+          content: 'Failed to download report: ' + error,
           animation: 'slide'
         });
       });
@@ -1359,6 +1336,9 @@
       ParticipantsService.createParticipant(participant).then(function(response) {
         if(response.status === 200) {
           participant = response.data;
+          // The backend auto-assigns a reference (an incrementing participant id) when
+          // none was supplied up front - pick up whatever it actually assigned.
+          $scope.referenceNumber = participant.reference;
           $rootScope.participant = participant;
           var interview = {};
           interview.participant = participant;
@@ -2095,23 +2075,15 @@
     }
 
     $scope.moduleTreeOptions = { dragEnabled: false };
-    $scope.siEmailView = false;
 
+    // Scrolls to and highlights the answer (in the "Interview Responses" tree below) that a
+    // clicked condition dot represents.
     $scope.siHighlightCondition = function(idNode) {
-      var elementId = 'node-' + idNode;
       $('.tree-node div').removeClass('highlight-rulenode');
-      var el = $('#' + elementId);
+      var el = $('#node-' + idNode);
       if (el.length) {
         el.addClass('highlight-rulenode');
-
-        var hazardsBox = $('#assessmentWrapper');
-        var hazardsHeight = hazardsBox.length ? hazardsBox.outerHeight() : 0;
-        var viewportHeight = $(window).height();
-        var availableHeight = Math.max(viewportHeight - hazardsHeight, 0);
-        var targetScreenY = hazardsHeight + Math.max((availableHeight - el.outerHeight()) / 2, 0);
-        var scrollY = Math.max(el.offset().top - targetScreenY, 0);
-
-        $('html, body').animate({ scrollTop: scrollY }, 800);
+        el[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     };
 
@@ -2152,9 +2124,77 @@
         return AgentsService.getStudyAgentsWithRules(interviewId);
       }).then(function(agents) {
         $scope.siAgents = agents || [];
+        buildIndividualExposureSummary();
         $scope.siAssessmentLoading = false;
         loadSiQuestionTree(interviewId);
       });
+    }
+
+    // Fallback wording used when a rule has no admin-authored rationale text yet.
+    // Calibrated to the rule's actual confidence level, not to imply more certainty than exists.
+    // No fallback exists for probHigh - an evidence claim shouldn't be fabricated generically,
+    // so a probHigh finding simply shows no rationale line until an admin writes one.
+    var DEFAULT_RATIONALE_TEXT = {
+      probMedium: 'Your answers point to a possible link to {agent}. The evidence at this level of ' +
+        'exposure isn’t conclusive, so this is noted rather than flagged as a concern.',
+      probLow: 'Your answers show a low-probability link to {agent}. This is a minor signal in your ' +
+        'answers, not a confirmed finding.',
+      probUnknown: 'Your answers touched on {agent}, but there wasn’t enough information to assess ' +
+        'this with confidence.',
+      possUnknown: 'Your answers touched on {agent}, but there wasn’t enough information to assess ' +
+        'this with confidence.'
+    };
+
+    // Builds the individual-facing summary: a binary "exposure indicated" verdict driven only by
+    // PROBABLE_HIGH rules, plus a lower-key list of anything else noted (excluding NO_EXPOSURE,
+    // which is a clear finding with nothing to explain). The full technical breakdown (all levels, all
+    // conditions) remains available to the employer via the existing PDF/email report.
+    function buildIndividualExposureSummary() {
+      var agentsById = {};
+      _.each($scope.siAgents, function(agent) {
+        agentsById[agent.idAgent] = agent;
+      });
+
+      var high = [];
+      var other = [];
+
+      _.each($scope.siData.firedRules, function(rule) {
+        if (rule.level === 'noExposure') {
+          return;
+        }
+        var agent = agentsById[rule.agentId];
+        var agentName = (agent && agent.name) || 'Unknown';
+
+        if (rule.level === 'probHigh') {
+          high.push({
+            agentName: agentName,
+            rationale: rule.rationale || null,
+            level: rule.level,
+            conditions: rule.conditions || []
+          });
+        } else {
+          var text = rule.rationale;
+          if (!text) {
+            var template = DEFAULT_RATIONALE_TEXT[rule.level];
+            text = template ? template.split('{agent}').join(agentName) : null;
+          }
+          if (text) {
+            other.push({
+              agentName: agentName,
+              level: rule.level,
+              text: text,
+              conditions: rule.conditions || []
+            });
+          }
+        }
+      });
+
+      // The verdict itself is binary - either estimated above the safety threshold or not.
+      // Lower-confidence findings (siOtherFindings) are supplementary detail shown afterward,
+      // regardless of which verdict applies - not a third competing result.
+      $scope.siVerdictState = high.length > 0 ? 'flagged' : 'clear';
+      $scope.siHighFindings = high;
+      $scope.siOtherFindings = other;
     }
 
     $scope.finishInterview = function() {

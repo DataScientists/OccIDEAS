@@ -6,7 +6,12 @@ public class EmailReportVO {
 
   private Long interviewId;
   private String email;
-  private List<ReportAgentVO> agents;
+  // "flagged" (a PROBABLE_HIGH rule fired) or "clear" (nothing above the safety threshold).
+  // Lower-confidence findings (otherFindings) are shown as supplementary detail regardless
+  // of which verdict applies, not a third competing result.
+  private String verdictState;
+  private List<IndividualFindingVO> highFindings;
+  private List<IndividualFindingVO> otherFindings;
   private List<ReportTreeNodeVO> tree;
 
   public Long getInterviewId() {
@@ -25,12 +30,28 @@ public class EmailReportVO {
     this.email = email;
   }
 
-  public List<ReportAgentVO> getAgents() {
-    return agents;
+  public String getVerdictState() {
+    return verdictState;
   }
 
-  public void setAgents(List<ReportAgentVO> agents) {
-    this.agents = agents;
+  public void setVerdictState(String verdictState) {
+    this.verdictState = verdictState;
+  }
+
+  public List<IndividualFindingVO> getHighFindings() {
+    return highFindings;
+  }
+
+  public void setHighFindings(List<IndividualFindingVO> highFindings) {
+    this.highFindings = highFindings;
+  }
+
+  public List<IndividualFindingVO> getOtherFindings() {
+    return otherFindings;
+  }
+
+  public void setOtherFindings(List<IndividualFindingVO> otherFindings) {
+    this.otherFindings = otherFindings;
   }
 
   public List<ReportTreeNodeVO> getTree() {

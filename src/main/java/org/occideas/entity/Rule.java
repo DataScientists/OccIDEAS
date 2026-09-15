@@ -32,6 +32,8 @@ public class Rule implements Serializable {
   private Agent agent;
   private String type;
   private int level;
+  @Column(columnDefinition = "TEXT")
+  private String rationale;
   @Temporal(TemporalType.TIMESTAMP)
   @UpdateTimestamp
   private Date lastUpdated;
@@ -71,6 +73,14 @@ public class Rule implements Serializable {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public String getRationale() {
+    return rationale;
+  }
+
+  public void setRationale(String rationale) {
+    this.rationale = rationale;
   }
 
   public Date getLastUpdated() {

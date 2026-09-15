@@ -11,8 +11,10 @@
     NodeLanguageService, AnzscoCoderService, ngToast) {
 
     $scope.$storage = $sessionStorage;
-    $scope.email = $stateParams.id || '';
-    $scope.externalMode = !!$stateParams.id;
+    // Participants are anonymous - no email/ID is collected. An external system embedding
+    // this page can still supply its own reference number via ?id=, which is honoured as-is;
+    // otherwise the backend auto-assigns an incrementing participant id as the reference.
+    $scope.startWithReferenceNumber = $stateParams.id || '';
     $scope.selectLanguage = {};
     $scope.jobTitle = '';
     $scope.jobDescription = '';
@@ -56,15 +58,6 @@
     };
 
     $scope.findAnzscoCode = function() {
-      if (!$scope.externalMode && !isValidEmail($scope.email)) {
-        ngToast.create({
-          className: 'danger',
-          content: 'You need to enter a valid email address before you can start',
-          animation: 'slide'
-        });
-        return;
-      }
-
       if (!isValidJobTitle()) {
         ngToast.create({
           className: 'danger',
@@ -116,14 +109,10 @@
 
     $scope.continueToInterview = function() {
       $state.go('startInterviewRun', {
-        startWithReferenceNumber: $scope.email,
+        startWithReferenceNumber: $scope.startWithReferenceNumber,
         jobModuleCode: ($scope.selectedSuggestion && $scope.selectedSuggestion.moduleCode) || null
       });
     };
-
-    function isValidEmail(email) {
-      return !!(email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()));
-    }
 
     function isValidJobTitle() {
       return !!($scope.jobTitle && $scope.jobTitle.trim().length > 0);

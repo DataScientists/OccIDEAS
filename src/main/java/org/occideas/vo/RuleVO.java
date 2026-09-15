@@ -18,6 +18,7 @@ public class RuleVO {
   private AgentVO agent;
   private String type;
   private String level;
+  private String rationale;
   private Date lastUpdated;
     @JsonInclude(Include.NON_EMPTY)
   private List<PossibleAnswerVO> conditions;
@@ -53,6 +54,14 @@ public class RuleVO {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public String getRationale() {
+    return rationale;
+  }
+
+  public void setRationale(String rationale) {
+    this.rationale = rationale;
   }
 
   public String getLevel() {
