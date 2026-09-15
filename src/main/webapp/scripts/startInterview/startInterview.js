@@ -8,12 +8,12 @@
     $stateProvider
       .state('startInterview', {
         url: '/startInterview?id',
-        templateUrl: 'scripts/startInterview/view/startInterviewForm.html',
-        controller: 'StartInterviewCtrl',
+        templateUrl: 'scripts/startInterview/view/startInterviewJobCoding.html',
+        controller: 'StartInterviewJobCodingCtrl',
         authenticate: false
       })
       .state('startInterviewRun', {
-        url: '/startInterview/interview/:startWithReferenceNumber',
+        url: '/startInterview/interview/:startWithReferenceNumber?jobModuleCode',
         templateUrl: 'scripts/interviews/view/interview.html',
         controller: 'InterviewsCtrl',
         authenticate: false,
@@ -28,6 +28,9 @@
           },
           startWithReferenceNumber: function($stateParams) {
             return $stateParams.startWithReferenceNumber;
+          },
+          jobModuleCode: function($stateParams) {
+            return $stateParams.jobModuleCode;
           },
           treeView: function() {
             return undefined;

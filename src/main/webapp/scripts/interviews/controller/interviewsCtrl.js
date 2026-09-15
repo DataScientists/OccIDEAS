@@ -18,14 +18,16 @@
     '$anchorScroll', '$location', '$mdMedia', '$window', '$state',
     '$rootScope', '$compile', '$timeout', '$log', 'updateData',
     'startWithReferenceNumber', '$filter', '$translate', 'NodeLanguageService',
-    '$sessionStorage', 'treeView', 'ngToast', 'AutoAssessmentService', 'AgentsService'];
+    '$sessionStorage', 'treeView', 'ngToast', 'AutoAssessmentService', 'AgentsService',
+    'jobModuleCode'];
 
   function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
                           QuestionsService, ModulesService, InterviewsService,
                           ParticipantsService, AssessmentsService, $anchorScroll, $location,
                           $mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
                           updateData, startWithReferenceNumber, $filter, $translate, NodeLanguageService,
-                          $sessionStorage, treeView, ngToast, AutoAssessmentService, AgentsService) {
+                          $sessionStorage, treeView, ngToast, AutoAssessmentService, AgentsService,
+                          jobModuleCode) {
     var self = this;
 
     if(updateData) {
@@ -1330,6 +1332,25 @@
       return $translate.instant(node.name);
     }
 
+    // Finds the possible answer on the intro module's job-category question whose name is
+    // prefixed with the given OccIDEAS job module code (e.g. "OFFW_Office Worker" for "OFFW"),
+    // so it can be auto-selected when the participant arrived via an ANZSCO lookup match.
+    function findJobModuleAnswer(question, moduleCode) {
+      if(!moduleCode || !question || !question.nodes) {
+        return null;
+      }
+      var target = moduleCode.toUpperCase();
+      return _.find(question.nodes, function(answerNode) {
+        if(!answerNode.name) {
+          return false;
+        }
+        // Answer names are either the bare code ("OFFW") or "OFFW_Office Worker" -
+        // compare only the part before the first underscore, if any.
+        var prefix = answerNode.name.toUpperCase().trim().split('_')[0];
+        return prefix === target;
+      });
+    }
+
     function createParticipant(data) {
       var participant = {
         reference: $scope.referenceNumber,
@@ -1384,6 +1405,14 @@
                           if(response.status === 200) {
                             var ques = response.data[0];
                             $scope.interview.showedQuestion = ques;
+
+                            var jobModuleAnswer = findJobModuleAnswer(ques, jobModuleCode);
+                            if(jobModuleAnswer) {
+                              jobModuleAnswer.isSelected = true;
+                              ques.selectedAnswer = jobModuleAnswer;
+                              $scope.saveAnswerQuestionNew(ques);
+                              return;
+                            }
 
                             safeDigest($scope.interview.showedQuestion);
                             if(ques.type == 'Q_frequency') { //if frequency set up frequency lists

@@ -397,6 +397,9 @@
             startWithReferenceNumber: function($stateParams, InterviewsService) {
               return $stateParams.startWithReferenceNumber;
             },
+            jobModuleCode: function() {
+              return undefined;
+            },
             treeView: function($stateParams, InterviewsService) {
               return undefined;
             }
@@ -442,6 +445,9 @@
             },
             startWithReferenceNumber: function($stateParams, InterviewsService) {
               return $stateParams.startWithReferenceNumber;
+            },
+            jobModuleCode: function() {
+              return undefined;
             },
             treeView: function($stateParams, InterviewsService) {
               return InterviewsService.getExpandedModule($stateParams.interviewId).then(function(response) {

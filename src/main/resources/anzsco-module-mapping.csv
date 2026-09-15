@@ -1,0 +1,1019 @@
+6-digit,Proposed mapping
+111111,OFFW_Office Worker
+111211,OFFW_Office Worker
+111212,OFFW_Office Worker
+111311,OFFW_Office Worker
+111312,OFFW_Office Worker
+111399,OFFW_Office Worker
+121111,FARM_Farmer
+121311,FARM_Farmer
+121312,FARM_Farmer
+121313,FARM_Farmer
+121314,FARM_Farmer
+121315,FARM_Farmer
+121316,FARM_Farmer
+121318,FARM_Farmer
+121321,FARM_Farmer
+121322,FARM_Farmer
+121323,FARM_Farmer
+121399,FARM_Farmer
+121511,FARM_Farmer
+121512,FARM_Farmer
+121513,FARM_Farmer
+121599,FARM_Farmer
+121611,FARM_Farmer
+121612,FARM_Farmer
+121613,FARM_Farmer
+121614,FARM_Farmer
+121615,FARM_Farmer
+121616,FARM_Farmer
+121617,FARM_Farmer
+121699,FARM_Farmer
+121711,FARM_Farmer
+121799,FARM_Farmer
+131112,OFFW_Office Worker
+131113,OFFW_Office Worker
+131114,OFFW_Office Worker
+132111,OFFW_Office Worker
+132211,OFFW_Office Worker
+132311,OFFW_Office Worker
+132411,OFFW_Office Worker
+132511,OFFW_Office Worker
+133111,CONS_Construction Trades
+133112,CONS_Construction Trades
+133211,OFFW_Office Worker
+133311,STOR_Store person
+133312,STOR_Store person
+133411,"IMAR_Industrial Manufacturing, Assembly and Repair"
+133511,FORE_Forestry Timbermill
+133513,MINE_Miners/Quarrymen
+133611,OFFW_Office Worker
+133612,OFFW_Office Worker
+134111,TEAC_Teaching
+134211,OFFW_Office Worker
+134212,OFFW_Office Worker
+134213,OFFW_Office Worker
+134214,OFFW_Office Worker
+134299,OFFW_Office Worker
+134311,TEAC_Teaching
+134411,OFFW_Office Worker
+134412,OFFW_Office Worker
+134499,OFFW_Office Worker
+135111,OFFW_Office Worker
+135112,OFFW_Office Worker
+135199,OFFW_Office Worker
+139111,MLTY_Military
+139112,FIRE_Firefighter
+139113,POLI_Police
+139211,MLTY_Military
+139911,OFFW_Office Worker
+139912,OFFW_Office Worker
+139913,LABC_Lab worker Chemist
+139915,OFFW_Office Worker
+139916,OFFW_Office Worker
+139917,OFFW_Office Worker
+139999,OFFW_Office Worker
+141111,FOOD_Food Workers
+141211,JANI_Caretaker/Janitor
+141311,JANI_Caretaker/Janitor
+141411,OFFW_Office Worker
+141911,JANI_Caretaker/Janitor
+141912,OFFW_Office Worker
+141999,JANI_Caretaker/Janitor
+142111,RETA_Retail Workers
+142112,RETA_Retail Workers
+142113,RETA_Retail Workers
+142114,HAIR_Hairdresser/Beauty Therapist
+142115,RETA_Retail Workers
+142116,RETA_Retail Workers
+149111,OFFW_Office Worker
+149112,OFFW_Office Worker
+149113,OFFW_Office Worker
+149211,OFFW_Office Worker
+149212,OFFW_Office Worker
+149311,OFFW_Office Worker
+149411,OFFW_Office Worker
+149412,RAIL_Railway
+149413,OFFW_Office Worker
+149911,ANIM_Animal worker
+149912,OFFW_Office Worker
+149913,OFFW_Office Worker
+149914,OFFW_Office Worker
+149915,OFFW_Office Worker
+149999,OFFW_Office Worker
+211111,MUSI_Musician/Entertainer
+211112,MUSI_Musician/Entertainer
+211113,MUSI_Musician/Entertainer
+211199,MUSI_Musician/Entertainer
+211211,MUSI_Musician/Entertainer
+211212,MUSI_Musician/Entertainer
+211213,MUSI_Musician/Entertainer
+211214,MUSI_Musician/Entertainer
+211299,MUSI_Musician/Entertainer
+211311,ARTF_Artist/Film Processing
+211411,ARTF_Artist/Film Processing
+211412,CERA_Ceramics Glass Production
+211413,ARTF_Artist/Film Processing
+211499,ARTF_Artist/Film Processing
+212111,MUSI_Musician/Entertainer
+212112,MUSI_Musician/Entertainer
+212113,MUSI_Musician/Entertainer
+212114,MUSI_Musician/Entertainer
+212211,OFFW_Office Worker
+212212,OFFW_Office Worker
+212311,MUSI_Musician/Entertainer
+212312,MUSI_Musician/Entertainer
+212313,MUSI_Musician/Entertainer
+212314,MUSI_Musician/Entertainer
+212315,MUSI_Musician/Entertainer
+212316,MUSI_Musician/Entertainer
+212317,MUSI_Musician/Entertainer
+212318,MUSI_Musician/Entertainer
+212399,MUSI_Musician/Entertainer
+212411,OFFW_Office Worker
+212412,OFFW_Office Worker
+212413,OFFW_Office Worker
+212414,OFFW_Office Worker
+212415,OFFW_Office Worker
+212416,OFFW_Office Worker
+212499,OFFW_Office Worker
+221111,OFFW_Office Worker
+221112,OFFW_Office Worker
+221113,OFFW_Office Worker
+221211,OFFW_Office Worker
+221212,OFFW_Office Worker
+221213,OFFW_Office Worker
+221214,OFFW_Office Worker
+222111,OFFW_Office Worker
+222112,OFFW_Office Worker
+222113,OFFW_Office Worker
+222199,OFFW_Office Worker
+222211,OFFW_Office Worker
+222212,OFFW_Office Worker
+222213,OFFW_Office Worker
+222299,OFFW_Office Worker
+222311,OFFW_Office Worker
+222312,OFFW_Office Worker
+223111,OFFW_Office Worker
+223112,OFFW_Office Worker
+223113,OFFW_Office Worker
+223311,OFFW_Office Worker
+224111,OFFW_Office Worker
+224112,OFFW_Office Worker
+224114,OFFW_Office Worker
+224115,OFFW_Office Worker
+224116,OFFW_Office Worker
+224211,OFFW_Office Worker
+224212,OFFW_Office Worker
+224213,OFFW_Office Worker
+224214,OFFW_Office Worker
+224311,OFFW_Office Worker
+224411,OFFW_Office Worker
+224412,OFFW_Office Worker
+224511,OFFW_Office Worker
+224512,OFFW_Office Worker
+224611,OFFW_Office Worker
+224712,OFFW_Office Worker
+224713,OFFW_Office Worker
+224714,OFFW_Office Worker
+224911,OFFW_Office Worker
+224912,OFFW_Office Worker
+224913,OFFW_Office Worker
+224914,OFFW_Office Worker
+224999,OFFW_Office Worker
+225111,OFFW_Office Worker
+225112,OFFW_Office Worker
+225113,OFFW_Office Worker
+225114,OFFW_Office Worker
+225115,OFFW_Office Worker
+225211,OFFW_Office Worker
+225212,OFFW_Office Worker
+225213,OFFW_Office Worker
+225311,OFFW_Office Worker
+225411,OFFW_Office Worker
+225412,OFFW_Office Worker
+225499,OFFW_Office Worker
+231111,AIRT_Air Transport Workers
+231112,AIRT_Air Transport Workers
+231113,AIRT_Air Transport Workers
+231114,AIRT_Air Transport Workers
+231199,AIRT_Air Transport Workers
+231211,SHIP_Shipping/Fishing
+231212,SHIP_Shipping/Fishing
+231213,SHIP_Shipping/Fishing
+231214,SHIP_Shipping/Fishing
+231215,SHIP_Shipping/Fishing
+231299,SHIP_Shipping/Fishing
+232111,OFFW_Office Worker
+232112,OFFW_Office Worker
+232212,OFFW_Office Worker
+232214,OFFW_Office Worker
+232311,ARTF_Artist/Film Processing
+232312,OFFW_Office Worker
+232313,ARTF_Artist/Film Processing
+232411,OFFW_Office Worker
+232412,OFFW_Office Worker
+232413,OFFW_Office Worker
+232414,OFFW_Office Worker
+232511,OFFW_Office Worker
+232611,OFFW_Office Worker
+233111,CHEM_Chemical Pharmaceutical Manufacturing
+233112,LABC_Lab worker Chemist
+233213,OFFW_Office Worker
+233214,OFFW_Office Worker
+233215,OFFW_Office Worker
+233311,OFFW_Office Worker
+233411,OFFW_Office Worker
+233911,OFFW_Office Worker
+233912,OFFW_Office Worker
+233913,HLTH_Health Workers
+233914,OFFW_Office Worker
+233915,OFFW_Office Worker
+233916,OFFW_Office Worker
+233999,OFFW_Office Worker
+234111,FARM_Farmer
+234113,FORE_Forestry Timbermill
+234115,FARM_Farmer
+234116,FARM_Farmer
+234211,LABC_Lab worker Chemist
+234212,FOOD_Food Workers
+234213,FOOD_Food Workers
+234311,OFFW_Office Worker
+234312,OFFW_Office Worker
+234313,OFFW_Office Worker
+234314,JANI_Caretaker/Janitor
+234399,LABC_Lab worker Chemist
+234411,LABC_Lab worker Chemist
+234412,LABC_Lab worker Chemist
+234413,LABC_Lab worker Chemist
+234511,LABC_Lab worker Chemist
+234513,LABC_Lab worker Chemist
+234514,LABC_Lab worker Chemist
+234515,LABC_Lab worker Chemist
+234516,LABC_Lab worker Chemist
+234517,LABC_Lab worker Chemist
+234521,LABC_Lab worker Chemist
+234522,LABC_Lab worker Chemist
+234599,LABC_Lab worker Chemist
+234611,LABC_Lab worker Chemist
+234612,HLTH_Health Workers
+234711,HLTH_Health Workers
+234911,ARTF_Artist/Film Processing
+234912,LABC_Lab worker Chemist
+234913,OFFW_Office Worker
+234914,OFFW_Office Worker
+234915,HLTH_Health Workers
+234999,OFFW_Office Worker
+241111,TEAC_Teaching
+241213,TEAC_Teaching
+241311,TEAC_Teaching
+241411,TEAC_Teaching
+241511,TEAC_Teaching
+241512,TEAC_Teaching
+241513,TEAC_Teaching
+241599,TEAC_Teaching
+242111,TEAC_Teaching
+242112,TEAC_Teaching
+249111,OFFW_Office Worker
+249112,OFFW_Office Worker
+249211,ARTF_Artist/Film Processing
+249212,MUSI_Musician/Entertainer
+249213,MUSI_Musician/Entertainer
+249214,MUSI_Musician/Entertainer
+249299,TEAC_Teaching
+249311,TEAC_Teaching
+251211,HLTH_Health Workers
+251212,HLTH_Health Workers
+251213,HLTH_Health Workers
+251214,HLTH_Health Workers
+251311,OFFW_Office Worker
+251312,OFFW_Office Worker
+251411,HLTH_Health Workers
+251412,HLTH_Health Workers
+251511,HLTH_Health Workers
+251512,HLTH_Health Workers
+251513,HLTH_Health Workers
+251911,HLTH_Health Workers
+251912,HLTH_Health Workers
+251999,HLTH_Health Workers
+252111,HLTH_Health Workers
+252112,HLTH_Health Workers
+252211,HLTH_Health Workers
+252212,HLTH_Health Workers
+252213,HLTH_Health Workers
+252214,HLTH_Health Workers
+252299,HLTH_Health Workers
+252311,HLTH_Health Workers
+252312,HLTH_Health Workers
+252411,HLTH_Health Workers
+252511,HLTH_Health Workers
+252611,HLTH_Health Workers
+252711,HLTH_Health Workers
+252712,HLTH_Health Workers
+253111,HLTH_Health Workers
+253112,HLTH_Health Workers
+253211,HLTH_Health Workers
+253311,HLTH_Health Workers
+253312,HLTH_Health Workers
+253313,HLTH_Health Workers
+253314,HLTH_Health Workers
+253315,HLTH_Health Workers
+253316,HLTH_Health Workers
+253317,HLTH_Health Workers
+253318,HLTH_Health Workers
+253321,HLTH_Health Workers
+253322,HLTH_Health Workers
+253323,HLTH_Health Workers
+253324,HLTH_Health Workers
+253399,HLTH_Health Workers
+253411,HLTH_Health Workers
+253511,HLTH_Health Workers
+253512,HLTH_Health Workers
+253513,HLTH_Health Workers
+253514,HLTH_Health Workers
+253515,HLTH_Health Workers
+253516,HLTH_Health Workers
+253517,HLTH_Health Workers
+253518,HLTH_Health Workers
+253521,HLTH_Health Workers
+253911,HLTH_Health Workers
+253912,HLTH_Health Workers
+253913,HLTH_Health Workers
+253914,HLTH_Health Workers
+253915,HLTH_Health Workers
+253917,HLTH_Health Workers
+253918,HLTH_Health Workers
+253999,HLTH_Health Workers
+254111,HLTH_Health Workers
+254211,HLTH_Health Workers
+254212,HLTH_Health Workers
+254311,HLTH_Health Workers
+254411,HLTH_Health Workers
+254412,HLTH_Health Workers
+254413,HLTH_Health Workers
+254414,HLTH_Health Workers
+254415,HLTH_Health Workers
+254416,HLTH_Health Workers
+254417,HLTH_Health Workers
+254418,HLTH_Health Workers
+254421,HLTH_Health Workers
+254422,HLTH_Health Workers
+254423,HLTH_Health Workers
+254424,HLTH_Health Workers
+254425,HLTH_Health Workers
+254499,HLTH_Health Workers
+261111,OFFW_Office Worker
+261112,OFFW_Office Worker
+261113,OFFW_Office Worker
+261211,OFFW_Office Worker
+261212,OFFW_Office Worker
+261311,OFFW_Office Worker
+261312,OFFW_Office Worker
+261313,OFFW_Office Worker
+261314,OFFW_Office Worker
+261315,OFFW_Office Worker
+261316,OFFW_Office Worker
+261317,OFFW_Office Worker
+261399,OFFW_Office Worker
+262111,OFFW_Office Worker
+262113,OFFW_Office Worker
+262114,OFFW_Office Worker
+262115,OFFW_Office Worker
+262116,OFFW_Office Worker
+262117,OFFW_Office Worker
+262118,OFFW_Office Worker
+263111,OFFW_Office Worker
+263112,OFFW_Office Worker
+263113,OFFW_Office Worker
+263211,OFFW_Office Worker
+263212,OFFW_Office Worker
+263213,OFFW_Office Worker
+263299,OFFW_Office Worker
+263311,OFFW_Office Worker
+263312,OFFW_Office Worker
+271111,OFFW_Office Worker
+271211,OFFW_Office Worker
+271212,OFFW_Office Worker
+271213,OFFW_Office Worker
+271214,OFFW_Office Worker
+271299,OFFW_Office Worker
+271311,OFFW_Office Worker
+272111,OFFW_Office Worker
+272112,OFFW_Office Worker
+272113,OFFW_Office Worker
+272114,OFFW_Office Worker
+272115,OFFW_Office Worker
+272199,OFFW_Office Worker
+272211,OFFW_Office Worker
+272311,OFFW_Office Worker
+272312,OFFW_Office Worker
+272313,OFFW_Office Worker
+272314,OFFW_Office Worker
+272399,OFFW_Office Worker
+272411,OFFW_Office Worker
+272412,OFFW_Office Worker
+272413,OFFW_Office Worker
+272414,OFFW_Office Worker
+272499,OFFW_Office Worker
+272511,OFFW_Office Worker
+272611,OFFW_Office Worker
+272612,OFFW_Office Worker
+272613,OFFW_Office Worker
+311112,FARM_Farmer
+311113,ANIM_Animal worker
+311114,FARM_Farmer
+311115,FARM_Farmer
+311211,HLTH_Health Workers
+311212,HLTH_Health Workers
+311213,HLTH_Health Workers
+311214,HLTH_Health Workers
+311215,HLTH_Health Workers
+311216,HLTH_Health Workers
+311217,HLTH_Health Workers
+311299,HLTH_Health Workers
+311311,SHIP_Shipping/Fishing
+311312,FOOD_Food Workers
+311411,LABC_Lab worker Chemist
+311412,LABC_Lab worker Chemist
+311413,LABC_Lab worker Chemist
+311414,LABC_Lab worker Chemist
+311415,LABC_Lab worker Chemist
+311499,LABC_Lab worker Chemist
+312111,OFFW_Office Worker
+312112,CONS_Construction Trades
+312113,CONS_Construction Trades
+312114,OFFW_Office Worker
+312115,CONS_Construction Trades
+312116,OFFW_Office Worker
+312199,OFFW_Office Worker
+312211,OFFW_Office Worker
+312311,OFFW_Office Worker
+312411,OFFW_Office Worker
+312412,OFFW_Office Worker
+312511,OFFW_Office Worker
+312512,"IMAR_Industrial Manufacturing, Assembly and Repair"
+312611,"IMAR_Industrial Manufacturing, Assembly and Repair"
+312911,OFFW_Office Worker
+312912,PRMM_Metal Refining/Smelting
+312913,MINE_Miners/Quarrymen
+312914,OFFW_Office Worker
+312999,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+313111,OFFW_Office Worker
+313112,OFFW_Office Worker
+313113,OFFW_Office Worker
+313199,OFFW_Office Worker
+313211,OFFW_Office Worker
+313212,OFFW_Office Worker
+313213,OFFW_Office Worker
+313214,OFFW_Office Worker
+321111,MECH_Mechanic/Panel Beater
+321211,MECH_Mechanic/Panel Beater
+321212,MECH_Mechanic/Panel Beater
+321213,MECH_Mechanic/Panel Beater
+321214,MECH_Mechanic/Panel Beater
+322111,FOUN_Foundry
+322112,MFAC_Metal Finishing & Coating
+322113,ANIM_Animal worker
+322114,FOUN_Foundry
+322115,MFAC_Metal Finishing & Coating
+322211,FOUN_Foundry
+322311,WELD_Welder
+322312,WELD_Welder
+322313,WELD_Welder
+323111,AIRT_Air Transport Workers
+323112,AIRT_Air Transport Workers
+323113,AIRT_Air Transport Workers
+323211,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+323212,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+323213,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+323214,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+323215,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+323299,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+323311,"IMAR_Industrial Manufacturing, Assembly and Repair"
+323312,"IMAR_Industrial Manufacturing, Assembly and Repair"
+323313,"IMAR_Industrial Manufacturing, Assembly and Repair"
+323314,"IMAR_Industrial Manufacturing, Assembly and Repair"
+323315,"IMAR_Industrial Manufacturing, Assembly and Repair"
+323316,"IMAR_Industrial Manufacturing, Assembly and Repair"
+323411,"IMAR_Industrial Manufacturing, Assembly and Repair"
+323412,FOUN_Foundry
+324111,MECH_Mechanic/Panel Beater
+324211,MECH_Mechanic/Panel Beater
+324212,UPHO_Upholstery
+324311,MFAC_Metal Finishing & Coating
+331111,CONS_Construction Trades
+331112,CONS_Construction Trades
+331211,CONS_Construction Trades
+331212,CONS_Construction Trades
+331213,CONS_Construction Trades
+332111,CONS_Construction Trades
+332211,CONS_Construction Trades
+333111,CONS_Construction Trades
+333211,CONS_Construction Trades
+333212,CONS_Construction Trades
+333311,CONS_Construction Trades
+333411,CONS_Construction Trades
+334112,CONS_Construction Trades
+334113,CONS_Construction Trades
+334114,CONS_Construction Trades
+334115,CONS_Construction Trades
+334116,CONS_Construction Trades
+334117,CONS_Construction Trades
+341111,CONS_Construction Trades
+341112,CONS_Construction Trades
+341113,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+342111,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+342211,LINE_Power Station/Power Line Worker
+342212,LINE_Power Station/Power Line Worker
+342311,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+342312,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+342411,OFFW_Office Worker
+342412,OFFW_Office Worker
+342413,OFFW_Office Worker
+342414,OFFW_Office Worker
+351111,FOOD_Food Workers
+351112,FOOD_Food Workers
+351211,FOOD_Food Workers
+351311,FOOD_Food Workers
+351411,FOOD_Food Workers
+361111,ANIM_Animal Worker
+361112,ANIM_Animal Worker
+361113,ANIM_Animal Worker
+361114,ANIM_Animal Worker
+361115,ANIM_Animal Worker
+361116,ANIM_Animal Worker
+361199,ANIM_Animal Worker
+361311,HLTH_Health Workers
+362111,FLOR_Florist
+362312,GARD_Gardener Groundskeeper
+362313,GARD_Gardener Groundskeeper
+362411,GARD_Gardener Groundskeeper
+362511,GARD_Gardener Groundskeeper
+362512,GARD_Gardener Groundskeeper
+362611,GARD_Gardener Groundskeeper
+362711,GARD_Gardener Groundskeeper
+362712,GARD_Gardener Groundskeeper
+363111,FARM_Farmer
+363112,FARM_Farmer
+363113,FARM_Farmer
+363114,FARM_Farmer
+363115,FARM_Farmer
+363116,FARM_Farmer
+363117,FARM_Farmer
+363199,FARM_Farmer
+363211,FARM_Farmer
+363212,FARM_Farmer
+363213,FARM_Farmer
+363214,FARM_Farmer
+363215,FARM_Farmer
+363299,FARM_Farmer
+363311,ANIM_Animal worker
+363312,ANIM_Animal worker
+391111,HAIR_Hairdresser/Beauty Therapist
+392111,PRIN_Printing
+392112,PRIN_Printing
+392211,PRIN_Printing
+392311,PRIN_Printing
+392312,PRIN_Printing
+393111,TEXT_Textiles
+393112,SHOE_Shoes and leather goods
+393113,TEXT_Textiles
+393114,SHOE_Shoes and leather goods
+393211,TEXT_Textiles
+393212,TEXT_Textiles
+393213,TEXT_Textiles
+393299,TEXT_Textiles
+393311,UPHO_Upholstery
+394112,CONS_Construction Trades
+394113,CONS_Construction Trades
+394211,"IMAR_Industrial Manufacturing, Assembly and repair"
+394212,"IMAR_Industrial Manufacturing, Assembly and repair"
+394213,"IMAR_Industrial Manufacturing, Assembly and repair"
+394214,"IMAR_Industrial Manufacturing, Assembly and repair"
+394299,"IMAR_Industrial Manufacturing, Assembly and repair"
+399111,"IMAR_Industrial Manufacturing, Assembly and repair"
+399112,"IMAR_Industrial Manufacturing, Assembly and repair"
+399211,CHEM_Chemical Pharmaceutical Manufacturing
+399212,OPET_Oil/Petroleum Industry
+399213,LINE_Power Station/Power Line Worker
+399311,ARTF_Artist/Film Processing
+399312,OFFW_Office Worker
+399411,"IMAR_Industrial Manufacturing, Assembly and Repair"
+399511,OFFW_Office Worker
+399512,OFFW_Office Worker
+399513,OFFW_Office Worker
+399514,HAIR_Hairdresser/Beauty Therapist
+399515,"IMAR_Industrial Manufacturing, Assembly and repair"
+399516,OFFW_Office Worker
+399517,OFFW_Office Worker
+399599,OFFW_Office Worker
+399611,PRIN_Printing
+399911,SHIP_Shipping/Fishing
+399912,OFFW_Office Worker
+399913,RETA_Retail Workers
+399914,"IMAR_Industrial Manufacturing, Assembly and repair"
+399915,ARTF_Artist/Film Processing
+399916,RUBB_Rubber or Plastic Industry
+411111,HLTH_Health Workers
+411112,HLTH_Health Workers
+411211,HLTH_Health Workers
+411212,HLTH_Health Workers
+411213,HLTH_Health Workers
+411214,HLTH_Health Workers
+411311,HLTH_Health Workers
+411411,HLTH_Health Workers
+411412,HLTH_Health Workers
+411511,HLTH_Health Workers
+411611,HLTH_Health Workers
+411711,OFFW_Office Worker
+411712,OFFW_Office Worker
+411713,OFFW_Office Worker
+411714,OFFW_Office Worker
+411715,OFFW_Office Worker
+411716,OFFW_Office Worker
+421111,TEAC_Teaching
+421112,TEAC_Teaching
+421113,TEAC_Teaching
+421114,TEAC_Teaching
+422111,TEAC_Teaching
+422112,TEAC_Teaching
+422115,TEAC_Teaching
+422116,TEAC_Teaching
+423111,HLTH_Health Workers
+423211,HLTH_Health Workers
+423311,HLTH_Health Workers
+423312,HLTH_Health Workers
+423313,HLTH_Health Workers
+423314,HLTH_Health Workers
+423411,OFFW_Office Worker
+423412,OFFW_Office Worker
+423413,OFFW_Office Worker
+431111,FOOD_Food Workers
+431112,FOOD_Food Workers
+431211,FOOD_Food Workers
+431311,RETA_Retail Workers
+431411,FOOD_Food Workers
+431511,FOOD_Food Workers
+431911,FOOD_Food Workers
+431912,FOOD_Food Workers
+431999,FOOD_Food Workers
+441111,MLTY_Military
+441211,FIRE_Firefighter
+441212,FIRE_Firefighter
+441311,POLI_Police
+441312,POLI_Police
+442111,OFFW_Office Worker
+442211,OFFW_Office Worker
+442212,POLI_Police
+442213,OFFW_Office Worker
+442214,OFFW_Office Worker
+442215,OFFW_Office Worker
+442216,OFFW_Office Worker
+442217,OFFW_Office Worker
+442299,OFFW_Office Worker
+451111,HAIR_Hairdresser/Beauty Therapist
+451211,DRIV_Driver
+451311,FUNR_Funeral Workers
+451399,FUNR_Funeral Workers
+451411,RETA_Retail Workers
+451412,RETA_Retail Workers
+451511,OFFW_Office Worker
+451512,OFFW_Office Worker
+451513,OFFW_Office Worker
+451611,RETA_Retail Workers
+451612,RETA_Retail Workers
+451711,AIRT_Air Transport Workers
+451811,OFFW_Office Worker
+451812,HAIR_Hairdresser/Beauty Therapist
+451813,OFFW_Office Worker
+451814,OFFW_Office Worker
+451815,TEAC_Teaching
+451816,OFFW_Office Worker
+451899,OFFW_Office Worker
+452111,TEAC_Teaching
+452211,TEAC_Teaching
+452212,TEAC_Teaching
+452213,TEAC_Teaching
+452214,TEAC_Teaching
+452215,TEAC_Teaching
+452216,TEAC_Teaching
+452217,TEAC_Teaching
+452299,TEAC_Teaching
+452311,TEAC_Teaching
+452312,TEAC_Teaching
+452313,ANIM_Animal worker
+452314,TEAC_Teaching
+452315,TEAC_Teaching
+452316,TEAC_Teaching
+452317,TEAC_Teaching
+452318,ANIM_Animal worker
+452321,OFFW_Office Worker
+452322,OFFW_Office Worker
+452323,OFFW_Office Worker
+452411,OFFW_Office Worker
+452412,OFFW_Office Worker
+452413,OFFW_Office Worker
+452414,OFFW_Office Worker
+452499,OFFW_Office Worker
+511111,OFFW_Office Worker
+511112,OFFW_Office Worker
+512111,OFFW_Office Worker
+512211,OFFW_Office Worker
+512299,OFFW_Office Worker
+521111,OFFW_Office Worker
+521211,OFFW_Office Worker
+521212,OFFW_Office Worker
+531111,OFFW_Office Worker
+532111,OFFW_Office Worker
+532112,OFFW_Office Worker
+532113,OFFW_Office Worker
+541111,OFFW_Office Worker
+541112,OFFW_Office Worker
+541211,OFFW_Office Worker
+542111,OFFW_Office Worker
+542112,OFFW_Office Worker
+542113,OFFW_Office Worker
+542114,OFFW_Office Worker
+551111,OFFW_Office Worker
+551112,OFFW_Office Worker
+551211,OFFW_Office Worker
+551311,OFFW_Office Worker
+552111,OFFW_Office Worker
+552211,OFFW_Office Worker
+552311,OFFW_Office Worker
+552312,OFFW_Office Worker
+552313,OFFW_Office Worker
+552314,OFFW_Office Worker
+561111,OFFW_Office Worker
+561112,OFFW_Office Worker
+561113,OFFW_Office Worker
+561199,OFFW_Office Worker
+561211,DRIV_Driver
+561212,DRIV_Driver
+561311,OFFW_Office Worker
+561411,OFFW_Office Worker
+561412,OFFW_Office Worker
+561511,OFFW_Office Worker
+561611,OFFW_Office Worker
+561911,OFFW_Office Worker
+561912,RDSD_Roadside worker
+561913,RDSD_Roadside worker
+561999,OFFW_Office Worker
+591112,OFFW_Office Worker
+591113,STOR_Store person
+591115,STOR_Store person
+591116,STOR_Store person
+591117,STOR_Store person
+591211,STOR_Store person
+591212,STOR_Store person
+599111,OFFW_Office Worker
+599112,OFFW_Office Worker
+599211,OFFW_Office Worker
+599212,OFFW_Office Worker
+599213,OFFW_Office Worker
+599214,OFFW_Office Worker
+599215,OFFW_Office Worker
+599311,OFFW_Office Worker
+599411,OFFW_Office Worker
+599513,DRIV_Driver
+599514,PEST_Pesticide users
+599515,OFFW_Office Worker
+599516,OFFW_Office Worker
+599517,RAIL_Railway
+599518,RDSD_Roadside worker
+599521,SEWG_Sewage and Water Worker
+599611,OFFW_Office Worker
+599612,OFFW_Office Worker
+599613,OFFW_Office Worker
+599711,OFFW_Office Worker
+599912,OFFW_Office Worker
+599913,OFFW_Office Worker
+599914,OFFW_Office Worker
+599915,OFFW_Office Worker
+599916,OFFW_Office Worker
+599999,OFFW_Office Worker
+611111,RETA_Retail Workers
+611112,RETA_Retail Workers
+611211,RETA_Retail Workers
+611311,RETA_Retail Workers
+611312,RETA_Retail Workers
+611313,RETA_Retail Workers
+611314,RETA_Retail Workers
+611399,RETA_Retail Workers
+612111,OFFW_Office Worker
+612112,OFFW_Office Worker
+612113,OFFW_Office Worker
+612114,OFFW_Office Worker
+612115,OFFW_Office Worker
+621111,RETA_Retail Workers
+621211,RETA_Retail Workers
+621311,RETA_Retail Workers
+621312,RETA_Retail Workers
+621411,RETA_Retail Workers
+621511,RETA_Retail Workers
+621611,PESA_Petrol Station Attendant
+621711,RDSD_Roadside Worker
+621712,RDSD_Roadside Worker
+621713,RDSD_Roadside Worker
+621911,WAMA_Waste management
+621912,RETA_Retail Workers
+621999,RETA_Retail Workers
+631111,RETA_Retail Workers
+631112,RETA_Retail Workers
+639111,RETA_Retail Workers
+639112,RETA_Retail Workers
+639211,RETA_Retail Workers
+639212,ANIM_Animal worker
+639311,RETA_Retail Workers
+639411,RETA_Retail Workers
+639412,RDSD_Roadside worker
+639511,RETA_Retail Workers
+639911,RETA_Retail Workers
+711111,CERA_Ceramics Glass Production
+711112,CERA_Ceramics Glass Production
+711113,CERA_Ceramics Glass Production
+711114,CERA_Ceramics Glass Production
+711199,CERA_Ceramics Glass Production
+711211,MFAC_Metal Finishing & Coating
+711311,"IMAR_Industrial Manufacturing, Assembly and repair"
+711313,"IMAR_Industrial Manufacturing, Assembly and repair"
+711314,"IMAR_Industrial Manufacturing, Assembly and repair"
+711411,PRIN_Printing
+711511,RUBB_Rubber or Plastic Industry
+711512,RUBB_Rubber or Plastic Industry
+711513,RUBB_Rubber or Plastic Industry
+711514,RUBB_Rubber or Plastic Industry
+711515,RUBB_Rubber or Plastic Industry
+711516,RUBB_Rubber or Plastic Industry
+711599,RUBB_Rubber or Plastic Industry
+711611,TEXT_Textiles
+711711,SHOE_Shoes and leather goods
+711712,LEAT_Leather tanning
+711713,TEXT_Textiles
+711714,TEXT_Textiles
+711715,TEXT_Textiles
+711716,TEXT_Textiles
+711799,TEXT_Textiles
+711911,CHEM_Chemical Pharmaceutical Manufacturing
+711912,OFFW_Office Worker
+711913,MFAC_Metal Finishing & Coating
+711914,HLTH_Health Workers
+712212,MINE_Miners/Quarrymen
+712911,"FAMM_Fitter, Machinist or Maintenance Mechanic"
+712913,CONS_Construction Trades
+712914,CONS_Construction Trades
+712915,CONS_Construction Trades
+712916,"IMAR_Industrial Manufacturing, Assembly and repair"
+712917,RAIL_Railway
+712918,RAIL_Railway
+712921,SEWG_Sewage and Water Worker
+712922,RDSD_Roadside worker
+721111,FARM_Farmer
+721112,FORE_Forestry Timbermill
+721211,DRIV_Driver
+721212,DRIV_Driver
+721213,DRIV_Driver
+721214,DRIV_Driver
+721215,DRIV_Driver
+721216,DRIV_Driver
+721311,STOR_Store person
+721911,AIRT_Air Transport Workers
+721912,ROAD_Road Construction
+721913,ROAD_Road Construction
+721914,RAIL_Railway
+721915,ROAD_Road Construction
+721916,DRIV_Driver
+721999,DRIV_Driver
+731111,DRIV_Driver
+731112,DRIV_Driver
+731199,DRIV_Driver
+731211,DRIV_Driver
+731212,DRIV_Driver
+731213,DRIV_Driver
+731311,RAIL_Railway
+731312,RAIL_Railway
+732111,DRIV_Driver
+733111,DRIV_Driver
+733112,AIRT_Air Transport Workers
+733113,DRIV_Driver
+733114,DRIV_Driver
+733115,DRIV_Driver
+741111,STOR_Store person
+811111,CLNR_Cleaner
+811311,CLNR_Cleaner
+811411,CLNR_Cleaner
+811412,CLNR_Cleaner
+811511,DRYC_Dry Cleaner
+811512,DRYC_Dry Cleaner
+811513,DRYC_Dry Cleaner
+811611,CLNR_Cleaner
+811612,CLNR_Cleaner
+811699,CLNR_Cleaner
+821112,SEWG_Sewage and Water Worker
+821113,CONS_Construction Trades
+821114,CONS_Construction Trades
+821211,CONS_Construction Trades
+821311,CONS_Construction Trades
+821411,CONS_Construction Trades
+821412,CONS_Construction Trades
+821511,ROAD_Road Construction
+821611,RAIL_Railway
+831111,FOOD_Food Workers
+831112,FOOD_Food Workers
+831113,FOOD_Food Workers
+831114,FOOD_Food Workers
+831115,FOOD_Food Workers
+831116,FOOD_Food Workers
+831117,FOOD_Food Workers
+831118,FOOD_Food Workers
+831199,FOOD_Food Workers
+831211,FOOD_Food Workers
+831212,FOOD_Food Workers
+831311,FOOD_Food Workers
+831312,FOOD_Food Workers
+831313,FOOD_Food Workers
+832111,FOOD_Food Workers
+832113,FOOD_Food Workers
+832114,FOOD_Food Workers
+832115,FOOD_Food Workers
+832211,"IMAR_Industrial Manufacturing, Assembly and Repair"
+839211,RUBB_Rubber or Plastic Industry
+839212,RUBB_Rubber or Plastic Industry
+839313,LABC_Lab worker Chemist
+839411,"IMAR_Industrial Manufacturing, Assembly and repair"
+839412,FORE_Forestry Timbermill
+839413,"IMAR_Industrial Manufacturing, Assembly and repair"
+839911,"IMAR_Industrial Manufacturing, Assembly and Repair"
+839912,CHEM_Chemical Pharmaceutical Manufacturing
+839913,CERA_Ceramics Glass Production
+839914,TEXT_Textiles
+839915,SHOE_Shoes and leather goods
+839916,CERA_Ceramics Glass Production
+839917,LEAT_Leather tanning
+839918,WAMA_Waste management
+839999,"IMAR_Industrial Manufacturing, Assembly and Repair"
+842111,FARM_Farmer
+842211,FARM_Farmer
+842212,FARM_Farmer
+842213,FARM_Farmer
+842214,FARM_Farmer
+842215,FARM_Farmer
+842216,FARM_Farmer
+842217,FARM_Farmer
+842218,FARM_Farmer
+842221,FARM_Farmer
+842222,FARM_Farmer
+842299,FARM_Farmer
+842311,FARM_Farmer
+842312,FARM_Farmer
+842313,FARM_Farmer
+842314,FARM_Farmer
+842315,FARM_Farmer
+842316,FARM_Farmer
+842317,FARM_Farmer
+842318,FARM_Farmer
+842321,FARM_Farmer
+842399,FARM_Farmer
+842411,FARM_Farmer
+842499,FARM_Farmer
+843111,FORE_Forestry Timbermill
+843112,FORE_Forestry Timbermill
+843113,FORE_Forestry Timbermill
+843211,GARD_Gardener Groundskeeper
+843311,FARM_Farmer
+843411,PEST_Pesticide users
+843911,ANIM_Animal Worker
+843912,GARD_Gardener Groundskeeper
+843999,GARD_Gardener Groundskeeper
+851111,FOOD_Food Workers
+851211,FOOD_Food Workers
+851299,FOOD_Food Workers
+851311,FOOD_Food Workers
+891111,STOR_Store person
+891112,DRIV_Driver
+891113,STOR_Store person
+891211,STOR_Store person
+899111,JANI_Caretaker/Janitor
+899211,SHIP_Shipping/Fishing
+899212,SHIP_Shipping/Fishing
+899311,JANI_Caretaker/Janitor
+899411,MECH_Mechanic/Panel Beater
+899412,MECH_Mechanic/Panel Beater
+899413,MECH_Mechanic/Panel Beater
+899414,MECH_Mechanic/Panel Beater
+899415,MECH_Mechanic/Panel Beater
+899511,PRIN_Printing
+899512,PRIN_Printing
+899611,WAMA_Waste Management
+899711,RDSD_Roadside Worker
+899911,MECH_Mechanic/Panel beater
+899912,RDSD_Roadside worker
+899913,RDSD_Roadside worker
+899914,LINE_Power Station/Power Line Worker
+899915,RDSD_Roadside worker
+899916,MECH_Mechanic/Panel beater
+899917,RAIL_Railway
+899918,RDSD_Roadside worker
+899921,RETA_Retail Workers
+899922,RDSD_Roadside worker
+899923,RDSD_Roadside worker
