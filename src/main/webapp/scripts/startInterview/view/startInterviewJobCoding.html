@@ -62,13 +62,26 @@
       </div>
 
       <div ng-if="selectedSuggestion">
+        <div class="si-anzsco-disambiguation"
+             ng-if="!selectedSuggestion.moduleName && selectedSuggestion.disambiguationOptions.length > 0">
+          <label class="si-label">{{selectedSuggestion.disambiguationQuestion}}</label>
+          <div class="si-anzsco-option"
+               ng-repeat="option in selectedSuggestion.disambiguationOptions"
+               ng-click="selectDisambiguationOption(option)">
+            <span class="si-anzsco-label">{{option.label}}</span>
+          </div>
+        </div>
+
         <div class="si-anzsco-module" ng-if="selectedSuggestion.moduleName">
           Matched interview: {{selectedSuggestion.moduleName}}
         </div>
-        <div class="si-anzsco-module si-anzsco-module-warning" ng-if="!selectedSuggestion.moduleName">
+        <div class="si-anzsco-module si-anzsco-module-warning"
+             ng-if="!selectedSuggestion.moduleName && !(selectedSuggestion.disambiguationOptions.length > 0)">
           No specific interview module found for this occupation &mdash; the general interview will be used.
         </div>
-        <div class="si-anzsco-actions">
+
+        <div class="si-anzsco-actions"
+             ng-if="selectedSuggestion.moduleName || !(selectedSuggestion.disambiguationOptions.length > 0)">
           <button class="si-btn-back" ng-click="goBack()">Back</button>
           <button class="si-btn-start" ng-click="continueToInterview()">Continue</button>
         </div>

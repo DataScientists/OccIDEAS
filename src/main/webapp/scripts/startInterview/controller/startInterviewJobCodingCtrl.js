@@ -102,6 +102,17 @@
       $scope.selectedSuggestion = suggestion;
     };
 
+    // Resolves an ambiguous suggestion (one whose ANZSCO code matched more than one job
+    // module) to the module the participant picked from the disambiguation question.
+    $scope.selectDisambiguationOption = function(option) {
+      if (!$scope.selectedSuggestion) {
+        return;
+      }
+      $scope.selectedSuggestion.moduleCode = option.moduleCode;
+      $scope.selectedSuggestion.moduleId = option.moduleId;
+      $scope.selectedSuggestion.moduleName = option.moduleName;
+    };
+
     $scope.goBack = function() {
       $scope.suggestions = null;
       $scope.selectedSuggestion = null;

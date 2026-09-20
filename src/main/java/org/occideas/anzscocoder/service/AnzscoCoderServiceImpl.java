@@ -6,9 +6,12 @@ import org.apache.logging.log4j.Logger;
 import org.occideas.anzscocoder.client.AbsCoderClient;
 import org.occideas.anzscocoder.client.AbsCoderCodeResponse;
 import org.occideas.anzscocoder.client.AbsCoderResultItem;
+import org.occideas.anzscocoder.dao.AnzscoDisambiguationOptionDao;
 import org.occideas.config.AbsCoderConfig;
+import org.occideas.entity.AnzscoDisambiguationOption;
 import org.occideas.module.service.ModuleService;
 import org.occideas.vo.AnzscoLookupResultVO;
+import org.occideas.vo.AnzscoModuleOptionVO;
 import org.occideas.vo.AnzscoSuggestionVO;
 import org.occideas.vo.ModuleVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +26,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class AnzscoCoderServiceImpl implements AnzscoCoderService {
@@ -45,6 +50,9 @@ public class AnzscoCoderServiceImpl implements AnzscoCoderService {
 
     @Autowired
     private ModuleService moduleService;
+
+    @Autowired
+    private AnzscoDisambiguationOptionDao disambiguationOptionDao;
 
     @PostConstruct
     public void loadAnzscoModuleMapping() {
@@ -97,24 +105,85 @@ public class AnzscoCoderServiceImpl implements AnzscoCoderService {
     }
 
     private void resolveModule(AnzscoSuggestionVO suggestion) {
-        String moduleCode = anzscoToModuleCode.get(suggestion.getCode());
+        String code = suggestion.getCode();
+        String moduleCode = anzscoToModuleCode.get(code);
+
+        if (StringUtils.isBlank(moduleCode) && StringUtils.isNotBlank(code) && code.length() < 6) {
+            // ABS returned a coarser code (major/sub-major/minor/unit group) than the 6-digit
+            // occupation codes our mapping table is keyed on - treat it as a prefix.
+            Set<String> matchingModules = new LinkedHashSet<>();
+            for (Map.Entry<String, String> entry : anzscoToModuleCode.entrySet()) {
+                if (entry.getKey().startsWith(code)) {
+                    matchingModules.add(entry.getValue());
+                }
+            }
+            if (matchingModules.size() == 1) {
+                // Every occupation under this prefix maps to the same module - safe to resolve directly.
+                moduleCode = matchingModules.iterator().next();
+            } else if (matchingModules.size() > 1) {
+                // Ambiguous - offer the participant a disambiguation question instead of guessing.
+                applyDisambiguation(suggestion, code);
+                return;
+            }
+        }
+
         if (StringUtils.isBlank(moduleCode)) {
-            log.warn("No OccIDEAS job module mapping for ANZSCO code {}", suggestion.getCode());
+            log.warn("No OccIDEAS job module mapping for ANZSCO code {}", code);
             return;
         }
         suggestion.setModuleCode(moduleCode);
+        ModuleVO module = resolveModuleByCode(moduleCode, code);
+        if (module != null) {
+            suggestion.setModuleId(module.getIdNode());
+            suggestion.setModuleName(module.getName());
+        }
+    }
+
+    private void applyDisambiguation(AnzscoSuggestionVO suggestion, String prefix) {
+        List<AnzscoDisambiguationOption> options;
+        try {
+            options = disambiguationOptionDao.findByPrefix(prefix);
+        } catch (Exception e) {
+            log.error("Failed to load ANZSCO disambiguation options for prefix {}", prefix, e);
+            return;
+        }
+        if (options == null || options.isEmpty()) {
+            log.warn("ANZSCO code {} is ambiguous (matches multiple job modules) but no disambiguation "
+                + "question is configured for this prefix", prefix);
+            return;
+        }
+
+        List<AnzscoModuleOptionVO> resolvedOptions = new ArrayList<>();
+        for (AnzscoDisambiguationOption option : options) {
+            ModuleVO module = resolveModuleByCode(option.getModuleCode(), prefix);
+            if (module == null) {
+                continue;
+            }
+            AnzscoModuleOptionVO optionVO = new AnzscoModuleOptionVO();
+            optionVO.setLabel(option.getOptionLabel());
+            optionVO.setModuleCode(option.getModuleCode());
+            optionVO.setModuleId(module.getIdNode());
+            optionVO.setModuleName(module.getName());
+            resolvedOptions.add(optionVO);
+        }
+        if (resolvedOptions.isEmpty()) {
+            return;
+        }
+        suggestion.setDisambiguationQuestion(options.get(0).getQuestionText());
+        suggestion.setDisambiguationOptions(resolvedOptions);
+    }
+
+    private ModuleVO resolveModuleByCode(String moduleCode, String anzscoCode) {
         try {
             ModuleVO module = moduleService.getModuleByNameLength(moduleCode, moduleCode.length());
-            if (module != null) {
-                suggestion.setModuleId(module.getIdNode());
-                suggestion.setModuleName(module.getName());
-            } else {
+            if (module == null) {
                 log.warn("No OccIDEAS job module found in database for code {} (ANZSCO {})", moduleCode,
-                    suggestion.getCode());
+                    anzscoCode);
             }
+            return module;
         } catch (Exception e) {
-            log.error("Failed to resolve OccIDEAS job module for code {} (ANZSCO {})", moduleCode,
-                suggestion.getCode(), e);
+            log.error("Failed to resolve OccIDEAS job module for code {} (ANZSCO {})", moduleCode, anzscoCode, e);
+            return null;
         }
     }
 }
