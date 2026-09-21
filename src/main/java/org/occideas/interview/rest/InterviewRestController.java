@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.occideas.base.rest.BaseRestController;
 import org.occideas.config.QualtricsConfig;
+import org.occideas.entity.Constant;
 import org.occideas.entity.Interview;
 import org.occideas.entity.InterviewAnswer;
 import org.occideas.entity.InterviewQuestion;
@@ -13,6 +14,7 @@ import org.occideas.interview.service.InterviewService;
 import org.occideas.interviewmodule.service.InterviewModuleService;
 import org.occideas.module.service.ModuleService;
 import org.occideas.question.service.QuestionService;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -48,6 +50,24 @@ public class InterviewRestController implements BaseRestController<InterviewVO> 
   
   @Autowired
   private QualtricsConfig qualtricsConfig;
+
+  @Autowired
+  private SystemPropertyService systemPropertyService;
+
+  @GET
+  @Path(value = "/getstartinterviewconfig")
+  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+  public Response getStartInterviewConfig() {
+    StartInterviewConfigVO vo = new StartInterviewConfigVO();
+    try {
+      SystemPropertyVO prop = systemPropertyService.getByName(Constant.START_INTERVIEW_ASSESSOR_MODE);
+      vo.setAssessorMode(prop != null && "true".equalsIgnoreCase(prop.getValue()));
+    } catch (Throwable e) {
+      log.error("Failed to read startInterview assessor mode config, defaulting to hidden", e);
+      vo.setAssessorMode(false);
+    }
+    return Response.ok(vo).build();
+  }
 
   @GET
   @Path(value = "/getlist")

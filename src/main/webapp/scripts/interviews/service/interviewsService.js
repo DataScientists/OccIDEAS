@@ -206,6 +206,16 @@
       return request.then(handleSuccess, handleError);
     }
 
+    function getStartInterviewConfig() {
+      var restURL = 'web/rest/interview/getstartinterviewconfig';
+      var request = $http({
+        method: 'GET',
+        url: restURL,
+        ignoreLoadingBar: true
+      });
+      return request.then(handleSuccess, handleError);
+    }
+
     function findFragment(idNode) {
       var restURL = 'web/rest/fragment/getinterviewfragment?id=' + idNode;
       var request = $http({
@@ -730,7 +740,8 @@
       exportInterviewRules: exportInterviewRules,
       preloadFilterStudyAgent: preloadFilterStudyAgent,
       emailReport: emailReport,
-      downloadReport: downloadReport
+      downloadReport: downloadReport,
+      getStartInterviewConfig: getStartInterviewConfig
     };
   }
 })();

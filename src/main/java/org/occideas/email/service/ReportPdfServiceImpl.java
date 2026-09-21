@@ -76,7 +76,7 @@ public class ReportPdfServiceImpl implements ReportPdfService {
 
     List<IndividualFindingVO> highFindings = reportData.getHighFindings();
     if (highFindings != null && !highFindings.isEmpty()) {
-      sb.append("<h1>What We Found</h1>");
+      sb.append("<h1>What Was Found</h1>");
       sb.append("<p class=\"section-note\">These are the exposures your answers most strongly point to.</p>");
       for (IndividualFindingVO finding : highFindings) {
         sb.append("<div class=\"finding\">");
@@ -91,12 +91,13 @@ public class ReportPdfServiceImpl implements ReportPdfService {
 
     List<IndividualFindingVO> otherFindings = reportData.getOtherFindings();
     if (otherFindings != null && !otherFindings.isEmpty()) {
-      sb.append("<h1>Other Things We Noted</h1>");
+      sb.append("<h1>Other Things Worth Noting</h1>");
       sb.append("<p class=\"section-note\">Lower-confidence or less certain matches. Being within safe limits "
         + "doesn't mean there's nothing worth reducing further &#8212; these are worth being aware of, even "
         + "though we're not flagging them as a problem.</p>");
       for (IndividualFindingVO finding : otherFindings) {
-        sb.append("<div class=\"noted-item\">");
+        String levelClass = "probLow".equals(finding.getLevel()) ? "noted-item-low" : "";
+        sb.append("<div class=\"noted-item ").append(levelClass).append("\">");
         sb.append("<span class=\"noted-name\">").append(escape(finding.getAgentName())).append("</span>");
         sb.append("<p class=\"noted-text\">").append(escape(finding.getText())).append("</p>");
         sb.append("</div>");
@@ -108,8 +109,8 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + "everything. If anything here concerns you, the best next step is talking to your OH&amp;S "
       + "representative, supervisor, or a doctor.</div>");
 
-    sb.append("<h1>Interview Responses</h1>");
-    if (reportData.getTree() != null) {
+    if (reportData.getTree() != null && !reportData.getTree().isEmpty()) {
+      sb.append("<h1>Interview Responses</h1>");
       appendTree(sb, reportData.getTree(), 0);
     }
 
@@ -179,11 +180,12 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".verdict-flagged .verdict-eyebrow { color: #a8651f; }"
       + ".verdict-title { font-size: 13pt; margin: 4px 0 6px; }"
       + ".verdict-body { margin: 0; font-size: 9.5pt; color: #5b5c53; }"
-      + ".finding { padding: 6px 0; border-top: 1px solid #edf2f5; }"
+      + ".finding { padding: 6px 0 6px 10px; border-top: 1px solid #edf2f5; border-left: 4px solid #b3452f; }"
       + ".finding-name { font-weight: bold; font-size: 10.5pt; }"
       + ".finding-rationale { margin: 3px 0 0; font-size: 9pt; color: #5b5c53; }"
       + ".finding-action { margin: 3px 0 0; font-size: 9pt; font-weight: bold; color: #2e7d95; }"
-      + ".noted-item { padding: 6px 0; border-top: 1px solid #edf2f5; }"
+      + ".noted-item { padding: 6px 0 6px 10px; border-top: 1px solid #edf2f5; border-left: 4px solid #b8752b; }"
+      + ".noted-item-low { border-left-color: #a68a2c; }"
       + ".noted-name { font-weight: bold; font-size: 10pt; }"
       + ".noted-text { margin: 3px 0 0; font-size: 9pt; color: #5b5c53; }"
       + ".noted-empty { font-size: 9pt; color: #8b8c80; }"

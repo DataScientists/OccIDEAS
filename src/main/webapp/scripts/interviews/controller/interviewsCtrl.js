@@ -19,7 +19,7 @@
     '$rootScope', '$compile', '$timeout', '$log', 'updateData',
     'startWithReferenceNumber', '$filter', '$translate', 'NodeLanguageService',
     '$sessionStorage', 'treeView', 'ngToast', 'AutoAssessmentService', 'AgentsService',
-    'jobModuleCode'];
+    'jobModuleCode', 'IndividualReportService'];
 
   function InterviewsCtrl(data, $scope, $mdDialog, FragmentsService, $q,
                           QuestionsService, ModulesService, InterviewsService,
@@ -27,7 +27,7 @@
                           $mdMedia, $window, $state, $rootScope, $compile, $timeout, $log,
                           updateData, startWithReferenceNumber, $filter, $translate, NodeLanguageService,
                           $sessionStorage, treeView, ngToast, AutoAssessmentService, AgentsService,
-                          jobModuleCode) {
+                          jobModuleCode, IndividualReportService) {
     var self = this;
 
     if(updateData) {
@@ -1128,7 +1128,10 @@
     }
 
     $scope.downloadReport = function() {
-      if (!$scope.linkedModule) {
+      // The Interview Responses tree is only included in assessor testing mode - in general
+      // use, linkedModule was never fetched (see runStartInterviewAssessment), so only require
+      // it here when assessor mode actually needs it.
+      if ($scope.siAssessorMode && !$scope.linkedModule) {
         ngToast.create({
           className: 'danger',
           content: 'Report is still loading, please try again in a moment.',
@@ -1146,9 +1149,9 @@
           return { agentName: finding.agentName, text: finding.rationale };
         }),
         otherFindings: _.map($scope.siOtherFindings, function(finding) {
-          return { agentName: finding.agentName, text: finding.text };
+          return { agentName: finding.agentName, text: finding.text, level: finding.level };
         }),
-        tree: buildReportTree($scope.linkedModule.nodes)
+        tree: $scope.siAssessorMode && $scope.linkedModule ? buildReportTree($scope.linkedModule.nodes) : []
       }).then(function(response) {
         $scope.siReportDownloading = false;
         var blob = new Blob([response.data], { type: 'application/pdf' });
@@ -2078,9 +2081,9 @@
 
     // Scrolls to and highlights the answer (in the "Interview Responses" tree below) that a
     // clicked condition dot represents.
-    $scope.siHighlightCondition = function(idNode) {
+    $scope.siHighlightCondition = function(cond) {
       $('.tree-node div').removeClass('highlight-rulenode');
-      var el = $('#node-' + idNode);
+      var el = $('#node-' + cond.idNode);
       if (el.length) {
         el.addClass('highlight-rulenode');
         el[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2101,8 +2104,15 @@
       $scope.siAssessmentLoading = true;
       $scope.siData = { firedRules: [], autoAssessedRules: [], manualAssessedRules: [], height: 30 };
       $scope.siAgents = [];
+      $scope.siAssessorMode = false;
 
-      AssessmentsService.updateFiredRules(interviewId).then(function(response) {
+      InterviewsService.getStartInterviewConfig().then(function(response) {
+        $scope.siAssessorMode = !!(response.data && response.data.assessorMode);
+        return AssessmentsService.updateFiredRules(interviewId);
+      }, function() {
+        // Config lookup failed - fail safe (hidden), still proceed with the assessment itself.
+        return AssessmentsService.updateFiredRules(interviewId);
+      }).then(function(response) {
         if (response.status === 200 && response.data && response.data[0]) {
           var firedRules = response.data[0].firedRules || [];
           var questionHistory = ($scope.interview && $scope.interview.questionHistory) || [];
@@ -2126,75 +2136,21 @@
         $scope.siAgents = agents || [];
         buildIndividualExposureSummary();
         $scope.siAssessmentLoading = false;
-        loadSiQuestionTree(interviewId);
+        // The Interview Responses tree (and the condition dots that link to it) are only
+        // relevant in assessor testing mode - skip fetching it otherwise.
+        if ($scope.siAssessorMode) {
+          loadSiQuestionTree(interviewId);
+        }
       });
     }
 
-    // Fallback wording used when a rule has no admin-authored rationale text yet.
-    // Calibrated to the rule's actual confidence level, not to imply more certainty than exists.
-    // No fallback exists for probHigh - an evidence claim shouldn't be fabricated generically,
-    // so a probHigh finding simply shows no rationale line until an admin writes one.
-    var DEFAULT_RATIONALE_TEXT = {
-      probMedium: 'Your answers point to a possible link to {agent}. The evidence at this level of ' +
-        'exposure isn’t conclusive, so this is noted rather than flagged as a concern.',
-      probLow: 'Your answers show a low-probability link to {agent}. This is a minor signal in your ' +
-        'answers, not a confirmed finding.'
-    };
-
-    // Builds the individual-facing summary: a binary "exposure indicated" verdict driven only by
-    // PROBABLE_HIGH rules, plus a lower-key list of anything else noted. Only PROBABLE_HIGH/MEDIUM/LOW
-    // are shown - NO_EXPOSURE is a clear finding with nothing to explain, and PROBABLE_UNKNOWN/
-    // POSSIBLE_UNKNOWN mean the automated rules couldn't confidently classify the exposure at all
-    // (that's what triggers a manual assessment) - surfacing those here with the same calibrated
-    // language as a real low/medium finding would overstate what this automated screening determined,
-    // and manual assessment is out of scope for this individual self-report. The full technical
-    // breakdown (all levels, all conditions) remains available to the employer via the PDF/email report.
+    // The verdict/findings logic lives in IndividualReportService so the fired rules page shows
+    // exactly the same report - see that service for what is and isn't surfaced.
     function buildIndividualExposureSummary() {
-      var agentsById = {};
-      _.each($scope.siAgents, function(agent) {
-        agentsById[agent.idAgent] = agent;
-      });
-
-      var high = [];
-      var other = [];
-
-      _.each($scope.siData.firedRules, function(rule) {
-        if (rule.level !== 'probHigh' && rule.level !== 'probMedium' && rule.level !== 'probLow') {
-          return;
-        }
-        var agent = agentsById[rule.agentId];
-        var agentName = (agent && agent.name) || 'Unknown';
-
-        if (rule.level === 'probHigh') {
-          high.push({
-            agentName: agentName,
-            rationale: rule.rationale || null,
-            level: rule.level,
-            conditions: rule.conditions || []
-          });
-        } else {
-          var text = rule.rationale;
-          if (!text) {
-            var template = DEFAULT_RATIONALE_TEXT[rule.level];
-            text = template ? template.split('{agent}').join(agentName) : null;
-          }
-          if (text) {
-            other.push({
-              agentName: agentName,
-              level: rule.level,
-              text: text,
-              conditions: rule.conditions || []
-            });
-          }
-        }
-      });
-
-      // The verdict itself is binary - either estimated above the safety threshold or not.
-      // Lower-confidence findings (siOtherFindings) are supplementary detail shown afterward,
-      // regardless of which verdict applies - not a third competing result.
-      $scope.siVerdictState = high.length > 0 ? 'flagged' : 'clear';
-      $scope.siHighFindings = high;
-      $scope.siOtherFindings = other;
+      var summary = IndividualReportService.build($scope.siData.firedRules, $scope.siAgents);
+      $scope.siVerdictState = summary.verdictState;
+      $scope.siHighFindings = summary.highFindings;
+      $scope.siOtherFindings = summary.otherFindings;
     }
 
     $scope.finishInterview = function() {

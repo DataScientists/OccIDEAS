@@ -1,0 +1,89 @@
+<!--
+  Shared individual exposure report body (verdict / findings / other noted / disclaimer).
+  Expects on scope: siVerdictState, siHighFindings, siOtherFindings. Optional: siAssessorMode and
+  siHighlightCondition(cond) (condition dots, only when the answer tree is on the page),
+  siManualReviewAgents (assessor-facing note, never set on the participant flow),
+  siShowNonStudyBadge (flags findings whose agent isn't a study agent; assessor page only).
+  Included by the startInterview report (interview.html) and the fired rules page (fireRules.html).
+-->
+<div class="si-verdict" ng-class="'si-verdict-' + siVerdictState">
+  <div class="si-verdict-eyebrow">Result</div>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'flagged'">Your answers suggest an exposure above safe limits</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'clear'">Your exposure is within safe limits</h1>
+  <p class="si-verdict-body" ng-if="siVerdictState === 'flagged'">
+    Based on your answers, your exposure to {{siHighFindings.length > 1 ? 'these substances' : 'this substance'}}
+    is estimated to be above the levels occupational health and safety standards treat as safe. This is
+    estimated from what you told us, not measured directly. Details below.
+  </p>
+  <p class="si-verdict-body" ng-if="siVerdictState === 'clear'">
+    Based on your answers, nothing reached the level occupational health and safety standards treat as
+    high exposure.
+  </p>
+</div>
+
+<div ng-if="siVerdictState === 'flagged'">
+  <h2 class="si-section-title">What was found</h2>
+  <p class="si-section-note">These are the exposures your answers most strongly point to.</p>
+  <div class="si-finding" ng-repeat="finding in siHighFindings">
+    <div class="si-finding-mark"></div>
+    <div class="si-finding-body">
+      <span class="si-finding-name">{{finding.agentName}}</span>
+      <span class="si-nonstudy-badge" ng-if="siShowNonStudyBadge && !finding.studyAgent"
+              title="This agent isn't in the study's agent list, so it isn't shown in the fired rules grid.">Not a study agent</span>
+      <p class="si-finding-rationale" ng-if="finding.rationale">{{finding.rationale}}</p>
+      <p class="si-finding-action">Talk to your supervisor or OH&amp;S representative about this finding.</p>
+      <div class="si-condition-dots-wrap" ng-if="siAssessorMode && finding.conditions.length > 0">
+        <span class="si-condition-dots-label">Click a dot to see the answer that triggered this:</span>
+        <div class="si-condition-dots">
+          <span class="{{finding.level}} si-rule-dot"
+                ng-repeat="cond in finding.conditions"
+                ng-click="siHighlightCondition(cond)"
+                title="Click to see your answer &mdash; {{cond.header}} {{cond.number}}"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-if="siOtherFindings.length > 0">
+  <h2 class="si-section-title">Other things worth noting</h2>
+  <p class="si-section-note">
+    Lower-confidence or less certain matches. Being within safe limits doesn't mean there's nothing
+    worth reducing further &mdash; these are worth being aware of, even though we're not flagging
+    them as a problem.
+  </p>
+  <div class="si-noted">
+    <div class="si-noted-item" ng-repeat="finding in siOtherFindings">
+      <div class="si-noted-mark" ng-class="{'si-noted-mark-low': finding.level === 'probLow'}"></div>
+      <div class="si-noted-body">
+        <span class="si-noted-name">{{finding.agentName}}</span>
+        <span class="si-nonstudy-badge" ng-if="siShowNonStudyBadge && !finding.studyAgent"
+              title="This agent isn't in the study's agent list, so it isn't shown in the fired rules grid.">Not a study agent</span>
+        <p class="si-noted-text">{{finding.text}}</p>
+        <div class="si-condition-dots-wrap" ng-if="siAssessorMode && finding.conditions.length > 0">
+          <span class="si-condition-dots-label">Click a dot to see the answer that triggered this:</span>
+          <div class="si-condition-dots">
+            <span class="{{finding.level}} si-rule-dot"
+                  ng-repeat="cond in finding.conditions"
+                  ng-click="siHighlightCondition(cond)"
+                  title="Click to see your answer &mdash; {{cond.header}} {{cond.number}}"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="si-disclaimer">
+  <strong>This is an educational screening tool, not a medical diagnosis.</strong>
+  It's based only on what you told us about your job, and it can't account for everything.
+  If anything here concerns you, the best next step is talking to your OH&amp;S representative,
+  supervisor, or a doctor.
+</div>
+
+<div class="si-disclaimer" ng-if="siManualReviewAgents.length > 0">
+  <strong>Assessor note:</strong>
+  {{siManualReviewAgents.length}} {{siManualReviewAgents.length === 1 ? 'agent needs' : 'agents need'}}
+  manual assessment and {{siManualReviewAgents.length === 1 ? 'is' : 'are'}} not shown in this report:
+  {{siManualReviewAgents.join(', ')}}.
+</div>

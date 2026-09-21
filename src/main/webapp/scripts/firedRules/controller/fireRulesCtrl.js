@@ -7,13 +7,14 @@
     'RulesService', 'ngToast', 'SystemPropertyService', '$mdDialog', 'AgentsService',
     '$q', '$sessionStorage', 'moduleName', '$rootScope', 'ManualAssessmentService',
     'AutoAssessmentService', 'ngToast', 'ModulesService', 'QuestionsService',
-    'ParticipantsService'];
+    'ParticipantsService', 'IndividualReportService'];
 
   function FiredRulesCtrl($scope, data, FiredRulesService, $timeout,
                           InterviewsService, AssessmentsService, $log, $compile,
                           RulesService, $ngToast, SystemPropertyService, $mdDialog,
                           AgentsService, $q, $sessionStorage, moduleName, $rootScope, ManualAssessmentService,
-                          AutoAssessmentService, ngToast, ModulesService, QuestionsService, ParticipantsService) {
+                          AutoAssessmentService, ngToast, ModulesService, QuestionsService, ParticipantsService,
+                          IndividualReportService) {
     var vm = this;
     vm.firedRulesByModule = [];
     $scope.interview = undefined;
@@ -1662,6 +1663,76 @@
         clickOutsideToClose: false
       });
     };
+
+    // Assessment report: the same individual exposure report shown at the end of a startInterview
+    // run (shared IndividualReportService + individualReport.html), built from this page's fired rules.
+    // Rebuilt while visible so it follows edits made through the rules context menus.
+    //
+    // Like the startInterview report, the click-to-see-answer condition dots only appear when the
+    // startInterviewAssessorMode SYS_CONFIG flag is true (re-read each time the report is opened, so a
+    // flag change takes effect without reloading). The dots point at this page's own answer tree, so
+    // in that mode the tree is loaded along with the report.
+    $scope.showAssessmentReport = false;
+    $scope.siAssessorMode = false;
+    // Findings for agents outside the study's agent list are still reported, but marked as such.
+    $scope.siShowNonStudyBadge = true;
+
+    function refreshAssessmentReport() {
+      var summary = IndividualReportService.build($scope.data && $scope.data.firedRules, $scope.agents);
+      _.each(summary.highFindings.concat(summary.otherFindings), function(finding) {
+        _.each(finding.conditions, function(cond) {
+          var module = _.find($scope.data.topModuleNameList, function(m) {
+            return m.idnode == cond.topNodeId;
+          });
+          cond.header = module ? module.topModuleName.substr(0, 4) : '';
+        });
+      });
+      $scope.siVerdictState = summary.verdictState;
+      $scope.siHighFindings = summary.highFindings;
+      $scope.siOtherFindings = summary.otherFindings;
+      $scope.siManualReviewAgents = summary.manualReviewAgents;
+    }
+
+    function applyAssessorModeConfig() {
+      InterviewsService.getStartInterviewConfig().then(function(response) {
+        $scope.siAssessorMode = !!(response.data && response.data.assessorMode);
+        if($scope.siAssessorMode && !$scope.linkedModule) {
+          $scope.expandAll();
+        }
+      }, function() {
+        // Config lookup failed - fail safe (no dots).
+        $scope.siAssessorMode = false;
+      });
+    }
+
+    $scope.siHighlightCondition = function(cond) {
+      $scope.highlightNode(cond.idNode, cond);
+    };
+
+    $scope.toggleAssessmentReport = function() {
+      $scope.showAssessmentReport = !$scope.showAssessmentReport;
+      if($scope.showAssessmentReport) {
+        refreshAssessmentReport();
+        applyAssessorModeConfig();
+      }
+    };
+
+    // Module names (used in the dot tooltips) finish loading after the rules themselves.
+    $scope.$watch('rulesLoaded', function(loaded) {
+      if(loaded && $scope.showAssessmentReport) {
+        refreshAssessmentReport();
+      }
+    });
+    $scope.$watchCollection('data.firedRules', function() {
+      if($scope.showAssessmentReport) {
+        refreshAssessmentReport();
+      }
+    });
+    $scope.$watchCollection('agents', function() {
+      if($scope.showAssessmentReport) {
+        refreshAssessmentReport();
+      }
+    });
 
     $scope.menuOptions =
       [
