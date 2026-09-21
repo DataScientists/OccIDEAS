@@ -29,9 +29,19 @@
     // there. studyAgents is used only to flag such findings (studyAgent: false) - callers decide
     // whether to surface that (the fired rules page does; the participant report doesn't).
     //
+    // options.collapseByAgent (the public view): for each agent only its highest-severity findings are
+    // kept - a high finding trumps that agent's medium/low ones, and a medium trumps its low - since
+    // "high" alongside "low probability link" for the same substance reads as a contradiction.
+    // Assessors leave it off to see every fired rule. It doesn't affect the verdict (high already
+    // drives it) or manualReviewAgents.
+    //
     // manualReviewAgents lists the agents behind those unknown-level rules. It's not part of the
     // participant-facing report; callers with an assessor audience (the fired rules page) can surface it.
-    this.build = function(firedRules, studyAgents) {
+    var SEVERITY_RANK = {probHigh: 3, probMedium: 2, probLow: 1};
+
+    this.build = function(firedRules, studyAgents, options) {
+      var collapseByAgent = !!(options && options.collapseByAgent);
+
       var studyAgentsById = {};
       _.each(studyAgents, function(agent) {
         studyAgentsById[agent.idAgent] = agent;
@@ -50,12 +60,24 @@
       var other = [];
       var manualReviewNames = [];
 
+      // Highest severity fired per agent, for collapseByAgent.
+      var topRankByAgent = {};
+      _.each(firedRules, function(rule) {
+        var rank = SEVERITY_RANK[rule.level] || 0;
+        if (rank > (topRankByAgent[rule.agentId] || 0)) {
+          topRankByAgent[rule.agentId] = rank;
+        }
+      });
+
       _.each(firedRules, function(rule) {
         if (rule.level === 'probUnknown' || rule.level === 'possUnknown') {
           manualReviewNames.push(agentNameFor(rule));
           return;
         }
         if (rule.level !== 'probHigh' && rule.level !== 'probMedium' && rule.level !== 'probLow') {
+          return;
+        }
+        if (collapseByAgent && SEVERITY_RANK[rule.level] < topRankByAgent[rule.agentId]) {
           return;
         }
         var agentName = agentNameFor(rule);

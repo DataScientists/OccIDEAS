@@ -2147,7 +2147,8 @@
     // The verdict/findings logic lives in IndividualReportService so the fired rules page shows
     // exactly the same report - see that service for what is and isn't surfaced.
     function buildIndividualExposureSummary() {
-      var summary = IndividualReportService.build($scope.siData.firedRules, $scope.siAgents);
+      var summary = IndividualReportService.build($scope.siData.firedRules, $scope.siAgents,
+        {collapseByAgent: !$scope.siAssessorMode});
       $scope.siVerdictState = summary.verdictState;
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;

@@ -1678,7 +1678,8 @@
     $scope.siShowNonStudyBadge = true;
 
     function refreshAssessmentReport() {
-      var summary = IndividualReportService.build($scope.data && $scope.data.firedRules, $scope.agents);
+      var summary = IndividualReportService.build($scope.data && $scope.data.firedRules, $scope.agents,
+        {collapseByAgent: !$scope.siAssessorMode});
       _.each(summary.highFindings.concat(summary.otherFindings), function(finding) {
         _.each(finding.conditions, function(cond) {
           var module = _.find($scope.data.topModuleNameList, function(m) {
@@ -1696,6 +1697,7 @@
     function applyAssessorModeConfig() {
       InterviewsService.getStartInterviewConfig().then(function(response) {
         $scope.siAssessorMode = !!(response.data && response.data.assessorMode);
+        refreshAssessmentReport();
         if($scope.siAssessorMode && !$scope.linkedModule) {
           $scope.expandAll();
         }
