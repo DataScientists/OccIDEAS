@@ -202,16 +202,17 @@
 
 .si-interview-bar {
   background: #3d9cbf;
-  padding: 8px 16px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  border-radius: 4px;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
 }
 
 .si-interview-logo {
-  max-height: 34px;
+  max-height: 32px;
   filter: brightness(0) invert(1);
 }
 
@@ -395,10 +396,17 @@
 }
 
 .si-question-box {
-  background-color: #edf2f5;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, .08);
+  overflow: hidden;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 16px;
+}
+
+.si-question-box > div {
+  padding: 20px 24px 24px;
 }
 
 .si-tree-columns {
@@ -424,12 +432,58 @@
 
 md-toolbar.si-toolbar {
   background-color: #3d9cbf !important;
-  min-height: 48px;
+  min-height: 56px;
+  padding: 0 20px;
 }
 
 md-toolbar.si-toolbar span,
 md-toolbar.si-toolbar md-button {
   color: #fff !important;
+}
+
+md-toolbar.si-toolbar .md-toolbar-tools {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+md-toolbar.si-toolbar .badge {
+  background-color: rgba(255, 255, 255, .25);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ---- Answer options ---- */
+
+.si-question-box .interview-radio-button,
+.si-question-box md-checkbox {
+  margin-bottom: 10px;
+  font-size: 14.5px;
+  color: #23241f;
+}
+
+.si-question-box md-radio-button .md-off {
+  border-color: #b9c2c8 !important;
+}
+
+.si-question-box md-radio-button.md-checked .md-off {
+  border-color: #3d9cbf !important;
+}
+
+.si-question-box md-radio-button.md-checked .md-on {
+  background-color: #3d9cbf !important;
+}
+
+.si-question-box md-checkbox .md-icon {
+  border-color: #b9c2c8 !important;
+}
+
+.si-question-box md-checkbox.md-checked .md-icon {
+  background-color: #3d9cbf !important;
+}
+
+.si-question-box md-input-container input,
+.si-question-box md-input-container md-select {
+  font-size: 14.5px;
 }
 
 /* ---- Action buttons ---- */

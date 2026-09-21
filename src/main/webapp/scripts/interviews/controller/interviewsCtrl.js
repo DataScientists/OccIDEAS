@@ -2138,17 +2138,17 @@
       probMedium: 'Your answers point to a possible link to {agent}. The evidence at this level of ' +
         'exposure isn’t conclusive, so this is noted rather than flagged as a concern.',
       probLow: 'Your answers show a low-probability link to {agent}. This is a minor signal in your ' +
-        'answers, not a confirmed finding.',
-      probUnknown: 'Your answers touched on {agent}, but there wasn’t enough information to assess ' +
-        'this with confidence.',
-      possUnknown: 'Your answers touched on {agent}, but there wasn’t enough information to assess ' +
-        'this with confidence.'
+        'answers, not a confirmed finding.'
     };
 
     // Builds the individual-facing summary: a binary "exposure indicated" verdict driven only by
-    // PROBABLE_HIGH rules, plus a lower-key list of anything else noted (excluding NO_EXPOSURE,
-    // which is a clear finding with nothing to explain). The full technical breakdown (all levels, all
-    // conditions) remains available to the employer via the existing PDF/email report.
+    // PROBABLE_HIGH rules, plus a lower-key list of anything else noted. Only PROBABLE_HIGH/MEDIUM/LOW
+    // are shown - NO_EXPOSURE is a clear finding with nothing to explain, and PROBABLE_UNKNOWN/
+    // POSSIBLE_UNKNOWN mean the automated rules couldn't confidently classify the exposure at all
+    // (that's what triggers a manual assessment) - surfacing those here with the same calibrated
+    // language as a real low/medium finding would overstate what this automated screening determined,
+    // and manual assessment is out of scope for this individual self-report. The full technical
+    // breakdown (all levels, all conditions) remains available to the employer via the PDF/email report.
     function buildIndividualExposureSummary() {
       var agentsById = {};
       _.each($scope.siAgents, function(agent) {
@@ -2159,7 +2159,7 @@
       var other = [];
 
       _.each($scope.siData.firedRules, function(rule) {
-        if (rule.level === 'noExposure') {
+        if (rule.level !== 'probHigh' && rule.level !== 'probMedium' && rule.level !== 'probLow') {
           return;
         }
         var agent = agentsById[rule.agentId];
