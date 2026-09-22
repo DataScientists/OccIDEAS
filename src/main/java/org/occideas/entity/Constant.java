@@ -8,6 +8,12 @@ public class Constant {
     // and the click-to-see-answer dots on the report - for internal assessor testing only.
     // Defaults to hidden (safer default) when unset, since general public use should not show this.
     public static final String START_INTERVIEW_ASSESSOR_MODE = "startInterviewAssessorMode";
+    // Optional prefix (e.g. "LIVE") stuck on the auto-assigned reference number of participants
+    // created through the public startInterview flow only - e.g. "LIVE00001" - so entries from that
+    // flow (a demo environment, a specific deployment) are easy to tell apart in the admin lists from
+    // participants entered by an assessor. Admin-entered/imported participants are never affected,
+    // whether or not this is set. Unset/blank falls back to the historical plain-numeric reference.
+    public static final String START_INTERVIEW_ID_PREFIX = "startInterviewIdPrefix";
     public static final String FILTER_STUDY_AGENTS = "filterStudyAgent";
     public static final String AUTO_CREATE_STUDY_AGENT_JSON = "autoCreateJson";
 

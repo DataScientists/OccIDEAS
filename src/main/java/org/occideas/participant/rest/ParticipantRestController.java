@@ -11,6 +11,7 @@ import org.occideas.participantdetails.service.ParticipantDetailsService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -199,7 +200,11 @@ public class ParticipantRestController implements BaseRestController<Participant
   public Response create(ParticipantVO json) {
     ParticipantVO participantVO;
     try {
-      participantVO = service.create(json);
+      // No authentication in context means this request came in through AuthenticationFilter's
+      // public-interview-path bypass (unauthenticated startInterview flow), not an admin session -
+      // see AuthenticationFilter.PUBLIC_INTERVIEW_PATHS and the same check in ReadOnlyFilter.
+      boolean isPublicRequest = SecurityContextHolder.getContext().getAuthentication() == null;
+      participantVO = isPublicRequest ? service.createPublic(json) : service.create(json);
     } catch (Throwable e) {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();

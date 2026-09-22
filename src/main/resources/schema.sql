@@ -330,6 +330,7 @@ CREATE TABLE Rule
     level        int       NOT NULL,
     type         varchar(255)       DEFAULT NULL,
     deleted      int       NOT NULL DEFAULT '0',
+    rationale    text               DEFAULT NULL,
     PRIMARY KEY (idRule)
 );
 
@@ -744,6 +745,7 @@ CREATE TABLE Rule
     level        int       NOT NULL,
     type         varchar(255)       DEFAULT NULL,
     deleted      int       NOT NULL DEFAULT '0',
+    rationale    text               DEFAULT NULL,
     PRIMARY KEY (idRule)
 );
 

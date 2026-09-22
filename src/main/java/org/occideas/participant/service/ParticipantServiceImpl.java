@@ -2,15 +2,18 @@ package org.occideas.participant.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.occideas.entity.AssessmentIntMod;
+import org.occideas.entity.Constant;
 import org.occideas.entity.Participant;
 import org.occideas.entity.ParticipantIntMod;
 import org.occideas.interviewquestion.dao.IInterviewQuestionDao;
 import org.occideas.mapper.ParticipantMapper;
 import org.occideas.participant.dao.IParticipantDao;
+import org.occideas.systemproperty.service.SystemPropertyService;
 import org.occideas.utilities.PageUtil;
 import org.occideas.vo.GenericFilterVO;
 import org.occideas.vo.PageVO;
 import org.occideas.vo.ParticipantVO;
+import org.occideas.vo.SystemPropertyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Autowired
   private ParticipantMapper mapper;
+
+  @Autowired
+  private SystemPropertyService systemPropertyService;
   private PageUtil<ParticipantIntMod> pageUtilIntMod = new PageUtil<>();
   private PageUtil<AssessmentIntMod> pageAssessmentUtilIntMod = new PageUtil<>();
   private PageUtil<ParticipantVO> pageUtil = new PageUtil<>();
@@ -81,6 +87,15 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Override
   public ParticipantVO create(ParticipantVO o) {
+    return create(o, false);
+  }
+
+  @Override
+  public ParticipantVO createPublic(ParticipantVO o) {
+    return create(o, true);
+  }
+
+  private ParticipantVO create(ParticipantVO o, boolean applyStudyIdPrefix) {
     Participant toSave = mapper.convertToParticipant(o, true);
     boolean autoAssignReference = StringUtils.isBlank(toSave.getReference());
     if (autoAssignReference) {
@@ -91,7 +106,9 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     String reference = o.getReference();
     if (autoAssignReference) {
-      reference = String.valueOf(idParticipant);
+      reference = applyStudyIdPrefix
+        ? buildPrefixedReference(idParticipant)
+        : String.valueOf(idParticipant);
       Participant saved = participantDao.get(idParticipant);
       saved.setReference(reference);
       participantDao.saveOrUpdate(saved);
@@ -102,6 +119,19 @@ public class ParticipantServiceImpl implements ParticipantService {
     entity.setReference(reference);
     entity.setStatus(o.getStatus());
     return mapper.convertToParticipantVO(entity, true);
+  }
+
+  // "LIVE" + idParticipant zero-padded to at least 5 digits, e.g. "LIVE00001" - same minimum-width
+  // padding already used for imported references (see InterviewServiceImpl.generateReferenceAuto).
+  // Falls back to the plain numeric reference (historical behaviour) when the SYS_CONFIG prefix is
+  // unset or blank, so an unconfigured environment doesn't unexpectedly grow a prefix.
+  private String buildPrefixedReference(Long idParticipant) {
+    SystemPropertyVO prop = systemPropertyService.getByName(Constant.START_INTERVIEW_ID_PREFIX);
+    String prefix = prop == null ? null : StringUtils.trimToNull(prop.getValue());
+    if (prefix == null) {
+      return String.valueOf(idParticipant);
+    }
+    return prefix + String.format("%05d", idParticipant);
   }
 
   @Override
