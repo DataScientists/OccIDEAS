@@ -32,7 +32,7 @@
       </div>
 
       <div class="si-field-group">
-        <label class="si-label" for="jobTitle">Job Title</label>
+        <label class="si-label" for="jobTitle">What is your job called?</label>
         <input class="si-input"
                id="jobTitle"
                ng-model="jobTitle"
@@ -42,7 +42,7 @@
       </div>
 
       <div class="si-field-group">
-        <label class="si-label" for="jobDescription">What did you do at work?</label>
+        <label class="si-label" for="jobDescription">Tell us about the kinds of things you usually do at work</label>
         <textarea class="si-input si-textarea"
                   id="jobDescription"
                   ng-model="jobDescription"
@@ -53,7 +53,7 @@
       <button class="si-btn-start"
               ng-click="findAnzscoCode()"
               ng-disabled="isLooking">
-        {{isLooking ? 'Looking up...' : 'Find My Job Match'}}
+        {{isLooking ? 'Arranging the best questions...' : 'Find the best questions for me'}}
       </button>
 
       <div class="si-anzsco-results" ng-if="suggestions && suggestions.length > 0">
