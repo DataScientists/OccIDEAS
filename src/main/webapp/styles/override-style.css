@@ -272,6 +272,16 @@
   background: #f7ecdd;
 }
 
+.si-verdict-medium {
+  border-color: #e6d3a3;
+  background: #faf4e2;
+}
+
+.si-verdict-low {
+  border-color: #d6d9bf;
+  background: #f3f4ea;
+}
+
 .si-verdict-eyebrow {
   font-size: 11px;
   font-weight: 700;
@@ -281,6 +291,8 @@
 }
 
 .si-verdict-flagged .si-verdict-eyebrow { color: #a8651f; }
+.si-verdict-medium .si-verdict-eyebrow { color: #8a6d1f; }
+.si-verdict-low .si-verdict-eyebrow { color: #6f7340; }
 
 .si-verdict-title {
   font-size: 22px;

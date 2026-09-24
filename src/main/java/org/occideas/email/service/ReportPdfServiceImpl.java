@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Renders the individual-facing exposure report as a small, dedicated HTML/CSS document
@@ -24,9 +25,9 @@ import java.util.List;
  * live app's stylesheet and any DOM-screenshot approach (jsPDF/html2canvas), which proved
  * unreliable for this content.
  *
- * Mirrors the on-screen calibrated report (see interview.html's #si-report-content): a
- * binary verdict driven only by PROBABLE_HIGH findings, plus a lower-key section for
- * everything else that was noted. This is deliberately not the full technical breakdown
+ * Mirrors the on-screen calibrated report (see individualReport.html): a verdict driven by
+ * the highest level found (flagged/medium/low/clear), the findings at that level, and any
+ * lower-level findings as "also identified". This is deliberately not the full technical breakdown
  * (all rule levels/conditions) - that remains available to the employer separately.
  */
 @Service
@@ -89,19 +90,41 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       }
     }
 
+    String verdictState = reportData.getVerdictState();
     List<IndividualFindingVO> otherFindings = reportData.getOtherFindings();
-    if (otherFindings != null && !otherFindings.isEmpty()) {
-      sb.append("<h1>Other Things Worth Noting</h1>");
-      sb.append("<p class=\"section-note\">Lower-confidence or less certain matches. Being within safe limits "
-        + "doesn't mean there's nothing worth reducing further &#8212; these are worth being aware of, even "
-        + "though we're not flagging them as a problem.</p>");
-      for (IndividualFindingVO finding : otherFindings) {
-        String levelClass = "probLow".equals(finding.getLevel()) ? "noted-item-low" : "";
-        sb.append("<div class=\"noted-item ").append(levelClass).append("\">");
-        sb.append("<span class=\"noted-name\">").append(escape(finding.getAgentName())).append("</span>");
-        sb.append("<p class=\"noted-text\">").append(escape(finding.getText())).append("</p>");
-        sb.append("</div>");
+    List<IndividualFindingVO> mediumFindings = findingsAtLevel(otherFindings, "probMedium");
+    List<IndividualFindingVO> lowFindings = findingsAtLevel(otherFindings, "probLow");
+    boolean flagged = "flagged".equals(verdictState);
+    boolean medium = "medium".equals(verdictState);
+
+    if (flagged && (!mediumFindings.isEmpty() || !lowFindings.isEmpty())) {
+      sb.append("<h1>Also Identified</h1>");
+    }
+    if (!mediumFindings.isEmpty()) {
+      if (medium) {
+        sb.append("<h1>What Was Found</h1>");
+      } else {
+        sb.append("<h2>Moderate</h2>");
       }
+      sb.append("<p class=\"section-note\">Below is a list of the recognized occupational hazards which your "
+        + "answers suggest may be present in your workplace. Please note that the levels you are exposed to "
+        + "are likely to be below the occupational limit. Please talk to your supervisor or OHS "
+        + "representative about these findings.</p>");
+      appendNotedItems(sb, mediumFindings, "");
+    }
+    if (!lowFindings.isEmpty()) {
+      if ("low".equals(verdictState)) {
+        sb.append("<h1>What Was Found</h1>");
+      } else if (medium) {
+        sb.append("<h1>Also Identified</h1>");
+      } else {
+        sb.append("<h2>Low</h2>");
+      }
+      sb.append("<p class=\"section-note\">Below is a list of the recognized occupational hazards which your "
+        + "answers suggest may be present in your workplace. Please note that the levels you are exposed to "
+        + "are likely to be well below the occupational limit so these agents are flagged for information "
+        + "only.</p>");
+      appendNotedItems(sb, lowFindings, "noted-item-low");
     }
 
     sb.append("<div class=\"disclaimer\"><strong>This is an educational screening tool, not a medical "
@@ -118,6 +141,22 @@ public class ReportPdfServiceImpl implements ReportPdfService {
     return sb.toString();
   }
 
+  private List<IndividualFindingVO> findingsAtLevel(List<IndividualFindingVO> findings, String level) {
+    if (findings == null) {
+      return List.of();
+    }
+    return findings.stream().filter(finding -> level.equals(finding.getLevel())).collect(Collectors.toList());
+  }
+
+  private void appendNotedItems(StringBuilder sb, List<IndividualFindingVO> findings, String levelClass) {
+    for (IndividualFindingVO finding : findings) {
+      sb.append("<div class=\"noted-item ").append(levelClass).append("\">");
+      sb.append("<span class=\"noted-name\">").append(escape(finding.getAgentName())).append("</span>");
+      sb.append("<p class=\"noted-text\">").append(escape(finding.getText())).append("</p>");
+      sb.append("</div>");
+    }
+  }
+
   private void appendHeader(StringBuilder sb) {
     sb.append("<div class=\"report-header\">");
     if (LOGO_DATA_URI != null) {
@@ -130,19 +169,41 @@ public class ReportPdfServiceImpl implements ReportPdfService {
   }
 
   private void appendVerdict(StringBuilder sb, EmailReportVO reportData) {
-    boolean flagged = "flagged".equals(reportData.getVerdictState());
-    sb.append("<div class=\"verdict verdict-").append(flagged ? "flagged" : "clear").append("\">");
-    sb.append("<div class=\"verdict-eyebrow\">Result</div>");
-    if (flagged) {
-      sb.append("<h2 class=\"verdict-title\">Your answers suggest an exposure above safe limits</h2>");
-      sb.append("<p class=\"verdict-body\">Based on your answers, your exposure is estimated to be above "
-        + "the levels occupational health and safety standards treat as safe. This is estimated from what "
-        + "you told us, not measured directly. Details below.</p>");
-    } else {
-      sb.append("<h2 class=\"verdict-title\">Your exposure is within safe limits</h2>");
-      sb.append("<p class=\"verdict-body\">Based on your answers, nothing reached the level occupational "
-        + "health and safety standards treat as high exposure.</p>");
+    String state = reportData.getVerdictState();
+    if (!"flagged".equals(state) && !"medium".equals(state) && !"low".equals(state)) {
+      state = "clear";
     }
+    String title;
+    String body;
+    switch (state) {
+      case "flagged":
+        title = "Your answers suggest one or more exposures which are at or above the occupational standards";
+        body = "Based on your answers, your exposure to the agents below is estimated to be at or above the "
+          + "levels that occupational health and safety standards recommend.";
+        break;
+      case "medium":
+        title = "Your exposure is likely below the occupational standards, but may be a moderate exposure";
+        body = "Based on your answers, your exposure to the agents below is estimated to be below the "
+          + "occupational limit, but at a moderate level. Please talk to your supervisor or OHS "
+          + "representative about these findings.";
+        break;
+      case "low":
+        title = "Your exposure is likely well below the occupational standards, with some low-level exposures";
+        body = "Based on your answers, your exposure to the agents below is estimated to be well below the "
+          + "occupational limit, so they are listed for information only.";
+        break;
+      default:
+        title = "Your exposure is within the occupational standards";
+        body = "Based on your answers, nothing reached the level that occupational health and safety "
+          + "standards recommend as a concern.";
+    }
+    sb.append("<div class=\"verdict verdict-").append(state).append("\">");
+    sb.append("<div class=\"verdict-eyebrow\">Result</div>");
+    sb.append("<h2 class=\"verdict-title\">").append(title).append("</h2>");
+    sb.append("<p class=\"verdict-body\">Based on your answers we have estimated which substances or agents "
+      + "you might be exposed to and the level of that exposure in relation to the occupational limit. These "
+      + "are estimated from what you told us, not measured directly.</p>");
+    sb.append("<p class=\"verdict-body\">").append(body).append("</p>");
     sb.append("</div>");
   }
 
@@ -178,8 +239,13 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".verdict-flagged { border-color: #e2c496; background-color: #f7ecdd; }"
       + ".verdict-eyebrow { font-size: 8pt; font-weight: bold; letter-spacing: 1px; color: #3f7a5c; }"
       + ".verdict-flagged .verdict-eyebrow { color: #a8651f; }"
+      + ".verdict-medium { border-color: #e6d3a3; background-color: #faf4e2; }"
+      + ".verdict-medium .verdict-eyebrow { color: #8a6d1f; }"
+      + ".verdict-low { border-color: #d6d9bf; background-color: #f3f4ea; }"
+      + ".verdict-low .verdict-eyebrow { color: #6f7340; }"
       + ".verdict-title { font-size: 13pt; margin: 4px 0 6px; }"
-      + ".verdict-body { margin: 0; font-size: 9.5pt; color: #5b5c53; }"
+      + ".verdict-body { margin: 0 0 4px; font-size: 9.5pt; color: #5b5c53; }"
+      + "h2 { font-size: 11pt; color: #222222; margin: 12px 0 2px; }"
       + ".finding { padding: 6px 0 6px 10px; border-top: 1px solid #edf2f5; border-left: 4px solid #b3452f; }"
       + ".finding-name { font-weight: bold; font-size: 10.5pt; }"
       + ".finding-rationale { margin: 3px 0 0; font-size: 9pt; color: #5b5c53; }"

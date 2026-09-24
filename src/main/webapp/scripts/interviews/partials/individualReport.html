@@ -16,6 +16,8 @@
 <div class="si-verdict" ng-class="'si-verdict-' + siVerdictState">
   <div class="si-verdict-eyebrow">Result</div>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'flagged'">Your answers suggest one or more exposures which are at or above the occupational standards</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'medium'">Your exposure is likely below the occupational standards, but may be a moderate exposure</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'low'">Your exposure is likely well below the occupational standards, with some low-level exposures</h1>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'clear'">Your exposure is within the occupational standards</h1>
   <p class="si-verdict-body">
     Based on your answers we have estimated which substances or agents you might be exposed to and the
@@ -25,6 +27,14 @@
   <p class="si-verdict-body" ng-if="siVerdictState === 'flagged'">
     Based on your answers, your exposure to the agents below is estimated to be at or above the levels
     that occupational health and safety standards recommend.
+  </p>
+  <p class="si-verdict-body" ng-if="siVerdictState === 'medium'">
+    Based on your answers, your exposure to the agents below is estimated to be below the occupational
+    limit, but at a moderate level. Please talk to your supervisor or OHS representative about these findings.
+  </p>
+  <p class="si-verdict-body" ng-if="siVerdictState === 'low'">
+    Based on your answers, your exposure to the agents below is estimated to be well below the
+    occupational limit, so they are listed for information only.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'clear'">
     Based on your answers, nothing reached the level that occupational health and safety standards
@@ -56,11 +66,16 @@
   </div>
 </div>
 
+<!--
+  Medium/low findings. Whichever level matches the verdict is the main "What was found" section;
+  anything below the verdict's level (e.g. lows under a medium verdict) is shown as "Also identified".
+-->
 <div ng-if="siOtherFindings.length > 0">
-  <h2 class="si-section-title">Other exposures to note</h2>
+  <h2 class="si-section-title" ng-if="siVerdictState === 'flagged'">Also identified</h2>
 
   <div ng-if="(siOtherFindings | filter:{level:'probMedium'}).length > 0">
-    <h3 class="si-section-subtitle">Moderate</h3>
+    <h2 class="si-section-title" ng-if="siVerdictState === 'medium'">What was found</h2>
+    <h3 class="si-section-subtitle" ng-if="siVerdictState === 'flagged'">Moderate</h3>
     <p class="si-section-note">
       Below is a list of the recognized occupational hazards which your answers suggest may be
       present in your workplace. Please note that the levels you are exposed to are likely to be
@@ -90,7 +105,9 @@
   </div>
 
   <div ng-if="(siOtherFindings | filter:{level:'probLow'}).length > 0">
-    <h3 class="si-section-subtitle">Low</h3>
+    <h2 class="si-section-title" ng-if="siVerdictState === 'low'">What was found</h2>
+    <h2 class="si-section-title" ng-if="siVerdictState === 'medium'">Also identified</h2>
+    <h3 class="si-section-subtitle" ng-if="siVerdictState === 'flagged'">Low</h3>
     <p class="si-section-note">
       Below is a list of the recognized occupational hazards which your answers suggest may be
       present in your workplace. Please note that the levels you are exposed to are likely to be
@@ -119,7 +136,7 @@
   </div>
 </div>
 
-<div ng-if="siVerdictState === 'clear' && siOtherFindings.length === 0 && siNotIdentifiedAgents.length > 0">
+<div ng-if="siVerdictState === 'clear' && siNotIdentifiedAgents.length > 0">
   <h2 class="si-section-title">No exposures to the following hazards were identified from your answers:</h2>
   <ul class="si-not-identified">
     <li ng-repeat="agentName in siNotIdentifiedAgents">{{agentName}}</li>

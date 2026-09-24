@@ -15,8 +15,8 @@
         'answers, not a confirmed finding.'
     };
 
-    // Builds the individual-facing summary: a binary "exposure indicated" verdict driven only by
-    // PROBABLE_HIGH rules, plus a lower-key list of anything else noted. Only PROBABLE_HIGH/MEDIUM/LOW
+    // Builds the individual-facing summary: a verdict driven by the highest level found (see
+    // verdictState below), plus the findings behind it. Only PROBABLE_HIGH/MEDIUM/LOW
     // are shown - NO_EXPOSURE is a clear finding with nothing to explain, and PROBABLE_UNKNOWN/
     // POSSIBLE_UNKNOWN mean the automated rules couldn't confidently classify the exposure at all
     // (that's what triggers a manual assessment) - surfacing those here with the same calibrated
@@ -34,8 +34,8 @@
     // "high" alongside "low probability link" for the same substance reads as a contradiction. If
     // more than one rule fires at that same top level (e.g. two probLow rules for the same agent),
     // they're merged into the one displayed finding rather than shown twice. Assessors leave it off
-    // to see every fired rule individually. It doesn't affect the verdict (high already drives it)
-    // or manualReviewAgents.
+    // to see every fired rule individually. It doesn't affect the verdict (each agent's top level is
+    // always kept) or manualReviewAgents.
     //
     // manualReviewAgents lists the agents behind those unknown-level rules. It's not part of the
     // participant-facing report; callers with an assessor audience (the fired rules page) can surface it.
@@ -148,11 +148,21 @@
         return name.toLowerCase();
       });
 
+      // The verdict follows the highest level found across all agents: 'flagged' (at/above the
+      // occupational standard), 'medium' (likely below it but a moderate exposure), 'low' (well
+      // below it, for information) or 'clear' (nothing found). Findings below the headline level
+      // (e.g. a low for another agent under a medium verdict) are shown as "also identified".
+      var verdictState = 'clear';
+      if (high.length > 0) {
+        verdictState = 'flagged';
+      } else if (_.some(other, {level: 'probMedium'})) {
+        verdictState = 'medium';
+      } else if (other.length > 0) {
+        verdictState = 'low';
+      }
+
       return {
-        // The verdict itself is binary - either estimated above the safety threshold or not.
-        // Lower-confidence findings are supplementary detail shown afterward, regardless of which
-        // verdict applies - not a third competing result.
-        verdictState: high.length > 0 ? 'flagged' : 'clear',
+        verdictState: verdictState,
         highFindings: high,
         otherFindings: other,
         manualReviewAgents: _.uniq(manualReviewNames),
