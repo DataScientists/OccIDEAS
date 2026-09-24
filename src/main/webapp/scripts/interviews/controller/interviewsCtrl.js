@@ -1115,6 +1115,82 @@
       $state.go('startInterview');
     };
 
+    // Progress indicator for the public startInterview flow. The question tree branches per
+    // answer, so the true total isn't knowable up front - instead of estimating a total tree size,
+    // this just counts real (non-linking) questions already revealed in the queue and adds a flat
+    // guess of ESTIMATED_QUESTIONS_PER_FRAGMENT for each not-yet-expanded task-module placeholder
+    // still sitting in the queue (a question with a non-zero .link - see processLinkingQuestionNew
+    // - is a silent routing node into a fragment/task-module, never shown to the participant; see
+    // interviewsCtrl.js's "question.link == 0" check for the real-vs-placeholder distinction).
+    // 2 is a reasonable flat guess: OFFW's six task-module fragments have 1, 1, 2, 3, 1 and 4 root
+    // questions respectively, averaging almost exactly 2.
+    // Whenever an answer reveals more real questions (either a fragment just got expanded, or the
+    // question just answered had its own conditional follow-ups queued), siProgress.delta briefly
+    // shows the count added, then clears itself after a couple of seconds.
+    var ESTIMATED_QUESTIONS_PER_FRAGMENT = 2;
+
+    $scope.siProgress = {
+      answered: 0,
+      estimatedTotal: 0,
+      delta: 0
+    };
+
+    var siPreviousRealCount = null;
+    var siDeltaTimeout = null;
+
+    function updateSiProgress() {
+      if($state.current.name.indexOf('startInterview') !== 0
+        || !$scope.interview || !$scope.interview.questionHistory) {
+        return;
+      }
+
+      var answered = 0;
+      var realCount = 0;
+      var pendingFragments = 0;
+      _.each($scope.interview.questionHistory, function(q) {
+        if(q.deleted) {
+          return;
+        }
+        if(q.link) {
+          if(!q.processed) {
+            pendingFragments++;
+          }
+        } else {
+          realCount++;
+          if(q.processed) {
+            answered++;
+          }
+        }
+      });
+
+      if(siPreviousRealCount !== null && realCount > siPreviousRealCount) {
+        $scope.siProgress.delta = realCount - siPreviousRealCount;
+        if(siDeltaTimeout) {
+          $timeout.cancel(siDeltaTimeout);
+        }
+        siDeltaTimeout = $timeout(function() {
+          $scope.siProgress.delta = 0;
+        }, 2000);
+      }
+      siPreviousRealCount = realCount;
+
+      $scope.siProgress.answered = answered;
+      $scope.siProgress.estimatedTotal = realCount + (pendingFragments * ESTIMATED_QUESTIONS_PER_FRAGMENT);
+    }
+
+    $scope.$watch(function() {
+      return $scope.interview && $scope.interview.questionHistory
+        ? $scope.interview.questionHistory.length : 0;
+    }, updateSiProgress);
+
+    // Capped short of 100% so a still-in-progress interview never falsely reads as "done".
+    $scope.siProgressFraction = function() {
+      if(!$scope.siProgress.estimatedTotal) {
+        return 0;
+      }
+      return Math.min($scope.siProgress.answered / $scope.siProgress.estimatedTotal, 0.97);
+    };
+
     function buildReportTree(nodes) {
       return _.map(nodes, function(node) {
         return {
@@ -1173,20 +1249,73 @@
       });
     };
 
+    // Questions the participant has actually answered (module links are only markers in the history).
+    function answeredQuestions() {
+      var questionHistory = ($scope.interview && $scope.interview.questionHistory) || [];
+      return _.filter(questionHistory, function(q) {
+        return q.processed && !q.deleted && !q.link;
+      });
+    }
+
+    // Previous is hidden on the first question, where there is nothing to go back to.
+    $scope.siCanGoBack = function() {
+      return answeredQuestions().length > 0;
+    };
+
+    function liveAnswers(question) {
+      return _.filter(question.answers, function(a) { return !a.deleted; });
+    }
+
+    // The most recently answered question. questionHistory is in queue order, not answer order,
+    // so this goes by answer id (assigned by the server when each answer is saved).
+    function lastAnsweredQuestion(interview) {
+      return _.maxBy(_.filter(interview.questionHistory, function(q) {
+        return q.processed && !q.deleted && !q.link && liveAnswers(q).length > 0;
+      }), function(q) {
+        return _.max(_.map(liveAnswers(q), 'id'));
+      });
+    }
+
+    // Reopens the last answered question: deletes its answers and every question queued beneath
+    // them, marks it unprocessed, then shows it with the previous answer preselected.
+    // Like the admin edit flow (buildAndEditQuestionNew + resetInterview) this works from a fresh
+    // copy of the interview from the server - the in-memory answers have no ids, so they can't be
+    // deleted server-side from here. interview/get leaves out answers, so they're fetched separately
+    // (live answers only) and attached to their questions.
     $scope.goBackQuestion = function() {
-      var questionHistory = $scope.interview.questionHistory;
-      var lastProcessed = null;
-      for (var i = questionHistory.length - 1; i >= 0; i--) {
-        var q = questionHistory[i];
-        if (q.processed && !q.deleted && !q.link) {
-          lastProcessed = q;
-          break;
+      $scope.inProgress = true;
+      var interviewId = $scope.interview.interviewId;
+      $q.all([
+        InterviewsService.get(interviewId),
+        InterviewsService.getInterviewAnswerList(interviewId)
+      ]).then(function(responses) {
+        if (responses[0].status == 200 && responses[1].status == 200) {
+          var interview = responses[0].data[0];
+          var answersByQuestion = _.groupBy(responses[1].data, 'interviewQuestionId');
+          _.each(interview.questionHistory, function(q) {
+            q.answers = answersByQuestion[q.id] || [];
+          });
+          var lastAnswered = lastAnsweredQuestion(interview);
+          if (lastAnswered) {
+            // Only swap in the reloaded interview once there's a question to show from it.
+            $scope.interview = interview;
+            reopenQuestion(lastAnswered);
+            return;
+          }
         }
+        $scope.inProgress = false;
+      }, function() {
+        $scope.inProgress = false;
+      });
+    };
+
+    function reopenQuestion(lastProcessed) {
+      if (!lastProcessed) {
+        $scope.inProgress = false;
+        return;
       }
 
-      if (!lastProcessed) return;
-
-      var previousAnswers = angular.copy(lastProcessed.answers);
+      var previousAnswers = angular.copy(liveAnswers(lastProcessed));
 
       questionsToDelete = [];
       answersToDelete = [];
@@ -1197,8 +1326,6 @@
       lastProcessed.deleted = 0;
       lastProcessed.processed = false;
       lastProcessed.answers = [];
-
-      $scope.inProgress = true;
 
       var defer1 = $q.defer();
       deleteAnswers(answersToDelete, defer1);
@@ -1249,7 +1376,7 @@
           });
         });
       });
-    };
+    }
 
     $scope.stopInterview = function(node) {
       ParticipantsService.findInterviewParticipant($rootScope.participant.idParticipant).then(
@@ -1278,6 +1405,39 @@
             }
           }
         });
+    };
+
+    // startInterview's replacement for the Stop button: end now and assess what has been answered.
+    // Unlike stopInterview it doesn't save the answer currently on screen - that save is async and
+    // would race the assessment, so only questions already submitted with Next are counted.
+    $scope.siPartial = false;
+    $scope.finishEarly = function(ev) {
+      var answeredCount = answeredQuestions().length;
+      var confirmDialog = $mdDialog.confirm()
+        .title('Finish now and see your results?')
+        .textContent('Your results will be based on the ' + answeredCount + ' question'
+          + (answeredCount === 1 ? '' : 's') + ' you have answered so far. Exposures linked to questions '
+          + 'you haven\'t reached may not be picked up. An answer on this screen is only counted '
+          + 'if you press Next first.')
+        .ariaLabel('Finish interview early')
+        .targetEvent(ev)
+        .ok('Finish & see results')
+        .cancel('Keep going');
+
+      $mdDialog.show(confirmDialog).then(function() {
+        ParticipantsService.findInterviewParticipant($rootScope.participant.idParticipant).then(
+          function(response) {
+            if(response.status === 200) {
+              $rootScope.participant = response.data[0];
+              addInterviewNote('Interview finished early by participant', 'System');
+              var participant = $rootScope.participant;
+              participant.status = 1;//partial
+              $rootScope.saveParticipant(participant);
+              $scope.siPartial = true;
+              endInterview();
+            }
+          });
+      });
     };
 
     function addInterviewNote(note, type) {
@@ -1336,7 +1496,15 @@
         reference: $scope.referenceNumber,
         interviews: []
       };
-      ParticipantsService.createParticipant(participant).then(function(response) {
+      // Public startInterview flow gets its own endpoint (createPublicParticipant) so the
+      // startInterviewIdPrefix reference prefix (e.g. LIVE00001) is applied - keyed off the
+      // active UI state rather than auth state, since an admin demoing/testing this flow via
+      // the debug link keeps their session token attached to every request.
+      var isPublicFlow = $state.current.name.indexOf('startInterview') === 0;
+      var createFn = isPublicFlow
+        ? ParticipantsService.createPublicParticipant
+        : ParticipantsService.createParticipant;
+      createFn(participant).then(function(response) {
         if(response.status === 200) {
           participant = response.data;
           // The backend auto-assigns a reference (an incrementing participant id) when
@@ -1898,6 +2066,13 @@
       });
     }
 
+    // A question re-queued after going back / editing gets a new row with the same questionId -
+    // the old deleted row mustn't count as already having it, or the follow-up is skipped.
+    function isSameQueuedQuestion(historyQuestion, queuedQuestion) {
+      return historyQuestion.id == queuedQuestion.id
+        || (historyQuestion.questionId == queuedQuestion.questionId && !historyQuestion.deleted);
+    }
+
     function showNextQuestionNew(lookupNode, parentNode) {
       var lookupNodeTemp = lookupNode;
       var parentNodeTemp = parentNode;
@@ -1915,7 +2090,7 @@
             var bFound = false;
             for(var j = 0; j < $scope.interview.questionHistory.length; j++) {
               var question = $scope.interview.questionHistory[j];
-              if(question.questionId == unprocessedQuestion.questionId) {
+              if(isSameQueuedQuestion(question, unprocessedQuestion)) {
                 bFound = true;
               }
             }
@@ -2007,7 +2182,7 @@
 
                 for(var j = 0; j < $scope.interview.questionHistory.length; j++) {
                   var question = $scope.interview.questionHistory[j];
-                  if(question.questionId == unprocessedQuestion.questionId) {
+                  if(isSameQueuedQuestion(question, unprocessedQuestion)) {
                     bFound = true;
                   }
                 }
@@ -2134,6 +2309,14 @@
         return AgentsService.getStudyAgentsWithRules(interviewId);
       }).then(function(agents) {
         $scope.siAgents = agents || [];
+        // Full study agent list for the "no exposures identified" section - optional, so a failed
+        // lookup just leaves that section out rather than holding up the report.
+        return AgentsService.getStudyAgents().then(function(studyAgents) {
+          $scope.siStudyAgentList = studyAgents || [];
+        }, function() {
+          $scope.siStudyAgentList = [];
+        });
+      }).then(function() {
         buildIndividualExposureSummary();
         $scope.siAssessmentLoading = false;
         // The Interview Responses tree (and the condition dots that link to it) are only
@@ -2148,10 +2331,11 @@
     // exactly the same report - see that service for what is and isn't surfaced.
     function buildIndividualExposureSummary() {
       var summary = IndividualReportService.build($scope.siData.firedRules, $scope.siAgents,
-        {collapseByAgent: !$scope.siAssessorMode});
+        {collapseByAgent: !$scope.siAssessorMode, allStudyAgents: $scope.siStudyAgentList});
       $scope.siVerdictState = summary.verdictState;
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;
+      $scope.siNotIdentifiedAgents = summary.notIdentifiedAgents;
     }
 
     $scope.finishInterview = function() {

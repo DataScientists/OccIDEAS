@@ -12,6 +12,17 @@
            src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png"/>
 
     </div>
+    <!-- Progress bar still experimental - only shown in assessor mode (startInterviewAssessorMode) for now. -->
+    <div class="si-progress-wrap"
+         ng-if="siAssessorMode && $root.$state.current.name.indexOf('startInterview') === 0 && interviewStarted && !interviewEnded">
+      <div class="si-progress-label">
+        Question {{siProgress.answered + 1}} of about {{siProgress.estimatedTotal}}
+        <span class="si-progress-delta" ng-if="siProgress.delta > 0">+{{siProgress.delta}}</span>
+      </div>
+      <div class="si-progress-bar">
+        <div class="si-progress-fill" style="width: {{siProgressFraction() * 100}}%"></div>
+      </div>
+    </div>
     <div>
       <div>
         <md-progress-linear md-mode="indeterminate" ng-if="inProgress"></md-progress-linear>
@@ -176,19 +187,24 @@
             </md-radio-group>
           </div>
 
-          <div layout="row" layout-align="start center">
-
-
-            <md-button class="md-fab md-raised si-fab-back" style="margin-left: 8px;"
-                       ng-click="goBackQuestion()"
-                       ng-if="$root.$state.current.name.indexOf('startInterview') === 0"><span><| </span></md-button>
+          <div layout="row" layout-align="start center"
+               ng-if="$root.$state.current.name.indexOf('startInterview') !== 0">
             <md-button class="md-fab md-raised" style="margin-left: 8px;"
-                       ng-class="{'si-fab-stop': $root.$state.current.name.indexOf('startInterview') === 0}"
                        ng-click="stopInterview(interview.showedQuestion)"><span> [#]</span></md-button>
             <md-button class="md-fab md-raised"
-                       ng-class="{'si-fab-next': $root.$state.current.name.indexOf('startInterview') === 0}"
                        ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
                        ng-if="!editModeOn"><span> |></span></md-button>
+          </div>
+
+          <div class="si-nav" ng-if="$root.$state.current.name.indexOf('startInterview') === 0">
+            <div class="si-nav-row">
+              <button type="button" class="si-nav-prev" ng-click="goBackQuestion()"
+                      ng-show="siCanGoBack()" ng-disabled="inProgress">&larr; Previous</button>
+              <button type="button" class="si-nav-next" ng-click="saveAnswerQuestionNew(interview.showedQuestion)"
+                      ng-if="!editModeOn" ng-disabled="inProgress">Next &rarr;</button>
+            </div>
+            <button type="button" class="si-nav-finish" ng-click="finishEarly($event, interview.showedQuestion)"
+                    ng-disabled="inProgress">Finish now &amp; see my results</button>
           </div>
 
           <div ng-if="$root.$state.current.name.indexOf('startInterview') !== 0">
@@ -270,6 +286,7 @@
         <md-button class="si-btn-start" ng-click="downloadReport()" ng-disabled="siReportDownloading">
           {{siReportDownloading ? 'Preparing…' : 'Download Report'}}
         </md-button>
+        <md-button class="si-btn-back" ng-click="startNewInterview()">Start Another Interview (debug)</md-button>
       </div>
     </div>
   </div>

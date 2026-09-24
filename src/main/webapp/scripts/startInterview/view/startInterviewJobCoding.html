@@ -9,6 +9,13 @@
 
     <div class="si-body">
 
+      <div class="si-assessor-agents" ng-if="siAssessorMode && siStudyAgentNames.length > 0">
+        <label class="si-label">Hazards this study checks for ({{siStudyAgentNames.length}}) &mdash; assessor mode only</label>
+        <ul class="si-not-identified">
+          <li ng-repeat="agentName in siStudyAgentNames">{{agentName}}</li>
+        </ul>
+      </div>
+
       <div class="si-field-group" ng-if="$storage.langEnabled">
         <label class="si-label">Language</label>
         <ui-select ng-change="changeNodeLanguage(selectLanguage)"
@@ -46,7 +53,7 @@
       <button class="si-btn-start"
               ng-click="findAnzscoCode()"
               ng-disabled="isLooking">
-        {{isLooking ? 'Looking up...' : 'Find ANZSCO Code'}}
+        {{isLooking ? 'Looking up...' : 'Find My Job Match'}}
       </button>
 
       <div class="si-anzsco-results" ng-if="suggestions && suggestions.length > 0">

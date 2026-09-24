@@ -94,6 +94,7 @@
       if(participant) {
         // get participant
         participant.status = getParticipantStatus($scope.participantStatus);
+        $scope.siPartial = participant.status == 1;
         ParticipantsService.save(participant).then(function(rp) {
           if(rp.status == 200) {
             ngToast.create({
@@ -227,6 +228,11 @@
 
     function initAgentData() {
       AgentsService.getStudyAgents().then(function(agent) {
+        // Kept whole for the assessment report's "no exposures identified" list.
+        $scope.siStudyAgentList = agent;
+        if($scope.showAssessmentReport) {
+          refreshAssessmentReport();
+        }
 
         var group = _.groupBy(agent, function(b) {
           return b.agentGroup.name;
@@ -297,6 +303,8 @@
             $scope.originalInterview = _.cloneDeep($scope.interview);
             participant = $scope.interview.participant;
             $scope.participantStatus = getParticipantDescription(participant.status);
+            // Drives the "partially completed interview" note on the assessment report.
+            $scope.siPartial = participant.status == 1;
             $scope.assessmentStatus = $scope.interview.assessedStatus;
             $scope.data = response.data[0];
 
@@ -1679,7 +1687,7 @@
 
     function refreshAssessmentReport() {
       var summary = IndividualReportService.build($scope.data && $scope.data.firedRules, $scope.agents,
-        {collapseByAgent: !$scope.siAssessorMode});
+        {collapseByAgent: !$scope.siAssessorMode, allStudyAgents: $scope.siStudyAgentList});
       _.each(summary.highFindings.concat(summary.otherFindings), function(finding) {
         _.each(finding.conditions, function(cond) {
           var module = _.find($scope.data.topModuleNameList, function(m) {
@@ -1692,6 +1700,7 @@
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;
       $scope.siManualReviewAgents = summary.manualReviewAgents;
+      $scope.siNotIdentifiedAgents = summary.notIdentifiedAgents;
     }
 
     function applyAssessorModeConfig() {

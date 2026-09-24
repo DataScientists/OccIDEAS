@@ -109,6 +109,14 @@
       });
       return request.then(handleSuccess1, handleError);
     };
+    var createPublicParticipant = function(p) {
+      var request = $http({
+        method: 'POST',
+        url: modulesUrl + '/createPublic',
+        data: p
+      });
+      return request.then(handleSuccess1, handleError);
+    };
     var createAMRBatchParticipant = function(p) {
       var request = $http({
         method: 'POST',
@@ -156,6 +164,7 @@
       findParticipant: findParticipant,
       deleteParticipant: deleteParticipant,
       createParticipant: createParticipant,
+      createPublicParticipant: createPublicParticipant,
       getPaginatedParticipantWithModList: getPaginatedParticipantWithModList,
       getPaginatedParticipantList: getPaginatedParticipantList,
       getPaginatedAssessmentWithModList: getPaginatedAssessmentWithModList,

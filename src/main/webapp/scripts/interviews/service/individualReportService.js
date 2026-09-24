@@ -29,14 +29,20 @@
     // there. studyAgents is used only to flag such findings (studyAgent: false) - callers decide
     // whether to surface that (the fired rules page does; the participant report doesn't).
     //
-    // options.collapseByAgent (the public view): for each agent only its highest-severity findings are
+    // options.collapseByAgent (the public view): for each agent only its highest-severity finding is
     // kept - a high finding trumps that agent's medium/low ones, and a medium trumps its low - since
-    // "high" alongside "low probability link" for the same substance reads as a contradiction.
-    // Assessors leave it off to see every fired rule. It doesn't affect the verdict (high already
-    // drives it) or manualReviewAgents.
+    // "high" alongside "low probability link" for the same substance reads as a contradiction. If
+    // more than one rule fires at that same top level (e.g. two probLow rules for the same agent),
+    // they're merged into the one displayed finding rather than shown twice. Assessors leave it off
+    // to see every fired rule individually. It doesn't affect the verdict (high already drives it)
+    // or manualReviewAgents.
     //
     // manualReviewAgents lists the agents behind those unknown-level rules. It's not part of the
     // participant-facing report; callers with an assessor audience (the fired rules page) can surface it.
+    //
+    // options.allStudyAgents (the full study agent list, AgentsService.getStudyAgents) gives
+    // notIdentifiedAgents: study agents with no high/medium/low finding and no unknown-level rule -
+    // an unknown means the rules couldn't decide, which isn't the same as nothing identified.
     var SEVERITY_RANK = {probHigh: 3, probMedium: 2, probLow: 1};
 
     this.build = function(firedRules, studyAgents, options) {
@@ -59,6 +65,11 @@
       var high = [];
       var other = [];
       var manualReviewNames = [];
+      // Only used when collapseByAgent - tracks the one finding already shown per agent in each
+      // bucket, so a second rule firing at the same top severity (e.g. two probLow rules for the
+      // same agent) merges into it instead of showing that agent twice.
+      var highByAgent = {};
+      var otherByAgent = {};
 
       // Highest severity fired per agent, for collapseByAgent.
       var topRankByAgent = {};
@@ -83,13 +94,21 @@
         var agentName = agentNameFor(rule);
 
         if (rule.level === 'probHigh') {
-          high.push({
+          if (collapseByAgent && highByAgent[rule.agentId]) {
+            highByAgent[rule.agentId].conditions = highByAgent[rule.agentId].conditions.concat(rule.conditions || []);
+            return;
+          }
+          var highFinding = {
             agentName: agentName,
             studyAgent: isStudyAgent(rule),
             rationale: rule.rationale || null,
             level: rule.level,
             conditions: rule.conditions || []
-          });
+          };
+          high.push(highFinding);
+          if (collapseByAgent) {
+            highByAgent[rule.agentId] = highFinding;
+          }
         } else {
           var text = rule.rationale;
           if (!text) {
@@ -97,15 +116,36 @@
             text = template ? template.split('{agent}').join(agentName) : null;
           }
           if (text) {
-            other.push({
+            if (collapseByAgent && otherByAgent[rule.agentId]) {
+              otherByAgent[rule.agentId].conditions = otherByAgent[rule.agentId].conditions.concat(rule.conditions || []);
+              return;
+            }
+            var otherFinding = {
               agentName: agentName,
               studyAgent: isStudyAgent(rule),
               level: rule.level,
               text: text,
               conditions: rule.conditions || []
-            });
+            };
+            other.push(otherFinding);
+            if (collapseByAgent) {
+              otherByAgent[rule.agentId] = otherFinding;
+            }
           }
         }
+      });
+
+      // Any rule at these levels means the agent wasn't cleared (unknown = couldn't be decided).
+      var notClearedAgentIds = {};
+      _.each(firedRules, function(rule) {
+        if (SEVERITY_RANK[rule.level] || rule.level === 'probUnknown' || rule.level === 'possUnknown') {
+          notClearedAgentIds[rule.agentId] = true;
+        }
+      });
+      var notIdentified = _.sortBy(_.uniq(_.map(_.filter(options && options.allStudyAgents, function(agent) {
+        return !notClearedAgentIds[agent.idAgent];
+      }), 'name')), function(name) {
+        return name.toLowerCase();
       });
 
       return {
@@ -115,7 +155,8 @@
         verdictState: high.length > 0 ? 'flagged' : 'clear',
         highFindings: high,
         otherFindings: other,
-        manualReviewAgents: _.uniq(manualReviewNames)
+        manualReviewAgents: _.uniq(manualReviewNames),
+        notIdentifiedAgents: notIdentified
       };
     };
   }

@@ -150,6 +150,8 @@
               ng-click='expandAll()' type="button">Show Questions</button>
       <button id="{{interviewId}}-show-report" class="btn btn-default" ng-click='toggleAssessmentReport()'
               type="button">{{showAssessmentReport ? 'Hide Assessment Report' : 'Show Assessment Report'}}</button>
+      <a id="{{interviewId}}-start-interview-debug" class="btn btn-default" ui-sref="startInterview"
+         target="_blank" title="Opens the public Start Interview form in a new tab, for demos">Start Interview (debug)</a>
     </div>
     <div id="assessment-report-{{interviewId}}" ng-if="showAssessmentReport"
          style="margin: 10px 0; padding: 16px; background: #fff; border: 1px solid #ddd; border-radius: 8px;">

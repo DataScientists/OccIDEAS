@@ -11,7 +11,6 @@ import org.occideas.participantdetails.service.ParticipantDetailsService;
 import org.occideas.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -200,11 +199,27 @@ public class ParticipantRestController implements BaseRestController<Participant
   public Response create(ParticipantVO json) {
     ParticipantVO participantVO;
     try {
-      // No authentication in context means this request came in through AuthenticationFilter's
-      // public-interview-path bypass (unauthenticated startInterview flow), not an admin session -
-      // see AuthenticationFilter.PUBLIC_INTERVIEW_PATHS and the same check in ReadOnlyFilter.
-      boolean isPublicRequest = SecurityContextHolder.getContext().getAuthentication() == null;
-      participantVO = isPublicRequest ? service.createPublic(json) : service.create(json);
+      participantVO = service.create(json);
+    } catch (Throwable e) {
+      e.printStackTrace();
+      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+    }
+    return Response.ok(participantVO).build();
+  }
+
+  // Dedicated endpoint for the public startInterview flow only - see ParticipantsService.createPublicParticipant
+  // in the frontend. Deliberately not distinguished by auth state: an admin testing/demoing the public flow
+  // while still logged in keeps their session token attached to every request (sessionStorage carries over
+  // across in-app navigation and into a same-origin tab opened via target="_blank"), so "no auth in context"
+  // is not a reliable signal here. The frontend knows which flow it's in, so it picks the endpoint instead.
+  @Path(value = "/createPublic")
+  @POST
+  @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
+  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+  public Response createPublic(ParticipantVO json) {
+    ParticipantVO participantVO;
+    try {
+      participantVO = service.createPublic(json);
     } catch (Throwable e) {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
