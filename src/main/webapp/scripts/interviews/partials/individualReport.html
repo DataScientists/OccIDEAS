@@ -5,7 +5,8 @@
   siManualReviewAgents (assessor-facing note, never set on the participant flow),
   siShowNonStudyBadge (flags findings whose agent isn't a study agent; assessor page only),
   siPartial (interview was stopped before the end, i.e. participant status Partial),
-  siNotIdentifiedAgents (study agents nothing was found for; listed only when nothing at all was found).
+  siNotIdentifiedAgents (study agents nothing was found for; listed only when nothing at all was found),
+  siEmployerShared (participant entered an employer code and consented to OccIDEAS reporting to their employer).
   Included by the startInterview report (interview.html) and the fired rules page (fireRules.html).
 -->
 <div class="si-partial-note" ng-if="siPartial">
@@ -141,6 +142,30 @@
   <ul class="si-not-identified">
     <li ng-repeat="agentName in siNotIdentifiedAgents">{{agentName}}</li>
   </ul>
+</div>
+
+<!--
+  Employer-code participants only. Shown after the result so it reads as "what happens next" rather than
+  a warning up front. OccIDEAS (not the system) reports to the employer, under an arrangement made when
+  the employer's code was set up; the employer can't link a reference to a person, and no name or contact
+  details are collected - keep this wording true to that if either changes.
+-->
+<div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState === 'flagged'">
+  <strong>What happens next</strong>
+  <p>
+    Because you entered an employer code, OccIDEAS will let your employer know that an exposure above safe
+    work health and safety limits was identified, so they can take steps to reduce it for you and your
+    co-workers. You don't need to raise this with them yourself.
+  </p>
+  <p>
+    We don't collect your name or contact details, and your employer won't be told which results are yours.
+    If you have concerns about your health, you're welcome to talk to your doctor or your workplace health
+    and safety representative.
+  </p>
+</div>
+<div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState !== 'flagged'">
+  As agreed, your results will be included in OccIDEAS's report to your employer. We don't collect your name
+  or contact details, and your employer won't be told which results are yours.
 </div>
 
 <div class="si-disclaimer">

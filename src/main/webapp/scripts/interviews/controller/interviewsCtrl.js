@@ -1504,9 +1504,15 @@
       var createFn = isPublicFlow
         ? ParticipantsService.createPublicParticipant
         : ParticipantsService.createParticipant;
-      createFn(participant).then(function(response) {
+      // Employer code (already checked, and consented to, on the start page) replaces the default
+      // reference prefix, e.g. ACMEM00042 - the backend re-checks it against the startInterviewEmployerCodes list.
+      var employerCode = isPublicFlow ? $state.params.employerCode : undefined;
+      createFn(participant, employerCode).then(function(response) {
         if(response.status === 200) {
           participant = response.data;
+          // Only true if the backend actually applied the code - drives the report's "shared with your employer" note.
+          $scope.siEmployerShared = !!(employerCode && participant.reference
+            && participant.reference.indexOf(employerCode) === 0);
           // The backend auto-assigns a reference (an incrementing participant id) when
           // none was supplied up front - pick up whatever it actually assigned.
           $scope.referenceNumber = participant.reference;

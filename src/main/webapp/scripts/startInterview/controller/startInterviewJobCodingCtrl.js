@@ -4,11 +4,13 @@
 
   StartInterviewJobCodingCtrl.$inject = [
     '$scope', '$rootScope', '$state', '$stateParams', '$sessionStorage', '$translate',
-    'NodeLanguageService', 'AnzscoCoderService', 'ngToast', 'InterviewsService', 'AgentsService'
+    'NodeLanguageService', 'AnzscoCoderService', 'ngToast', 'InterviewsService', 'AgentsService',
+    'ParticipantsService', '$q'
   ];
 
   function StartInterviewJobCodingCtrl($scope, $rootScope, $state, $stateParams, $sessionStorage, $translate,
-    NodeLanguageService, AnzscoCoderService, ngToast, InterviewsService, AgentsService) {
+    NodeLanguageService, AnzscoCoderService, ngToast, InterviewsService, AgentsService,
+    ParticipantsService, $q) {
 
     $scope.$storage = $sessionStorage;
     // Participants are anonymous - no email/ID is collected. An external system embedding
@@ -21,6 +23,42 @@
     $scope.suggestions = null;
     $scope.selectedSuggestion = null;
     $scope.isLooking = false;
+    // Optional employer code - typed in, or supplied by the employer's link via ?code=. A valid one
+    // becomes the participant's reference prefix (e.g. ACMEM00042) instead of the default.
+    $scope.employerCode = $stateParams.code || '';
+    $scope.employerCodeStatus = null; // null (not checked) | 'valid' | 'invalid'
+    // A valid code also needs the participant to tick that their employer may see their answers and
+    // will be told about exposures above safe limits - without it the code isn't passed on at all.
+    // Object (not a bare boolean) so the checkbox inside the template's ng-if child scope writes back here.
+    $scope.consent = {employerSharing: false};
+
+    $scope.employerCodeChanged = function() {
+      $scope.employerCodeStatus = null;
+      $scope.consent.employerSharing = false;
+    };
+
+    // Resolves true when the code is blank (it's optional) or valid, false when it isn't recognised.
+    $scope.checkEmployerCode = function() {
+      var code = ($scope.employerCode || '').trim();
+      if (!code) {
+        $scope.employerCodeStatus = null;
+        return $q.when(true);
+      }
+      if ($scope.employerCodeStatus) {
+        return $q.when($scope.employerCodeStatus === 'valid');
+      }
+      return ParticipantsService.checkEmployerCode(code).then(function(response) {
+        var valid = !!(response.data && response.data.valid);
+        if (valid) {
+          $scope.employerCode = response.data.code;
+        }
+        $scope.employerCodeStatus = valid ? 'valid' : 'invalid';
+        return valid;
+      }, function() {
+        $scope.employerCodeStatus = 'invalid';
+        return false;
+      });
+    };
 
     // Stub on $rootScope so InterviewsCtrl can find it via scope chain
     if (!$rootScope.addInterviewTabInterviewers) {
@@ -41,6 +79,10 @@
         });
       }
     });
+
+    if ($scope.employerCode) {
+      $scope.checkEmployerCode();
+    }
 
     if ($scope.$storage.langEnabled) {
       $translate.refresh();
@@ -87,6 +129,28 @@
         $translate.use('GB');
       }
 
+      $scope.checkEmployerCode().then(function(codeOk) {
+        if (!codeOk) {
+          ngToast.create({
+            className: 'danger',
+            content: 'Employer code not recognised - please check it, or leave it blank',
+            animation: 'slide'
+          });
+          return;
+        }
+        if ($scope.employerCodeStatus === 'valid' && !$scope.consent.employerSharing) {
+          ngToast.create({
+            className: 'danger',
+            content: 'Please tick the box to confirm you understand what your employer will see, or remove the employer code',
+            animation: 'slide'
+          });
+          return;
+        }
+        lookupAnzscoCode();
+      });
+    };
+
+    function lookupAnzscoCode() {
       $scope.isLooking = true;
       $scope.suggestions = null;
       $scope.selectedSuggestion = null;
@@ -111,7 +175,7 @@
           animation: 'slide'
         });
       });
-    };
+    }
 
     $scope.selectSuggestion = function(suggestion) {
       $scope.selectedSuggestion = suggestion;
@@ -136,7 +200,8 @@
     $scope.continueToInterview = function() {
       $state.go('startInterviewRun', {
         startWithReferenceNumber: $scope.startWithReferenceNumber,
-        jobModuleCode: ($scope.selectedSuggestion && $scope.selectedSuggestion.moduleCode) || null
+        jobModuleCode: ($scope.selectedSuggestion && $scope.selectedSuggestion.moduleCode) || null,
+        employerCode: ($scope.employerCodeStatus === 'valid' && $scope.consent.employerSharing) ? $scope.employerCode : null
       });
     };
 

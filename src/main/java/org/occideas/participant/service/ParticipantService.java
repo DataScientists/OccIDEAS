@@ -31,7 +31,12 @@ public interface ParticipantService extends BaseService<ParticipantVO> {
   // startInterviewIdPrefix SYS_CONFIG prefix (see Constant.START_INTERVIEW_ID_PREFIX). Used only by
   // the public startInterview flow - every other creator (admin screens, CSV/Qualtrics/Voxco/IPSOS
   // imports) keeps using the plain create(ParticipantVO) and is unaffected by this config.
-  ParticipantVO createPublic(ParticipantVO o);
+  // employerCode, when it's in the startInterviewEmployerCodes SYS_CONFIG list, is used as the
+  // prefix instead of the default - see Constant.START_INTERVIEW_EMPLOYER_CODES.
+  ParticipantVO createPublic(ParticipantVO o, String employerCode);
+
+  // Normalised (trimmed, upper-cased) code if it's in the startInterviewEmployerCodes list, else null.
+  String findValidEmployerCode(String employerCode);
 
   ParticipantVO getByReferenceNumber(String referenceNumber);
   

@@ -9,6 +9,25 @@
 
     <div class="si-body">
 
+      <div class="si-intro">
+        <h2 class="si-intro-title">Could your work be affecting your health?</h2>
+        <p>
+          Many jobs involve exposure to things like dusts, fumes, chemicals, noise or radiation.
+          Health and safety professionals know these hazards well, but it takes time for research to become common knowledge.
+          Asbestos, for example, was linked to lung disease in the 1920s, but wasn't banned in Australia until 2003.
+          That's why many people aren't aware of the risks in their own work.
+        </p>
+        <p>
+          This short questionnaire asks about the work you do and checks it against known workplace health hazards.
+          At the end you'll get a personal summary of any exposures that may apply to you, and what they mean.
+        </p>
+        <ul class="si-intro-points">
+          <li>Takes about 5&ndash;15 minutes, depending on the kinds of tasks you do</li>
+          <li>No login or contact details needed</li>
+          <li>This is a screening tool, not a medical diagnosis</li>
+        </ul>
+      </div>
+
       <div class="si-assessor-agents" ng-if="siAssessorMode && siStudyAgentNames.length > 0">
         <label class="si-label">Hazards this study checks for ({{siStudyAgentNames.length}}) &mdash; assessor mode only</label>
         <ul class="si-not-identified">
@@ -29,6 +48,38 @@
             <div ng-bind-html="lang.description | highlight: $select.search" style="display: inline"></div>
           </ui-select-choices>
         </ui-select>
+      </div>
+
+      <div class="si-field-group">
+        <label class="si-label" for="employerCode">Employer code (optional)</label>
+        <div class="si-help">If your employer directed you to this site, enter the 5-character code they gave you.
+          Leave it blank if you'd prefer to take part privately.</div>
+        <input class="si-input si-code-input"
+               id="employerCode"
+               maxlength="5"
+               ng-blur="checkEmployerCode()"
+               ng-change="employerCodeChanged()"
+               ng-class="{'si-input-invalid': employerCodeStatus === 'invalid'}"
+               ng-model="employerCode"
+               placeholder="e.g. ABCDE"
+               type="text"/>
+        <div class="si-code-status si-code-valid" ng-if="employerCodeStatus === 'valid'">&#10003; Code accepted</div>
+        <div class="si-employer-notice" ng-if="employerCodeStatus === 'valid'">
+          <strong>Because you've entered an employer code:</strong>
+          <ul>
+            <li>Your employer may see your answers</li>
+            <li>Your employer will be told if we find an exposure above safe work health and safety limits,
+              so they can take steps to protect you and your co-workers</li>
+            <li>If you'd rather not share your results, remove the code to take part privately</li>
+          </ul>
+          <label class="si-consent">
+            <input ng-model="consent.employerSharing" type="checkbox"/>
+            I understand my employer may see my answers and will be told about exposures above safe limits.
+          </label>
+        </div>
+        <div class="si-code-status si-code-invalid" ng-if="employerCodeStatus === 'invalid'">
+          Code not recognised &mdash; please check it, or leave it blank.
+        </div>
       </div>
 
       <div class="si-field-group">

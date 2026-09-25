@@ -1,6 +1,8 @@
 package org.occideas.participant.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.occideas.entity.AssessmentIntMod;
 import org.occideas.entity.Constant;
 import org.occideas.entity.Participant;
@@ -27,6 +29,8 @@ import java.util.List;
 @Service
 @Transactional
 public class ParticipantServiceImpl implements ParticipantService {
+
+  private Logger log = LogManager.getLogger(this.getClass());
 
   @Autowired
   private IParticipantDao participantDao;
@@ -87,15 +91,15 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   @Override
   public ParticipantVO create(ParticipantVO o) {
-    return create(o, false);
+    return create(o, false, null);
   }
 
   @Override
-  public ParticipantVO createPublic(ParticipantVO o) {
-    return create(o, true);
+  public ParticipantVO createPublic(ParticipantVO o, String employerCode) {
+    return create(o, true, employerCode);
   }
 
-  private ParticipantVO create(ParticipantVO o, boolean applyStudyIdPrefix) {
+  private ParticipantVO create(ParticipantVO o, boolean applyStudyIdPrefix, String employerCode) {
     Participant toSave = mapper.convertToParticipant(o, true);
     boolean autoAssignReference = StringUtils.isBlank(toSave.getReference());
     if (autoAssignReference) {
@@ -107,7 +111,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     String reference = o.getReference();
     if (autoAssignReference) {
       reference = applyStudyIdPrefix
-        ? buildPrefixedReference(idParticipant)
+        ? buildPrefixedReference(idParticipant, employerCode)
         : String.valueOf(idParticipant);
       Participant saved = participantDao.get(idParticipant);
       saved.setReference(reference);
@@ -123,15 +127,40 @@ public class ParticipantServiceImpl implements ParticipantService {
 
   // "LIVE" + idParticipant zero-padded to at least 5 digits, e.g. "LIVE00001" - same minimum-width
   // padding already used for imported references (see InterviewServiceImpl.generateReferenceAuto).
-  // Falls back to the plain numeric reference (historical behaviour) when the SYS_CONFIG prefix is
-  // unset or blank, so an unconfigured environment doesn't unexpectedly grow a prefix.
-  private String buildPrefixedReference(Long idParticipant) {
-    SystemPropertyVO prop = systemPropertyService.getByName(Constant.START_INTERVIEW_ID_PREFIX);
-    String prefix = prop == null ? null : StringUtils.trimToNull(prop.getValue());
+  // A valid employer code takes priority over the default prefix; an invalid one is ignored (logged)
+  // rather than failing the participant's interview start. Falls back to the plain numeric reference
+  // (historical behaviour) when neither is set, so an unconfigured environment doesn't grow a prefix.
+  private String buildPrefixedReference(Long idParticipant, String employerCode) {
+    String prefix = findValidEmployerCode(employerCode);
+    if (prefix == null) {
+      if (StringUtils.isNotBlank(employerCode)) {
+        log.warn("Ignoring unrecognised startInterview employer code '" + employerCode + "'");
+      }
+      SystemPropertyVO prop = systemPropertyService.getByName(Constant.START_INTERVIEW_ID_PREFIX);
+      prefix = prop == null ? null : StringUtils.trimToNull(prop.getValue());
+    }
     if (prefix == null) {
       return String.valueOf(idParticipant);
     }
     return prefix + String.format("%05d", idParticipant);
+  }
+
+  @Override
+  public String findValidEmployerCode(String employerCode) {
+    String code = StringUtils.upperCase(StringUtils.trimToNull(employerCode));
+    if (code == null) {
+      return null;
+    }
+    SystemPropertyVO prop = systemPropertyService.getByName(Constant.START_INTERVIEW_EMPLOYER_CODES);
+    if (prop == null || StringUtils.isBlank(prop.getValue())) {
+      return null;
+    }
+    for (String valid : prop.getValue().split(",")) {
+      if (code.equalsIgnoreCase(valid.trim())) {
+        return code;
+      }
+    }
+    return null;
   }
 
   @Override

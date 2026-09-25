@@ -109,11 +109,23 @@
       });
       return request.then(handleSuccess1, handleError);
     };
-    var createPublicParticipant = function(p) {
+    // employerCode is only passed once the participant has ticked the start page's employer-sharing
+    // consent box, so employerConsent goes with it - the backend ignores a code without it.
+    var createPublicParticipant = function(p, employerCode) {
       var request = $http({
         method: 'POST',
         url: modulesUrl + '/createPublic',
+        params: employerCode ? {employerCode: employerCode, employerConsent: true} : undefined,
         data: p
+      });
+      return request.then(handleSuccess1, handleError);
+    };
+    var checkEmployerCode = function(code) {
+      var request = $http({
+        method: 'GET',
+        url: modulesUrl + '/checkEmployerCode',
+        params: {code: code},
+        ignoreLoadingBar: true
       });
       return request.then(handleSuccess1, handleError);
     };
@@ -165,6 +177,7 @@
       deleteParticipant: deleteParticipant,
       createParticipant: createParticipant,
       createPublicParticipant: createPublicParticipant,
+      checkEmployerCode: checkEmployerCode,
       getPaginatedParticipantWithModList: getPaginatedParticipantWithModList,
       getPaginatedParticipantList: getPaginatedParticipantList,
       getPaginatedAssessmentWithModList: getPaginatedAssessmentWithModList,

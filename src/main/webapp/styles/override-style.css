@@ -644,6 +644,124 @@ md-toolbar.si-toolbar .badge {
   margin-bottom: 4px;
 }
 
+/* Introduction block at the top of the startInterview front screen */
+.si-intro {
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e3eaee;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.si-intro-title {
+  margin: 0 0 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #3d9cbf;
+}
+
+.si-intro p {
+  margin: 0 0 10px;
+}
+
+.si-intro-points {
+  margin: 14px 0 0;
+  padding: 10px 16px 10px 32px;
+  border-left: 4px solid #3d9cbf;
+  border-radius: 6px;
+  background: #f5fafc;
+  font-size: 13.5px;
+}
+
+.si-intro-points li {
+  margin-bottom: 3px;
+}
+
+/* Optional employer code field on the startInterview front screen */
+.si-help {
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #777;
+}
+
+.si-code-input {
+  max-width: 160px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.si-input.si-input-invalid {
+  border-color: #c9302c;
+}
+
+.si-code-status {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.si-code-valid { color: #2e7d32; }
+.si-code-invalid { color: #c9302c; }
+
+/* What sharing with the employer means, plus the consent checkbox - shown once a code is accepted */
+.si-employer-notice {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-left: 4px solid #e0a800;
+  border-radius: 6px;
+  background: #fff8e1;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #5b5c53;
+}
+
+.si-employer-notice strong { color: #8a6d00; }
+
+.si-employer-notice ul {
+  margin: 6px 0 10px;
+  padding-left: 20px;
+}
+
+.si-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+}
+
+/* loginstyle.css hides every checkbox site-wide (left: -9999px) for its custom login checkboxes -
+   bring the native one back here, where there's no styled label to stand in for it. */
+.si-consent input[type="checkbox"] {
+  position: static;
+  left: auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #3d9cbf;
+  cursor: pointer;
+}
+
+/* Report "what happens next" note for participants who shared their results with their employer */
+.si-employer-shared-note {
+  margin: 20px 0 16px;
+  padding: 12px 16px;
+  border-left: 4px solid #3d9cbf;
+  border-radius: 6px;
+  background: #f5fafc;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.si-employer-shared-note p {
+  margin: 6px 0 0;
+}
+
 /* Assessor-mode study hazard list on the startInterview front screen */
 .si-assessor-agents {
   margin-bottom: 20px;

@@ -216,15 +216,38 @@ public class ParticipantRestController implements BaseRestController<Participant
   @POST
   @Consumes(value = MediaType.APPLICATION_JSON_VALUE)
   @Produces(value = MediaType.APPLICATION_JSON_VALUE)
-  public Response createPublic(ParticipantVO json) {
+  public Response createPublic(ParticipantVO json, @QueryParam("employerCode") String employerCode,
+                               @QueryParam("employerConsent") boolean employerConsent) {
     ParticipantVO participantVO;
     try {
-      participantVO = service.createPublic(json);
+      // The employer code is only used when the participant ticked the start page's consent box
+      // (their employer may see their answers and will be told about exposures above safe limits),
+      // so a prefixed reference like ACMEM00042 doubles as the record of that consent.
+      participantVO = service.createPublic(json, employerConsent ? employerCode : null);
     } catch (Throwable e) {
       e.printStackTrace();
       return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
     }
     return Response.ok(participantVO).build();
+  }
+
+  // Public (startInterview) check of an employer code against the startInterviewEmployerCodes list, so
+  // the start page can confirm or reject what was typed. Answers yes/no for one code only - the list
+  // itself is never exposed, so the public page can't be used to enumerate other employers' codes.
+  @GET
+  @Path(value = "/checkEmployerCode")
+  @Produces(value = MediaType.APPLICATION_JSON_VALUE)
+  public Response checkEmployerCode(@QueryParam("code") String code) {
+    EmployerCodeCheckVO result = new EmployerCodeCheckVO();
+    try {
+      String validCode = service.findValidEmployerCode(code);
+      result.setValid(validCode != null);
+      result.setCode(validCode);
+    } catch (Throwable e) {
+      e.printStackTrace();
+      return Response.status(Status.BAD_REQUEST).type("text/plain").entity(e.getMessage()).build();
+    }
+    return Response.ok(result).build();
   }
 
   @Path(value = "/update")

@@ -14,6 +14,11 @@ public class Constant {
     // participants entered by an assessor. Admin-entered/imported participants are never affected,
     // whether or not this is set. Unset/blank falls back to the historical plain-numeric reference.
     public static final String START_INTERVIEW_ID_PREFIX = "startInterviewIdPrefix";
+    // Comma-separated list of valid employer codes (e.g. "ACMEM,BUILD") for the public startInterview
+    // flow. A participant directed by their employer enters one of these (or arrives with ?code=) and
+    // it replaces startInterviewIdPrefix as their reference prefix, e.g. "ACMEM00042". Matched
+    // case-insensitively; codes not in the list are ignored and the default prefix is used instead.
+    public static final String START_INTERVIEW_EMPLOYER_CODES = "startInterviewEmployerCodes";
     public static final String FILTER_STUDY_AGENTS = "filterStudyAgent";
     public static final String AUTO_CREATE_STUDY_AGENT_JSON = "autoCreateJson";
 
