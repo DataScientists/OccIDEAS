@@ -4,15 +4,16 @@
 
   function IndividualReportService() {
 
-    // Fallback wording used when a rule has no admin-authored rationale text yet.
-    // Calibrated to the rule's actual confidence level, not to imply more certainty than exists.
+    // Fallback wording used when a rule has no admin-authored rationale text yet. Follows the agreed
+    // scale (legal/health-data-position.md section 3): probMedium = likely below the exposure limit,
+    // probLow = estimated to be well below it - never implying the exposure is harmless.
     // No fallback exists for probHigh - an evidence claim shouldn't be fabricated generically,
     // so a probHigh finding simply shows no rationale line until an admin writes one.
     var DEFAULT_RATIONALE_TEXT = {
-      probMedium: 'Your answers point to a possible link to {agent}. The evidence at this level of ' +
-        'exposure isn’t conclusive, so this is noted rather than flagged as a concern.',
-      probLow: 'Your answers show a low-probability link to {agent}. This is a minor signal in your ' +
-        'answers, not a confirmed finding.'
+      probMedium: 'Based on your answers, your exposure to {agent} is likely to be below the exposure ' +
+        'limit. This is an estimate from what you told us, not a measurement.',
+      probLow: 'Based on your answers, your exposure to {agent} is estimated to be well below the ' +
+        'exposure limit. This doesn’t mean there is no exposure.'
     };
 
     // Builds the individual-facing summary: a verdict driven by the highest level found (see
@@ -148,9 +149,9 @@
         return name.toLowerCase();
       });
 
-      // The verdict follows the highest level found across all agents: 'flagged' (at/above the
-      // occupational standard), 'medium' (likely below it but a moderate exposure), 'low' (well
-      // below it, for information) or 'clear' (nothing found). Findings below the headline level
+      // The verdict follows the highest level found across all agents: 'flagged' (probHigh - likely
+      // above the exposure limit), 'medium' (probMedium - likely below it), 'low' (probLow - estimated
+      // to be well below it) or 'clear' (nothing found). Findings below the headline level
       // (e.g. a low for another agent under a medium verdict) are shown as "also identified".
       var verdictState = 'clear';
       if (high.length > 0) {

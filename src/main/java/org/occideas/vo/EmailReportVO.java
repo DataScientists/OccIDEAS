@@ -5,6 +5,9 @@ import java.util.List;
 public class EmailReportVO {
 
   private Long interviewId;
+  // Participant reference (e.g. LIVE00042), shown on the public report so the participant can quote it
+  // in a privacy request - the privacy notice (privacy.html) tells them to find it there.
+  private String participantId;
   private String email;
   // "flagged" (a PROBABLE_HIGH rule fired) or "clear" (nothing above the safety threshold).
   // Lower-confidence findings (otherFindings) are shown as supplementary detail regardless
@@ -20,6 +23,14 @@ public class EmailReportVO {
 
   public void setInterviewId(Long interviewId) {
     this.interviewId = interviewId;
+  }
+
+  public String getParticipantId() {
+    return participantId;
+  }
+
+  public void setParticipantId(String participantId) {
+    this.participantId = participantId;
   }
 
   public String getEmail() {

@@ -28,7 +28,7 @@
     $scope.employerCode = $stateParams.code || '';
     $scope.employerCodeStatus = null; // null (not checked) | 'valid' | 'invalid'
     // A valid code also needs the participant to tick that their employer may see their answers and
-    // will be told about exposures above safe limits - without it the code isn't passed on at all.
+    // will be told if their estimated exposure is above an exposure limit - without it the code isn't passed on at all.
     // Object (not a bare boolean) so the checkbox inside the template's ng-if child scope writes back here.
     $scope.consent = {employerSharing: false};
 

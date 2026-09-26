@@ -10,7 +10,7 @@
     <div class="si-body">
 
       <div class="si-intro">
-        <h2 class="si-intro-title">Could your work be affecting your health?</h2>
+        <h2 class="si-intro-title">Could you be exposed to hazards at work?</h2>
         <p>
           Many jobs involve exposure to things like dusts, fumes, chemicals, noise or radiation.
           Health and safety professionals know these hazards well, but it takes time for research to become common knowledge.
@@ -19,12 +19,12 @@
         </p>
         <p>
           This short questionnaire asks about the work you do and checks it against known workplace health hazards.
-          At the end you'll get a personal summary of any exposures that may apply to you, and what they mean.
+          At the end you'll get a personal summary of your estimated exposures, and what they mean.
         </p>
         <ul class="si-intro-points">
           <li>Takes about 5&ndash;15 minutes, depending on the kinds of tasks you do</li>
           <li>No login or contact details needed</li>
-          <li>This is a screening tool, not a medical diagnosis</li>
+          <li>An estimate of your exposure at work, not a health assessment or diagnosis</li>
         </ul>
       </div>
 
@@ -68,13 +68,13 @@
           <strong>Because you've entered an employer code:</strong>
           <ul>
             <li>Your employer may see your answers</li>
-            <li>Your employer will be told if we find an exposure above safe work health and safety limits,
+            <li>Your employer will be told if your estimated exposure to a hazard is above the exposure limit,
               so they can take steps to protect you and your co-workers</li>
             <li>If you'd rather not share your results, remove the code to take part privately</li>
           </ul>
           <label class="si-consent">
             <input ng-model="consent.employerSharing" type="checkbox"/>
-            I understand my employer may see my answers and will be told about exposures above safe limits.
+            I understand my employer may see my answers and will be told if my estimated exposure is above an exposure limit.
           </label>
         </div>
         <div class="si-code-status si-code-invalid" ng-if="employerCodeStatus === 'invalid'">
@@ -99,6 +99,10 @@
                   ng-model="jobDescription"
                   placeholder="Describe your main tasks and duties"
                   rows="4"></textarea>
+        <div class="si-help si-help-after">
+          Your job title and description are sent to the Australian Bureau of Statistics' occupation coding
+          service to match your occupation. Please don't include names or other personal details.
+        </div>
       </div>
 
       <button class="si-btn-start"

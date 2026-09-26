@@ -72,7 +72,7 @@ public class ReportPdfServiceImpl implements ReportPdfService {
     StringBuilder sb = new StringBuilder();
     sb.append("<html><head><meta charset=\"UTF-8\"/><style>").append(css()).append("</style></head><body>");
 
-    appendHeader(sb);
+    appendHeader(sb, reportData);
     appendVerdict(sb, reportData);
 
     List<IndividualFindingVO> highFindings = reportData.getHighFindings();
@@ -106,10 +106,9 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       } else {
         sb.append("<h2>Moderate</h2>");
       }
-      sb.append("<p class=\"section-note\">Below is a list of the recognized occupational hazards which your "
-        + "answers suggest may be present in your workplace. Please note that the levels you are exposed to "
-        + "are likely to be below the occupational limit. Please talk to your supervisor or OHS "
-        + "representative about these findings.</p>");
+      sb.append("<p class=\"section-note\">Below is a list of recognised occupational hazards that your "
+        + "answers suggest may be present in your workplace. Your exposure to these is likely to be below the "
+        + "exposure limit. Please talk to your supervisor or OHS representative about these findings.</p>");
       appendNotedItems(sb, mediumFindings, "");
     }
     if (!lowFindings.isEmpty()) {
@@ -120,15 +119,20 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       } else {
         sb.append("<h2>Low</h2>");
       }
-      sb.append("<p class=\"section-note\">Below is a list of the recognized occupational hazards which your "
-        + "answers suggest may be present in your workplace. Please note that the levels you are exposed to "
-        + "are likely to be well below the occupational limit so these agents are flagged for information "
-        + "only.</p>");
+      sb.append("<p class=\"section-note\">Below is a list of recognised occupational hazards that your "
+        + "answers suggest may be present in your workplace. Your exposure to these is estimated to be well "
+        + "below the exposure limit. Low exposure isn't the same as no exposure, so they are listed here.</p>");
       appendNotedItems(sb, lowFindings, "noted-item-low");
     }
 
-    sb.append("<div class=\"disclaimer\"><strong>This is an educational screening tool, not a medical "
-      + "diagnosis.</strong> It's based only on what you told us about your job, and it can't account for "
+    if (reportData.getParticipantId() != null && !reportData.getParticipantId().isEmpty()) {
+      sb.append("<p class=\"participant-id\">Your participant ID: <strong>")
+        .append(escape(reportData.getParticipantId()))
+        .append("</strong>. Keep this if you want to contact us about your data.</p>");
+    }
+
+    sb.append("<div class=\"disclaimer\"><strong>This is an estimate of your exposure at work, not a health "
+      + "assessment or medical diagnosis.</strong> It's based only on what you told us about your job, and it can't account for "
       + "everything. If anything here concerns you, the best next step is talking to your OH&amp;S "
       + "representative, supervisor, or a doctor.</div>");
 
@@ -157,12 +161,16 @@ public class ReportPdfServiceImpl implements ReportPdfService {
     }
   }
 
-  private void appendHeader(StringBuilder sb) {
+  private void appendHeader(StringBuilder sb, EmailReportVO reportData) {
     sb.append("<div class=\"report-header\">");
     if (LOGO_DATA_URI != null) {
       sb.append("<img class=\"report-logo\" src=\"").append(LOGO_DATA_URI).append("\" alt=\"OccIDEAS\"/>");
     }
-    sb.append("<span class=\"report-date\">Generated: ")
+    sb.append("<span class=\"report-date\">");
+    if (reportData.getParticipantId() != null && !reportData.getParticipantId().isEmpty()) {
+      sb.append("Participant ID: <strong>").append(escape(reportData.getParticipantId())).append("</strong> &#183; ");
+    }
+    sb.append("Generated: ")
       .append(escape(LocalDateTime.now().format(REPORT_DATE_FORMAT)))
       .append("</span>");
     sb.append("</div>");
@@ -173,37 +181,46 @@ public class ReportPdfServiceImpl implements ReportPdfService {
     if (!"flagged".equals(state) && !"medium".equals(state) && !"low".equals(state)) {
       state = "clear";
     }
+    // Same wording as the on-screen report (individualReport.html) - keep the two in sync.
     String title;
     String body;
+    String recommendation = null;
     switch (state) {
       case "flagged":
-        title = "Your answers suggest one or more exposures which are at or above the occupational standards";
-        body = "Based on your answers, your exposure to the agents below is estimated to be at or above the "
-          + "levels that occupational health and safety standards recommend.";
+        title = "Your exposure to one or more hazards is likely to be above the exposure limit";
+        body = "Based on your answers, your exposure to the agents below is likely to be above the exposure "
+          + "limit used by the assessment. This is an estimate from your answers, not a measurement at your "
+          + "workplace.";
+        recommendation = "<strong>We recommend you talk to a doctor or other qualified health professional and "
+          + "share this report with them,</strong> so they can decide whether any health check or follow-up is "
+          + "needed. This result does not mean that harm to your health has been found.";
         break;
       case "medium":
-        title = "Your exposure is likely below the occupational standards, but may be a moderate exposure";
-        body = "Based on your answers, your exposure to the agents below is estimated to be below the "
-          + "occupational limit, but at a moderate level. Please talk to your supervisor or OHS "
-          + "representative about these findings.";
+        title = "Your exposure is likely to be below the exposure limit";
+        body = "Based on your answers, your exposure to the agents below is likely to be below the exposure "
+          + "limit. Because this is an estimate, it may still warrant attention. Please talk to your supervisor "
+          + "or OHS representative about these findings.";
         break;
       case "low":
-        title = "Your exposure is likely well below the occupational standards, with some low-level exposures";
+        title = "Your exposure is estimated to be well below the exposure limit";
         body = "Based on your answers, your exposure to the agents below is estimated to be well below the "
-          + "occupational limit, so they are listed for information only.";
+          + "exposure limit. Low exposure isn't the same as no exposure, so they are listed below.";
         break;
       default:
-        title = "Your exposure is within the occupational standards";
-        body = "Based on your answers, nothing reached the level that occupational health and safety "
-          + "standards recommend as a concern.";
+        title = "No exposures were identified from your answers";
+        body = "Based on your answers, the assessment didn't identify exposure to any of the hazards it covers. "
+          + "This is an estimate from what you told us, not a guarantee that your work involves no exposure.";
     }
     sb.append("<div class=\"verdict verdict-").append(state).append("\">");
     sb.append("<div class=\"verdict-eyebrow\">Result</div>");
     sb.append("<h2 class=\"verdict-title\">").append(title).append("</h2>");
     sb.append("<p class=\"verdict-body\">Based on your answers we have estimated which substances or agents "
-      + "you might be exposed to and the level of that exposure in relation to the occupational limit. These "
+      + "you might be exposed to and the level of that exposure in relation to the exposure limit. These "
       + "are estimated from what you told us, not measured directly.</p>");
     sb.append("<p class=\"verdict-body\">").append(body).append("</p>");
+    if (recommendation != null) {
+      sb.append("<p class=\"verdict-body\">").append(recommendation).append("</p>");
+    }
     sb.append("</div>");
   }
 
@@ -257,6 +274,7 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".noted-empty { font-size: 9pt; color: #8b8c80; }"
       + ".disclaimer { margin-top: 16px; padding: 8px 12px; background-color: #edf2f5; border-radius: 4px; font-size: 8pt; color: #5b5c53; }"
       + ".disclaimer strong { color: #2e7d95; }"
+      + ".participant-id { margin-top: 16px; font-size: 9pt; color: #5b5c53; }"
       + ".tree-node { padding: 2px 0; }"
       + ".badge { background-color: #edf2f5; border-radius: 3px; padding: 1px 4px; font-size: 8pt; }"
       + ".node-text { font-size: 9pt; }";

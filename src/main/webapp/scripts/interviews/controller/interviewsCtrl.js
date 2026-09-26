@@ -1220,6 +1220,7 @@
 
       InterviewsService.downloadReport({
         interviewId: $scope.interview.interviewId,
+        participantId: $scope.siParticipantId,
         verdictState: $scope.siVerdictState,
         highFindings: _.map($scope.siHighFindings, function(finding) {
           return { agentName: finding.agentName, text: finding.rationale };
@@ -1513,6 +1514,10 @@
           // Only true if the backend actually applied the code - drives the report's "shared with your employer" note.
           $scope.siEmployerShared = !!(employerCode && participant.reference
             && participant.reference.indexOf(employerCode) === 0);
+          // Shown on the public report so the participant can quote it in a privacy request (privacy.html).
+          if(isPublicFlow) {
+            $scope.siParticipantId = participant.reference;
+          }
           // The backend auto-assigns a reference (an incrementing participant id) when
           // none was supplied up front - pick up whatever it actually assigned.
           $scope.referenceNumber = participant.reference;

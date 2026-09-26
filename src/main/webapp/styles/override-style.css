@@ -686,6 +686,11 @@ md-toolbar.si-toolbar .badge {
   color: #777;
 }
 
+/* Help text placed under a field rather than between the label and the field */
+.si-help.si-help-after {
+  margin: 6px 0 0;
+}
+
 .si-code-input {
   max-width: 160px;
   text-transform: uppercase;
@@ -760,6 +765,25 @@ md-toolbar.si-toolbar .badge {
 
 .si-employer-shared-note p {
   margin: 6px 0 0;
+}
+
+/* Participant ID at the end of the public report, for privacy requests */
+.si-participant-id {
+  margin: 16px 0 12px;
+  font-size: 13.5px;
+  color: #5b5c53;
+}
+
+/* Same ID repeated at the top of the report, where it's harder to miss */
+.si-participant-id.si-participant-id-top {
+  margin: 0 0 12px;
+  text-align: right;
+  font-size: 13px;
+}
+
+.si-participant-id strong {
+  letter-spacing: .5px;
+  color: #333;
 }
 
 /* Assessor-mode study hazard list on the startInterview front screen */

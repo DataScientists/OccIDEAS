@@ -6,9 +6,14 @@
   siShowNonStudyBadge (flags findings whose agent isn't a study agent; assessor page only),
   siPartial (interview was stopped before the end, i.e. participant status Partial),
   siNotIdentifiedAgents (study agents nothing was found for; listed only when nothing at all was found),
-  siEmployerShared (participant entered an employer code and consented to OccIDEAS reporting to their employer).
+  siEmployerShared (participant entered an employer code and consented to OccIDEAS reporting to their employer),
+  siParticipantId (public flow only - the participant's reference, for privacy requests).
   Included by the startInterview report (interview.html) and the fired rules page (fireRules.html).
 -->
+<div class="si-participant-id si-participant-id-top" ng-if="siParticipantId">
+  Participant ID: <strong>{{siParticipantId}}</strong>
+</div>
+
 <div class="si-partial-note" ng-if="siPartial">
   <strong>This assessment is based on a partially completed interview.</strong>
   Questions that weren't answered couldn't be assessed, so some exposures may not be shown here.
@@ -16,30 +21,36 @@
 
 <div class="si-verdict" ng-class="'si-verdict-' + siVerdictState">
   <div class="si-verdict-eyebrow">Result</div>
-  <h1 class="si-verdict-title" ng-if="siVerdictState === 'flagged'">Your answers suggest one or more exposures which are at or above the occupational standards</h1>
-  <h1 class="si-verdict-title" ng-if="siVerdictState === 'medium'">Your exposure is likely below the occupational standards, but may be a moderate exposure</h1>
-  <h1 class="si-verdict-title" ng-if="siVerdictState === 'low'">Your exposure is likely well below the occupational standards, with some low-level exposures</h1>
-  <h1 class="si-verdict-title" ng-if="siVerdictState === 'clear'">Your exposure is within the occupational standards</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'flagged'">Your exposure to one or more hazards is likely to be above the exposure limit</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'medium'">Your exposure is likely to be below the exposure limit</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'low'">Your exposure is estimated to be well below the exposure limit</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'clear'">No exposures were identified from your answers</h1>
   <p class="si-verdict-body">
     Based on your answers we have estimated which substances or agents you might be exposed to and the
-    level of that exposure in relation to the occupational limit. These are estimated from what you told
+    level of that exposure in relation to the exposure limit. These are estimated from what you told
     us, not measured directly.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'flagged'">
-    Based on your answers, your exposure to the agents below is estimated to be at or above the levels
-    that occupational health and safety standards recommend.
+    Based on your answers, your exposure to the agents below is likely to be above the exposure limit
+    used by the assessment. This is an estimate from your answers, not a measurement at your workplace.
+  </p>
+  <p class="si-verdict-body" ng-if="siVerdictState === 'flagged'">
+    <strong>We recommend you talk to a doctor or other qualified health professional and share this report
+    with them,</strong> so they can decide whether any health check or follow-up is needed. This result does
+    not mean that harm to your health has been found.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'medium'">
-    Based on your answers, your exposure to the agents below is estimated to be below the occupational
-    limit, but at a moderate level. Please talk to your supervisor or OHS representative about these findings.
+    Based on your answers, your exposure to the agents below is likely to be below the exposure limit.
+    Because this is an estimate, it may still warrant attention. Please talk to your supervisor or OHS
+    representative about these findings.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'low'">
     Based on your answers, your exposure to the agents below is estimated to be well below the
-    occupational limit, so they are listed for information only.
+    exposure limit. Low exposure isn't the same as no exposure, so they are listed below.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'clear'">
-    Based on your answers, nothing reached the level that occupational health and safety standards
-    recommend as a concern.
+    Based on your answers, the assessment didn't identify exposure to any of the hazards it covers.
+    This is an estimate from what you told us, not a guarantee that your work involves no exposure.
   </p>
 </div>
 
@@ -78,10 +89,9 @@
     <h2 class="si-section-title" ng-if="siVerdictState === 'medium'">What was found</h2>
     <h3 class="si-section-subtitle" ng-if="siVerdictState === 'flagged'">Moderate</h3>
     <p class="si-section-note">
-      Below is a list of the recognized occupational hazards which your answers suggest may be
-      present in your workplace. Please note that the levels you are exposed to are likely to be
-      below the occupational limit. Please talk to your supervisor or OHS representative about
-      these findings.
+      Below is a list of recognised occupational hazards that your answers suggest may be present in
+      your workplace. Your exposure to these is likely to be below the exposure limit. Please talk to
+      your supervisor or OHS representative about these findings.
     </p>
     <div class="si-noted">
       <div class="si-noted-item" ng-repeat="finding in siOtherFindings | filter:{level:'probMedium'}">
@@ -110,9 +120,9 @@
     <h2 class="si-section-title" ng-if="siVerdictState === 'medium'">Also identified</h2>
     <h3 class="si-section-subtitle" ng-if="siVerdictState === 'flagged'">Low</h3>
     <p class="si-section-note">
-      Below is a list of the recognized occupational hazards which your answers suggest may be
-      present in your workplace. Please note that the levels you are exposed to are likely to be
-      well below the occupational limit so these agents are flagged for information only.
+      Below is a list of recognised occupational hazards that your answers suggest may be present in
+      your workplace. Your exposure to these is estimated to be well below the exposure limit. Low
+      exposure isn't the same as no exposure, so they are listed here.
     </p>
     <div class="si-noted">
       <div class="si-noted-item" ng-repeat="finding in siOtherFindings | filter:{level:'probLow'}">
@@ -153,14 +163,13 @@
 <div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState === 'flagged'">
   <strong>What happens next</strong>
   <p>
-    Because you entered an employer code, OccIDEAS will let your employer know that an exposure above safe
-    work health and safety limits was identified, so they can take steps to reduce it for you and your
+    Because you entered an employer code, OccIDEAS will let your employer know that your estimated exposure
+    to one or more hazards was above the exposure limit, so they can take steps to reduce it for you and your
     co-workers. You don't need to raise this with them yourself.
   </p>
   <p>
     We don't collect your name or contact details, and your employer won't be told which results are yours.
-    If you have concerns about your health, you're welcome to talk to your doctor or your workplace health
-    and safety representative.
+    You can also talk to your workplace health and safety representative.
   </p>
 </div>
 <div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState !== 'flagged'">
@@ -168,8 +177,12 @@
   or contact details, and your employer won't be told which results are yours.
 </div>
 
+<p class="si-participant-id" ng-if="siParticipantId">
+  Your participant ID: <strong>{{siParticipantId}}</strong>. Keep this if you want to contact us about your data.
+</p>
+
 <div class="si-disclaimer">
-  <strong>This is an educational screening tool, not a medical diagnosis.</strong>
+  <strong>This is an estimate of your exposure at work, not a health assessment or medical diagnosis.</strong>
   It's based only on what you told us about your job, and it can't account for everything.
   If anything here concerns you, the best next step is talking to your OH&amp;S representative,
   supervisor, or a doctor.
