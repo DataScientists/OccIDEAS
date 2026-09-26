@@ -145,9 +145,60 @@
 }
 
 .si-anzsco-code {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #999;
+  white-space: nowrap;
+}
+
+.si-match {
+  margin-top: 24px;
+  padding: 16px 20px;
+  border-left: 4px solid #3d9cbf;
+  border-radius: 6px;
+  background: #f3f9fb;
+}
+
+.si-match-title {
+  margin: 0 0 12px;
+  font-size: 17px;
   font-weight: 700;
-  color: #3d9cbf;
-  min-width: 64px;
+  color: #256d8a;
+}
+
+.si-match-row {
+  margin-bottom: 12px;
+}
+
+.si-match-caption {
+  font-size: 13.5px;
+  color: #555;
+}
+
+.si-match-value {
+  margin-top: 2px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.si-match-alternatives {
+  margin-top: 16px;
+}
+
+.si-match-alternatives .si-anzsco-option {
+  background: #fff;
+}
+
+.si-match-proceed {
+  margin-top: 18px;
+}
+
+.si-match-proceed p {
+  margin: 0 0 4px;
+  font-size: 14.5px;
+  color: #444;
 }
 
 .si-anzsco-label {
@@ -155,33 +206,49 @@
   color: #333;
 }
 
-.si-anzsco-confidence {
-  color: #888;
-  font-size: 12px;
-}
-
 .si-anzsco-disambiguation {
   margin-top: 24px;
 }
 
-.si-anzsco-module {
-  margin-top: 24px;
-  font-size: 13px;
+.si-input.si-input-attention {
+  border-color: #d9a441;
+  box-shadow: 0 0 0 2px rgba(217, 164, 65, .2);
+}
+
+.si-no-match {
+  margin: 4px 0 4px;
+  padding: 10px 14px;
+  border-left: 4px solid #d9a441;
+  border-radius: 6px;
+  background: #fdf6e7;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b5320;
+}
+
+.si-not-covered {
+  padding: 16px 20px;
+  border-left: 4px solid #3d9cbf;
+  border-radius: 6px;
+  background: #f3f9fb;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.si-not-covered-title {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 700;
   color: #256d8a;
 }
 
-.si-anzsco-module-warning {
-  color: #8a6d25;
+.si-not-covered p {
+  margin: 0 0 10px;
 }
 
-.si-anzsco-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.si-anzsco-actions .si-btn-start {
-  margin-top: 0;
+.si-not-covered p:last-child {
+  margin-bottom: 0;
 }
 
 .si-btn-back {
@@ -663,6 +730,13 @@ md-toolbar.si-toolbar .badge {
 
 .si-intro p {
   margin: 0 0 10px;
+}
+
+.si-intro .si-intro-subtitle {
+  margin: -8px 0 14px;
+  font-size: 15px;
+  font-style: italic;
+  color: #666;
 }
 
 .si-intro-points {

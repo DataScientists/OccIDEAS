@@ -10,12 +10,13 @@
     <div class="si-body">
 
       <div class="si-intro">
-        <h2 class="si-intro-title">Could you be exposed to hazards at work?</h2>
+        <h2 class="si-intro-title">Workplace Exposure Questionnaire</h2>
+        <p class="si-intro-subtitle">Estimates your occupational exposure to known workplace health hazards</p>
         <p>
           Many jobs involve exposure to things like dusts, fumes, chemicals, noise or radiation.
-          Health and safety professionals know these hazards well, but it takes time for research to become common knowledge.
+          Health and safety professionals know these hazards well, but it takes time for research to become common knowledge,
+          so many people aren't aware of the health hazards in their own work.
           Asbestos, for example, was linked to lung disease in the 1920s, but wasn't banned in Australia until 2003.
-          That's why many people aren't aware of the risks in their own work.
         </p>
         <p>
           This short questionnaire asks about the work you do and checks it against known workplace health hazards.
@@ -34,6 +35,22 @@
           <li ng-repeat="agentName in siStudyAgentNames">{{agentName}}</li>
         </ul>
       </div>
+
+      <div class="si-not-covered" ng-if="notCovered">
+        <h3 class="si-not-covered-title">We can't match your occupation</h3>
+        <p>
+          Sorry, this questionnaire doesn't yet cover the kind of work you described, so we can't estimate
+          your exposures.
+        </p>
+        <p ng-if="employerCodeStatus === 'valid'">
+          As you were given an employer code, please let the person at your workplace who gave it to you know,
+          so they can arrange another way to assess your work.
+        </p>
+        <p>Thank you for your time.</p>
+      </div>
+
+      <!-- ng-show rather than ng-if: the inputs bind to primitives on this scope. -->
+      <div ng-show="!notCovered">
 
       <div class="si-field-group" ng-if="$storage.langEnabled">
         <label class="si-label">Language</label>
@@ -86,6 +103,8 @@
         <label class="si-label" for="jobTitle">What is your job called?</label>
         <input class="si-input"
                id="jobTitle"
+               ng-change="clearMatch()"
+               ng-class="{'si-input-attention': noMatchShown}"
                ng-model="jobTitle"
                placeholder="e.g. Carpenter"
                required
@@ -96,6 +115,8 @@
         <label class="si-label" for="jobDescription">Tell us about the kinds of things you usually do at work</label>
         <textarea class="si-input si-textarea"
                   id="jobDescription"
+                  ng-change="clearMatch()"
+                  ng-class="{'si-input-attention': noMatchShown}"
                   ng-model="jobDescription"
                   placeholder="Describe your main tasks and duties"
                   rows="4"></textarea>
@@ -105,25 +126,31 @@
         </div>
       </div>
 
+      <div class="si-no-match" ng-if="noMatchShown">
+        <strong>We couldn't match your occupation.</strong>
+        Please try a different or more specific job title (e.g. "Welder" rather than "Tradesperson"),
+        and describe your main tasks in a little more detail.
+      </div>
+
       <button class="si-btn-start"
               ng-click="findAnzscoCode()"
               ng-disabled="isLooking">
-        {{isLooking ? 'Arranging the best questions...' : 'Find the best questions for me'}}
+        {{isLooking ? 'Matching your occupation...' : 'Match my occupation'}}
       </button>
 
-      <div class="si-anzsco-results" ng-if="suggestions && suggestions.length > 0">
-        <label class="si-label">Select the closest match</label>
-        <div class="si-anzsco-option"
-             ng-class="{'si-anzsco-option-selected': selectedSuggestion === suggestion}"
-             ng-click="selectSuggestion(suggestion)"
-             ng-repeat="suggestion in suggestions">
-          <span class="si-anzsco-code">{{suggestion.code}}</span>
-          <span class="si-anzsco-label">{{suggestion.label}}</span>
-          <span class="si-anzsco-confidence">{{(suggestion.confidence * 100) | number:0}}%</span>
-        </div>
-      </div>
+      <div class="si-match" ng-if="selectedSuggestion">
+        <h3 class="si-match-title">Your occupation match</h3>
 
-      <div ng-if="selectedSuggestion">
+        <div class="si-match-row">
+          <div class="si-match-caption">
+            The Australian Bureau of Statistics' occupation coding service matched your job to:
+          </div>
+          <div class="si-match-value">
+            {{selectedSuggestion.label}}
+            <span class="si-anzsco-code">ANZSCO code: {{selectedSuggestion.code}}</span>
+          </div>
+        </div>
+
         <div class="si-anzsco-disambiguation"
              ng-if="!selectedSuggestion.moduleName && selectedSuggestion.disambiguationOptions.length > 0">
           <label class="si-label">{{selectedSuggestion.disambiguationQuestion}}</label>
@@ -134,19 +161,28 @@
           </div>
         </div>
 
-        <div class="si-anzsco-module" ng-if="selectedSuggestion.moduleName">
-          Matched interview: {{selectedSuggestion.moduleName}}
-        </div>
-        <div class="si-anzsco-module si-anzsco-module-warning"
-             ng-if="!selectedSuggestion.moduleName && !(selectedSuggestion.disambiguationOptions.length > 0)">
-          No specific interview module found for this occupation &mdash; the general interview will be used.
+        <div class="si-match-row" ng-if="selectedSuggestion.moduleName">
+          <div class="si-match-caption">Based on this, we'll use the questionnaire for:</div>
+          <div class="si-match-value">{{selectedSuggestion.moduleName}}</div>
         </div>
 
-        <div class="si-anzsco-actions"
-             ng-if="selectedSuggestion.moduleName || !(selectedSuggestion.disambiguationOptions.length > 0)">
-          <button class="si-btn-back" ng-click="goBack()">Back</button>
-          <button class="si-btn-start" ng-click="continueToInterview()">Continue</button>
+        <div class="si-match-alternatives" ng-if="suggestions.length > 1">
+          <label class="si-label">Not quite right? Select a closer match:</label>
+          <div class="si-anzsco-option"
+               ng-click="selectSuggestion(suggestion)"
+               ng-if="suggestion !== selectedSuggestion"
+               ng-repeat="suggestion in suggestions">
+            <span class="si-anzsco-label">{{suggestion.label}}</span>
+            <span class="si-anzsco-code">ANZSCO code: {{suggestion.code}}</span>
+          </div>
         </div>
+
+        <div class="si-match-proceed" ng-if="selectedSuggestion.moduleName">
+          <p>Please continue to start the questionnaire.</p>
+          <button class="si-btn-start" ng-click="continueToInterview()">Start questionnaire</button>
+        </div>
+      </div>
+
       </div>
 
     </div>

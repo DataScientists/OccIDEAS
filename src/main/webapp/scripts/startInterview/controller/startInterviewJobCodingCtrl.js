@@ -23,6 +23,13 @@
     $scope.suggestions = null;
     $scope.selectedSuggestion = null;
     $scope.isLooking = false;
+    // Occupation matching that doesn't lead to a questionnaire - either the ABS Coder found no
+    // match, or none of its matches map to an OccIDEAS job module. The first time we ask the
+    // participant to refine their details; after that we end politely rather than let them
+    // self-pick a questionnaire, which could give a misleading exposure estimate.
+    $scope.noMatchAttempts = 0;
+    $scope.noMatchShown = false;
+    $scope.notCovered = false;
     // Optional employer code - typed in, or supplied by the employer's link via ?code=. A valid one
     // becomes the participant's reference prefix (e.g. ACMEM00042) instead of the default.
     $scope.employerCode = $stateParams.code || '';
@@ -157,15 +164,19 @@
 
       AnzscoCoderService.lookup($scope.jobTitle, $scope.jobDescription).then(function(response) {
         $scope.isLooking = false;
-        $scope.suggestions = (response.data && response.data.suggestions) || [];
-        if ($scope.suggestions.length > 0) {
-          $scope.selectedSuggestion = $scope.suggestions[0];
+        // Only offer matches that lead to a questionnaire.
+        var usable = _.filter((response.data && response.data.suggestions) || [], hasQuestionnaire);
+        if (usable.length > 0) {
+          $scope.noMatchShown = false;
+          $scope.suggestions = usable;
+          $scope.selectedSuggestion = usable[0];
+          return;
+        }
+        $scope.noMatchAttempts++;
+        if ($scope.noMatchAttempts >= 2) {
+          $scope.notCovered = true;
         } else {
-          ngToast.create({
-            className: 'warning',
-            content: 'No ANZSCO code could be matched. Try adding more detail to the description.',
-            animation: 'slide'
-          });
+          $scope.noMatchShown = true;
         }
       }, function(errorMessage) {
         $scope.isLooking = false;
@@ -192,7 +203,9 @@
       $scope.selectedSuggestion.moduleName = option.moduleName;
     };
 
-    $scope.goBack = function() {
+    // Editing the job title or description makes any shown match stale - clear it so the
+    // participant re-runs the match rather than continuing with the old one.
+    $scope.clearMatch = function() {
       $scope.suggestions = null;
       $scope.selectedSuggestion = null;
     };
@@ -204,6 +217,11 @@
         employerCode: ($scope.employerCodeStatus === 'valid' && $scope.consent.employerSharing) ? $scope.employerCode : null
       });
     };
+
+    function hasQuestionnaire(suggestion) {
+      return !!suggestion.moduleName ||
+        !!(suggestion.disambiguationOptions && suggestion.disambiguationOptions.length > 0);
+    }
 
     function isValidJobTitle() {
       return !!($scope.jobTitle && $scope.jobTitle.trim().length > 0);
