@@ -1676,18 +1676,17 @@
     // run (shared IndividualReportService + individualReport.html), built from this page's fired rules.
     // Rebuilt while visible so it follows edits made through the rules context menus.
     //
-    // Like the startInterview report, the click-to-see-answer condition dots only appear when the
-    // startInterviewAssessorMode SYS_CONFIG flag is true (re-read each time the report is opened, so a
-    // flag change takes effect without reloading). The dots point at this page's own answer tree, so
-    // in that mode the tree is loaded along with the report.
+    // It opens in the public view - exactly what the participant saw. The assessor view toggle adds
+    // one finding per rule, the click-to-see-answer condition dots, the non-study agent badges and the
+    // manual review note. The dots point at this page's own answer tree, so switching to the assessor
+    // view loads the tree too.
     $scope.showAssessmentReport = false;
     $scope.siAssessorMode = false;
-    // Findings for agents outside the study's agent list are still reported, but marked as such.
-    $scope.siShowNonStudyBadge = true;
+    $scope.siShowNonStudyBadge = false;
 
     function refreshAssessmentReport() {
       var summary = IndividualReportService.build($scope.data && $scope.data.firedRules, $scope.agents,
-        {collapseByAgent: !$scope.siAssessorMode, allStudyAgents: $scope.siStudyAgentList});
+        {publicView: !$scope.siAssessorMode, allStudyAgents: $scope.siStudyAgentList});
       _.each(summary.highFindings.concat(summary.otherFindings), function(finding) {
         _.each(finding.conditions, function(cond) {
           var module = _.find($scope.data.topModuleNameList, function(m) {
@@ -1699,21 +1698,8 @@
       $scope.siVerdictState = summary.verdictState;
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;
-      $scope.siManualReviewAgents = summary.manualReviewAgents;
+      $scope.siManualReviewAgents = $scope.siAssessorMode ? summary.manualReviewAgents : [];
       $scope.siNotIdentifiedAgents = summary.notIdentifiedAgents;
-    }
-
-    function applyAssessorModeConfig() {
-      InterviewsService.getStartInterviewConfig().then(function(response) {
-        $scope.siAssessorMode = !!(response.data && response.data.assessorMode);
-        refreshAssessmentReport();
-        if($scope.siAssessorMode && !$scope.linkedModule) {
-          $scope.expandAll();
-        }
-      }, function() {
-        // Config lookup failed - fail safe (no dots).
-        $scope.siAssessorMode = false;
-      });
     }
 
     $scope.siHighlightCondition = function(cond) {
@@ -1724,7 +1710,15 @@
       $scope.showAssessmentReport = !$scope.showAssessmentReport;
       if($scope.showAssessmentReport) {
         refreshAssessmentReport();
-        applyAssessorModeConfig();
+      }
+    };
+
+    $scope.toggleAssessorView = function() {
+      $scope.siAssessorMode = !$scope.siAssessorMode;
+      $scope.siShowNonStudyBadge = $scope.siAssessorMode;
+      refreshAssessmentReport();
+      if($scope.siAssessorMode && !$scope.linkedModule) {
+        $scope.expandAll();
       }
     };
 

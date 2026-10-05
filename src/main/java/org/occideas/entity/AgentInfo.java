@@ -19,6 +19,11 @@ public class AgentInfo implements Serializable {
     private long idAgent;
     private String name;
     private String description;
+    // Participant-facing phrase describing the agent, e.g. "a mineral fibre once widely used in building
+    // materials, classified as a known human carcinogen". The public report builds each finding's text
+    // from this rather than the per-rule rationale, which stays in the assessor view.
+    @Column(columnDefinition = "TEXT")
+    private String publicDescription;
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date lastUpdated;
@@ -54,6 +59,14 @@ public class AgentInfo implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPublicDescription() {
+        return publicDescription;
+    }
+
+    public void setPublicDescription(String publicDescription) {
+        this.publicDescription = publicDescription;
     }
 
     public Date getLastUpdated() {

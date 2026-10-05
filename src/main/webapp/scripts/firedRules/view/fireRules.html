@@ -150,6 +150,9 @@
               ng-click='expandAll()' type="button">Show Questions</button>
       <button id="{{interviewId}}-show-report" class="btn btn-default" ng-click='toggleAssessmentReport()'
               type="button">{{showAssessmentReport ? 'Hide Assessment Report' : 'Show Assessment Report'}}</button>
+      <button id="{{interviewId}}-toggle-assessor-view" class="btn btn-default" ng-if="showAssessmentReport"
+              ng-click='toggleAssessorView()' type="button"
+              title="Switch between the report the participant saw and the full assessor detail">{{siAssessorMode ? 'Show Public View' : 'Show Assessor View'}}</button>
       <a id="{{interviewId}}-start-interview-debug" class="btn btn-default" ui-sref="startInterview"
          target="_blank" title="Opens the public Start Interview form in a new tab, for demos">Start Interview (debug)</a>
     </div>

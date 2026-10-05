@@ -12,6 +12,7 @@ public class AgentVO {
   private long idAgent;
   private String name;
   private String description;
+  private String publicDescription;
 
   private AgentGroupVO agentGroup;
 
@@ -43,6 +44,14 @@ public class AgentVO {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getPublicDescription() {
+    return publicDescription;
+  }
+
+  public void setPublicDescription(String publicDescription) {
+    this.publicDescription = publicDescription;
   }
 
   public Date getLastUpdated() {

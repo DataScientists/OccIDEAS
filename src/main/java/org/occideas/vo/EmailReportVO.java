@@ -1,7 +1,12 @@
 package org.occideas.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
+// ignoreUnknown: a browser still running cached JS from before the answer tree was dropped sends a
+// "tree" field - ignore it rather than failing the download.
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailReportVO {
 
   private Long interviewId;
@@ -15,7 +20,6 @@ public class EmailReportVO {
   private String verdictState;
   private List<IndividualFindingVO> highFindings;
   private List<IndividualFindingVO> otherFindings;
-  private List<ReportTreeNodeVO> tree;
 
   public Long getInterviewId() {
     return interviewId;
@@ -63,13 +67,5 @@ public class EmailReportVO {
 
   public void setOtherFindings(List<IndividualFindingVO> otherFindings) {
     this.otherFindings = otherFindings;
-  }
-
-  public List<ReportTreeNodeVO> getTree() {
-    return tree;
-  }
-
-  public void setTree(List<ReportTreeNodeVO> tree) {
-    this.tree = tree;
   }
 }

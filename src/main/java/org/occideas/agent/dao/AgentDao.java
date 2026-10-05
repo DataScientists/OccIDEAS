@@ -71,7 +71,8 @@ public class AgentDao implements IAgentDao {
       .setProjection(Projections.projectionList()
         .add(Projections.property("idAgent"), "idAgent")
         .add(Projections.property("name"), "name")
-        .add(Projections.property("description"), "description"))
+        .add(Projections.property("description"), "description")
+        .add(Projections.property("publicDescription"), "publicDescription"))
       .setResultTransformer(Transformers.aliasToBean(Agent.class));
     return crit.list();
   }
@@ -87,7 +88,8 @@ public class AgentDao implements IAgentDao {
         .add(Projections.property("idAgent"), "idAgent")
         .add(Projections.property("agentGroup"), "agentGroup")
         .add(Projections.property("name"), "name")
-        .add(Projections.property("description"), "description"))
+        .add(Projections.property("description"), "description")
+        .add(Projections.property("publicDescription"), "publicDescription"))
       .setResultTransformer(Transformers.aliasToBean(Agent.class));
     return crit.list();
   }

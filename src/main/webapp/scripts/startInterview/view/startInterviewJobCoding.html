@@ -29,13 +29,6 @@
         </ul>
       </div>
 
-      <div class="si-assessor-agents" ng-if="siAssessorMode && siStudyAgentNames.length > 0">
-        <label class="si-label">Hazards this study checks for ({{siStudyAgentNames.length}}) &mdash; assessor mode only</label>
-        <ul class="si-not-identified">
-          <li ng-repeat="agentName in siStudyAgentNames">{{agentName}}</li>
-        </ul>
-      </div>
-
       <div class="si-not-covered" ng-if="notCovered">
         <h3 class="si-not-covered-title">We can't match your occupation</h3>
         <p>
@@ -149,6 +142,9 @@
             {{selectedSuggestion.label}}
             <span class="si-anzsco-code">ANZSCO code: {{selectedSuggestion.code}}</span>
           </div>
+          <div class="si-help si-help-after">
+            If this doesn't look right, edit your job title or description above and match again.
+          </div>
         </div>
 
         <div class="si-anzsco-disambiguation"
@@ -164,17 +160,6 @@
         <div class="si-match-row" ng-if="selectedSuggestion.moduleName">
           <div class="si-match-caption">Based on this, we'll use the questionnaire for:</div>
           <div class="si-match-value">{{selectedSuggestion.moduleName}}</div>
-        </div>
-
-        <div class="si-match-alternatives" ng-if="suggestions.length > 1">
-          <label class="si-label">Not quite right? Select a closer match:</label>
-          <div class="si-anzsco-option"
-               ng-click="selectSuggestion(suggestion)"
-               ng-if="suggestion !== selectedSuggestion"
-               ng-repeat="suggestion in suggestions">
-            <span class="si-anzsco-label">{{suggestion.label}}</span>
-            <span class="si-anzsco-code">ANZSCO code: {{suggestion.code}}</span>
-          </div>
         </div>
 
         <div class="si-match-proceed" ng-if="selectedSuggestion.moduleName">

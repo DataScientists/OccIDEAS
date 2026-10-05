@@ -4,13 +4,11 @@
 
   StartInterviewJobCodingCtrl.$inject = [
     '$scope', '$rootScope', '$state', '$stateParams', '$sessionStorage', '$translate',
-    'NodeLanguageService', 'AnzscoCoderService', 'ngToast', 'InterviewsService', 'AgentsService',
-    'ParticipantsService', '$q'
+    'NodeLanguageService', 'AnzscoCoderService', 'ngToast', 'ParticipantsService', '$q'
   ];
 
   function StartInterviewJobCodingCtrl($scope, $rootScope, $state, $stateParams, $sessionStorage, $translate,
-    NodeLanguageService, AnzscoCoderService, ngToast, InterviewsService, AgentsService,
-    ParticipantsService, $q) {
+    NodeLanguageService, AnzscoCoderService, ngToast, ParticipantsService, $q) {
 
     $scope.$storage = $sessionStorage;
     // Participants are anonymous - no email/ID is collected. An external system embedding
@@ -71,21 +69,6 @@
     if (!$rootScope.addInterviewTabInterviewers) {
       $rootScope.addInterviewTabInterviewers = function() {};
     }
-
-    // Assessor mode only: list the study's hazards on the front screen as a testing reference.
-    // Participants don't see it - naming the agents before the task questions could bias answers.
-    $scope.siAssessorMode = false;
-    $scope.siStudyAgentNames = [];
-    InterviewsService.getStartInterviewConfig().then(function(response) {
-      $scope.siAssessorMode = !!(response.data && response.data.assessorMode);
-      if ($scope.siAssessorMode) {
-        AgentsService.getStudyAgents().then(function(agents) {
-          $scope.siStudyAgentNames = _.sortBy(_.uniq(_.map(agents, 'name')), function(name) {
-            return name.toLowerCase();
-          });
-        });
-      }
-    });
 
     if ($scope.employerCode) {
       $scope.checkEmployerCode();

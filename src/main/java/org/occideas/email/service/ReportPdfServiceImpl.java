@@ -4,7 +4,6 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.occideas.vo.EmailReportVO;
 import org.occideas.vo.IndividualFindingVO;
-import org.occideas.vo.ReportTreeNodeVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -136,11 +135,6 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + "everything. If anything here concerns you, the best next step is talking to your OH&amp;S "
       + "representative, supervisor, or a doctor.</div>");
 
-    if (reportData.getTree() != null && !reportData.getTree().isEmpty()) {
-      sb.append("<h1>Interview Responses</h1>");
-      appendTree(sb, reportData.getTree(), 0);
-    }
-
     sb.append("</body></html>");
     return sb.toString();
   }
@@ -224,20 +218,6 @@ public class ReportPdfServiceImpl implements ReportPdfService {
     sb.append("</div>");
   }
 
-  private void appendTree(StringBuilder sb, List<ReportTreeNodeVO> nodes, int depth) {
-    for (ReportTreeNodeVO node : nodes) {
-      sb.append("<div class=\"tree-node\" style=\"margin-left:").append(depth * 16).append("px;\">");
-      sb.append("<span class=\"badge\">")
-        .append(escape(node.getHeader())).append(" ").append(escape(node.getNumber()))
-        .append("</span> ");
-      sb.append("<span class=\"node-text\">").append(escape(node.getName())).append("</span>");
-      sb.append("</div>");
-      if (node.getNodes() != null && !node.getNodes().isEmpty()) {
-        appendTree(sb, node.getNodes(), depth + 1);
-      }
-    }
-  }
-
   // openhtmltopdf parses the HTML as strict XML - escapeHtml4 would emit named entities
   // (e.g. &mdash; for an em dash) that aren't declared in XML and fail parsing. escapeXml11
   // only ever emits the predefined XML entities plus numeric character references.
@@ -274,9 +254,6 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".noted-empty { font-size: 9pt; color: #8b8c80; }"
       + ".disclaimer { margin-top: 16px; padding: 8px 12px; background-color: #edf2f5; border-radius: 4px; font-size: 8pt; color: #5b5c53; }"
       + ".disclaimer strong { color: #2e7d95; }"
-      + ".participant-id { margin-top: 16px; font-size: 9pt; color: #5b5c53; }"
-      + ".tree-node { padding: 2px 0; }"
-      + ".badge { background-color: #edf2f5; border-radius: 3px; padding: 1px 4px; font-size: 8pt; }"
-      + ".node-text { font-size: 9pt; }";
+      + ".participant-id { margin-top: 16px; font-size: 9pt; color: #5b5c53; }";
   }
 }

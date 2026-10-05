@@ -4,9 +4,9 @@
 
   function IndividualReportService() {
 
-    // Fallback wording used when a rule has no admin-authored rationale text yet. Follows the agreed
-    // scale (legal/health-data-position.md section 3): probMedium = likely below the exposure limit,
-    // probLow = estimated to be well below it - never implying the exposure is harmless.
+    // Assessor view only: fallback wording used when a rule has no admin-authored rationale text yet.
+    // Follows the agreed scale (legal/health-data-position.md section 3): probMedium = likely below the
+    // exposure limit, probLow = estimated to be well below it - never implying the exposure is harmless.
     // No fallback exists for probHigh - an evidence claim shouldn't be fabricated generically,
     // so a probHigh finding simply shows no rationale line until an admin writes one.
     var DEFAULT_RATIONALE_TEXT = {
@@ -15,6 +15,24 @@
       probLow: 'Based on your answers, your exposure to {agent} is estimated to be well below the ' +
         'exposure limit. This doesn’t mean there is no exposure.'
     };
+
+    // Public view: each finding is described per agent, never per rule, so the participant isn't
+    // told which answers or questions triggered it (the occupational epidemiologist's advice - the
+    // rule-specific Rule.rationale stays in the assessor view). The text is the agent's
+    // publicDescription plus a sentence for the level. probHigh gets no level sentence - the verdict
+    // above it already says the exposure is likely above the limit and recommends a health professional.
+    var PUBLIC_LEVEL_TEXT = {
+      probHigh: '',
+      probMedium: ' Based on your answers, your exposure is likely to be below the exposure limit. ' +
+        'This is an estimate from what you told us, not a measurement.',
+      probLow: ' Based on your answers, your exposure is estimated to be well below the exposure limit. ' +
+        'This doesn’t mean there is no exposure.'
+    };
+
+    function publicText(agentName, publicDescription, level) {
+      return 'Your answers indicate that you may have been exposed to ' + agentName +
+        (publicDescription ? ', ' + publicDescription : '') + '.' + PUBLIC_LEVEL_TEXT[level];
+    }
 
     // Builds the individual-facing summary: a verdict driven by the highest level found (see
     // verdictState below), plus the findings behind it. Only PROBABLE_HIGH/MEDIUM/LOW
@@ -30,12 +48,12 @@
     // there. studyAgents is used only to flag such findings (studyAgent: false) - callers decide
     // whether to surface that (the fired rules page does; the participant report doesn't).
     //
-    // options.collapseByAgent (the public view): for each agent only its highest-severity finding is
-    // kept - a high finding trumps that agent's medium/low ones, and a medium trumps its low - since
+    // options.publicView: findings are worded per agent (see PUBLIC_LEVEL_TEXT) and collapsed - for
+    // each agent only its highest-severity finding is kept - a high finding trumps that agent's medium/low ones, and a medium trumps its low - since
     // "high" alongside "low probability link" for the same substance reads as a contradiction. If
     // more than one rule fires at that same top level (e.g. two probLow rules for the same agent),
     // they're merged into the one displayed finding rather than shown twice. Assessors leave it off
-    // to see every fired rule individually. It doesn't affect the verdict (each agent's top level is
+    // to see every fired rule individually, each with its own Rule.rationale. It doesn't affect the verdict (each agent's top level is
     // always kept) or manualReviewAgents.
     //
     // manualReviewAgents lists the agents behind those unknown-level rules. It's not part of the
@@ -47,7 +65,7 @@
     var SEVERITY_RANK = {probHigh: 3, probMedium: 2, probLow: 1};
 
     this.build = function(firedRules, studyAgents, options) {
-      var collapseByAgent = !!(options && options.collapseByAgent);
+      var publicView = !!(options && options.publicView);
 
       var studyAgentsById = {};
       _.each(studyAgents, function(agent) {
@@ -59,6 +77,11 @@
         return (rule.agent && rule.agent.name) || (studyAgent && studyAgent.name) || 'Unknown';
       }
 
+      function publicDescriptionFor(rule) {
+        var studyAgent = studyAgentsById[rule.agentId];
+        return (rule.agent && rule.agent.publicDescription) || (studyAgent && studyAgent.publicDescription) || null;
+      }
+
       function isStudyAgent(rule) {
         return !!studyAgentsById[rule.agentId];
       }
@@ -66,13 +89,13 @@
       var high = [];
       var other = [];
       var manualReviewNames = [];
-      // Only used when collapseByAgent - tracks the one finding already shown per agent in each
+      // Only used in the public view - tracks the one finding already shown per agent in each
       // bucket, so a second rule firing at the same top severity (e.g. two probLow rules for the
       // same agent) merges into it instead of showing that agent twice.
       var highByAgent = {};
       var otherByAgent = {};
 
-      // Highest severity fired per agent, for collapseByAgent.
+      // Highest severity fired per agent, for the public view.
       var topRankByAgent = {};
       _.each(firedRules, function(rule) {
         var rank = SEVERITY_RANK[rule.level] || 0;
@@ -89,35 +112,36 @@
         if (rule.level !== 'probHigh' && rule.level !== 'probMedium' && rule.level !== 'probLow') {
           return;
         }
-        if (collapseByAgent && SEVERITY_RANK[rule.level] < topRankByAgent[rule.agentId]) {
+        if (publicView && SEVERITY_RANK[rule.level] < topRankByAgent[rule.agentId]) {
           return;
         }
         var agentName = agentNameFor(rule);
 
         if (rule.level === 'probHigh') {
-          if (collapseByAgent && highByAgent[rule.agentId]) {
+          if (publicView && highByAgent[rule.agentId]) {
             highByAgent[rule.agentId].conditions = highByAgent[rule.agentId].conditions.concat(rule.conditions || []);
             return;
           }
           var highFinding = {
             agentName: agentName,
             studyAgent: isStudyAgent(rule),
-            rationale: rule.rationale || null,
+            rationale: publicView ? publicText(agentName, publicDescriptionFor(rule), rule.level)
+              : (rule.rationale || null),
             level: rule.level,
             conditions: rule.conditions || []
           };
           high.push(highFinding);
-          if (collapseByAgent) {
+          if (publicView) {
             highByAgent[rule.agentId] = highFinding;
           }
         } else {
-          var text = rule.rationale;
+          var text = publicView ? publicText(agentName, publicDescriptionFor(rule), rule.level) : rule.rationale;
           if (!text) {
             var template = DEFAULT_RATIONALE_TEXT[rule.level];
             text = template ? template.split('{agent}').join(agentName) : null;
           }
           if (text) {
-            if (collapseByAgent && otherByAgent[rule.agentId]) {
+            if (publicView && otherByAgent[rule.agentId]) {
               otherByAgent[rule.agentId].conditions = otherByAgent[rule.agentId].conditions.concat(rule.conditions || []);
               return;
             }
@@ -129,7 +153,7 @@
               conditions: rule.conditions || []
             };
             other.push(otherFinding);
-            if (collapseByAgent) {
+            if (publicView) {
               otherByAgent[rule.agentId] = otherFinding;
             }
           }

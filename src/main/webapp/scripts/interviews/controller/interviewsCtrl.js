@@ -1115,107 +1115,7 @@
       $state.go('startInterview');
     };
 
-    // Progress indicator for the public startInterview flow. The question tree branches per
-    // answer, so the true total isn't knowable up front - instead of estimating a total tree size,
-    // this just counts real (non-linking) questions already revealed in the queue and adds a flat
-    // guess of ESTIMATED_QUESTIONS_PER_FRAGMENT for each not-yet-expanded task-module placeholder
-    // still sitting in the queue (a question with a non-zero .link - see processLinkingQuestionNew
-    // - is a silent routing node into a fragment/task-module, never shown to the participant; see
-    // interviewsCtrl.js's "question.link == 0" check for the real-vs-placeholder distinction).
-    // 2 is a reasonable flat guess: OFFW's six task-module fragments have 1, 1, 2, 3, 1 and 4 root
-    // questions respectively, averaging almost exactly 2.
-    // Whenever an answer reveals more real questions (either a fragment just got expanded, or the
-    // question just answered had its own conditional follow-ups queued), siProgress.delta briefly
-    // shows the count added, then clears itself after a couple of seconds.
-    var ESTIMATED_QUESTIONS_PER_FRAGMENT = 2;
-
-    $scope.siProgress = {
-      answered: 0,
-      estimatedTotal: 0,
-      delta: 0
-    };
-
-    var siPreviousRealCount = null;
-    var siDeltaTimeout = null;
-
-    function updateSiProgress() {
-      if($state.current.name.indexOf('startInterview') !== 0
-        || !$scope.interview || !$scope.interview.questionHistory) {
-        return;
-      }
-
-      var answered = 0;
-      var realCount = 0;
-      var pendingFragments = 0;
-      _.each($scope.interview.questionHistory, function(q) {
-        if(q.deleted) {
-          return;
-        }
-        if(q.link) {
-          if(!q.processed) {
-            pendingFragments++;
-          }
-        } else {
-          realCount++;
-          if(q.processed) {
-            answered++;
-          }
-        }
-      });
-
-      if(siPreviousRealCount !== null && realCount > siPreviousRealCount) {
-        $scope.siProgress.delta = realCount - siPreviousRealCount;
-        if(siDeltaTimeout) {
-          $timeout.cancel(siDeltaTimeout);
-        }
-        siDeltaTimeout = $timeout(function() {
-          $scope.siProgress.delta = 0;
-        }, 2000);
-      }
-      siPreviousRealCount = realCount;
-
-      $scope.siProgress.answered = answered;
-      $scope.siProgress.estimatedTotal = realCount + (pendingFragments * ESTIMATED_QUESTIONS_PER_FRAGMENT);
-    }
-
-    $scope.$watch(function() {
-      return $scope.interview && $scope.interview.questionHistory
-        ? $scope.interview.questionHistory.length : 0;
-    }, updateSiProgress);
-
-    // Capped short of 100% so a still-in-progress interview never falsely reads as "done".
-    $scope.siProgressFraction = function() {
-      if(!$scope.siProgress.estimatedTotal) {
-        return 0;
-      }
-      return Math.min($scope.siProgress.answered / $scope.siProgress.estimatedTotal, 0.97);
-    };
-
-    function buildReportTree(nodes) {
-      return _.map(nodes, function(node) {
-        return {
-          header: node.header,
-          number: node.number,
-          name: node.name,
-          nodeclass: node.nodeclass,
-          nodes: node.nodes && node.nodes.length ? buildReportTree(node.nodes) : []
-        };
-      });
-    }
-
     $scope.downloadReport = function() {
-      // The Interview Responses tree is only included in assessor testing mode - in general
-      // use, linkedModule was never fetched (see runStartInterviewAssessment), so only require
-      // it here when assessor mode actually needs it.
-      if ($scope.siAssessorMode && !$scope.linkedModule) {
-        ngToast.create({
-          className: 'danger',
-          content: 'Report is still loading, please try again in a moment.',
-          animation: 'slide'
-        });
-        return;
-      }
-
       $scope.siReportDownloading = true;
 
       InterviewsService.downloadReport({
@@ -1227,8 +1127,7 @@
         }),
         otherFindings: _.map($scope.siOtherFindings, function(finding) {
           return { agentName: finding.agentName, text: finding.text, level: finding.level };
-        }),
-        tree: $scope.siAssessorMode && $scope.linkedModule ? buildReportTree($scope.linkedModule.nodes) : []
+        })
       }).then(function(response) {
         $scope.siReportDownloading = false;
         var blob = new Blob([response.data], { type: 'application/pdf' });
@@ -2263,42 +2162,13 @@
       $scope.openAnswerSummary = function() {};
     }
 
-    $scope.moduleTreeOptions = { dragEnabled: false };
-
-    // Scrolls to and highlights the answer (in the "Interview Responses" tree below) that a
-    // clicked condition dot represents.
-    $scope.siHighlightCondition = function(cond) {
-      $('.tree-node div').removeClass('highlight-rulenode');
-      var el = $('#node-' + cond.idNode);
-      if (el.length) {
-        el.addClass('highlight-rulenode');
-        el[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    };
-
-    function loadSiQuestionTree(interviewId) {
-      InterviewsService.getExpandedModule(interviewId).then(function(response) {
-        if (response.status === '200' && response.data && response.data[0]) {
-          $scope.linkedModule = response.data[0];
-          addHeader($scope.linkedModule.nodes);
-        }
-      });
-    }
-
     function runStartInterviewAssessment() {
       var interviewId = $scope.interview.interviewId;
       $scope.siAssessmentLoading = true;
       $scope.siData = { firedRules: [], autoAssessedRules: [], manualAssessedRules: [], height: 30 };
       $scope.siAgents = [];
-      $scope.siAssessorMode = false;
 
-      InterviewsService.getStartInterviewConfig().then(function(response) {
-        $scope.siAssessorMode = !!(response.data && response.data.assessorMode);
-        return AssessmentsService.updateFiredRules(interviewId);
-      }, function() {
-        // Config lookup failed - fail safe (hidden), still proceed with the assessment itself.
-        return AssessmentsService.updateFiredRules(interviewId);
-      }).then(function(response) {
+      AssessmentsService.updateFiredRules(interviewId).then(function(response) {
         if (response.status === 200 && response.data && response.data[0]) {
           var firedRules = response.data[0].firedRules || [];
           var questionHistory = ($scope.interview && $scope.interview.questionHistory) || [];
@@ -2330,11 +2200,6 @@
       }).then(function() {
         buildIndividualExposureSummary();
         $scope.siAssessmentLoading = false;
-        // The Interview Responses tree (and the condition dots that link to it) are only
-        // relevant in assessor testing mode - skip fetching it otherwise.
-        if ($scope.siAssessorMode) {
-          loadSiQuestionTree(interviewId);
-        }
       });
     }
 
@@ -2342,7 +2207,7 @@
     // exactly the same report - see that service for what is and isn't surfaced.
     function buildIndividualExposureSummary() {
       var summary = IndividualReportService.build($scope.siData.firedRules, $scope.siAgents,
-        {collapseByAgent: !$scope.siAssessorMode, allStudyAgents: $scope.siStudyAgentList});
+        {publicView: true, allStudyAgents: $scope.siStudyAgentList});
       $scope.siVerdictState = summary.verdictState;
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;

@@ -4,10 +4,6 @@ public class Constant {
     public static final String ASC = "ASC";
     public static final String DESC = "DESC";
     public static final String STUDY_INTRO = "activeIntro";
-    // When "true", the public startInterview flow shows the full Interview Responses Q&A tree
-    // and the click-to-see-answer dots on the report - for internal assessor testing only.
-    // Defaults to hidden (safer default) when unset, since general public use should not show this.
-    public static final String START_INTERVIEW_ASSESSOR_MODE = "startInterviewAssessorMode";
     // Optional prefix (e.g. "LIVE") stuck on the auto-assigned reference number of participants
     // created through the public startInterview flow only - e.g. "LIVE00001" - so entries from that
     // flow (a demo environment, a specific deployment) are easy to tell apart in the admin lists from

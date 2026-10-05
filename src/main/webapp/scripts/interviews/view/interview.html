@@ -12,17 +12,6 @@
            src="https://static.wixstatic.com/media/2ba4c3_72496cb786bf42f4bbcaa3687a4b9970.png"/>
 
     </div>
-    <!-- Progress bar still experimental - only shown in assessor mode (startInterviewAssessorMode) for now. -->
-    <div class="si-progress-wrap"
-         ng-if="siAssessorMode && $root.$state.current.name.indexOf('startInterview') === 0 && interviewStarted && !interviewEnded">
-      <div class="si-progress-label">
-        Question {{siProgress.answered + 1}} of about {{siProgress.estimatedTotal}}
-        <span class="si-progress-delta" ng-if="siProgress.delta > 0">+{{siProgress.delta}}</span>
-      </div>
-      <div class="si-progress-bar">
-        <div class="si-progress-fill" style="width: {{siProgressFraction() * 100}}%"></div>
-      </div>
-    </div>
     <div>
       <div>
         <md-progress-linear md-mode="indeterminate" ng-if="inProgress"></md-progress-linear>
@@ -277,10 +266,6 @@
         <div id="si-report-content">
 
           <ng-include src="'scripts/interviews/partials/individualReport.html'"></ng-include>
-
-          <div id="interview-question-list" ng-if="siAssessorMode">
-            <ng-include src="'scripts/startInterview/view/siModuleTree.html'"></ng-include>
-          </div>
         </div>
         <p>&nbsp;</p>
         <md-button class="si-btn-start" ng-click="downloadReport()" ng-disabled="siReportDownloading">

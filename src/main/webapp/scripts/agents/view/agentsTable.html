@@ -63,6 +63,20 @@
               </div>
             </div>
           </td>
+          <td demo-tracked-table-cell
+              ng-class="publicDescription.$dirty ? 'bg-warning' : ''"
+              ng-form="publicDescription"
+              ng-switch="row.isEditing" title="'Public Description'">
+            <!-- Shown on the participant report: "...may have been exposed to <name>, <public description>." -->
+            <div ng-click="row.isEditing = true">
+              <span class="editable-text" ng-switch-default>{{row.publicDescription}}</span>
+              <div class="controls" ng-switch-when="true">
+                <textarea class="editable-input form-control input-sm" name="publicDescription"
+                          ng-model="row.publicDescription" rows="3"
+                          placeholder="e.g. a mineral fibre once widely used in building materials, classified as a known human carcinogen"></textarea>
+              </div>
+            </div>
+          </td>
           <td filter="{isChecked: 'text'}" style="text-align: center;" title="'Study'" width="30"> {{row.isChecked}}
             <input ng-checked="row.isChecked"
                    ng-click="toggleStudyAgent(row)" ng-model="checkboxes.items[row.idAgent]"

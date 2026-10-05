@@ -30,6 +30,7 @@ public class AgentMapperImpl implements AgentMapper {
     agentVO.setIdAgent(agent.getIdAgent());
     agentVO.setName(agent.getName());
     agentVO.setDescription(agent.getDescription());
+    agentVO.setPublicDescription(agent.getPublicDescription());
     agentVO.setLastUpdated(agent.getLastUpdated());
     agentVO.setAgentGroup(agentGroupMapper.convertToAgentGroupVO(agent.getGroup()));
     agentVO.setDeleted(agent.getDeleted());
@@ -64,6 +65,7 @@ public class AgentMapperImpl implements AgentMapper {
     agent.setIdAgent(agentVO.getIdAgent());
     agent.setName(agentVO.getName());
     agent.setDescription(agentVO.getDescription());
+    agent.setPublicDescription(agentVO.getPublicDescription());
     agent.setGroup(agentGroupMapper.convertToAgentGroup(agentVO.getAgentGroup()));
     agent.setLastUpdated(agentVO.getLastUpdated());
     agent.setDeleted(agentVO.getDeleted());
