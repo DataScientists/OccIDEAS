@@ -45,8 +45,8 @@
     //
     // Agent names come from the fired rule's own agent, not the study-agent list: that list only
     // holds the study's agents (SYS_CONFIG 'studyagent'), so a rule for any other agent has no entry
-    // there. studyAgents is used only to flag such findings (studyAgent: false) - callers decide
-    // whether to surface that (the fired rules page does; the participant report doesn't).
+    // there. studyAgents is used only to flag such findings (studyAgent: false), which the assessor
+    // view badges. The public view leaves non-study agents out entirely (see publicStudyAgentIds).
     //
     // options.publicView: findings are worded per agent (see PUBLIC_LEVEL_TEXT) and collapsed - for
     // each agent only its highest-severity finding is kept - a high finding trumps that agent's medium/low ones, and a medium trumps its low - since
@@ -86,6 +86,23 @@
         return !!studyAgentsById[rule.agentId];
       }
 
+      // The public view only reports study agents (options.allStudyAgents), in both the findings and
+      // the verdict - the same list the "no exposures identified" section uses - so a rule firing for
+      // an agent outside the study (e.g. a region-specific variant like Ocular UV EU) isn't shown to
+      // the participant. The assessor view keeps every fired rule, badging the non-study ones. If the
+      // study agent list is empty (lookup failed or none configured) nothing is filtered, rather than
+      // the participant getting an empty report.
+      var publicStudyAgentIds = null;
+      if (publicView && options.allStudyAgents && options.allStudyAgents.length > 0) {
+        publicStudyAgentIds = {};
+        _.each(options.allStudyAgents, function(agent) {
+          publicStudyAgentIds[agent.idAgent] = true;
+        });
+      }
+      var reportedRules = publicStudyAgentIds ? _.filter(firedRules, function(rule) {
+        return publicStudyAgentIds[rule.agentId];
+      }) : firedRules;
+
       var high = [];
       var other = [];
       var manualReviewNames = [];
@@ -97,14 +114,14 @@
 
       // Highest severity fired per agent, for the public view.
       var topRankByAgent = {};
-      _.each(firedRules, function(rule) {
+      _.each(reportedRules, function(rule) {
         var rank = SEVERITY_RANK[rule.level] || 0;
         if (rank > (topRankByAgent[rule.agentId] || 0)) {
           topRankByAgent[rule.agentId] = rank;
         }
       });
 
-      _.each(firedRules, function(rule) {
+      _.each(reportedRules, function(rule) {
         if (rule.level === 'probUnknown' || rule.level === 'possUnknown') {
           manualReviewNames.push(agentNameFor(rule));
           return;
@@ -162,7 +179,7 @@
 
       // Any rule at these levels means the agent wasn't cleared (unknown = couldn't be decided).
       var notClearedAgentIds = {};
-      _.each(firedRules, function(rule) {
+      _.each(reportedRules, function(rule) {
         if (SEVERITY_RANK[rule.level] || rule.level === 'probUnknown' || rule.level === 'possUnknown') {
           notClearedAgentIds[rule.agentId] = true;
         }
