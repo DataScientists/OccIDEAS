@@ -729,6 +729,31 @@ md-toolbar.si-toolbar .badge {
 .si-code-valid { color: #2e7d32; }
 .si-code-invalid { color: #c9302c; }
 
+/* Code passed in from the occideas.com link - shown read-only instead of asked for again */
+.si-code-locked {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+
+.si-code-locked-value {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.si-code-locked .si-code-status,
+.si-code-locked .si-help {
+  margin: 0;
+}
+
+.si-code-remove {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
 /* What sharing with the employer means, plus the consent checkbox - shown once a code is accepted */
 .si-employer-notice {
   margin-top: 12px;

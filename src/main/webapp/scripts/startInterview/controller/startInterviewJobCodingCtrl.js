@@ -36,10 +36,25 @@
     // will be told if their estimated exposure is above an exposure limit - without it the code isn't passed on at all.
     // Object (not a bare boolean) so the checkbox inside the template's ng-if child scope writes back here.
     $scope.consent = {employerSharing: false};
+    // Arrived from the occideas.com start page (with a code, or via its "Start without a code"
+    // button, which adds ?from=web). That page already introduces the questionnaire and asks for
+    // the code, so we skip our long intro and the code box rather than repeat them.
+    $scope.fromWebsite = !!$stateParams.code || $stateParams.from === 'web';
+    // A code from the link is shown read-only once it checks out; if it isn't recognised (or the
+    // participant removes it) the editable box comes back.
+    $scope.codeLocked = !!$stateParams.code;
+    // "Start without a code" on occideas.com means they've already chosen to take part privately.
+    $scope.showCodeInput = !($stateParams.from === 'web' && !$stateParams.code);
 
     $scope.employerCodeChanged = function() {
       $scope.employerCodeStatus = null;
       $scope.consent.employerSharing = false;
+    };
+
+    $scope.removeEmployerCode = function() {
+      $scope.employerCode = '';
+      $scope.codeLocked = false;
+      $scope.employerCodeChanged();
     };
 
     // Resolves true when the code is blank (it's optional) or valid, false when it isn't recognised.
@@ -71,7 +86,11 @@
     }
 
     if ($scope.employerCode) {
-      $scope.checkEmployerCode();
+      $scope.checkEmployerCode().then(function(valid) {
+        if (!valid) {
+          $scope.codeLocked = false;
+        }
+      });
     }
 
     if ($scope.$storage.langEnabled) {

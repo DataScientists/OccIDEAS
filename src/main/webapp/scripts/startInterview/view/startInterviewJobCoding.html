@@ -12,6 +12,8 @@
       <div class="si-intro">
         <h2 class="si-intro-title">Workplace Exposure Questionnaire</h2>
         <p class="si-intro-subtitle">Estimates your occupational exposure to known workplace health hazards</p>
+        <!-- The occideas.com start page already covers this, so skip it for people coming from there. -->
+        <div ng-if="!fromWebsite">
         <p>
           Many jobs involve exposure to things like dusts, fumes, chemicals, noise or radiation.
           Health and safety professionals know these hazards well, but it takes time for research to become common knowledge,
@@ -27,6 +29,7 @@
           <li>No login or contact details needed</li>
           <li>An estimate of your exposure at work, not a health assessment or diagnosis</li>
         </ul>
+        </div>
       </div>
 
       <div class="si-not-covered" ng-if="notCovered">
@@ -60,20 +63,38 @@
         </ui-select>
       </div>
 
-      <div class="si-field-group">
-        <label class="si-label" for="employerCode">Employer code (optional)</label>
-        <div class="si-help">If your employer directed you to this site, enter the 5-character code they gave you.
-          Leave it blank if you'd prefer to take part privately.</div>
-        <input class="si-input si-code-input"
-               id="employerCode"
-               maxlength="5"
-               ng-blur="checkEmployerCode()"
-               ng-change="employerCodeChanged()"
-               ng-class="{'si-input-invalid': employerCodeStatus === 'invalid'}"
-               ng-model="employerCode"
-               placeholder="e.g. ABCDE"
-               type="text"/>
-        <div class="si-code-status si-code-valid" ng-if="employerCodeStatus === 'valid'">&#10003; Code accepted</div>
+      <!-- ng-show rather than ng-if so the input binds straight to employerCode on this scope. -->
+      <div class="si-field-group" ng-show="codeLocked || showCodeInput">
+        <!-- Code from the occideas.com link: shown read-only rather than asked for again. -->
+        <div ng-show="codeLocked">
+          <label class="si-label">Employer code</label>
+          <div class="si-code-locked">
+            <span class="si-code-locked-value">{{employerCode}}</span>
+            <span class="si-code-status si-code-valid" ng-if="employerCodeStatus === 'valid'">&#10003; Code accepted</span>
+            <span class="si-help" ng-if="!employerCodeStatus">Checking code...</span>
+          </div>
+          <a class="si-code-remove" href="" ng-click="removeEmployerCode()">Remove code and take part privately</a>
+        </div>
+
+        <div ng-show="!codeLocked">
+          <label class="si-label" for="employerCode">Employer code (optional)</label>
+          <div class="si-help">If your employer directed you to this site, enter the 5-character code they gave you.
+            Leave it blank if you'd prefer to take part privately.</div>
+          <input class="si-input si-code-input"
+                 id="employerCode"
+                 maxlength="5"
+                 ng-blur="checkEmployerCode()"
+                 ng-change="employerCodeChanged()"
+                 ng-class="{'si-input-invalid': employerCodeStatus === 'invalid'}"
+                 ng-model="employerCode"
+                 placeholder="e.g. ABCDE"
+                 type="text"/>
+          <div class="si-code-status si-code-valid" ng-if="employerCodeStatus === 'valid'">&#10003; Code accepted</div>
+          <div class="si-code-status si-code-invalid" ng-if="employerCodeStatus === 'invalid'">
+            Code not recognised &mdash; please check it, or leave it blank.
+          </div>
+        </div>
+
         <div class="si-employer-notice" ng-if="employerCodeStatus === 'valid'">
           <strong>Because you've entered an employer code:</strong>
           <ul>
@@ -86,9 +107,6 @@
             <input ng-model="consent.employerSharing" type="checkbox"/>
             I understand my employer may see my answers and will be told if my estimated exposure is above an exposure limit.
           </label>
-        </div>
-        <div class="si-code-status si-code-invalid" ng-if="employerCodeStatus === 'invalid'">
-          Code not recognised &mdash; please check it, or leave it blank.
         </div>
       </div>
 
