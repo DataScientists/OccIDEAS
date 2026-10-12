@@ -220,8 +220,15 @@ public class ParticipantRestController implements BaseRestController<Participant
                                @QueryParam("employerConsent") boolean employerConsent) {
     ParticipantVO participantVO;
     try {
+      // Taking part needs a valid employer code, consented to. The exception is an external system
+      // embedding the flow with its own reference (?id= on the start page), which vouches for the participant.
+      boolean ownReference = json != null && json.getReference() != null && !json.getReference().trim().isEmpty();
+      if (!ownReference && (!employerConsent || service.findValidEmployerCode(employerCode) == null)) {
+        return Response.status(Status.FORBIDDEN).type("text/plain")
+          .entity("A valid employer code is required to take part").build();
+      }
       // The employer code is only used when the participant ticked the start page's consent box
-      // (their employer may see their answers and will be told about exposures above safe limits),
+      // (their employer may see their answers and will be told about exposures above an exposure limit),
       // so a prefixed reference like ACMEM00042 doubles as the record of that consent.
       participantVO = service.createPublic(json, employerConsent ? employerCode : null);
     } catch (Throwable e) {

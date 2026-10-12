@@ -4,11 +4,11 @@
 
   StartInterviewJobCodingCtrl.$inject = [
     '$scope', '$rootScope', '$state', '$stateParams', '$sessionStorage', '$translate',
-    'NodeLanguageService', 'AnzscoCoderService', 'ngToast', 'ParticipantsService', '$q'
+    'NodeLanguageService', 'AnzscoCoderService', 'ngToast', 'ParticipantsService', '$q', '$timeout', '$window'
   ];
 
   function StartInterviewJobCodingCtrl($scope, $rootScope, $state, $stateParams, $sessionStorage, $translate,
-    NodeLanguageService, AnzscoCoderService, ngToast, ParticipantsService, $q) {
+    NodeLanguageService, AnzscoCoderService, ngToast, ParticipantsService, $q, $timeout, $window) {
 
     $scope.$storage = $sessionStorage;
     // Participants are anonymous - no email/ID is collected. An external system embedding
@@ -28,41 +28,35 @@
     $scope.noMatchAttempts = 0;
     $scope.noMatchShown = false;
     $scope.notCovered = false;
-    // Optional employer code - typed in, or supplied by the employer's link via ?code=. A valid one
-    // becomes the participant's reference prefix (e.g. ACMEM00042) instead of the default.
+    // Employer code - typed in, or supplied by the employer's link via ?code=. A valid one is needed
+    // to take part, and becomes the participant's reference prefix (e.g. ACMEM00042).
     $scope.employerCode = $stateParams.code || '';
     $scope.employerCodeStatus = null; // null (not checked) | 'valid' | 'invalid'
     // A valid code also needs the participant to tick that their employer may see their answers and
     // will be told if their estimated exposure is above an exposure limit - without it the code isn't passed on at all.
     // Object (not a bare boolean) so the checkbox inside the template's ng-if child scope writes back here.
     $scope.consent = {employerSharing: false};
-    // Arrived from the occideas.com start page (with a code, or via its "Start without a code"
-    // button, which adds ?from=web). That page already introduces the questionnaire and asks for
-    // the code, so we skip our long intro and the code box rather than repeat them.
-    $scope.fromWebsite = !!$stateParams.code || $stateParams.from === 'web';
-    // A code from the link is shown read-only once it checks out; if it isn't recognised (or the
-    // participant removes it) the editable box comes back.
-    $scope.codeLocked = !!$stateParams.code;
-    // "Start without a code" on occideas.com means they've already chosen to take part privately.
-    $scope.showCodeInput = !($stateParams.from === 'web' && !$stateParams.code);
+    // Everyone needs a valid code, except participants from an external system embedding this
+    // page with its own reference (?id=) - the backend's createPublic applies the same rule.
+    $scope.codeRequired = !$scope.startWithReferenceNumber;
+
+    // The job questions only show once the participant is cleared to take part.
+    $scope.canDescribeJob = function() {
+      return !$scope.codeRequired ||
+        ($scope.employerCodeStatus === 'valid' && $scope.consent.employerSharing);
+    };
 
     $scope.employerCodeChanged = function() {
       $scope.employerCodeStatus = null;
       $scope.consent.employerSharing = false;
     };
 
-    $scope.removeEmployerCode = function() {
-      $scope.employerCode = '';
-      $scope.codeLocked = false;
-      $scope.employerCodeChanged();
-    };
-
-    // Resolves true when the code is blank (it's optional) or valid, false when it isn't recognised.
+    // Resolves true when the code is valid, or blank where a code isn't required; false otherwise.
     $scope.checkEmployerCode = function() {
       var code = ($scope.employerCode || '').trim();
       if (!code) {
         $scope.employerCodeStatus = null;
-        return $q.when(true);
+        return $q.when(!$scope.codeRequired);
       }
       if ($scope.employerCodeStatus) {
         return $q.when($scope.employerCodeStatus === 'valid');
@@ -80,17 +74,42 @@
       });
     };
 
+    // Bring each newly shown step into view - on a phone it would otherwise appear below the fold
+    // unnoticed. Only scrolls when the element isn't already fully visible.
+    function scrollIntoViewIfNeeded(id) {
+      $timeout(function() {
+        var el = document.getElementById(id);
+        if (!el) {
+          return;
+        }
+        var rect = el.getBoundingClientRect();
+        if (rect.top >= 0 && rect.bottom <= $window.innerHeight) {
+          return;
+        }
+        var reduceMotion = $window.matchMedia && $window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        el.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block: 'start'});
+      });
+    }
+
+    function scrollWhenShown(watchFn, id) {
+      $scope.$watch(watchFn, function(shown, wasShown) {
+        if (shown && !wasShown) {
+          scrollIntoViewIfNeeded(id);
+        }
+      });
+    }
+
+    scrollWhenShown(function() { return $scope.canDescribeJob(); }, 'siJobDetails');
+    scrollWhenShown(function() { return !!$scope.selectedSuggestion; }, 'siMatch');
+    scrollWhenShown(function() { return $scope.notCovered; }, 'siNotCovered');
+
     // Stub on $rootScope so InterviewsCtrl can find it via scope chain
     if (!$rootScope.addInterviewTabInterviewers) {
       $rootScope.addInterviewTabInterviewers = function() {};
     }
 
     if ($scope.employerCode) {
-      $scope.checkEmployerCode().then(function(valid) {
-        if (!valid) {
-          $scope.codeLocked = false;
-        }
-      });
+      $scope.checkEmployerCode();
     }
 
     if ($scope.$storage.langEnabled) {
@@ -142,7 +161,9 @@
         if (!codeOk) {
           ngToast.create({
             className: 'danger',
-            content: 'Employer code not recognised - please check it, or leave it blank',
+            content: $scope.codeRequired
+              ? 'Please enter a valid code from your employer to take part'
+              : 'Employer code not recognised - please check it, or leave it blank',
             animation: 'slide'
           });
           return;
@@ -150,7 +171,7 @@
         if ($scope.employerCodeStatus === 'valid' && !$scope.consent.employerSharing) {
           ngToast.create({
             className: 'danger',
-            content: 'Please tick the box to confirm you understand what your employer will see, or remove the employer code',
+            content: 'Please tick the box to confirm you understand what your employer will see',
             animation: 'slide'
           });
           return;
@@ -203,6 +224,8 @@
       $scope.selectedSuggestion.moduleCode = option.moduleCode;
       $scope.selectedSuggestion.moduleId = option.moduleId;
       $scope.selectedSuggestion.moduleName = option.moduleName;
+      // Reveals the "Start questionnaire" button underneath.
+      scrollIntoViewIfNeeded('siMatchProceed');
     };
 
     // Editing the job title or description makes any shown match stale - clear it so the

@@ -657,45 +657,18 @@ md-toolbar.si-toolbar .badge {
   margin-bottom: 4px;
 }
 
-/* Introduction block at the top of the startInterview front screen */
+/* Title at the top of the startInterview front screen */
 .si-intro {
-  margin-bottom: 26px;
-  padding-bottom: 22px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #e3eaee;
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: #444;
 }
 
 .si-intro-title {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 20px;
   font-weight: 700;
   color: #3d9cbf;
-}
-
-.si-intro p {
-  margin: 0 0 10px;
-}
-
-.si-intro .si-intro-subtitle {
-  margin: -8px 0 14px;
-  font-size: 15px;
-  font-style: italic;
-  color: #666;
-}
-
-.si-intro-points {
-  margin: 14px 0 0;
-  padding: 10px 16px 10px 32px;
-  border-left: 4px solid #3d9cbf;
-  border-radius: 6px;
-  background: #f5fafc;
-  font-size: 13.5px;
-}
-
-.si-intro-points li {
-  margin-bottom: 3px;
 }
 
 /* Optional employer code field on the startInterview front screen */
@@ -728,31 +701,6 @@ md-toolbar.si-toolbar .badge {
 
 .si-code-valid { color: #2e7d32; }
 .si-code-invalid { color: #c9302c; }
-
-/* Code passed in from the occideas.com link - shown read-only instead of asked for again */
-.si-code-locked {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 14px;
-}
-
-.si-code-locked-value {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 2px;
-}
-
-.si-code-locked .si-code-status,
-.si-code-locked .si-help {
-  margin: 0;
-}
-
-.si-code-remove {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 13px;
-}
 
 /* What sharing with the employer means, plus the consent checkbox - shown once a code is accepted */
 .si-employer-notice {
