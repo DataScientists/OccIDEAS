@@ -1123,7 +1123,11 @@
         }),
         otherFindings: _.map($scope.siOtherFindings, function(finding) {
           return { agentName: finding.agentName, text: finding.text, level: finding.level };
-        })
+        }),
+        assessedAgents: _.map($scope.siAssessedAgents, function(row) {
+          return { agentName: row.agentName, text: row.status, level: row.level };
+        }),
+        partial: !!$scope.siPartial
       }).then(function(response) {
         $scope.siReportDownloading = false;
         var blob = new Blob([response.data], { type: 'application/pdf' });
@@ -2189,8 +2193,8 @@
         return AgentsService.getStudyAgentsWithRules(interviewId);
       }).then(function(agents) {
         $scope.siAgents = agents || [];
-        // Full study agent list for the "no exposures identified" section - optional, so a failed
-        // lookup just leaves that section out rather than holding up the report.
+        // Full study agent list for the "Agents assessed" table - optional, so a failed lookup just
+        // leaves the table to the agents that had findings rather than holding up the report.
         return AgentsService.getStudyAgents().then(function(studyAgents) {
           $scope.siStudyAgentList = studyAgents || [];
         }, function() {
@@ -2210,7 +2214,7 @@
       $scope.siVerdictState = summary.verdictState;
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;
-      $scope.siNotIdentifiedAgents = summary.notIdentifiedAgents;
+      $scope.siAssessedAgents = summary.assessedAgents;
     }
 
     $scope.finishInterview = function() {

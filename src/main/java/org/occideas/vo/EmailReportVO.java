@@ -20,6 +20,11 @@ public class EmailReportVO {
   private String verdictState;
   private List<IndividualFindingVO> highFindings;
   private List<IndividualFindingVO> otherFindings;
+  // "Agents assessed" table rows - text is the status shown (e.g. "No exposure identified"), level is
+  // probHigh/probMedium/probLow/unknown/none. Built by individualReportService.js, same as on screen.
+  private List<IndividualFindingVO> assessedAgents;
+  // Interview was stopped before the end - adds a caveat under the agents assessed table.
+  private boolean partial;
 
   public Long getInterviewId() {
     return interviewId;
@@ -67,5 +72,21 @@ public class EmailReportVO {
 
   public void setOtherFindings(List<IndividualFindingVO> otherFindings) {
     this.otherFindings = otherFindings;
+  }
+
+  public List<IndividualFindingVO> getAssessedAgents() {
+    return assessedAgents;
+  }
+
+  public void setAssessedAgents(List<IndividualFindingVO> assessedAgents) {
+    this.assessedAgents = assessedAgents;
+  }
+
+  public boolean isPartial() {
+    return partial;
+  }
+
+  public void setPartial(boolean partial) {
+    this.partial = partial;
   }
 }

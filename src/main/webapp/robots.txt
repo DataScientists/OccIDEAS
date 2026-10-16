@@ -1,0 +1,4 @@
+# OccIDEAS is a private research application - nothing here should be crawled or indexed.
+# Note: this is honoured only by well-behaved crawlers; it does not block malicious bots.
+User-agent: *
+Disallow: /

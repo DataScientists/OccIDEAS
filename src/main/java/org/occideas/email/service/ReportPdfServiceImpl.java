@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * unreliable for this content.
  *
  * Mirrors the on-screen calibrated report (see individualReport.html): a verdict driven by
- * the highest level found (flagged/medium/low/clear), the findings at that level, and any
+ * the highest level found (flagged/medium/low/clear), an "agents assessed" table, the findings at that level, and any
  * lower-level findings as "also identified". This is deliberately not the full technical breakdown
  * (all rule levels/conditions) - that remains available to the employer separately.
  */
@@ -73,6 +73,7 @@ public class ReportPdfServiceImpl implements ReportPdfService {
 
     appendHeader(sb, reportData);
     appendVerdict(sb, reportData);
+    appendAssessedAgents(sb, reportData);
 
     List<IndividualFindingVO> highFindings = reportData.getHighFindings();
     if (highFindings != null && !highFindings.isEmpty()) {
@@ -152,6 +153,28 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       sb.append("<span class=\"noted-name\">").append(escape(finding.getAgentName())).append("</span>");
       sb.append("<p class=\"noted-text\">").append(escape(finding.getText())).append("</p>");
       sb.append("</div>");
+    }
+  }
+
+  // Every agent the assessment covers with its status - same as the on-screen "Agents assessed" table.
+  private void appendAssessedAgents(StringBuilder sb, EmailReportVO reportData) {
+    List<IndividualFindingVO> rows = reportData.getAssessedAgents();
+    if (rows == null || rows.isEmpty()) {
+      return;
+    }
+    sb.append("<h1>Agents Assessed</h1>");
+    sb.append("<p class=\"section-note\">The hazards this assessment covers, and your estimated exposure to "
+      + "each based on your answers.</p>");
+    sb.append("<table class=\"assessed\"><thead><tr><th>Agent</th><th>Estimated exposure</th></tr></thead><tbody>");
+    for (IndividualFindingVO row : rows) {
+      sb.append("<tr><td class=\"assessed-name\">").append(escape(row.getAgentName())).append("</td>");
+      sb.append("<td><span class=\"assessed-dot assessed-").append(escape(row.getLevel())).append("\"></span>")
+        .append(escape(row.getText())).append("</td></tr>");
+    }
+    sb.append("</tbody></table>");
+    if (reportData.isPartial()) {
+      sb.append("<p class=\"section-note\">Some questions weren't answered, so \u201cNo exposure identified\u201d "
+        + "may mean the questions about that agent weren't reached.</p>");
     }
   }
 
@@ -254,6 +277,16 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".noted-empty { font-size: 9pt; color: #8b8c80; }"
       + ".disclaimer { margin-top: 16px; padding: 8px 12px; background-color: #edf2f5; border-radius: 4px; font-size: 8pt; color: #5b5c53; }"
       + ".disclaimer strong { color: #2e7d95; }"
-      + ".participant-id { margin-top: 16px; font-size: 9pt; color: #5b5c53; }";
+      + ".participant-id { margin-top: 16px; font-size: 9pt; color: #5b5c53; }"
+      + ".assessed { width: 100%; border-collapse: collapse; border: 1px solid #edf2f5; font-size: 9pt; }"
+      + ".assessed th { padding: 4px 8px; background-color: #f5f8fa; text-align: left; font-size: 8.5pt; color: #5b5c53; }"
+      + ".assessed td { padding: 4px 8px; border-top: 1px solid #edf2f5; vertical-align: top; }"
+      + ".assessed-name { font-weight: bold; }"
+      + ".assessed-dot { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border-radius: 4px; }"
+      + ".assessed-probHigh { background-color: #b3452f; }"
+      + ".assessed-probMedium { background-color: #b8752b; }"
+      + ".assessed-probLow { background-color: #a68a2c; }"
+      + ".assessed-unknown { background-color: #b9c2c8; }"
+      + ".assessed-none { background-color: #3f7a5c; }";
   }
 }

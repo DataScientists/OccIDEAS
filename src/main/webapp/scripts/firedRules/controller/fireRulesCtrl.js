@@ -1699,7 +1699,7 @@
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;
       $scope.siManualReviewAgents = $scope.siAssessorMode ? summary.manualReviewAgents : [];
-      $scope.siNotIdentifiedAgents = summary.notIdentifiedAgents;
+      $scope.siAssessedAgents = summary.assessedAgents;
     }
 
     $scope.siHighlightCondition = function(cond) {

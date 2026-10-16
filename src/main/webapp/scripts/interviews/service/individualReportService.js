@@ -59,10 +59,22 @@
     // manualReviewAgents lists the agents behind those unknown-level rules. It's not part of the
     // participant-facing report; callers with an assessor audience (the fired rules page) can surface it.
     //
-    // options.allStudyAgents (the full study agent list, AgentsService.getStudyAgents) gives
-    // notIdentifiedAgents: study agents with no high/medium/low finding and no unknown-level rule -
-    // an unknown means the rules couldn't decide, which isn't the same as nothing identified.
+    // assessedAgents is the "Agents assessed" summary table: one row per agent - every study agent
+    // (options.allStudyAgents, AgentsService.getStudyAgents) plus any other agent a reported rule fired
+    // for - with the agent's top level. A study agent nothing fired for is 'none' (no exposure
+    // identified - not "no exposure", since this is an estimate). An agent with only unknown-level
+    // rules is 'unknown': the rules couldn't decide, which isn't the same as nothing identified.
     var SEVERITY_RANK = {probHigh: 3, probMedium: 2, probLow: 1};
+
+    // Same wording as the verdicts - keep in sync with individualReport.html and ReportPdfServiceImpl.
+    var ASSESSED_STATUS = {
+      probHigh: 'Likely above the exposure limit',
+      probMedium: 'Likely below the exposure limit',
+      probLow: 'Estimated to be well below the exposure limit',
+      unknown: 'Couldn’t be estimated from your answers',
+      none: 'No exposure identified'
+    };
+    var ASSESSED_ORDER = {probHigh: 0, probMedium: 1, probLow: 2, unknown: 3, none: 4};
 
     this.build = function(firedRules, studyAgents, options) {
       var publicView = !!(options && options.publicView);
@@ -177,18 +189,27 @@
         }
       });
 
-      // Any rule at these levels means the agent wasn't cleared (unknown = couldn't be decided).
-      var notClearedAgentIds = {};
+      var assessedByAgent = {};
+      _.each(options && options.allStudyAgents, function(agent) {
+        assessedByAgent[agent.idAgent] = {agentName: agent.name, level: 'none'};
+      });
       _.each(reportedRules, function(rule) {
-        if (SEVERITY_RANK[rule.level] || rule.level === 'probUnknown' || rule.level === 'possUnknown') {
-          notClearedAgentIds[rule.agentId] = true;
+        var row = assessedByAgent[rule.agentId];
+        if (!row) {
+          row = assessedByAgent[rule.agentId] = {agentName: agentNameFor(rule), level: 'none'};
+        }
+        if (SEVERITY_RANK[rule.level]) {
+          if (SEVERITY_RANK[rule.level] > (SEVERITY_RANK[row.level] || 0)) {
+            row.level = rule.level;
+          }
+        } else if ((rule.level === 'probUnknown' || rule.level === 'possUnknown') && row.level === 'none') {
+          row.level = 'unknown';
         }
       });
-      var notIdentified = _.sortBy(_.uniq(_.map(_.filter(options && options.allStudyAgents, function(agent) {
-        return !notClearedAgentIds[agent.idAgent];
-      }), 'name')), function(name) {
-        return name.toLowerCase();
-      });
+      var assessedAgents = _.sortBy(_.map(_.values(assessedByAgent), function(row) {
+        row.status = ASSESSED_STATUS[row.level];
+        return row;
+      }), [function(row) { return ASSESSED_ORDER[row.level]; }, function(row) { return row.agentName.toLowerCase(); }]);
 
       // The verdict follows the highest level found across all agents: 'flagged' (probHigh - likely
       // above the exposure limit), 'medium' (probMedium - likely below it), 'low' (probLow - estimated
@@ -208,7 +229,7 @@
         highFindings: high,
         otherFindings: other,
         manualReviewAgents: _.uniq(manualReviewNames),
-        notIdentifiedAgents: notIdentified
+        assessedAgents: assessedAgents
       };
     };
   }

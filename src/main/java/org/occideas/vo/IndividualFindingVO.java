@@ -4,8 +4,8 @@ public class IndividualFindingVO {
 
   private String agentName;
   private String text;
-  // Only meaningful for "other findings" (probMedium/probLow) - used to pick the severity
-  // color for this finding's mark in the PDF. Unused/ignored for high findings.
+  // Only meaningful for "other findings" (probMedium/probLow) and assessed agent rows
+  // (also probHigh/unknown/none) - used to pick the severity color in the PDF. Unused for high findings.
   private String level;
 
   public String getAgentName() {

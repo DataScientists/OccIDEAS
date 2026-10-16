@@ -5,7 +5,7 @@
   siManualReviewAgents (assessor-facing note, never set on the participant flow),
   siShowNonStudyBadge (flags findings whose agent isn't a study agent; assessor page only),
   siPartial (interview was stopped before the end, i.e. participant status Partial),
-  siNotIdentifiedAgents (study agents nothing was found for; listed only when nothing at all was found),
+  siAssessedAgents (the "Agents assessed" table - every study agent plus any other agent with a finding, with its status),
   siEmployerShared (participant entered an employer code and consented to OccIDEAS reporting to their employer),
   siTrial (participant entered the TRIAL code - no employer, answers may be used to test and improve OccIDEAS),
   siParticipantId (public flow only - the participant's reference, for privacy requests).
@@ -52,6 +52,29 @@
   <p class="si-verdict-body" ng-if="siVerdictState === 'clear'">
     Based on your answers, the assessment didn't identify exposure to any of the hazards it covers.
     This is an estimate from what you told us, not a guarantee that your work involves no exposure.
+  </p>
+</div>
+
+<!-- Every agent the assessment covers, so the participant can see what they were assessed for - not just what was found. -->
+<div ng-if="siAssessedAgents.length > 0">
+  <h2 class="si-section-title">Agents assessed</h2>
+  <p class="si-section-note">
+    The hazards this assessment covers, and your estimated exposure to each based on your answers.
+  </p>
+  <table class="si-assessed">
+    <thead>
+      <tr><th>Agent</th><th>Estimated exposure</th></tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in siAssessedAgents">
+        <td class="si-assessed-name">{{row.agentName}}</td>
+        <td><span class="si-assessed-dot" ng-class="'si-assessed-' + row.level"></span>{{row.status}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="si-section-note si-assessed-partial" ng-if="siPartial">
+    Some questions weren't answered, so &ldquo;No exposure identified&rdquo; may mean the questions about that
+    agent weren't reached.
   </p>
 </div>
 
@@ -148,12 +171,6 @@
   </div>
 </div>
 
-<div ng-if="siVerdictState === 'clear' && siNotIdentifiedAgents.length > 0">
-  <h2 class="si-section-title">No exposures to the following hazards were identified from your answers:</h2>
-  <ul class="si-not-identified">
-    <li ng-repeat="agentName in siNotIdentifiedAgents">{{agentName}}</li>
-  </ul>
-</div>
 
 <!--
   Employer-code participants only. Shown after the result so it reads as "what happens next" rather than

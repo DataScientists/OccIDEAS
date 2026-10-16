@@ -642,20 +642,48 @@ md-toolbar.si-toolbar .badge {
 
 .si-nav-finish:hover { color: #2e7d95; }
 
-/* "No exposures identified" hazard list - multi-column so a long study agent list stays compact */
-.si-not-identified {
-  columns: 3 180px;
-  column-gap: 24px;
-  margin: 8px 0 0;
-  padding-left: 18px;
-  font-size: 14px;
+/* "Agents assessed" summary table - every agent covered, with its estimated exposure */
+.si-assessed {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #edf2f5;
+  font-size: 13.5px;
+  color: #23241f;
+}
+
+.si-assessed th {
+  padding: 8px 12px;
+  background: #f5f8fa;
+  border-bottom: 1px solid #edf2f5;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
   color: #5b5c53;
 }
 
-.si-not-identified li {
-  break-inside: avoid;
-  margin-bottom: 4px;
+.si-assessed td {
+  padding: 8px 12px;
+  border-top: 1px solid #edf2f5;
+  vertical-align: top;
 }
+
+.si-assessed-name { font-weight: 600; }
+
+.si-assessed-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 7px;
+  border-radius: 50%;
+}
+
+.si-assessed-probHigh { background: #b3452f; }
+.si-assessed-probMedium { background: #b8752b; }
+.si-assessed-probLow { background: #a68a2c; }
+.si-assessed-unknown { background: #b9c2c8; }
+.si-assessed-none { background: #3f7a5c; }
+
+.si-assessed-partial { margin-top: 8px; }
 
 /* Title at the top of the startInterview front screen */
 .si-intro {
