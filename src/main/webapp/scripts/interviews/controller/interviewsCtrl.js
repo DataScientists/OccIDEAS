@@ -1111,10 +1111,6 @@
 
     };
 
-    $scope.startNewInterview = function() {
-      $state.go('startInterview');
-    };
-
     $scope.downloadReport = function() {
       $scope.siReportDownloading = true;
 
@@ -1411,8 +1407,11 @@
         if(response.status === 200) {
           participant = response.data;
           // Only true if the backend actually applied the code - drives the report's "shared with your employer" note.
-          $scope.siEmployerShared = !!(employerCode && participant.reference
+          var codeApplied = !!(employerCode && participant.reference
             && participant.reference.indexOf(employerCode) === 0);
+          // TRIAL has no employer behind it - the report shows a trial note instead.
+          $scope.siTrial = codeApplied && employerCode.toUpperCase() === 'TRIAL';
+          $scope.siEmployerShared = codeApplied && !$scope.siTrial;
           // Shown on the public report so the participant can quote it in a privacy request (privacy.html).
           if(isPublicFlow) {
             $scope.siParticipantId = participant.reference;

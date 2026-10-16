@@ -46,6 +46,12 @@
         ($scope.employerCodeStatus === 'valid' && $scope.consent.employerSharing);
     };
 
+    // TRIAL is a shared code (also in startInterviewEmployerCodes) for people trying OccIDEAS out - there's no
+    // employer behind it, so the start page and report describe a trial instead of sharing with an employer.
+    $scope.isTrialCode = function() {
+      return $scope.employerCodeStatus === 'valid' && ($scope.employerCode || '').toUpperCase() === 'TRIAL';
+    };
+
     $scope.employerCodeChanged = function() {
       $scope.employerCodeStatus = null;
       $scope.consent.employerSharing = false;

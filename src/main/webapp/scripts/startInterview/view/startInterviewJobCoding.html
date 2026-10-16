@@ -20,7 +20,7 @@
           Sorry, this questionnaire doesn't yet cover the kind of work you described, so we can't estimate
           your exposures.
         </p>
-        <p ng-if="employerCodeStatus === 'valid'">
+        <p ng-if="employerCodeStatus === 'valid' && !isTrialCode()">
           As you were given an employer code, please let the person at your workplace who gave it to you know,
           so they can arrange another way to assess your work.
         </p>
@@ -61,7 +61,20 @@
                placeholder="e.g. ABCDE"
                type="text"/>
         <div class="si-code-status si-code-valid" ng-if="employerCodeStatus === 'valid'">&#10003; Code accepted</div>
-        <div class="si-employer-notice" ng-if="employerCodeStatus === 'valid'">
+        <div class="si-employer-notice" ng-if="isTrialCode()">
+          <strong>Because you've entered a trial code:</strong>
+          <ul>
+            <li>This is a trial of OccIDEAS, so you can see how the questionnaire and your report work</li>
+            <li>Your answers may be used to test and improve OccIDEAS</li>
+            <li>Your answers won't be shared with any employer</li>
+            <li>If you'd rather your answers weren't used this way, you can choose not to take part</li>
+          </ul>
+          <label class="si-consent">
+            <input ng-model="consent.employerSharing" type="checkbox"/>
+            I understand this is a trial and my answers may be used to test and improve OccIDEAS.
+          </label>
+        </div>
+        <div class="si-employer-notice" ng-if="employerCodeStatus === 'valid' && !isTrialCode()">
           <strong>Because you've entered an employer code:</strong>
           <ul>
             <li>Your employer may see your answers</li>

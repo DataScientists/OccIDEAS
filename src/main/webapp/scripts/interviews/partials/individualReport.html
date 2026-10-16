@@ -7,6 +7,7 @@
   siPartial (interview was stopped before the end, i.e. participant status Partial),
   siNotIdentifiedAgents (study agents nothing was found for; listed only when nothing at all was found),
   siEmployerShared (participant entered an employer code and consented to OccIDEAS reporting to their employer),
+  siTrial (participant entered the TRIAL code - no employer, answers may be used to test and improve OccIDEAS),
   siParticipantId (public flow only - the participant's reference, for privacy requests).
   Included by the startInterview report (interview.html) and the fired rules page (fireRules.html).
 -->
@@ -163,7 +164,7 @@
 <div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState === 'flagged'">
   <strong>What happens next</strong>
   <p>
-    Because you entered an employer code, OccIDEAS will let your employer know that your estimated exposure
+    As agreed when you started, OccIDEAS will let your employer know that your estimated exposure
     to one or more hazards was above the exposure limit, so they can take steps to reduce it for you and your
     co-workers. You don't need to raise this with them yourself.
   </p>
@@ -175,6 +176,10 @@
 <div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState !== 'flagged'">
   As agreed, your results will be included in OccIDEAS's report to your employer. We don't collect your name
   or contact details, and your employer won't be told which results are yours.
+</div>
+
+<div class="si-employer-shared-note" ng-if="siTrial">
+  As this was a trial, your answers may be used to test and improve OccIDEAS. They won't be shared with any employer.
 </div>
 
 <p class="si-participant-id" ng-if="siParticipantId">
