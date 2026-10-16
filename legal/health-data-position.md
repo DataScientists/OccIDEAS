@@ -46,12 +46,12 @@ at all. Confirmed 25 September 2026:
 | Rule result | Report state | Wording |
 | --- | --- | --- |
 | `probHigh` | High ("flagged") | Your exposure is **likely to be above** the exposure limit |
-| `probMedium` | Medium | Your exposure is **likely to be below** the exposure limit |
+| `probMedium` | Medium ("Moderate" to participants) | You have **some exposure, but it is likely to be below** the exposure limit |
 | `probLow` | Low | Your exposure is **estimated to be well below** the exposure limit |
 
 - **probMedium** leaves some chance that exposure is above the limit, so a Medium result must not sound
-  reassuring. The report says it "may still warrant attention" and suggests talking to a supervisor or
-  OHS representative.
+  reassuring. The report says "you have some exposure" and that it "may still warrant attention", and
+  suggests talking to a supervisor or health and safety representative.
 - **probLow** says "estimated to be" rather than "is", because it is the same kind of estimate as the
   others. It must not read as a measurement or a guarantee.
 
@@ -75,6 +75,13 @@ We follow the advisor's guide for all wording that participants see:
   describe them differently. A partly completed interview is labelled as partial.
 - **General hazard information is kept separate from the participant's own result.** Health-effect
   statements about an agent are general background, not conclusions about the individual.
+
+- **Same definitions as occideas.com.** The report's "What the levels mean" key (under the Agents assessed
+  table, on screen and in the PDF) uses the definitions from the occideas.com home page. Its extra "Couldn't be
+  estimated" line only shows while unknown-level rules exist, and they are being removed, so the site
+  doesn't need it. Change the two together. Checked 17 October 2026; the site still
+  needs two edits to match: "found no exposure" should be "No exposure was identified", and the High advice
+  should also mention a doctor or other health professional.
 
 ## 4. How participants can take part
 
@@ -236,7 +243,7 @@ Status as of 25 September 2026.
 
 **Report headings**
 > - High: Your exposure to one or more hazards is likely to be above the exposure limit
-> - Medium: Your exposure is likely to be below the exposure limit
+> - Medium: You have some exposure, but it is likely to be below the exposure limit
 > - Low: Your exposure is estimated to be well below the exposure limit
 > - Nothing found: No exposures were identified from your answers
 
@@ -259,6 +266,24 @@ Status as of 25 September 2026.
 **Report: other results, employer code**
 > As agreed, your results will be included in OccIDEAS's report to your employer. We don't collect your
 > name or contact details, and your employer won't be told which results are yours.
+
+**Report: High finding action line**
+> Talk to your supervisor or health and safety representative about this finding, and see the guidance from
+> your local work health and safety regulator.
+
+**Report: "What the levels mean" key (all results, under the Agents assessed table)**
+> - High: your exposure is likely to be above the exposure limit.
+> - Moderate: you have some exposure, but it is likely to be below the exposure limit.
+> - Low: your exposure is estimated to be well below the exposure limit. Low exposure isn't the same as no
+>   exposure.
+> - No exposure identified: your answers didn't point to exposure to this hazard. This is an estimate, not a
+>   guarantee.
+> - Couldn't be estimated: your answers didn't give enough information to estimate this exposure.
+>   (Shown only when an agent has this status. The unknown-level rules behind it are being removed.)
+>
+> These are estimates from your answers, compared with the exposure limit. They are not measurements. For
+> some hazards, including those that can cause cancer, it's best to keep exposure as low as possible, even
+> below the limit.
 
 **Report: no exposures identified**
 > **No exposures were identified from your answers**

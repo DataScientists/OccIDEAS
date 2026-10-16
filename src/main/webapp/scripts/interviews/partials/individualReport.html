@@ -23,7 +23,7 @@
 <div class="si-verdict" ng-class="'si-verdict-' + siVerdictState">
   <div class="si-verdict-eyebrow">Result</div>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'flagged'">Your exposure to one or more hazards is likely to be above the exposure limit</h1>
-  <h1 class="si-verdict-title" ng-if="siVerdictState === 'medium'">Your exposure is likely to be below the exposure limit</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'medium'">You have some exposure, but it is likely to be below the exposure limit</h1>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'low'">Your exposure is estimated to be well below the exposure limit</h1>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'clear'">No exposures were identified from your answers</h1>
   <p class="si-verdict-body">
@@ -41,9 +41,9 @@
     not mean that harm to your health has been found.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'medium'">
-    Based on your answers, your exposure to the agents below is likely to be below the exposure limit.
-    Because this is an estimate, it may still warrant attention. Please talk to your supervisor or OHS
-    representative about these findings.
+    Based on your answers, you have some exposure to the agents below, but it is likely to be below the
+    exposure limit. Because this is an estimate, it may still warrant attention. Please talk to your
+    supervisor or health and safety representative about these findings.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'low'">
     Based on your answers, your exposure to the agents below is estimated to be well below the
@@ -76,6 +76,21 @@
     Some questions weren't answered, so &ldquo;No exposure identified&rdquo; may mean the questions about that
     agent weren't reached.
   </p>
+
+  <!-- Key for the status column. Same definitions as occideas.com - keep the two in sync. -->
+  <h3 class="si-section-subtitle">What the levels mean</h3>
+  <ul class="si-levels">
+    <li><span class="si-assessed-dot si-assessed-probHigh"></span><strong>High:</strong> your exposure is likely to be above the exposure limit.</li>
+    <li><span class="si-assessed-dot si-assessed-probMedium"></span><strong>Moderate:</strong> you have some exposure, but it is likely to be below the exposure limit.</li>
+    <li><span class="si-assessed-dot si-assessed-probLow"></span><strong>Low:</strong> your exposure is estimated to be well below the exposure limit. Low exposure isn't the same as no exposure.</li>
+    <li><span class="si-assessed-dot si-assessed-none"></span><strong>No exposure identified:</strong> your answers didn't point to exposure to this hazard. This is an estimate, not a guarantee.</li>
+    <li ng-if="(siAssessedAgents | filter:{level:'unknown'}).length > 0"><span class="si-assessed-dot si-assessed-unknown"></span><strong>Couldn't be estimated:</strong> your answers didn't give enough information to estimate this exposure.</li>
+  </ul>
+  <p class="si-section-note">
+    These are estimates from your answers, compared with the exposure limit. They are not measurements.
+    For some hazards, including those that can cause cancer, it's best to keep exposure as low as possible,
+    even below the limit.
+  </p>
 </div>
 
 <div ng-if="siVerdictState === 'flagged'">
@@ -88,7 +103,7 @@
       <span class="si-nonstudy-badge" ng-if="siShowNonStudyBadge && !finding.studyAgent"
               title="This agent isn't in the study's agent list, so it isn't shown in the fired rules grid.">Not a study agent</span>
       <p class="si-finding-rationale" ng-if="finding.rationale">{{finding.rationale}}</p>
-      <p class="si-finding-action">Talk to your supervisor or OH&amp;S representative about this finding.</p>
+      <p class="si-finding-action">Talk to your supervisor or health and safety representative about this finding, and see the guidance from your local work health and safety regulator.</p>
       <div class="si-condition-dots-wrap" ng-if="siAssessorMode && finding.conditions.length > 0">
         <span class="si-condition-dots-label">Click a dot to see the answer that triggered this:</span>
         <div class="si-condition-dots">
@@ -114,8 +129,8 @@
     <h3 class="si-section-subtitle" ng-if="siVerdictState === 'flagged'">Moderate</h3>
     <p class="si-section-note">
       Below is a list of recognised occupational hazards that your answers suggest may be present in
-      your workplace. Your exposure to these is likely to be below the exposure limit. Please talk to
-      your supervisor or OHS representative about these findings.
+      your workplace. You have some exposure to these, but it is likely to be below the exposure limit.
+      Please talk to your supervisor or health and safety representative about these findings.
     </p>
     <div class="si-noted">
       <div class="si-noted-item" ng-repeat="finding in siOtherFindings | filter:{level:'probMedium'}">
@@ -206,7 +221,7 @@
 <div class="si-disclaimer">
   <strong>This is an estimate of your exposure at work, not a health assessment or medical diagnosis.</strong>
   It's based only on what you told us about your job, and it can't account for everything.
-  If anything here concerns you, the best next step is talking to your OH&amp;S representative,
+  If anything here concerns you, the best next step is talking to your health and safety representative,
   supervisor, or a doctor.
 </div>
 

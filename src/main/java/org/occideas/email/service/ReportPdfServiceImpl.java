@@ -85,7 +85,8 @@ public class ReportPdfServiceImpl implements ReportPdfService {
         if (finding.getText() != null && !finding.getText().isEmpty()) {
           sb.append("<p class=\"finding-rationale\">").append(escape(finding.getText())).append("</p>");
         }
-        sb.append("<p class=\"finding-action\">Talk to your supervisor or OH&amp;S representative about this finding.</p>");
+        sb.append("<p class=\"finding-action\">Talk to your supervisor or health and safety representative about "
+          + "this finding, and see the guidance from your local work health and safety regulator.</p>");
         sb.append("</div>");
       }
     }
@@ -107,8 +108,9 @@ public class ReportPdfServiceImpl implements ReportPdfService {
         sb.append("<h2>Moderate</h2>");
       }
       sb.append("<p class=\"section-note\">Below is a list of recognised occupational hazards that your "
-        + "answers suggest may be present in your workplace. Your exposure to these is likely to be below the "
-        + "exposure limit. Please talk to your supervisor or OHS representative about these findings.</p>");
+        + "answers suggest may be present in your workplace. You have some exposure to these, but it is likely "
+        + "to be below the exposure limit. Please talk to your supervisor or health and safety representative "
+        + "about these findings.</p>");
       appendNotedItems(sb, mediumFindings, "");
     }
     if (!lowFindings.isEmpty()) {
@@ -133,7 +135,7 @@ public class ReportPdfServiceImpl implements ReportPdfService {
 
     sb.append("<div class=\"disclaimer\"><strong>This is an estimate of your exposure at work, not a health "
       + "assessment or medical diagnosis.</strong> It's based only on what you told us about your job, and it can't account for "
-      + "everything. If anything here concerns you, the best next step is talking to your OH&amp;S "
+      + "everything. If anything here concerns you, the best next step is talking to your health and safety "
       + "representative, supervisor, or a doctor.</div>");
 
     sb.append("</body></html>");
@@ -176,6 +178,28 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       sb.append("<p class=\"section-note\">Some questions weren't answered, so \u201cNo exposure identified\u201d "
         + "may mean the questions about that agent weren't reached.</p>");
     }
+    // Key for the status column - same as individualReport.html and occideas.com.
+    sb.append("<h2>What the levels mean</h2><ul class=\"levels\">");
+    appendLevel(sb, "probHigh", "High:", "your exposure is likely to be above the exposure limit.");
+    appendLevel(sb, "probMedium", "Moderate:", "you have some exposure, but it is likely to be below the exposure limit.");
+    appendLevel(sb, "probLow", "Low:", "your exposure is estimated to be well below the exposure limit. Low "
+      + "exposure isn't the same as no exposure.");
+    appendLevel(sb, "none", "No exposure identified:", "your answers didn't point to exposure to this hazard. "
+      + "This is an estimate, not a guarantee.");
+    // Only explained when a row has it - unknown-level rules are being removed, after which it never appears.
+    if (rows.stream().anyMatch(row -> "unknown".equals(row.getLevel()))) {
+      appendLevel(sb, "unknown", "Couldn't be estimated:", "your answers didn't give enough information to "
+        + "estimate this exposure.");
+    }
+    sb.append("</ul>");
+    sb.append("<p class=\"section-note\">These are estimates from your answers, compared with the exposure limit. "
+      + "They are not measurements. For some hazards, including those that can cause cancer, it's best to keep "
+      + "exposure as low as possible, even below the limit.</p>");
+  }
+
+  private void appendLevel(StringBuilder sb, String level, String label, String text) {
+    sb.append("<li><span class=\"assessed-dot assessed-").append(level).append("\"></span><strong>")
+      .append(label).append("</strong> ").append(text).append("</li>");
   }
 
   private void appendHeader(StringBuilder sb, EmailReportVO reportData) {
@@ -213,10 +237,10 @@ public class ReportPdfServiceImpl implements ReportPdfService {
           + "needed. This result does not mean that harm to your health has been found.";
         break;
       case "medium":
-        title = "Your exposure is likely to be below the exposure limit";
-        body = "Based on your answers, your exposure to the agents below is likely to be below the exposure "
-          + "limit. Because this is an estimate, it may still warrant attention. Please talk to your supervisor "
-          + "or OHS representative about these findings.";
+        title = "You have some exposure, but it is likely to be below the exposure limit";
+        body = "Based on your answers, you have some exposure to the agents below, but it is likely to be below "
+          + "the exposure limit. Because this is an estimate, it may still warrant attention. Please talk to your "
+          + "supervisor or health and safety representative about these findings.";
         break;
       case "low":
         title = "Your exposure is estimated to be well below the exposure limit";
@@ -287,6 +311,8 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".assessed-probMedium { background-color: #b8752b; }"
       + ".assessed-probLow { background-color: #a68a2c; }"
       + ".assessed-unknown { background-color: #b9c2c8; }"
-      + ".assessed-none { background-color: #3f7a5c; }";
+      + ".assessed-none { background-color: #3f7a5c; }"
+      + ".levels { margin: 4px 0 6px; padding-left: 0; list-style-type: none; font-size: 9pt; color: #5b5c53; }"
+      + ".levels li { margin: 0 0 3px; }";
   }
 }

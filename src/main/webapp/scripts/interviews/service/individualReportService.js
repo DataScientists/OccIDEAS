@@ -10,8 +10,8 @@
     // No fallback exists for probHigh - an evidence claim shouldn't be fabricated generically,
     // so a probHigh finding simply shows no rationale line until an admin writes one.
     var DEFAULT_RATIONALE_TEXT = {
-      probMedium: 'Based on your answers, your exposure to {agent} is likely to be below the exposure ' +
-        'limit. This is an estimate from what you told us, not a measurement.',
+      probMedium: 'Based on your answers, you have some exposure to {agent}, but it is likely to be below ' +
+        'the exposure limit. This is an estimate from what you told us, not a measurement.',
       probLow: 'Based on your answers, your exposure to {agent} is estimated to be well below the ' +
         'exposure limit. This doesn’t mean there is no exposure.'
     };
@@ -23,7 +23,7 @@
     // above it already says the exposure is likely above the limit and recommends a health professional.
     var PUBLIC_LEVEL_TEXT = {
       probHigh: '',
-      probMedium: ' Based on your answers, your exposure is likely to be below the exposure limit. ' +
+      probMedium: ' Based on your answers, you have some exposure, but it is likely to be below the exposure limit. ' +
         'This is an estimate from what you told us, not a measurement.',
       probLow: ' Based on your answers, your exposure is estimated to be well below the exposure limit. ' +
         'This doesn’t mean there is no exposure.'
@@ -66,11 +66,12 @@
     // rules is 'unknown': the rules couldn't decide, which isn't the same as nothing identified.
     var SEVERITY_RANK = {probHigh: 3, probMedium: 2, probLow: 1};
 
-    // Same wording as the verdicts - keep in sync with individualReport.html and ReportPdfServiceImpl.
+    // Same wording as the verdicts and the "What the levels mean" key (which matches occideas.com) -
+    // keep in sync with individualReport.html and ReportPdfServiceImpl.
     var ASSESSED_STATUS = {
-      probHigh: 'Likely above the exposure limit',
-      probMedium: 'Likely below the exposure limit',
-      probLow: 'Estimated to be well below the exposure limit',
+      probHigh: 'High: likely above the exposure limit',
+      probMedium: 'Moderate: some exposure, likely below the exposure limit',
+      probLow: 'Low: estimated to be well below the exposure limit',
       unknown: 'Couldn’t be estimated from your answers',
       none: 'No exposure identified'
     };

@@ -685,6 +685,19 @@ md-toolbar.si-toolbar .badge {
 
 .si-assessed-partial { margin-top: 8px; }
 
+/* "What the levels mean" key under the Agents assessed table */
+.si-levels {
+  margin: 4px 0 8px;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5b5c53;
+}
+
+.si-levels li { margin: 0 0 4px; }
+.si-levels strong { color: #23241f; }
+
 /* Title at the top of the startInterview front screen */
 .si-intro {
   margin-bottom: 22px;
