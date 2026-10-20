@@ -1127,7 +1127,8 @@
         assessedAgents: _.map($scope.siAssessedAgents, function(row) {
           return { agentName: row.agentName, text: row.status, level: row.level };
         }),
-        partial: !!$scope.siPartial
+        partial: !!$scope.siPartial,
+        showDemoNote: !!($scope.siParticipantId && !$scope.siEmployerShared)
       }).then(function(response) {
         $scope.siReportDownloading = false;
         var blob = new Blob([response.data], { type: 'application/pdf' });

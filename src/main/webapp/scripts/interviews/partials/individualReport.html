@@ -226,6 +226,14 @@
   or supervisor.
 </div>
 
+<!-- Public flow only, and not for employer-code participants: their employer is already a client. -->
+<div class="si-demo-note" ng-if="siParticipantId && !siEmployerShared">
+  <strong>Want a more detailed assessment for your workplace?</strong>
+  OccIDEAS can assess exposure to a wider range of chemicals and other workplace hazards. Visit
+  <a href="https://www.occideas.com" rel="noopener" target="_blank">occideas.com</a> to find out more or
+  book a demonstration.
+</div>
+
 <div class="si-disclaimer" ng-if="siManualReviewAgents.length > 0">
   <strong>Assessor note:</strong>
   {{siManualReviewAgents.length}} {{siManualReviewAgents.length === 1 ? 'agent needs' : 'agents need'}}

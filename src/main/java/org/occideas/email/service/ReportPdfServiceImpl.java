@@ -138,6 +138,12 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + "everything. If anything here concerns you, the best next step is talking to your health and safety "
       + "representative or supervisor.</div>");
 
+    if (reportData.isShowDemoNote()) {
+      sb.append("<div class=\"demo-note\"><strong>Want a more detailed assessment for your workplace?</strong> "
+        + "OccIDEAS can assess exposure to a wider range of chemicals and other workplace hazards. Visit "
+        + "<a href=\"https://www.occideas.com\">occideas.com</a> to find out more or book a demonstration.</div>");
+    }
+
     sb.append("</body></html>");
     return sb.toString();
   }
@@ -302,6 +308,9 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".noted-empty { font-size: 9pt; color: #8b8c80; }"
       + ".disclaimer { margin-top: 16px; padding: 8px 12px; background-color: #edf2f5; border-radius: 4px; font-size: 8pt; color: #5b5c53; }"
       + ".disclaimer strong { color: #2e7d95; }"
+      + ".demo-note { margin-top: 8px; padding: 8px 12px; border: 1px solid #d5e3ea; border-radius: 4px; font-size: 8pt; color: #5b5c53; }"
+      + ".demo-note strong { color: #2e7d95; }"
+      + ".demo-note a { color: #3d9cbf; }"
       + ".participant-id { margin-top: 16px; font-size: 9pt; color: #5b5c53; }"
       + ".assessed { width: 100%; border-collapse: collapse; border: 1px solid #edf2f5; font-size: 9pt; }"
       + ".assessed th { padding: 4px 8px; background-color: #f5f8fa; text-align: left; font-size: 8.5pt; color: #5b5c53; }"

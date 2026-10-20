@@ -299,6 +299,10 @@ Status as of 25 September 2026.
 > Based on your answers, the assessment didn't identify exposure to any of the hazards it covers. This is
 > an estimate from what you told us, not a guarantee that your work involves no exposure.
 
+**Report: demonstration note (public report, trial and private participants only; not shown with an employer code)**
+> **Want a more detailed assessment for your workplace?** OccIDEAS can assess exposure to a wider range of
+> chemicals and other workplace hazards. Visit occideas.com to find out more or book a demonstration.
+
 **Report disclaimer (all results)**
 > **This is an estimate of your exposure at work, not medical advice, a health assessment or a diagnosis.**
 > It's based only on what you told us about your job, and it can't account for everything. If anything here

@@ -25,6 +25,8 @@ public class EmailReportVO {
   private List<IndividualFindingVO> assessedAgents;
   // Interview was stopped before the end - adds a caveat under the agents assessed table.
   private boolean partial;
+  // "Book a demonstration" note at the end - public flow without an employer code (same rule as on screen).
+  private boolean showDemoNote;
 
   public Long getInterviewId() {
     return interviewId;
@@ -88,5 +90,13 @@ public class EmailReportVO {
 
   public void setPartial(boolean partial) {
     this.partial = partial;
+  }
+
+  public boolean isShowDemoNote() {
+    return showDemoNote;
+  }
+
+  public void setShowDemoNote(boolean showDemoNote) {
+    this.showDemoNote = showDemoNote;
   }
 }
