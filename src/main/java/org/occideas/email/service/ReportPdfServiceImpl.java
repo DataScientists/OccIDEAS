@@ -133,10 +133,10 @@ public class ReportPdfServiceImpl implements ReportPdfService {
         .append("</strong>. Keep this if you want to contact us about your data.</p>");
     }
 
-    sb.append("<div class=\"disclaimer\"><strong>This is an estimate of your exposure at work, not a health "
-      + "assessment or medical diagnosis.</strong> It's based only on what you told us about your job, and it can't account for "
+    sb.append("<div class=\"disclaimer\"><strong>This is an estimate of your exposure at work, not medical "
+      + "advice, a health assessment or a diagnosis.</strong> It's based only on what you told us about your job, and it can't account for "
       + "everything. If anything here concerns you, the best next step is talking to your health and safety "
-      + "representative, supervisor, or a doctor.</div>");
+      + "representative or supervisor.</div>");
 
     sb.append("</body></html>");
     return sb.toString();
@@ -232,9 +232,10 @@ public class ReportPdfServiceImpl implements ReportPdfService {
         body = "Based on your answers, your exposure to the agents below is likely to be above the exposure "
           + "limit used by the assessment. This is an estimate from your answers, not a measurement at your "
           + "workplace.";
-        recommendation = "<strong>We recommend you talk to a doctor or other qualified health professional and "
-          + "share this report with them,</strong> so they can decide whether any health check or follow-up is "
-          + "needed. This result does not mean that harm to your health has been found.";
+        recommendation = "<strong>We recommend you share this report with your supervisor or health and safety "
+          + "representative, so your exposure can be reduced, and with a doctor or other qualified health "
+          + "professional,</strong> who can decide whether any health check or follow-up is needed. This result "
+          + "does not mean that harm to your health has been found.";
         break;
       case "medium":
         title = "You have some exposure, but it is likely to be below the exposure limit";

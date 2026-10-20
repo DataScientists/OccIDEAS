@@ -36,9 +36,10 @@
     used by the assessment. This is an estimate from your answers, not a measurement at your workplace.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'flagged'">
-    <strong>We recommend you talk to a doctor or other qualified health professional and share this report
-    with them,</strong> so they can decide whether any health check or follow-up is needed. This result does
-    not mean that harm to your health has been found.
+    <strong>We recommend you share this report with your supervisor or health and safety representative,
+    so your exposure can be reduced, and with a doctor or other qualified health professional,</strong> who
+    can decide whether any health check or follow-up is needed. This result does not mean that harm to your
+    health has been found.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'medium'">
     Based on your answers, you have some exposure to the agents below, but it is likely to be below the
@@ -219,10 +220,10 @@
 </p>
 
 <div class="si-disclaimer">
-  <strong>This is an estimate of your exposure at work, not a health assessment or medical diagnosis.</strong>
+  <strong>This is an estimate of your exposure at work, not medical advice, a health assessment or a diagnosis.</strong>
   It's based only on what you told us about your job, and it can't account for everything.
-  If anything here concerns you, the best next step is talking to your health and safety representative,
-  supervisor, or a doctor.
+  If anything here concerns you, the best next step is talking to your health and safety representative
+  or supervisor.
 </div>
 
 <div class="si-disclaimer" ng-if="siManualReviewAgents.length > 0">

@@ -67,8 +67,10 @@ We follow the advisor's guide for all wording that participants see:
   claim a measured concentration, a confirmed exceedance, or a legal breach.
 - **"Exposure limit", never "safe limit".** Safe Work Australia says exposure standards are not a line
   between healthy and unhealthy workplaces.
-- **High result:** we *recommend* that the participant sees a qualified health professional and shares
-  their report with them, and we say this does not mean harm has been found.
+- **High result:** we *recommend* that the participant shares their report with their supervisor or health
+  and safety representative (to reduce exposure) and with a qualified health professional, and we say this
+  does not mean harm has been found. This is the only place we suggest seeing a doctor. Elsewhere we say the
+  questionnaire is not medical advice and point to workplace contacts (decided 20 October 2026).
 - **Medium and Low results:** we never say "safe", "harmless", "nothing to worry about" or "no
   follow-up needed".
 - **Not enough information / no exposure identified / Low** are three different results, and we
@@ -81,7 +83,8 @@ We follow the advisor's guide for all wording that participants see:
   estimated" line only shows while unknown-level rules exist, and they are being removed, so the site
   doesn't need it. Change the two together. Checked 17 October 2026; the site still
   needs two edits to match: "found no exposure" should be "No exposure was identified", and the High advice
-  should also mention a doctor or other health professional.
+  should also mention sharing the report with a supervisor or health and safety representative and with a
+  doctor or other health professional (the report wording changed 20 October 2026).
 
 ## 4. How participants can take part
 
@@ -147,8 +150,9 @@ Status as of 25 September 2026.
 2. ~~Health framing on the start page.~~ The heading is now "Could you be exposed to hazards at work?",
    and both the start page and the report disclaimer say it is an estimate of exposure, not a health
    assessment or diagnosis.
-3. ~~High-result advice is too weak.~~ Every High result now recommends seeing a doctor or other
-   qualified health professional and sharing the report, and says this doesn't mean harm has been found.
+3. ~~High-result advice is too weak.~~ Every High result now recommends sharing the report with a
+   supervisor or health and safety representative and with a doctor or other qualified health
+   professional, and says this doesn't mean harm has been found.
 4. ~~The no-exposure result reassures without support.~~ It now says "No exposures were identified from
    your answers" and that this isn't a guarantee of no exposure. The Low result says low exposure isn't
    the same as no exposure.
@@ -222,6 +226,10 @@ Status as of 25 September 2026.
 > **Could you be exposed to hazards at work?**
 > - An estimate of your exposure at work, not a health assessment or diagnosis
 
+**Start page: before the Start questionnaire button (all participants)**
+> **This questionnaire estimates your exposure at work.** It isn't medical advice, a health assessment or a
+> diagnosis.
+
 **Under the job description field**
 > Your job title and description are sent to the Australian Bureau of Statistics' occupation coding
 > service to match your occupation. Please don't include names or other personal details.
@@ -251,9 +259,10 @@ Status as of 25 September 2026.
 > Based on your answers, your exposure to the agents below is likely to be above the exposure limit
 > used by the assessment. This is an estimate from your answers, not a measurement at your workplace.
 >
-> **We recommend you talk to a doctor or other qualified health professional and share this report with
-> them,** so they can decide whether any health check or follow-up is needed. This result does not mean
-> that harm to your health has been found.
+> **We recommend you share this report with your supervisor or health and safety representative, so your
+> exposure can be reduced, and with a doctor or other qualified health professional,** who can decide
+> whether any health check or follow-up is needed. This result does not mean that harm to your health has
+> been found.
 
 **Report: "What happens next" (High result, employer code)**
 > Because you entered an employer code, OccIDEAS will let your employer know that your estimated exposure
@@ -291,4 +300,6 @@ Status as of 25 September 2026.
 > an estimate from what you told us, not a guarantee that your work involves no exposure.
 
 **Report disclaimer (all results)**
-> **This is an estimate of your exposure at work, not a health assessment or medical diagnosis.**
+> **This is an estimate of your exposure at work, not medical advice, a health assessment or a diagnosis.**
+> It's based only on what you told us about your job, and it can't account for everything. If anything here
+> concerns you, the best next step is talking to your health and safety representative or supervisor.
