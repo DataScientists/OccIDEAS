@@ -211,7 +211,15 @@ public class InterviewServiceImpl implements InterviewService {
     public InterviewVO create(InterviewVO o) {
         // set default assessed status
         o.setAssessedStatus(AssessmentStatusEnum.NOTASSESSED.getDisplay());
-        Object obj = dao.save(mapper.convertToInterview(o));
+        Interview newInterview = mapper.convertToInterview(o);
+        Object obj = dao.save(newInterview);
+        // notes sent with a new interview belong to it - the client doesn't know the id yet
+        // (data entry used to send the participant id, which only matched by coincidence)
+        if (newInterview.getNotes() != null) {
+            for (Note note : newInterview.getNotes()) {
+                note.setInterviewId((Long) obj);
+            }
+        }
         Interview intervew = null;
         if (obj instanceof Interview) {
             intervew = (Interview) obj;

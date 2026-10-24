@@ -188,6 +188,11 @@
 		} else {
 			self.isSelfInterviewer = false;
 		}
+
+		//Data entry, interviewer A and allocator users get Status / Details instead of Start / Resume
+		self.usesParticipantDetails = auth.userHasPermission(['ROLE_DATAENTRY', 'ROLE_INTERVIEWERA', 'ROLE_ALLOCATOR']);
+		//Only data entry users can add participants
+		self.isDataEntry = auth.userHasPermission(['ROLE_DATAENTRY']);
 		self.tableParams = new NgTableParams(
 			{
 				page: 1,

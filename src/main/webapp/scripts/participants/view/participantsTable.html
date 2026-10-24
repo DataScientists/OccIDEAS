@@ -27,9 +27,14 @@
 					</ui-select-choices>
 				</ui-select>
 			</div>
-			<div class="col-md-4" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
+			<div class="col-md-4" ng-if="!vm.usesParticipantDetails" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
 				<button class="btn btn-default" ng-click="vm.add(selectLanguage)">
 					<span>Start</span>
+				</button>
+			</div>
+			<div class="col-md-4" ng-if="vm.isDataEntry" style="display: inline-block;margin-top: 18px;margin-right: -150px;">
+				<button class="btn btn-default" ng-click="vm.addDataEntryParticipant()">
+					<span>Add Participant</span>
 				</button>
 			</div>
 		</div>
@@ -41,17 +46,25 @@
 
 				<tr ng-repeat="participant in $data">
 					<td filter="{idParticipant: 'text'}" title="'Participant Id'">{{participant.idParticipant}}</td>
-					<td filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
+					<td ng-if="!vm.usesParticipantDetails" filter="{idinterview: 'text'}" title="'Interview Id'">{{participant.idinterview}}</td>
 					<td filter="{reference: 'text'}" title="'Study Id Number'">{{participant.reference}}</td>
-					<td filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
+					<td ng-if="!vm.usesParticipantDetails" filter="{status: 'select'}" filter-data="getInterviewStatusList()" title="'Participant Status'">
 						{{participant.statusDescription}}
 					</td>
-					<td style="max-width: 200px;" title="'Notes'">
+					<td ng-if="vm.usesParticipantDetails" filter="{status: 'select'}" filter-data="getParticipantStatusList()" title="'Status'">
+						{{participant.statusDescription}}
+					</td>
+					<td ng-if="vm.usesParticipantDetails" title="'Details'">
+						<button class="btn btn-default btn-sm" ng-click="vm.showParticipantDetailsTab(participant)">
+							<span class="glyphicon glyphicon-list-alt"></span>
+						</button>
+					</td>
+					<td ng-if="!vm.usesParticipantDetails" style="max-width: 200px;" title="'Notes'">
 						<button class="btn btn-default" ng-click="showNotes(participant.idinterview)">
 							<span class="glyphicon glyphicon-comment"></span>
 						</button>
 					</td>
-					<td title="'Resume'">
+					<td ng-if="!vm.usesParticipantDetails" title="'Resume'">
 						<button class="btn btn-default btn-sm"
 								ng-click="addInterviewTabInterviewersEdit(participant)"
 								ng-if="participant.statusDescription=='Running'">
