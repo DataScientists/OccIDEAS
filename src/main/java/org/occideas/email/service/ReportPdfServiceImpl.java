@@ -85,6 +85,13 @@ public class ReportPdfServiceImpl implements ReportPdfService {
         if (finding.getText() != null && !finding.getText().isEmpty()) {
           sb.append("<p class=\"finding-rationale\">").append(escape(finding.getText())).append("</p>");
         }
+        if (finding.getReasons() != null && !finding.getReasons().isEmpty()) {
+          sb.append("<p class=\"finding-reasons-label\">Why this was estimated as High:</p><ul class=\"finding-reasons\">");
+          for (String reason : finding.getReasons()) {
+            sb.append("<li>").append(escape(reason)).append("</li>");
+          }
+          sb.append("</ul>");
+        }
         sb.append("<p class=\"finding-action\">Talk to your supervisor or health and safety representative about "
           + "this finding, and see the guidance from your local work health and safety regulator.</p>");
         sb.append("</div>");
@@ -125,6 +132,21 @@ public class ReportPdfServiceImpl implements ReportPdfService {
         + "answers suggest may be present in your workplace. Your exposure to these is estimated to be well "
         + "below the exposure limit. Low exposure isn't the same as no exposure, so they are listed here.</p>");
       appendNotedItems(sb, lowFindings, "noted-item-low");
+    }
+
+    // Same notes as on screen (individualReport.html).
+    if (reportData.isEmployerShared() && flagged) {
+      sb.append("<div class=\"demo-note\"><strong>What happens next</strong><br/>As agreed when you started, "
+        + "OccIDEAS will let your employer know about this result (see above). We don't collect your name or "
+        + "contact details, and your employer won't be told which results are yours.</div>");
+    } else if (reportData.isEmployerShared()) {
+      sb.append("<div class=\"demo-note\">As agreed, your results will be included in OccIDEAS's report to your "
+        + "employer. We don't collect your name or contact details, and your employer won't be told which "
+        + "results are yours.</div>");
+    }
+    if (reportData.isTrial()) {
+      sb.append("<div class=\"demo-note\">As this was a trial, your answers may be used to test and improve "
+        + "OccIDEAS. They won't be shared with any employer.</div>");
     }
 
     if (reportData.getParticipantId() != null && !reportData.getParticipantId().isEmpty()) {
@@ -238,16 +260,25 @@ public class ReportPdfServiceImpl implements ReportPdfService {
         body = "Based on your answers, your exposure to the agents below is likely to be above the exposure "
           + "limit used by the assessment. This is an estimate from your answers, not a measurement at your "
           + "workplace.";
-        recommendation = "<strong>We recommend you share this report with your supervisor or health and safety "
-          + "representative, so your exposure can be reduced, and with a doctor or other qualified health "
-          + "professional,</strong> who can decide whether any health check or follow-up is needed. This result "
-          + "does not mean that harm to your health has been found.";
+        if (reportData.isEmployerShared()) {
+          // OccIDEAS reports to the employer, but never which results are whose - keep this true to that.
+          recommendation = "<strong>Your employer has signed up to OccIDEAS and will be told about this result, "
+            + "without being told it's yours, so they can work with you and your co-workers on the next steps to "
+            + "reduce exposure.</strong> You can also talk to your supervisor or health and safety representative "
+            + "about this finding, and see the guidance from your local work health and safety regulator. This "
+            + "result does not mean that harm to your health has been found.";
+        } else {
+          recommendation = "<strong>Talk to your supervisor or health and safety representative about this "
+            + "finding, and see the guidance from your local work health and safety regulator.</strong> This "
+            + "result does not mean that harm to your health has been found.";
+        }
         break;
       case "medium":
         title = "You have some exposure, but it is likely to be below the exposure limit";
         body = "Based on your answers, you have some exposure to the agents below, but it is likely to be below "
           + "the exposure limit. Because this is an estimate, it may still warrant attention. Please talk to your "
-          + "supervisor or health and safety representative about these findings.";
+          + "supervisor or health and safety representative about these findings, and see the guidance from your "
+          + "local work health and safety regulator.";
         break;
       case "low":
         title = "Your exposure is estimated to be well below the exposure limit";
@@ -300,6 +331,8 @@ public class ReportPdfServiceImpl implements ReportPdfService {
       + ".finding { padding: 6px 0 6px 10px; border-top: 1px solid #edf2f5; border-left: 4px solid #b3452f; }"
       + ".finding-name { font-weight: bold; font-size: 10.5pt; }"
       + ".finding-rationale { margin: 3px 0 0; font-size: 9pt; color: #5b5c53; }"
+      + ".finding-reasons-label { margin: 4px 0 0; font-size: 9pt; font-weight: bold; color: #222222; }"
+      + ".finding-reasons { margin: 2px 0 0; padding-left: 16px; font-size: 9pt; color: #5b5c53; }"
       + ".finding-action { margin: 3px 0 0; font-size: 9pt; font-weight: bold; color: #2e7d95; }"
       + ".noted-item { padding: 6px 0 6px 10px; border-top: 1px solid #edf2f5; border-left: 4px solid #b8752b; }"
       + ".noted-item-low { border-left-color: #a68a2c; }"

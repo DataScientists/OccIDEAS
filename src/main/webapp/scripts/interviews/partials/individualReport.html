@@ -35,16 +35,25 @@
     Based on your answers, your exposure to the agents below is likely to be above the exposure limit
     used by the assessment. This is an estimate from your answers, not a measurement at your workplace.
   </p>
-  <p class="si-verdict-body" ng-if="siVerdictState === 'flagged'">
-    <strong>We recommend you share this report with your supervisor or health and safety representative,
-    so your exposure can be reduced, and with a doctor or other qualified health professional,</strong> who
-    can decide whether any health check or follow-up is needed. This result does not mean that harm to your
+  <!-- Trial / no code: no employer behind the participant, so point them to the regulator's guidance. -->
+  <p class="si-verdict-body" ng-if="siVerdictState === 'flagged' && !siEmployerShared">
+    <strong>Talk to your supervisor or health and safety representative about this finding, and see the
+    guidance from your local work health and safety regulator.</strong> This result does not mean that harm
+    to your health has been found.
+  </p>
+  <!-- Employer code: OccIDEAS reports to the employer, but never which results are whose - keep this true to that. -->
+  <p class="si-verdict-body" ng-if="siVerdictState === 'flagged' && siEmployerShared">
+    <strong>Your employer has signed up to OccIDEAS and will be told about this result, without being told
+    it's yours, so they can work with you and your co-workers on the next steps to reduce exposure.</strong>
+    You can also talk to your supervisor or health and safety representative about this finding, and see the
+    guidance from your local work health and safety regulator. This result does not mean that harm to your
     health has been found.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'medium'">
     Based on your answers, you have some exposure to the agents below, but it is likely to be below the
     exposure limit. Because this is an estimate, it may still warrant attention. Please talk to your
-    supervisor or health and safety representative about these findings.
+    supervisor or health and safety representative about these findings, and see the guidance from your
+    local work health and safety regulator.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'low'">
     Based on your answers, your exposure to the agents below is estimated to be well below the
@@ -104,6 +113,12 @@
       <span class="si-nonstudy-badge" ng-if="siShowNonStudyBadge && !finding.studyAgent"
               title="This agent isn't in the study's agent list, so it isn't shown in the fired rules grid.">Not a study agent</span>
       <p class="si-finding-rationale" ng-if="finding.rationale">{{finding.rationale}}</p>
+      <div class="si-finding-reasons" ng-if="finding.reasons.length > 0">
+        <span class="si-finding-reasons-label">Why this was estimated as High:</span>
+        <ul>
+          <li ng-repeat="reason in finding.reasons">{{reason}}</li>
+        </ul>
+      </div>
       <p class="si-finding-action">Talk to your supervisor or health and safety representative about this finding, and see the guidance from your local work health and safety regulator.</p>
       <div class="si-condition-dots-wrap" ng-if="siAssessorMode && finding.conditions.length > 0">
         <span class="si-condition-dots-label">Click a dot to see the answer that triggered this:</span>
@@ -197,13 +212,8 @@
 <div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState === 'flagged'">
   <strong>What happens next</strong>
   <p>
-    As agreed when you started, OccIDEAS will let your employer know that your estimated exposure
-    to one or more hazards was above the exposure limit, so they can take steps to reduce it for you and your
-    co-workers. You don't need to raise this with them yourself.
-  </p>
-  <p>
+    As agreed when you started, OccIDEAS will let your employer know about this result (see above).
     We don't collect your name or contact details, and your employer won't be told which results are yours.
-    You can also talk to your workplace health and safety representative.
   </p>
 </div>
 <div class="si-employer-shared-note" ng-if="siEmployerShared && siVerdictState !== 'flagged'">

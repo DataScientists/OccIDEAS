@@ -21,7 +21,7 @@ public class AgentInfo implements Serializable {
     private String description;
     // Participant-facing phrase describing the agent, e.g. "a mineral fibre once widely used in building
     // materials, classified as a known human carcinogen". The public report builds each finding's text
-    // from this rather than the per-rule rationale, which stays in the assessor view.
+    // from this; High findings also list each fired rule's rationale as "why this was estimated as High".
     @Column(columnDefinition = "TEXT")
     private String publicDescription;
     @Temporal(TemporalType.TIMESTAMP)

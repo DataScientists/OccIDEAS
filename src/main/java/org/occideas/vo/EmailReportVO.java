@@ -25,6 +25,10 @@ public class EmailReportVO {
   private List<IndividualFindingVO> assessedAgents;
   // Interview was stopped before the end - adds a caveat under the agents assessed table.
   private boolean partial;
+  // Employer code applied (not TRIAL) - flagged recommendation says the employer will follow up, plus the employer note.
+  private boolean employerShared;
+  // TRIAL code applied - adds the trial note (answers may be used to improve OccIDEAS, not shared with an employer).
+  private boolean trial;
   // "Book a demonstration" note at the end - public flow without an employer code (same rule as on screen).
   private boolean showDemoNote;
 
@@ -90,6 +94,22 @@ public class EmailReportVO {
 
   public void setPartial(boolean partial) {
     this.partial = partial;
+  }
+
+  public boolean isEmployerShared() {
+    return employerShared;
+  }
+
+  public void setEmployerShared(boolean employerShared) {
+    this.employerShared = employerShared;
+  }
+
+  public boolean isTrial() {
+    return trial;
+  }
+
+  public void setTrial(boolean trial) {
+    this.trial = trial;
   }
 
   public boolean isShowDemoNote() {

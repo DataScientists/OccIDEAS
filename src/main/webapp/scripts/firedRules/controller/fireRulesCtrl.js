@@ -305,6 +305,10 @@
             $scope.participantStatus = getParticipantDescription(participant.status);
             // Drives the "partially completed interview" note on the assessment report.
             $scope.siPartial = participant.status == 1;
+            // TRIAL code participants get TRIAL-prefixed references (e.g. TRIAL00001); anyone else gets the
+            // employer-code wording on the report, same as siTrial/siEmployerShared in the startInterview flow.
+            $scope.siTrial = (participant.reference || '').substr(0, 5).toUpperCase() === 'TRIAL';
+            $scope.siEmployerShared = !$scope.siTrial;
             $scope.assessmentStatus = $scope.interview.assessedStatus;
             $scope.data = response.data[0];
 

@@ -48,7 +48,8 @@
     // there. studyAgents is used only to flag such findings (studyAgent: false), which the assessor
     // view badges. The public view leaves non-study agents out entirely (see publicStudyAgentIds).
     //
-    // options.publicView: findings are worded per agent (see PUBLIC_LEVEL_TEXT) and collapsed - for
+    // options.publicView: findings are worded per agent (see PUBLIC_LEVEL_TEXT; High findings also carry
+    // their rules' rationales as reasons) and collapsed - for
     // each agent only its highest-severity finding is kept - a high finding trumps that agent's medium/low ones, and a medium trumps its low - since
     // "high" alongside "low probability link" for the same substance reads as a contradiction. If
     // more than one rule fires at that same top level (e.g. two probLow rules for the same agent),
@@ -148,8 +149,16 @@
         var agentName = agentNameFor(rule);
 
         if (rule.level === 'probHigh') {
+          // Public view: each High rule's Rule.rationale (expert-reviewed) is listed under the agent as a
+          // "why this was estimated as High" reason - all of them when several High rules fire for one
+          // agent, identical texts once. No rationale means no reasons, never a made-up generic one.
+          var reason = publicView && rule.rationale ? rule.rationale.trim() : '';
           if (publicView && highByAgent[rule.agentId]) {
-            highByAgent[rule.agentId].conditions = highByAgent[rule.agentId].conditions.concat(rule.conditions || []);
+            var existing = highByAgent[rule.agentId];
+            existing.conditions = existing.conditions.concat(rule.conditions || []);
+            if (reason && existing.reasons.indexOf(reason) < 0) {
+              existing.reasons.push(reason);
+            }
             return;
           }
           var highFinding = {
@@ -157,6 +166,7 @@
             studyAgent: isStudyAgent(rule),
             rationale: publicView ? publicText(agentName, publicDescriptionFor(rule), rule.level)
               : (rule.rationale || null),
+            reasons: reason ? [reason] : [],
             level: rule.level,
             conditions: rule.conditions || []
           };

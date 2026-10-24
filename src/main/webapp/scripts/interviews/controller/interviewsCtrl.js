@@ -1119,7 +1119,7 @@
         participantId: $scope.siParticipantId,
         verdictState: $scope.siVerdictState,
         highFindings: _.map($scope.siHighFindings, function(finding) {
-          return { agentName: finding.agentName, text: finding.rationale };
+          return { agentName: finding.agentName, text: finding.rationale, reasons: finding.reasons };
         }),
         otherFindings: _.map($scope.siOtherFindings, function(finding) {
           return { agentName: finding.agentName, text: finding.text, level: finding.level };
@@ -1128,6 +1128,8 @@
           return { agentName: row.agentName, text: row.status, level: row.level };
         }),
         partial: !!$scope.siPartial,
+        employerShared: !!$scope.siEmployerShared,
+        trial: !!$scope.siTrial,
         showDemoNote: !!($scope.siParticipantId && !$scope.siEmployerShared)
       }).then(function(response) {
         $scope.siReportDownloading = false;
