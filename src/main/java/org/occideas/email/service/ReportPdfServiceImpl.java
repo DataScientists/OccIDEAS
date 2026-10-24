@@ -256,10 +256,11 @@ public class ReportPdfServiceImpl implements ReportPdfService {
     String recommendation = null;
     switch (state) {
       case "flagged":
-        title = "Your exposure to one or more hazards is likely to be above the exposure limit";
-        body = "Based on your answers, your exposure to the agents below is likely to be above the exposure "
-          + "limit used by the assessment. This is an estimate from your answers, not a measurement at your "
-          + "workplace.";
+        // Names the High agents - built by individualReportService.js, plain text, escaped here.
+        title = reportData.getVerdictTitle() != null && !reportData.getVerdictTitle().isBlank()
+          ? escape(reportData.getVerdictTitle())
+          : "Your exposure to one or more hazards is likely to be above the exposure limit";
+        body = "This is an estimate from your answers, not a measurement at your workplace.";
         if (reportData.isEmployerShared()) {
           // OccIDEAS reports to the employer, but never which results are whose - keep this true to that.
           recommendation = "<strong>Your employer has signed up to OccIDEAS and will be told about this result, "

@@ -1118,6 +1118,7 @@
         interviewId: $scope.interview.interviewId,
         participantId: $scope.siParticipantId,
         verdictState: $scope.siVerdictState,
+        verdictTitle: $scope.siVerdictTitle,
         highFindings: _.map($scope.siHighFindings, function(finding) {
           return { agentName: finding.agentName, text: finding.rationale, reasons: finding.reasons };
         }),
@@ -2215,6 +2216,7 @@
       var summary = IndividualReportService.build($scope.siData.firedRules, $scope.siAgents,
         {publicView: true, allStudyAgents: $scope.siStudyAgentList});
       $scope.siVerdictState = summary.verdictState;
+      $scope.siVerdictTitle = summary.verdictTitle;
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;
       $scope.siAssessedAgents = summary.assessedAgents;

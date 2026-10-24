@@ -78,6 +78,28 @@
     };
     var ASSESSED_ORDER = {probHigh: 0, probMedium: 1, probLow: 2, unknown: 3, none: 4};
 
+    // Flagged verdict heading names the High agents - up to FLAGGED_TITLE_MAX_NAMES, then "and N other
+    // hazards" so a long list doesn't swamp the heading. Same order as the "Agents assessed" table.
+    // Sent to the PDF as-is (ReportPdfServiceImpl) so the two can't drift apart.
+    var FLAGGED_TITLE_MAX_NAMES = 3;
+
+    function flaggedTitle(highFindings) {
+      var names = _.sortBy(_.uniq(_.map(highFindings, 'agentName')), function(name) {
+        return name.toLowerCase();
+      });
+      var shown = names.length > FLAGGED_TITLE_MAX_NAMES ? names.slice(0, FLAGGED_TITLE_MAX_NAMES) : names;
+      var rest = names.length - shown.length;
+      var list;
+      if (rest > 0) {
+        list = shown.join(', ') + ' and ' + rest + ' other hazard' + (rest === 1 ? '' : 's');
+      } else if (shown.length > 1) {
+        list = shown.slice(0, -1).join(', ') + ' and ' + shown[shown.length - 1];
+      } else {
+        list = shown[0];
+      }
+      return 'Your exposure to ' + list + ' is likely to be above the exposure limit';
+    }
+
     this.build = function(firedRules, studyAgents, options) {
       var publicView = !!(options && options.publicView);
 
@@ -237,6 +259,7 @@
 
       return {
         verdictState: verdictState,
+        verdictTitle: verdictState === 'flagged' ? flaggedTitle(high) : null,
         highFindings: high,
         otherFindings: other,
         manualReviewAgents: _.uniq(manualReviewNames),

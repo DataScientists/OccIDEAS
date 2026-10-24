@@ -18,6 +18,8 @@ public class EmailReportVO {
   // Lower-confidence findings (otherFindings) are shown as supplementary detail regardless
   // of which verdict applies, not a third competing result.
   private String verdictState;
+  // Flagged verdict heading naming the High agents (individualReportService.js); null otherwise.
+  private String verdictTitle;
   private List<IndividualFindingVO> highFindings;
   private List<IndividualFindingVO> otherFindings;
   // "Agents assessed" table rows - text is the status shown (e.g. "No exposure identified"), level is
@@ -62,6 +64,14 @@ public class EmailReportVO {
 
   public void setVerdictState(String verdictState) {
     this.verdictState = verdictState;
+  }
+
+  public String getVerdictTitle() {
+    return verdictTitle;
+  }
+
+  public void setVerdictTitle(String verdictTitle) {
+    this.verdictTitle = verdictTitle;
   }
 
   public List<IndividualFindingVO> getHighFindings() {

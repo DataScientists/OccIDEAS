@@ -1,6 +1,6 @@
 <!--
   Shared individual exposure report body (verdict / findings / other noted / disclaimer).
-  Expects on scope: siVerdictState, siHighFindings, siOtherFindings. Optional: siAssessorMode and
+  Expects on scope: siVerdictState, siVerdictTitle (flagged heading naming the High agents), siHighFindings, siOtherFindings. Optional: siAssessorMode and
   siHighlightCondition(cond) (condition dots, only when the answer tree is on the page),
   siManualReviewAgents (assessor-facing note, never set on the participant flow),
   siShowNonStudyBadge (flags findings whose agent isn't a study agent; assessor page only),
@@ -22,7 +22,7 @@
 
 <div class="si-verdict" ng-class="'si-verdict-' + siVerdictState">
   <div class="si-verdict-eyebrow">Result</div>
-  <h1 class="si-verdict-title" ng-if="siVerdictState === 'flagged'">Your exposure to one or more hazards is likely to be above the exposure limit</h1>
+  <h1 class="si-verdict-title" ng-if="siVerdictState === 'flagged'">{{siVerdictTitle || 'Your exposure to one or more hazards is likely to be above the exposure limit'}}</h1>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'medium'">You have some exposure, but it is likely to be below the exposure limit</h1>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'low'">Your exposure is estimated to be well below the exposure limit</h1>
   <h1 class="si-verdict-title" ng-if="siVerdictState === 'clear'">No exposures were identified from your answers</h1>
@@ -32,8 +32,7 @@
     us, not measured directly.
   </p>
   <p class="si-verdict-body" ng-if="siVerdictState === 'flagged'">
-    Based on your answers, your exposure to the agents below is likely to be above the exposure limit
-    used by the assessment. This is an estimate from your answers, not a measurement at your workplace.
+    This is an estimate from your answers, not a measurement at your workplace.
   </p>
   <!-- Trial / no code: no employer behind the participant, so point them to the regulator's guidance. -->
   <p class="si-verdict-body" ng-if="siVerdictState === 'flagged' && !siEmployerShared">

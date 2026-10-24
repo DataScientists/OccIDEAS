@@ -1700,6 +1700,7 @@
         });
       });
       $scope.siVerdictState = summary.verdictState;
+      $scope.siVerdictTitle = summary.verdictTitle;
       $scope.siHighFindings = summary.highFindings;
       $scope.siOtherFindings = summary.otherFindings;
       $scope.siManualReviewAgents = $scope.siAssessorMode ? summary.manualReviewAgents : [];
